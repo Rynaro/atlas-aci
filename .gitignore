@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+dist/
+*.egg-info/
+
+# uv
+.uv/
+
+# Tool caches
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+
+# Atlas index artifacts
+.atlas/
+
+# Editor / OS
+.DS_Store
+*.swp
+
+# Claude Code local settings
+.claude/settings.local.json
