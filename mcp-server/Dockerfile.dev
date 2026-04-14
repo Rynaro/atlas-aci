@@ -1,0 +1,58 @@
+# syntax=docker/dockerfile:1
+#
+# atlas-aci — dev-loop image.
+#
+# Separate from the production Dockerfile so the runtime image stays
+# minimal. This one includes pytest, ruff, mypy and keeps the source
+# tree under /work so bind-mounted edits round-trip without rebuilds.
+#
+# ──────────────────────────────────────────────────────────────────────
+# Build once, run many:
+#
+#   docker build -f Dockerfile.dev -t atlas-aci-dev .
+#
+#   # Interactive shell with everything pre-installed
+#   docker run --rm -it -v "$PWD":/work atlas-aci-dev
+#
+#   # One-shot commands (use whatever verifier you need)
+#   docker run --rm -v "$PWD":/work atlas-aci-dev uv run pytest -q
+#   docker run --rm -v "$PWD":/work atlas-aci-dev uv run ruff check src/ tests/
+#   docker run --rm -v "$PWD":/work atlas-aci-dev uv run ruff format --check src/ tests/
+#   docker run --rm -v "$PWD":/work atlas-aci-dev uv run mypy src/
+#
+#   # Smoke-test the server CLI
+#   docker run --rm -v "$PWD":/work atlas-aci-dev uv run atlas-aci --help
+#
+# The bind mount overlays /work with your host checkout, so edits on
+# the host are immediately visible inside the container. The cached
+# .venv from `uv sync` in the build stage is preserved because it
+# lives outside /work.
+# ──────────────────────────────────────────────────────────────────────
+
+FROM python:3.12-slim
+
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    apt-get update && apt-get install -y --no-install-recommends \
+        ripgrep \
+        git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Seed a venv outside /work so the bind mount can't shadow it.
+ENV UV_PROJECT_ENVIRONMENT=/opt/venv \
+    PATH="/opt/venv/bin:$PATH" \
+    PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1
+
+WORKDIR /work
+COPY pyproject.toml README.md ./
+COPY src ./src
+COPY tests ./tests
+
+# `uv sync` installs the project in editable mode; hatchling reads
+# `readme = "README.md"` from pyproject.toml, so the file must be here.
+RUN uv sync --extra dev
+
+CMD ["bash"]

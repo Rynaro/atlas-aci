@@ -1,0 +1,32 @@
+# Keep the build context small and hermetic.
+# The production Dockerfile only copies pyproject.toml + src/;
+# Dockerfile.dev also copies tests/. Everything else is noise.
+
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+
+dist/
+build/
+*.egg-info/
+
+.atlas/
+.git/
+.gitignore
+.github/
+
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Never ship local secrets into an image
+.env
+.env.*
