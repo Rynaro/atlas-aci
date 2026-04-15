@@ -17,7 +17,7 @@ the host of your choice. The server implements the bounded ACI from
 | Project mgmt | `uv` | Fast, lockfile, single-binary distribution |
 | Filesystem search | `ripgrep` (binary) | Already canonical, faster than any Python equivalent |
 | Universal AST | `tree-sitter` + `tree-sitter-language-pack` | Vendor-neutral, multi-language, low overhead |
-| Ruby AST (specialist) | `prism` via subprocess | generic-agent's hard requirement |
+| Ruby AST (specialist) | `prism` via subprocess | Vendor-neutral; Prism is the canonical Ruby 3.x AST |
 | Memex MVP | hashed-directory KV | No DB needed; upgrade later |
 | Memex production | `sqlite-vec` | When semantic search over excerpts becomes useful |
 | Sandbox | DevContainer or Docker | Required for `test_dry_run` |
@@ -159,13 +159,6 @@ cp -r atlas/skills/* .github/skills/atlas/
 cp -r atlas/templates/* .github/templates/atlas/
 ```
 
-If you have a generic-agent overlay for your repo, also copy it:
-
-```bash
-cp generic-agent/generic-agent.agent.md .github/agents/generic-agent.agent.md
-cp -r generic-agent/skills/* .github/skills/    # NOT under atlas/, these are generic-agent-specific
-```
-
 ---
 
 ## 7. Run the canary suite
@@ -256,8 +249,8 @@ laptop is ~60s. Worry about this later.
 Roughly in priority order:
 
 1. **`ar_query_graph` adapter** — the Rails-aware writer/reader-to-table
-   resolver generic-agent's HARD GATE depends on. Without this, data-critical
-   missions can't H-confidence-anchor CVR write paths.
+   resolver. Enables high-confidence anchoring of write paths for
+   missions targeting data integrity.
 2. **sqlite-vec Memex backend.** Enables `memex.search(query)` so the
    Locate phase can find prior excerpts semantically. Big quality lift on
    recurring missions over the same area.

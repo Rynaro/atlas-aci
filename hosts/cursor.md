@@ -74,8 +74,6 @@ filesystem and code-graph access. Refuse any write-scoped requests and
 hand off per the recipient labels in the scout report.
 ```
 
-For generic-agent, a parallel `generic-agent.mdc` rule with the domain-specific overlay.
-
 ## 4. Invoke
 
 In Cursor's chat or composer:

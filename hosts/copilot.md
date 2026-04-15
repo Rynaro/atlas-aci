@@ -26,17 +26,9 @@ cp -r ~/code/atlas/skills/*    .github/skills/atlas/
 cp -r ~/code/atlas/templates/* .github/templates/atlas/
 ```
 
-For a generic-agent overlay — overlaid on the same repo:
-
-```bash
-cp ~/code/generic-agent/generic-agent.agent.md   .github/agents/generic-agent.agent.md
-cp -r ~/code/generic-agent/skills/*        .github/skills/    # NOT under atlas/, they're generic-agent-specific
-```
-
 ## 3. Register the MCP server in the agent frontmatter
 
-Edit `.github/agents/atlas.agent.md` (and `generic-agent.agent.md`) so the
-frontmatter includes:
+Edit `.github/agents/atlas.agent.md` so the frontmatter includes:
 
 ```yaml
 ---
@@ -55,30 +47,6 @@ tools:
       command: ["atlas-aci", "serve",
                 "--repo", "${workspaceFolder}",
                 "--memex-root", "${workspaceFolder}/.atlas/memex"]
----
-```
-
-For generic-agent, point at the same server but include the domain-specific
-extensions (Prism subprocess MCP if/when you split it out):
-
-```yaml
----
-name: generic-agent
-version: 2.0
-methodology: ATLAS
-methodology_version: 1.0
-replaces: SAGE
-tools:
-  mcp_servers:
-    - name: atlas-aci
-      transport: stdio
-      command: ["atlas-aci", "serve",
-                "--repo", "${workspaceFolder}",
-                "--memex-root", "${workspaceFolder}/.atlas/memex"]
-    # When prism-codegraph is split out as its own server, add it here:
-    # - name: prism-codegraph
-    #   transport: stdio
-    #   command: ["prism-codegraph", "serve", "--repo", "${workspaceFolder}"]
 ---
 ```
 
@@ -120,26 +88,15 @@ MCP command failed to spawn — check the workspace path and that
 voter PII. Decision target: worker → PII-field → handling-policy matrix.
 ```
 
-Or for generic-agent:
+## Token-budget note
 
-```
-@generic-agent mission — enumerate DataObjects writing to sensitive_records and
-prove each is INSERT-only with auth. Decision target: (DataObject,
-write_op, auth_method) triples + integrity checklist.
-```
-
-## Token-budget note (specific to your setup)
-
-Per your existing `copilot-instructions.md` consolidation work: the
-ATLAS+generic-agent agent files together add roughly 1700 BPE tokens to the
-always-loaded budget when both agents are present. Skills are
-progressive-disclosure (≤200 lines each) so they only weigh in when
-loaded.
+The ATLAS agent file adds roughly 900 BPE tokens to the always-loaded
+budget. Skills are progressive-disclosure (≤200 lines each) so they only
+weigh in when loaded.
 
 If your `copilot-instructions.md` + `CONTEXT.md` is currently ~900 BPE
-tokens (your stated post-consolidation number), and Archie + generic-agent
-profiles add ~1700 BPE, you're at ~2600 BPE always-loaded. Still well
-inside the 25% rule for a 200k-token window. Comfortable.
+tokens, adding the ATLAS profile puts you at ~1800 BPE always-loaded.
+Still well inside the 25% rule for a 200k-token window. Comfortable.
 
 ## Custom agent handoff buttons
 

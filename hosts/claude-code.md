@@ -65,14 +65,6 @@ cp -r atlas/skills/* ~/.config/claude/skills/atlas/
 cp -r atlas/templates/* ~/.config/claude/templates/atlas/
 ```
 
-For a generic-agent overlay:
-
-```bash
-cp generic-agent/generic-agent.agent.md ~/.config/claude/agents/generic-agent.md
-mkdir -p ~/.config/claude/skills/generic-agent
-cp -r generic-agent/skills/* ~/.config/claude/skills/generic-agent/
-```
-
 ## 5. Restart Claude Code
 
 The MCP servers connect on app startup. After restart, in a chat:
@@ -87,11 +79,9 @@ Should show seven `atlas-aci` tools. If you see `mcp_error`, check
 ## 6. Invoke ATLAS
 
 ```
-@atlas mission — list all writers to sensitive_records, decision target:
-(DataObject, write_op, authorization_method) triples.
+@atlas mission — map all Sidekiq workers in app/workers/** that touch
+sensitive PII fields. Decision target: worker → field → handling-policy matrix.
 ```
-
-(Or `@generic-agent ...` if you have a generic-agent overlay configured.)
 
 ## Troubleshooting
 
