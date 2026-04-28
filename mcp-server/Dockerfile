@@ -34,14 +34,21 @@ FROM python:3.12-slim AS builder
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
 WORKDIR /build
-COPY pyproject.toml README.md ./
+COPY pyproject.toml uv.lock README.md ./
 COPY src ./src
 
-# Build the wheel directly. No intermediate `uv sync` — hatchling + uv
-# build is self-contained, and the runtime stage installs via pip.
-# README.md is copied because pyproject.toml's `readme = "README.md"`
-# field makes hatchling require it at build time.
+# Build the wheel directly. README.md is copied because pyproject.toml's
+# `readme = "README.md"` field makes hatchling require it at build time.
 RUN uv build --wheel --out-dir /dist
+
+# Export the locked transitive deps (production extras only) so the
+# runtime stage installs the exact versions captured in uv.lock and not
+# whatever pip resolves fresh against PyPI. Without this, every fresh
+# build is exposed to upstream wheel restructures — e.g. tree-sitter-
+# language-pack 1.6.3 dropped its top-level module and silently broke
+# the image (no build error, ModuleNotFoundError at runtime).
+RUN uv export --frozen --no-dev --no-emit-project --format requirements-txt \
+        --output-file /dist/requirements.txt
 
 # ──────────────────────────────────────────────────────────────────────
 
@@ -66,8 +73,13 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 # is predictable across rebuilds.
 RUN useradd --create-home --uid 10001 atlas
 
-COPY --from=builder /dist/*.whl /tmp/
-RUN pip install --no-cache-dir /tmp/*.whl && rm /tmp/*.whl
+COPY --from=builder /dist/requirements.txt /dist/*.whl /tmp/
+# Install transitive deps from the lockfile-derived requirements.txt
+# first, then the project wheel itself with --no-deps so pip cannot
+# re-resolve and undo the lock-respecting install.
+RUN pip install --no-cache-dir -r /tmp/requirements.txt \
+ && pip install --no-cache-dir --no-deps /tmp/*.whl \
+ && rm /tmp/*.whl /tmp/requirements.txt
 
 # Pre-create the mount points and hand /memex to the unprivileged user.
 # /repo is operator-provided (read-only in production), so its ownership
