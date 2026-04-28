@@ -1,0 +1,149 @@
+id: atlas-aci-ci-hardening
+title: "atlas-aci CI Hardening — production-image behavioural gate + fast-lane lint/test"
+status: draft
+owner: TBD
+cycle: SPECTRA
+created: 2026-04-28
+related:
+  siblings:
+    - atlas-aci-codegraph-build-regression-test
+  triggers:
+    - "atlas-aci#1 (tree-sitter-language-pack 1.6.3 silent break in 1.1.0 image)"
+
+frame:
+  product: "atlas-aci production Docker image (consumed via `eidolons atlas aci --container --runtime docker`)"
+  current_state: "no .github/workflows/, no automated build or behavioural check"
+  prevention_target: "transitive-dep wheel-layout drift that builds clean but breaks at runtime"
+
+scope:
+  in:
+    - "ci.yml: ruff + ruff format --check + mypy + pytest on Python 3.11 and 3.12 matrix, every PR + push to main"
+    - "ci.yml: dev-image (Dockerfile.dev) smoke build + `atlas-aci --help` on every PR touching mcp-server/"
+    - "image.yml: docker build --no-cache of mcp-server/Dockerfile on PRs touching mcp-server/, push to main, and daily cron 17 6 * * *"
+    - "image.yml: behavioural gate — `atlas-aci index --repo <fixture> --langs python` against checked-in fixture, assert .atlas/graph.db has >0 symbols"
+    - "Checked-in fixture at mcp-server/tests/fixtures/sample_py/ with one Python file containing at least one function and one class"
+    - ".gitignore entry for mcp-server/tests/fixtures/sample_py/.atlas/"
+  out:
+    - "GHCR publishing / image releases / docker push"
+    - "Versioning automation / semantic-release / tag triggers"
+    - "Dependabot or Renovate configuration"
+    - "Sibling unit-level CodeGraph.build() regression test"
+    - "Multi-arch (arm64) builds"
+    - "macOS / Windows runners"
+    - "Slack / email / external notification integrations"
+    - "Performance / benchmark CI"
+
+decision_points:
+  - id: D1
+    question: "One workflow or two?"
+    decision: "Two — ci.yml (fast, every PR) and image.yml (heavy, gated paths + daily cron)"
+  - id: D2
+    question: "Fixture: checked-in or generated?"
+    decision: "Checked-in at mcp-server/tests/fixtures/sample_py/ — keeps the gate locally reproducible"
+  - id: D3
+    question: "Matrix dimensions?"
+    decision: "Fast lane: python 3.11 + 3.12 on ubuntu-latest. Heavy lane: single cell, no Python matrix (image pins 3.12-slim)"
+  - id: D4
+    question: "How does the behavioural gate fail fast?"
+    decision: "Three steps: --help loads; `index` against fixture exits 0; sqlite query on .atlas/graph.db returns >0 symbols"
+  - id: D5
+    question: "uv install strategy in fast lane?"
+    decision: "astral-sh/setup-uv@v3 + `uv sync --extra dev` + `uv run <tool>`; no YAML duplication of Dockerfile.dev install logic"
+  - id: D6
+    question: "Docker layer cache on the prod-image build?"
+    decision: "No — `--no-cache` is load-bearing; the cron's purpose is to detect transient upstream breakage, which a cache would mask"
+  - id: D7
+    question: "Concurrency policy?"
+    decision: "Per-ref cancel-in-progress on PR/push; serial queue on cron group (no cancellation between daily runs)"
+
+acceptance_criteria:
+  - id: AC1
+    name: "Fast lane on every PR"
+    given: "PR opened or updated against main"
+    when: "GitHub Actions evaluates workflows"
+    then: "ci.yml runs ruff check, ruff format --check, mypy src/, pytest -q on Python 3.11 + 3.12; completes <5 min"
+  - id: AC2
+    name: "Dev-image smoke"
+    given: "PR touches mcp-server/**"
+    when: "ci.yml runs"
+    then: "Dockerfile.dev builds and `docker run --rm <dev-image> uv run atlas-aci --help` exits 0"
+  - id: AC3
+    name: "Prod-image behavioural gate on PR"
+    given: "PR touches mcp-server/** or .github/workflows/image.yml"
+    when: "image.yml runs"
+    then: "image builds with --no-cache; `--help` exits 0; `index --repo /repo --langs python` exits 0; .atlas/graph.db exists with >0 symbol rows"
+  - id: AC4
+    name: "Daily cron"
+    given: "no PRs in flight"
+    when: "schedule trigger 17 6 * * * fires"
+    then: "image.yml runs full AC3 sequence against main"
+  - id: AC5
+    name: "Specific-bug regression coverage"
+    given: "synthetic upstream wheel-layout regression in tree-sitter-language-pack (or equivalent)"
+    when: "image.yml runs"
+    then: "AC3 step 3 fails non-zero with the runtime error surfaced in the log — load-bearing behavioural gate"
+  - id: AC6
+    name: "Fixture idempotency"
+    given: "AC3 step 3 has run once and produced .atlas/"
+    when: "subsequent runs occur"
+    then: "the workflow cleans .atlas/ before re-running, or the index command tolerates re-runs"
+  - id: AC7
+    name: "Marker-bounded blame"
+    given: "future workflow files coexist"
+    when: "implementer reads ci.yml or image.yml"
+    then: "top-of-file comment names spec id atlas-aci-ci-hardening and links to .spectra/atlas-aci-ci-hardening.md"
+
+validation_gates:
+  - id: G1
+    check: "ci.yml exists; matrix cells green on a no-op PR"
+  - id: G2
+    check: "image.yml exists; full sequence green on a no-op PR touching mcp-server/"
+  - id: G3
+    check: "image.yml cron runs at least once on main and is green"
+  - id: G4
+    check: "AC5 dry-run: widening tree-sitter-language-pack constraint to >=1.6.3 makes the gate fail red on the index step"
+  - id: G5
+    check: "mcp-server/tests/fixtures/sample_py/ is checked in with parseable Python symbols"
+  - id: G6
+    check: ".gitignore includes mcp-server/tests/fixtures/sample_py/.atlas/"
+  - id: G7
+    check: "fast-lane <5 min, heavy-lane <10 min wall-clock on a clean PR"
+  - id: G8
+    check: "shellcheck clean on any inline shell >5 lines; extract to mcp-server/scripts/ci/ if so"
+  - id: G9
+    check: "no secrets.* references; runs on public ubuntu-latest"
+  - id: G10
+    check: "both workflow files carry the spec-id comment header (AC7)"
+
+stories:
+  - id: S1
+    title: "Add ci.yml fast lane"
+    summary: "Lint, type, unit-test workflow on Python 3.11/3.12 matrix"
+    deliverables:
+      - ".github/workflows/ci.yml"
+    acceptance_refs: [AC1, AC2, AC7]
+    gate_refs: [G1, G7, G8, G9, G10]
+  - id: S2
+    title: "Add image.yml heavy lane (PR + push + cron)"
+    summary: "Full --no-cache prod-image build + behavioural fixture run"
+    deliverables:
+      - ".github/workflows/image.yml"
+    acceptance_refs: [AC3, AC4, AC5, AC6, AC7]
+    gate_refs: [G2, G3, G4, G7, G8, G9, G10]
+  - id: S3
+    title: "Add behavioural fixture"
+    summary: "Checked-in mcp-server/tests/fixtures/sample_py/ with one Python file (>=1 function, >=1 class) and a README marker"
+    deliverables:
+      - "mcp-server/tests/fixtures/sample_py/main.py"
+      - "mcp-server/tests/fixtures/sample_py/README.md"
+      - ".gitignore entry for mcp-server/tests/fixtures/sample_py/.atlas/"
+    acceptance_refs: [AC3, AC5, AC6]
+    gate_refs: [G5, G6]
+
+open_questions:
+  - "Cron timezone: 17 6 * * * UTC = 03:17 BRT. Preferred window?"
+  - "Cron flake handling: retry-once or accept and re-run manually?"
+  - "Should the fixture broaden to Ruby / JS / TS?"
+  - "Concurrency on cron: queue (default in this spec) or skip if previous still running?"
+  - "Workflow permissions: confirm `contents: read` is sufficient long-term"
+  - "Action pinning: major tags vs. SHA pinning per project policy"

@@ -1,0 +1,221 @@
+---
+# SPECTRA spec manifest — machine-readable companion to
+# atlas-aci-codegraph-build-test.md
+#
+# Consumed by downstream implementers (APIVR-Δ, IDG) and by tooling that
+# tracks spec → PR → release lineage.
+
+spec_id: atlas-aci-codegraph-build-test
+title: Regression test for CodeGraph.build() end-to-end
+status: ready-for-implementation
+methodology: SPECTRA
+cycle_phase: A  # post-Articulate, ready for downstream pickup
+
+repo:
+  name: Rynaro/atlas-aci
+  working_tree: /tmp/eidolons-fix/atlas-aci
+  package_root: mcp-server
+
+target:
+  module: mcp-server/src/atlas_aci/codegraph.py
+  symbol: CodeGraph.build
+  bug_class: deferred_import_regression
+
+handoffs:
+  upstream:
+    - id: atlas-aci#1
+      kind: scout_report
+      summary: tree-sitter-language-pack 1.6.3 wheel removed top-level module; production Dockerfile pulled it in via transitive drift; build() failed at runtime; no test caught it
+  downstream:
+    - kind: implementer
+      preferred: APIVR-Delta
+      fallback: IDG
+  siblings:
+    - id: atlas-aci-ci-hardening
+      relationship: complements
+      summary: Adds a Docker-based CI job that runs this test inside the production image to close the dev-vs-prod dep-resolution gap
+
+scope:
+  in:
+    - Add new test file mcp-server/tests/test_codegraph_build.py
+    - Exercise CodeGraph(...).build() against an in-test tmp_path fixture
+    - Trigger the deferred `from tree_sitter_language_pack import get_parser` import for real
+    - Assert on build() return dict (files_indexed >= 1, symbols >= 1)
+    - Assert on graph.db schema and contents via direct sqlite3 read
+    - Assert on public query surface via search_symbol()
+    - Parametrize over at least Python; optionally Ruby
+  out:
+    - Container/CI workflow (deferred to atlas-aci-ci-hardening)
+    - Refactoring codegraph.py to make the deferred import isolatable
+    - Test coverage for serve / MCP transport plumbing
+    - Test coverage for enforcement.py (already in test_enforcement.py)
+    - Performance / scale benchmarks
+    - The since=... incremental-build branch of build()
+
+acceptance_criteria:
+  - id: AC-1
+    name: build_runs_end_to_end_against_python_fixture
+    given: tmp_path with a single sample.py containing a class and a function
+    when: CodeGraph(repo=tmp_path, langs=["python"]).build() is called
+    then:
+      - return value is a dict
+      - stats["files_indexed"] >= 1
+      - stats["symbols"] >= 1
+      - "stats[\"refs\"] is an int >= 0"
+      - tmp_path/.atlas/graph.db exists on disk
+  - id: AC-2
+    name: deferred_import_executes_for_real
+    given: the same fixture as AC-1
+    when: build() is called
+    then:
+      - if tree_sitter_language_pack is broken or absent, ImportError/ModuleNotFoundError must propagate out of build()
+      - the test must NOT use pytest.importorskip
+      - the test must NOT wrap build() in try/except at the test level
+    note: This is the load-bearing assertion. The whole point of the test is to surface this exception class in CI.
+  - id: AC-3
+    name: persisted_symbols_are_queryable_via_search_symbol
+    given: fixture and successful build()
+    when: graph.search_symbol("Greeter", kind="class") and graph.search_symbol("greet", kind="function") are called
+    then:
+      - Greeter result contains >= 1 definition with kind == "class" and path ending in sample.py
+      - greet result contains >= 1 definition with kind == "function"
+  - id: AC-4
+    name: direct_sqlite_read_confirms_schema
+    given: fixture and successful build()
+    when: sqlite3.connect(tmp_path/.atlas/graph.db) and SELECTs are executed
+    then:
+      - "SELECT COUNT(*) FROM symbols >= 1"
+      - "SELECT COUNT(*) FROM manifest WHERE key='version' == 1"
+      - tables symbols, refs, manifest all exist in sqlite_master
+  - id: AC-5
+    name: unsupported_extensions_are_skipped
+    given: fixture with sample.py + notes.txt + data.json
+    when: build() runs with langs=["python"]
+    then:
+      - stats["files_indexed"] == 1
+      - no parser exception is raised for non-Python files
+  - id: AC-6
+    name: skip_patterns_are_honored
+    given: fixture with sample.py at root and copies under .git/ and node_modules/
+    when: build() runs
+    then:
+      - stats["files_indexed"] == 1
+      - DEFAULT_SKIP_PATTERNS directories are excluded
+
+decisions:
+  - id: D-1
+    question: Fixture style — in-test tmp_path vs checked-in tests/fixtures/sample-repo/
+    decision: in-test tmp_path with string-literal sources
+    rationale:
+      - locality of intent — fixture source and assertions co-located
+      - zero fixture-drift risk
+      - matches existing test_enforcement.py style (tmp_path + write_text)
+      - trivial multi-language parametrization
+  - id: D-2
+    question: Language coverage — Python-only vs parametrized
+    decision: Python required floor; Ruby added as second parametrize case; JS/TS deferred
+    rationale:
+      - any language exercises the top-level import path
+      - each language binding is a separate compiled artifact in language-pack — Ruby could break independently
+      - atlas-aci is explicitly Ruby-friendly per codegraph.py module docstring
+      - JS/TS bindings heavier; defer to avoid noise
+  - id: D-3
+    question: Scope discipline — regression test vs de-facto integration test
+    decision: regression test, scoped narrowly to build() end-to-end
+    rationale:
+      - other surfaces (search_symbol edge cases, query DSL, callers_of, since=) get their own test files
+      - file naming convention test_codegraph_<surface>.py
+  - id: D-4
+    question: Test file location
+    decision: mcp-server/tests/test_codegraph_build.py
+    rationale: matches test_enforcement.py placement; pyproject.toml testpaths already covers it
+  - id: D-5
+    question: Assert on structlog output for the import-failure path?
+    decision: No
+    rationale: capturing structlog is fiddly and orthogonal; the exception itself is the assertion
+  - id: D-6
+    question: Use of monkeypatch/mocking
+    decision: No mocking of tree_sitter_language_pack, tree_sitter, or any indexing internal
+    rationale: the test's value depends on running for real; isolation reintroduces the original failure mode
+    permitted: monkeypatch only for cwd/env tweaks if absolutely needed (it should not be needed)
+
+validation_gates:
+  - id: Gate-1
+    name: local_pytest_run
+    cmd: cd mcp-server && uv sync && uv run pytest tests/test_codegraph_build.py -v
+    pass_condition: all parametrized cases green; no SKIPPED/XFAILED/XPASSED; runtime < 5s
+  - id: Gate-2
+    name: full_suite_still_green
+    cmd: cd mcp-server && uv run pytest tests/ -v
+    pass_condition: existing test_enforcement.py unaffected; new file adds >= 6 tests
+  - id: Gate-3
+    name: negative_simulation_of_original_bug
+    cmd: |
+      cd mcp-server
+      uv run pip uninstall -y tree-sitter-language-pack
+      uv run pytest tests/test_codegraph_build.py -v   # expect failure
+      uv sync                                            # restore
+    pass_condition: AC-1/AC-2 fail loudly with ModuleNotFoundError; not skipped
+    kind: manual_one_time
+    pr_evidence_required: true
+  - id: Gate-4
+    name: lint_and_type
+    cmd: |
+      cd mcp-server
+      uv run ruff check tests/test_codegraph_build.py
+      uv run mypy tests/test_codegraph_build.py
+    pass_condition: clean
+  - id: Gate-5
+    name: sqlite_connection_cleanup
+    pass_condition: test closes graph._db (or equivalent); no lingering open connections at teardown
+    follow_up: consider giving CodeGraph a context-manager surface
+
+risks:
+  - id: Risk-1
+    summary: tree-sitter-language-pack binding flakiness on certain CI runners (musl/Alpine, ARM gaps)
+    mitigation: pyproject constraint >=0.3,<1.6.3 pins to known-working; flakiness is the signal we want — do not retry-mask
+  - id: Risk-2
+    summary: Tree-sitter Python grammar evolves and QUERIES["python"] matches nothing
+    mitigation: empty results would be a real regression — assertion stays strict; query update is a codegraph.py concern
+  - id: Risk-3
+    summary: Cross-language parametrize state bleed
+    mitigation: each parametrize instance gets its own tmp_path and CodeGraph; graph.db is per-repo not process-global
+
+open_questions:
+  - id: OQ-1
+    question: Should the test assert refs >= 1 instead of refs >= 0?
+    default: keep refs >= 0; implementer may strengthen if local runs prove stable
+  - id: OQ-2
+    question: Direct unit test for _iter_source_files?
+    default: out-of-scope; covered transitively by AC-5 and AC-6
+  - id: OQ-3
+    question: Test the since= incremental branch?
+    default: out-of-scope; defer to atlas-aci-incremental-build-test
+
+artifacts:
+  produces:
+    - path: mcp-server/tests/test_codegraph_build.py
+      kind: new_file
+      owner: implementer
+  modifies: []
+  forbids_changes_to:
+    - mcp-server/src/atlas_aci/codegraph.py
+    - mcp-server/pyproject.toml
+    - mcp-server/tests/test_enforcement.py
+
+definition_of_done:
+  - All five validation gates pass
+  - PR description carries Gate-3 evidence inline
+  - Test file follows test_enforcement.py style (from __future__ import annotations, pathlib.Path typing, pytest fixtures, no unittest.TestCase)
+  - CI is green on the resulting PR
+
+references:
+  - kind: source
+    path: mcp-server/src/atlas_aci/codegraph.py
+    note: CodeGraph class definition; build() at lines 142–194; deferred import at 144–148
+  - kind: source
+    path: mcp-server/tests/test_enforcement.py
+    note: Reference style for fixtures (tmp_path, write_text); only existing test in the repo
+  - kind: config
+    path: mcp-server/pyproject.toml
+    note: testpaths=["tests"], asyncio_mode="auto", tree-sitter-language-pack>=0.3,<1.6.3 pin from atlas-aci#1
