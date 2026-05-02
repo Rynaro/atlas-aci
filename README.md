@@ -252,6 +252,16 @@ Every release is signed and attested:
 
 ### Verification
 
+Every published GA image (tagged `v<x>.<y>.<z>` without a pre-release suffix)
+has been scanned by Trivy before signing and has no known HIGH or CRITICAL CVEs
+at release time — the workflow fails and does not proceed to cosign, SBOM
+attestation, or GitHub Release creation if any are found. Pre-release images
+(`-rc.*`, `-beta.*`) are exempt from the fail-on-vuln gate to allow
+security-bug-fix testing, but the Trivy SARIF report is still uploaded and
+visible in the repository's **Security** tab. Findings that are discovered
+post-release also surface there; users who need a known-good image can pin an
+earlier digest via `--image-digest` while a patch release is being prepared.
+
 **Cosign keyless verify:**
 
 ```bash

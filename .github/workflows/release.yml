@@ -6,16 +6,20 @@
 #   1. Verify pyproject.toml version matches the tag (Q-NEW-1 resolution).
 #   2. Build linux/amd64 + linux/arm64 image from mcp-server/Dockerfile.
 #   3. Push to ghcr.io/rynaro/atlas-aci with SemVer tags via metadata-action.
-#   4. Generate SBOM (SPDX) and attest it with actions/attest-sbom.
-#   5. Generate build provenance with actions/attest-build-provenance.
-#   6. Cosign keyless-sign the image manifest using OIDC (no key secrets).
-#   7. Capture the multi-arch index digest and publish a GitHub Release.
+#   4. Trivy vulnerability scan on the published image digest (H4).
+#      GA releases fail on HIGH/CRITICAL CVEs; pre-releases are exempt but
+#      SARIF is still uploaded for visibility.
+#   5. Cosign keyless-sign the image manifest using OIDC (no key secrets).
+#   6. Generate SBOM (SPDX) and attest it with actions/attest-sbom.
+#   7. Generate build provenance with actions/attest-build-provenance.
+#   8. Capture the multi-arch index digest and publish a GitHub Release.
 #
 # Permissions required:
-#   contents: write      — create GitHub Release
-#   packages: write      — push to ghcr.io
-#   id-token: write      — OIDC token for cosign keyless signing
-#   attestations: write  — write attestations (SBOM + provenance)
+#   contents: write        — create GitHub Release
+#   packages: write        — push to ghcr.io
+#   id-token: write        — OIDC token for cosign keyless signing
+#   attestations: write    — write attestations (SBOM + provenance)
+#   security-events: write — upload SARIF to GitHub Security tab
 #
 # Note on R-NEW-6: if the organisation's OIDC policy blocks id-token:write,
 # cosign signing will fail. The build/push and attestation steps will still
@@ -33,6 +37,7 @@ permissions:
   packages: write
   id-token: write
   attestations: write
+  security-events: write
 
 env:
   REGISTRY: ghcr.io
@@ -169,7 +174,49 @@ jobs:
           echo "Multi-arch index digest: ${DIGEST}"
 
       # ────────────────────────────────────────────────────────────────────
-      # 7. Generate SBOM (SPDX) and attest it (D-NEW-3)
+      # 7. Trivy vulnerability scan on the published image digest (H4)
+      #
+      #    Eidolons security model (docs/architecture.md): minimum-privilege;
+      #    published OCI images are gated on no-known-HIGH-or-CRITICAL CVEs at
+      #    release time. Pre-releases are exempt to allow security-bug-fix
+      #    testing.
+      #
+      #    Step order rationale: scan first so a vuln-fail short-circuits the
+      #    remaining supply-chain steps (sign, SBOM attest, provenance attest).
+      #    Only images that pass the scan are signed and attested.
+      #
+      #    Two sub-steps:
+      #      a. SARIF scan — always runs, uploads findings to GitHub Security tab
+      #         for visibility regardless of tag type or severity level.
+      #      b. Gate scan  — runs only on GA tags; fails the workflow on HIGH or
+      #         CRITICAL findings so a vulnerable image is never promoted.
+      # ────────────────────────────────────────────────────────────────────
+      - name: Trivy scan — generate SARIF report
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: ${{ env.IMAGE_NAME }}@${{ steps.build-push.outputs.digest }}
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL'
+          exit-code: '0'
+
+      - name: Upload Trivy SARIF to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+      - name: Trivy scan — gate on HIGH/CRITICAL (GA releases only)
+        uses: aquasecurity/trivy-action@0.28.0
+        if: ${{ !contains(github.ref_name, '-rc') && !contains(github.ref_name, '-beta') }}
+        with:
+          image-ref: ${{ env.IMAGE_NAME }}@${{ steps.build-push.outputs.digest }}
+          format: 'table'
+          severity: 'HIGH,CRITICAL'
+          exit-code: '1'
+
+      # ────────────────────────────────────────────────────────────────────
+      # 8. Generate SBOM (SPDX) and attest it (D-NEW-3)
       # ────────────────────────────────────────────────────────────────────
       - name: Generate SBOM
         uses: anchore/sbom-action@v0
@@ -187,7 +234,7 @@ jobs:
           push-to-registry: true
 
       # ────────────────────────────────────────────────────────────────────
-      # 8. Build provenance attestation (D-NEW-3)
+      # 9. Build provenance attestation (D-NEW-3)
       # ────────────────────────────────────────────────────────────────────
       - name: Attest build provenance
         uses: actions/attest-build-provenance@v1
@@ -197,7 +244,7 @@ jobs:
           push-to-registry: true
 
       # ────────────────────────────────────────────────────────────────────
-      # 9. Cosign keyless signing via OIDC (D-NEW-3, R-NEW-6)
+      # 10. Cosign keyless signing via OIDC (D-NEW-3, R-NEW-6)
       #    Requires id-token: write. If blocked by org policy, this step
       #    will fail but the push and attestation steps will still succeed.
       #    To skip cosign without removing it: add 'continue-on-error: true'.
@@ -212,7 +259,7 @@ jobs:
           cosign sign --yes "${{ env.IMAGE_NAME }}@${DIGEST}"
 
       # ────────────────────────────────────────────────────────────────────
-      # 10. Publish GitHub Release with digest in the notes
+      # 11. Publish GitHub Release with digest in the notes
       #     Downstream pinners copy the ghcr.io/…@sha256:<digest> line.
       # ────────────────────────────────────────────────────────────────────
       - name: Create GitHub Release
