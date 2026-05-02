@@ -53,6 +53,7 @@ not by convention. Mechanically.
 - [Integrate with your codebase](#integrate-with-your-codebase)
 - [Supported hosts](#supported-hosts)
 - [Running in Docker](#running-in-docker)
+- [Container image](#container-image)
 - [Development](#development)
 - [Repository layout](#repository-layout)
 - [Security invariants](#security-invariants)
@@ -212,6 +213,75 @@ code-level check. The runtime image runs as an unprivileged
 `atlas:10001` user with `ripgrep` and `git` preinstalled. See
 [`INTEGRATION.md`](INTEGRATION.md#running-in-docker) for the full
 index-then-serve pattern.
+
+---
+
+## Container image
+
+`ghcr.io/rynaro/atlas-aci` is the canonical distribution channel.
+Images are built on every `v*` tag push via the [release workflow](.github/workflows/release.yml)
+and support **linux/amd64 and linux/arm64** (Apple Silicon and Linux
+servers are both first-class targets).
+
+### Pull commands
+
+```bash
+# Latest stable release
+docker pull ghcr.io/rynaro/atlas-aci:latest
+
+# Specific version
+docker pull ghcr.io/rynaro/atlas-aci:0.2.0
+
+# Immutable digest pin (recommended for production)
+docker pull ghcr.io/rynaro/atlas-aci@sha256:<digest>
+```
+
+Digest-pinned pulls are the most reliable — a tag can be overwritten,
+but a digest never changes. The release notes for each tag include the
+exact `ghcr.io/rynaro/atlas-aci@sha256:<digest>` string ready to copy.
+
+### Supply-chain attestations
+
+Every release is signed and attested:
+
+- **Cosign keyless signature** — signed with the GitHub Actions OIDC
+  token; no long-lived keys required.
+- **SBOM (SPDX)** — attached as a ghcr.io attestation via
+  `actions/attest-sbom`.
+- **Build provenance** — attached via `actions/attest-build-provenance`.
+
+### Verification
+
+**Cosign keyless verify:**
+
+```bash
+cosign verify \
+  --certificate-identity-regexp "https://github.com/Rynaro/atlas-aci/.github/workflows/release.yml@.*" \
+  --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
+  ghcr.io/rynaro/atlas-aci@sha256:<digest>
+```
+
+**SBOM and provenance via `gh attestation`:**
+
+```bash
+gh attestation verify oci://ghcr.io/rynaro/atlas-aci@sha256:<digest> \
+  --owner Rynaro
+```
+
+### Consumer integration via Eidolons
+
+If you use the [Eidolons nexus](https://github.com/Rynaro/eidolons),
+`eidolons mcp atlas-aci` pulls from `ghcr.io/rynaro/atlas-aci` by
+default and wires the digest-pinned image into your project's
+`.mcp.json`. For air-gapped environments or when the registry is
+unreachable, pass `--build-locally`:
+
+```bash
+eidolons mcp atlas-aci pull --build-locally
+```
+
+See [`INTEGRATION.md §GHCR distribution`](INTEGRATION.md#ghcr-distribution)
+for the full consumer workflow.
 
 ---
 

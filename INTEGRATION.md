@@ -354,6 +354,96 @@ for the multi-repo isolation hardening item.
 
 ---
 
+## GHCR distribution
+
+`ghcr.io/rynaro/atlas-aci` is the canonical image registry. Images are
+published on every tagged release and support `linux/amd64` and
+`linux/arm64`.
+
+### Using `eidolons mcp atlas-aci` (recommended)
+
+The [Eidolons nexus](https://github.com/Rynaro/eidolons) automates the
+image pull and `.mcp.json` wiring. From your project root:
+
+```bash
+# Pull the pinned image from GHCR and wire it into your project
+eidolons mcp atlas-aci
+```
+
+This command:
+1. Pulls `ghcr.io/rynaro/atlas-aci@sha256:<pinned-digest>` from GHCR
+   (the digest is embedded in the nexus and updated with each atlas-aci
+   release).
+2. Writes a `.mcp.json` entry pointing at the digest-pinned image.
+
+The pinned digest is the integrity primitive — you do not need to run
+cosign on every pull. The digest cannot be faked.
+
+### Air-gap escape hatch
+
+If GHCR is unreachable (firewall, air-gap, registry outage), use the
+`--build-locally` flag to build the image directly from source:
+
+```bash
+eidolons mcp atlas-aci pull --build-locally
+```
+
+This invokes `docker build` against the upstream `atlas-aci` git
+repository and tags the result for local use. The `--build-locally`
+path is a **P0 invariant** in the nexus — it will never be removed.
+
+You may also specify a custom git ref:
+
+```bash
+eidolons mcp atlas-aci pull --build-locally --git-ref v0.2.0
+```
+
+### Manual pull
+
+If you are not using the Eidolons nexus, pull directly:
+
+```bash
+# By tag
+docker pull ghcr.io/rynaro/atlas-aci:latest
+
+# By digest (immutable pin — preferred for production)
+docker pull ghcr.io/rynaro/atlas-aci@sha256:<digest>
+```
+
+The digest for each release is published in the GitHub Release notes.
+
+### Verifying supply-chain attestations (optional)
+
+Every published image carries a cosign keyless signature and GitHub
+Sigstore attestations for SBOM and build provenance. Verification is
+optional (the digest pin alone is sufficient for integrity) but
+available for operators with stricter supply-chain requirements.
+
+**Cosign keyless verify:**
+
+```bash
+cosign verify \
+  --certificate-identity-regexp "https://github.com/Rynaro/atlas-aci/.github/workflows/release.yml@.*" \
+  --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
+  ghcr.io/rynaro/atlas-aci@sha256:<digest>
+```
+
+**SBOM and provenance via `gh attestation`:**
+
+```bash
+gh attestation verify oci://ghcr.io/rynaro/atlas-aci@sha256:<digest> \
+  --owner Rynaro
+```
+
+A successful `gh attestation verify` confirms that:
+- The image was built by GitHub Actions in the `Rynaro/atlas-aci`
+  repository.
+- The SBOM lists every dependency vendored into the image.
+- The provenance links the image to the exact commit that triggered the
+  release.
+
+---
+
 ## Further reading
 
 - [`README.md`](README.md) — orientation, tool manifest, security
