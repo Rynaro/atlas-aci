@@ -1,0 +1,257 @@
+# atlas-aci — multi-arch release workflow
+#
+# Triggered by a `v*` tag push (e.g. `v0.2.0`, `v0.2.0-rc.1`).
+#
+# Pipeline stages:
+#   1. Verify pyproject.toml version matches the tag (Q-NEW-1 resolution).
+#   2. Build linux/amd64 + linux/arm64 image from mcp-server/Dockerfile.
+#   3. Push to ghcr.io/rynaro/atlas-aci with SemVer tags via metadata-action.
+#   4. Generate SBOM (SPDX) and attest it with actions/attest-sbom.
+#   5. Generate build provenance with actions/attest-build-provenance.
+#   6. Cosign keyless-sign the image manifest using OIDC (no key secrets).
+#   7. Capture the multi-arch index digest and publish a GitHub Release.
+#
+# Permissions required:
+#   contents: write      — create GitHub Release
+#   packages: write      — push to ghcr.io
+#   id-token: write      — OIDC token for cosign keyless signing
+#   attestations: write  — write attestations (SBOM + provenance)
+#
+# Note on R-NEW-6: if the organisation's OIDC policy blocks id-token:write,
+# cosign signing will fail. The build/push and attestation steps will still
+# succeed. See the cosign step for a fallback note.
+
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+  packages: write
+  id-token: write
+  attestations: write
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ghcr.io/rynaro/atlas-aci
+
+jobs:
+  release:
+    name: Build, sign, attest, and publish
+    runs-on: ubuntu-latest
+
+    outputs:
+      image-digest: ${{ steps.build-push.outputs.digest }}
+      image-version: ${{ steps.meta.outputs.version }}
+
+    steps:
+      # ────────────────────────────────────────────────────────────────────
+      # 0. Checkout
+      # ────────────────────────────────────────────────────────────────────
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # ────────────────────────────────────────────────────────────────────
+      # 1. Version consistency check (Q-NEW-1 resolution)
+      #    The git tag is the SemVer source of truth.
+      #    Fail loudly if mcp-server/pyproject.toml's version field
+      #    does not match the tag (without the 'v' prefix).
+      # ────────────────────────────────────────────────────────────────────
+      - name: Verify pyproject.toml version matches tag
+        run: |
+          TAG_VERSION="${{ github.ref_name }}"
+          # Strip leading 'v'
+          TAG_VERSION="${TAG_VERSION#v}"
+          # Strip any pre-release suffix for the pyproject comparison
+          # (e.g. v0.2.0-rc.1 → 0.2.0 — pyproject.toml tracks the base version)
+          BASE_TAG_VERSION="${TAG_VERSION%%-*}"
+
+          # Extract version from pyproject.toml
+          PYPROJECT_VERSION="$(grep -E '^version = "[^"]+"' mcp-server/pyproject.toml \
+            | head -1 | sed 's/version = "//;s/"//')"
+
+          echo "Tag version (base):     ${BASE_TAG_VERSION}"
+          echo "pyproject.toml version: ${PYPROJECT_VERSION}"
+
+          if [ "${BASE_TAG_VERSION}" != "${PYPROJECT_VERSION}" ]; then
+            echo ""
+            echo "ERROR: Version mismatch!"
+            echo "  git tag '${TAG_VERSION}' implies base version '${BASE_TAG_VERSION}'"
+            echo "  but mcp-server/pyproject.toml declares version '${PYPROJECT_VERSION}'."
+            echo ""
+            echo "Fix: update mcp-server/pyproject.toml version to '${BASE_TAG_VERSION}'"
+            echo "     before pushing a release tag."
+            exit 1
+          fi
+
+          echo "Version check passed: ${BASE_TAG_VERSION}"
+
+      # ────────────────────────────────────────────────────────────────────
+      # 2. Multi-arch build prerequisites
+      # ────────────────────────────────────────────────────────────────────
+      - name: Set up QEMU (for linux/arm64 cross-compile)
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # ────────────────────────────────────────────────────────────────────
+      # 3. Authenticate to GHCR
+      # ────────────────────────────────────────────────────────────────────
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # ────────────────────────────────────────────────────────────────────
+      # 4. Compute image tags via metadata-action (D-NEW-9)
+      #
+      #    GA tag (e.g. v1.2.3)     → :1.2.3, :1.2, :1, :latest
+      #    Pre-release (e.g. -rc.*) → :1.2.3-rc.1  (no :latest)
+      #
+      #    The flavor block controls :latest — it is set to false here so
+      #    that only GA tags (matched by the first type=match pattern) get
+      #    the :latest alias. The metadata-action 'latest' flavour is set
+      #    on the GA pattern via type=raw,value=latest only when the tag
+      #    does not contain a pre-release suffix.
+      # ────────────────────────────────────────────────────────────────────
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_NAME }}
+          flavor: |
+            latest=false
+          tags: |
+            # GA release: v1.2.3 → 1.2.3, 1.2, 1
+            type=match,pattern=v(\d+\.\d+\.\d+)$,group=1
+            type=match,pattern=v(\d+\.\d+)\.\d+$,group=1
+            type=match,pattern=v(\d+)\.\d+\.\d+$,group=1
+            # GA release only: add :latest
+            type=raw,value=latest,enable=${{ !contains(github.ref_name, '-') }}
+            # Pre-release: v1.2.3-rc.1 → 1.2.3-rc.1
+            type=match,pattern=v(\d+\.\d+\.\d+-.+),group=1
+
+      # ────────────────────────────────────────────────────────────────────
+      # 5. Build and push multi-arch image (linux/amd64 + linux/arm64)
+      #    Build context is ./mcp-server (where Dockerfile lives).
+      #    GHA cache used to keep arm64 build fast on repeat runs (R-NEW-5).
+      # ────────────────────────────────────────────────────────────────────
+      - name: Build and push multi-arch image
+        id: build-push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./mcp-server
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # ────────────────────────────────────────────────────────────────────
+      # 6. Capture multi-arch index digest
+      #    docker/build-push-action outputs the manifest list digest.
+      #    We also inspect via imagetools to surface it in Release notes.
+      # ────────────────────────────────────────────────────────────────────
+      - name: Capture multi-arch index digest
+        id: inspect
+        run: |
+          DIGEST="$(docker buildx imagetools inspect \
+            "${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }}" \
+            --format '{{json .Manifest.Digest}}' | tr -d '"')"
+          echo "digest=${DIGEST}" >> "$GITHUB_OUTPUT"
+          echo "Multi-arch index digest: ${DIGEST}"
+
+      # ────────────────────────────────────────────────────────────────────
+      # 7. Generate SBOM (SPDX) and attest it (D-NEW-3)
+      # ────────────────────────────────────────────────────────────────────
+      - name: Generate SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          image: ${{ env.IMAGE_NAME }}@${{ steps.build-push.outputs.digest }}
+          artifact-name: sbom.spdx.json
+          output-file: /tmp/sbom.spdx.json
+
+      - name: Attest SBOM
+        uses: actions/attest-sbom@v1
+        with:
+          subject-name: ${{ env.IMAGE_NAME }}
+          subject-digest: ${{ steps.build-push.outputs.digest }}
+          sbom-path: /tmp/sbom.spdx.json
+          push-to-registry: true
+
+      # ────────────────────────────────────────────────────────────────────
+      # 8. Build provenance attestation (D-NEW-3)
+      # ────────────────────────────────────────────────────────────────────
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-name: ${{ env.IMAGE_NAME }}
+          subject-digest: ${{ steps.build-push.outputs.digest }}
+          push-to-registry: true
+
+      # ────────────────────────────────────────────────────────────────────
+      # 9. Cosign keyless signing via OIDC (D-NEW-3, R-NEW-6)
+      #    Requires id-token: write. If blocked by org policy, this step
+      #    will fail but the push and attestation steps will still succeed.
+      #    To skip cosign without removing it: add 'continue-on-error: true'.
+      # ────────────────────────────────────────────────────────────────────
+      - name: Install cosign
+        uses: sigstore/cosign-installer@v3
+
+      - name: Sign image with cosign (keyless OIDC)
+        env:
+          DIGEST: ${{ steps.build-push.outputs.digest }}
+        run: |
+          cosign sign --yes "${{ env.IMAGE_NAME }}@${DIGEST}"
+
+      # ────────────────────────────────────────────────────────────────────
+      # 10. Publish GitHub Release with digest in the notes
+      #     Downstream pinners copy the ghcr.io/…@sha256:<digest> line.
+      # ────────────────────────────────────────────────────────────────────
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          generate_release_notes: true
+          body: |
+            ## Container image
+
+            ### Pull by tag
+            ```bash
+            docker pull ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }}
+            ```
+
+            ### Pull by digest (recommended — immutable pin)
+            ```bash
+            docker pull ${{ env.IMAGE_NAME }}@${{ steps.inspect.outputs.digest }}
+            ```
+
+            **Multi-arch:** `linux/amd64` + `linux/arm64`
+
+            ### Supply-chain verification
+
+            Verify the cosign keyless signature:
+            ```bash
+            cosign verify \
+              --certificate-identity-regexp "https://github.com/Rynaro/atlas-aci/.github/workflows/release.yml@.*" \
+              --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
+              ${{ env.IMAGE_NAME }}@${{ steps.inspect.outputs.digest }}
+            ```
+
+            Verify SBOM + provenance attestations:
+            ```bash
+            gh attestation verify oci://${{ env.IMAGE_NAME }}@${{ steps.inspect.outputs.digest }} \
+              --owner Rynaro
+            ```
+
+            ### Digest for nexus pinning
+            ```
+            ${{ env.IMAGE_NAME }}@${{ steps.inspect.outputs.digest }}
+            ```
