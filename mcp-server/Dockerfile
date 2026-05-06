@@ -91,7 +91,8 @@ WORKDIR /home/atlas
 
 VOLUME ["/repo", "/memex"]
 
-ENV PYTHONUNBUFFERED=1 \
+ENV HOME=/tmp \
+    PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1
 
 # MCP stdio handles SIGINT cleanly; make `docker stop` fast by mapping
