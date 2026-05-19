@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **feat(codegraph): Rust Tree-sitter query (`QUERIES["rust"]`).** Adds symbol extraction for free `fn`, impl methods, `struct`/`enum` (kind `class`), `trait` (new kind `trait`), `mod` (kind `module`), and reference extraction for free calls, scoped calls (`Mod::fn()`), and method calls (`x.method()`). Callers opt in via `langs=["rust"]` or `--langs rust`. Closes #11.
+
 ## [0.2.3] - 2026-05-06
 
 ### Fixed

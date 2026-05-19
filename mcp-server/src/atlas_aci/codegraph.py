@@ -67,6 +67,17 @@ QUERIES: dict[str, str] = {
         (method_definition name: (property_identifier) @name) @def.method
         (call_expression function: (identifier) @callee) @ref.call
     """,
+    "rust": """
+        (function_item name: (identifier) @name) @def.function
+        (impl_item (declaration_list (function_item name: (identifier) @name) @def.method))
+        (struct_item name: (type_identifier) @name) @def.class
+        (enum_item name: (type_identifier) @name) @def.class
+        (trait_item name: (type_identifier) @name) @def.trait
+        (mod_item name: (identifier) @name) @def.module
+        (call_expression function: (identifier) @callee) @ref.call
+        (call_expression function: (scoped_identifier name: (identifier) @callee)) @ref.call
+        (call_expression function: (field_expression field: (field_identifier) @callee)) @ref.call
+    """,
 }
 
 
