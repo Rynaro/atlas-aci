@@ -26,6 +26,11 @@ if TYPE_CHECKING:
 log = structlog.get_logger()
 
 # Map file extensions → tree-sitter language names.
+#
+# Beyond the programming languages, the web/markup/config formats below let
+# ATLAS index static-site repos (Jekyll, Hugo, plain HTML/SCSS) where the
+# "symbols" worth jumping to are SCSS mixins/variables, element ids, YAML
+# keys, Markdown headings, and shell functions rather than classes/methods.
 LANG_BY_EXT: dict[str, str] = {
     ".rb": "ruby",
     ".py": "python",
@@ -36,11 +41,35 @@ LANG_BY_EXT: dict[str, str] = {
     ".go": "go",
     ".rs": "rust",
     ".java": "java",
+    # Stylesheets — SCSS is a strict superset of CSS, so the scss grammar
+    # parses plain `.css` too.
+    ".scss": "scss",
+    ".css": "scss",
+    # Markup / templates (Jekyll layouts, includes, pages).
+    ".html": "html",
+    ".htm": "html",
+    # Data / config / front matter.
+    ".yml": "yaml",
+    ".yaml": "yaml",
+    # Prose / posts.
+    ".md": "markdown",
+    ".markdown": "markdown",
+    # Shell tooling (build scripts, `jex.sh`-style helpers).
+    ".sh": "bash",
+    ".bash": "bash",
 }
 
 
 # Per-language Tree-sitter queries for symbol extraction.
-# Add languages as needed; the Ruby and Python queries below cover the common cases.
+#
+# Every `@def.<kind>` capture must be accompanied by a `@name` capture in the
+# same pattern — `_extract` reads the name straight from `@name`. A `@callee`
+# capture (optionally paired with `@ref.*`) records a reference / call edge.
+# Captures whose names start with `_` (e.g. `@_an`) are query-local helpers
+# used only by `#eq?`/`#match?` predicates and are ignored by `_extract`.
+#
+# Add languages as needed; the Ruby and Python queries below cover the common
+# cases, and the web/markup grammars below cover static-site repos.
 QUERIES: dict[str, str] = {
     "ruby": """
         (class name: (constant) @name) @def.class
@@ -67,7 +96,46 @@ QUERIES: dict[str, str] = {
         (method_definition name: (property_identifier) @name) @def.method
         (call_expression function: (identifier) @callee) @ref.call
     """,
+    # Stylesheets: jump to where a mixin/function/placeholder/`$variable` is
+    # defined or a class/id selector is styled; `@include` sites become refs.
+    # The `#match?` keeps only `$`-prefixed declarations (real SCSS variables),
+    # not every `color:`/`margin:` property declaration.
+    "scss": r"""
+        (mixin_statement (identifier) @name) @def.mixin
+        (function_statement (identifier) @name) @def.function
+        (placeholder (identifier) @name) @def.placeholder
+        (declaration (property_name) @name (#match? @name "^\\$")) @def.variable
+        (class_selector (class_name) @name) @def.selector
+        (id_selector (id_name) @name) @def.id
+        (include_statement (identifier) @callee) @ref.include
+    """,
+    # Markup: index elements carrying an `id` (anchor targets / JS hooks).
+    "html": """
+        (attribute
+            (attribute_name) @_an
+            (quoted_attribute_value (attribute_value) @name)
+            (#eq? @_an "id")) @def.id
+    """,
+    # Data / config / front matter: every mapping key is a lookup target.
+    "yaml": """
+        (block_mapping_pair key: (flow_node) @name) @def.key
+    """,
+    # Prose: headings are the navigable structure of a document.
+    "markdown": """
+        (atx_heading (inline) @name) @def.heading
+        (setext_heading (paragraph (inline) @name)) @def.heading
+    """,
+    # Shell: function definitions are defs; every command invocation is a ref,
+    # so `callers_of:<fn>` resolves call sites.
+    "bash": """
+        (function_definition (word) @name) @def.function
+        (command (command_name (word) @callee)) @ref.call
+    """,
 }
+
+# Languages indexed by default — kept in sync with the query table so adding a
+# grammar above automatically extends the default index.
+DEFAULT_LANGS: tuple[str, ...] = tuple(QUERIES)
 
 
 SCHEMA = """
@@ -124,7 +192,7 @@ class CodeGraph:
 
     def __init__(self, repo: Path, langs: list[str] | None = None):
         self.repo = repo.resolve()
-        self.langs = set(langs or ["ruby", "python", "javascript", "typescript"])
+        self.langs = set(langs) if langs else set(DEFAULT_LANGS)
         self.db_path = self.repo / ".atlas" / "graph.db"
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         self._db: sqlite3.Connection | None = None
@@ -209,43 +277,49 @@ class CodeGraph:
     def _extract(
         self, tree, source: bytes, rel_path: str, lang: str
     ) -> tuple[list[Symbol], list[Reference]]:
-        """Run the language-specific Tree-sitter query and pull out defs + refs."""
-        from tree_sitter import QueryCursor
+        """Run the language-specific Tree-sitter query and pull out defs + refs.
+
+        Iterates *matches* (not raw captures) so each ``@def.<kind>`` node stays
+        grouped with the ``@name`` it owns, and ``#eq?``/``#match?`` predicates
+        are applied. A match carrying a ``def.*`` capture yields a Symbol named
+        from its ``@name``; a match carrying ``@callee`` yields a Reference.
+        """
+        from tree_sitter import Query, QueryCursor
         from tree_sitter_language_pack import get_language
 
         ts_lang = get_language(cast("SupportedLanguage", lang))
-        query = ts_lang.query(QUERIES[lang])
-        captures = QueryCursor(query).captures(tree.root_node)
+        query = Query(ts_lang, QUERIES[lang])
+        matches = QueryCursor(query).matches(tree.root_node)
 
         symbols: list[Symbol] = []
         refs: list[Reference] = []
 
-        # Tree-sitter captures arrive as {capture_name: [nodes]}
-        for cap_name, nodes in captures.items():
-            for node in nodes:
-                if cap_name == "name":
-                    # The parent capture tells us def.<kind>; we look it up via the def.* siblings
+        # Each match arrives as (pattern_index, {capture_name: [nodes]}).
+        for _pattern_index, caps in matches:
+            def_cap = next((c for c in caps if c.startswith("def.")), None)
+            if def_cap is not None:
+                name_nodes = caps.get("name")
+                if not name_nodes:
                     continue
-                if cap_name.startswith("def."):
-                    kind = cap_name.split(".", 1)[1]
-                    name_node = self._find_name_child(node)
-                    if name_node is None:
+                name = self._node_text(source, name_nodes[0]).strip()
+                if not name:
+                    continue
+                def_node = caps[def_cap][0]
+                symbols.append(
+                    Symbol(
+                        name=name,
+                        kind=def_cap.split(".", 1)[1],
+                        path=rel_path,
+                        line_start=def_node.start_point[0] + 1,
+                        line_end=def_node.end_point[0] + 1,
+                        lang=lang,
+                    )
+                )
+            elif "callee" in caps:
+                for node in caps["callee"]:
+                    name = self._node_text(source, node).strip()
+                    if not name:
                         continue
-                    name = source[name_node.start_byte : name_node.end_byte].decode(
-                        "utf-8", errors="replace"
-                    )
-                    symbols.append(
-                        Symbol(
-                            name=name,
-                            kind=kind,
-                            path=rel_path,
-                            line_start=node.start_point[0] + 1,
-                            line_end=node.end_point[0] + 1,
-                            lang=lang,
-                        )
-                    )
-                elif cap_name == "callee":
-                    name = source[node.start_byte : node.end_byte].decode("utf-8", errors="replace")
                     refs.append(
                         Reference(
                             callee_name=name,
@@ -258,24 +332,9 @@ class CodeGraph:
 
         return symbols, refs
 
-    def _find_name_child(self, node):
-        """Find the @name capture inside a def.<kind> node.
-
-        Heuristic: first 'identifier'/'constant' child.
-        """
-        for child in node.children:
-            if child.type in ("identifier", "constant", "type_identifier", "property_identifier"):
-                return child
-            # Recurse one level for nested wrappings
-            for grandchild in child.children:
-                if grandchild.type in (
-                    "identifier",
-                    "constant",
-                    "type_identifier",
-                    "property_identifier",
-                ):
-                    return grandchild
-        return None
+    @staticmethod
+    def _node_text(source: bytes, node) -> str:
+        return source[node.start_byte : node.end_byte].decode("utf-8", errors="replace")
 
     # ---- Queries ----
 

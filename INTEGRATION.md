@@ -103,14 +103,25 @@ two reasons:
 
 ## Step 3 — Pick your language set
 
-The `--langs` flag defaults to `ruby,python,javascript,typescript`.
-Pass a comma-separated list of any subset.
+The `--langs` flag defaults to every grammar the indexer ships with:
+`ruby,python,typescript,javascript,scss,html,yaml,markdown,bash`.
+Pass a comma-separated list to index only a subset.
 
 | Language | Notes |
 |----------|-------|
 | `ruby` | Uses `tree-sitter-ruby` out of the box. Specialist Ruby AST work (Rails routes, etc.) goes through a separate `prism` adapter — see [`SETUP.md §0`](SETUP.md#0-stack-at-a-glance). |
 | `python` | Supported via `tree-sitter-language-pack`. |
 | `javascript` / `typescript` | Supported via `tree-sitter-language-pack`. JSX/TSX is handled by the TS grammar. |
+| `scss` | Mixins, functions, placeholders, `$variables`, and class/id selectors become defs; `@include` sites become refs. The SCSS grammar also parses plain `.css`. |
+| `html` | Elements carrying an `id` are indexed as anchor / JS-hook targets. |
+| `yaml` | Every mapping key (incl. nested) is a lookup target — covers `_config.yml`, `_data/*`, and front matter files. |
+| `markdown` | ATX and setext headings index the document outline (`.md` / `.markdown`). |
+| `bash` | Function definitions are defs; command invocations are refs, so `callers_of:<fn>` resolves call sites (`.sh` / `.bash`). |
+
+> The `scss`/`html`/`yaml`/`markdown`/`bash` grammars make ATLAS useful on
+> **static-site repos** (Jekyll, Hugo, plain HTML/SCSS) where the symbols worth
+> jumping to are stylesheet tokens, element ids, data keys, and headings rather
+> than classes and methods.
 
 **Mixed-language repos.** Index everything you care about in a single
 pass. The indexer is fine with polyglot trees — it just walks files
@@ -136,10 +147,13 @@ node_modules   vendor/bundle   vendor/cache   tmp
 log            .git            dist           build
 public/assets  public/packs    public/packs-test
 coverage       .bundle         __pycache__    .venv
-.atlas         storage
+.atlas         storage         _site          .jekyll-cache
+.sass-cache
 ```
 
-That's a Rails/Node/Python-centric default. If your repo has other
+That's a Rails/Node/Python/Jekyll-centric default (`_site`,
+`.jekyll-cache`, and `.sass-cache` keep generated static-site output out
+of the index). If your repo has other
 noisy trees — generated protobuf stubs, snapshot fixtures, migration
 dumps, large checked-in binaries — you have two options today:
 

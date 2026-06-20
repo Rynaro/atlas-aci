@@ -9,7 +9,7 @@ from pathlib import Path
 import click
 import structlog
 
-from atlas_aci.codegraph import CodeGraph
+from atlas_aci.codegraph import DEFAULT_LANGS, CodeGraph
 from atlas_aci.config import Config
 
 
@@ -58,7 +58,10 @@ def serve(repo: Path, memex_root: Path | None, max_bytes_per_call: int) -> None:
     "--repo", required=True, type=click.Path(exists=True, file_okay=False, path_type=Path)
 )
 @click.option(
-    "--langs", default="ruby,python,javascript,typescript", help="Comma-separated language list"
+    "--langs",
+    default=",".join(DEFAULT_LANGS),
+    show_default=True,
+    help="Comma-separated language list",
 )
 @click.option("--since", default=None, help="Git ref for incremental indexing (e.g. HEAD~10)")
 def index(repo: Path, langs: str, since: str | None) -> None:
