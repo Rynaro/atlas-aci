@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-06-20
+
+### Security
+- **Bump transitive dependencies to clear newly-disclosed HIGH advisories so the release Trivy gate passes.** The `v0.3.0` tag built and pushed an image but its release pipeline failed the `HIGH/CRITICAL` Trivy gate on six fixable advisories disclosed since `0.2.3` (all in `mcp`'s transitive tree), so no GitHub Release was published. This patch floors the affected packages via `[tool.uv] constraint-dependencies` (constraints, not new direct deps — they bind only what's already resolved and stop a future re-lock from regressing below the fix), verified locally against the built image with `trivy 0.69.3` (`--severity HIGH,CRITICAL --ignore-unfixed`):
+  - `cryptography` 46.0.7 → 49.0.0 — GHSA-537c-gmf6-5ccf (vulnerable OpenSSL bundled in wheels; fixed ≥48.0.1)
+  - `pyjwt` 2.12.1 → 2.13.0 — CVE-2026-48526 (authentication bypass via forged tokens)
+  - `python-multipart` 0.0.26 → 0.0.32 — CVE-2026-42561, CVE-2026-53539 (parser DoS)
+  - `starlette` 1.0.0 → 1.3.1 — CVE-2026-48818 (SSRF / NTLM credential theft), CVE-2026-54283
+- Supersedes the incomplete `v0.3.0` tag; this is the first published release carrying the static-site indexing feature.
+
 ## [0.3.0] - 2026-06-20
 
 ### Added
