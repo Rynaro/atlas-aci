@@ -24,6 +24,10 @@ DEFAULT_SKIP_PATTERNS: tuple[str, ...] = (
     ".venv",
     ".atlas",  # our own index dir
     "storage",
+    # Static-site generator build output / caches — generated, not source.
+    "_site",  # Jekyll build output
+    ".jekyll-cache",
+    ".sass-cache",
 )
 
 

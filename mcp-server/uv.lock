@@ -26,7 +26,7 @@ wheels = [
 
 [[package]]
 name = "atlas-aci"
-version = "0.1.0"
+version = "0.3.0"
 source = { editable = "." }
 dependencies = [
     { name = "click" },
@@ -60,7 +60,7 @@ requires-dist = [
     { name = "sqlite-vec", marker = "extra == 'vec'", specifier = ">=0.1.3" },
     { name = "structlog", specifier = ">=24.1" },
     { name = "tree-sitter", specifier = ">=0.23" },
-    { name = "tree-sitter-language-pack", specifier = ">=0.3" },
+    { name = "tree-sitter-language-pack", specifier = ">=0.3,<1.6.3" },
 ]
 provides-extras = ["ruby", "vec", "dev"]
 
