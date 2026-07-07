@@ -63,7 +63,14 @@ def serve(repo: Path, memex_root: Path | None, max_bytes_per_call: int) -> None:
     show_default=True,
     help="Comma-separated language list",
 )
-@click.option("--since", default=None, help="Git ref for incremental indexing (e.g. HEAD~10)")
+@click.option(
+    "--since",
+    default=None,
+    help=(
+        "Enable incremental re-index: skip files unchanged since the last pass "
+        "(pass any marker, e.g. HEAD)"
+    ),
+)
 def index(repo: Path, langs: str, since: str | None) -> None:
     """Build or update the code-graph index for a repository."""
     log = structlog.get_logger()

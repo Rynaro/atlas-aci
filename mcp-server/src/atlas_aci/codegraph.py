@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import sqlite3
 from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, cast
 
@@ -165,6 +166,16 @@ CREATE TABLE IF NOT EXISTS manifest (
     key   TEXT PRIMARY KEY,
     value TEXT NOT NULL
 );
+
+-- Per-file state for incremental (`--since`) indexing: lets build() skip
+-- files whose (mtime_ns, size) haven't changed since the last pass.
+CREATE TABLE IF NOT EXISTS files (
+    path        TEXT PRIMARY KEY,
+    mtime_ns    INTEGER NOT NULL,
+    size        INTEGER NOT NULL,
+    lang        TEXT NOT NULL,
+    indexed_at  TEXT
+);
 """
 
 
@@ -208,27 +219,60 @@ class CodeGraph:
     # ---- Build / re-index ----
 
     def build(self, since: str | None = None) -> dict[str, Any]:
-        """Index the repo. Returns stats."""
+        """Index the repo. Returns stats.
+
+        ``since`` is truthy → incremental mode: a per-file ``(mtime_ns, size)``
+        manifest (the ``files`` table) is consulted so files unchanged since the
+        last pass are skipped entirely (their existing symbols/refs carry
+        forward untouched), changed/new files are re-extracted after purging
+        their stale rows, and files that vanished from disk have their rows
+        removed. ``since=None`` performs a full rebuild: all ``symbols``,
+        ``refs``, and ``files`` rows are wiped and every file is re-indexed,
+        which also re-establishes a correct baseline manifest for a later
+        incremental pass.
+        """
         try:
             from tree_sitter_language_pack import get_parser
         except ImportError as e:
             log.error("tree_sitter_unavailable", error=str(e))
             raise
 
-        # Wipe existing data — incremental indexing is a future optimization
-        if since is None:
+        incremental = since is not None
+
+        if not incremental:
             self.db.execute("DELETE FROM symbols")
             self.db.execute("DELETE FROM refs")
+            self.db.execute("DELETE FROM files")
 
-        files_seen = 0
+        stored_files: dict[str, tuple[int, int]] = {}
+        if incremental:
+            stored_files = {
+                row["path"]: (row["mtime_ns"], row["size"])
+                for row in self.db.execute("SELECT path, mtime_ns, size FROM files").fetchall()
+            }
+
+        files_indexed = 0
+        files_skipped = 0
+        files_removed = 0
         symbols_added = 0
         refs_added = 0
+        seen_paths: set[str] = set()
 
         for path in self._iter_source_files():
             ext = path.suffix
             lang = LANG_BY_EXT.get(ext)
             if not lang or lang not in self.langs or lang not in QUERIES:
                 continue
+
+            rel = str(path.relative_to(self.repo))
+            stat = path.stat()
+            mtime_ns, size = stat.st_mtime_ns, stat.st_size
+
+            if incremental:
+                seen_paths.add(rel)
+                if stored_files.get(rel) == (mtime_ns, size):
+                    files_skipped += 1
+                    continue
 
             try:
                 parser = get_parser(cast("SupportedLanguage", lang))
@@ -238,8 +282,11 @@ class CodeGraph:
                 log.warning("parse_failed", path=str(path), error=str(exc))
                 continue
 
-            files_seen += 1
-            rel = str(path.relative_to(self.repo))
+            if incremental:
+                # New or changed file — drop stale rows before re-extracting so
+                # a rename/removal-within-file doesn't leave duplicate entries.
+                self.db.execute("DELETE FROM symbols WHERE path = ?", (rel,))
+                self.db.execute("DELETE FROM refs WHERE path = ?", (rel,))
 
             symbols, refs = self._extract(tree, source, rel, lang)
             for s in symbols:
@@ -257,9 +304,29 @@ class CodeGraph:
                 )
                 refs_added += 1
 
+            self.db.execute(
+                "INSERT OR REPLACE INTO files(path, mtime_ns, size, lang, indexed_at) "
+                "VALUES (?, ?, ?, ?, ?)",
+                (rel, mtime_ns, size, lang, datetime.now(UTC).isoformat()),
+            )
+            files_indexed += 1
+
+        if incremental:
+            for rel in set(stored_files) - seen_paths:
+                self.db.execute("DELETE FROM symbols WHERE path = ?", (rel,))
+                self.db.execute("DELETE FROM refs WHERE path = ?", (rel,))
+                self.db.execute("DELETE FROM files WHERE path = ?", (rel,))
+                files_removed += 1
+
         self.db.execute("INSERT OR REPLACE INTO manifest(key, value) VALUES ('version', '1')")
         self.db.commit()
-        return {"files_indexed": files_seen, "symbols": symbols_added, "refs": refs_added}
+        return {
+            "files_indexed": files_indexed,
+            "symbols": symbols_added,
+            "refs": refs_added,
+            "files_skipped": files_skipped,
+            "files_removed": files_removed,
+        }
 
     def _iter_source_files(self):
         """Yield source files, respecting the skip list."""
