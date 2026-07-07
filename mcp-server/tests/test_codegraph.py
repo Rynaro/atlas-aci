@@ -7,6 +7,7 @@ YAML, Markdown, and shell.
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 import pytest
@@ -15,6 +16,10 @@ from atlas_aci.codegraph import DEFAULT_LANGS, CodeGraph
 
 
 def _build(tmp_path: Path, files: dict[str, str]) -> CodeGraph:
+    """Full build helper. Returns the live ``CodeGraph`` (its connection is not
+    discarded), so callers can mutate `graph.repo` on disk and call
+    ``graph.build(since=...)`` again to exercise incremental re-indexing.
+    """
     repo = tmp_path / "repo"
     repo.mkdir()
     for rel, content in files.items():
@@ -204,3 +209,104 @@ def test_known_web_extensions_are_recognized(ext: str) -> None:
     from atlas_aci.codegraph import LANG_BY_EXT
 
     assert ext in LANG_BY_EXT
+
+
+# ---- Incremental indexing (--since) ----
+
+
+def _symbol_count(graph: CodeGraph) -> int:
+    return int(graph.db.execute("SELECT COUNT(*) FROM symbols").fetchone()[0])
+
+
+def _ref_count(graph: CodeGraph) -> int:
+    return int(graph.db.execute("SELECT COUNT(*) FROM refs").fetchone()[0])
+
+
+def test_incremental_skips_unchanged_files(tmp_path: Path) -> None:
+    graph = _build(
+        tmp_path,
+        {
+            "app/a.rb": "class A\n  def call\n  end\nend\n",
+            "app/b.rb": "class B\n  def call\n  end\nend\n",
+        },
+    )
+
+    stats = graph.build(since="HEAD")
+
+    assert stats["files_skipped"] >= 2
+    assert stats["files_indexed"] == 0
+    assert _names(graph.search_symbol("A")["definitions"]) == {"A"}
+    assert _names(graph.search_symbol("B")["definitions"]) == {"B"}
+
+
+def test_incremental_reindexes_changed_file_without_stale_rows(tmp_path: Path) -> None:
+    graph = _build(
+        tmp_path,
+        {
+            "app/a.rb": "class OldName\n  def call\n  end\nend\n",
+            "app/b.rb": "class B\n  def call\n  end\nend\n",
+        },
+    )
+    path_a = graph.repo / "app/a.rb"
+    path_a.write_text("class NewName\n  def call\n  end\nend\n")
+    # Force a distinct, later mtime so the (mtime_ns, size) change key differs
+    # even if the rewrite happened to land at the same size within the same
+    # filesystem timestamp tick.
+    bumped_ns = path_a.stat().st_mtime_ns + 10_000_000_000
+    os.utime(path_a, ns=(bumped_ns, bumped_ns))
+
+    stats = graph.build(since="HEAD")
+
+    assert stats["files_indexed"] == 1
+    assert graph.search_symbol("OldName")["definitions"] == []
+    assert _names(graph.search_symbol("NewName")["definitions"]) == {"NewName"}
+    # The untouched sibling file's symbols must survive unchanged.
+    assert _names(graph.search_symbol("B")["definitions"]) == {"B"}
+
+
+def test_incremental_removes_deleted_file(tmp_path: Path) -> None:
+    graph = _build(
+        tmp_path,
+        {
+            "app/a.rb": "class A\n  def call\n  end\nend\n",
+            "app/b.rb": "class B\n  def call\n  end\nend\n",
+        },
+    )
+    (graph.repo / "app/b.rb").unlink()
+
+    stats = graph.build(since="HEAD")
+
+    assert stats["files_removed"] >= 1
+    assert graph.search_symbol("B")["definitions"] == []
+    assert _names(graph.search_symbol("A")["definitions"]) == {"A"}
+
+
+def test_incremental_is_idempotent_when_nothing_changes(tmp_path: Path) -> None:
+    graph = _build(
+        tmp_path,
+        {
+            "app/a.rb": "class A\n  def call\n    record_vote(1)\n  end\nend\n",
+        },
+    )
+
+    graph.build(since="HEAD")
+    first_symbols, first_refs = _symbol_count(graph), _ref_count(graph)
+
+    graph.build(since="HEAD")
+    second_symbols, second_refs = _symbol_count(graph), _ref_count(graph)
+
+    assert first_symbols == second_symbols
+    assert first_refs == second_refs
+
+
+def test_full_build_populates_files_manifest(tmp_path: Path) -> None:
+    graph = _build(
+        tmp_path,
+        {
+            "app/a.rb": "class A\nend\n",
+            "app/b.rb": "class B\nend\n",
+        },
+    )
+
+    count = graph.db.execute("SELECT COUNT(*) FROM files").fetchone()[0]
+    assert count > 0
