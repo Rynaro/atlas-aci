@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-07-07
+
+### Added
+- **feat(codegraph): incremental indexing via `--since` so large repos skip unchanged files.** `CodeGraph.build()` was fully destructive — every run did `DELETE FROM symbols`/`refs` then re-indexed the whole tree, and passing `--since` silently re-inserted every file (producing duplicate rows). Full re-indexes after each commit are impractical on Rails-scale repos. A new `files` manifest table (`path`, `mtime_ns`, `size`, `lang`, `indexed_at`, created with `CREATE TABLE IF NOT EXISTS` so existing `.atlas/graph.db` files upgrade transparently) now tracks per-file state:
+  - **Full mode (`since=None`)** wipes `symbols`/`refs`/`files`, re-indexes everything, and records each file's `(mtime_ns, size)` — establishing a baseline for a later incremental pass.
+  - **Incremental mode (`--since`)** consults the manifest: files unchanged since the last pass are skipped (their symbols/refs carry forward untouched), changed/new files are re-extracted after purging their stale rows, and files removed from disk have all their rows deleted.
+  - `build()` stats gain `files_skipped` and `files_removed`.
+  - Chose `(mtime_ns, size)` over git-diff because the indexer targets arbitrary directories not guaranteed to be git repos; changed files always get fresh mtimes after checkout/pull/commit, serving the post-commit-hook use case. The `--since` CLI help text now describes the real behavior.
+
 ## [0.3.1] - 2026-06-20
 
 ### Security
