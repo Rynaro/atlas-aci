@@ -243,15 +243,46 @@ def test_search_text_own_overflow_signal_promotes_to_truncated(enforcement: Enfo
     assert out["retry_hint"] == "narrower_scope"
 
 
-def test_view_file_next_cursor_promotes_to_truncated(enforcement: Enforcement) -> None:
-    """view_file's `next_cursor`/`total_lines` stay untouched — a strictly
-    more informative pagination contract than a bare boolean — but a naive
-    consumer checking only `truncated` must still see it fire."""
+def test_view_file_bare_next_cursor_does_not_trigger_truncated(enforcement: Enforcement) -> None:
+    """NEW-1 (checker, second pass, F-6 follow-up): a fully-satisfied
+    window that simply doesn't reach EOF is NOT a truncation of the
+    *request* — `next_cursor` alone must never flip `truncated`. An
+    earlier version of this test asserted the opposite and passed,
+    encoding the bug the checker reproduced: `view_file` on lines 2-4 of a
+    10-line file (a complete, un-clamped window) returned `truncated:
+    true` with `retry_hint: narrower_scope`, which is wrong on both counts
+    — nothing was clamped, and the correct next action is to page via
+    `next_cursor`, not narrow the query."""
+    result = {
+        "path": "app/big.rb",
+        "start_line": 2,
+        "end_line": 4,
+        "lines": ["a\n", "b\n", "c\n"],  # exactly what was requested — no clamping
+        "next_cursor": 5,
+        "total_lines": 10,
+    }
+    out = apply_central_bounds("view_file", {}, result, enforcement)
+    assert "truncated" not in out
+    assert "truncated_fields" not in out
+    assert "more_available" not in out
+    # The pagination contract itself is untouched — it's the correct,
+    # sufficient signal for "the file continues".
+    assert out["next_cursor"] == 5
+    assert out["total_lines"] == 10
+
+
+def test_view_file_overflow_signal_promotes_to_truncated(enforcement: Enforcement) -> None:
+    """The REQUEST itself was clamped (e.g. asked for more lines than
+    max_lines_per_view) — genuine "you asked for more than you got", and
+    must still flag `truncated` (mirrors list_dir/search_text's own literal
+    `overflow` key — the one tool-level signal apply_central_bounds
+    promotes)."""
     result = {
         "path": "app/big.rb",
         "start_line": 1,
         "end_line": 2,
-        "lines": ["a\n", "b\n"],  # 2 items, under cap (3)
+        "lines": ["a\n", "b\n"],  # 2 items, under the central cap (3)
+        "overflow": True,
         "next_cursor": 3,
         "total_lines": 500,
     }
@@ -261,9 +292,66 @@ def test_view_file_next_cursor_promotes_to_truncated(enforcement: Enforcement) -
     assert out["returned_count"] == {"lines": 2}
     assert out["more_available"] is True
     assert out["retry_hint"] == "narrower_scope"
-    # The pagination contract survives untouched — it's strictly additional.
+    # The pagination contract survives untouched alongside the unified one.
     assert out["next_cursor"] == 3
     assert out["total_lines"] == 500
+
+
+async def test_view_file_real_window_under_cap_is_not_falsely_truncated(
+    config: Config, enforcement: Enforcement, memex: Memex
+) -> None:
+    """End-to-end regression for NEW-1, through the real view_file tool
+    (not just a synthetic fixture — the checker's point that the bug was
+    "tested-in" applies to relying on fixtures alone). Reading a middle
+    window of a longer file must not report `truncated`."""
+    lines = [f"line{i}\n" for i in range(1, 11)]  # 10 lines
+    (config.repo / "big.txt").write_text("".join(lines))
+    code_graph = CodeGraph(repo=config.repo)
+
+    result = await dispatch_tool_call(
+        "view_file",
+        {"path": "big.txt", "start_line": 2, "end_line": 4},
+        config,
+        enforcement,
+        memex,
+        code_graph,
+    )
+    assert result["lines"] == ["line2\n", "line3\n", "line4\n"]
+    assert "truncated" not in result
+    assert result["next_cursor"] == 5
+    assert result["total_lines"] == 10
+
+
+async def test_view_file_real_request_exceeding_max_lines_is_truncated(tmp_path: Path) -> None:
+    """End-to-end: a request whose window exceeds max_lines_per_view IS a
+    genuine truncation of the request and must be flagged. Uses its own
+    Config (default max_bound_field_elements=200) rather than the shared
+    `config` fixture (max_bound_field_elements=3) — that fixture's small
+    central cap would *also* fire here and confound which cap actually
+    produced the truncation; isolating view_file's own max_lines_per_view
+    overflow is the point of this test."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    isolated_config = Config(repo=repo, memex_root=tmp_path / "memex")
+    isolated_enforcement = Enforcement(isolated_config)
+    isolated_memex = Memex(isolated_config.memex_root)
+
+    lines = [f"line{i}\n" for i in range(1, 251)]  # 250 lines
+    (repo / "huge.txt").write_text("".join(lines))
+    code_graph = CodeGraph(repo=repo)
+
+    result = await dispatch_tool_call(
+        "view_file",
+        {"path": "huge.txt", "start_line": 1, "end_line": 250},
+        isolated_config,
+        isolated_enforcement,
+        isolated_memex,
+        code_graph,
+    )
+    assert len(result["lines"]) == isolated_config.max_lines_per_view
+    assert result["truncated"] is True
+    assert result["truncated_fields"] == ["lines"]
+    assert result["retry_hint"] == "narrower_scope"
 
 
 # ---- AC-H-6 — absolute byte ceiling hard-fails ----

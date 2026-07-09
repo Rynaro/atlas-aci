@@ -123,6 +123,19 @@ async def view_file(
         "end_line": actual_start + len(selected) - 1,
         "lines": selected,
     }
+    if overflow:
+        # The REQUESTED range itself was clamped to max_lines_per_view —
+        # "you asked for more than you got". Distinct from the file merely
+        # continuing past this window (below): a fully-satisfied window
+        # that happens not to reach EOF is not a truncation of the
+        # request, and must not be reported as one (NEW-1 — a `truncated`
+        # flag that fires on every non-final read of the most-used tool
+        # trains every consumer to ignore it, and "narrower_scope" is
+        # actively wrong advice when the real answer is "page via
+        # next_cursor"). `apply_central_bounds` promotes this literal key
+        # to the unified `truncated` contract; it deliberately does NOT
+        # promote bare `next_cursor` presence.
+        result["overflow"] = True
     if overflow or actual_end < len(all_lines):
         result["next_cursor"] = actual_end + 1
         result["total_lines"] = len(all_lines)

@@ -217,18 +217,28 @@ def apply_central_bounds(
     single response that still can't fit even after element truncation
     (AC-H-6).
 
-    F-6 (vocabulary unification): list_dir/search_text signal their own
-    tool-level overflow via a literal ``overflow: true`` key; view_file
-    signals pagination via ``next_cursor``. Both are folded into the same
-    un-ignorable ``truncated`` contract here, so a consumer that checks only
-    ``truncated`` can never miss an overflow just because a *different*
-    layer (the tool itself, not the central cap) detected it.
-    ``next_cursor``/``total_lines`` are left untouched — they are a
-    strictly *more* informative continuation contract for a long ordered
-    file window (an exact "call again with this cursor"), not merely a
-    "some rows were dropped" flag — but `truncated` must still fire so a
-    naive consumer that has never heard of `next_cursor` still gets the
-    un-ignorable signal.
+    F-6 (vocabulary unification): list_dir/search_text/view_file all signal
+    their own tool-level overflow via the same literal ``overflow: true``
+    key — folded here into the un-ignorable ``truncated`` contract, so a
+    consumer that checks only ``truncated`` can never miss an overflow just
+    because a *different* layer (the tool itself, not the central cap)
+    detected it.
+
+    NEW-1 (checker, second pass): this deliberately does NOT promote bare
+    ``next_cursor`` presence. ``truncated`` must mean "you asked for more
+    than you got" (the *request* was clamped — e.g. view_file's window
+    exceeded ``max_lines_per_view``), never "the file/result merely
+    continues past what you asked for". Those are different facts:
+    view_file sets ``next_cursor``/``total_lines`` on *every* window that
+    doesn't reach EOF, including a fully-satisfied, un-clamped read — a
+    naive "next_cursor present => truncated" rule made `truncated` fire on
+    nearly every call to the single most-used tool (training every
+    consumer to ignore it) and attached ``retry_hint: narrower_scope`` to
+    normal pagination, which is actively wrong advice (the correct action
+    is to page via ``next_cursor``, not narrow the query). Only the literal
+    ``overflow`` key — set exactly when the request itself was clamped —
+    triggers the unified contract; ``next_cursor``/``total_lines`` remain a
+    separate, strictly more informative continuation contract on their own.
     """
     if not isinstance(result, dict):
         return result
@@ -244,8 +254,7 @@ def apply_central_bounds(
         if overflowed:
             truncated_fields.add(field)
 
-    tool_signalled_more = bool(result.get("overflow")) or "next_cursor" in result
-    if tool_signalled_more and fields:
+    if result.get("overflow") and fields:
         truncated_fields.update(f for f in fields if isinstance(result.get(f), list))
 
     if truncated_fields:
