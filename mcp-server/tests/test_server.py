@@ -15,7 +15,7 @@ from pathlib import Path
 import pytest
 
 from atlas_aci.codegraph import PRODUCED_KINDS, CodeGraph
-from atlas_aci.config import Config
+from atlas_aci.config import DEFAULT_MAX_BOUND_FIELD_ELEMENTS, Config
 from atlas_aci.enforcement import Enforcement, ToolError
 from atlas_aci.memex import Memex
 from atlas_aci.server import (
@@ -23,6 +23,7 @@ from atlas_aci.server import (
     TOOL_BOUNDED_FIELDS,
     apply_central_bounds,
     bounded_fields_for,
+    build_server_state,
     build_tool_manifest,
     dispatch_tool_call,
 )
@@ -53,6 +54,34 @@ def _rb(repo: Path, rel: str, content: str) -> None:
     p = repo / rel
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text(content)
+
+
+# ---- NEW-2 — guard the query_limit <-> config-cap wiring (F-1 relapse) ----
+
+
+def test_run_stdio_wires_query_limit_to_config_cap_plus_one(tmp_path: Path) -> None:
+    """CodeGraph.__init__'s own default for query_limit is
+    DEFAULT_MAX_BOUND_FIELD_ELEMENTS + 1 — a *module* constant — not
+    Config.max_bound_field_elements + 1. `build_server_state` (what
+    `run_stdio` calls) only agrees with the configured cap because it
+    passes query_limit explicitly; nothing previously asserted that
+    wiring survives a refactor. A default-constructed CodeGraph paired
+    with a custom-cap Config would silently reopen F-1 at a different cap
+    value — identical failure mode, one layer up. Uses a cap deliberately
+    far from the module default so a regression to CodeGraph's bare
+    default (which would silently disagree) fails this test rather than
+    passing by coincidence."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    custom_cap = 57
+    assert custom_cap != DEFAULT_MAX_BOUND_FIELD_ELEMENTS, "fixture must differ from the default"
+    config = Config(repo=repo, memex_root=tmp_path / "memex", max_bound_field_elements=custom_cap)
+
+    _enforcement, _memex, code_graph = build_server_state(config)
+
+    assert code_graph.query_limit == custom_cap + 1
+    assert code_graph.query_limit != DEFAULT_MAX_BOUND_FIELD_ELEMENTS + 1
+    assert code_graph.read_only is True
 
 
 # ---- AC-H-15 — registry completeness (a no-op cap must fail this) ----

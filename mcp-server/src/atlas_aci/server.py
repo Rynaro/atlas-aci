@@ -330,9 +330,21 @@ async def dispatch_tool_call(
     return apply_central_bounds(name, arguments, result, enforcement)
 
 
-async def run_stdio(config: Config) -> None:
-    """Start the MCP server over stdio. Used by all major hosts."""
-    server = Server("atlas-aci")
+def build_server_state(config: Config) -> tuple[Enforcement, Memex, CodeGraph]:
+    """Construct the per-process state `run_stdio` wires together.
+
+    Kept as a standalone function (not inlined in `run_stdio`) specifically
+    so the ``CodeGraph.query_limit`` <-> ``Config.max_bound_field_elements``
+    wiring is directly unit-testable without booting a stdio server
+    (NEW-2, checker second pass): ``CodeGraph.__init__``'s own default for
+    ``query_limit`` is ``DEFAULT_MAX_BOUND_FIELD_ELEMENTS + 1`` — a *module*
+    constant — not ``config.max_bound_field_elements + 1``. Those two only
+    agree today because this function passes the latter explicitly; nothing
+    previously asserted that the wiring survives a refactor. A
+    default-constructed `CodeGraph` paired with a custom-cap `Config` would
+    silently reopen F-1 at a different cap value — the identical "two
+    numbers that must agree, with nothing checking" failure mode.
+    """
     enforcement = Enforcement(config)
     memex = Memex(config.memex_root)
     # read_only=True: `serve` never writes under .atlas (DIR-2). On a
@@ -347,6 +359,13 @@ async def run_stdio(config: Config) -> None:
         read_only=True,
         query_limit=config.max_bound_field_elements + 1,
     )
+    return enforcement, memex, code_graph
+
+
+async def run_stdio(config: Config) -> None:
+    """Start the MCP server over stdio. Used by all major hosts."""
+    server = Server("atlas-aci")
+    enforcement, memex, code_graph = build_server_state(config)
 
     @server.list_tools()
     async def _list_tools() -> list[Tool]:
