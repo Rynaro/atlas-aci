@@ -12,9 +12,21 @@
 # defence-in-depth configured by the repo operator — out-of-tree, not
 # something this workflow (or the acceptance suite) can assert.
 #
-# `--frozen` is used throughout: it refuses to silently re-lock
-# `mcp-server/uv.lock` (a real, separately-tracked defect — AC-REL-3, P3) and
-# fails loudly instead if the lock is genuinely out of sync.
+# `--frozen` is used throughout: it uses the committed `uv.lock` exactly
+# as-is and never rewrites it — the failure mode that already bit this
+# project once (a bare `uv run` silently re-locking `atlas-aci` from 0.3.1
+# to 0.4.0). `--frozen` does NOT validate that the lock is up to date with
+# `pyproject.toml` — that is `--locked`'s job, not this flag's (verified:
+# `uv sync --locked` exits non-zero and reports "needs to be updated" when
+# they disagree; `--frozen` exits 0 regardless). We deliberately do NOT use
+# `--locked` here yet: `mcp-server/uv.lock` is *currently* stale relative to
+# `pyproject.toml` (the atlas-aci package version pin — AC-REL-3, a real,
+# separately-tracked defect owned by phase P3's release-prep), so switching
+# to `--locked` today would fail every PR's CI run on an unrelated,
+# already-known issue. `--frozen` is the correct choice until AC-REL-3
+# lands; AC-REL-3 itself should add a `--locked` (or `uv lock --check`) step
+# once the lock is current, so lock/pyproject drift can never silently ship
+# again.
 
 name: CI
 
