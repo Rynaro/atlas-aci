@@ -1,0 +1,437 @@
+{
+  "esl_version": "1.1",
+  "change_id": "aci-v2-harden-and-augment",
+  "status": "in_progress",
+  "tier": "full",
+  "maker": "vivi",
+  "checker": "vigil",
+  "acceptance_checks": [
+    {
+      "id": "AC-H-1",
+      "given": "the repository has a CI workflow at .github/workflows/ci.yml",
+      "when": "a pull request is opened or updated against main",
+      "then": "the CI workflow SHALL run the pytest suite over mcp-server/tests and report a failing check run when any test fails",
+      "verify_method": "acceptance-criteria.md#AC-H-1 (frozen sha256:5c3adddbd075) — ci: .github/workflows/ci.yml triggers on pull_request; a probe PR with a deliberately failing test produces a failing check run (branch-protection enforcement is defence-in-depth, out-of-tree; see AC-NEG-6)"
+    },
+    {
+      "id": "AC-H-2",
+      "given": "the CI workflow is present",
+      "when": "a pull request is opened or updated against main",
+      "then": "the CI workflow SHALL run ruff and mypy and report a failing check run when either reports an error",
+      "verify_method": "acceptance-criteria.md#AC-H-2 (frozen sha256:5c3adddbd075) — ci: .github/workflows/ci.yml contains ruff + mypy steps gated on pull_request; a probe PR with a lint error produces a failing check run"
+    },
+    {
+      "id": "AC-H-3",
+      "given": "a tool has returned a result inside _call_tool",
+      "when": "the result is about to be serialized to the MCP transport",
+      "then": "the central dispatch-middleware SHALL apply the element-cap to the declared list-valued field on an element boundary before applying the serialized-byte ceiling",
+      "verify_method": "acceptance-criteria.md#AC-H-3 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_server.py::test_central_bounds_applies_element_cap_then_byte_ceiling"
+    },
+    {
+      "id": "AC-H-4",
+      "given": "each registered tool and each graph_query verb is fed a synthetic response whose list-valued field exceeds the element-cap",
+      "when": "it returns through _call_tool",
+      "then": "every such response SHALL come back truncated with the un-ignorable flag set, never returned whole",
+      "verify_method": "acceptance-criteria.md#AC-H-4 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_server.py::test_every_tool_and_verb_truncates_and_flags_over_cap (drives an over-cap fixture per tool/verb; a no-op cap fails this)"
+    },
+    {
+      "id": "AC-H-5",
+      "given": "a tool response exceeds the central element-cap but not the absolute byte-ceiling",
+      "when": "the central middleware truncates it",
+      "then": "the returned object SHALL carry an un-ignorable top-level truncated:true with the returned count, more_available:true, plus retry_hint:narrower_scope",
+      "verify_method": "acceptance-criteria.md#AC-H-5 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_server.py::test_overflow_truncate_and_flag_contract"
+    },
+    {
+      "id": "AC-H-6",
+      "given": "a single degenerate response cannot satisfy the absolute serialized-byte ceiling even after element truncation IF the byte-ceiling backstop is breached",
+      "then": "the middleware SHALL return a structured error via ToolError instead of an oversized body",
+      "verify_method": "acceptance-criteria.md#AC-H-6 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_server.py::test_absolute_byte_ceiling_hard_fails"
+    },
+    {
+      "id": "AC-H-7",
+      "given": "a search_symbol call on a common name that resolves to more definitions than the element-cap",
+      "when": "search_symbol returns through _call_tool",
+      "then": "the response SHALL be truncated and flagged rather than returning the full unbounded definitions list",
+      "verify_method": "acceptance-criteria.md#AC-H-7 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_server.py::test_search_symbol_is_bounded (regression for codegraph.py:408-414); in P0 gate_criteria"
+    },
+    {
+      "id": "AC-H-8",
+      "given": "a graph_query callers_of on a hub callee that matches more edges than the element-cap",
+      "when": "graph_query returns through _call_tool",
+      "then": "the response SHALL be truncated and flagged rather than returning the full unbounded edges list",
+      "verify_method": "acceptance-criteria.md#AC-H-8 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_server.py::test_graph_query_is_bounded (regression for codegraph.py:425-431); in P0 gate_criteria"
+    },
+    {
+      "id": "AC-H-9",
+      "given": "a repository is being indexed under v2 semantics",
+      "when": "the DB is opened or created",
+      "then": "the path SHALL be .atlas/graph.\u003cepoch\u003e.db where \u003cepoch\u003e is the monotonic schema-epoch integer, never the bare .atlas/graph.db",
+      "verify_method": "acceptance-criteria.md#AC-H-9 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_schema_epoch.py::test_db_path_is_epoch_namespaced"
+    },
+    {
+      "id": "AC-H-10",
+      "given": "one or more .atlas/graph.*.db files exist whose epoch is not the current epoch",
+      "when": "the index (write) command runs",
+      "then": "the non-current-epoch DB files SHALL be swept from .atlas by the index path only, never by serve",
+      "verify_method": "acceptance-criteria.md#AC-H-10 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_schema_epoch.py::test_index_sweeps_stale_epoch_files_serve_does_not"
+    },
+    {
+      "id": "AC-H-11",
+      "given": "an on-disk DB whose filename epoch does not match its in-DB manifest epoch row IF the index command encounters it",
+      "then": "it SHALL be rebuilt, whereas serve encountering it SHALL fail fast with a structured ToolError naming the required index command, writing nothing",
+      "verify_method": "acceptance-criteria.md#AC-H-11 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_schema_epoch.py::test_index_rebuilds_serve_fails_fast_on_epoch_mismatch"
+    },
+    {
+      "id": "AC-H-12",
+      "then": "a committed EXPECTED_DDL_HASH constant paired with the integer epoch SHALL equal the hash of the current schema DDL, so changing the DDL without bumping the epoch and its recorded hash fails CI",
+      "verify_method": "acceptance-criteria.md#AC-H-12 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_schema_epoch.py::test_expected_ddl_hash_matches_current_ddl"
+    },
+    {
+      "id": "AC-H-13",
+      "then": "the set of LANG_BY_EXT values SHALL be a subset of the QUERIES keys unioned with an explicit unsupported-extension allowlist",
+      "verify_method": "acceptance-criteria.md#AC-H-13 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_codegraph.py::test_lang_by_ext_consistent_with_queries (guards codegraph.py:41-44 vs QUERIES keys)"
+    },
+    {
+      "id": "AC-H-14",
+      "given": "files with a recognized-but-unsupported extension are present in the indexed tree IF the indexer skips them",
+      "then": "it SHALL emit a visible \"unsupported extension skipped: N files\" report rather than silently no-op",
+      "verify_method": "acceptance-criteria.md#AC-H-14 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_codegraph.py::test_unsupported_extension_skip_is_reported"
+    },
+    {
+      "id": "AC-H-15",
+      "then": "every registered tool or graph_query verb that exposes a list-valued field SHALL declare a non-empty registered _bounded_field so the central cap can never be a silent no-op",
+      "verify_method": "acceptance-criteria.md#AC-H-15 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_server.py::test_every_list_returning_tool_registers_a_bounded_field (registry-completeness; the D2:48 \"every tool calls a cap helper\" prescription); in P0 gate_criteria"
+    },
+    {
+      "id": "AC-H-16",
+      "given": "serve is started against a read-only .atlas mount matching the README:201-210 --read-only :ro deployment WHILE the epoch matches",
+      "then": "serve SHALL start successfully performing zero writes or unlinks under .atlas, and SHALL fail cleanly with a ToolError naming index when the epoch does not match",
+      "verify_method": "acceptance-criteria.md#AC-H-16 (frozen sha256:5c3adddbd075) — ci/test: mcp-server/tests/test_schema_epoch.py::test_serve_read_only_mount_zero_writes plus a CI job running serve against a :ro mount asserting no filesystem writes under .atlas"
+    },
+    {
+      "id": "AC-H-17",
+      "given": "two index processes run concurrently as the documented background post-commit hook can trigger",
+      "when": "each builds the epoch DB",
+      "then": "the build SHALL write to a temporary path then atomically rename under a single-writer lock so a concurrent run cannot corrupt the DB",
+      "verify_method": "acceptance-criteria.md#AC-H-17 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_schema_epoch.py::test_concurrent_index_atomic_rename_no_corruption (addresses F17; codegraph.py:214 default locking)"
+    },
+    {
+      "id": "AC-H-18",
+      "then": "for every tool and every graph_query verb a truncation signal SHALL be set if and only if content that both exists and was requested was withheld; and no continuation cursor SHALL point beyond the end of the available content",
+      "verify_method": "acceptance-criteria.md#AC-H-18 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_server.py::test_truncation_signal_iff_content_withheld parametrizes each tool and verb at cap-1, cap, cap+1, and a request extending past end-of-content, with expected truncation and cursor values computed independently of the implementation under test (pins the F-1/NEW-1 proxy-vs-invariant defect class the P0 pass reproduced and fixed four times) ## Track DOC — Doc-honesty"
+    },
+    {
+      "id": "AC-DOC-1",
+      "given": "atlas-aci v2.0.0 is released WHILE the per-tool cap tests (AC-H-7, AC-H-8, AC-H-15) pass",
+      "then": "the README:411-413 \"Mechanical bounds ... applied per call ... narrow bounds never widen\" claim SHALL be true for all tools including search_symbol and graph_query",
+      "verify_method": "acceptance-criteria.md#AC-DOC-1 (frozen sha256:5c3adddbd075) — test: AC-H-7/AC-H-8/AC-H-15 green; grep: README.md:411-413 retains the bounds invariant with no per-tool exception (anchor corrected from the scout's wrong 107-111 per F6)"
+    },
+    {
+      "id": "AC-DOC-2",
+      "then": "no file in the repository SHALL describe --since as git-ref diffing, since the implementation keys only on (mtime_ns, size)",
+      "verify_method": "acceptance-criteria.md#AC-DOC-2 (frozen sha256:5c3adddbd075) — grep: `grep -rniE \"since \u003c?git-?ref|restricts indexing to files changed since a ref|--since HEAD~[0-9]\"` over README.md INTEGRATION.md SETUP.md mcp-server returns zero (covers INTEGRATION.md:201, README.md:173, INTEGRATION.md:208, mcp-server/Dockerfile:64, SETUP.md:238 per F12)"
+    },
+    {
+      "id": "AC-DOC-3",
+      "then": "no file SHALL quote a canary pass-rate for a suite whose dispatcher raises NotImplementedError, and scripts/run-canaries.py SHALL carry a visible deferred-in-v2.0.0 note",
+      "verify_method": "acceptance-criteria.md#AC-DOC-3 (frozen sha256:5c3adddbd075) — grep: canary pass-rate claim absent or flagged aspirational in README.md (348-349) and SETUP.md (182-183, 282) per F13/F15; scripts/run-canaries.py contains an explicit deferred note"
+    },
+    {
+      "id": "AC-DOC-4",
+      "then": "the Prism Ruby specialist-mode references SHALL be removed from codegraph.py, SETUP.md, INTEGRATION.md, and pyproject.toml",
+      "verify_method": "acceptance-criteria.md#AC-DOC-4 (frozen sha256:5c3adddbd075) — grep: `grep -rni prism` over source and docs returns zero matches, or only an explicit \"not shipped\" note (catches SETUP.md:120 fifth site per F-C7)"
+    },
+    {
+      "id": "AC-DOC-5",
+      "then": "a top-level LICENSE file SHALL exist declaring Apache-2.0 as promised in README:462-463",
+      "verify_method": "acceptance-criteria.md#AC-DOC-5 (frozen sha256:5c3adddbd075) — cmd: test -f LICENSE; grep: LICENSE contains the Apache License 2.0 identifier"
+    },
+    {
+      "id": "AC-DOC-6",
+      "then": "the search_symbol MCP kind enum SHALL be a superset of the kinds the indexer actually produces",
+      "verify_method": "acceptance-criteria.md#AC-DOC-6 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_server.py::test_search_symbol_kind_enum_superset_of_produced_kinds (server.py:97-101 vs codegraph.py:104-134)"
+    },
+    {
+      "id": "AC-DOC-7",
+      "then": "this repository's CLAUDE.md SHALL NOT reference a .atlas/symbols.db artifact that the code never creates",
+      "verify_method": "acceptance-criteria.md#AC-DOC-7 (frozen sha256:5c3adddbd075) — grep: CLAUDE.md contains no \"symbols.db\"; only .atlas/graph.\u003cepoch\u003e.db is named"
+    },
+    {
+      "id": "AC-DOC-8",
+      "then": "the README repository-layout section SHALL list mcp-server/tests/test_codegraph.py",
+      "verify_method": "acceptance-criteria.md#AC-DOC-8 (frozen sha256:5c3adddbd075) — grep: README.md repository-layout block (near README.md:384) includes test_codegraph.py"
+    },
+    {
+      "id": "AC-DOC-9",
+      "then": "the server.py tool-manifest memex description SHALL NOT claim refs are returned by other tools while no tool emits a memex ref",
+      "verify_method": "acceptance-criteria.md#AC-DOC-9 (frozen sha256:5c3adddbd075) — grep/test: server.py:139 description corrected; or a test asserting at least one tool emits a memex:// ref"
+    },
+    {
+      "id": "AC-DOC-10",
+      "then": "the mcp-server/README.md tools table SHALL NOT describe search_symbol as unbounded nor graph_query as implementation-defined once the central bound lands",
+      "verify_method": "acceptance-criteria.md#AC-DOC-10 (frozen sha256:5c3adddbd075) — grep: `grep -niE \"unbounded \\(cheap\\)|implementation-defined\" mcp-server/README.md` returns zero (corrects mcp-server/README.md:34-35 per F11) ## Track A1 — Materialized edges + confidence enum"
+    },
+    {
+      "id": "AC-A1-1",
+      "then": "the v2-epoch schema SHALL include a materialized call/inheritance edge table carrying source, target, relation type, confidence, and candidate set",
+      "verify_method": "acceptance-criteria.md#AC-A1-1 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_schema_epoch.py::test_edges_table_present_v2 (edges table exists under the v2 epoch)"
+    },
+    {
+      "id": "AC-A1-2",
+      "then": "every materialized call/inheritance edge SHALL carry a confidence value drawn from exactly the set {EXTRACTED, INFERRED, AMBIGUOUS}",
+      "verify_method": "acceptance-criteria.md#AC-A1-2 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_confidence.py::test_every_call_inheritance_edge_confidence_in_closed_enum (scoped to call/inheritance edges only per F9; rationale_for edges are excluded, see AC-A4-6; PRESERVED under D4a: AMBIGUOUS edges stay in the table and are still returned by graph_query, the analysis-graph exclusion is an analysis-time filter, not a drop)"
+    },
+    {
+      "id": "AC-A1-3",
+      "given": "a reference resolves to exactly one candidate that is syntactically type-qualified per the per-language rule pinned in spec.md D4",
+      "when": "the edge is emitted",
+      "then": "its confidence SHALL be EXTRACTED",
+      "verify_method": "acceptance-criteria.md#AC-A1-3 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_confidence.py::test_single_type_qualified_is_extracted (per-language fixtures per AC-A1-11)"
+    },
+    {
+      "id": "AC-A1-4",
+      "given": "a reference resolves to exactly one candidate via heuristic that is not type-qualified",
+      "when": "the edge is emitted",
+      "then": "its confidence SHALL be INFERRED",
+      "verify_method": "acceptance-criteria.md#AC-A1-4 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_confidence.py::test_single_heuristic_is_inferred"
+    },
+    {
+      "id": "AC-A1-5",
+      "given": "a reference resolves to more than one candidate",
+      "when": "the edge is emitted",
+      "then": "it SHALL be tagged AMBIGUOUS with the full ordered candidates[] attached, never dropped",
+      "verify_method": "acceptance-criteria.md#AC-A1-5 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_confidence.py::test_multi_candidate_is_ambiguous_with_candidates (PRESERVED under D4a: AMBIGUOUS is never dropped from the edge table or graph_query; D4a only excludes it from the A2/A3/probe analysis graph)"
+    },
+    {
+      "id": "AC-A1-6",
+      "given": "a reference resolves to zero candidates IF no target can be found",
+      "then": "no edge SHALL be emitted and the reference SHALL remain an unresolved name, never assigned an enum value",
+      "verify_method": "acceptance-criteria.md#AC-A1-6 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_confidence.py::test_zero_candidates_emits_no_edge"
+    },
+    {
+      "id": "AC-A1-7",
+      "given": "the v2 QUERIES capture superclass/heritage for Ruby, Python, and JS/TS",
+      "when": "subclasses_of is called for a class with known subclasses",
+      "then": "it SHALL return real inheritance edges rather than the empty stub-with-warning",
+      "verify_method": "acceptance-criteria.md#AC-A1-7 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_graph_query.py::test_subclasses_of_returns_real_edges (retires codegraph.py:454-460)"
+    },
+    {
+      "id": "AC-A1-8",
+      "then": "the candidates[] of any AMBIGUOUS edge SHALL be emitted in a fixed total order for identical input",
+      "verify_method": "acceptance-criteria.md#AC-A1-8 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_confidence.py::test_candidates_total_order_stable (same-machine; foundation for D6)"
+    },
+    {
+      "id": "AC-A1-9",
+      "then": "the v2-epoch schema SHALL omit the legacy always-NULL refs.enclosing column, and caller context SHALL be carried by the materialized edge source endpoint instead",
+      "verify_method": "acceptance-criteria.md#AC-A1-9 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_schema_epoch.py::test_refs_enclosing_dropped_no_always_null_column (resolves F10 by DROP; codegraph.py:391-397)"
+    },
+    {
+      "id": "AC-A1-10",
+      "given": "refs.enclosing is dropped from the v2 schema",
+      "when": "callers_of returns edges",
+      "then": "each edge SHALL carry caller context from the edge source endpoint, the graph_query DSL documentation SHALL reflect the changed response shape, and it SHALL document the analysis-graph divergence whereby graph_query returns all matching edges including AMBIGUOUS while god_nodes and communities analyze only the confident subgraph",
+      "verify_method": "acceptance-criteria.md#AC-A1-10 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_graph_query.py::test_callers_of_caller_context_from_edge_source; grep: DSL doc updated for the F10 response-shape change and the D4a divergence (graph_query returns AMBIGUOUS; god_nodes/communities exclude it)"
+    },
+    {
+      "id": "AC-A1-11",
+      "then": "spec.md D4 SHALL pin the syntactic type-qualified rule for each shipped language, and per-language fixtures SHALL decide EXTRACTED versus INFERRED accordingly",
+      "verify_method": "acceptance-criteria.md#AC-A1-11 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_confidence.py::test_type_qualified_rule_per_language (Ruby/Python/JS-TS fixtures per the pinned rule; resolves F18) ## Track A2 — God nodes"
+    },
+    {
+      "id": "AC-A2-1",
+      "given": "a materialized v2 edge table",
+      "when": "god nodes are requested",
+      "then": "the result SHALL be the degree-centrality ranking computed over the confident subgraph (EXTRACTED union INFERRED, with AMBIGUOUS edges excluded from degree) in a fixed deterministic order for identical input",
+      "verify_method": "acceptance-criteria.md#AC-A2-1 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_graph_query.py::test_god_nodes_degree_centrality_deterministic (degree computed over confident edges only per D4a)"
+    },
+    {
+      "id": "AC-A2-2",
+      "given": "god-node ranking is computed WHILE it consumes only edge counts from the edge table",
+      "then": "it SHALL require no graph-algorithm runtime dependency",
+      "verify_method": "acceptance-criteria.md#AC-A2-2 (frozen sha256:5c3adddbd075) — test/grep: god-node code imports no networkx/igraph/graspologic; test_graph_query.py::test_god_nodes_uses_only_edge_counts"
+    },
+    {
+      "id": "AC-A2-3",
+      "then": "the god_nodes and communities responses SHALL carry analysis_basis set to \"confident_edges\", ambiguous_edges_excluded as a count, and resolved_edge_count, making the analysis-graph-versus-returned-edges divergence visible",
+      "verify_method": "acceptance-criteria.md#AC-A2-3 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_graph_query.py::test_analysis_basis_fields_present (god_nodes and communities responses expose analysis_basis, ambiguous_edges_excluded, resolved_edge_count per D4a) ## Track A3 — LPA communities"
+    },
+    {
+      "id": "AC-A3-1",
+      "given": "the D3 decision is flagged at 0.65 confidence IF any A3 community source path is modified in a commit that does not also contain the probe verdict artefact",
+      "then": "the harden-gate CI job SHALL fail so A3 code cannot land before the LPA-vs-Louvain modularity probe and its verdict are recorded",
+      "verify_method": "acceptance-criteria.md#AC-A3-1 (frozen sha256:5c3adddbd075) — ci: .github/workflows/harden-gate.yml fails when an A3 path changes without .spectra/changes/aci-v2-harden-and-augment/probe-lpa-vs-louvain.md present (mechanical ordering per F7). The artefact SHALL record, per repo (Solidus and Spree): the K=10 networkx louvain_communities best/worst/median/mean+/-sd with seeds 0..9 and gamma=1.0; the single deterministic LPA_Q from the shipped implementation; the confident-subgraph construction (D4a); the three-clause evaluation; and the PASS/CUT verdict. The check SHALL also assert the recorded verdict equals the mechanical evaluation of the recorded numbers (a maker cannot record failing numbers under a PASS label, resolving F7). networkx runs ONLY in an ephemeral probe-time environment (uvx or a throwaway venv), never in mcp-server/pyproject.toml or mcp-server/uv.lock, which is what preserves AC-NEG-2 (running `uv add networkx` would detonate AC-NEG-2)"
+    },
+    {
+      "id": "AC-A3-2",
+      "given": "a fixed v2 edge table projected to the confident subgraph (EXTRACTED union INFERRED, AMBIGUOUS excluded)",
+      "when": "LPA community detection runs twice on identical input",
+      "then": "it SHALL assign identical community memberships with identical total-ordered community IDs",
+      "verify_method": "acceptance-criteria.md#AC-A3-2 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_communities.py::test_lpa_deterministic_total_order (same-machine; the D3a probe consumes this shipped deterministic LPA over the confident subgraph, single run, no seed)"
+    },
+    {
+      "id": "AC-A3-3",
+      "then": "community detection SHALL be computed with a hand-rolled label-propagation implementation over the confident subgraph (EXTRACTED union INFERRED, AMBIGUOUS never fanned out) that adds no new runtime dependency",
+      "verify_method": "acceptance-criteria.md#AC-A3-3 (frozen sha256:5c3adddbd075) — test/grep: mcp-server/tests/test_communities.py::test_no_new_dependency; community module imports no networkx and operates only on confident edges (D4a)"
+    },
+    {
+      "id": "AC-A3-4",
+      "given": "the probe evaluates the three-clause rule per repo on Solidus and Spree independently and never averaged, all of: (i) Louvain_Q_median \u003e= 0.30 as a precondition, (ii) LPA_Q \u003e= 0.30, (iii) LPA_Q \u003e= 0.85 * Louvain_Q_median, where Louvain_Q_median is the median of K=10 networkx louvain_communities runs at seeds 0..9 and gamma=1.0, LPA_Q is the single deterministic run of the shipped LPA, both over the confident subgraph (EXTRACTED union INFERRED) as an undirected unweighted projection IF either pinned repo fails any of the three clauses",
+      "then": "A3 communities SHALL be cut from v2.0.0 and deferred to v2.1, shipping A2 god nodes only, never adopting networkx or Louvain as a dependency",
+      "verify_method": "acceptance-criteria.md#AC-A3-4 (frozen sha256:5c3adddbd075) — artefact: probe-lpa-vs-louvain.md records the per-repo numeric comparison and the resulting proceed-LPA-or-cut-to-v2.1 verdict; a source-verified-structured repo failing clause (i) is a construction FAIL that cuts A3 (not a repo swap); networkx runs only in a probe-time scratch venv, preserving AC-NEG-2 (DIR-1: networkx flip deleted; AC-NEG-2 stays absolute; SHAs solidusio/solidus@4026945d614e81383c007ed1ab1278a0195ce5d9 and spree/spree@6699cde44303ea85ef6e56c5e87c44a738ab73fc)"
+    },
+    {
+      "id": "AC-A3-5",
+      "given": "v2.0.0 is assembled for release IF any A3 community code exists in the tree while the probe verdict artefact does not record PASS on both pinned repos",
+      "then": "the harden-gate CI job SHALL fail the build",
+      "verify_method": "acceptance-criteria.md#AC-A3-5 (frozen sha256:5c3adddbd075) — ci: .github/workflows/harden-gate.yml asserts (probe verdict == PASS, i.e. AC-A3-4's three-clause rule holds independently on both Solidus and Spree) OR (no communities module/verb present); mechanical cut-branch per DIR-1 ## Track A4 — Rationale nodes"
+    },
+    {
+      "id": "AC-A4-1",
+      "given": "a Ruby source file containing a recognized rationale-prefixed comment",
+      "when": "it is indexed",
+      "then": "a rationale node SHALL be created for that comment with a rationale_for edge to its enclosing scope",
+      "verify_method": "acceptance-criteria.md#AC-A4-1 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_rationale.py::test_ruby_rationale_node_and_edge"
+    },
+    {
+      "id": "AC-A4-2",
+      "given": "a Python or JS/TS source file containing a recognized rationale-prefixed comment",
+      "when": "it is indexed",
+      "then": "a rationale node SHALL be created for that comment, ported from the graphify prefix set",
+      "verify_method": "acceptance-criteria.md#AC-A4-2 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_rationale.py::test_python_and_jsts_rationale_nodes"
+    },
+    {
+      "id": "AC-A4-3",
+      "given": "a JS/TS comment referencing an ADR or RFC identifier",
+      "when": "it is indexed",
+      "then": "the rationale node SHALL carry the canonicalized ADR/RFC label",
+      "verify_method": "acceptance-criteria.md#AC-A4-3 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_rationale.py::test_jsts_adr_rfc_promotion (ports extract.py:1087)"
+    },
+    {
+      "id": "AC-A4-4",
+      "then": "rationale nodes SHALL be excluded from cross-file symbol resolution so they never form false symbol links",
+      "verify_method": "acceptance-criteria.md#AC-A4-4 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_rationale.py::test_rationale_excluded_from_resolution"
+    },
+    {
+      "id": "AC-A4-5",
+      "given": "scss, html, yaml, markdown, or bash files are indexed IF they contain comment-like content",
+      "then": "no rationale node SHALL be created for those markup/config languages",
+      "verify_method": "acceptance-criteria.md#AC-A4-5 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_rationale.py::test_no_rationale_for_markup_config_langs"
+    },
+    {
+      "id": "AC-A4-6",
+      "then": "rationale_for edges SHALL live in a separate rationale relation defined by the H3 epoch substrate DDL, carrying no confidence enum value, so A4 depends only on H3 and not on A1 edge resolution",
+      "verify_method": "acceptance-criteria.md#AC-A4-6 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_schema_epoch.py::test_rationale_relation_separate_no_confidence (resolves F9; edge-store folded into H3) ## Track A5 — Deterministic export/import"
+    },
+    {
+      "id": "AC-A5-1",
+      "given": "a built v2 graph",
+      "when": "it is exported",
+      "then": "the output SHALL be canonical JSONL with one record per line, sorted keys, fixed float formatting, and LF line endings",
+      "verify_method": "acceptance-criteria.md#AC-A5-1 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_export.py::test_canonical_jsonl_shape"
+    },
+    {
+      "id": "AC-A5-2",
+      "given": "a graph exported from a repository",
+      "when": "the export is written",
+      "then": "all path keys SHALL be repository-relative so the artefact re-anchors on load",
+      "verify_method": "acceptance-criteria.md#AC-A5-2 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_export.py::test_relative_path_keys_reanchor"
+    },
+    {
+      "id": "AC-A5-3",
+      "then": "two exports of an identical source tree on the same machine SHALL be byte-identical",
+      "verify_method": "acceptance-criteria.md#AC-A5-3 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_export.py::test_export_byte_identical_for_identical_input"
+    },
+    {
+      "id": "AC-A5-4",
+      "given": "a canonical JSONL export",
+      "when": "it is imported on a cold start",
+      "then": "the importer SHALL reproduce a valid current-epoch DB that passes an integrity check, idempotently on repeat import",
+      "verify_method": "acceptance-criteria.md#AC-A5-4 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_export.py::test_import_roundtrip_idempotent"
+    },
+    {
+      "id": "AC-A5-5",
+      "then": "v2.0.0 SHALL ship no graph or union merge driver, while a trivial regenerate-on-conflict driver is permitted, and the documented conflict workflow SHALL be to regenerate from source",
+      "verify_method": "acceptance-criteria.md#AC-A5-5 (frozen sha256:5c3adddbd075) — grep/test: no nx.compose-style graph/union merge shipped; a regenerate-on-conflict driver is allowed even if it registers git config merge.\u003cx\u003e.driver (narrowed per the AC-A5-5 nit)"
+    },
+    {
+      "id": "AC-A5-6",
+      "given": "a JSONL export",
+      "when": "the header record is read",
+      "then": "it SHALL carry the schema-epoch and a content hash of the export body",
+      "verify_method": "acceptance-criteria.md#AC-A5-6 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_export.py::test_header_record_epoch_and_content_hash"
+    },
+    {
+      "id": "AC-A5-7",
+      "given": "the same graph is built with records inserted in a shuffled order",
+      "when": "it is exported",
+      "then": "the exporter SHALL emit records in an explicit canonical order independent of rowid or insertion order",
+      "verify_method": "acceptance-criteria.md#AC-A5-7 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_export.py::test_record_level_canonical_order_independent_of_rowid (ORDER BY type,path,line,name,...; resolves F8, same-machine)"
+    },
+    {
+      "id": "AC-A5-8",
+      "then": "source-file iteration SHALL be deterministically sorted rather than filesystem-order rglob",
+      "verify_method": "acceptance-criteria.md#AC-A5-8 (frozen sha256:5c3adddbd075) — test: mcp-server/tests/test_codegraph.py::test_source_file_iteration_sorted (fixes codegraph.py:336 unsorted rglob; foundation for byte-determinism per F8) ## Track REL — D6 cross-platform release blocker"
+    },
+    {
+      "id": "AC-REL-1",
+      "given": "the same source tree is exported on macOS and on Linux in the CI OS matrix IF the two exports are not byte-identical",
+      "then": "the CI OS-matrix job SHALL fail so the release cannot proceed until cross-platform byte-determinism is restored",
+      "verify_method": "acceptance-criteria.md#AC-REL-1 (frozen sha256:5c3adddbd075) — ci: .github/workflows/ci.yml OS-matrix job diffs the two exports; a mismatch fails the job (release blocking is the job plus operator branch protection as defence-in-depth)"
+    },
+    {
+      "id": "AC-REL-2",
+      "given": "the larger pinned reference repo (Spree @ 6699cde44303ea85ef6e56c5e87c44a738ab73fc) is exported once at P3",
+      "when": "the export completes",
+      "then": "its size SHALL be recorded into the probe or a sibling artefact and asserted below 104857600 bytes",
+      "verify_method": "acceptance-criteria.md#AC-REL-2 (frozen sha256:5c3adddbd075) — artefact: export size is measured once at P3/release-prep on Spree (the larger repo; owner vivi per V4), recorded into probe-lpa-vs-louvain.md or a sibling export-size artefact, and CI asserts the recorded number against the 100 MB ceiling rather than re-cloning per PR (matches AC-A3-1's measure-once presence pattern; export includes AMBIGUOUS edges, so D4a does not shrink it; tilde dropped per F5)"
+    },
+    {
+      "id": "AC-REL-3",
+      "then": "the atlas-aci version pinned in mcp-server/uv.lock SHALL equal the version in mcp-server/pyproject.toml",
+      "verify_method": "acceptance-criteria.md#AC-REL-3 (frozen sha256:5c3adddbd075) — ci/test: a check asserts the atlas-aci stanza version in mcp-server/uv.lock equals pyproject.toml version (guards the shipped-v0.4.0 defect: git show HEAD:mcp-server/uv.lock:37 = 0.3.1 vs pyproject.toml:3 = 0.4.0) ## Track NEG — Thesis-protecting negatives"
+    },
+    {
+      "id": "AC-NEG-1",
+      "then": "no LLM client SHALL be importable from the atlas_aci server package",
+      "verify_method": "acceptance-criteria.md#AC-NEG-1 (frozen sha256:5c3adddbd075) — test/grep: `grep -rn \"import anthropic\\|import openai\\|import boto3\\|from anthropic\\|from openai\" mcp-server/src` returns zero; test_no_llm_import asserts ImportError-free absence"
+    },
+    {
+      "id": "AC-NEG-2",
+      "then": "networkx SHALL NOT appear anywhere in the resolved dependency tree, absolutely and unconditionally",
+      "verify_method": "acceptance-criteria.md#AC-NEG-2 (frozen sha256:5c3adddbd075) — cmd: `grep -i networkx mcp-server/pyproject.toml mcp-server/uv.lock` returns zero matches (DIR-1: no D3 flip can change this; a below-threshold probe cuts A3, it does not add networkx). NOTE: the D3a probe computes the Louvain baseline WITH networkx, but only inside an ephemeral throwaway environment (uvx or a scratch venv) that never touches pyproject.toml or uv.lock; a `uv add networkx` would detonate this criterion, so the probe MUST keep networkx out of the package deps and lockfile"
+    },
+    {
+      "id": "AC-NEG-3",
+      "then": "AMBIGUOUS SHALL be produced only by the deterministic candidate-count-greater-than-one rule, never by any LLM path",
+      "verify_method": "acceptance-criteria.md#AC-NEG-3 (frozen sha256:5c3adddbd075) — test/grep: no LLM producer of AMBIGUOUS exists; test_confidence.py::test_ambiguous_producer_is_deterministic_only"
+    },
+    {
+      "id": "AC-NEG-4",
+      "then": "the migration path SHALL contain no ALTER TABLE ladder",
+      "verify_method": "acceptance-criteria.md#AC-NEG-4 (frozen sha256:5c3adddbd075) — grep: `grep -rni \"alter table\" mcp-server/src` returns zero matches"
+    },
+    {
+      "id": "AC-NEG-5",
+      "then": "v2.0.0 SHALL add no new runtime dependency beyond the v0.4.0 core set",
+      "verify_method": "acceptance-criteria.md#AC-NEG-5 (frozen sha256:5c3adddbd075) — cmd: diff of mcp-server/pyproject.toml core dependencies shows only the version bump, no added runtime package (the [dev] extras already ship pytest/ruff/mypy, so H0 adds none)"
+    },
+    {
+      "id": "AC-NEG-6",
+      "given": "the committed harden-gate workflow at .github/workflows/harden-gate.yml IF an augmentation A1-A5 path is modified while any hardening check is absent or failing",
+      "then": "the harden-gate job SHALL fail the build regardless of branch-protection settings",
+      "verify_method": "acceptance-criteria.md#AC-NEG-6 (frozen sha256:5c3adddbd075) — ci: .github/workflows/harden-gate.yml is the in-tree mechanism (DIR-3); a probe augmentation PR against a red gate fails the job; branch protection is documented defence-in-depth only"
+    },
+    {
+      "id": "AC-NEG-7",
+      "then": "AMBIGUOUS edges SHALL NOT contribute to degree-centrality god-node ranking nor to community membership",
+      "verify_method": "acceptance-criteria.md#AC-NEG-7 (frozen sha256:5c3adddbd075) — test/grep: mcp-server/tests/test_confidence.py::test_ambiguous_excluded_from_analysis_graph asserts no ambiguity-as-importance (no fan-out to candidates, no fractional-weight injection); god_nodes and communities consume only the confident subgraph (EXTRACTED union INFERRED) per D4a"
+    }
+  ],
+  "spec_ref": "spec.md",
+  "created_at": "2026-07-09T18:26:43Z",
+  "has_code": true,
+  "memory_preflight": {
+    "ran": true,
+    "records": 0
+  }
+}

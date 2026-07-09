@@ -1,0 +1,408 @@
+{
+  "schema": "ramza/plan-state.v1",
+  "plan": "aci-v2-harden-and-augment",
+  "created_at": "2026-07-09T18:26:43Z",
+  "tier": "full",
+  "phase": "A",
+  "phases_done": [
+    "RS",
+    "S",
+    "P",
+    "E",
+    "C",
+    "T",
+    "R",
+    "T",
+    "A"
+  ],
+  "rightsize": {
+    "score": 8,
+    "computed_tier": "full",
+    "inputs": {
+      "files_est": 22,
+      "new_dep": false,
+      "public_api": true,
+      "migration": true,
+      "security": true,
+      "novel": true,
+      "stakes": "high",
+      "files_touched": 22,
+      "rubric_score": 10,
+      "tradeoff_present": true
+    }
+  },
+  "refine_cycles": 1,
+  "skips": [],
+  "gates": [
+    {
+      "rubric": "complexity",
+      "total": 10,
+      "dims": {
+        "scope": 3,
+        "ambiguity": 2,
+        "dependencies": 3,
+        "risk": 2
+      },
+      "verdict": "human_loop",
+      "at": "2026-07-09T18:49:49Z",
+      "label": "aci-v2 scope complexity"
+    },
+    {
+      "rubric": "explore",
+      "total": 87.5,
+      "dims": {
+        "alignment": 10,
+        "correctness": 9,
+        "maintainability": 9,
+        "performance": 8,
+        "simplicity": 9,
+        "risk": 8,
+        "innovation": 4
+      },
+      "verdict": "elite",
+      "at": "2026-07-09T18:49:49Z",
+      "label": "H-A: encode FORGE constraint-graph spine (P0 gate -> P1 -> P2 -> P3)"
+    },
+    {
+      "rubric": "explore",
+      "total": 41.5,
+      "dims": {
+        "alignment": 3,
+        "correctness": 3,
+        "maintainability": 5,
+        "performance": 6,
+        "simplicity": 7,
+        "risk": 3,
+        "innovation": 3
+      },
+      "verdict": "weak",
+      "at": "2026-07-09T18:49:49Z",
+      "label": "H-B: collapse hardening into feature phases (REJECTED: breaks GATED harden-first)"
+    },
+    {
+      "rubric": "explore",
+      "total": 40.5,
+      "dims": {
+        "alignment": 3,
+        "correctness": 3,
+        "maintainability": 4,
+        "performance": 7,
+        "simplicity": 6,
+        "risk": 2,
+        "innovation": 5
+      },
+      "verdict": "weak",
+      "at": "2026-07-09T18:49:49Z",
+      "label": "H-C: fully parallelize A1-A5 after gate (REJECTED: violates D6 total-order + G-B edges-first)"
+    },
+    {
+      "rubric": "confidence",
+      "total": 84.75,
+      "dims": {
+        "pattern_match": 88,
+        "requirement_clarity": 82,
+        "decomposition_stability": 85,
+        "constraint_compliance": 84
+      },
+      "verdict": "VALIDATE",
+      "at": "2026-07-09T18:55:31Z",
+      "label": "aci-v2 assemble confidence"
+    },
+    {
+      "rubric": "refine",
+      "cycle": 1,
+      "total": 4.4,
+      "min": 4,
+      "dims": {
+        "clarity": 4,
+        "completeness": 5,
+        "actionability": 4,
+        "efficiency": 4,
+        "testability": 5
+      },
+      "verdict": "pass",
+      "at": "2026-07-09T19:40:24Z",
+      "label": "refine cycle 1: apply checker-critique F1-F18 + DIR-1/2/3"
+    },
+    {
+      "rubric": "confidence",
+      "total": 87.75,
+      "dims": {
+        "pattern_match": 90,
+        "requirement_clarity": 85,
+        "decomposition_stability": 88,
+        "constraint_compliance": 88
+      },
+      "verdict": "AUTO_PROCEED",
+      "at": "2026-07-09T19:45:44Z",
+      "label": "aci-v2 assemble confidence (post-checker, F1-F18+DIR applied)"
+    }
+  ],
+  "amendments": [
+    {
+      "prev": "8ef9f67e0efdc45141d7556cced0994ecb6cac14b9b6b4c4b92c385de6acda3b",
+      "new": "d291f7287d9346369427a339888208c41fc97e5076766a834c7e0b8e74c1a688",
+      "reason": "refine cycle 1: applied checker-critique.md F1-F18 + orchestrator DIR-1 (networkx flip deleted, A3 cut-to-v2.1), DIR-2 (serve never mutates .atlas; sweep/rebuild index-only), DIR-3 (in-tree harden-gate.yml is the gate mechanism); 57 -> 67 criteria",
+      "at": "2026-07-09T19:45:44Z"
+    },
+    {
+      "prev": "d291f7287d9346369427a339888208c41fc97e5076766a834c7e0b8e74c1a688",
+      "new": "f89400c426f56871eb30ea15253a9105e3d24c7705dbbfa695fe30368b939994",
+      "reason": "orchestrator correction: F14 confirmed against committed blob (git show HEAD:mcp-server/uv.lock:37 = 0.3.1 vs pyproject.toml:3 = 0.4.0, live v0.4.0 defect); added AC-REL-3 asserting uv.lock version == pyproject version; 67 -> 68 criteria",
+      "at": "2026-07-09T19:51:49Z"
+    },
+    {
+      "prev": "f89400c426f56871eb30ea15253a9105e3d24c7705dbbfa695fe30368b939994",
+      "new": "5c3adddbd075a7c12bdd965ee760484a04e5a9a6a4ce05302cbd7bc4147fc7e7",
+      "reason": "amendment 2: FORGE D3a/D4a by-ID change list (deliberation-amendment-d3a-d4a.md) applied verbatim + AC-H-18 truncate-iff-content-withheld invariant + SCOPE-1/SCOPE-2 reconciliation (checker-verdict-p0.md); maintainer R=0.85; V1 resolved to two pinned SHAs (v1-reference-repo.md); 68 -> 71 criteria",
+      "at": "2026-07-09T22:45:31Z"
+    }
+  ],
+  "declared_scope": [
+    ".github/workflows/ci.yml",
+    ".github/workflows/harden-gate.yml",
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/src/atlas_aci/server.py",
+    "mcp-server/src/atlas_aci/enforcement.py",
+    "mcp-server/src/atlas_aci/config.py",
+    "mcp-server/src/atlas_aci/memex.py",
+    "mcp-server/src/atlas_aci/__main__.py",
+    "mcp-server/src/atlas_aci/__init__.py",
+    "mcp-server/src/atlas_aci/export.py",
+    "mcp-server/src/atlas_aci/tools/search_symbol.py",
+    "mcp-server/src/atlas_aci/tools/graph_query.py",
+    "mcp-server/src/atlas_aci/tools/view_file.py",
+    "mcp-server/tests/*.py",
+    "mcp-server/pyproject.toml",
+    "mcp-server/uv.lock",
+    "mcp-server/Dockerfile",
+    "mcp-server/README.md",
+    "README.md",
+    "INTEGRATION.md",
+    "SETUP.md",
+    "CLAUDE.md",
+    "CHANGELOG.md",
+    "scripts/run-canaries.py",
+    "scripts/harden-gate-classify.sh",
+    "scripts/test-harden-gate-classify.sh",
+    "LICENSE",
+    ".gitignore"
+  ],
+  "criteria_sha256": "5c3adddbd075a7c12bdd965ee760484a04e5a9a6a4ce05302cbd7bc4147fc7e7",
+  "critic": {
+    "author": "ramza",
+    "checker": "vigil",
+    "at": "2026-07-09T19:45:44Z"
+  },
+  "criteria_frozen_at": "2026-07-09T22:39:06Z",
+  "scope_declared_at": "2026-07-09T22:54:38Z",
+  "rubric_arithmetic": {
+    "complexity": {
+      "dims": {
+        "scope": 3,
+        "ambiguity": 2,
+        "dependencies": 3,
+        "risk": 2
+      },
+      "total": 10,
+      "verdict": "human_loop",
+      "note": "scope 3 (5 augment + 5 harden workstreams + 8 doc items across ~22 files); ambiguity 2 (D1-D6 settled; residual D3 probe + D6 cross-platform); dependencies 3 (H0->H1->H2->GATE; D1 gates all; A1->A3->A5 total-order, tightest coupling); risk 2 (G-A derived DB de-risks migration; one hard blocker D6 explicitly gated)"
+    },
+    "confidence": {
+      "dims": {
+        "pattern_match": 90,
+        "requirement_clarity": 85,
+        "decomposition_stability": 88,
+        "constraint_compliance": 88
+      },
+      "total": 87.75,
+      "verdict": "AUTO_PROCEED",
+      "note": "re-scored at Assemble after vigil GO-WITH-CONDITIONS + F1-F18/DIR-1/2/3 applied; residual [VERIFY] (reference repo, cross-platform determinism) are now mechanically bounded."
+    }
+  },
+  "selected_hypothesis": "H-A (encode FORGE constraint-graph spine) — explore elite 87.5; rejected H-B collapse-hardening (weak 41.5), H-C full-parallel (weak 40.5)",
+  "phase_spine": [
+    {
+      "phase": "P0",
+      "name": "Hardening gate (GATED; in-tree harden-gate.yml is the mechanism — DIR-3)",
+      "workstreams": [
+        "H0 — CI: pytest + ruff + mypy on every PR (.github/workflows/ci.yml)",
+        "H0b — committed harden-gate.yml: fails when an A1-A5 path changes while hardening checks are absent/failing (DIR-3/F3)",
+        "H1 — central bounds chokepoint in _call_tool (element-cap + byte-ceiling; _bounded_field registry)",
+        "H2 — route search_symbol + graph_query through H1 + over-cap-per-tool/verb test + registry-completeness test (F2)",
+        "H3 — schema-epoch DB path .atlas/graph.<epoch>.db + EXPECTED_DDL_HASH pairing (F1) + sweep/rebuild INDEX-PATH ONLY + serve fail-fast (DIR-2/F16) + atomic-rename single-writer (F17) + rationale-store DDL (F9)",
+        "H4 — silent-dead-language honesty (LANG_BY_EXT<->QUERIES) + kind-enum honesty",
+        "DOC — repo-wide doc-honesty batch (F11/F12/F13) + add LICENSE"
+      ],
+      "blocking_preconditions": [],
+      "exit_gate": "ALL THREE green: CI-runs-tests-on-PR (AC-H-1) AND over-cap+registry+truncation-invariant cap tests (AC-H-4, AC-H-7, AC-H-8, AC-H-15, AC-H-18 - no no-op cap passes; AC-H-18 pins the truncate-iff-content-withheld invariant the P0 F-1/NEW-1 defect class violated) AND epoch-substrate+DDL-hash (AC-H-9, AC-H-12). harden-gate.yml enforces in-tree; branch protection is defence-in-depth.",
+      "gate_criteria": [
+        "AC-H-1",
+        "AC-H-4",
+        "AC-H-7",
+        "AC-H-8",
+        "AC-H-9",
+        "AC-H-12",
+        "AC-H-15",
+        "AC-H-18",
+        "AC-NEG-6"
+      ]
+    },
+    {
+      "phase": "P1",
+      "name": "Edges + god nodes",
+      "workstreams": [
+        "A1 — materialize call/inheritance edge table + deterministic confidence enum {EXTRACTED/INFERRED/AMBIGUOUS} + ordered candidates[] + subclasses_of via real inheritance edges + refs.enclosing DROP (caller-context from edge source) + per-language type-qualified rule (F18)",
+        "A2 - degree-centrality god nodes over the CONFIDENT subgraph (EXTRACTED union INFERRED; AMBIGUOUS excluded from degree, D4a), zero-dep; responses carry analysis_basis/ambiguous_edges_excluded/resolved_edge_count (AC-A2-3)"
+      ],
+      "blocking_preconditions": [
+        "P0 harden-gate green (all three)",
+        "H3 epoch substrate landed",
+        "A2 blocked on A1 (degree = edge count; G-B: no real edges today, verified by vigil)"
+      ],
+      "exit_gate": "edge/confidence tests green (AC-A1-1..11); god-node determinism test green (AC-A2-1); analysis-basis visibility fields present on god_nodes/communities (AC-A2-3)."
+    },
+    {
+      "phase": "P2",
+      "name": "Communities + rationale (A3 conditional — DIR-1)",
+      "workstreams": [
+        "A3 - hand-rolled deterministic LPA communities over the confident subgraph (AMBIGUOUS never fanned out, D4a), total-ordered IDs (zero-dep) OR cut to v2.1 if the D3a probe fails",
+        "A4 — rationale nodes Ruby -> Python -> JS/TS (parallel; rationale-store DDL folded into H3, edge-resolution-independent)"
+      ],
+      "blocking_preconditions": [
+        "A3 blocked on A1 (trustworthy edges) + A2 (ordered first) + the D3 evidence probe (HARD, MECHANICAL: harden-gate.yml fails if an A3 path changes without probe-lpa-vs-louvain.md — AC-A3-1)",
+        "DIR-1/D3a branch (pre-registered, anti-circular): pass per repo iff Louvain_Q_median>=0.30 AND LPA_Q>=0.30 AND LPA_Q>=0.85*Louvain_Q_median (Q_struct=0.30, R=0.85 maintainer-confirmed; Louvain baseline = median of K=10 networkx louvain_communities at seeds 0..9, gamma=1.0; LPA = shipped single deterministic run; both over the confident-subgraph undirected unweighted projection), evaluated INDEPENDENTLY on solidus@4026945d AND spree@6699cde4, never averaged; either repo failing any clause => A3 CUT to v2.1, ship A2 only, NEVER networkx/Louvain (AC-A3-4/AC-A3-5; AC-NEG-2 absolute; networkx runs probe-time-only in an ephemeral env, never in pyproject/uv.lock)",
+        "A4 blocked on P0 gate + H3 only (rationale store in H3 substrate; independent of A1 edge resolution — F9)",
+        "D4a: AMBIGUOUS edges excluded from the A2/A3/probe analysis graph but still returned by graph_query (AC-A2-3 visibility fields, AC-NEG-7 no ambiguity-as-importance, AC-A1-10 DSL divergence); AC-A1-2/AC-A1-5 preserved (analysis-time filter, not a drop)"
+      ],
+      "exit_gate": "LPA determinism + total-order test green (AC-A3-2) OR mechanical cut-branch (AC-A3-4/5); analysis-basis fields on communities (AC-A2-3); rationale tests green (AC-A4-1..6)."
+    },
+    {
+      "phase": "P3",
+      "name": "Export + release",
+      "workstreams": [
+        "A5 — deterministic sorted canonical JSONL export (record-level ORDER BY + sorted _iter_source_files — F8) + idempotent import (NO graph/union merge driver; trivial regenerate-on-conflict permitted)",
+        "Release-prep — version bump 2.0.0, uv.lock regen (F14), CHANGELOG, migration/upgrade doc, canary-honesty"
+      ],
+      "blocking_preconditions": [
+        "A5 blocked on A1, A3 (or its cut), A4 frozen (export freezes the on-disk contract LAST; D6 forces total orders on A3 IDs + A1 candidates + A5 records)",
+        "RELEASE BLOCKER: D6 cross-platform byte-determinism (AC-REL-1); same-machine record-order checks (AC-A5-7/8) catch it first"
+      ],
+      "exit_gate": "cross-platform byte-determinism green on CI OS matrix (AC-REL-1); round-trip idempotent import green (AC-A5-4)."
+    }
+  ],
+  "verify_items": [
+    {
+      "id": "V1",
+      "item": "Reference Rails-scale repo(s) for the D3 probe + AC-REL-2 export-size (F5) - RESOLVED to two SHA-pinned public BSD-3 repos; D3a pass rule frozen before the probe runs (anti-circularity)",
+      "resolver": "ATLAS (v1-reference-repo.md): solidusio/solidus@4026945d614e81383c007ed1ab1278a0195ce5d9 + spree/spree@6699cde44303ea85ef6e56c5e87c44a738ab73fc; rule Q_struct=0.30, R=0.85, median K=10 seeds 0..9 gamma=1.0 Louvain baseline vs shipped single-run LPA over the confident subgraph, per repo. Probe RUN still pending (executor: ATLAS)",
+      "gates": "P2/A3 + P3/REL",
+      "status": "RESOLVED (pending probe run)"
+    },
+    {
+      "id": "V2",
+      "item": "Independent plan critic (full-tier maker!=checker)",
+      "resolver": "vigil critiqued this plan (checker-critique.md); recorded via ramza-gate critic --author ramza --checker vigil",
+      "gates": "Assemble entry",
+      "status": "RESOLVED"
+    },
+    {
+      "id": "V3",
+      "item": "Cross-platform byte-determinism (macOS vs Linux) — unverifiable single-OS",
+      "resolver": "vivi + CI OS matrix",
+      "gates": "P3 release blocker (AC-REL-1)",
+      "status": "open"
+    },
+    {
+      "id": "V4",
+      "item": "Rails-scale export size vs 100 MB (104857600 bytes) ceiling — unmeasured",
+      "resolver": "vivi",
+      "gates": "P3 (AC-REL-2)",
+      "status": "open"
+    },
+    {
+      "id": "V5",
+      "item": "ESL change.json acceptance_checks:[] + amended criteria SHA-256 must be threaded into the ESL manifest at handoff",
+      "resolver": "orchestrator (stated: 'I will thread the manifest'); change.json left ESL-owned/untouched",
+      "gates": "ESL deliberated -> in_progress",
+      "status": "open"
+    }
+  ],
+  "stopped_at": {
+    "phase": "A",
+    "reason": "Assemble reached; independent critic recorded (ramza/vigil, V2 resolved). Amendment 2 applied and re-frozen: FORGE D3a/D4a by-ID change list + AC-H-18 (truncate-iff-withheld) + SCOPE-1/SCOPE-2 reconciliation; 68 -> 71 criteria; V1 resolved (two pinned SHAs). Remaining opens: V3 (cross-platform byte-determinism), V4 (export size on Spree), V5 (orchestrator threads change.json)."
+  },
+  "ac_counts": {
+    "total": 71,
+    "H": 18,
+    "DOC": 10,
+    "A1": 11,
+    "A2": 3,
+    "A3": 5,
+    "A4": 6,
+    "A5": 8,
+    "REL": 3,
+    "NEG": 7
+  },
+  "amendment_source": {
+    "checker": "checker-critique.md (vigil GO-WITH-CONDITIONS)",
+    "directives": [
+      "DIR-1 networkx-absolute/A3-cut-to-v2.1",
+      "DIR-2 serve-never-mutates-.atlas/index-only-sweep",
+      "DIR-3 in-tree-harden-gate.yml"
+    ],
+    "findings_applied": "F1-F18 + AC-A5-5 nit"
+  },
+  "corrections": [
+    {
+      "at": "2026-07-09T19:51:49Z",
+      "source": "orchestrator",
+      "item": "F14 uv.lock version drift",
+      "verified": "git show HEAD:mcp-server/uv.lock:37 == version = \"0.3.1\"; pyproject.toml:3 == 0.4.0",
+      "action": "reverted my working-tree-based sub-claim; F14 disposition -> applied; added AC-REL-3 (uv.lock==pyproject)"
+    }
+  ],
+  "amendment_2": {
+    "at": "2026-07-09T22:39:06Z",
+    "source": [
+      "deliberation-amendment-d3a-d4a.md (FORGE D3a/D4a; exact by-ID change list applied verbatim)",
+      "checker-verdict-p0.md (vigil P0 second pass: SCOPE-1/SCOPE-2, NEW-1/2/3, R-1, test_dry_run residual)",
+      "v1-reference-repo.md (ATLAS: two pinned SHAs; AC-REL-2 measure-once-on-Spree pattern)",
+      "maintainer: R=0.85 (midpoint of the principled band [0.80, 0.90])"
+    ],
+    "changes": "D3a: preamble two-part pre-registered rule (Q_struct=0.30/R=0.85/K=10/seeds 0..9/gamma=1.0/median/confident-subgraph undirected unweighted); AC-A3-1 strengthen (content schema + verdict==eval + ephemeral networkx); AC-A3-2/AC-A3-3 clarify (shipped LPA over confident subgraph); AC-A3-4 REPLACE (three-clause per-repo rule, both SHAs); AC-A3-5 (PASS on both repos); AC-REL-2 (measure once at P3 on Spree, recorded-number check). D4a: AC-A2-1 amend (degree over confident subgraph); AC-A2-3 NEW (analysis_basis/ambiguous_edges_excluded/resolved_edge_count); AC-A1-10 extend (DSL divergence); AC-NEG-7 NEW (no ambiguity-as-importance); AC-A1-2/AC-A1-5 preserved (analysis-time filter, not a drop). AC-H-18 NEW (truncation-signal iff content withheld; no cursor past EOF; boundary test at cap-1/cap/cap+1/past-end, expected values independent of impl - pins the F-1/NEW-1 proxy-vs-invariant defect class). AC-NEG-2 ephemeral-networkx trap note (probe runs networkx in uvx/throwaway venv, never in pyproject/uv.lock). SCOPE-1 memex.py moved into P0 scope (AC-H-16 :ro mkdir fail-open); SCOPE-2 test_thesis_negatives.py declared. V1 resolved (two pinned SHAs).",
+    "count_delta": "68 -> 71 (+AC-H-18, +AC-A2-3, +AC-NEG-7)",
+    "gate_criteria_delta": "added AC-H-18 to P0 gate_criteria (the invariant the gate exists to certify; vigil's F-1 NO-GO ruling treats it as gate-level)"
+  },
+  "drift_reports": [
+    {
+      "at": "2026-07-09T22:46:32Z",
+      "range": "f56a78e..HEAD",
+      "files_changed": 24,
+      "uncovered": [
+        "mcp-server/src/atlas_aci/tools/view_file.py"
+      ]
+    },
+    {
+      "at": "2026-07-09T22:47:50Z",
+      "range": "f56a78e..HEAD",
+      "files_changed": 24,
+      "uncovered": []
+    },
+    {
+      "at": "2026-07-09T22:54:24Z",
+      "range": "f56a78e..HEAD",
+      "files_changed": 26,
+      "uncovered": [
+        "scripts/harden-gate-classify.sh",
+        "scripts/test-harden-gate-classify.sh"
+      ]
+    },
+    {
+      "at": "2026-07-09T22:54:38Z",
+      "range": "f56a78e..HEAD",
+      "files_changed": 26,
+      "uncovered": []
+    }
+  ]
+}
