@@ -7,8 +7,15 @@ suitable for CI gating.
 
 This is a thin orchestrator. The actual host dispatch is pluggable —
 implement an adapter for your host (Claude Code via API, Copilot via
-GitHub Action, Cursor via headless mode) under the `dispatchers/`
-namespace and select with `--host`.
+GitHub Action, Cursor via headless mode) and select it with `--host`.
+
+DEFERRED IN v2.0.0 (doc-honesty batch, AC-DOC-3): no real dispatcher is
+implemented yet. `--host stub` (the default and only wired choice) uses
+`StubDispatcher`, whose `dispatch()` deliberately raises
+`NotImplementedError` — see below. Any other `--host` value raises the same
+in `main()`. There is therefore no canary pass-rate to quote against a real
+host today; do not cite one in docs until a real dispatcher lands. The
+sketched adapters below (Claude Code API, etc.) are comments, not code.
 
 Usage:
   uv run python scripts/run-canaries.py \\
@@ -78,7 +85,11 @@ class HostDispatcher(Protocol):
 
 
 class StubDispatcher:
-    """Reference dispatcher that does nothing — replace with a real adapter."""
+    """Reference dispatcher that does nothing — replace with a real adapter.
+
+    DEFERRED IN v2.0.0: this is the only wired dispatcher today. There is no
+    real host adapter, so there is no canary pass-rate to report yet.
+    """
 
     def dispatch(self, mission_md: str, repo: Path) -> dict[str, Any]:
         raise NotImplementedError(

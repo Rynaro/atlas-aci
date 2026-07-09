@@ -1,0 +1,231 @@
+# atlas-aci — the harden-gate (DIR-3 / AC-NEG-6)
+#
+# This is the IN-TREE mechanism for "no augmentation (A1-A5) code merges
+# until the P0 hardening gate is green" (spec.md "GATED harden-first").
+# Branch protection / required-status-checks are documented defence-in-depth
+# ONLY — repo settings are not a reviewable artefact and this suite cannot
+# assert them (checker-critique.md F3). This workflow is: it runs on every
+# PR, it is reviewable in the diff, and it fails the check run under the
+# conditions below regardless of what branch-protection is or isn't
+# configured. Making it a REQUIRED status check (so a red run blocks the
+# merge button) is the one piece of config the repo operator must still do;
+# that is the "defence-in-depth" half, not the mechanism itself.
+#
+# What this job checks, in order:
+#   1. Absolute thesis negatives (AC-NEG-1, AC-NEG-2, AC-NEG-4) — always,
+#      regardless of what changed. Cheap, unconditional, no dependency on
+#      diff detection.
+#   2. IF this PR's diff touches an augmentation (A1-A5) marker path —
+#      either a file that can ONLY exist because A1-A5 landed, or an
+#      augmentation-specific code marker added to one of the shared hot
+#      files (codegraph.py / graph_query.py / search_symbol.py / server.py)
+#      — THEN the P0 gate-criteria tests (AC-H-4/7/8/15, AC-H-9/12) must
+#      exist and pass. Missing or failing any of them fails this job
+#      (AC-NEG-6).
+#   3. IF an A3 (communities) path changed, the D3 probe verdict artefact
+#      must be present (AC-A3-1); IF A3 code exists in the tree at all, the
+#      probe verdict must record PASS, never a cut-to-v2.1 or absent verdict
+#      (AC-A3-4/AC-A3-5) — the mechanical cut-branch never adds networkx.
+#
+# KNOWN LIMITATION (documented, not silently swept): codegraph.py,
+# tools/graph_query.py, tools/search_symbol.py, and server.py are touched by
+# BOTH hardening (H1-H4) and every augmentation workstream (A1-A5) —
+# declared-scope.md calls codegraph.py "the hot file". A pure file-path
+# diff cannot perfectly distinguish a hardening edit from an augmentation
+# edit to the same file, so step 2's content-marker heuristic is a
+# best-effort net, not a formal proof, for edits to those four files. The
+# marker-path check in step 2 (new files that literally cannot exist without
+# A1-A5) is exact; the code-marker heuristic is the imperfect half. Tighten
+# the marker list in future phases as A1-A5 land for real.
+
+name: Harden Gate
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  harden-gate:
+    name: harden-gate (DIR-3)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout (full history for diffing)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Absolute thesis negatives (AC-NEG-1, AC-NEG-2, AC-NEG-4)
+        run: |
+          set -euo pipefail
+          fail=0
+
+          if grep -rqi "networkx" mcp-server/pyproject.toml mcp-server/uv.lock 2>/dev/null; then
+            echo "FAIL (AC-NEG-2): networkx found in the dependency tree — absolute and unconditional (DIR-1); a below-threshold D3 probe cuts A3, it never adds networkx."
+            fail=1
+          fi
+
+          if grep -rni "alter table" mcp-server/src 2>/dev/null; then
+            echo "FAIL (AC-NEG-4): an ALTER TABLE migration ladder was found — the DB is pure derived data (D1), no migration ladder is ever permitted."
+            fail=1
+          fi
+
+          if grep -rnE "import anthropic|import openai|import boto3|from anthropic|from openai" mcp-server/src 2>/dev/null; then
+            echo "FAIL (AC-NEG-1): an LLM client is importable from the atlas_aci server package."
+            fail=1
+          fi
+
+          if [ "$fail" -ne 0 ]; then
+            exit 1
+          fi
+          echo "Absolute negatives: clean."
+
+      - name: Compute changed files
+        id: diff
+        run: |
+          set -euo pipefail
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+          git diff --name-only "$BASE_SHA" "$HEAD_SHA" > /tmp/changed_files.txt
+          echo "--- changed files ---"
+          cat /tmp/changed_files.txt
+
+      - name: Detect an augmentation (A1-A5) change
+        id: augmented
+        run: |
+          set -euo pipefail
+
+          # Files that can ONLY exist because an A1-A5 workstream landed —
+          # an exact, not heuristic, signal.
+          AUGMENTATION_MARKER_PATHS="mcp-server/src/atlas_aci/export.py
+          mcp-server/tests/test_confidence.py
+          mcp-server/tests/test_communities.py
+          mcp-server/tests/test_rationale.py
+          mcp-server/tests/test_export.py
+          mcp-server/tests/test_graph_query.py"
+
+          # Shared "hot files" touched by both hardening and every
+          # augmentation workstream (declared-scope.md) — a pure path match
+          # can't disambiguate, so these are only flagged via the content
+          # heuristic below, never by path alone.
+          HOT_FILES="mcp-server/src/atlas_aci/codegraph.py
+          mcp-server/src/atlas_aci/tools/graph_query.py
+          mcp-server/src/atlas_aci/tools/search_symbol.py
+          mcp-server/src/atlas_aci/server.py"
+
+          AUGMENTATION_CODE_MARKERS='EXTRACTED|INFERRED|AMBIGUOUS|god_node|label_propagation|rationale_for|CREATE TABLE IF NOT EXISTS edges'
+
+          augmented=false
+
+          while IFS= read -r f; do
+            [ -z "$f" ] && continue
+            if grep -qxF "$f" <<< "$AUGMENTATION_MARKER_PATHS"; then
+              echo "augmentation marker path changed: $f"
+              augmented=true
+            fi
+          done < /tmp/changed_files.txt
+
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+          while IFS= read -r f; do
+            [ -z "$f" ] && continue
+            if grep -qxF "$f" <<< "$HOT_FILES"; then
+              if git diff "$BASE_SHA" "$HEAD_SHA" -- "$f" | grep -E '^\+' | grep -qE "$AUGMENTATION_CODE_MARKERS"; then
+                echo "augmentation code marker added in $f"
+                augmented=true
+              fi
+            fi
+          done < /tmp/changed_files.txt
+
+          echo "augmented=$augmented" >> "$GITHUB_OUTPUT"
+
+      - name: Install ripgrep
+        if: steps.augmented.outputs.augmented == 'true'
+        run: sudo apt-get update && sudo apt-get install -y ripgrep
+
+      - name: Install uv
+        if: steps.augmented.outputs.augmented == 'true'
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "latest"
+
+      - name: Set up Python
+        if: steps.augmented.outputs.augmented == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: "mcp-server/pyproject.toml"
+
+      - name: Verify the P0 gate criteria are green (AC-NEG-6)
+        if: steps.augmented.outputs.augmented == 'true'
+        working-directory: mcp-server
+        run: |
+          set -euo pipefail
+          echo "Augmentation (A1-A5) change detected in this PR's diff — verifying the P0 harden-gate criteria before allowing it (AC-NEG-6)."
+          uv sync --frozen --extra dev
+          # The exact P0 gate_criteria tests (AC-H-4, AC-H-7, AC-H-8, AC-H-15,
+          # AC-H-9, AC-H-12). Missing (collection error) or failing any of
+          # these fails this job — that's what makes a no-op cap or a
+          # never-bumped epoch structurally block augmentation.
+          uv run --frozen pytest -v \
+            "tests/test_server.py::test_every_tool_and_verb_truncates_and_flags_over_cap" \
+            "tests/test_server.py::test_search_symbol_is_bounded" \
+            "tests/test_server.py::test_graph_query_is_bounded" \
+            "tests/test_server.py::test_every_list_returning_tool_registers_a_bounded_field" \
+            "tests/test_schema_epoch.py::test_db_path_is_epoch_namespaced" \
+            "tests/test_schema_epoch.py::test_expected_ddl_hash_matches_current_ddl"
+
+      - name: No-augmentation short-circuit
+        if: steps.augmented.outputs.augmented != 'true'
+        run: echo "No augmentation (A1-A5) path changed in this diff — harden-gate is a no-op for this PR."
+
+      - name: A3 probe precondition + mechanical cut-branch (AC-A3-1, AC-A3-4, AC-A3-5)
+        run: |
+          set -euo pipefail
+
+          # test_communities.py can ONLY exist because A3 landed — an exact
+          # signal, checked by path alone. codegraph.py / graph_query.py are
+          # shared hot files (H3/H4/A1/A2/A3 all touch them), so — same
+          # reasoning as the augmentation-detection step above — those two
+          # are only flagged via an A3-specific *content* marker actually
+          # added in the diff, never by path alone (that would false-positive
+          # on this very P0 PR, which legitimately edits both for H3/H4).
+          A3_EXCLUSIVE_PATH="mcp-server/tests/test_communities.py"
+          A3_HOT_FILES="mcp-server/src/atlas_aci/codegraph.py
+          mcp-server/src/atlas_aci/tools/graph_query.py"
+          A3_CODE_MARKERS='label_propagation|community_id|LPA|lpa_communities'
+
+          PROBE_ARTIFACT=".spectra/changes/aci-v2-harden-and-augment/probe-lpa-vs-louvain.md"
+
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+
+          a3_touched=false
+          while IFS= read -r f; do
+            [ -z "$f" ] && continue
+            if [ "$f" = "$A3_EXCLUSIVE_PATH" ]; then
+              echo "A3-exclusive path changed: $f"
+              a3_touched=true
+            elif grep -qxF "$f" <<< "$A3_HOT_FILES"; then
+              if git diff "$BASE_SHA" "$HEAD_SHA" -- "$f" | grep -E '^\+' | grep -qE "$A3_CODE_MARKERS"; then
+                echo "A3 code marker added in $f"
+                a3_touched=true
+              fi
+            fi
+          done < /tmp/changed_files.txt
+
+          if [ "$a3_touched" = true ] && [ ! -f "$PROBE_ARTIFACT" ]; then
+            echo "FAIL (AC-A3-1): an A3 (communities) path changed but $PROBE_ARTIFACT is not present. The LPA-vs-Louvain modularity probe and its verdict must be recorded before any A3 source path is touched."
+            exit 1
+          fi
+
+          if [ -f mcp-server/tests/test_communities.py ]; then
+            if [ ! -f "$PROBE_ARTIFACT" ] || ! grep -qiE "verdict.*:.*pass" "$PROBE_ARTIFACT"; then
+              echo "FAIL (AC-A3-4/AC-A3-5): A3 community code exists in the tree but the probe verdict does not record PASS. Per DIR-1, a below-threshold probe cuts A3 to v2.1 (ship A2 god-nodes only) — it never adopts networkx/Louvain."
+              exit 1
+            fi
+          fi
+
+          echo "A3 probe precondition: clean (no A3 code present, or probe verdict recorded PASS)."

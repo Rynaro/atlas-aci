@@ -92,10 +92,10 @@ and can be tightened per deployment.
 | `view_file` | Read a window of lines from a UTF-8 text file. Rejects binaries by extension and by `UnicodeDecodeError`. | ≤100 lines/call, ≤8 KiB/call, `next_cursor` for paging |
 | `list_dir` | List a directory, respecting the skip-list (`node_modules`, `vendor/bundle`, `.git`, `.atlas`, …). | ≤200 entries/call, overflow flag if truncated |
 | `search_text` | Ripgrep-backed regex search over a repo-relative scope or glob. Smart-case by default. | ≤50 matches/call, 15s wall-clock timeout |
-| `search_symbol` | Index-backed symbol lookup. Returns definitions + references for a name (optionally filtered by `kind`). | Requires `atlas-aci index` first; refs capped at 200 |
-| `graph_query` | Tiny DSL over the code graph: `callers_of:Sym`, `definitions_of:Name`, `subclasses_of:Class`. | Returns structured rows; rejects unknown verbs |
+| `search_symbol` | Index-backed symbol lookup. Returns definitions + references for a name (optionally filtered by `kind`). | Requires `atlas-aci index` first; central element cap + byte ceiling (truncated + flagged) |
+| `graph_query` | Tiny DSL over the code graph: `callers_of:Sym`, `definitions_of:Name`, `subclasses_of:Class`. | Rejects unknown verbs; central element cap + byte ceiling (truncated + flagged) |
 | `test_dry_run` | Run one test file (optionally filtered by case name) as a subprocess with captured stdout/stderr. | 30s wall-clock, ≤8 KiB stdout+stderr. **Operator must sandbox.** |
-| `memex_read` | Byte-exact retrieval of a previously captured excerpt. Refs are returned by other tools when they cite source content. | Scoped to the hashed-dir backend |
+| `memex_read` | Byte-exact retrieval of a previously captured excerpt via its `memex://excerpt/<sha256>` ref, minted by `Memex.write()`. No ATLAS tool currently emits one. | Scoped to the hashed-dir backend |
 
 Process-wide: **200 calls/minute** sliding-window rate limit. Every
 call is recorded in telemetry (per-tool count, bytes out, overflow
@@ -170,7 +170,10 @@ language selection, skip-list tuning, keeping the index fresh
 that catch first-time operators.
 
 > **TL;DR** — `atlas-aci index` writes to `<repo>/.atlas/`; add that
-> to your `.gitignore`; re-index incrementally with `--since HEAD~10`;
+> to your `.gitignore`; re-index cheaply with `--since <marker>` (skips
+> files whose `(mtime, size)` are unchanged since the last pass — it does
+> **not** diff a git ref; see
+> [`INTEGRATION.md` §Keep the index fresh](INTEGRATION.md#step-6--keep-the-index-fresh));
 > one server process per repo.
 
 ---
@@ -345,9 +348,13 @@ uv run python scripts/run-canaries.py \
     --output /tmp/canary-results.json
 ```
 
-First-run pass rate of 50–60% is normal; iterate on your skill files
-until ≥80% before promoting to production. See
-[`SETUP.md §7`](SETUP.md#7-run-the-canary-suite).
+**Status: the host dispatcher is not implemented yet.** `--host stub` is the
+only wired option; `StubDispatcher.dispatch()` raises `NotImplementedError`,
+and any other `--host` value raises the same in `main()`. There is no
+canary pass-rate to quote until a real dispatcher (Claude Code API, Copilot
+Action, Cursor headless) is implemented — see the deferred note in
+[`scripts/run-canaries.py`](scripts/run-canaries.py). Wiring one in is
+tracked as follow-up work; see [`SETUP.md §7`](SETUP.md#7-run-the-canary-suite).
 
 ---
 
@@ -381,7 +388,10 @@ atlas-aci/
 │   │       ├── graph_query.py
 │   │       └── test_dry_run.py
 │   └── tests/
-│       └── test_enforcement.py        ← safety invariants
+│       ├── test_enforcement.py        ← safety invariants
+│       ├── test_codegraph.py          ← indexer + language-table honesty
+│       ├── test_server.py             ← central bounds chokepoint (D2)
+│       └── test_schema_epoch.py       ← epoch-namespaced DB substrate (D1)
 │
 ├── hosts/
 │   ├── claude-code.md
@@ -410,7 +420,12 @@ has a corresponding test in
    with `FORBIDDEN`.
 3. **Mechanical bounds.** Line / entry / match / byte caps and the
    sliding-window rate limiter are applied per call in
-   `enforcement.py`. Tools can only narrow bounds, never widen them.
+   `enforcement.py`, plus a central dispatch-layer chokepoint
+   (`server.py`'s `apply_central_bounds`) that element-caps every tool's
+   declared list-valued field and enforces an absolute byte ceiling —
+   the floor every tool (including `search_symbol` and `graph_query`)
+   passes through regardless of its own caps. Tools can only narrow
+   bounds, never widen them.
 4. **Structured errors.** All errors are `ToolError(code, message,
    retry_hint)`. The retry hint is one of `none`, `narrower_scope`,
    `different_tool` — intended to be acted on by the model without
@@ -457,6 +472,6 @@ items most commonly skipped:
 
 ## License
 
-Apache-2.0. See [`mcp-server/pyproject.toml`](mcp-server/pyproject.toml)
-for the declaration. A top-level `LICENSE` file will land with the
-first published release.
+Apache-2.0. See the top-level [`LICENSE`](LICENSE) file for the full text;
+[`mcp-server/pyproject.toml`](mcp-server/pyproject.toml) declares the same
+identifier for the packaged distribution.

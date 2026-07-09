@@ -1,0 +1,68 @@
+# atlas-aci — pull-request CI (H0, v2.0.0 hardening gate)
+#
+# Runs the pytest suite, ruff (lint + format), and mypy on every PR against
+# `main`. Before this workflow existed, `.github/workflows/` held only the
+# tag-triggered `release.yml` — the test suite never ran on a PR, so
+# "verified" was unenforceable (spec.md problem statement item 2).
+#
+# This workflow is one of the three P0 harden-gate greens (AC-H-1, AC-H-2);
+# `.github/workflows/harden-gate.yml` is the separate in-tree mechanism that
+# blocks augmentation (A1-A5) PRs while these checks are absent or red
+# (AC-NEG-6, DIR-3). Branch protection / required status checks are
+# defence-in-depth configured by the repo operator — out-of-tree, not
+# something this workflow (or the acceptance suite) can assert.
+#
+# `--frozen` is used throughout: it refuses to silently re-lock
+# `mcp-server/uv.lock` (a real, separately-tracked defect — AC-REL-3, P3) and
+# fails loudly instead if the lock is genuinely out of sync.
+
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: pytest / ruff / mypy
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mcp-server
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install ripgrep
+        run: sudo apt-get update && sudo apt-get install -y ripgrep
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "latest"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: "mcp-server/pyproject.toml"
+
+      - name: Sync dependencies (frozen — never silently re-locks)
+        run: uv sync --frozen --extra dev
+
+      - name: pytest
+        run: uv run --frozen pytest -q
+
+      - name: ruff check
+        run: uv run --frozen ruff check src/ tests/
+
+      - name: ruff format --check
+        run: uv run --frozen ruff format --check src/ tests/
+
+      - name: mypy
+        run: uv run --frozen mypy src/

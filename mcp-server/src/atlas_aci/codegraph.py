@@ -6,13 +6,15 @@ universal AST parsing. Exposes:
 - search_symbol(name, kind?) → defs + refs
 - graph_query(query)        → adjacency lookups
 
-For Ruby-heavy repos, the recommended
-production deployment also runs `prism-codegraph` as a separate MCP server
-with deeper Ruby semantics. This module covers the universal baseline.
+This module covers the universal baseline for every shipped language.
 """
 
 from __future__ import annotations
 
+import fcntl
+import hashlib
+import os
+import re
 import sqlite3
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -32,6 +34,12 @@ log = structlog.get_logger()
 # ATLAS index static-site repos (Jekyll, Hugo, plain HTML/SCSS) where the
 # "symbols" worth jumping to are SCSS mixins/variables, element ids, YAML
 # keys, Markdown headings, and shell functions rather than classes/methods.
+#
+# Not every extension below has a QUERIES entry — see UNSUPPORTED_LANGS and
+# the module-level consistency assertion just below QUERIES. Recognizing an
+# extension here without either a QUERIES entry or an UNSUPPORTED_LANGS
+# acknowledgment is the "silent dead language" bug (D5-Q2): the indexer would
+# skip every such file with zero visible signal.
 LANG_BY_EXT: dict[str, str] = {
     ".rb": "ruby",
     ".py": "python",
@@ -138,12 +146,50 @@ QUERIES: dict[str, str] = {
 # grammar above automatically extends the default index.
 DEFAULT_LANGS: tuple[str, ...] = tuple(QUERIES)
 
+# Kinds the indexer actually produces, derived mechanically from QUERIES so
+# this can never drift from reality (AC-DOC-6: the search_symbol `kind` enum
+# in server.py's tool manifest must stay a superset of this).
+_DEF_KIND_RE = re.compile(r"@def\.(\w+)")
+PRODUCED_KINDS: tuple[str, ...] = tuple(
+    sorted({m for q in QUERIES.values() for m in _DEF_KIND_RE.findall(q)})
+)
+
+# Extensions recognized in LANG_BY_EXT with no QUERIES entry — the indexer
+# skips these but reports the skip visibly (AC-H-14) instead of silently
+# indexing to nothing (D5-Q2). This is an *honesty* fix, not a coverage
+# commitment: promoting one of these to real support means writing a real
+# QUERIES entry, at which point it comes out of this set.
+UNSUPPORTED_LANGS: frozenset[str] = frozenset({"tsx", "go", "rust", "java"})
+
+assert set(LANG_BY_EXT.values()) <= set(QUERIES) | UNSUPPORTED_LANGS, (
+    "LANG_BY_EXT declares a language with neither a QUERIES entry nor an "
+    "UNSUPPORTED_LANGS acknowledgment — the silent dead-language bug D5-Q2 "
+    "exists specifically to prevent."
+)
+
+
+# ---- Schema-epoch DB substrate (D1/H3) ----
+#
+# The DB is pure derived data (G-A): fully reconstructable from source, never
+# hand-edited. There is therefore no in-place schema-migration ladder — a
+# schema change always yields a fresh epoch (`.atlas/graph.<epoch>.db`),
+# never an in-place migration of the old file. `SCHEMA_EPOCH` is a monotonic integer,
+# bumped in the same commit that changes `SCHEMA` below; `EXPECTED_DDL_HASH`
+# is a *hand-maintained* companion constant (deliberately NOT derived from
+# `SCHEMA` at import time — see test_schema_epoch.py::test_expected_ddl_hash_
+# matches_current_ddl) that must be recomputed and pasted in whenever `SCHEMA`
+# changes, so "changed the DDL, forgot to bump the epoch" fails CI (AC-H-12)
+# instead of silently reusing a wrong-shaped DB.
+#
+# Recompute via:
+#   python -c "from atlas_aci.codegraph import SCHEMA, ddl_hash; print(ddl_hash(SCHEMA))"
+SCHEMA_EPOCH = 1
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS symbols (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
     name        TEXT NOT NULL,
-    kind        TEXT NOT NULL,        -- class | module | method | function
+    kind        TEXT NOT NULL,        -- class | module | method | function | ...
     path        TEXT NOT NULL,
     line_start  INTEGER NOT NULL,
     line_end    INTEGER NOT NULL,
@@ -162,6 +208,26 @@ CREATE TABLE IF NOT EXISTS refs (
 );
 CREATE INDEX IF NOT EXISTS idx_refs_callee ON refs(callee_name);
 
+-- Rationale nodes (A4, phase P2) — comment-derived "why" annotations. This
+-- is a *separate* relation from `refs` and the future call/inheritance edge
+-- table (F9 / AC-A4-6): `rationale_for` edges carry no confidence-enum
+-- value, so they must never collide with "every materialized call/
+-- inheritance edge carries a confidence" (AC-A1-2). Schema-only in this
+-- epoch — P2's A4 workstream adds the comment-scanning extraction logic;
+-- nothing populates this table yet.
+CREATE TABLE IF NOT EXISTS rationale (
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    path          TEXT NOT NULL,
+    line          INTEGER NOT NULL,
+    text          TEXT NOT NULL,
+    label         TEXT,               -- canonicalized ADR/RFC label, if any
+    target_path   TEXT,               -- rationale_for edge target: enclosing scope's file
+    target_line   INTEGER,            -- rationale_for edge target: enclosing scope's line
+    target_name   TEXT,               -- rationale_for edge target: enclosing scope's symbol name
+    lang          TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_rationale_path ON rationale(path);
+
 CREATE TABLE IF NOT EXISTS manifest (
     key   TEXT PRIMARY KEY,
     value TEXT NOT NULL
@@ -177,6 +243,28 @@ CREATE TABLE IF NOT EXISTS files (
     indexed_at  TEXT
 );
 """
+
+
+def ddl_hash(ddl: str) -> str:
+    """SHA-256 hex digest of a schema DDL string (AC-H-12)."""
+    return hashlib.sha256(ddl.encode("utf-8")).hexdigest()
+
+
+# Hand-maintained — see the SCHEMA_EPOCH docstring above. Do NOT replace this
+# with `ddl_hash(SCHEMA)`; that would make the pairing test a tautology.
+EXPECTED_DDL_HASH = "2371e04f6df8df80cfa9e6162dd451acf8d8db52e545a494bed6a4e296347cd6"
+
+
+def parse_query_verb(dsl: str) -> str:
+    """Extract the DSL verb ('callers_of', 'definitions_of', 'subclasses_of',
+    ...) from a graph_query string without a full parse. Shared by
+    `CodeGraph.query` and server.py's central-bounds dispatch (D2) so the two
+    never drift on what "verb" means.
+    """
+    if ":" not in dsl:
+        return ""
+    verb, _, _ = dsl.partition(":")
+    return verb.strip()
 
 
 @dataclass
@@ -199,24 +287,61 @@ class Reference:
 
 
 class CodeGraph:
-    """Tree-sitter-backed code graph stored in SQLite under .atlas/graph.db."""
+    """Tree-sitter-backed code graph stored in SQLite under
+    ``.atlas/graph.<SCHEMA_EPOCH>.db``.
 
-    def __init__(self, repo: Path, langs: list[str] | None = None):
+    ``read_only=True`` is the contract `serve` uses (DIR-2): the constructor
+    performs no filesystem writes, and the lazy `db` connection opens in
+    SQLite's ``mode=ro`` so no write, journal, or lock file is ever created —
+    safe against a ``--read-only`` ``:ro`` bind mount. Sweeping stale-epoch
+    files and rebuilding on epoch mismatch happen exclusively in `build()`
+    (the `index`/write path); a read-only instance never sweeps or rebuilds.
+    """
+
+    def __init__(self, repo: Path, langs: list[str] | None = None, read_only: bool = False):
         self.repo = repo.resolve()
         self.langs = set(langs) if langs else set(DEFAULT_LANGS)
-        self.db_path = self.repo / ".atlas" / "graph.db"
-        self.db_path.parent.mkdir(parents=True, exist_ok=True)
+        self.read_only = read_only
+        self.atlas_dir = self.repo / ".atlas"
+        self.db_path = self.atlas_dir / f"graph.{SCHEMA_EPOCH}.db"
+        if not read_only:
+            self.atlas_dir.mkdir(parents=True, exist_ok=True)
         self._db: sqlite3.Connection | None = None
 
     @property
     def db(self) -> sqlite3.Connection:
         if self._db is None:
-            self._db = sqlite3.connect(self.db_path)
-            self._db.executescript(SCHEMA)
+            if self.read_only:
+                # mode=ro: SQLite never attempts a write, journal, or lock
+                # file for this connection — safe on a read-only mount.
+                self._db = sqlite3.connect(f"file:{self.db_path}?mode=ro", uri=True)
+            else:
+                self._db = sqlite3.connect(self.db_path)
+                self._db.executescript(SCHEMA)
             self._db.row_factory = sqlite3.Row
         return self._db
 
-    # ---- Build / re-index ----
+    def epoch_ok(self) -> bool:
+        """True iff the current-epoch DB file exists AND its in-DB manifest
+        epoch row agrees with SCHEMA_EPOCH (the F1 belt-and-suspenders
+        cross-check). Always opens its own short-lived ``mode=ro`` connection
+        — never creates, writes, or reuses `self.db` — so it is safe to call
+        from the read-only `serve` path (DIR-2/AC-H-16) as well as from
+        `build()` to decide whether an incremental pass is safe.
+        """
+        if not self.db_path.exists():
+            return False
+        try:
+            conn = sqlite3.connect(f"file:{self.db_path}?mode=ro", uri=True)
+            try:
+                row = conn.execute("SELECT value FROM manifest WHERE key = 'epoch'").fetchone()
+            finally:
+                conn.close()
+        except sqlite3.Error:
+            return False
+        return row is not None and row[0] == str(SCHEMA_EPOCH)
+
+    # ---- Build / re-index (index-path only; never called by `serve`) ----
 
     def build(self, since: str | None = None) -> dict[str, Any]:
         """Index the repo. Returns stats.
@@ -230,25 +355,107 @@ class CodeGraph:
         ``refs``, and ``files`` rows are wiped and every file is re-indexed,
         which also re-establishes a correct baseline manifest for a later
         incremental pass.
+
+        Per DIR-2, sweeping stale-epoch files and rebuilding on epoch
+        mismatch happen *only* here, never on the `serve` (read-only) path.
+        Per F17/AC-H-17, a full rebuild writes to a temporary file and
+        atomically replaces the target path; both modes run under a
+        single-writer file lock so two concurrent `index` invocations (e.g.
+        the documented backgrounded post-commit hook) cannot corrupt the DB.
         """
+        if self.read_only:
+            raise RuntimeError(
+                "CodeGraph.build() is index-path only (DIR-2); a read_only "
+                "CodeGraph (as `serve` constructs) never writes to .atlas."
+            )
         try:
             from tree_sitter_language_pack import get_parser
         except ImportError as e:
             log.error("tree_sitter_unavailable", error=str(e))
             raise
 
+        self.atlas_dir.mkdir(parents=True, exist_ok=True)
+        lock_path = self.atlas_dir / ".index.lock"
+        with open(lock_path, "a+") as lock_file:
+            fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX)
+            try:
+                swept = self._sweep_stale_epoch_files()
+                if swept:
+                    log.info("stale_epoch_files_swept", files=swept)
+
+                if since is not None and self.epoch_ok():
+                    return self._build_in_place(get_parser, since)
+                if since is not None:
+                    log.warning(
+                        "schema_epoch_mismatch_forces_full_rebuild",
+                        expected_epoch=SCHEMA_EPOCH,
+                    )
+                return self._build_full_atomic(get_parser)
+            finally:
+                fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
+
+    def _sweep_stale_epoch_files(self) -> list[str]:
+        """Index-path only (DIR-2): remove ``.atlas/graph.*.db`` files whose
+        epoch differs from `SCHEMA_EPOCH`. `serve` never calls this."""
+        if not self.atlas_dir.exists():
+            return []
+        removed = []
+        for f in sorted(self.atlas_dir.glob("graph.*.db")):
+            if f.name != self.db_path.name:
+                f.unlink()
+                removed.append(f.name)
+        return removed
+
+    def _build_in_place(self, get_parser: Any, since: str) -> dict[str, Any]:
+        """Incremental build: modifies the existing current-epoch DB file in
+        place (protected by the single-writer lock in `build()`)."""
+        self._db = None
+        conn = sqlite3.connect(self.db_path)
+        conn.executescript(SCHEMA)
+        conn.row_factory = sqlite3.Row
+        try:
+            stats = self._run_build(conn, get_parser, since=since)
+        finally:
+            conn.close()
+        self._db = None  # next `.db` access reopens fresh against db_path
+        return stats
+
+    def _build_full_atomic(self, get_parser: Any) -> dict[str, Any]:
+        """Full rebuild: builds into a temp file, then atomically replaces
+        `self.db_path` (F17/AC-H-17). A crash mid-build leaves any previous
+        DB untouched."""
+        tmp_path = self.atlas_dir / f".graph.{SCHEMA_EPOCH}.db.tmp.{os.getpid()}"
+        if tmp_path.exists():
+            tmp_path.unlink()
+        conn = sqlite3.connect(tmp_path)
+        conn.executescript(SCHEMA)
+        conn.row_factory = sqlite3.Row
+        try:
+            stats = self._run_build(conn, get_parser, since=None)
+        finally:
+            conn.close()
+        self._db = None  # drop any stale handle before the swap
+        os.replace(tmp_path, self.db_path)
+        return stats
+
+    def _run_build(
+        self, conn: sqlite3.Connection, get_parser: Any, since: str | None
+    ) -> dict[str, Any]:
+        """The core indexing loop against an already-open connection. Shared
+        by the in-place incremental path and the full-rebuild-into-temp-file
+        path so the extraction logic itself never duplicates."""
         incremental = since is not None
 
         if not incremental:
-            self.db.execute("DELETE FROM symbols")
-            self.db.execute("DELETE FROM refs")
-            self.db.execute("DELETE FROM files")
+            conn.execute("DELETE FROM symbols")
+            conn.execute("DELETE FROM refs")
+            conn.execute("DELETE FROM files")
 
         stored_files: dict[str, tuple[int, int]] = {}
         if incremental:
             stored_files = {
                 row["path"]: (row["mtime_ns"], row["size"])
-                for row in self.db.execute("SELECT path, mtime_ns, size FROM files").fetchall()
+                for row in conn.execute("SELECT path, mtime_ns, size FROM files").fetchall()
             }
 
         files_indexed = 0
@@ -257,10 +464,18 @@ class CodeGraph:
         symbols_added = 0
         refs_added = 0
         seen_paths: set[str] = set()
+        unsupported_skipped: dict[str, int] = {}
 
         for path in self._iter_source_files():
             ext = path.suffix
             lang = LANG_BY_EXT.get(ext)
+
+            if lang is not None and lang not in QUERIES:
+                # Recognized extension, no query support (D5-Q2) — report,
+                # don't silently no-op.
+                unsupported_skipped[lang] = unsupported_skipped.get(lang, 0) + 1
+                continue
+
             if not lang or lang not in self.langs or lang not in QUERIES:
                 continue
 
@@ -285,26 +500,26 @@ class CodeGraph:
             if incremental:
                 # New or changed file — drop stale rows before re-extracting so
                 # a rename/removal-within-file doesn't leave duplicate entries.
-                self.db.execute("DELETE FROM symbols WHERE path = ?", (rel,))
-                self.db.execute("DELETE FROM refs WHERE path = ?", (rel,))
+                conn.execute("DELETE FROM symbols WHERE path = ?", (rel,))
+                conn.execute("DELETE FROM refs WHERE path = ?", (rel,))
 
             symbols, refs = self._extract(tree, source, rel, lang)
             for s in symbols:
-                self.db.execute(
+                conn.execute(
                     "INSERT INTO symbols(name, kind, path, line_start, line_end, lang) "
                     "VALUES (?, ?, ?, ?, ?, ?)",
                     (s.name, s.kind, s.path, s.line_start, s.line_end, s.lang),
                 )
                 symbols_added += 1
             for r in refs:
-                self.db.execute(
+                conn.execute(
                     "INSERT INTO refs(callee_name, path, line, enclosing, lang) "
                     "VALUES (?, ?, ?, ?, ?)",
                     (r.callee_name, r.path, r.line, r.enclosing, r.lang),
                 )
                 refs_added += 1
 
-            self.db.execute(
+            conn.execute(
                 "INSERT OR REPLACE INTO files(path, mtime_ns, size, lang, indexed_at) "
                 "VALUES (?, ?, ?, ?, ?)",
                 (rel, mtime_ns, size, lang, datetime.now(UTC).isoformat()),
@@ -313,19 +528,32 @@ class CodeGraph:
 
         if incremental:
             for rel in set(stored_files) - seen_paths:
-                self.db.execute("DELETE FROM symbols WHERE path = ?", (rel,))
-                self.db.execute("DELETE FROM refs WHERE path = ?", (rel,))
-                self.db.execute("DELETE FROM files WHERE path = ?", (rel,))
+                conn.execute("DELETE FROM symbols WHERE path = ?", (rel,))
+                conn.execute("DELETE FROM refs WHERE path = ?", (rel,))
+                conn.execute("DELETE FROM files WHERE path = ?", (rel,))
                 files_removed += 1
 
-        self.db.execute("INSERT OR REPLACE INTO manifest(key, value) VALUES ('version', '1')")
-        self.db.commit()
+        for lang, count in sorted(unsupported_skipped.items()):
+            log.warning(
+                "unsupported_extension_skipped",
+                lang=lang,
+                count=count,
+                message=f"unsupported extension skipped: {count} files",
+            )
+
+        conn.execute(
+            "INSERT OR REPLACE INTO manifest(key, value) VALUES ('epoch', ?)",
+            (str(SCHEMA_EPOCH),),
+        )
+        conn.commit()
         return {
             "files_indexed": files_indexed,
             "symbols": symbols_added,
             "refs": refs_added,
             "files_skipped": files_skipped,
             "files_removed": files_removed,
+            "unsupported_skipped": unsupported_skipped,
+            "schema_epoch": SCHEMA_EPOCH,
         }
 
     def _iter_source_files(self):
@@ -437,10 +665,10 @@ class CodeGraph:
         'subclasses_of:ApplicationRepository',
         'definitions_of:Tallier'.
         """
-        if ":" not in dsl:
+        verb = parse_query_verb(dsl)
+        if not verb:
             return {"error": "INVALID_QUERY", "message": "Expected 'verb:argument' form."}
-        verb, _, arg = dsl.partition(":")
-        verb = verb.strip()
+        _, _, arg = dsl.partition(":")
         arg = arg.strip()
 
         if verb == "callers_of":

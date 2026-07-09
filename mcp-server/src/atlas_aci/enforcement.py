@@ -137,6 +137,21 @@ class Enforcement:
         """Returns True if body is over the byte cap; caller decides what to do."""
         return len(body) > self.config.max_bytes_per_call
 
+    def cap_list_field(self, items: list[Any]) -> tuple[list[Any], bool]:
+        """The D2 central-bounds-chokepoint element cap (server.py `_call_tool`).
+
+        Truncates a single declared list-valued field on a whole-element
+        boundary — never raw byte-slicing. This is the universal backstop
+        applied to *every* registered tool/verb via the `_bounded_field`
+        convention, independent of whatever tool-specific cap (if any) the
+        tool itself already applied. Returns (possibly-truncated list,
+        overflowed).
+        """
+        cap = self.config.max_bound_field_elements
+        if len(items) > cap:
+            return items[:cap], True
+        return items, False
+
     # ---- Telemetry ----
 
     def record(

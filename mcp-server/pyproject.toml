@@ -18,9 +18,10 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+# Reserved for a future Ruby-specialist extra; nothing ships in it today.
+# Ruby support is the tree-sitter-language-pack grammar above, same as
+# every other language — there is no separate Ruby specialist mode.
 ruby = [
-  # prism-rb is invoked via subprocess; install separately:
-  # gem install prism
 ]
 vec = [
   "sqlite-vec>=0.1.3",

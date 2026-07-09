@@ -45,6 +45,14 @@ class Config:
     max_bytes_per_call: int = 8 * 1024
     test_dry_run_timeout_s: int = 30
 
+    # The D2 central-bounds-chokepoint backstop (server.py `_call_tool`):
+    # every tool/verb's declared `_bounded_field` is truncated to this many
+    # elements before the universal byte ceiling is checked. Distinct from
+    # the tool-specific caps above — this is the floor that makes "a tool
+    # forgot to cap its list field" (search_symbol, graph_query) structurally
+    # impossible, regardless of what the tool itself does.
+    max_bound_field_elements: int = 200
+
     # Rate limiting (set to 0 to disable)
     max_calls_per_minute: int = 200
 

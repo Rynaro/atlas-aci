@@ -20,8 +20,10 @@ uv run atlas-aci serve --repo /path/to/repo
 # Build the code-graph index for a repo
 uv run atlas-aci index --repo /path/to/repo --langs ruby,python,javascript,typescript
 
-# Incremental re-index
-uv run atlas-aci index --repo /path/to/repo --since HEAD~10
+# Incremental re-index — `--since <marker>` skips files whose (mtime_ns,
+# size) are unchanged since the last pass; it does not diff a git ref, so
+# any truthy value works as the marker.
+uv run atlas-aci index --repo /path/to/repo --since incremental
 
 # Print tool manifest as JSON
 uv run atlas-aci tools --repo /path/to/repo
@@ -47,11 +49,11 @@ uv run python scripts/run-canaries.py --repo /path/to/repo --canaries atlas/eval
 The MCP server (`mcp-server/src/atlas_aci/`) has a layered design:
 
 1. **`__main__.py`** — Click CLI with three subcommands: `serve`, `index`, `tools`
-2. **`server.py`** — MCP protocol wiring. Registers `tools/list` and `tools/call` handlers. Every tool call passes through enforcement before reaching the tool implementation.
-3. **`enforcement.py`** — The security/reliability core. Enforces: read-only tool allowlist, path-traversal rejection, rate limiting (sliding window), per-tool output bounds (line caps, match caps, byte caps), and telemetry recording. All bounds are mechanical, not advisory.
+2. **`server.py`** — MCP protocol wiring. Registers `tools/list` and `tools/call` handlers via `dispatch_tool_call`. Every tool call passes through enforcement, then through the central bounds chokepoint (`apply_central_bounds`) before the response is ever serialized — this is what makes "a tool forgot to cap its response" structurally impossible, not just a per-tool convention.
+3. **`enforcement.py`** — The security/reliability core. Enforces: read-only tool allowlist, path-traversal rejection, rate limiting (sliding window), per-tool output bounds (line caps, match caps, byte caps) plus the central `cap_list_field` backstop every tool/verb routes through, and telemetry recording. All bounds are mechanical, not advisory.
 4. **`config.py`** — Dataclass holding repo path, memex root, all bound limits, and skip patterns. One instance per server process.
 5. **`tools/`** — Individual tool implementations. Each receives `(arguments, config, enforcement)` and returns a dict. `search_text` wraps ripgrep, `view_file` reads lines with pagination via `next_cursor`, `test_dry_run` runs a subprocess with timeout.
-6. **`codegraph.py`** — Tree-sitter-based symbol indexer. Produces `.atlas/symbols.db` and `.atlas/graph.db` (SQLite).
+6. **`codegraph.py`** — Tree-sitter-based symbol indexer. Produces one epoch-namespaced `.atlas/graph.<SCHEMA_EPOCH>.db` (SQLite) holding the `symbols`, `refs`, `rationale`, `manifest`, and `files` tables — a single database file, not a separate one per table.
 7. **`memex.py`** — Hashed-directory key-value store for byte-exact excerpt retrieval.
 
 **Key invariant**: If a tool name is not in `enforcement.READ_ONLY_TOOLS`, the call is rejected with `FORBIDDEN` before any code runs.

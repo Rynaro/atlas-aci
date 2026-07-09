@@ -16,8 +16,7 @@ the host of your choice. The server implements the bounded ACI from
 | MCP SDK | Python `mcp>=1.2` | Mature, async, stdio + SSE transports |
 | Project mgmt | `uv` | Fast, lockfile, single-binary distribution |
 | Filesystem search | `ripgrep` (binary) | Already canonical, faster than any Python equivalent |
-| Universal AST | `tree-sitter` + `tree-sitter-language-pack` | Vendor-neutral, multi-language, low overhead |
-| Ruby AST (specialist) | `prism` via subprocess | Vendor-neutral; Prism is the canonical Ruby 3.x AST |
+| Universal AST | `tree-sitter` + `tree-sitter-language-pack` | Vendor-neutral, multi-language, low overhead; also covers Ruby — no separate specialist mode ships today |
 | Memex MVP | hashed-directory KV | No DB needed; upgrade later |
 | Memex production | `sqlite-vec` | When semantic search over excerpts becomes useful |
 | Sandbox | DevContainer or Docker | Required for `test_dry_run` |
@@ -115,11 +114,14 @@ This produces:
 
 ```
 ~/code/your-repo/.atlas/
-├── symbols.db       # SQLite: symbol → definition site index
-├── graph.db         # SQLite: caller→callee adjacency
-├── routes.json      # Rails routes (parsed via Prism)
-└── manifest.yaml    # index version, repo SHA, lang stats
+└── graph.<epoch>.db   # SQLite: symbols, refs (caller→callee adjacency),
+                        # a manifest table (schema epoch), and a files
+                        # table (per-file incremental-index state)
 ```
+
+There is no `symbols.db`, `routes.json`, or `manifest.yaml` — everything
+above lives in the single epoch-namespaced `graph.<epoch>.db` file. (There
+is also no Rails-routes extraction shipped today.)
 
 Re-run `index` whenever the repo's HEAD shifts significantly. For now, do
 it manually; a `post-commit` hook is overkill until you've shipped the
@@ -173,14 +175,18 @@ uv run python scripts/run-canaries.py \
 This is a thin orchestrator that:
 
 1. Loads each canary mission's `mission.md`.
-2. Sends it to the configured host (Claude Code via API, Copilot via
-   action, etc.).
+2. Dispatches it to a host adapter you plug in under `--host`.
 3. Captures the resulting `scout-report.md`.
 4. Compares against the canary's `expected/` answers.
 5. Emits pass/fail + telemetry.
 
-First-run pass rate of 50–60% is normal. Iterate on your skill files until
-≥80%, then promote to production.
+**Status: no host dispatcher ships today.** `--host stub` is the only wired
+option, and `StubDispatcher.dispatch()` deliberately raises
+`NotImplementedError` — see the deferred note in
+[`scripts/run-canaries.py`](scripts/run-canaries.py). Real dispatchers
+(Claude Code via API, Copilot via Action, Cursor headless) are sketched as
+comments in that file but not implemented; there is no pass rate to quote
+until one exists. Wire one in before relying on this step.
 
 ---
 
@@ -214,8 +220,8 @@ Before letting ATLAS run unattended on shared infra:
 
 The MCP tool manifest is loaded into every agent context. The seven ATLAS
 tools serialize to ~1500 tokens of JSON Schema. That's your fixed
-overhead per conversation. If you split into multiple servers (e.g.,
-`atlas-aci` + `prism-codegraph` later), expect ~2200 tokens of overhead.
+overhead per conversation. Running additional MCP servers alongside
+`atlas-aci` adds their own manifest overhead on top of that.
 
 ### Debugging tool calls
 
@@ -232,10 +238,12 @@ enforcement layer caught it.
 
 ### Updating the index incrementally
 
-The MVP re-indexes from scratch. For repos changing often:
+`--since <marker>` skips files whose `(mtime_ns, size)` are unchanged since
+the last pass — it does not diff a git ref, so any truthy value works as
+the marker:
 
 ```bash
-uv run atlas-aci index --repo ... --since HEAD~10
+uv run atlas-aci index --repo ... --since incremental
 ```
 
 Tree-sitter parsing is fast enough that incremental indexing matters less
@@ -261,8 +269,9 @@ Roughly in priority order:
 4. **Telemetry → CORTEX bridge.** Right now telemetry is per-mission. A
    pipeline that ingests every mission's telemetry into your existing
    CORTEX JSONL gives you the cross-session reflection signal.
-5. **Split `prism-codegraph` into its own server** when index size or
-   query latency justifies it.
+5. **A canary host dispatcher.** `scripts/run-canaries.py` ships only a
+   `StubDispatcher`; a real Claude Code / Copilot / Cursor adapter is
+   needed before the canary suite produces a meaningful pass rate.
 
 ---
 
@@ -278,8 +287,9 @@ Roughly in priority order:
   staleness when the repo changes.
 - **Adding "convenience" tools** like `summarize_file` or `explain_module`.
   Those are LLM-side concerns. Keep the ACI primitive and dumb.
-- **Skipping the canary run before declaring victory.** Without the canary
-  pass rate you have no idea if your wiring works end to end.
+- **Declaring victory without an end-to-end check.** The canary suite is
+  the intended mechanism for this, but it needs a real host dispatcher
+  wired in first (§10 item 5) — it ships with only a stub today.
 
 ---
 
@@ -310,7 +320,10 @@ atlas-aci/
 │   │       ├── graph_query.py
 │   │       └── test_dry_run.py
 │   └── tests/
-│       └── test_enforcement.py
+│       ├── test_enforcement.py
+│       ├── test_codegraph.py
+│       ├── test_server.py
+│       └── test_schema_epoch.py
 │
 ├── hosts/                            # per-host wiring snippets
 │   ├── claude-code.md
