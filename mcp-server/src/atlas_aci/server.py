@@ -216,27 +216,52 @@ def apply_central_bounds(
     (``ToolError``) is reserved for the absolute byte-ceiling backstop — a
     single response that still can't fit even after element truncation
     (AC-H-6).
+
+    F-6 (vocabulary unification): list_dir/search_text signal their own
+    tool-level overflow via a literal ``overflow: true`` key; view_file
+    signals pagination via ``next_cursor``. Both are folded into the same
+    un-ignorable ``truncated`` contract here, so a consumer that checks only
+    ``truncated`` can never miss an overflow just because a *different*
+    layer (the tool itself, not the central cap) detected it.
+    ``next_cursor``/``total_lines`` are left untouched — they are a
+    strictly *more* informative continuation contract for a long ordered
+    file window (an exact "call again with this cursor"), not merely a
+    "some rows were dropped" flag — but `truncated` must still fire so a
+    naive consumer that has never heard of `next_cursor` still gets the
+    un-ignorable signal.
     """
     if not isinstance(result, dict):
         return result
 
     fields = bounded_fields_for(name, arguments)
-    truncated_any = False
+    truncated_fields: set[str] = set()
     for field in fields:
         items = result.get(field)
         if not isinstance(items, list):
             continue
         capped, overflowed = enforcement.cap_list_field(items)
         result[field] = capped
-        truncated_any = truncated_any or overflowed
+        if overflowed:
+            truncated_fields.add(field)
 
-    if truncated_any:
+    tool_signalled_more = bool(result.get("overflow")) or "next_cursor" in result
+    if tool_signalled_more and fields:
+        truncated_fields.update(f for f in fields if isinstance(result.get(f), list))
+
+    if truncated_fields:
         result["truncated"] = True
-        result["returned_count"] = sum(
-            len(result[f]) for f in fields if isinstance(result.get(f), list)
-        )
+        # F-7: which field(s) actually lost data — a bare summed total (or a
+        # single "something truncated" boolean) can't tell a consumer this,
+        # which matters for multi-field tools like search_symbol
+        # (definitions + references can overflow independently).
+        result["truncated_fields"] = sorted(truncated_fields)
+        # Per-field counts, not summed — same reasoning: `returned_count`
+        # must be attributable to a specific field, not a conflated total.
+        result["returned_count"] = {
+            f: len(result[f]) for f in fields if isinstance(result.get(f), list)
+        }
         result["more_available"] = True
-        result["retry_hint"] = "narrower_scope"
+        result.setdefault("retry_hint", "narrower_scope")
 
     # Absolute byte ceiling — the backstop, deliberately a separate (larger)
     # threshold than any individual tool's own byte cap (Config.

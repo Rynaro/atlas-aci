@@ -160,9 +160,89 @@ def test_overflow_truncate_and_flag_contract(enforcement: Enforcement) -> None:
     result = {"entries": [{"name": f"f{i}"} for i in range(10)]}
     out = apply_central_bounds("list_dir", {}, result, enforcement)
     assert out["truncated"] is True
-    assert out["returned_count"] == 3
+    assert out["truncated_fields"] == ["entries"]
+    assert out["returned_count"] == {"entries": 3}
     assert out["more_available"] is True
     assert out["retry_hint"] == "narrower_scope"
+
+
+def test_returned_count_is_per_field_not_summed(enforcement: Enforcement) -> None:
+    """F-7: a multi-field tool's returned_count must be attributable to a
+    specific field — a summed total conflates e.g. search_symbol's
+    `definitions` (over cap) with `references` (under cap), making it
+    impossible to tell which one actually lost data."""
+    result = {
+        "definitions": [{"name": "foo"}] * 6,  # over cap (3)
+        "references": [{"name": "foo"}] * 2,  # under cap
+    }
+    out = apply_central_bounds("search_symbol", {}, result, enforcement)
+    assert out["truncated"] is True
+    assert out["truncated_fields"] == ["definitions"]
+    assert out["returned_count"] == {"definitions": 3, "references": 2}
+
+
+# ---- F-6 — unify tool-level overflow vocabularies onto `truncated` ----
+#
+# list_dir/search_text signal their own cap via a literal `overflow: true`
+# key; view_file signals pagination via `next_cursor`. Each fixture below
+# stays UNDER the central element cap (3) on purpose, so it's specifically
+# the tool-level-signal-promotion path being tested here, not central
+# cap_list_field's own (already-covered) detection.
+
+
+def test_list_dir_own_overflow_signal_promotes_to_truncated(enforcement: Enforcement) -> None:
+    result = {
+        "path": ".",
+        "entries": [{"name": "a"}, {"name": "b"}],  # 2 items, under cap (3)
+        "overflow": True,
+        "message": "Listing capped at 2 entries. Use a glob to narrow.",
+    }
+    out = apply_central_bounds("list_dir", {}, result, enforcement)
+    assert out["truncated"] is True
+    assert out["truncated_fields"] == ["entries"]
+    assert out["returned_count"] == {"entries": 2}
+    assert out["more_available"] is True
+    assert out["retry_hint"] == "narrower_scope"
+    # The tool's own vocabulary survives untouched alongside the unified one.
+    assert out["overflow"] is True
+    assert out["message"] == "Listing capped at 2 entries. Use a glob to narrow."
+
+
+def test_search_text_own_overflow_signal_promotes_to_truncated(enforcement: Enforcement) -> None:
+    result = {
+        "matches": [{"path": "a.rb", "line": 1}],  # 1 item, under cap (3)
+        "overflow": True,
+        "message": "Search hit the cap of 1 matches. Narrow scope or use search_symbol.",
+    }
+    out = apply_central_bounds("search_text", {}, result, enforcement)
+    assert out["truncated"] is True
+    assert out["truncated_fields"] == ["matches"]
+    assert out["returned_count"] == {"matches": 1}
+    assert out["more_available"] is True
+    assert out["retry_hint"] == "narrower_scope"
+
+
+def test_view_file_next_cursor_promotes_to_truncated(enforcement: Enforcement) -> None:
+    """view_file's `next_cursor`/`total_lines` stay untouched — a strictly
+    more informative pagination contract than a bare boolean — but a naive
+    consumer checking only `truncated` must still see it fire."""
+    result = {
+        "path": "app/big.rb",
+        "start_line": 1,
+        "end_line": 2,
+        "lines": ["a\n", "b\n"],  # 2 items, under cap (3)
+        "next_cursor": 3,
+        "total_lines": 500,
+    }
+    out = apply_central_bounds("view_file", {}, result, enforcement)
+    assert out["truncated"] is True
+    assert out["truncated_fields"] == ["lines"]
+    assert out["returned_count"] == {"lines": 2}
+    assert out["more_available"] is True
+    assert out["retry_hint"] == "narrower_scope"
+    # The pagination contract survives untouched — it's strictly additional.
+    assert out["next_cursor"] == 3
+    assert out["total_lines"] == 500
 
 
 # ---- AC-H-6 — absolute byte ceiling hard-fails ----
@@ -297,7 +377,8 @@ async def test_references_at_sql_limit_boundary_are_not_silently_swallowed(
     )
     assert len(over["references"]) == cap
     assert over["truncated"] is True
-    assert over["returned_count"] == cap
+    assert over["truncated_fields"] == ["references"]
+    assert over["returned_count"] == {"definitions": 0, "references": cap}
     assert over["more_available"] is True
     assert over["retry_hint"] == "narrower_scope"
 
@@ -341,7 +422,8 @@ async def test_callers_of_at_sql_limit_boundary_are_not_silently_swallowed(
     )
     assert len(over["edges"]) == cap
     assert over["truncated"] is True
-    assert over["returned_count"] == cap
+    assert over["truncated_fields"] == ["edges"]
+    assert over["returned_count"] == {"edges": cap}
     assert over["more_available"] is True
     assert over["retry_hint"] == "narrower_scope"
 
