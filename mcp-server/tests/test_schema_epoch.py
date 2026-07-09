@@ -12,6 +12,8 @@ import sqlite3
 import threading
 from pathlib import Path
 
+import pytest
+
 from atlas_aci.codegraph import (
     EXPECTED_DDL_HASH,
     SCHEMA,
@@ -111,6 +113,26 @@ def test_expected_ddl_hash_matches_current_ddl() -> None:
 
 
 # ---- AC-H-16 ----
+
+
+def test_read_only_connection_is_actually_sqlite_mode_ro(tmp_path: Path) -> None:
+    """Direct proof, not a chmod proxy (the checker's finding): the
+    read-only CodeGraph's `db` connection is opened in SQLite's own
+    ``mode=ro``, so a write attempt fails at the SQLite layer itself —
+    independent of OS permission bits. This matters because root ignores
+    mode bits entirely, and a real ``--read-only`` ``:ro`` bind mount
+    enforces read-only via ``EROFS`` at the kernel/mount level, a mechanism
+    ``chmod`` cannot simulate. `mode=ro` is what actually protects a
+    deployment regardless of who the container runs as."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _write_ruby(repo, "app/a.rb", "class A\nend\n")
+    writer = CodeGraph(repo=repo)
+    writer.build()
+
+    reader = CodeGraph(repo=repo, read_only=True)
+    with pytest.raises(sqlite3.OperationalError):
+        reader.db.execute("INSERT INTO manifest(key, value) VALUES ('x', 'y')")
 
 
 def test_serve_read_only_mount_zero_writes(tmp_path: Path) -> None:

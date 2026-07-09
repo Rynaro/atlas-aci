@@ -5,6 +5,10 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from pathlib import Path
 
+import structlog
+
+log = structlog.get_logger()
+
 # The default for Config.max_bound_field_elements below. Named at module
 # level (not just a dataclass default) so codegraph.py can derive its own
 # internal SQL fetch-limit default from the *same* number — see
@@ -81,7 +85,29 @@ class Config:
     def __post_init__(self) -> None:
         self.repo = self.repo.resolve()
         self.memex_root = self.memex_root.resolve()
-        self.memex_root.mkdir(parents=True, exist_ok=True)
+        # Best-effort only (AC-H-16 finding): `serve`'s default --memex-root
+        # is `<repo>/.atlas/memex` — INSIDE the repo. Under a real
+        # `--read-only`/`:ro` mount without a separately-mounted writable
+        # memex volume (the documented deployment passes one explicitly via
+        # the Dockerfile's baked `--memex-root /memex`; an operator who
+        # forgets that flag does not), an unconditional mkdir crashes the
+        # entire server at startup — discovered by the AC-H-16 Docker smoke
+        # test, not by the mode=ro chmod simulation, which never exercises
+        # this code path. `Memex.__init__` is the actual owner of creating
+        # this directory (and is equally best-effort); Config no longer
+        # assumes write access on the agent's behalf. A missing/unwritable
+        # memex_root degrades gracefully: `memex_read` returns NOT_FOUND for
+        # any ref (nothing was ever written there anyway — no ATLAS tool
+        # currently emits a memex ref), while the other six tools are
+        # entirely unaffected.
+        try:
+            self.memex_root.mkdir(parents=True, exist_ok=True)
+        except OSError as e:
+            log.warning(
+                "memex_root_not_writable",
+                memex_root=str(self.memex_root),
+                error=str(e),
+            )
 
     def is_in_repo(self, p: Path) -> bool:
         """Path-traversal guard. Resolves symlinks; rejects anything outside the repo."""
