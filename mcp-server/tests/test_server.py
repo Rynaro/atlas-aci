@@ -206,7 +206,10 @@ async def test_search_symbol_is_bounded(
 ) -> None:
     for i in range(6):
         _rb(config.repo, f"app/m{i}.rb", f"class M{i}\n  def call\n  end\nend\n")
-    code_graph = CodeGraph(repo=config.repo)
+    # query_limit mirrors run_stdio's production wiring (cap+1, never the
+    # bare cap — F-1) so this end-to-end test exercises the same path a
+    # real deployment does, not just the default query_limit.
+    code_graph = CodeGraph(repo=config.repo, query_limit=config.max_bound_field_elements + 1)
     code_graph.build()
 
     result = await dispatch_tool_call(
@@ -225,7 +228,7 @@ async def test_graph_query_is_bounded(
             f"app/m{i}.rb",
             f"class M{i}\n  def call\n    record_vote(1)\n  end\nend\n",
         )
-    code_graph = CodeGraph(repo=config.repo)
+    code_graph = CodeGraph(repo=config.repo, query_limit=config.max_bound_field_elements + 1)
     code_graph.build()
 
     result = await dispatch_tool_call(
@@ -240,13 +243,116 @@ async def test_graph_query_is_bounded(
     assert result["truncated"] is True
 
 
+# ---- F-1 regression: SQL-limit / central-cap boundary collision ----
+#
+# codegraph.py's `refs` query used a hardcoded `LIMIT 200` that, at
+# production defaults, exactly equals `max_bound_field_elements` (also 200).
+# SQL silently pre-truncates to exactly the cap, so the central chokepoint
+# sees `len(items) == cap`, never `> cap`, and sets no flag — a symbol with
+# 250 references returned exactly 200 rows with `truncated: False`. This
+# parametrizes the boundary (cap-1, cap, cap+1 rows actually present) so the
+# exact-fit case (cap) and the real-overflow case (cap+1) are both pinned.
+
+
+async def test_references_at_sql_limit_boundary_are_not_silently_swallowed(
+    config: Config, enforcement: Enforcement, memex: Memex
+) -> None:
+    cap = config.max_bound_field_elements  # 3, from the `config` fixture
+    query_limit = cap + 1
+
+    # One file, one method, three callees invoked cap-1 / cap / cap+1 times —
+    # isolates the "references" field (no matching definitions exist for
+    # these callee names, so `definitions` stays empty for every case).
+    calls_under = "\n    ".join(["callee_under()"] * (cap - 1))
+    calls_exact = "\n    ".join(["callee_exact()"] * cap)
+    calls_over = "\n    ".join(["callee_over()"] * (cap + 1))
+    body = (
+        f"class Hub\n  def call\n    {calls_under}\n    {calls_exact}\n"
+        f"    {calls_over}\n  end\nend\n"
+    )
+    _rb(config.repo, "app/hub.rb", body)
+    code_graph = CodeGraph(repo=config.repo, query_limit=query_limit)
+    code_graph.build()
+
+    # cap-1 references present: nothing hidden, nothing flagged.
+    under = await dispatch_tool_call(
+        "search_symbol", {"name": "callee_under"}, config, enforcement, memex, code_graph
+    )
+    assert len(under["references"]) == cap - 1
+    assert "truncated" not in under
+
+    # Exactly cap references present: an exact fit is NOT an overflow — this
+    # is the boundary the collision bug got wrong in the other direction
+    # (asserting the fix doesn't now over-fire on a case with nothing hidden).
+    exact = await dispatch_tool_call(
+        "search_symbol", {"name": "callee_exact"}, config, enforcement, memex, code_graph
+    )
+    assert len(exact["references"]) == cap
+    assert "truncated" not in exact
+
+    # cap+1 references present: this is the exact scenario that used to
+    # silently return `cap` rows with no signal at all. Must now be flagged.
+    over = await dispatch_tool_call(
+        "search_symbol", {"name": "callee_over"}, config, enforcement, memex, code_graph
+    )
+    assert len(over["references"]) == cap
+    assert over["truncated"] is True
+    assert over["returned_count"] == cap
+    assert over["more_available"] is True
+    assert over["retry_hint"] == "narrower_scope"
+
+
+async def test_callers_of_at_sql_limit_boundary_are_not_silently_swallowed(
+    config: Config, enforcement: Enforcement, memex: Memex
+) -> None:
+    """Same boundary, through graph_query's callers_of — which had no SQL
+    LIMIT at all (F-2), not just a colliding one."""
+    cap = config.max_bound_field_elements
+    query_limit = cap + 1
+
+    calls_exact = "\n    ".join(["callee_exact()"] * cap)
+    calls_over = "\n    ".join(["callee_over()"] * (cap + 1))
+    _rb(
+        config.repo,
+        "app/hub.rb",
+        f"class Hub\n  def call\n    {calls_exact}\n    {calls_over}\n  end\nend\n",
+    )
+    code_graph = CodeGraph(repo=config.repo, query_limit=query_limit)
+    code_graph.build()
+
+    exact = await dispatch_tool_call(
+        "graph_query",
+        {"query": "callers_of:callee_exact"},
+        config,
+        enforcement,
+        memex,
+        code_graph,
+    )
+    assert len(exact["edges"]) == cap
+    assert "truncated" not in exact
+
+    over = await dispatch_tool_call(
+        "graph_query",
+        {"query": "callers_of:callee_over"},
+        config,
+        enforcement,
+        memex,
+        code_graph,
+    )
+    assert len(over["edges"]) == cap
+    assert over["truncated"] is True
+    assert over["returned_count"] == cap
+    assert over["more_available"] is True
+    assert over["retry_hint"] == "narrower_scope"
+
+
 async def test_search_symbol_still_works_under_cap(
     config: Config, enforcement: Enforcement, memex: Memex
 ) -> None:
     """Regression guard: the central cap must not touch a response that's
     already within bounds — no truncated flag, no data loss."""
     _rb(config.repo, "app/a.rb", "class Tallier\n  def call\n  end\nend\n")
-    code_graph = CodeGraph(repo=config.repo)
+    code_graph = CodeGraph(repo=config.repo, query_limit=config.max_bound_field_elements + 1)
     code_graph.build()
 
     result = await dispatch_tool_call(

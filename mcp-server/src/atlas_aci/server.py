@@ -305,7 +305,14 @@ async def run_stdio(config: Config) -> None:
     # current-epoch match the read-only connection just works; on a
     # mismatch/never-indexed repo, search_symbol/graph_query fail fast via
     # `code_graph.epoch_ok()` — no sweep, no rebuild, no write, ever.
-    code_graph = CodeGraph(repo=config.repo, read_only=True)
+    # query_limit=cap+1 (never the bare cap — F-1) is what makes the SQL
+    # LIMIT and the central `_bounded_field` cap agree on the same boundary
+    # instead of silently colliding at it (see CodeGraph's docstring).
+    code_graph = CodeGraph(
+        repo=config.repo,
+        read_only=True,
+        query_limit=config.max_bound_field_elements + 1,
+    )
 
     @server.list_tools()
     async def _list_tools() -> list[Tool]:

@@ -5,6 +5,14 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from pathlib import Path
 
+# The default for Config.max_bound_field_elements below. Named at module
+# level (not just a dataclass default) so codegraph.py can derive its own
+# internal SQL fetch-limit default from the *same* number — see
+# CodeGraph.__init__'s `query_limit` — instead of an independent magic
+# constant that could silently drift out of sync with it (F-1: this is
+# exactly the class of bug a second hardcoded 200 caused).
+DEFAULT_MAX_BOUND_FIELD_ELEMENTS: int = 200
+
 # Hardcoded skip list — overridable in instance config.
 DEFAULT_SKIP_PATTERNS: tuple[str, ...] = (
     "node_modules",
@@ -51,7 +59,7 @@ class Config:
     # the tool-specific caps above — this is the floor that makes "a tool
     # forgot to cap its list field" (search_symbol, graph_query) structurally
     # impossible, regardless of what the tool itself does.
-    max_bound_field_elements: int = 200
+    max_bound_field_elements: int = DEFAULT_MAX_BOUND_FIELD_ELEMENTS
 
     # The absolute serialized-byte ceiling (AC-H-6) — deliberately a
     # *separate*, larger number than `max_bytes_per_call` above. Several

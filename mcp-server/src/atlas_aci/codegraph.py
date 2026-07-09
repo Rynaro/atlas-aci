@@ -23,6 +23,8 @@ from typing import TYPE_CHECKING, Any, cast
 
 import structlog
 
+from atlas_aci.config import DEFAULT_MAX_BOUND_FIELD_ELEMENTS
+
 if TYPE_CHECKING:
     from tree_sitter_language_pack import SupportedLanguage
 
@@ -296,12 +298,39 @@ class CodeGraph:
     safe against a ``--read-only`` ``:ro`` bind mount. Sweeping stale-epoch
     files and rebuilding on epoch mismatch happen exclusively in `build()`
     (the `index`/write path); a read-only instance never sweeps or rebuilds.
+
+    ``query_limit`` bounds every internal SQL query in `search_symbol` /
+    `callers_of` (F-1/F-2). It is deliberately the *central bounds cap plus
+    one* (``max_bound_field_elements + 1``), never equal to the cap itself —
+    a query that fetches exactly ``cap`` rows pre-truncates in SQL before the
+    central chokepoint ever sees the response, so an exact-cap SQL LIMIT is
+    indistinguishable from "nothing more exists" and the overflow flag never
+    fires (this collided exactly at the shared default of 200/200). Fetching
+    one extra row makes overflow *detectable*: if the (cap+1)-th row comes
+    back, the central cap correctly sees ``len > cap`` and truncates-and-
+    flags; if it doesn't, nothing was hidden. This is also what bounds the
+    *work* (F-2): callers with no LIMIT at all `fetchall()` an unbounded
+    result set into memory regardless of what the response-side byte
+    ceiling later measures. `server.py`'s `run_stdio` wires this to
+    ``config.max_bound_field_elements + 1``; the default here
+    (``DEFAULT_MAX_BOUND_FIELD_ELEMENTS + 1``) matches Config's own default
+    so a bare ``CodeGraph(repo)`` (as most tests construct it) still fetches
+    a bounded amount.
     """
 
-    def __init__(self, repo: Path, langs: list[str] | None = None, read_only: bool = False):
+    def __init__(
+        self,
+        repo: Path,
+        langs: list[str] | None = None,
+        read_only: bool = False,
+        query_limit: int | None = None,
+    ):
         self.repo = repo.resolve()
         self.langs = set(langs) if langs else set(DEFAULT_LANGS)
         self.read_only = read_only
+        self.query_limit = (
+            query_limit if query_limit is not None else DEFAULT_MAX_BOUND_FIELD_ELEMENTS + 1
+        )
         self.atlas_dir = self.repo / ".atlas"
         self.db_path = self.atlas_dir / f"graph.{SCHEMA_EPOCH}.db"
         if not read_only:
@@ -634,27 +663,37 @@ class CodeGraph:
     # ---- Queries ----
 
     def search_symbol(self, name: str, kind: str | None = None) -> dict[str, Any]:
+        # LIMIT self.query_limit (cap+1, never the bare cap — see the class
+        # docstring / F-1) on BOTH queries: this bounds the SQL work itself
+        # (F-2 — previously `defs` had no LIMIT at all) and makes overflow
+        # detectable rather than silently pre-truncated to an amount
+        # indistinguishable from "nothing more exists".
         sql = "SELECT * FROM symbols WHERE name = ?"
         params: list[Any] = [name]
         if kind and kind != "any":
             sql += " AND kind = ?"
             params.append(kind)
+        sql += " LIMIT ?"
+        params.append(self.query_limit)
         defs = [dict(r) for r in self.db.execute(sql, params).fetchall()]
 
         refs = [
             dict(r)
             for r in self.db.execute(
-                "SELECT * FROM refs WHERE callee_name = ? LIMIT 200", (name,)
+                "SELECT * FROM refs WHERE callee_name = ? LIMIT ?", (name, self.query_limit)
             ).fetchall()
         ]
 
         return {"definitions": defs, "references": refs}
 
     def callers_of(self, symbol: str) -> list[dict[str, Any]]:
+        # See search_symbol above: LIMIT self.query_limit (cap+1), not
+        # unbounded (F-2) and not the bare cap (F-1).
         return [
             dict(r)
             for r in self.db.execute(
-                "SELECT path, line, enclosing FROM refs WHERE callee_name = ?", (symbol,)
+                "SELECT path, line, enclosing FROM refs WHERE callee_name = ? LIMIT ?",
+                (symbol, self.query_limit),
             ).fetchall()
         ]
 
