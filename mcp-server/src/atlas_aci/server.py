@@ -201,6 +201,36 @@ def bounded_fields_for(name: str, arguments: dict[str, Any]) -> tuple[str, ...]:
     return TOOL_BOUNDED_FIELDS.get(name, ())
 
 
+# ---- R-1 (P0 checker residual, tracked for A1) ----
+#
+# The registry above protects every top-level list field a tool/verb
+# declares — but a *sub-field* nested one level inside a bounded field's own
+# elements can still escape it entirely, because `bounded_fields_for` only
+# ever looks at the RESPONSE's top level. A1 introduces exactly this shape:
+# `callers_of`/`subclasses_of` return an `edges` list (already capped above),
+# but an AMBIGUOUS edge's own `candidates[]` (AC-A1-5, "the full ordered
+# candidates[] attached, never dropped") is *itself* unbounded — a common
+# name can resolve to hundreds of same-named candidates. Declared the same
+# way as the top-level registry, one level down: verb -> {containing_field:
+# nested_field_name}. Empty for every tool/verb with no such nesting (most of
+# them) — unlike the top-level registry, not every bounded field needs an
+# entry here, only ones whose own elements carry their own list.
+GRAPH_QUERY_VERB_NESTED_BOUNDED_FIELDS: dict[str, dict[str, str]] = {
+    "callers_of": {"edges": "candidates"},
+    "subclasses_of": {"edges": "candidates"},
+}
+
+
+def nested_bounded_fields_for(name: str, arguments: dict[str, Any]) -> dict[str, str]:
+    """The R-1 sibling of `bounded_fields_for`: which nested sub-field (if
+    any) inside a top-level bounded field's own list elements must ALSO be
+    capped."""
+    if name == "graph_query":
+        verb = parse_query_verb(arguments.get("query", ""))
+        return GRAPH_QUERY_VERB_NESTED_BOUNDED_FIELDS.get(verb, {})
+    return {}
+
+
 def apply_central_bounds(
     name: str,
     arguments: dict[str, Any],
@@ -257,6 +287,41 @@ def apply_central_bounds(
     if result.get("overflow") and fields:
         truncated_fields.update(f for f in fields if isinstance(result.get(f), list))
 
+    # R-1: cap any registered nested sub-field one level inside an already-
+    # capped field's own elements (e.g. graph_query edges[].candidates) —
+    # the sub-field escape the top-level-only registry above cannot see.
+    # Runs against the SURVIVING (already top-level-capped) elements, so a
+    # candidates[] belonging to an edge the top-level cap already dropped is
+    # never even visited. Reported under the dotted key "field.nested_field"
+    # in both `truncated_fields` and `returned_count` — distinguishable from
+    # a top-level field's own truncation, never conflated with it.
+    nested_returned_counts: dict[str, int] = {}
+    for field, nested_field in nested_bounded_fields_for(name, arguments).items():
+        items = result.get(field)
+        if not isinstance(items, list):
+            continue
+        nested_key = f"{field}.{nested_field}"
+        saw_nested_list = False
+        nested_overflowed = False
+        total_returned = 0
+        for element in items:
+            if not isinstance(element, dict):
+                continue
+            nested_items = element.get(nested_field)
+            if not isinstance(nested_items, list):
+                continue
+            saw_nested_list = True
+            capped, overflowed = enforcement.cap_list_field(nested_items)
+            element[nested_field] = capped
+            total_returned += len(capped)
+            if overflowed:
+                nested_overflowed = True
+        if not saw_nested_list:
+            continue
+        nested_returned_counts[nested_key] = total_returned
+        if nested_overflowed:
+            truncated_fields.add(nested_key)
+
     if truncated_fields:
         result["truncated"] = True
         # F-7: which field(s) actually lost data — a bare summed total (or a
@@ -266,9 +331,9 @@ def apply_central_bounds(
         result["truncated_fields"] = sorted(truncated_fields)
         # Per-field counts, not summed — same reasoning: `returned_count`
         # must be attributable to a specific field, not a conflated total.
-        result["returned_count"] = {
-            f: len(result[f]) for f in fields if isinstance(result.get(f), list)
-        }
+        returned_count = {f: len(result[f]) for f in fields if isinstance(result.get(f), list)}
+        returned_count.update(nested_returned_counts)
+        result["returned_count"] = returned_count
         result["more_available"] = True
         result.setdefault("retry_hint", "narrower_scope")
 

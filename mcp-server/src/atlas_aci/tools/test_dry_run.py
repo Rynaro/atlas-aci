@@ -84,18 +84,31 @@ async def test_dry_run(
             "narrower_scope",
         ) from e
 
-    # Cap output to byte budget
+    # Cap output to byte budget. `truncated_fields` names exactly which
+    # stream(s) actually lost data — stdout and stderr are capped
+    # independently, so (per the F-7 lesson elsewhere in this codebase) a
+    # bare `truncated: true` boolean alone can't tell a consumer which
+    # stream to re-request or trust as complete (P0 checker residual: this
+    # tool set `truncated` without `truncated_fields`, an inconsistent
+    # contract shape vs every other tool — tracked for A1, closed here).
     cap = config.max_bytes_per_call
     stdout_text = stdout_bytes[:cap].decode("utf-8", errors="replace")
     stderr_text = stderr_bytes[:cap].decode("utf-8", errors="replace")
-    truncated = len(stdout_bytes) > cap or len(stderr_bytes) > cap
+    truncated_fields = []
+    if len(stdout_bytes) > cap:
+        truncated_fields.append("stdout")
+    if len(stderr_bytes) > cap:
+        truncated_fields.append("stderr")
+    truncated = bool(truncated_fields)
 
-    result = {
+    result: dict[str, Any] = {
         "exit_code": proc.returncode,
         "stdout": stdout_text,
         "stderr": stderr_text,
         "truncated": truncated,
     }
+    if truncated_fields:
+        result["truncated_fields"] = truncated_fields
 
     enforcement.record(
         tool="test_dry_run",
