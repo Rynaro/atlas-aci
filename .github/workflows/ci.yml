@@ -78,3 +78,122 @@ jobs:
 
       - name: mypy
         run: uv run --frozen mypy src/
+
+  serve-read-only-smoke:
+    # AC-H-16: the pytest-level chmod simulation the checker ruled an
+    # unfaithful proxy (root ignores mode bits; chmod cannot simulate the
+    # EROFS a real `:ro` bind mount enforces at the kernel/mount level, nor
+    # SQLite's hot-journal/locking behavior under one). This job runs the
+    # actual production configuration: a built image, `--read-only`, a
+    # `:ro` repo bind mount — the exact shape this project's own live
+    # `.mcp.json` uses. It must (a) start and stay alive rather than crash,
+    # and (b) leave every file under `.atlas` byte-for-byte and
+    # mtime-for-mtime unchanged.
+    name: serve --read-only :ro smoke test (AC-H-16)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build atlas-aci image
+        run: docker build -t atlas-aci-ci-smoketest -f mcp-server/Dockerfile mcp-server
+
+      - name: Build a tiny fixture repo and index it (writable mount)
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/smoke-repo/app
+          cat > /tmp/smoke-repo/app/hello.rb <<'RUBY'
+          class Hello
+            def call
+            end
+          end
+          RUBY
+          # Permissive so the container's non-default UID (10001) can write
+          # regardless of the runner's own UID — a CI-only convenience, not
+          # a production security posture.
+          chmod -R 777 /tmp/smoke-repo
+          docker run --rm -v /tmp/smoke-repo:/repo atlas-aci-ci-smoketest index --repo /repo
+
+      - name: Snapshot .atlas before serve
+        run: |
+          find /tmp/smoke-repo/.atlas -type f -exec stat -c '%n %Y %s' {} \; | sort > /tmp/atlas-before.txt
+          cat /tmp/atlas-before.txt
+
+      - name: serve under --read-only :ro must start and stay alive (AC-H-16)
+        run: |
+          set -euo pipefail
+          docker volume create atlas-memex-ci >/dev/null
+
+          # An MCP stdio server blocks reading its next request; hold stdin
+          # open via a FIFO so it doesn't see EOF and exit cleanly (which
+          # would be indistinguishable here from "crashed").
+          rm -f /tmp/mcp-in
+          mkfifo /tmp/mcp-in
+          exec 3<>/tmp/mcp-in
+
+          docker run --rm -i --name atlas-serve-smoketest --read-only \
+            -v /tmp/smoke-repo:/repo:ro \
+            -v atlas-memex-ci:/memex \
+            atlas-aci-ci-smoketest serve --repo /repo --memex-root /memex \
+            <&3 > /tmp/serve.log 2>&1 &
+
+          sleep 3
+
+          if ! docker ps --filter "name=atlas-serve-smoketest" --format '{{.Names}}' | grep -q atlas-serve-smoketest; then
+            echo "FAIL (AC-H-16): serve did not stay alive under --read-only :ro"
+            cat /tmp/serve.log
+            exit 1
+          fi
+          echo "serve stayed alive under --read-only :ro (expected)."
+          cat /tmp/serve.log
+
+          docker kill atlas-serve-smoketest >/dev/null 2>&1 || true
+          exec 3>&-
+          rm -f /tmp/mcp-in
+
+      - name: Confirm zero writes under .atlas (AC-H-16)
+        run: |
+          set -euo pipefail
+          find /tmp/smoke-repo/.atlas -type f -exec stat -c '%n %Y %s' {} \; | sort > /tmp/atlas-after.txt
+          if ! diff -u /tmp/atlas-before.txt /tmp/atlas-after.txt; then
+            echo "FAIL (AC-H-16): .atlas contents changed under a read-only serve mount"
+            exit 1
+          fi
+          echo "Zero writes under .atlas confirmed."
+
+      - name: serve WITHOUT --memex-root override must still stay alive (regression guard)
+        run: |
+          set -euo pipefail
+          # The step above uses the *documented* invocation (an explicit
+          # --memex-root on its own writable volume, matching the
+          # Dockerfile's baked CMD) and would pass even without the fix
+          # below. This step is the actual regression test: the default
+          # --memex-root (`<repo>/.atlas/memex`, INSIDE the read-only
+          # mount, no separate volume) is what a Docker smoke test caught
+          # crashing the whole server at startup (`Config.__post_init__` /
+          # `Memex.__init__` unconditionally calling `mkdir` — fixed to be
+          # best-effort). Must still start; `memex_read` degrading to
+          # NOT_FOUND for this session is an acceptable, documented
+          # consequence, not a crash.
+          rm -f /tmp/mcp-in
+          mkfifo /tmp/mcp-in
+          exec 3<>/tmp/mcp-in
+
+          docker run --rm -i --name atlas-serve-smoketest-nomemex --read-only \
+            -v /tmp/smoke-repo:/repo:ro \
+            atlas-aci-ci-smoketest serve --repo /repo \
+            <&3 > /tmp/serve-nomemex.log 2>&1 &
+
+          sleep 3
+
+          if ! docker ps --filter "name=atlas-serve-smoketest-nomemex" --format '{{.Names}}' | grep -q atlas-serve-smoketest-nomemex; then
+            echo "FAIL: serve crashed without an explicit --memex-root under --read-only :ro"
+            cat /tmp/serve-nomemex.log
+            exit 1
+          fi
+          echo "serve stayed alive without --memex-root under --read-only :ro (expected)."
+          cat /tmp/serve-nomemex.log
+
+          docker kill atlas-serve-smoketest-nomemex >/dev/null 2>&1 || true
+          exec 3>&-
+          rm -f /tmp/mcp-in
