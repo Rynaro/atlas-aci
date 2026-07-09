@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import fcntl
 import hashlib
+import json
 import os
 import re
 import sqlite3
@@ -79,6 +80,18 @@ LANG_BY_EXT: dict[str, str] = {
 # Captures whose names start with `_` (e.g. `@_an`) are query-local helpers
 # used only by `#eq?`/`#match?` predicates and are ignored by `_extract`.
 #
+# A1 (v2): captures whose pattern-level tag starts with `heritage.` (instead
+# of `def.` or `ref.`) feed the materialized edge table's inheritance/mixin
+# relations (superclass | include | extend | prepend) — see `_extract`. Each
+# `heritage.<relation>` pattern captures exactly one `@target_name` node (the
+# referenced class/module, pre-resolution); the *source* endpoint (which
+# class/module declares the relation) is resolved afterwards from line
+# ranges against `symbols`, not captured here (D1's "caller context from the
+# edge source endpoint" — F10). Call patterns (`@ref.call`) additionally
+# capture an optional `@receiver` node (the call's receiver/qualifier, if
+# any) so `_is_call_qualified` can decide EXTRACTED vs INFERRED (D4/F18)
+# without a second parse pass.
+#
 # Add languages as needed; the Ruby and Python queries below cover the common
 # cases, and the web/markup grammars below cover static-site repos.
 QUERIES: dict[str, str] = {
@@ -87,25 +100,61 @@ QUERIES: dict[str, str] = {
         (module name: (constant) @name) @def.module
         (method name: (identifier) @name) @def.method
         (singleton_method name: (identifier) @name) @def.method
-        (call method: (identifier) @callee) @ref.call
+        (call receiver: (_)? @receiver method: (identifier) @callee) @ref.call
+        (class
+            superclass: (superclass
+                [(constant) (scope_resolution)] @target_name)) @heritage.superclass
+        (call
+            method: (identifier) @_verb (#eq? @_verb "include")
+            arguments: (argument_list
+                [(constant) (scope_resolution)] @target_name)) @heritage.include
+        (call
+            method: (identifier) @_verb (#eq? @_verb "extend")
+            arguments: (argument_list
+                [(constant) (scope_resolution)] @target_name)) @heritage.extend
+        (call
+            method: (identifier) @_verb (#eq? @_verb "prepend")
+            arguments: (argument_list
+                [(constant) (scope_resolution)] @target_name)) @heritage.prepend
     """,
     "python": """
         (class_definition name: (identifier) @name) @def.class
         (function_definition name: (identifier) @name) @def.function
         (call function: (identifier) @callee) @ref.call
-        (call function: (attribute attribute: (identifier) @callee)) @ref.call
+        (call
+            function: (attribute
+                object: (_) @receiver
+                attribute: (identifier) @callee)) @ref.call
+        (class_definition
+            superclasses: (argument_list (identifier) @target_name)) @heritage.superclass
+        (class_definition
+            superclasses: (argument_list
+                (attribute attribute: (identifier) @target_name))) @heritage.superclass
     """,
     "typescript": """
         (class_declaration name: (type_identifier) @name) @def.class
         (function_declaration name: (identifier) @name) @def.function
         (method_definition name: (property_identifier) @name) @def.method
         (call_expression function: (identifier) @callee) @ref.call
+        (call_expression
+            function: (member_expression
+                object: (_) @receiver
+                property: (property_identifier) @callee)) @ref.call
+        (new_expression constructor: (identifier) @callee) @ref.call
+        (class_declaration
+            (class_heritage (extends_clause value: (identifier) @target_name))) @heritage.superclass
     """,
     "javascript": """
         (class_declaration name: (identifier) @name) @def.class
         (function_declaration name: (identifier) @name) @def.function
         (method_definition name: (property_identifier) @name) @def.method
         (call_expression function: (identifier) @callee) @ref.call
+        (call_expression
+            function: (member_expression
+                object: (_) @receiver
+                property: (property_identifier) @callee)) @ref.call
+        (new_expression constructor: (identifier) @callee) @ref.call
+        (class_declaration (class_heritage (identifier) @target_name)) @heritage.superclass
     """,
     # Stylesheets: jump to where a mixin/function/placeholder/`$variable` is
     # defined or a class/id selector is styled; `@include` sites become refs.
@@ -185,7 +234,7 @@ assert set(LANG_BY_EXT.values()) <= set(QUERIES) | UNSUPPORTED_LANGS, (
 #
 # Recompute via:
 #   python -c "from atlas_aci.codegraph import SCHEMA, ddl_hash; print(ddl_hash(SCHEMA))"
-SCHEMA_EPOCH = 1
+SCHEMA_EPOCH = 2
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS symbols (
@@ -200,18 +249,66 @@ CREATE TABLE IF NOT EXISTS symbols (
 CREATE INDEX IF NOT EXISTS idx_symbols_name ON symbols(name);
 CREATE INDEX IF NOT EXISTS idx_symbols_path ON symbols(path);
 
+-- Raw (pre-resolution) name references — call sites AND heritage
+-- (superclass/include/extend/prepend) sites alike. `enclosing` (F10 /
+-- AC-A1-9) is DROPPED here: it was schema'd but always NULL
+-- (codegraph.py history); caller context now comes from the materialized
+-- `edges` table's source endpoint instead (AC-A1-10), computed from this
+-- table plus `symbols` in `_resolve_edges`. `relation`/`qualified` are new
+-- in the v2 epoch: `relation` distinguishes a method call from a heritage
+-- reference; `qualified` is the syntactic type-qualification fact D4/F18
+-- pins per language, captured at extraction time from the AST shape alone
+-- (never inferred after the fact) — the sole input to EXTRACTED vs
+-- INFERRED when candidate_count == 1.
 CREATE TABLE IF NOT EXISTS refs (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
     callee_name TEXT NOT NULL,
+    relation    TEXT NOT NULL DEFAULT 'call',  -- call | superclass | include | extend | prepend
+    qualified   INTEGER NOT NULL DEFAULT 0,    -- syntactic type-qualification (D4/F18), 0/1
     path        TEXT NOT NULL,
     line        INTEGER NOT NULL,
-    enclosing   TEXT,                -- enclosing def name, if known
     lang        TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_refs_callee ON refs(callee_name);
 
+-- The materialized call/inheritance edge table (A1/D4/G-B) — the first
+-- real edge set atlas-aci has ever had. Fully derived from `refs` +
+-- `symbols` by `_resolve_edges` on every build (full or incremental), never
+-- hand-authored (G-A). One row per *resolved* reference (candidate_count
+-- >= 1); a zero-candidate reference never gets a row (AC-A1-6) and stays
+-- only in `refs`. `confidence` is the deterministic 3-value enum (D4):
+-- EXTRACTED (1 candidate, qualified), INFERRED (1 candidate, heuristic),
+-- AMBIGUOUS (>1 candidates — never dropped, AC-A1-5). `target_*` carries
+-- the single resolved endpoint for EXTRACTED/INFERRED; `candidates` is a
+-- JSON array (totally ordered by path/line/name, AC-A1-8) of every matching
+-- {path,line,name} candidate, populated for AMBIGUOUS edges only. AMBIGUOUS
+-- edges are stored and returned by graph_query like any other edge
+-- (AC-A1-2/AC-A1-5) — D4a's confident-subgraph exclusion (EXTRACTED union
+-- INFERRED) is an analysis-time filter for the not-yet-built A2/A3, never a
+-- storage-time drop; `confident_edges()` below is the query primitive A2/A3
+-- will filter through.
+CREATE TABLE IF NOT EXISTS edges (
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    relation      TEXT NOT NULL,      -- call | superclass | include | extend | prepend
+    source_path   TEXT NOT NULL,
+    source_line   INTEGER NOT NULL,
+    source_name   TEXT,               -- enclosing symbol name at the reference site
+    source_kind   TEXT,               -- enclosing symbol kind at the reference site
+    callee_name   TEXT NOT NULL,      -- the referenced name, pre-resolution
+    confidence    TEXT NOT NULL,      -- EXTRACTED | INFERRED | AMBIGUOUS
+    target_path   TEXT,               -- resolved single target (EXTRACTED/INFERRED only)
+    target_line   INTEGER,
+    target_name   TEXT,
+    candidates    TEXT,               -- JSON array [{path,line,name}, ...]; AMBIGUOUS only
+    lang          TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_edges_callee ON edges(callee_name);
+CREATE INDEX IF NOT EXISTS idx_edges_target_name ON edges(target_name);
+CREATE INDEX IF NOT EXISTS idx_edges_relation ON edges(relation);
+CREATE INDEX IF NOT EXISTS idx_edges_confidence ON edges(confidence);
+
 -- Rationale nodes (A4, phase P2) — comment-derived "why" annotations. This
--- is a *separate* relation from `refs` and the future call/inheritance edge
+-- is a *separate* relation from `refs` and the call/inheritance `edges`
 -- table (F9 / AC-A4-6): `rationale_for` edges carry no confidence-enum
 -- value, so they must never collide with "every materialized call/
 -- inheritance edge carries a confidence" (AC-A1-2). Schema-only in this
@@ -254,7 +351,7 @@ def ddl_hash(ddl: str) -> str:
 
 # Hand-maintained — see the SCHEMA_EPOCH docstring above. Do NOT replace this
 # with `ddl_hash(SCHEMA)`; that would make the pairing test a tautology.
-EXPECTED_DDL_HASH = "2371e04f6df8df80cfa9e6162dd451acf8d8db52e545a494bed6a4e296347cd6"
+EXPECTED_DDL_HASH = "a41130cc523b58d7f7652448370516b82fd0a2e487a154fd6dc58a504b884caa"
 
 
 def parse_query_verb(dsl: str) -> str:
@@ -282,6 +379,15 @@ def parse_query_verb(dsl: str) -> str:
 # dispatchable at all) cannot evade a test that enumerates this set itself.
 KNOWN_QUERY_VERBS: frozenset[str] = frozenset({"callers_of", "definitions_of", "subclasses_of"})
 
+# A1/D4 — edge-resolution candidate kinds, by relation. A call reference
+# only ever resolves against a callable definition; a heritage reference
+# (superclass/include/extend/prepend) only ever resolves against a
+# class/module definition. Keeps `_resolve_edges` from matching, say, a
+# method that happens to share a name with an unrelated class.
+_HERITAGE_RELATIONS: tuple[str, ...] = ("superclass", "include", "extend", "prepend")
+_CALL_CANDIDATE_KINDS: tuple[str, ...] = ("method", "function", "singleton_method")
+_HERITAGE_CANDIDATE_KINDS: tuple[str, ...] = ("class", "module")
+
 
 @dataclass
 class Symbol:
@@ -295,11 +401,22 @@ class Symbol:
 
 @dataclass
 class Reference:
+    """A raw (pre-resolution) name reference — a call site or a heritage
+    (superclass/include/extend/prepend) site. ``enclosing`` is DROPPED (F10 /
+    AC-A1-9): caller context is resolved after the fact, from the `edges`
+    table's source endpoint, not carried on this dataclass. ``qualified`` is
+    the syntactic type-qualification fact (D4/F18) captured from the AST
+    shape at extraction time — the sole input `_resolve_edges` uses to
+    decide EXTRACTED vs INFERRED when a reference resolves to exactly one
+    candidate.
+    """
+
     callee_name: str
     path: str
     line: int
-    enclosing: str | None
     lang: str
+    relation: str = "call"
+    qualified: bool = False
 
 
 class CodeGraph:
@@ -556,9 +673,9 @@ class CodeGraph:
                 symbols_added += 1
             for r in refs:
                 conn.execute(
-                    "INSERT INTO refs(callee_name, path, line, enclosing, lang) "
-                    "VALUES (?, ?, ?, ?, ?)",
-                    (r.callee_name, r.path, r.line, r.enclosing, r.lang),
+                    "INSERT INTO refs(callee_name, relation, qualified, path, line, lang) "
+                    "VALUES (?, ?, ?, ?, ?, ?)",
+                    (r.callee_name, r.relation, int(r.qualified), r.path, r.line, r.lang),
                 )
                 refs_added += 1
 
@@ -584,6 +701,15 @@ class CodeGraph:
                 message=f"unsupported extension skipped: {count} files",
             )
 
+        # A1/G-B: the edge table is pure derived data over `refs` + `symbols`
+        # (both of which the loop above already keeps correct, incrementally
+        # or fully) — so it is always cheaply recomputed from scratch here,
+        # on every build call, rather than incrementally patched. This is
+        # what lets `--since` stay correct even though a changed file in
+        # isolation cannot know its own candidate count (that requires the
+        # *global* symbol table — G-B/D4).
+        edges_added = self._resolve_edges(conn)
+
         conn.execute(
             "INSERT OR REPLACE INTO manifest(key, value) VALUES ('epoch', ?)",
             (str(SCHEMA_EPOCH),),
@@ -593,6 +719,7 @@ class CodeGraph:
             "files_indexed": files_indexed,
             "symbols": symbols_added,
             "refs": refs_added,
+            "edges": edges_added,
             "files_skipped": files_skipped,
             "files_removed": files_removed,
             "unsupported_skipped": unsupported_skipped,
@@ -620,7 +747,11 @@ class CodeGraph:
         Iterates *matches* (not raw captures) so each ``@def.<kind>`` node stays
         grouped with the ``@name`` it owns, and ``#eq?``/``#match?`` predicates
         are applied. A match carrying a ``def.*`` capture yields a Symbol named
-        from its ``@name``; a match carrying ``@callee`` yields a Reference.
+        from its ``@name``; a match carrying a ``heritage.<relation>`` tag
+        yields an inheritance/mixin Reference (A1); a match carrying
+        ``@callee`` yields a call Reference, with `_is_call_qualified` (D4/
+        F18) deciding its `qualified` flag from the same match's optional
+        ``@receiver`` capture — no second parse pass.
         """
         from tree_sitter import Query, QueryCursor
         from tree_sitter_language_pack import get_language
@@ -635,6 +766,7 @@ class CodeGraph:
         # Each match arrives as (pattern_index, {capture_name: [nodes]}).
         for _pattern_index, caps in matches:
             def_cap = next((c for c in caps if c.startswith("def.")), None)
+            heritage_cap = next((c for c in caps if c.startswith("heritage.")), None)
             if def_cap is not None:
                 name_nodes = caps.get("name")
                 if not name_nodes:
@@ -653,7 +785,35 @@ class CodeGraph:
                         lang=lang,
                     )
                 )
+            elif heritage_cap is not None:
+                # A1/D4: superclass | include | extend | prepend. The
+                # referenced name (`@target_name`) is, by grammar
+                # construction, always a constant/class/import-style
+                # reference in every shipped language — heritage references
+                # are unconditionally type-qualified (`qualified=True`),
+                # mirroring F18's "a constant receiver ... = type-qualified"
+                # rule applied to the heritage slot itself rather than a call
+                # receiver.
+                target_nodes = caps.get("target_name")
+                if not target_nodes:
+                    continue
+                relation = heritage_cap.split(".", 1)[1]
+                for node in target_nodes:
+                    name = self._node_text(source, node).strip()
+                    if not name:
+                        continue
+                    refs.append(
+                        Reference(
+                            callee_name=name,
+                            path=rel_path,
+                            line=node.start_point[0] + 1,
+                            lang=lang,
+                            relation=relation,
+                            qualified=True,
+                        )
+                    )
             elif "callee" in caps:
+                qualified = self._is_call_qualified(lang, source, caps)
                 for node in caps["callee"]:
                     name = self._node_text(source, node).strip()
                     if not name:
@@ -663,16 +823,172 @@ class CodeGraph:
                             callee_name=name,
                             path=rel_path,
                             line=node.start_point[0] + 1,
-                            enclosing=None,
                             lang=lang,
+                            relation="call",
+                            qualified=qualified,
                         )
                     )
 
         return symbols, refs
 
     @staticmethod
+    def _is_call_qualified(lang: str, source: bytes, caps: dict[str, list[Any]]) -> bool:
+        """The D4/F18 syntactic type-qualification rule for a call reference.
+
+        Ruby's grammar already distinguishes constant (capitalized) receivers
+        from plain identifiers at the *node-type* level (`constant` /
+        `scope_resolution` vs `identifier` / `self`), so Ruby needs no
+        further heuristic — mirrors graphify's `type_qualified`, pinned per
+        F18: "a constant receiver or `::` scope resolution ... = type-
+        qualified; a local-variable receiver ... / a bare method = INFERRED".
+
+        Python and JS/TS grammars do NOT make that distinction structurally
+        (a class name and a local variable are both plain `identifier`
+        nodes), so they use the same *syntactic* proxy Ruby's grammar
+        enforces for free: capitalization. `Foo.bar()` / `Foo()` / `new
+        Foo()` with a capitalized qualifier-or-bare-callee is treated as
+        class-or-import-bound (qualified); `self.bar()` / `obj.bar()` /
+        `bar()` is not. This is a pure syntax check — no symbol-table
+        cross-reference, no LLM, no runtime type information (AC-NEG-3).
+        """
+        receiver_nodes = caps.get("receiver")
+        if lang == "ruby":
+            if not receiver_nodes:
+                return False
+            return receiver_nodes[0].type in ("constant", "scope_resolution")
+
+        if receiver_nodes:
+            text = CodeGraph._node_text(source, receiver_nodes[0]).strip()
+        else:
+            callee_nodes = caps.get("callee") or []
+            text = CodeGraph._node_text(source, callee_nodes[0]).strip() if callee_nodes else ""
+        return bool(text) and text[0].isupper()
+
+    @staticmethod
     def _node_text(source: bytes, node) -> str:
         return source[node.start_byte : node.end_byte].decode("utf-8", errors="replace")
+
+    # ---- Edge resolution (A1/D4/G-B) ----
+
+    def _resolve_edges(self, conn: sqlite3.Connection) -> int:
+        """Materialize the v2 call/inheritance edge table from the raw
+        `refs` + `symbols` relations `_run_build` just brought up to date.
+
+        Always a full recompute (`DELETE FROM edges` then re-derive): the DB
+        is pure derived data (G-A), and candidate resolution is inherently
+        *global* — a single changed file cannot know its own candidate
+        count without seeing every other file's symbols — so incrementally
+        patching `edges` per changed file would either be wrong or require
+        tracking a full dependency graph. Recomputing this cheap, SQL-only
+        pass from the already-correct `refs`/`symbols` tables is both
+        simpler and correct by construction, on every build call (full or
+        `--since`).
+
+        Partitions strictly on candidate count (D4), never an LLM path
+        (AC-NEG-3):
+          - 0 candidates -> no edge; the reference stays an unresolved name
+            in `refs` (AC-A1-6).
+          - 1 candidate  -> EXTRACTED if the reference was syntactically
+            type-qualified at the site (`refs.qualified`, D4/F18), else
+            INFERRED.
+          - >1 candidates -> AMBIGUOUS, with the full ordered `candidates[]`
+            attached (AC-A1-5) — never dropped, unlike graphify's silent
+            edge-drop guard.
+        Candidate rows (and therefore `candidates[]`) are always fetched
+        `ORDER BY path, line_start, name` — a fixed total order for
+        identical input (AC-A1-8), independent of SQLite rowid/insertion
+        order (D6 foundation).
+        """
+        conn.execute("DELETE FROM edges")
+        edges_added = 0
+
+        ref_rows = conn.execute(
+            "SELECT callee_name, relation, qualified, path, line, lang FROM refs "
+            "ORDER BY path, line, callee_name"
+        ).fetchall()
+
+        for ref in ref_rows:
+            relation = ref["relation"]
+            if relation in _HERITAGE_RELATIONS:
+                candidate_kinds = _HERITAGE_CANDIDATE_KINDS
+            else:
+                candidate_kinds = _CALL_CANDIDATE_KINDS
+            placeholders = ",".join("?" for _ in candidate_kinds)
+            candidates = conn.execute(
+                f"SELECT name, path, line_start FROM symbols WHERE name = ? "
+                f"AND kind IN ({placeholders}) ORDER BY path, line_start, name",
+                (ref["callee_name"], *candidate_kinds),
+            ).fetchall()
+
+            if not candidates:
+                continue  # AC-A1-6: zero candidates — no edge, ever.
+
+            source_name, source_kind = self._enclosing_symbol(conn, ref["path"], ref["line"])
+
+            if len(candidates) == 1:
+                confidence = "EXTRACTED" if ref["qualified"] else "INFERRED"
+                target = candidates[0]
+                target_path = target["path"]
+                target_line = target["line_start"]
+                target_name = target["name"]
+                candidates_json = None
+            else:
+                confidence = "AMBIGUOUS"
+                target_path = target_line = target_name = None
+                candidates_json = json.dumps(
+                    [
+                        {"path": c["path"], "line": c["line_start"], "name": c["name"]}
+                        for c in candidates
+                    ]
+                )
+
+            conn.execute(
+                "INSERT INTO edges(relation, source_path, source_line, source_name, "
+                "source_kind, callee_name, confidence, target_path, target_line, "
+                "target_name, candidates, lang) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (
+                    relation,
+                    ref["path"],
+                    ref["line"],
+                    source_name,
+                    source_kind,
+                    ref["callee_name"],
+                    confidence,
+                    target_path,
+                    target_line,
+                    target_name,
+                    candidates_json,
+                    ref["lang"],
+                ),
+            )
+            edges_added += 1
+
+        return edges_added
+
+    @staticmethod
+    def _enclosing_symbol(
+        conn: sqlite3.Connection, path: str, line: int
+    ) -> tuple[str | None, str | None]:
+        """The innermost symbol in `path` whose ``[line_start, line_end]``
+        range contains `line` — the F10 replacement for the always-NULL
+        `refs.enclosing`: caller context is derived from the materialized
+        edge's source endpoint instead of stored redundantly on every ref
+        (AC-A1-9/AC-A1-10). "Innermost" = smallest line span; ties are
+        broken by the latest start line, then by name, for a fixed
+        deterministic result — in practice two symbols in the same file
+        cannot legitimately share an identical span, so ties never bite.
+        Returns ``(None, None)`` when the reference sits outside every known
+        symbol's range (e.g. a Ruby top-level call) — a real, not-hidden,
+        "no enclosing definition" fact, not an error.
+        """
+        row = conn.execute(
+            "SELECT name, kind FROM symbols WHERE path = ? AND line_start <= ? AND line_end >= ? "
+            "ORDER BY (line_end - line_start) ASC, line_start DESC, name ASC LIMIT 1",
+            (path, line, line),
+        ).fetchone()
+        if row is None:
+            return None, None
+        return row["name"], row["kind"]
 
     # ---- Queries ----
 
@@ -701,15 +1017,97 @@ class CodeGraph:
         return {"definitions": defs, "references": refs}
 
     def callers_of(self, symbol: str) -> list[dict[str, Any]]:
-        # See search_symbol above: LIMIT self.query_limit (cap+1), not
-        # unbounded (F-2) and not the bare cap (F-1).
-        return [
-            dict(r)
-            for r in self.db.execute(
-                "SELECT path, line, enclosing FROM refs WHERE callee_name = ? LIMIT ?",
-                (symbol, self.query_limit),
-            ).fetchall()
-        ]
+        """A1: queries the materialized `edges` table (relation='call'),
+        replacing the pre-A1 `refs`-by-name-string join. Response shape
+        change (F10/AC-A1-9/AC-A1-10): each edge now carries caller context
+        as a `source` object (`{path, line, name, kind}`, resolved from the
+        edge's source endpoint) instead of the old, always-null
+        `enclosing` string — see `_edge_row_to_dict`.
+        """
+        return self._edges_for(symbol, ("call",))
+
+    def subclasses_of(self, symbol: str) -> list[dict[str, Any]]:
+        """A1 (AC-A1-7): resolves real inheritance/mixin edges — Ruby
+        `superclass`/`include`/`extend`/`prepend` plus the `superclass`
+        equivalent already captured for Python and JS/TS — retiring the
+        empty stub-with-warning. Aggregates all heritage relations under
+        one verb, matching the DSL's single `subclasses_of:Class` form; a
+        Rails engine leaning on `concerns/` mixins (D3a's stated Solidus/
+        Spree target) surfaces through `include`/`extend`/`prepend` here
+        exactly as it would through `superclass`.
+        """
+        return self._edges_for(symbol, _HERITAGE_RELATIONS)
+
+    def confident_edges(self) -> list[dict[str, Any]]:
+        """The confident subgraph (EXTRACTED union INFERRED — D4a) as a
+        cheap, ready-made query: the object A2's degree-centrality god
+        nodes, A3's community detection, and the D3a probe are all
+        specified to consume (none of those are built by A1 — this is the
+        storage+retrieval primitive they will filter through). AMBIGUOUS is
+        excluded here — never fanned out to its candidates, never given
+        fractional weight (AC-NEG-7) — but this is an *analysis-time*
+        filter, not a storage-time drop: AMBIGUOUS edges remain in `edges`
+        and are still returned in full by `callers_of`/`subclasses_of`
+        (D4a, AC-A1-2/AC-A1-5 preserved).
+        """
+        rows = self.db.execute(
+            "SELECT * FROM edges WHERE confidence IN ('EXTRACTED', 'INFERRED') "
+            "ORDER BY source_path, source_line, callee_name"
+        ).fetchall()
+        return [self._edge_row_to_dict(r) for r in rows]
+
+    def _edges_for(self, callee_name: str, relations: tuple[str, ...]) -> list[dict[str, Any]]:
+        """Shared query path for `callers_of`/`subclasses_of`: both filter
+        the materialized `edges` table by the pre-resolution `callee_name`
+        string (mirroring the pre-A1 `callers_of`'s own name-string filter)
+        and a relation set. Returns *every* matching edge regardless of
+        confidence, including AMBIGUOUS with its `candidates[]` attached —
+        D4a's confident-subgraph exclusion applies to `confident_edges`
+        (A2/A3's future analysis input), never to what `graph_query` itself
+        returns (AC-A1-5). LIMIT self.query_limit (cap+1, never the bare
+        cap) bounds SQL work the same way search_symbol/callers_of already
+        did pre-A1 (F-1/F-2) — the central bounds chokepoint (server.py)
+        still truncates-and-flags the returned list at the response layer.
+        """
+        placeholders = ",".join("?" for _ in relations)
+        rows = self.db.execute(
+            f"SELECT * FROM edges WHERE callee_name = ? AND relation IN ({placeholders}) "
+            f"ORDER BY source_path, source_line, callee_name LIMIT ?",
+            (callee_name, *relations, self.query_limit),
+        ).fetchall()
+        return [self._edge_row_to_dict(r) for r in rows]
+
+    @staticmethod
+    def _edge_row_to_dict(row: sqlite3.Row) -> dict[str, Any]:
+        """Shapes one `edges` row into the graph_query response contract
+        (AC-A1-10). `source` replaces the dropped `refs.enclosing` (F10)
+        with real caller context from the materialized edge's own source
+        endpoint. `target` is the single resolved endpoint for
+        EXTRACTED/INFERRED; `candidates` is the full ordered candidate set
+        (R-1/AC-A1-5/AC-A1-8) for AMBIGUOUS — the two are mutually
+        exclusive by construction (`_resolve_edges` never populates both).
+        """
+        edge: dict[str, Any] = {
+            "relation": row["relation"],
+            "confidence": row["confidence"],
+            "source": {
+                "path": row["source_path"],
+                "line": row["source_line"],
+                "name": row["source_name"],
+                "kind": row["source_kind"],
+            },
+        }
+        if row["confidence"] == "AMBIGUOUS":
+            edge["target"] = None
+            edge["candidates"] = json.loads(row["candidates"]) if row["candidates"] else []
+        else:
+            edge["target"] = {
+                "path": row["target_path"],
+                "line": row["target_line"],
+                "name": row["target_name"],
+            }
+            edge["candidates"] = None
+        return edge
 
     def query(self, dsl: str) -> dict[str, Any]:
         """Tiny DSL.
@@ -735,13 +1133,9 @@ class CodeGraph:
             return self.search_symbol(arg)
 
         if verb == "subclasses_of":
-            # Best-effort; without inheritance edges, return classes whose
-            # name appears near the parent. A real implementation extends
-            # QUERIES with superclass capture.
-            return {
-                "edges": [],
-                "warning": "subclasses_of requires extended index; not implemented in MVP.",
-            }
+            # A1 (AC-A1-7): real inheritance/mixin edges, replacing the MVP
+            # empty-stub-with-warning.
+            return {"edges": self.subclasses_of(arg)}
 
         # Unreachable today (KNOWN_QUERY_VERBS has exactly the three
         # members dispatched above) — NOT dead-code hygiene, a guard

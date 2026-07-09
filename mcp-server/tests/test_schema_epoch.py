@@ -238,13 +238,15 @@ def test_concurrent_index_atomic_rename_no_corruption(tmp_path: Path) -> None:
 
 
 # ---- AC-A1-1 (materialized edge table exists under the v2 epoch) ----
-#
-# A1 itself (the confidence enum, candidate sets, real inheritance edges) is
-# P1 scope — out of bounds for this change. This test only pins that the H3
-# substrate did NOT prematurely create an `edges` table; A1 owns that DDL.
 
 
-def test_edges_table_not_yet_present(tmp_path: Path) -> None:
+def test_edges_table_present_v2(tmp_path: Path) -> None:
+    """A1 (P1): the v2-epoch schema includes a materialized call/
+    inheritance edge table carrying source, target, relation type,
+    confidence, and candidate set. Supersedes P0's
+    `test_edges_table_not_yet_present`, which pinned the *opposite* fact
+    (H3 must not implement A1 early) — that guard's job is done; A1 owns
+    this DDL now."""
     repo = tmp_path / "repo"
     repo.mkdir()
     graph = CodeGraph(repo=repo)
@@ -253,10 +255,38 @@ def test_edges_table_not_yet_present(tmp_path: Path) -> None:
         row[0]
         for row in graph.db.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall()
     }
-    assert "edges" not in tables, (
-        "the materialized call/inheritance edge table is A1 (phase P1) scope — "
-        "H3 (this change) must not implement it early"
-    )
+    assert "edges" in tables
+
+    cols = {row[1] for row in graph.db.execute("PRAGMA table_info(edges)").fetchall()}
+    assert {
+        "relation",
+        "source_path",
+        "source_line",
+        "callee_name",
+        "confidence",
+        "target_path",
+        "target_line",
+        "target_name",
+        "candidates",
+    } <= cols
+
+
+# ---- AC-A1-9 (refs.enclosing DROPPED) ----
+
+
+def test_refs_enclosing_dropped_no_always_null_column(tmp_path: Path) -> None:
+    """F10: the legacy always-NULL `refs.enclosing` column is omitted from
+    the v2 schema entirely — not merely left unpopulated. Caller context is
+    carried by the materialized edge's source endpoint instead
+    (AC-A1-10)."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    graph = CodeGraph(repo=repo)
+    graph.build()
+
+    cols = {row[1] for row in graph.db.execute("PRAGMA table_info(refs)").fetchall()}
+    assert "enclosing" not in cols
+    assert {"callee_name", "relation", "qualified", "path", "line"} <= cols
 
 
 # ---- AC-A4-6 ----

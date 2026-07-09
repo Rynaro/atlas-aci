@@ -179,6 +179,115 @@ def test_undispatched_known_verb_raises_rather_than_impersonating_a_stub(
         graph.query("widgets_of:Anything")
 
 
+# ---- R-1 — nested sub-field escape (candidates[] inside edges[]) ----
+#
+# The `_bounded_field` registry (AC-H-15) protects every top-level list
+# field. A1 introduces a sub-field NESTED one level inside an already-capped
+# field's own elements: an AMBIGUOUS graph_query edge's `candidates[]`
+# (AC-A1-5, "the full ordered candidates[] attached, never dropped") is
+# itself unbounded. These tests compute the expected post-cap shape
+# independently of apply_central_bounds's own arithmetic (a fresh slice in
+# the test), per the boundary-testing lesson the P0 pass learned four times.
+
+
+def test_nested_bounded_field_registry_covers_every_verb_with_a_sub_list() -> None:
+    from atlas_aci.server import GRAPH_QUERY_VERB_NESTED_BOUNDED_FIELDS
+
+    assert GRAPH_QUERY_VERB_NESTED_BOUNDED_FIELDS["callers_of"] == {"edges": "candidates"}
+    assert GRAPH_QUERY_VERB_NESTED_BOUNDED_FIELDS["subclasses_of"] == {"edges": "candidates"}
+
+
+def test_candidates_subfield_is_capped_and_flagged_when_over_cap(enforcement: Enforcement) -> None:
+    cap = enforcement.config.max_bound_field_elements  # 3, from the `config` fixture
+    over_cap_candidates = [{"path": "a.rb", "line": i, "name": "Foo"} for i in range(cap + 3)]
+    result = {
+        "edges": [
+            {
+                "relation": "call",
+                "confidence": "AMBIGUOUS",
+                "source": {"path": "b.rb", "line": 1, "name": "call", "kind": "method"},
+                "target": None,
+                "candidates": over_cap_candidates,
+            }
+        ]
+    }
+    out = apply_central_bounds("graph_query", {"query": "callers_of:foo"}, result, enforcement)
+
+    assert len(out["edges"]) == 1, "the top-level edges list itself was under cap"
+    assert out["edges"][0]["candidates"] == over_cap_candidates[:cap], (
+        "candidates[] must be capped on a whole-element boundary, computed independently here"
+    )
+    assert out["truncated"] is True
+    assert "edges.candidates" in out["truncated_fields"]
+    assert out["returned_count"]["edges.candidates"] == cap
+    assert out["more_available"] is True
+    assert out["retry_hint"] == "narrower_scope"
+
+
+def test_candidates_subfield_exactly_at_cap_is_not_falsely_flagged(
+    enforcement: Enforcement,
+) -> None:
+    cap = enforcement.config.max_bound_field_elements
+    exact_candidates = [{"path": "a.rb", "line": i, "name": "Foo"} for i in range(cap)]
+    result = {
+        "edges": [
+            {
+                "relation": "call",
+                "confidence": "AMBIGUOUS",
+                "source": {"path": "b.rb", "line": 1, "name": "call", "kind": "method"},
+                "target": None,
+                "candidates": exact_candidates,
+            }
+        ]
+    }
+    out = apply_central_bounds("graph_query", {"query": "subclasses_of:Foo"}, result, enforcement)
+
+    assert out["edges"][0]["candidates"] == exact_candidates
+    assert "truncated" not in out, "an exact-fit candidates[] must not be flagged as truncated"
+
+
+def test_candidates_subfield_under_cap_across_multiple_edges_not_flagged(
+    enforcement: Enforcement,
+) -> None:
+    """Every edge's candidates[] individually under cap: no truncation, even
+    though the tool returns several AMBIGUOUS edges at once."""
+    cap = enforcement.config.max_bound_field_elements
+    result = {
+        "edges": [
+            {
+                "relation": "call",
+                "confidence": "AMBIGUOUS",
+                "source": {"path": "b.rb", "line": i, "name": "call", "kind": "method"},
+                "target": None,
+                "candidates": [{"path": "a.rb", "line": 1, "name": "Foo"}],
+            }
+            for i in range(cap - 1)
+        ]
+    }
+    out = apply_central_bounds("graph_query", {"query": "callers_of:foo"}, result, enforcement)
+    assert "truncated" not in out
+
+
+def test_extracted_edge_with_null_candidates_is_unaffected(enforcement: Enforcement) -> None:
+    """An EXTRACTED/INFERRED edge carries `candidates: None`, never a list
+    (AC-A1-2/AC-A1-5 mutual exclusivity) — the nested cap must not choke on
+    that shape."""
+    result = {
+        "edges": [
+            {
+                "relation": "call",
+                "confidence": "EXTRACTED",
+                "source": {"path": "b.rb", "line": 1, "name": "call", "kind": "method"},
+                "target": {"path": "a.rb", "line": 2, "name": "Foo"},
+                "candidates": None,
+            }
+        ]
+    }
+    out = apply_central_bounds("graph_query", {"query": "callers_of:foo"}, result, enforcement)
+    assert "truncated" not in out
+    assert out["edges"][0]["candidates"] is None
+
+
 # ---- AC-H-3 — element cap before byte ceiling ----
 
 
@@ -685,6 +794,13 @@ async def test_search_symbol_is_bounded(
 async def test_graph_query_is_bounded(
     config: Config, enforcement: Enforcement, memex: Memex
 ) -> None:
+    # A1: callers_of now queries the materialized `edges` table, which only
+    # carries a row for a reference that resolves to >=1 candidate
+    # (AC-A1-6) — so the fixture must define `record_vote` somewhere for
+    # its 6 call sites to become edges at all (a single definition ->
+    # candidate_count == 1 -> each call site resolves INFERRED, since these
+    # are bare unqualified calls).
+    _rb(config.repo, "app/hub.rb", "class Hub\n  def record_vote(n)\n  end\nend\n")
     for i in range(6):
         _rb(
             config.repo,
@@ -774,6 +890,16 @@ async def test_callers_of_at_sql_limit_boundary_are_not_silently_swallowed(
     cap = config.max_bound_field_elements
     query_limit = cap + 1
 
+    # A1: callers_of now queries the materialized `edges` table, which only
+    # carries a row for a reference resolving to >=1 candidate (AC-A1-6) —
+    # so both callees must be defined somewhere for their call sites to
+    # become edges (each resolves to exactly 1 candidate -> INFERRED, bare
+    # unqualified calls).
+    _rb(
+        config.repo,
+        "app/targets.rb",
+        "class Targets\n  def callee_exact\n  end\n  def callee_over\n  end\nend\n",
+    )
     calls_exact = "\n    ".join(["callee_exact()"] * cap)
     calls_over = "\n    ".join(["callee_over()"] * (cap + 1))
     _rb(
