@@ -27,6 +27,8 @@ from atlas_aci.server import (
     build_tool_manifest,
     dispatch_tool_call,
 )
+from atlas_aci.tools.list_dir import list_dir
+from atlas_aci.tools.search_text import search_text
 
 
 @pytest.fixture
@@ -409,6 +411,221 @@ async def test_view_file_real_request_exceeding_max_lines_is_truncated(tmp_path:
     assert result["truncated"] is True
     assert result["truncated_fields"] == ["lines"]
     assert result["retry_hint"] == "narrower_scope"
+
+
+# ---- NEW-1 residual (checker, round 2): the invariant, tested directly ----
+#
+# `overflow` <=> content the caller asked for was withheld. `next_cursor`
+# <=> more file exists beyond what was returned (and must never point past
+# EOF). These are INDEPENDENT facts — a fully-satisfied window can still
+# have more file after it (row "200,1-100" below), and a nominally-clamped
+# request can withhold nothing at all if the file itself is short (rows
+# "10,1-5000" and "50,1-200" — the exact false-positive the checker
+# reproduced against the prior fix: `cap_lines` clamps the *requested*
+# range to max_lines_per_view with no knowledge of the file's real length,
+# so treating that clamp alone as "overflow" reports withholding — and a
+# next_cursor past EOF — for content that was never there to withhold).
+#
+# Expected values below are computed independently of view_file.py's own
+# arithmetic (a fresh formula in the test, not a call into the module under
+# test), per the instruction that the assertion must not inherit the
+# implementation's own math.
+
+
+def _expected_view_file_outcome(
+    total_lines: int, start: int, end: int, max_lines_per_view: int
+) -> tuple[int, bool, int | None, int | None]:
+    """Returns (expected_got, expected_overflow, expected_next_cursor,
+    expected_total_lines_field), derived from the stated invariant alone."""
+    capped_end = min(end, start + max_lines_per_view - 1)
+    effective_end = min(end, total_lines)
+    returned_end = min(capped_end, total_lines)
+    expected_got = returned_end - start + 1
+    expected_overflow = capped_end < effective_end
+    if capped_end < total_lines:
+        return expected_got, expected_overflow, capped_end + 1, total_lines
+    return expected_got, expected_overflow, None, None
+
+
+@pytest.mark.parametrize(
+    ("total_lines", "start", "end"),
+    [
+        (10, 1, 5000),  # request nominally clamped, file far shorter: nothing withheld
+        (50, 1, 200),  # same shape, different sizes
+        (200, 1, 5000),  # request clamped AND file long enough: genuine withholding
+        (200, 1, 100),  # request exactly satisfied, more file remains after
+        (10, 2, 4),  # mid-file complete window (the original NEW-1 fixture)
+        (10, 1, 10),  # exact full-file read, nothing more, nothing withheld
+    ],
+)
+async def test_view_file_overflow_and_next_cursor_match_the_invariant(
+    tmp_path: Path, total_lines: int, start: int, end: int
+) -> None:
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    isolated_config = Config(repo=repo, memex_root=tmp_path / "memex")
+    isolated_enforcement = Enforcement(isolated_config)
+    isolated_memex = Memex(isolated_config.memex_root)
+    code_graph = CodeGraph(repo=repo)
+
+    lines = [f"line{i}\n" for i in range(1, total_lines + 1)]
+    (repo / "f.txt").write_text("".join(lines))
+
+    expected_got, expected_overflow, expected_next_cursor, expected_total = (
+        _expected_view_file_outcome(total_lines, start, end, isolated_config.max_lines_per_view)
+    )
+
+    result = await dispatch_tool_call(
+        "view_file",
+        {"path": "f.txt", "start_line": start, "end_line": end},
+        isolated_config,
+        isolated_enforcement,
+        isolated_memex,
+        code_graph,
+    )
+
+    assert len(result["lines"]) == expected_got
+    assert bool(result.get("truncated", False)) is expected_overflow
+    assert result.get("next_cursor") == expected_next_cursor
+    assert result.get("total_lines") == expected_total
+    if expected_next_cursor is not None:
+        assert expected_next_cursor <= total_lines, "a cursor must never point past EOF"
+
+
+# ---- Same invariant, checked against list_dir / search_text / test_dry_run ----
+#
+# view_file's bug was a *structural* clamp (cap_lines computes a capped end
+# from the requested range alone, with no knowledge of the file's real
+# length) standing in for the real invariant ("content withheld"). The
+# question for the other three tools with their own overflow signal: is
+# theirs grounded in the same way, or is it already computed from what
+# actually exists? Empirically checked at the exact cap boundary below —
+# not just reasoned about — because that is exactly the boundary the
+# previous (incomplete) view_file fix got wrong.
+
+
+async def test_list_dir_exact_cap_entries_is_not_falsely_flagged(tmp_path: Path) -> None:
+    """list_dir's `overflow` is set only inside the iteration loop, exactly
+    when a candidate BEYOND the cap is rejected — it never fires from a
+    count computed independently of what's actually there. A directory
+    with precisely `cap` matching entries must not be flagged."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    config = Config(repo=repo, memex_root=tmp_path / "memex", max_entries_per_list=5)
+    enforcement = Enforcement(config)
+    for i in range(5):  # exactly cap
+        (repo / f"f{i}.txt").write_text("x")
+
+    result = await list_dir({"path": "."}, config, enforcement)
+
+    assert len(result["entries"]) == 5
+    assert "overflow" not in result
+    out = apply_central_bounds("list_dir", {}, result, enforcement)
+    assert "truncated" not in out
+
+
+async def test_list_dir_cap_plus_one_entries_is_correctly_flagged(tmp_path: Path) -> None:
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    config = Config(repo=repo, memex_root=tmp_path / "memex", max_entries_per_list=5)
+    enforcement = Enforcement(config)
+    for i in range(6):  # cap + 1
+        (repo / f"f{i}.txt").write_text("x")
+
+    result = await list_dir({"path": "."}, config, enforcement)
+
+    assert len(result["entries"]) == 5
+    assert result["overflow"] is True
+    out = apply_central_bounds("list_dir", {}, result, enforcement)
+    assert out["truncated"] is True
+
+
+async def test_search_text_exact_cap_matches_is_not_falsely_flagged(tmp_path: Path) -> None:
+    """search_text's `overflow` is computed from the actual accumulated
+    match count returned by rg (`len(matches) > limit`), not from a
+    requested-vs-actual proxy. A file with exactly `limit` matching lines
+    must not be flagged."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    config = Config(repo=repo, memex_root=tmp_path / "memex", max_matches_per_search=5)
+    enforcement = Enforcement(config)
+    (repo / "f.txt").write_text("\n".join(["needle"] * 5) + "\n")  # exactly limit
+
+    result = await search_text({"pattern": "needle", "scope": "f.txt"}, config, enforcement)
+
+    assert len(result["matches"]) == 5
+    assert "overflow" not in result
+    out = apply_central_bounds("search_text", {}, result, enforcement)
+    assert "truncated" not in out
+
+
+async def test_search_text_cap_plus_one_matches_is_correctly_flagged(tmp_path: Path) -> None:
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    config = Config(repo=repo, memex_root=tmp_path / "memex", max_matches_per_search=5)
+    enforcement = Enforcement(config)
+    (repo / "f.txt").write_text("\n".join(["needle"] * 6) + "\n")  # cap + 1
+
+    result = await search_text({"pattern": "needle", "scope": "f.txt"}, config, enforcement)
+
+    assert len(result["matches"]) == 5
+    assert result["overflow"] is True
+    out = apply_central_bounds("search_text", {}, result, enforcement)
+    assert out["truncated"] is True
+
+
+class _FakeCompletedProcess:
+    def __init__(self, stdout: bytes, stderr: bytes = b""):
+        self._stdout = stdout
+        self._stderr = stderr
+        self.returncode = 0
+
+    async def communicate(self) -> tuple[bytes, bytes]:
+        return self._stdout, self._stderr
+
+    def kill(self) -> None:  # pragma: no cover - not exercised on the happy path
+        pass
+
+    async def wait(self) -> None:  # pragma: no cover
+        return None
+
+
+async def test_test_dry_run_truncated_reflects_actual_bytes_not_a_proxy(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """test_dry_run's `truncated` is `len(stdout_bytes) > cap or
+    len(stderr_bytes) > cap` — computed directly from the real subprocess
+    output's byte length, never from a requested/structural proxy.
+    Confirmed at the exact boundary: exactly `cap` bytes of stdout is NOT
+    flagged; `cap + 1` bytes IS."""
+    import asyncio
+
+    from atlas_aci.tools import test_dry_run as test_dry_run_module
+
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    config = Config(repo=repo, memex_root=tmp_path / "memex", max_bytes_per_call=10)
+    enforcement = Enforcement(config)
+    test_file = repo / "test_x.py"
+    test_file.write_text("def test_x():\n    pass\n")
+
+    def _exec_with(stdout: bytes):
+        async def _fake_exec(*_args, **_kwargs):
+            return _FakeCompletedProcess(stdout)
+
+        return _fake_exec
+
+    monkeypatch.setattr(
+        asyncio, "create_subprocess_exec", _exec_with(b"x" * config.max_bytes_per_call)
+    )
+    exact = await test_dry_run_module.test_dry_run({"path": "test_x.py"}, config, enforcement)
+    assert exact["truncated"] is False
+
+    monkeypatch.setattr(
+        asyncio, "create_subprocess_exec", _exec_with(b"x" * (config.max_bytes_per_call + 1))
+    )
+    over = await test_dry_run_module.test_dry_run({"path": "test_x.py"}, config, enforcement)
+    assert over["truncated"] is True
 
 
 # ---- AC-H-6 — absolute byte ceiling hard-fails ----

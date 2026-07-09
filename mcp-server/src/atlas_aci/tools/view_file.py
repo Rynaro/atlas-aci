@@ -72,7 +72,7 @@ async def view_file(
             "retry_hint": "different_tool",
         }
 
-    actual_start, actual_end, overflow = enforcement.cap_lines(start_line, end_line)
+    actual_start, actual_end, _ = enforcement.cap_lines(start_line, end_line)
 
     try:
         with abs_p.open("r", encoding="utf-8") as f:
@@ -117,6 +117,30 @@ async def view_file(
             "retry_hint": "different_tool",
         }
 
+    total_lines = len(all_lines)
+
+    # The invariant (NEW-1 residual, checker second pass, round 2):
+    # `overflow` means "content the caller asked for was withheld" —
+    # nothing less, nothing more. It is NOT "did cap_lines structurally
+    # clamp the requested range" (that was the previous, still-wrong proxy:
+    # asking for lines 1-5000 of a 10-line file clamps to 1-100 by
+    # max_lines_per_view alone, but the file only has 10 lines, so nothing
+    # was actually withheld — that must not report overflow, and must not
+    # emit a next_cursor past EOF either).
+    #
+    # `effective_end` is the true upper bound of what the caller could
+    # possibly receive: the smaller of what they asked for and what the
+    # file actually has.
+    effective_end = min(end_line, total_lines)
+    # Overflow iff the max_lines_per_view cap cut the window short of that
+    # true bound — i.e. lines that exist AND were asked for were withheld.
+    overflow = actual_end < effective_end
+    # next_cursor iff there is more file beyond what was returned — an
+    # entirely independent fact from `overflow` (row 4 of the boundary
+    # test: a fully-satisfied, un-clamped window can still have more file
+    # after it). Never past EOF: only set when real content remains.
+    more_file_remains = actual_end < total_lines
+
     result: dict[str, Any] = {
         "path": str(p),
         "start_line": actual_start,
@@ -124,21 +148,13 @@ async def view_file(
         "lines": selected,
     }
     if overflow:
-        # The REQUESTED range itself was clamped to max_lines_per_view —
-        # "you asked for more than you got". Distinct from the file merely
-        # continuing past this window (below): a fully-satisfied window
-        # that happens not to reach EOF is not a truncation of the
-        # request, and must not be reported as one (NEW-1 — a `truncated`
-        # flag that fires on every non-final read of the most-used tool
-        # trains every consumer to ignore it, and "narrower_scope" is
-        # actively wrong advice when the real answer is "page via
-        # next_cursor"). `apply_central_bounds` promotes this literal key
-        # to the unified `truncated` contract; it deliberately does NOT
-        # promote bare `next_cursor` presence.
+        # `apply_central_bounds` promotes this literal key to the unified
+        # `truncated` contract (F-6); it deliberately does NOT promote bare
+        # `next_cursor` presence (NEW-1).
         result["overflow"] = True
-    if overflow or actual_end < len(all_lines):
+    if more_file_remains:
         result["next_cursor"] = actual_end + 1
-        result["total_lines"] = len(all_lines)
+        result["total_lines"] = total_lines
 
     enforcement.record(
         tool="view_file",
