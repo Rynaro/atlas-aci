@@ -269,6 +269,20 @@ def parse_query_verb(dsl: str) -> str:
     return verb.strip()
 
 
+# The graph_query DSL's entire verb vocabulary — the single source of truth
+# `CodeGraph.query` dispatches against (F-3). A dedicated test
+# (test_server.py::test_bounded_field_registry_covers_every_known_query_verb)
+# asserts every member here has a non-empty entry in
+# `GRAPH_QUERY_VERB_BOUNDED_FIELDS`, discovered from *this* constant rather
+# than a hand-maintained duplicate list in the test file. This is what makes
+# a brand-new verb's bounds-registration checked mechanically regardless of
+# what it's named — the checker demonstrated that a harden-gate.yml content
+# grep for literal strings like "label_propagation" is evadable by simply
+# choosing different names; a verb landing here (which it must, to be
+# dispatchable at all) cannot evade a test that enumerates this set itself.
+KNOWN_QUERY_VERBS: frozenset[str] = frozenset({"callers_of", "definitions_of", "subclasses_of"})
+
+
 @dataclass
 class Symbol:
     name: str
@@ -707,6 +721,8 @@ class CodeGraph:
         verb = parse_query_verb(dsl)
         if not verb:
             return {"error": "INVALID_QUERY", "message": "Expected 'verb:argument' form."}
+        if verb not in KNOWN_QUERY_VERBS:
+            return {"error": "UNKNOWN_VERB", "message": f"Unknown verb {verb!r}."}
         _, _, arg = dsl.partition(":")
         arg = arg.strip()
 
@@ -718,12 +734,11 @@ class CodeGraph:
         if verb == "definitions_of":
             return self.search_symbol(arg)
 
-        if verb == "subclasses_of":
-            # Best-effort; without inheritance edges, return classes whose name appears
-            # near the parent. A real implementation extends QUERIES with superclass capture.
-            return {
-                "edges": [],
-                "warning": "subclasses_of requires extended index; not implemented in MVP.",
-            }
-
-        return {"error": "UNKNOWN_VERB", "message": f"Unknown verb {verb!r}."}
+        # verb == "subclasses_of" (the only remaining member of
+        # KNOWN_QUERY_VERBS): best-effort; without inheritance edges,
+        # return classes whose name appears near the parent. A real
+        # implementation extends QUERIES with superclass capture.
+        return {
+            "edges": [],
+            "warning": "subclasses_of requires extended index; not implemented in MVP.",
+        }

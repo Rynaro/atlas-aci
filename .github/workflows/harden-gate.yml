@@ -27,16 +27,35 @@
 #      probe verdict must record PASS, never a cut-to-v2.1 or absent verdict
 #      (AC-A3-4/AC-A3-5) — the mechanical cut-branch never adds networkx.
 #
-# KNOWN LIMITATION (documented, not silently swept): codegraph.py,
-# tools/graph_query.py, tools/search_symbol.py, and server.py are touched by
-# BOTH hardening (H1-H4) and every augmentation workstream (A1-A5) —
-# declared-scope.md calls codegraph.py "the hot file". A pure file-path
-# diff cannot perfectly distinguish a hardening edit from an augmentation
-# edit to the same file, so step 2's content-marker heuristic is a
-# best-effort net, not a formal proof, for edits to those four files. The
-# marker-path check in step 2 (new files that literally cannot exist without
-# A1-A5) is exact; the code-marker heuristic is the imperfect half. Tighten
-# the marker list in future phases as A1-A5 land for real.
+# KNOWN LIMITATION, VERIFIED (F-3, checker finding — not silently swept):
+# step 2's content-marker heuristic is evadable. Rename the edges table,
+# import the confidence enum from a differently-named module, call the test
+# file something other than test_edges.py, and this step reports
+# augmented=false — a grep for literal strings can always be dodged by
+# choosing different identifiers. Do not try to out-guess this by adding
+# more markers ("marker whack-a-mole"); it is not a fixable arms race.
+#
+# What actually closes the gap: `ci.yml`'s `test` job has NO `if:` gating —
+# it runs the full pytest suite, unconditionally, on every PR, independent
+# of anything this workflow decides. Two tests specifically make a
+# newly-added, unbounded capability fail CI regardless of naming:
+#   - test_bounded_field_registry_matches_tool_manifest discovers every
+#     tool from build_tool_manifest() itself (not a hardcoded name list) —
+#     a new top-level tool with no _bounded_field registration fails.
+#   - test_bounded_field_registry_covers_every_known_query_verb discovers
+#     every graph_query verb from codegraph.KNOWN_QUERY_VERBS itself (the
+#     same constant CodeGraph.query() dispatches against) — a new verb
+#     *must* be added there to be reachable at all, and doing so is what
+#     the completeness check keys on, not a string pattern in the diff.
+# So for "does a regression to an existing bound, or a brand-new
+# unbounded tool/verb, get caught" — yes, unconditionally, via ci.yml,
+# regardless of how this step classifies the diff. Step 2's marker
+# heuristic is therefore best-effort/decorative for that specific concern;
+# it is NOT redundant for step 3 below, which ci.yml has no way to enforce
+# at all (it is about *sequencing* — probe-artifact-before-code — not
+# boundedness, and no pytest test can know a probe was supposed to run
+# first). Leaving the markers as they are; the fix that matters lives in
+# the pytest suite, not in a bash grep pattern.
 
 name: Harden Gate
 

@@ -99,6 +99,27 @@ def test_bounded_field_registry_matches_tool_manifest(config: Config) -> None:
     )
 
 
+def test_bounded_field_registry_covers_every_known_query_verb() -> None:
+    """F-3: a brand-new graph_query verb is checked here mechanically,
+    regardless of what it's named. The checker demonstrated that
+    harden-gate.yml's content-marker heuristic (grepping for literal
+    strings like "label_propagation") is evadable by simply choosing
+    different identifiers. This test instead discovers the DSL's verb
+    vocabulary from `codegraph.KNOWN_QUERY_VERBS` — the same constant
+    `CodeGraph.query` dispatches against — so a verb cannot be reachable at
+    all without appearing here, and therefore cannot dodge this check by
+    naming alone. (Every verb today returns a list-valued field; a future
+    purely-scalar verb would need the same kind of explicit
+    no-list-field acknowledgment `test_dry_run`/`memex_read` get above.)"""
+    from atlas_aci.codegraph import KNOWN_QUERY_VERBS
+
+    missing = KNOWN_QUERY_VERBS - set(GRAPH_QUERY_VERB_BOUNDED_FIELDS)
+    assert not missing, (
+        f"graph_query verb(s) {missing} are dispatchable but have no "
+        f"_bounded_field registration (D2/F-3)"
+    )
+
+
 # ---- AC-H-3 — element cap before byte ceiling ----
 
 
