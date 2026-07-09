@@ -734,11 +734,24 @@ class CodeGraph:
         if verb == "definitions_of":
             return self.search_symbol(arg)
 
-        # verb == "subclasses_of" (the only remaining member of
-        # KNOWN_QUERY_VERBS): best-effort; without inheritance edges,
-        # return classes whose name appears near the parent. A real
-        # implementation extends QUERIES with superclass capture.
-        return {
-            "edges": [],
-            "warning": "subclasses_of requires extended index; not implemented in MVP.",
-        }
+        if verb == "subclasses_of":
+            # Best-effort; without inheritance edges, return classes whose
+            # name appears near the parent. A real implementation extends
+            # QUERIES with superclass capture.
+            return {
+                "edges": [],
+                "warning": "subclasses_of requires extended index; not implemented in MVP.",
+            }
+
+        # Unreachable today (KNOWN_QUERY_VERBS has exactly the three
+        # members dispatched above) — NOT dead-code hygiene, a guard
+        # (NEW-3, checker second pass). A1 is expected to add verbs to
+        # KNOWN_QUERY_VERBS; a verb added there without a corresponding
+        # dispatch branch above must fail loudly here, not silently fall
+        # through and impersonate subclasses_of's empty-with-warning shape
+        # (which is exactly what an unconditional final `return` here
+        # would do).
+        raise NotImplementedError(
+            f"verb {verb!r} is declared in KNOWN_QUERY_VERBS but has no "
+            f"dispatch branch in CodeGraph.query() — add one before shipping it."
+        )

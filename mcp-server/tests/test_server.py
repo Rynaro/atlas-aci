@@ -149,6 +149,34 @@ def test_bounded_field_registry_covers_every_known_query_verb() -> None:
     )
 
 
+def test_undispatched_known_verb_raises_rather_than_impersonating_a_stub(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """NEW-3 (checker, second pass): CodeGraph.query()'s final branch used
+    to be an unconditional `return` (no `if verb == "subclasses_of"` guard),
+    so any future member of KNOWN_QUERY_VERBS added without a matching
+    dispatch branch would silently fall through and return
+    subclasses_of's empty-with-warning shape — impersonating a DIFFERENT
+    verb's stub rather than failing loudly. A1 is expected to add verbs;
+    this simulates exactly that (a verb declared reachable but never wired
+    up) and asserts it now raises instead of returning a wrong-shaped
+    success response."""
+    import atlas_aci.codegraph as codegraph_module
+
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    graph = codegraph_module.CodeGraph(repo=repo)
+    graph.build()
+
+    monkeypatch.setattr(
+        codegraph_module,
+        "KNOWN_QUERY_VERBS",
+        codegraph_module.KNOWN_QUERY_VERBS | {"widgets_of"},
+    )
+    with pytest.raises(NotImplementedError):
+        graph.query("widgets_of:Anything")
+
+
 # ---- AC-H-3 — element cap before byte ceiling ----
 
 
