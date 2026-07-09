@@ -32,7 +32,7 @@ uv run atlas-aci tools
 | `list_dir` | List directory entries | ≤200 entries/call |
 | `search_text` | Ripgrep-backed regex | ≤50 matches/call |
 | `search_symbol` | Index lookup | central element cap + byte ceiling (truncated + flagged) |
-| `graph_query` | Code-graph queries | central element cap + byte ceiling (truncated + flagged) |
+| `graph_query` | Code-graph queries: `callers_of`/`subclasses_of` over the v2 materialized edge table (confidence-tagged, real inheritance edges — see [`../README.md` §`graph_query` DSL — edge shape](../README.md#graph_query-dsl--edge-shape-v200--a1)) | central element cap + byte ceiling (truncated + flagged), incl. the nested `edges[].candidates` sub-field |
 | `test_dry_run` | Run a test in sandbox | wall-clock ≤30s, stdout ≤8KiB |
 | `memex_read` | Byte-exact excerpt fetch | bounded by Memex backend |
 

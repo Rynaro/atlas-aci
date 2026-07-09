@@ -102,6 +102,68 @@ call is recorded in telemetry (per-tool count, bytes out, overflow
 flags, errors) — wire `Enforcement.records` to your observability
 sink.
 
+### `graph_query` DSL — edge shape (v2.0.0 / A1)
+
+`callers_of:Sym` and `subclasses_of:Class` both query the materialized
+call/inheritance edge table `atlas-aci index` builds (`definitions_of:Name`
+is unchanged — it delegates straight to `search_symbol`). Each element of
+the returned `edges` list has this shape:
+
+```jsonc
+{
+  "relation": "call",          // call | superclass | include | extend | prepend
+  "confidence": "EXTRACTED",   // EXTRACTED | INFERRED | AMBIGUOUS — never LLM-produced
+  "source": {                  // caller context — replaces the old, always-null
+    "path": "app/tallier.rb",  // `enclosing` field (v1). None/None when the
+    "line": 3,                 // reference sits outside every known symbol's
+    "name": "call",            // range (e.g. a Ruby top-level call).
+    "kind": "method"
+  },
+  "target": {                  // populated for EXTRACTED/INFERRED only —
+    "path": "app/target.rb",   // the single resolved definition.
+    "line": 2,
+    "name": "record_vote"
+  },
+  "candidates": null           // populated (never truncated silently — see
+                                // below) for AMBIGUOUS edges only; mutually
+                                // exclusive with `target`.
+}
+```
+
+A **zero-candidate** reference (the callee resolves to no known definition
+anywhere in the index) never becomes an edge at all — it stays an
+unresolved name, exactly as `refs` recorded it pre-v2. `subclasses_of`
+aggregates every inheritance/mixin relation (`superclass`, `include`,
+`extend`, `prepend`) under the one verb, since a Rails engine leaning on
+`concerns/` mixins expresses "subclass-of" through all four relations, not
+just `superclass`.
+
+**The analysis-graph divergence (D4a) — spec'd now, not yet shipped.**
+`graph_query` always returns every *matching* edge, AMBIGUOUS included,
+with its full ordered `candidates[]` attached — this project's "never
+silently incomplete" thesis extends to ambiguity itself: an edge with more
+than one candidate is reported, not dropped. A1 also ships
+`CodeGraph.confident_edges()`, a query primitive over the **confident
+subgraph** (`EXTRACTED` ∪ `INFERRED`) that excludes AMBIGUOUS entirely (no
+fan-out to candidates, no fractional weight — ambiguity is not importance).
+Degree-centrality god nodes and community detection (A2/A3, **not part of
+this release** — tracked separately) are specified to consume exactly that
+primitive as their analysis input, never the raw `graph_query` edge set.
+When those verbs ship, "what `graph_query` returns" and "what god-nodes/
+communities analyze" will deliberately differ, and their responses will
+carry `analysis_basis`, `ambiguous_edges_excluded`, and `resolved_edge_count`
+fields making that divergence visible rather than implicit.
+
+`candidates[]` (and every edge enumeration) is emitted in a fixed total
+order (`path`, `line`, `name`) for identical input — required for the
+project's byte-deterministic export goal, and incidentally what makes the
+shape safe to diff/test. Like every other bounded field, an over-cap
+`candidates[]` is truncated on a whole-element boundary and flagged
+(`truncated: true`, `truncated_fields: ["edges.candidates"]`,
+`more_available: true`) rather than silently cut — nested sub-fields get
+the same "never silently incomplete" treatment the top-level `edges` list
+already had.
+
 ---
 
 ## Why read-only
