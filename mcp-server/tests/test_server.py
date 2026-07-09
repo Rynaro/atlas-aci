@@ -103,11 +103,12 @@ def test_bounded_field_registry_matches_tool_manifest(config: Config) -> None:
 
 
 def test_central_bounds_applies_element_cap_then_byte_ceiling(enforcement: Enforcement) -> None:
-    # Each item ~2KB; 6 of them (~12KB) would blow the 8KB byte ceiling if it
-    # ran first, but 3 of them (~6KB, post element-cap) comfortably fit. If
-    # the byte ceiling ran BEFORE the element cap this would hard-fail
-    # instead of truncating — proving the two run in the documented order.
-    item = {"path": "a" * 2000, "line": 1}
+    # Each item ~220KB; 6 of them (~1.3MB) would blow the absolute byte
+    # ceiling (1 MiB) if it ran first, but 3 of them (~660KB, post
+    # element-cap) comfortably fit. If the byte ceiling ran BEFORE the
+    # element cap this would hard-fail instead of truncating — proving the
+    # two run in the documented order.
+    item = {"path": "a" * 220_000, "line": 1}
     result = {"edges": [dict(item) for _ in range(6)]}
     out = apply_central_bounds("graph_query", {"query": "callers_of:foo"}, result, enforcement)
     assert len(out["edges"]) == 3
@@ -168,13 +169,33 @@ def test_overflow_truncate_and_flag_contract(enforcement: Enforcement) -> None:
 
 
 def test_absolute_byte_ceiling_hard_fails(enforcement: Enforcement) -> None:
-    # A single element far larger than the byte ceiling — element
+    # A single element far larger than the absolute byte ceiling — element
     # truncation cannot rescue it (1 item is already under the element cap).
-    huge = "x" * (enforcement.config.max_bytes_per_call * 4)
+    huge = "x" * (enforcement.config.max_response_bytes * 2)
     result = {"lines": [huge]}
     with pytest.raises(ToolError) as exc:
         apply_central_bounds("view_file", {}, result, enforcement)
     assert exc.value.code == "RESPONSE_TOO_LARGE"
+
+
+def test_absolute_byte_ceiling_does_not_false_positive_on_combined_per_tool_caps(
+    enforcement: Enforcement,
+) -> None:
+    """Regression guard: test_dry_run independently caps stdout AND stderr at
+    max_bytes_per_call, so a normal both-near-cap response legitimately runs
+    to ~2x that. The absolute ceiling (max_response_bytes) must be a genuine
+    backstop above this, not equal to max_bytes_per_call — reusing the
+    latter here previously hard-failed a perfectly normal response."""
+    cap = enforcement.config.max_bytes_per_call
+    result = {
+        "exit_code": 1,
+        "stdout": "x" * cap,
+        "stderr": "y" * cap,
+        "truncated": True,
+    }
+    out = apply_central_bounds("test_dry_run", {}, dict(result), enforcement)
+    assert out["stdout"] == "x" * cap
+    assert out["stderr"] == "y" * cap
 
 
 # ---- AC-H-7 / AC-H-8 — the two named regressions, end to end ----

@@ -137,6 +137,16 @@ class Enforcement:
         """Returns True if body is over the byte cap; caller decides what to do."""
         return len(body) > self.config.max_bytes_per_call
 
+    def over_absolute_byte_ceiling(self, body: bytes) -> bool:
+        """The D2 central-bounds-chokepoint absolute byte ceiling (AC-H-6).
+
+        Deliberately a *different*, larger threshold than `cap_bytes` above
+        — see `Config.max_response_bytes`'s docstring for why reusing
+        `max_bytes_per_call` here would hard-fail normal responses instead
+        of reserving hard-fail for a genuinely degenerate one.
+        """
+        return len(body) > self.config.max_response_bytes
+
     def cap_list_field(self, items: list[Any]) -> tuple[list[Any], bool]:
         """The D2 central-bounds-chokepoint element cap (server.py `_call_tool`).
 

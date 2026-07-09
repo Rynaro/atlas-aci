@@ -238,15 +238,17 @@ def apply_central_bounds(
         result["more_available"] = True
         result["retry_hint"] = "narrower_scope"
 
-    # Absolute byte ceiling — the backstop. Measured on the compact
-    # serialization (information content), not the indent=2 presentation
-    # whitespace the wire format uses for readability.
+    # Absolute byte ceiling — the backstop, deliberately a separate (larger)
+    # threshold than any individual tool's own byte cap (Config.
+    # max_response_bytes docstring). Measured on the compact serialization
+    # (information content), not the indent=2 presentation whitespace the
+    # wire format uses for readability.
     body = json.dumps(result, separators=(",", ":"), default=str).encode("utf-8")
-    if enforcement.cap_bytes(body):
+    if enforcement.over_absolute_byte_ceiling(body):
         raise ToolError(
             "RESPONSE_TOO_LARGE",
             f"Tool {name!r} response exceeds the absolute byte ceiling "
-            f"({enforcement.config.max_bytes_per_call}B) even after element "
+            f"({enforcement.config.max_response_bytes}B) even after element "
             f"truncation.",
             retry_hint="narrower_scope",
         )

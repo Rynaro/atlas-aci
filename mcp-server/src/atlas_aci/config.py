@@ -53,6 +53,18 @@ class Config:
     # impossible, regardless of what the tool itself does.
     max_bound_field_elements: int = 200
 
+    # The absolute serialized-byte ceiling (AC-H-6) — deliberately a
+    # *separate*, larger number than `max_bytes_per_call` above. Several
+    # tools already legitimately combine more than one `max_bytes_per_call`
+    # chunk in a single response (e.g. test_dry_run's stdout *and* stderr are
+    # each independently capped at `max_bytes_per_call`, so a normal
+    # both-near-cap response is ~2x that). Reusing `max_bytes_per_call` here
+    # would hard-fail those *normal* responses instead of reserving hard-fail
+    # for a genuinely degenerate one, as AC-H-6 requires. This is the true
+    # backstop: comfortably above any well-behaved tool's worst case, so it
+    # only fires when element-capping couldn't rescue the response.
+    max_response_bytes: int = 1024 * 1024
+
     # Rate limiting (set to 0 to disable)
     max_calls_per_minute: int = 200
 
