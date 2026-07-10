@@ -107,6 +107,7 @@ and it answers in JSON:
 ```console
 $ uv run atlas-aci index --repo .
 $ uv run python -c "
+from pathlib import Path
 from atlas_aci.codegraph import CodeGraph
 from atlas_aci.config import Config
 from atlas_aci.enforcement import Enforcement
@@ -141,7 +142,8 @@ print(json.dumps(asyncio.run(graph_query({'query': 'callers_of:assert_read_only'
 ```
 
 ```console
-$ # god_nodes: — degree centrality over the confident subgraph only
+$ # same shape, query changed to 'god_nodes:' — degree centrality over
+$ # the confident subgraph only
 {
   "god_nodes": [
     {"path": "mcp-server/src/atlas_aci/codegraph.py", "line": 753,
