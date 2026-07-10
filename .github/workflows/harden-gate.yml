@@ -239,14 +239,20 @@ jobs:
             # recomputed Q matches the sidecar's recorded (networkx)
             # value within tolerance (an honesty check on the recorded
             # run); and recomputes an indexer_fingerprint from the CURRENT
-            # tree's codegraph.py, failing loudly if the probe is stale
-            # relative to the indexer that would actually run today. Then,
+            # tree, failing loudly if the probe is stale relative to the
+            # indexer that would actually run today. That fingerprint
+            # (defect 15, found IN the defect-13 staleness fix) hashes
+            # codegraph.py IN FULL plus both probe scripts — an earlier
+            # version hashed only confident_edges()'s own body, missing
+            # _resolve_source_node()/_enclosing_symbol()/_target_kind(),
+            # which also determine the committed graph's edge set. Then,
             # using ONLY the recomputed values, fails if the computed
             # verdict differs from the recorded one in EITHER direction —
             # a recorded CUT over genuinely passing numbers is equally a
             # lie, not just a recorded PASS over failing ones. See
-            # scripts/test-verify-probe-verdict.sh (14 forged scenarios,
-            # each guard's necessity proven by disabling it in isolation)
+            # scripts/test-verify-probe-verdict.sh (20 scenarios: 14 forged
+            # sidecars + 6 fingerprint-coverage checks, each guard's
+            # necessity proven by disabling it in isolation)
             # for the self-test proving this has teeth, and
             # probe-lpa-vs-louvain.md's "one input this cannot mechanically
             # verify" section for the one trust boundary that remains

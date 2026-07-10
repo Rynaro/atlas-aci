@@ -101,6 +101,7 @@ _LIST_BEARING_VERBS = {
     "subclasses_of": ("edges",),
     "god_nodes": ("god_nodes",),
     "communities": ("communities",),
+    "rationale": ("rationale",),
 }
 
 
@@ -1008,8 +1009,8 @@ _ANCHOR_TOOL_SCENARIOS: list[tuple[str, dict[str, list[dict[str, str]]], str]] =
 ]
 
 # (query_string, static_extra_fields, field_under_test) — every graph_query
-# verb, including subclasses_of (AC-A1-7/AC-A1-10), god_nodes (A2), and
-# communities (A3).
+# verb, including subclasses_of (AC-A1-7/AC-A1-10), god_nodes (A2),
+# communities (A3), and rationale (A4).
 _ANCHOR_VERB_SCENARIOS: list[tuple[str, dict[str, list[dict[str, str]]], str]] = [
     ("callers_of:Foo", {}, "edges"),
     ("definitions_of:Foo", {"references": [{"name": "safe"}]}, "definitions"),
@@ -1017,6 +1018,7 @@ _ANCHOR_VERB_SCENARIOS: list[tuple[str, dict[str, list[dict[str, str]]], str]] =
     ("subclasses_of:Foo", {}, "edges"),
     ("god_nodes:", {}, "god_nodes"),
     ("communities:", {}, "communities"),
+    ("rationale:", {}, "rationale"),
 ]
 
 
@@ -1052,6 +1054,15 @@ def _anchor_list_item(field: str, i: int) -> Any:
             "name": f"Node{i}",
             "kind": "class",
             "community_id": i,
+        }
+    if field == "rationale":
+        return {
+            "path": "a.rb",
+            "line": i,
+            "text": f"# NOTE: rationale {i}",
+            "label": None,
+            "target": {"path": "a.rb", "line": i, "name": f"Node{i}"},
+            "lang": "ruby",
         }
     raise AssertionError(f"unhandled field {field!r} in anchor test fixture")
 

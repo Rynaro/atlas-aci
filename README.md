@@ -93,7 +93,7 @@ and can be tightened per deployment.
 | `list_dir` | List a directory, respecting the skip-list (`node_modules`, `vendor/bundle`, `.git`, `.atlas`, …). | ≤200 entries/call, overflow flag if truncated |
 | `search_text` | Ripgrep-backed regex search over a repo-relative scope or glob. Smart-case by default. | ≤50 matches/call, 15s wall-clock timeout |
 | `search_symbol` | Index-backed symbol lookup. Returns definitions + references for a name (optionally filtered by `kind`). | Requires `atlas-aci index` first; central element cap + byte ceiling (truncated + flagged) |
-| `graph_query` | Tiny DSL over the code graph: `callers_of:Sym`, `definitions_of:Name`, `subclasses_of:Class`, `god_nodes:`, `communities:`. | Rejects unknown verbs; central element cap + byte ceiling (truncated + flagged) |
+| `graph_query` | Tiny DSL over the code graph: `callers_of:Sym`, `definitions_of:Name`, `subclasses_of:Class`, `god_nodes:`, `communities:`, `rationale:`. | Rejects unknown verbs; central element cap + byte ceiling (truncated + flagged) |
 | `test_dry_run` | Run one test file (optionally filtered by case name) as a subprocess with captured stdout/stderr. | 30s wall-clock, ≤8 KiB stdout+stderr. **Operator must sandbox.** |
 | `memex_read` | Byte-exact retrieval of a previously captured excerpt via its `memex://excerpt/<sha256>` ref, minted by `Memex.write()`. No ATLAS tool currently emits one. | Scoped to the hashed-dir backend |
 
@@ -312,6 +312,62 @@ for the full measurement. The probe methodology (two pinned reference
 repos, networkx Louvain as the comparison baseline) is a one-time
 gate-clearing exercise, not a shipped runtime path — networkx never
 appears in `mcp-server/pyproject.toml` or `mcp-server/uv.lock`.
+
+### `graph_query` DSL — `rationale:` (v2.0.0 / A4)
+
+`rationale:` (same `verb:argument` shape, trailing colon required,
+argument ignored) returns every recognized rationale comment in the
+repo — `# NOTE:`/`# IMPORTANT:`/`# HACK:`/`# WHY:`/`# RATIONALE:`/
+`# TODO:`/`# FIXME:`-prefixed comments (ported from graphify's prefix
+set), plus, JS/TS only, any comment referencing an ADR or RFC identifier
+(no prefix required for that case):
+
+```jsonc
+{
+  "rationale": [
+    {
+      "path": "mcp-server/src/atlas_aci/codegraph.py",
+      "line": 1234,
+      "text": "# HACK: this method special-cases nil for legacy reasons",
+      "label": null,
+      "target": {"path": "mcp-server/src/atlas_aci/codegraph.py", "line": 1230, "name": "CodeGraph"},
+      "lang": "ruby"
+    },
+    {
+      "path": "app/foo.ts",
+      "line": 7,
+      "text": "* background reading: RFC 793",
+      "label": "RFC-793",
+      "target": {"path": "app/foo.ts", "line": 5, "name": "bar"},
+      "lang": "typescript"
+    }
+  ],
+  "rationale_count": 2
+}
+```
+
+Ruby → Python → JS/TS only (D5) — scss/html/yaml/markdown/bash never get
+a rationale node, even when they contain comment-like, prefix-matching
+text (the capture is added to exactly four of the QUERIES entries, never
+those five). `target` is the comment's tightest enclosing symbol (the
+`rationale_for` edge's destination), or `null` when the comment sits
+outside every known symbol's range (e.g. a module-level comment) — a
+real "no enclosing definition" fact, not an error. `label` is the
+canonicalized `ADR-0011`/`RFC-793`-style identifier (JS/TS only,
+`extract.py:1087`'s regex ported over), `null` otherwise.
+
+`rationale_for` edges carry **no confidence value** and live in their
+own `rationale` relation, entirely separate from the call/inheritance
+`edges` table — a rationale comment was never a call/inheritance
+candidate in the first place (structural: the tree-sitter capture that
+feeds it is tagged `comment.*`, never `def.*`, so `PRODUCED_KINDS`
+mechanically can never contain `"rationale"` — the same guarantee that
+keeps `AMBIGUOUS` out of the analysis graph, applied here to keep
+rationale comments out of `symbols` altogether). A `# NOTE:`-shaped
+string inside a string or template literal is never captured either —
+tree-sitter's grammar distinguishes `comment` nodes from `string`/
+`template_string` nodes at the parse-tree level, not by a text filter
+applied after the fact.
 
 ---
 

@@ -115,7 +115,9 @@ def build_tool_manifest(_config: Config) -> list[dict[str, Any]]:
                 "'definitions_of:Name', 'subclasses_of:Class', 'god_nodes:' "
                 "(degree-centrality ranking over the confident subgraph), "
                 "'communities:' (deterministic label-propagation communities "
-                "over the confident subgraph). Bounded and flagged like "
+                "over the confident subgraph), 'rationale:' (recognized "
+                "NOTE:/HACK:/WHY:/etc. comments and ADR/RFC references, "
+                "Ruby/Python/JS/TS only). Bounded and flagged like "
                 "every other tool. Run `atlas-aci index` first."
             ),
             "inputSchema": {
@@ -189,6 +191,7 @@ GRAPH_QUERY_VERB_BOUNDED_FIELDS: dict[str, tuple[str, ...]] = {
     "subclasses_of": ("edges",),
     "god_nodes": ("god_nodes",),
     "communities": ("communities",),
+    "rationale": ("rationale",),
 }
 
 

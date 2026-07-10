@@ -73,8 +73,20 @@ today:
   **derived** from it, never stored as an independent, trust-me number.
 - **`probe-lpa-vs-louvain.json`** (the sidecar) now also carries
   `graph_bundle.sha256` (the bundle's integrity hash) and
-  `indexer_fingerprint` (a hash over `SCHEMA_EPOCH`, `EXPECTED_DDL_HASH`,
-  and `confident_edges()`'s own source text, computed at probe time).
+  `indexer_fingerprint`. An earlier revision of this fingerprint hashed
+  only `SCHEMA_EPOCH` + `EXPECTED_DDL_HASH` + `confident_edges()`'s own
+  body — the checker found this under-covered the graph-determining
+  logic (`_resolve_source_node()`/`_enclosing_symbol()`/`_target_kind()`
+  also determine which edges end up in the committed graph, and a change
+  to `_enclosing_symbol` reaches `_resolve_source_node` through STORED
+  DATA — via `_resolve_edges()` — not a direct call, so a naive
+  call-graph closure would miss it). Fixed by hashing `codegraph.py` IN
+  FULL, verbatim, plus the two probe scripts that decide what gets
+  exported/assembled (`probe-export-confident-graph.py`,
+  `probe-assemble-graph-bundle.py`) — this cannot omit a
+  graph-determining function by construction, at the cost of being
+  conservative (any edit anywhere in `codegraph.py` forces a re-check,
+  the safe failure direction).
 - **`scripts/verify-probe-verdict.py`**, given only these two files and
   the current tree (no networkx, no `mcp-server` environment, standard
   library only), now:
@@ -95,16 +107,32 @@ today:
      across both repos (see the reproduction table below).
   4. Uses the **recomputed** values, never the sidecar's, for the actual
      pass/fail arithmetic from here on.
-  5. Recomputes the `indexer_fingerprint` from the CURRENT tree's
-     `codegraph.py` and fails loudly — "the probe is stale and must be
-     re-run" — on any mismatch, rather than silently certifying a changed
-     indexer.
+  5. Recomputes the `indexer_fingerprint` from the CURRENT tree and fails
+     loudly — "the probe is stale and must be re-run" — on any mismatch,
+     rather than silently certifying a changed indexer.
 
-`scripts/test-verify-probe-verdict.sh` forges fourteen artefacts (every
-round above, plus the graph-bundle/fingerprint attacks) and asserts each
-is rejected while the real, currently-recorded sidecar + bundle are
-accepted — each guard's necessity was proven in isolation by disabling it
+`scripts/test-verify-probe-verdict.sh` forges fourteen sidecar artefacts
+(every round above, plus the graph-bundle/fingerprint attacks) PLUS six
+fingerprint-coverage scenarios (editing `confident_edges`/
+`_resolve_source_node`/`_enclosing_symbol`/`_target_kind` or either probe
+script, alone, in a throwaway tree copy, and confirming the fingerprint
+flips) — twenty scenarios total, every one rejected/flipped as expected
+while the real, currently-recorded sidecar + bundle are accepted. Each
+guard's necessity was proven in isolation by disabling it (or, for the
+coverage scenarios, by reverting to the narrower pre-fix implementation)
 and confirming precisely (and only) the matching scenario flips.
+
+**A4 note:** `indexer_fingerprint` is a whole-file hash by design, so
+A4's rationale-extraction additions to `codegraph.py` flip it even
+though they do not touch any graph-determining function — verified by
+diff: zero mentions of `confident_edges`/`_resolve_source_node`/
+`_enclosing_symbol`/`_target_kind` in A4's diff, and the two probe
+scripts are byte-identical. The recorded `indexer_fingerprint` was
+refreshed to match post-A4 `codegraph.py` as part of landing A4 — this
+is NOT a probe re-run (the confident subgraph, bundle, and verdict are
+unchanged and were never re-derived); it is the freshness marker
+catching up to unrelated file content, exactly the documented,
+conservative trade-off of hashing the whole file.
 
 ## The one input this cannot mechanically verify — stated, not implied
 

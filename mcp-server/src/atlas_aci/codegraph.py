@@ -106,6 +106,25 @@ LANG_BY_EXT: dict[str, str] = {
 # and augmented assignment are out of scope) — a cheap, best-effort
 # shadowing signal, not a full scope analysis.
 #
+# A4 (v2, P2): `@comment.rationale` captures every `comment`-kind node —
+# tree-sitter's own grammar-level node type, verified identical (`comment`)
+# across ruby/python/javascript/typescript, distinct from `string`/
+# `string_literal` nodes at the grammar level. This is what structurally
+# guarantees a `# NOTE:`-looking substring INSIDE a string literal is never
+# captured here at all (confirmed empirically: zero matches querying
+# `(comment) @c` against fixtures with rationale-shaped text inside string/
+# template literals) — not a filter applied after the fact, a parse-tree
+# fact. `_extract` decides, per-language, whether a captured comment's OWN
+# text is a "recognized rationale-prefixed comment" (D5/AC-A4-1/AC-A4-2);
+# a `comment.*` tag is deliberately NOT `def.*` — `PRODUCED_KINDS` (derived
+# mechanically from `@def\.(\w+)`) can therefore never contain "rationale",
+# which is what keeps a rationale comment permanently out of `symbols` and
+# so out of every call/inheritance resolution candidate set (AC-A4-4) —
+# the same class of guarantee AC-NEG-7 gives AMBIGUOUS, structural rather
+# than a second filter that could silently drift. D5/AC-A4-5: this capture
+# is added ONLY to the four code languages below (Ruby, Python, JS, TS, in
+# that order) — never to scss/html/yaml/markdown/bash.
+#
 # Add languages as needed; the Ruby and Python queries below cover the common
 # cases, and the web/markup grammars below cover static-site repos.
 QUERIES: dict[str, str] = {
@@ -133,6 +152,7 @@ QUERIES: dict[str, str] = {
         (call
             receiver: [(constant) (scope_resolution)] @target_name
             method: (identifier) @_verb (#eq? @_verb "new")) @heritage.construct
+        (comment) @comment.rationale
     """,
     "python": """
         (class_definition name: (identifier) @name) @def.class
@@ -148,6 +168,7 @@ QUERIES: dict[str, str] = {
             superclasses: (argument_list
                 (attribute attribute: (identifier) @target_name))) @heritage.superclass
         (assignment left: (identifier) @assign.target)
+        (comment) @comment.rationale
     """,
     "typescript": """
         (class_declaration name: (type_identifier) @name) @def.class
@@ -163,6 +184,7 @@ QUERIES: dict[str, str] = {
             (class_heritage (extends_clause value: (identifier) @target_name))) @heritage.superclass
         (variable_declarator name: (identifier) @assign.target)
         (assignment_expression left: (identifier) @assign.target)
+        (comment) @comment.rationale
     """,
     "javascript": """
         (class_declaration name: (identifier) @name) @def.class
@@ -177,6 +199,7 @@ QUERIES: dict[str, str] = {
         (class_declaration (class_heritage (identifier) @target_name)) @heritage.superclass
         (variable_declarator name: (identifier) @assign.target)
         (assignment_expression left: (identifier) @assign.target)
+        (comment) @comment.rationale
     """,
     # Stylesheets: jump to where a mixin/function/placeholder/`$variable` is
     # defined or a class/id selector is styled; `@include` sites become refs.
@@ -450,7 +473,7 @@ def parse_query_verb(dsl: str) -> str:
 # choosing different names; a verb landing here (which it must, to be
 # dispatchable at all) cannot evade a test that enumerates this set itself.
 KNOWN_QUERY_VERBS: frozenset[str] = frozenset(
-    {"callers_of", "definitions_of", "subclasses_of", "god_nodes", "communities"}
+    {"callers_of", "definitions_of", "subclasses_of", "god_nodes", "communities", "rationale"}
 )
 
 # A1/D4 — edge-resolution candidate kinds, by relation.
@@ -589,6 +612,110 @@ class Reference:
     relation: str = "call"
     qualified: bool = False
     qualifier_name: str | None = None
+
+
+@dataclass
+class RationaleComment:
+    """A4 (D5): one recognized rationale comment, pre-resolution — its
+    enclosing scope (the ``rationale_for`` edge target) is resolved
+    afterwards by line-range containment against ``symbols``, the same
+    "resolve from source, don't carry it on the dataclass" discipline
+    F10/AC-A1-9 established for call/heritage references. ``label`` is the
+    canonicalized ADR/RFC identifier (AC-A4-3, JS/TS only) or ``None``.
+    """
+
+    path: str
+    line: int
+    text: str
+    label: str | None
+    lang: str
+
+
+# A4/D5 — the rationale-comment marker vocabulary, ported from graphify's
+# prefix set (AC-A4-2) for the two comment syntaxes this project's four
+# code languages use: `#`-line comments (Ruby, Python) and `//`-line /
+# `/* ... */`-block comments (JS, TS). graphify has no Ruby extractor to
+# port (the scout report found prefix lists only for Python and JS/TS) —
+# Ruby reuses the SAME marker words over the SAME `#` syntax Python uses,
+# a disclosed judgment call (D5 orders Ruby first; there is no other
+# reference implementation to diverge from). Exact-prefix, case-sensitive
+# matching (mirrors graphify's literal `str.startswith` tuples) — not a
+# regex-anywhere-in-the-comment search, so "see the WHY: field below" in
+# ordinary prose doesn't falsely trigger.
+_RATIONALE_MARKERS: tuple[str, ...] = (
+    "NOTE",
+    "IMPORTANT",
+    "HACK",
+    "WHY",
+    "RATIONALE",
+    "TODO",
+    "FIXME",
+)
+_HASH_RATIONALE_PREFIXES: tuple[str, ...] = tuple(f"# {m}:" for m in _RATIONALE_MARKERS)
+_SLASH_RATIONALE_PREFIXES: tuple[str, ...] = tuple(f"// {m}:" for m in _RATIONALE_MARKERS)
+# JS/TS block-comment continuation lines (`/**\n * NOTE: ...\n */`) carry a
+# leading `*` instead of `//` on every line but the first.
+_STAR_RATIONALE_PREFIXES: tuple[str, ...] = tuple(f"* {m}:" for m in _RATIONALE_MARKERS)
+
+# AC-A4-3 — JS/TS only (graphify has no Python/other-language equivalent,
+# confirmed by the scout report; D5 keeps this project's port scoped the
+# same way). `[- ]?` accepts "ADR-11", "ADR 11", "ADR11"; canonicalized
+# below to a fixed `ADR-0011` (4-digit, zero-padded) / `RFC-793` (as-is,
+# real RFC numbers are already large and never zero-padded in practice) —
+# a disclosed judgment call, not specified further by the frozen criterion
+# beyond its own two worked examples.
+_ADR_RFC_RE = re.compile(r"\b(ADR|RFC)[- ]?(\d{1,5})\b", re.IGNORECASE)
+
+
+def _canonical_adr_rfc_label(text: str) -> str | None:
+    match = _ADR_RFC_RE.search(text)
+    if not match:
+        return None
+    kind, digits = match.group(1).upper(), int(match.group(2))
+    return f"ADR-{digits:04d}" if kind == "ADR" else f"RFC-{digits}"
+
+
+def _match_rationale_comment(lang: str, raw_text: str) -> tuple[int, str, str | None] | None:
+    """Decides whether a tree-sitter `comment` node's own exact source text
+    is a "recognized rationale-prefixed comment" (AC-A4-1/AC-A4-2) for
+    `lang`, and separately (JS/TS only, AC-A4-3) whether it references an
+    ADR/RFC identifier. Returns `(line_offset, text, label)` — `line_offset`
+    is 0 for a single-line comment or a match on a block comment's own
+    first line, otherwise the 0-based offset of the specific inner line
+    that matched within a multi-line block comment (so the rationale node
+    can point at the actual triggering line, not just the block's start) —
+    or `None` if this comment is not a rationale comment at all.
+    """
+    lines = raw_text.splitlines() or [raw_text]
+
+    if lang in ("ruby", "python"):
+        for offset, line in enumerate(lines):
+            stripped = line.strip()
+            if stripped.startswith(_HASH_RATIONALE_PREFIXES):
+                return offset, stripped, None
+        return None
+
+    if lang in ("javascript", "typescript"):
+        label = _canonical_adr_rfc_label(raw_text)
+        for offset, line in enumerate(lines):
+            stripped = line.strip()
+            if stripped.startswith(_SLASH_RATIONALE_PREFIXES) or stripped.startswith(
+                _STAR_RATIONALE_PREFIXES
+            ):
+                return offset, stripped, label
+        if label is not None:
+            # An ADR/RFC reference with no NOTE:/HACK:/etc. prefix is STILL
+            # a rationale node (AC-A4-3 names no prefix precondition) —
+            # anchor at the SPECIFIC line the ADR/RFC identifier actually
+            # appears on (not just the block's first line), so `text`
+            # carries the substantive content, not e.g. a bare `/**`.
+            for offset, line in enumerate(lines):
+                if _ADR_RFC_RE.search(line):
+                    return offset, line.strip(), label
+            return 0, lines[0].strip(), label  # defensive; unreachable given `label` matched
+        return None
+
+    return None
 
 
 class CodeGraph:
@@ -782,6 +909,7 @@ class CodeGraph:
             conn.execute("DELETE FROM symbols")
             conn.execute("DELETE FROM refs")
             conn.execute("DELETE FROM assignment_targets")
+            conn.execute("DELETE FROM rationale")
             conn.execute("DELETE FROM files")
 
         stored_files: dict[str, tuple[int, int]] = {}
@@ -796,6 +924,7 @@ class CodeGraph:
         files_removed = 0
         symbols_added = 0
         refs_added = 0
+        rationale_added = 0
         seen_paths: set[str] = set()
         unsupported_skipped: dict[str, int] = {}
 
@@ -836,8 +965,11 @@ class CodeGraph:
                 conn.execute("DELETE FROM symbols WHERE path = ?", (rel,))
                 conn.execute("DELETE FROM refs WHERE path = ?", (rel,))
                 conn.execute("DELETE FROM assignment_targets WHERE path = ?", (rel,))
+                conn.execute("DELETE FROM rationale WHERE path = ?", (rel,))
 
-            symbols, refs, assignment_targets = self._extract(tree, source, rel, lang)
+            symbols, refs, assignment_targets, rationale_comments = self._extract(
+                tree, source, rel, lang
+            )
             for target_name in assignment_targets:
                 conn.execute(
                     "INSERT INTO assignment_targets(path, name) VALUES (?, ?)",
@@ -866,6 +998,31 @@ class CodeGraph:
                     ),
                 )
                 refs_added += 1
+            for rc in rationale_comments:
+                # A4/AC-A4-1: the rationale_for edge target is the TIGHTEST
+                # enclosing symbol in THIS SAME FILE's just-extracted
+                # `symbols` (a rationale comment's scope is always local to
+                # its own file — no cross-file resolution, AC-A4-4 is about
+                # never becoming a call/inheritance CANDIDATE, not about
+                # finding its owner). None when no symbol contains the
+                # comment's line (e.g. a module-level/top-of-file comment)
+                # — a real "no enclosing definition" fact, not an error.
+                target = self._resolve_rationale_target(rc, symbols)
+                conn.execute(
+                    "INSERT INTO rationale(path, line, text, label, target_path, "
+                    "target_line, target_name, lang) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                    (
+                        rc.path,
+                        rc.line,
+                        rc.text,
+                        rc.label,
+                        target[0] if target else None,
+                        target[1] if target else None,
+                        target[2] if target else None,
+                        rc.lang,
+                    ),
+                )
+                rationale_added += 1
 
             conn.execute(
                 "INSERT OR REPLACE INTO files(path, mtime_ns, size, lang, indexed_at) "
@@ -879,6 +1036,7 @@ class CodeGraph:
                 conn.execute("DELETE FROM symbols WHERE path = ?", (rel,))
                 conn.execute("DELETE FROM refs WHERE path = ?", (rel,))
                 conn.execute("DELETE FROM assignment_targets WHERE path = ?", (rel,))
+                conn.execute("DELETE FROM rationale WHERE path = ?", (rel,))
                 conn.execute("DELETE FROM files WHERE path = ?", (rel,))
                 files_removed += 1
 
@@ -909,11 +1067,30 @@ class CodeGraph:
             "symbols": symbols_added,
             "refs": refs_added,
             "edges": edges_added,
+            "rationale": rationale_added,
             "files_skipped": files_skipped,
             "files_removed": files_removed,
             "unsupported_skipped": unsupported_skipped,
             "schema_epoch": SCHEMA_EPOCH,
         }
+
+    @staticmethod
+    def _resolve_rationale_target(
+        comment: RationaleComment, symbols: list[Symbol]
+    ) -> tuple[str, int, str] | None:
+        """The `rationale_for` edge target (AC-A4-1/AC-A4-2): the TIGHTEST
+        enclosing symbol (smallest `line_end - line_start` span) among this
+        SAME file's just-extracted `symbols` whose range contains the
+        comment's line — ties broken by earliest `line_start`, then name,
+        for a fixed deterministic result (mirrors `_enclosing_symbol`'s own
+        tie-break rule). `None` when no symbol in this file contains the
+        comment's line (e.g. a module-level/top-of-file comment) — a real
+        "no enclosing definition" fact, not an error."""
+        candidates = [s for s in symbols if s.line_start <= comment.line <= s.line_end]
+        if not candidates:
+            return None
+        best = min(candidates, key=lambda s: (s.line_end - s.line_start, s.line_start, s.name))
+        return best.path, best.line_start, best.name
 
     def _iter_source_files(self):
         """Yield source files, respecting the skip list."""
@@ -930,9 +1107,9 @@ class CodeGraph:
 
     def _extract(
         self, tree, source: bytes, rel_path: str, lang: str
-    ) -> tuple[list[Symbol], list[Reference], list[str]]:
+    ) -> tuple[list[Symbol], list[Reference], list[str], list[RationaleComment]]:
         """Run the language-specific Tree-sitter query and pull out defs +
-        refs + assignment targets.
+        refs + assignment targets + rationale comments.
 
         Iterates *matches* (not raw captures) so each ``@def.<kind>`` node stays
         grouped with the ``@name`` it owns, and ``#eq?``/``#match?`` predicates
@@ -945,6 +1122,12 @@ class CodeGraph:
         carrying ``@assign.target`` (checker MAJOR-1, condition 5) yields a
         plain assignment-target name, collected for the shadowing guard
         `_resolve_edges` consults — Python/JS/TS only, see QUERIES' comment.
+        A match carrying ``@comment.rationale`` (A4/D5) yields a
+        RationaleComment IFF `_match_rationale_comment` recognizes its own
+        text as a rationale comment for `lang` — most comments captured by
+        this tag are NOT rationale comments and are silently skipped here
+        (the capture is "every comment", the filter is "is it a NOTE:/HACK:/
+        etc.-prefixed one, or does it reference an ADR/RFC").
         """
         from tree_sitter import Query, QueryCursor
         from tree_sitter_language_pack import get_language
@@ -956,12 +1139,14 @@ class CodeGraph:
         symbols: list[Symbol] = []
         refs: list[Reference] = []
         assignment_targets: list[str] = []
+        rationale_comments: list[RationaleComment] = []
 
         # Each match arrives as (pattern_index, {capture_name: [nodes]}).
         for _pattern_index, caps in matches:
             def_cap = next((c for c in caps if c.startswith("def.")), None)
             heritage_cap = next((c for c in caps if c.startswith("heritage.")), None)
             assign_cap = next((c for c in caps if c.startswith("assign.")), None)
+            comment_cap = next((c for c in caps if c.startswith("comment.")), None)
             if def_cap is not None:
                 name_nodes = caps.get("name")
                 if not name_nodes:
@@ -1014,6 +1199,26 @@ class CodeGraph:
                     name = self._node_text(source, node).strip()
                     if name:
                         assignment_targets.append(name)
+            elif comment_cap is not None:
+                # A4/D5: every `comment`-kind node arrives here; most are
+                # NOT rationale comments (ordinary prose) and are silently
+                # skipped — only `_match_rationale_comment`-recognized ones
+                # become a RationaleComment.
+                for node in caps[comment_cap]:
+                    raw = self._node_text(source, node)
+                    matched = _match_rationale_comment(lang, raw)
+                    if matched is None:
+                        continue
+                    line_offset, text, label = matched
+                    rationale_comments.append(
+                        RationaleComment(
+                            path=rel_path,
+                            line=node.start_point[0] + line_offset + 1,
+                            text=text,
+                            label=label,
+                            lang=lang,
+                        )
+                    )
             elif "callee" in caps:
                 qualified, qualifier_name = self._call_qualification(lang, source, caps)
                 for node in caps["callee"]:
@@ -1033,7 +1238,7 @@ class CodeGraph:
                         )
                     )
 
-        return symbols, refs, assignment_targets
+        return symbols, refs, assignment_targets, rationale_comments
 
     @staticmethod
     def _call_qualification(
@@ -1738,6 +1943,52 @@ class CodeGraph:
             edge["candidates"] = None
         return edge
 
+    def rationale(self) -> dict[str, Any]:
+        """A4 (D5): every recognized rationale comment in the repo — a
+        whole-graph verb like `god_nodes:`/`communities:`, not a single-
+        symbol lookup. Independent of `confident_edges()`/the confidence
+        enum entirely (AC-A4-6): `rationale_for` edges carry no confidence
+        value and live in their own relation, so this method has nothing
+        to do with the analysis-graph exclusions AC-NEG-7 governs — a
+        rationale comment was never a call/inheritance edge candidate in
+        the first place (AC-A4-4, structural via `PRODUCED_KINDS` never
+        containing "rationale" — see `_match_rationale_comment`'s callers).
+
+        `target` is the comment's enclosing scope (the `rationale_for`
+        edge's destination), or `None` when the comment sits outside every
+        known symbol's range (e.g. a module-level comment) — a real "no
+        enclosing definition" fact, not an error, mirroring
+        `_resolve_source_node`'s `(None, None)` convention for the same
+        situation on the call/inheritance side.
+
+        Total order: `(path, line, text)` — a fixed order for identical
+        input, matching every other list this project returns (D6).
+        """
+        rows = self.db.execute(
+            "SELECT path, line, text, label, target_path, target_line, target_name, lang "
+            "FROM rationale ORDER BY path, line, text"
+        ).fetchall()
+        items = [
+            {
+                "path": r["path"],
+                "line": r["line"],
+                "text": r["text"],
+                "label": r["label"],
+                "target": (
+                    {
+                        "path": r["target_path"],
+                        "line": r["target_line"],
+                        "name": r["target_name"],
+                    }
+                    if r["target_path"] is not None
+                    else None
+                ),
+                "lang": r["lang"],
+            }
+            for r in rows
+        ]
+        return {"rationale": items, "rationale_count": len(items)}
+
     def query(self, dsl: str) -> dict[str, Any]:
         """Tiny DSL.
 
@@ -1745,9 +1996,9 @@ class CodeGraph:
         'subclasses_of:ApplicationRepository',
         'definitions_of:Tallier',
         'god_nodes:' (A2), 'communities:' (A3 — mechanically gated, see
-        `communities()`) — both take the same trailing-colon-required,
-        argument-ignored form: the analysis spans the whole confident
-        subgraph, not a single named symbol.
+        `communities()`), 'rationale:' (A4) — all three take the same
+        trailing-colon-required, argument-ignored form: the analysis spans
+        the whole graph, not a single named symbol.
         """
         verb = parse_query_verb(dsl)
         if not verb:
@@ -1789,10 +2040,15 @@ class CodeGraph:
             # subgraph — `arg` is ignored (see the docstring above).
             return self.communities()
 
-        # Unreachable today (KNOWN_QUERY_VERBS has exactly the five
+        if verb == "rationale":
+            # A4: every recognized rationale comment — `arg` is ignored
+            # (see the docstring above).
+            return self.rationale()
+
+        # Unreachable today (KNOWN_QUERY_VERBS has exactly the six
         # members dispatched above) — NOT dead-code hygiene, a guard
-        # (NEW-3, checker second pass). A1/A2/A3 are expected to add verbs
-        # to KNOWN_QUERY_VERBS; a verb added there without a corresponding
+        # (NEW-3, checker second pass). A1/A2/A3/A4 are expected to add
+        # verbs to KNOWN_QUERY_VERBS; a verb added there without a corresponding
         # dispatch branch above must fail loudly here, not silently fall
         # through and impersonate subclasses_of's empty-with-warning shape
         # (which is exactly what an unconditional final `return` here
