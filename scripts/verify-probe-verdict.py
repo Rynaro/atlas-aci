@@ -54,17 +54,37 @@ the sidecar. This script:
      arithmetic from here on — median, and all three frozen-bar clauses,
      are computed from graph-derived numbers only.
 
+THE FIFTH DEFECT (checker, this pass) — the staleness hole: nothing tied
+the sidecar to the indexer that produced it. A4/A5 will modify
+`codegraph.py`; if the confident-edge selection logic or schema changes,
+a stale sidecar could certify a version of the indexer that no longer
+exists. Fixed: an `indexer_fingerprint` (a hash over `SCHEMA_EPOCH`,
+`EXPECTED_DDL_HASH`, and `confident_edges()`'s own source text) is
+recorded in the sidecar at probe time and recomputed here from the
+CURRENT tree's `codegraph.py` — a mismatch means the probe is stale and
+must be re-run, never silently accepted.
+
+THE DOCUMENTED TERMINUS: after all of the above, the one input this
+script still cannot independently verify is that the committed graph
+bundle is a FAITHFUL export of the two pinned repo SHAs — that requires
+actually cloning and indexing two Rails applications, which CI cannot do
+on every PR. That link is attested by INDEPENDENT REPRODUCTION (the
+checker re-cloned both repos, re-indexed, re-exported, and re-scored,
+reproducing every float to the last digit), not by anything this script
+mechanically checks. See `probe-lpa-vs-louvain.md` and
+`harden-gate.yml`'s header comment for this bound stated explicitly.
+
 Usage:
   python3 scripts/verify-probe-verdict.py <sidecar_json_path>
 
 Exit 0 iff: the sidecar's declared bar/seeds/repo-set agree with the
 frozen constants; the graph bundle's sha256 matches; every recomputed
 node/edge/community count and modularity Q matches the sidecar's
-recorded copies within tolerance; and the recorded verdict equals the
-mechanical evaluation of the RECOMPUTED numbers against the frozen bar.
-Exit 1 on any provenance/integrity/arithmetic mismatch, with a
-diagnostic naming exactly what disagreed. Exit 2 on usage /
-malformed-input errors.
+recorded copies within tolerance; the indexer fingerprint matches the
+current tree; and the recorded verdict equals the mechanical evaluation
+of the RECOMPUTED numbers against the frozen bar. Exit 1 on any
+provenance/integrity/arithmetic mismatch, with a diagnostic naming
+exactly what disagreed. Exit 2 on usage / malformed-input errors.
 """
 
 from __future__ import annotations
@@ -72,6 +92,7 @@ from __future__ import annotations
 import gzip
 import hashlib
 import json
+import re
 import statistics
 import sys
 from pathlib import Path
@@ -114,14 +135,20 @@ FROZEN_PINNED_SHAS: frozenset[str] = frozenset(
 # above that noise floor while still catching any real divergence.
 Q_TOLERANCE: float = 1e-9
 
+# Checker defect 13 (staleness hole): the indexer fingerprint is computed
+# straight from `codegraph.py`'s own SOURCE TEXT — never by importing
+# `atlas_aci` (this script must run without `mcp-server`'s environment,
+# and without networkx, AC-NEG-2).
+CODEGRAPH_RELATIVE_PATH = "mcp-server/src/atlas_aci/codegraph.py"
+
 
 class ProvenanceError(Exception):
     """The sidecar's declared facts (bar constants, seed set, repo
-    identity/count, graph-bundle integrity, or recomputed counts/Q
-    values) disagree with either the frozen constants above or the graph
-    bundle's own recomputed content. Raised for ANY such mismatch — never
-    silently reconciled by preferring either side's value; the mismatch
-    itself is the finding."""
+    identity/count, graph-bundle integrity, recomputed counts/Q values, or
+    indexer fingerprint) disagree with either the frozen constants above
+    or the graph bundle's own recomputed content. Raised for ANY such
+    mismatch — never silently reconciled by preferring either side's
+    value; the mismatch itself is the finding."""
 
 
 # ---------------------------------------------------------------------------
@@ -335,6 +362,58 @@ def evaluate_repo(repo: dict[str, Any], bundle: dict[str, Any]) -> dict[str, Any
     }
 
 
+# ---------------------------------------------------------------------------
+# Indexer fingerprint: is the sidecar stale relative to the CURRENT tree?
+# ---------------------------------------------------------------------------
+
+
+def compute_indexer_fingerprint(repo_root: Path) -> str:
+    """Hashes `SCHEMA_EPOCH` + `EXPECTED_DDL_HASH` + `confident_edges()`'s
+    own source text (the confident-edge selection logic) straight out of
+    `codegraph.py` -- dependency-free (no `atlas_aci` import, no
+    `mcp-server` environment needed), so this check can run standalone,
+    exactly like the rest of this script."""
+    path = repo_root / CODEGRAPH_RELATIVE_PATH
+    if not path.is_file():
+        raise ProvenanceError(f"cannot compute the indexer fingerprint: {path} does not exist")
+    source = path.read_text()
+
+    epoch_match = re.search(r"^SCHEMA_EPOCH\s*=\s*(\d+)", source, re.MULTILINE)
+    if not epoch_match:
+        raise ProvenanceError(f"could not find SCHEMA_EPOCH in {path}")
+
+    ddl_match = re.search(r'^EXPECTED_DDL_HASH\s*=\s*"([0-9a-f]+)"', source, re.MULTILINE)
+    if not ddl_match:
+        raise ProvenanceError(f"could not find EXPECTED_DDL_HASH in {path}")
+
+    method_match = re.search(r"    def confident_edges\(self\).*?(?=\n    def )", source, re.DOTALL)
+    if not method_match:
+        raise ProvenanceError(f"could not find confident_edges()'s method body in {path}")
+
+    fingerprint_input = (
+        f"epoch={epoch_match.group(1)}|ddl_hash={ddl_match.group(1)}|"
+        f"confident_edges={method_match.group(0)}"
+    )
+    return hashlib.sha256(fingerprint_input.encode("utf-8")).hexdigest()
+
+
+def _check_indexer_fingerprint_matches_tree(sidecar: dict[str, Any], repo_root: Path) -> None:
+    recorded = sidecar.get("indexer_fingerprint")
+    if not recorded:
+        raise ProvenanceError(
+            "sidecar is missing indexer_fingerprint -- cannot confirm it is not stale"
+        )
+    current = compute_indexer_fingerprint(repo_root)
+    if current != recorded:
+        raise ProvenanceError(
+            f"indexer_fingerprint mismatch: sidecar records {recorded!r}, the CURRENT tree's "
+            f"codegraph.py computes {current!r}. The probe is STALE relative to the current "
+            "indexer (SCHEMA_EPOCH/EXPECTED_DDL_HASH/confident_edges() selection logic changed "
+            "since the probe ran) and must be re-run -- a stale probe must never certify a "
+            "changed indexer."
+        )
+
+
 def main() -> int:
     if len(sys.argv) != 2:
         print(f"usage: {sys.argv[0]} <sidecar_json_path>", file=sys.stderr)
@@ -348,9 +427,12 @@ def main() -> int:
         print(f"FAIL: could not read/parse sidecar JSON: {e}", file=sys.stderr)
         return 2
 
+    repo_root = Path(__file__).resolve().parent.parent
+
     try:
         _check_declared_bar_matches_frozen(data.get("bar", {}))
         _check_repo_set_matches_frozen(data.get("repos", []))
+        _check_indexer_fingerprint_matches_tree(data, repo_root)
         bundle = _load_graph_bundle(sidecar_path, data)
         _check_bundle_repo_set_matches_sidecar(bundle, data.get("repos", []))
     except ProvenanceError as e:
@@ -393,7 +475,8 @@ def main() -> int:
     print(
         f"OK (AC-A3-1/F7): recorded verdict '{recorded_verdict}' matches the "
         "recomputed verdict under the frozen, hardcoded bar; every recomputed count "
-        "and Q agrees with the sidecar's recorded copies."
+        "and Q agrees with the sidecar's recorded copies; the indexer fingerprint "
+        "matches the current tree."
     )
     return 0
 

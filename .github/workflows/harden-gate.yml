@@ -38,8 +38,27 @@
 #      faith until checker defect 13. `scripts/verify-probe-verdict.py`
 #      now recomputes every modularity value in pure Python straight from
 #      a committed graph bundle (`probe-graphs.json.gz`: node/edge
-#      identities + every partition, sha256-pinned in the sidecar) —
-#      trusting no summary field, only the primitive graph data.
+#      identities + every partition, sha256-pinned in the sidecar), and
+#      an `indexer_fingerprint` (hashing `SCHEMA_EPOCH`/
+#      `EXPECTED_DDL_HASH`/`confident_edges()`'s own source) ties the
+#      sidecar to the CURRENT tree's indexer, failing loudly ("stale
+#      probe, re-run it") if A4/A5 ever change the confident-edge
+#      selection logic without a fresh probe run.
+#
+#      THE DOCUMENTED TERMINUS: after all of the above, the one input
+#      this job CANNOT mechanically verify is that the committed graph
+#      bundle is a FAITHFUL export of the two pinned repo SHAs — that
+#      requires cloning and indexing two full Rails applications, which
+#      this CI job does not do on every PR. That specific link is
+#      attested by INDEPENDENT REPRODUCTION, not a mechanical check: the
+#      checker re-cloned both pinned repos, re-indexed them with the
+#      shipped `CodeGraph`, re-exported the confident subgraph, and
+#      re-scored it with an ephemeral networkx run, reproducing every
+#      load-bearing float to the last digit (recorded in
+#      `probe-lpa-vs-louvain.md`). Stating this bound here, rather than
+#      leaving it implicit, is itself part of the fix — an undocumented
+#      trust boundary is the same defect this file has now closed
+#      thirteen times over, just moved one level up.
 #
 # KNOWN LIMITATION, VERIFIED (F-3, checker second pass — not silently
 # swept): step 2's content-marker heuristic is evadable by renaming.
@@ -219,13 +238,20 @@ jobs:
             # in pure Python straight from that bundle; asserts each
             # recomputed Q matches the sidecar's recorded (networkx)
             # value within tolerance (an honesty check on the recorded
-            # run). Then, using ONLY the recomputed values, fails if the
-            # computed verdict differs from the recorded one in EITHER
-            # direction — a recorded CUT over genuinely passing numbers is
-            # equally a lie, not just a recorded PASS over failing ones.
-            # See scripts/test-verify-probe-verdict.sh (13 forged
-            # scenarios, each guard's necessity proven by disabling it in
-            # isolation) for the self-test proving this has teeth.
+            # run); and recomputes an indexer_fingerprint from the CURRENT
+            # tree's codegraph.py, failing loudly if the probe is stale
+            # relative to the indexer that would actually run today. Then,
+            # using ONLY the recomputed values, fails if the computed
+            # verdict differs from the recorded one in EITHER direction —
+            # a recorded CUT over genuinely passing numbers is equally a
+            # lie, not just a recorded PASS over failing ones. See
+            # scripts/test-verify-probe-verdict.sh (14 forged scenarios,
+            # each guard's necessity proven by disabling it in isolation)
+            # for the self-test proving this has teeth, and
+            # probe-lpa-vs-louvain.md's "one input this cannot mechanically
+            # verify" section for the one trust boundary that remains
+            # (the graph bundle's fidelity to the two pinned repo SHAs,
+            # attested by independent reproduction, not a mechanical check).
             if [ ! -f "$PROBE_ARTIFACT" ] || [ ! -f "$PROBE_JSON" ]; then
               echo "FAIL (AC-A3-4/AC-A3-5): A3 community code exists in the tree but the probe artefact/sidecar is missing ($PROBE_ARTIFACT, $PROBE_JSON)."
               exit 1

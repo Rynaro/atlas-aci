@@ -54,8 +54,14 @@ it does and does not check:
    and ship a clusterer scoring `Q=0.31` against a bar that is only as
    honest as the numbers used to compute it — `0.85 * median` is
    trivially gameable by lying about the baseline (checker defect 13).
+5. **The sidecar must be tied to the indexer that produced it.** A4/A5
+   modify `codegraph.py`; nothing tied a recorded PASS to the specific
+   `SCHEMA_EPOCH`/`EXPECTED_DDL_HASH`/`confident_edges()` selection logic
+   that produced it, so a stale sidecar could certify an indexer that no
+   longer exists (the staleness hole).
 
-**The fix for (4)** is what is committed alongside this file today:
+**The fix for (4) and (5)** is what is committed alongside this file
+today:
 
 - **`probe-graphs.json.gz`** (built by
   `scripts/probe-assemble-graph-bundle.py`): the confident subgraph
@@ -66,9 +72,12 @@ it does and does not check:
   `edge_count`, `lpa_community_count`, and every modularity `Q` are
   **derived** from it, never stored as an independent, trust-me number.
 - **`probe-lpa-vs-louvain.json`** (the sidecar) now also carries
-  `graph_bundle.sha256` (the bundle's integrity hash).
-- **`scripts/verify-probe-verdict.py`**, given only these two files (no
-  networkx, no `mcp-server` environment, standard library only), now:
+  `graph_bundle.sha256` (the bundle's integrity hash) and
+  `indexer_fingerprint` (a hash over `SCHEMA_EPOCH`, `EXPECTED_DDL_HASH`,
+  and `confident_edges()`'s own source text, computed at probe time).
+- **`scripts/verify-probe-verdict.py`**, given only these two files and
+  the current tree (no networkx, no `mcp-server` environment, standard
+  library only), now:
   1. Verifies the bundle's sha256 against the sidecar's recorded value
      (a tampered or substituted bundle is loud, not silent).
   2. Recomputes `node_count`/`edge_count`/`lpa_community_count` straight
@@ -86,17 +95,33 @@ it does and does not check:
      across both repos (see the reproduction table below).
   4. Uses the **recomputed** values, never the sidecar's, for the actual
      pass/fail arithmetic from here on.
+  5. Recomputes the `indexer_fingerprint` from the CURRENT tree's
+     `codegraph.py` and fails loudly — "the probe is stale and must be
+     re-run" — on any mismatch, rather than silently certifying a changed
+     indexer.
 
-`scripts/test-verify-probe-verdict.sh` forges thirteen artefacts (every
-round above, plus the graph-bundle attacks) and asserts each is rejected
-while the real, currently-recorded sidecar + bundle are accepted — each
-guard's necessity was proven in isolation by disabling it and confirming
-precisely (and only) the matching scenario flips.
+`scripts/test-verify-probe-verdict.sh` forges fourteen artefacts (every
+round above, plus the graph-bundle/fingerprint attacks) and asserts each
+is rejected while the real, currently-recorded sidecar + bundle are
+accepted — each guard's necessity was proven in isolation by disabling it
+and confirming precisely (and only) the matching scenario flips.
 
-(A remaining gap — nothing yet ties this sidecar to the specific indexer
-that produced it, so a stale probe could silently certify a
-`codegraph.py` that no longer exists once A4/A5 change it — is tracked
-separately and closed next.)
+## The one input this cannot mechanically verify — stated, not implied
+
+After all of the above, there is exactly one remaining trusted input:
+**that the committed graph bundle is a faithful export of the two pinned
+repo SHAs.** Verifying that mechanically would require cloning and
+indexing two full Rails applications on every PR — CI cannot do that,
+and this project does not pretend otherwise. That link is attested by
+**independent reproduction**, not by a mechanical check: the checker
+re-cloned both repos at the exact pinned SHAs, re-indexed them with the
+shipped `CodeGraph`, re-exported the confident subgraph, and re-scored it
+with an ephemeral networkx run — and every load-bearing float reproduced
+to the last digit (see the per-repo reproduction table below). An
+honest, documented bound is a guarantee; an undocumented one is the same
+defect this campaign has now found (and closed) thirteen times. This
+same statement is repeated in `.github/workflows/harden-gate.yml`'s
+header comment, next to the mechanical checks it actually runs.
 
 **Reader check:** every number below was pasted straight out of the
 probe scripts' JSON output, not retyped/rounded by hand except where

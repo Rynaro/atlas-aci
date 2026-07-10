@@ -19,6 +19,8 @@
 #     10 forges exactly that; scenarios 11/12 attack the graph BUNDLE
 #     this was fixed with (a tampered bundle, and a bundle edited so a
 #     recomputed Q genuinely diverges from its recorded value).
+#   - The staleness hole: nothing tied the sidecar to the indexer that
+#     produced it. Scenario 13 forges a stale `indexer_fingerprint`.
 #
 # This self-test asserts scripts/verify-probe-verdict.py rejects every
 # forgery below and accepts the real, currently-recorded probe sidecar +
@@ -298,6 +300,18 @@ PYEOF
 _assert_exit "forged: graph rewired (sha256 re-signed to match, counts unchanged, but Q now diverges)" \
     "$dir/probe-lpa-vs-louvain.json" 1
 
+# ---- Scenario 13: stale indexer_fingerprint ----
+dir="$(_scenario_dir scenario-13)"
+python3 - "$REAL_JSON" "$dir/probe-lpa-vs-louvain.json" << 'PYEOF'
+import json
+import sys
+
+data = json.load(open(sys.argv[1]))
+data["indexer_fingerprint"] = "0" * 64  # does not match the current tree's codegraph.py
+json.dump(data, open(sys.argv[2], "w"))
+PYEOF
+_assert_exit "forged: stale indexer_fingerprint (does not match the current tree)" \
+    "$dir/probe-lpa-vs-louvain.json" 1
 
 echo ""
 echo "$pass_count passed, $fail_count failed"
