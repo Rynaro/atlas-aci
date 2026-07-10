@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""D3a probe-verdict verifier — the AC-A3-1/F7 fix (checker defects 11-13).
+"""D3a probe-verdict verifier — the AC-A3-1/F7 fix (checker defects 11-13, 15).
 
 THE FIRST FIX (defect 10): `.github/workflows/harden-gate.yml` used to
 gate A3 on `grep -qiE "verdict.*:.*pass" "$PROBE_ARTIFACT"` — a check of
@@ -54,15 +54,28 @@ the sidecar. This script:
      arithmetic from here on — median, and all three frozen-bar clauses,
      are computed from graph-derived numbers only.
 
-THE FIFTH DEFECT (checker, this pass) — the staleness hole: nothing tied
-the sidecar to the indexer that produced it. A4/A5 will modify
-`codegraph.py`; if the confident-edge selection logic or schema changes,
-a stale sidecar could certify a version of the indexer that no longer
-exists. Fixed: an `indexer_fingerprint` (a hash over `SCHEMA_EPOCH`,
-`EXPECTED_DDL_HASH`, and `confident_edges()`'s own source text) is
-recorded in the sidecar at probe time and recomputed here from the
-CURRENT tree's `codegraph.py` — a mismatch means the probe is stale and
-must be re-run, never silently accepted.
+THE FIFTH DEFECT — the staleness hole: nothing tied the sidecar to the
+indexer that produced it. A4/A5 will modify `codegraph.py`; if the
+confident-edge selection/projection logic or schema changes, a stale
+sidecar could certify a version of the indexer that no longer exists.
+Fixed: an `indexer_fingerprint` recorded in the sidecar at probe time and
+recomputed here from the CURRENT tree — a mismatch means the probe is
+stale and must be re-run, never silently accepted.
+
+THE SIXTH DEFECT (checker, found IN the fifth defect's own fix, same
+pass one level deeper): the first `indexer_fingerprint` implementation
+hashed `SCHEMA_EPOCH` + `EXPECTED_DDL_HASH` + ONLY `confident_edges()`'s
+body — but the committed graph's edge set is ALSO determined by
+`_resolve_source_node()` (can drop an edge whose source doesn't resolve)
+and `_enclosing_symbol()` (feeds `_resolve_source_node`'s underlying data
+via `_resolve_edges()` — a data-flow dependency, not a direct call, so a
+naive call-graph closure would miss it) and `_target_kind()`. See
+`compute_indexer_fingerprint`'s own docstring for the fix: rather than
+hand-list every graph-determining function ("a hand-maintained list of
+function names is the next bug" — the same lesson `_CALL_CANDIDATE_KINDS`
+taught), it now hashes `codegraph.py` IN FULL, verbatim, plus the two
+probe scripts that decide what gets exported/assembled — closing the
+CLASS of "which function did I forget," not just this one instance.
 
 THE DOCUMENTED TERMINUS: after all of the above, the one input this
 script still cannot independently verify is that the committed graph
@@ -135,11 +148,15 @@ FROZEN_PINNED_SHAS: frozenset[str] = frozenset(
 # above that noise floor while still catching any real divergence.
 Q_TOLERANCE: float = 1e-9
 
-# Checker defect 13 (staleness hole): the indexer fingerprint is computed
-# straight from `codegraph.py`'s own SOURCE TEXT — never by importing
+# Checker defect 13 (staleness hole) / defect 15 (under-coverage, found in
+# the fix for defect 13): the indexer fingerprint is computed straight
+# from these three files' own SOURCE TEXT — never by importing
 # `atlas_aci` (this script must run without `mcp-server`'s environment,
-# and without networkx, AC-NEG-2).
+# and without networkx, AC-NEG-2). See `compute_indexer_fingerprint` for
+# why all three (not just `codegraph.py`) are in scope.
 CODEGRAPH_RELATIVE_PATH = "mcp-server/src/atlas_aci/codegraph.py"
+PROBE_EXPORT_SCRIPT_RELATIVE_PATH = "scripts/probe-export-confident-graph.py"
+PROBE_ASSEMBLE_SCRIPT_RELATIVE_PATH = "scripts/probe-assemble-graph-bundle.py"
 
 
 class ProvenanceError(Exception):
@@ -368,31 +385,67 @@ def evaluate_repo(repo: dict[str, Any], bundle: dict[str, Any]) -> dict[str, Any
 
 
 def compute_indexer_fingerprint(repo_root: Path) -> str:
-    """Hashes `SCHEMA_EPOCH` + `EXPECTED_DDL_HASH` + `confident_edges()`'s
-    own source text (the confident-edge selection logic) straight out of
-    `codegraph.py` -- dependency-free (no `atlas_aci` import, no
-    `mcp-server` environment needed), so this check can run standalone,
-    exactly like the rest of this script."""
-    path = repo_root / CODEGRAPH_RELATIVE_PATH
-    if not path.is_file():
-        raise ProvenanceError(f"cannot compute the indexer fingerprint: {path} does not exist")
-    source = path.read_text()
+    """Hashes everything that determines the committed graph bundle.
 
-    epoch_match = re.search(r"^SCHEMA_EPOCH\s*=\s*(\d+)", source, re.MULTILINE)
+    Checker defect 15 (found in the fix for defect 13's staleness hole,
+    the same pass deeper): an earlier revision hashed `SCHEMA_EPOCH` +
+    `EXPECTED_DDL_HASH` + ONLY `confident_edges()`'s own body. But the
+    committed graph's edge set is jointly determined by `confident_edges()`
+    AND `_resolve_source_node()` (which resolves -- and can DROP -- each
+    edge's source endpoint) AND `_enclosing_symbol()` (which feeds
+    `_resolve_source_node`'s underlying `source_name`/`source_kind` data by
+    way of `_resolve_edges()`, not a direct call — a data-flow dependency a
+    naive self-call closure would miss) AND `_target_kind()`. A change to
+    any of these alters every `Q` in the bundle without necessarily
+    touching `confident_edges()` itself — a stale bundle would certify as
+    fresh, and no workflow would ask for a re-run.
+
+    THE FIX closes the CLASS, not the instance (the same lesson
+    `_CALL_CANDIDATE_KINDS`/`PRODUCED_KINDS` already taught this codebase):
+    rather than hand-list every graph-determining function — "a
+    hand-maintained list of function names is the next bug" — this hashes
+    `codegraph.py` IN FULL, verbatim, plus the two probe scripts that
+    decide what the export pipeline reads and writes
+    (`probe-export-confident-graph.py`, `probe-assemble-graph-bundle.py`).
+    Hashing the whole file cannot omit a graph-determining function *by
+    construction* — there is no list to fall out of date. The tradeoff is
+    conservatism, not blindness: an edit ANYWHERE in `codegraph.py` (even
+    an unrelated docstring) flips the fingerprint and forces a probe
+    re-run, which is the safe failure direction (an unnecessary "please
+    re-run" is cheap; a silent false "fresh" on a changed indexer is the
+    defect this exists to prevent). `scripts/test-verify-probe-verdict.sh`
+    proves this by editing `_resolve_source_node`, `_enclosing_symbol`,
+    `_target_kind`, and `confident_edges` in turn (one at a time, in a
+    throwaway copy) and confirming EACH edit alone flips the fingerprint —
+    the same "prove it has teeth" discipline as every other guard here.
+
+    Dependency-free (no `atlas_aci` import, no `mcp-server` environment,
+    no networkx) -- reads three files as plain text, nothing else.
+    """
+    codegraph_path = repo_root / CODEGRAPH_RELATIVE_PATH
+    export_script_path = repo_root / PROBE_EXPORT_SCRIPT_RELATIVE_PATH
+    assemble_script_path = repo_root / PROBE_ASSEMBLE_SCRIPT_RELATIVE_PATH
+    for path in (codegraph_path, export_script_path, assemble_script_path):
+        if not path.is_file():
+            raise ProvenanceError(f"cannot compute the indexer fingerprint: {path} does not exist")
+
+    codegraph_source = codegraph_path.read_text()
+    export_script_source = export_script_path.read_text()
+    assemble_script_source = assemble_script_path.read_text()
+
+    epoch_match = re.search(r"^SCHEMA_EPOCH\s*=\s*(\d+)", codegraph_source, re.MULTILINE)
     if not epoch_match:
-        raise ProvenanceError(f"could not find SCHEMA_EPOCH in {path}")
+        raise ProvenanceError(f"could not find SCHEMA_EPOCH in {codegraph_path}")
 
-    ddl_match = re.search(r'^EXPECTED_DDL_HASH\s*=\s*"([0-9a-f]+)"', source, re.MULTILINE)
+    ddl_match = re.search(r'^EXPECTED_DDL_HASH\s*=\s*"([0-9a-f]+)"', codegraph_source, re.MULTILINE)
     if not ddl_match:
-        raise ProvenanceError(f"could not find EXPECTED_DDL_HASH in {path}")
-
-    method_match = re.search(r"    def confident_edges\(self\).*?(?=\n    def )", source, re.DOTALL)
-    if not method_match:
-        raise ProvenanceError(f"could not find confident_edges()'s method body in {path}")
+        raise ProvenanceError(f"could not find EXPECTED_DDL_HASH in {codegraph_path}")
 
     fingerprint_input = (
         f"epoch={epoch_match.group(1)}|ddl_hash={ddl_match.group(1)}|"
-        f"confident_edges={method_match.group(0)}"
+        f"codegraph_source={codegraph_source}|"
+        f"export_script={export_script_source}|"
+        f"assemble_script={assemble_script_source}"
     )
     return hashlib.sha256(fingerprint_input.encode("utf-8")).hexdigest()
 
@@ -406,11 +459,10 @@ def _check_indexer_fingerprint_matches_tree(sidecar: dict[str, Any], repo_root: 
     current = compute_indexer_fingerprint(repo_root)
     if current != recorded:
         raise ProvenanceError(
-            f"indexer_fingerprint mismatch: sidecar records {recorded!r}, the CURRENT tree's "
-            f"codegraph.py computes {current!r}. The probe is STALE relative to the current "
-            "indexer (SCHEMA_EPOCH/EXPECTED_DDL_HASH/confident_edges() selection logic changed "
-            "since the probe ran) and must be re-run -- a stale probe must never certify a "
-            "changed indexer."
+            f"indexer_fingerprint mismatch: sidecar records {recorded!r}, the CURRENT tree "
+            f"computes {current!r}. The probe is STALE relative to the current indexer "
+            "(codegraph.py and/or the probe export/assembly scripts changed since the probe "
+            "ran) and must be re-run -- a stale probe must never certify a changed indexer."
         )
 
 

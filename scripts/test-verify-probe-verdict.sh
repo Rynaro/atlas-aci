@@ -313,6 +313,88 @@ PYEOF
 _assert_exit "forged: stale indexer_fingerprint (does not match the current tree)" \
     "$dir/probe-lpa-vs-louvain.json" 1
 
+# ---- Fingerprint coverage (checker defect 15): every graph-determining
+# function, and both probe scripts, must flip compute_indexer_fingerprint()
+# when edited -- proving the whole-file-hash fix actually covers what it
+# claims to, not just confident_edges() (the under-coverage the checker
+# found IN the defect-13 fix itself). Builds a throwaway copy of the real
+# repo tree, edits exactly ONE function (or script) at a time, and asserts
+# the fingerprint changes relative to an untouched baseline copy.
+_fingerprint_dir="$TMP_DIR/fingerprint-coverage"
+mkdir -p "$_fingerprint_dir/baseline/mcp-server/src/atlas_aci" "$_fingerprint_dir/baseline/scripts"
+cp "$REPO_ROOT/mcp-server/src/atlas_aci/codegraph.py" \
+    "$_fingerprint_dir/baseline/mcp-server/src/atlas_aci/codegraph.py"
+cp "$REPO_ROOT/scripts/probe-export-confident-graph.py" \
+    "$_fingerprint_dir/baseline/scripts/probe-export-confident-graph.py"
+cp "$REPO_ROOT/scripts/probe-assemble-graph-bundle.py" \
+    "$_fingerprint_dir/baseline/scripts/probe-assemble-graph-bundle.py"
+
+_fingerprint_of() {
+    local root="$1"
+    python3 -c "
+import importlib.util, sys
+from pathlib import Path
+spec = importlib.util.spec_from_file_location('verify_probe_verdict', '$VERIFY')
+mod = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(mod)
+print(mod.compute_indexer_fingerprint(Path('$root')))
+"
+}
+
+baseline_fp="$(_fingerprint_of "$_fingerprint_dir/baseline")"
+
+_assert_fingerprint_flips() {
+    local scenario="$1" edited_root="$2"
+    local edited_fp
+    edited_fp="$(_fingerprint_of "$edited_root")"
+    if [ "$edited_fp" != "$baseline_fp" ]; then
+        echo "PASS: $scenario (fingerprint flipped)"
+        pass_count=$((pass_count + 1))
+    else
+        echo "FAIL: $scenario -- fingerprint did NOT change; this function/script is NOT covered"
+        fail_count=$((fail_count + 1))
+    fi
+}
+
+for fn in confident_edges _resolve_source_node _enclosing_symbol _target_kind; do
+    edited_dir="$_fingerprint_dir/edit-$fn"
+    mkdir -p "$edited_dir/mcp-server/src/atlas_aci" "$edited_dir/scripts"
+    cp "$_fingerprint_dir/baseline/scripts/probe-export-confident-graph.py" "$edited_dir/scripts/"
+    cp "$_fingerprint_dir/baseline/scripts/probe-assemble-graph-bundle.py" "$edited_dir/scripts/"
+    python3 - "$_fingerprint_dir/baseline/mcp-server/src/atlas_aci/codegraph.py" \
+        "$edited_dir/mcp-server/src/atlas_aci/codegraph.py" "$fn" << 'PYEOF'
+import re
+import sys
+
+src_path, out_path, fn_name = sys.argv[1:4]
+source = open(src_path).read()
+pattern = re.compile(rf"(    def {re.escape(fn_name)}\([^)]*\)[^:]*:\n)")
+match = pattern.search(source)
+if not match:
+    raise SystemExit(f"could not find def {fn_name}( in {src_path}")
+insertion = match.end()
+edited = (
+    source[:insertion]
+    + "        pass  # VERIFICATION-ONLY: proving the fingerprint covers this function\n"
+    + source[insertion:]
+)
+open(out_path, "w").write(edited)
+PYEOF
+    _assert_fingerprint_flips "editing $fn() alone flips the indexer fingerprint" "$edited_dir"
+done
+
+for script in probe-export-confident-graph.py probe-assemble-graph-bundle.py; do
+    edited_dir="$_fingerprint_dir/edit-$script"
+    mkdir -p "$edited_dir/mcp-server/src/atlas_aci" "$edited_dir/scripts"
+    cp "$_fingerprint_dir/baseline/mcp-server/src/atlas_aci/codegraph.py" \
+        "$edited_dir/mcp-server/src/atlas_aci/"
+    cp "$_fingerprint_dir/baseline/scripts/probe-export-confident-graph.py" "$edited_dir/scripts/"
+    cp "$_fingerprint_dir/baseline/scripts/probe-assemble-graph-bundle.py" "$edited_dir/scripts/"
+    printf '\n# VERIFICATION-ONLY: proving the fingerprint covers this script\n' \
+        >> "$edited_dir/scripts/$script"
+    _assert_fingerprint_flips "editing $script alone flips the indexer fingerprint" "$edited_dir"
+done
+
 echo ""
 echo "$pass_count passed, $fail_count failed"
 if [ "$fail_count" -ne 0 ]; then
