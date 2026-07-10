@@ -450,7 +450,7 @@ def parse_query_verb(dsl: str) -> str:
 # choosing different names; a verb landing here (which it must, to be
 # dispatchable at all) cannot evade a test that enumerates this set itself.
 KNOWN_QUERY_VERBS: frozenset[str] = frozenset(
-    {"callers_of", "definitions_of", "subclasses_of", "god_nodes"}
+    {"callers_of", "definitions_of", "subclasses_of", "god_nodes", "communities"}
 )
 
 # A1/D4 — edge-resolution candidate kinds, by relation.
@@ -533,6 +533,15 @@ _CALL_RELATIONS: tuple[str, ...] = ("call", "construct")
 # have either). `test_codegraph.py::test_edge_relation_is_a_closed_set`
 # is the enforcement point; this frozenset is what it checks against.
 KNOWN_EDGE_RELATIONS: frozenset[str] = frozenset({"call", *_CLASS_TARGET_RELATIONS})
+
+# A3: a bound on `CodeGraph.communities()`'s label-propagation loop.
+# Deterministic asynchronous LPA with fixed tie-breaking is not
+# mathematically GUARANTEED to converge (real-world graphs occasionally
+# oscillate between two label configurations), so this caps runtime
+# without affecting a converging graph — a run that reaches the cap simply
+# stops on whatever labels the last pass produced, which is still a
+# deterministic function of the input (the loop itself has no randomness).
+_LPA_MAX_ITERATIONS = 100
 
 
 @dataclass
@@ -1404,32 +1413,12 @@ class CodeGraph:
             if target is not None:
                 key = (target["path"], target["line"], target["name"])
                 in_degree[key] = in_degree.get(key, 0) + 1
-                if key not in node_kind:
-                    row = self.db.execute(
-                        "SELECT kind FROM symbols WHERE path = ? AND line_start = ? "
-                        "AND name = ? LIMIT 1",
-                        key,
-                    ).fetchone()
-                    node_kind[key] = row["kind"] if row is not None else None
+                node_kind.setdefault(key, self._target_kind(target))
 
-            source = edge["source"]
-            if source["name"] is not None:
-                row = self.db.execute(
-                    "SELECT path, line_start, name, kind FROM symbols WHERE path = ? "
-                    "AND name = ? AND kind = ? AND line_start <= ? AND line_end >= ? "
-                    "ORDER BY line_start LIMIT 1",
-                    (
-                        source["path"],
-                        source["name"],
-                        source["kind"],
-                        source["line"],
-                        source["line"],
-                    ),
-                ).fetchone()
-                if row is not None:
-                    key = (row["path"], row["line_start"], row["name"])
-                    out_degree[key] = out_degree.get(key, 0) + 1
-                    node_kind.setdefault(key, row["kind"])
+            source_key, source_kind = self._resolve_source_node(edge["source"])
+            if source_key is not None:
+                out_degree[source_key] = out_degree.get(source_key, 0) + 1
+                node_kind.setdefault(source_key, source_kind)
 
         nodes: list[dict[str, Any]] = [
             {
@@ -1449,10 +1438,6 @@ class CodeGraph:
         # unique per node.
         nodes.sort(key=lambda n: (-cast(int, n["degree"]), n["path"], n["line"], n["name"]))
 
-        ambiguous_edges_excluded = self.db.execute(
-            "SELECT COUNT(*) FROM edges WHERE confidence = 'AMBIGUOUS'"
-        ).fetchone()[0]
-
         return {
             "god_nodes": nodes,
             # AC-A2-3: makes the analysis-graph-versus-returned-edges
@@ -1467,7 +1452,178 @@ class CodeGraph:
             # contradiction — these three fields say plainly that the
             # ranking never included them.
             "analysis_basis": "confident_edges",
-            "ambiguous_edges_excluded": ambiguous_edges_excluded,
+            "ambiguous_edges_excluded": self._ambiguous_edge_count(),
+            "resolved_edge_count": len(confident),
+        }
+
+    def _ambiguous_edge_count(self) -> int:
+        """The count of AMBIGUOUS edges in the FULL `edges` table —
+        shared by `god_nodes()`/`communities()`'s `ambiguous_edges_excluded`
+        field (AC-A2-3). Independent of `confident_edges()` on purpose: it
+        counts what was WITHHELD, not a property of what was analyzed."""
+        row = self.db.execute(
+            "SELECT COUNT(*) FROM edges WHERE confidence = 'AMBIGUOUS'"
+        ).fetchone()
+        return cast(int, row[0])
+
+    def _target_kind(self, target: dict[str, Any]) -> str | None:
+        """The resolved `kind` of an edge's target endpoint. `target_line`
+        (`_resolve_edges`) is already the target symbol's exact
+        `line_start` — an exact-match lookup, no range/ambiguity risk."""
+        row = self.db.execute(
+            "SELECT kind FROM symbols WHERE path = ? AND line_start = ? AND name = ? LIMIT 1",
+            (target["path"], target["line"], target["name"]),
+        ).fetchone()
+        return row["kind"] if row is not None else None
+
+    def _resolve_source_node(
+        self, source: dict[str, Any]
+    ) -> tuple[tuple[str, int, str] | None, str | None]:
+        """Resolves a confident edge's `source` endpoint (the call site's
+        enclosing symbol) to the SAME kind of exact `(path, line_start,
+        name)` identity `target` already carries. Shared by `god_nodes()`
+        (out-degree) and `communities()` (undirected adjacency) so this
+        lookup lives in exactly one place.
+
+        `source["line"]` is the *call site's* line, not the enclosing
+        symbol's own `line_start` — a plain `(path, name, kind)` grouping
+        could conflate two identically-named-and-kinded definitions in the
+        same file (rare, but real), so this re-derives the exact enclosing
+        definition via name + kind + line-range containment against
+        `symbols`, rather than approximating. Returns `(None, None)` when
+        the reference has no enclosing symbol at all (e.g. a Ruby
+        top-level call) — nothing to attribute source-side contribution to.
+        """
+        if source["name"] is None:
+            return None, None
+        row = self.db.execute(
+            "SELECT path, line_start, name, kind FROM symbols WHERE path = ? "
+            "AND name = ? AND kind = ? AND line_start <= ? AND line_end >= ? "
+            "ORDER BY line_start LIMIT 1",
+            (source["path"], source["name"], source["kind"], source["line"], source["line"]),
+        ).fetchone()
+        if row is None:
+            return None, None
+        return (row["path"], row["line_start"], row["name"]), row["kind"]
+
+    def communities(self) -> dict[str, Any]:
+        """A3 (D3/D4a): hand-rolled deterministic label propagation over
+        the confident subgraph — zero new runtime dependency (AC-A3-3),
+        single run, no seed, total-ordered visitation and tie-breaks
+        (AC-A3-2/D6).
+
+        Structural AC-NEG-7 compliance, same guarantee as `god_nodes()`:
+        this method's entire analysis input is `self.confident_edges()`'s
+        return value. AMBIGUOUS exclusion is additionally *algorithmically
+        forced* here, not merely chosen: an AMBIGUOUS edge has no single
+        target, so there is no single node to draw an undirected
+        connection to in the first place — fan-out or fractional
+        connectivity across its candidates was rejected by D4a as the same
+        phantom-graph failure D6 rejected for merge drivers.
+
+        Graph construction: an undirected, unweighted projection over the
+        SAME node identity `god_nodes()` uses — `(path, line, name)`, a
+        specific symbol definition. Multi-edges between the same pair
+        collapse to one (D3a); self-loops (a symbol calling itself) are
+        dropped — they carry no information about which OTHER community a
+        node belongs with.
+
+        Algorithm (deterministic Raghavan-style LPA, adapted): nodes are
+        visited in a FIXED total order (sorted `(path, line, name)`) every
+        pass, asynchronously (a node sees its neighbors' already-updated
+        labels within the same pass) — labels start as each node's own
+        index in that sorted order (already a deterministic assignment).
+        Each pass, a node adopts the most frequent label among its
+        neighbors; ties break toward the SMALLEST label value, a fixed
+        rule, never "random" or insertion-order-dependent. Runs until a
+        full pass makes no change, or `_LPA_MAX_ITERATIONS` is reached
+        (LPA is not guaranteed to converge in general; this bounds runtime
+        without affecting the pinned reference repos, which converge well
+        under the cap in practice).
+
+        Final community IDs are NOT the raw propagated label values (those
+        are arbitrary node-index leftovers) — communities are grouped,
+        then renumbered 0..N-1 in ascending order of their smallest member
+        node (already a total order), so the ID assignment itself is
+        reproducible, not just the grouping.
+        """
+        confident = self.confident_edges()
+
+        adjacency: dict[tuple[str, int, str], set[tuple[str, int, str]]] = {}
+        node_kind: dict[tuple[str, int, str], str | None] = {}
+
+        def _touch(key: tuple[str, int, str], kind: str | None) -> None:
+            adjacency.setdefault(key, set())
+            node_kind.setdefault(key, kind)
+
+        for edge in confident:
+            target = edge["target"]
+            if target is None:
+                continue
+            source_key, source_kind = self._resolve_source_node(edge["source"])
+            if source_key is None:
+                continue
+            target_key = (target["path"], target["line"], target["name"])
+            _touch(source_key, source_kind)
+            _touch(target_key, self._target_kind(target))
+            if source_key == target_key:
+                continue  # self-loop: no cross-community information
+            adjacency[source_key].add(target_key)
+            adjacency[target_key].add(source_key)
+
+        nodes_sorted = sorted(adjacency)
+        labels: dict[tuple[str, int, str], int] = {node: i for i, node in enumerate(nodes_sorted)}
+
+        for _pass_number in range(_LPA_MAX_ITERATIONS):
+            changed = False
+            for node in nodes_sorted:
+                neighbors = adjacency[node]
+                if not neighbors:
+                    continue
+                counts: dict[int, int] = {}
+                for neighbor in neighbors:
+                    label = labels[neighbor]
+                    counts[label] = counts.get(label, 0) + 1
+                max_count = max(counts.values())
+                # Deterministic tie-break: the smallest label among those
+                # tied for most-frequent — never "random", never
+                # insertion/hash-order-dependent.
+                new_label = min(label for label, count in counts.items() if count == max_count)
+                if new_label != labels[node]:
+                    labels[node] = new_label
+                    changed = True
+            if not changed:
+                break
+
+        groups: dict[int, list[tuple[str, int, str]]] = {}
+        for node in nodes_sorted:
+            groups.setdefault(labels[node], []).append(node)
+        # Renumber 0..N-1, ordered by each group's smallest member — the
+        # propagated label VALUES are arbitrary leftover node-indices;
+        # the total order lives in the node identities, not the labels.
+        ordered_groups = sorted(groups.values(), key=min)
+        community_of: dict[tuple[str, int, str], int] = {
+            node: community_id
+            for community_id, group in enumerate(ordered_groups)
+            for node in group
+        }
+
+        members = [
+            {
+                "path": node[0],
+                "line": node[1],
+                "name": node[2],
+                "kind": node_kind.get(node),
+                "community_id": community_of[node],
+            }
+            for node in nodes_sorted
+        ]
+
+        return {
+            "communities": members,
+            "community_count": len(ordered_groups),
+            "analysis_basis": "confident_edges",
+            "ambiguous_edges_excluded": self._ambiguous_edge_count(),
             "resolved_edge_count": len(confident),
         }
 
@@ -1571,10 +1727,10 @@ class CodeGraph:
         Forms: 'callers_of:RecordVote#call',
         'subclasses_of:ApplicationRepository',
         'definitions_of:Tallier',
-        'god_nodes:' (A2 — the trailing colon is required by this DSL's
-        `verb:argument` shape; the argument itself is ignored, since the
-        ranking is computed over the whole confident subgraph, not a
-        single named symbol).
+        'god_nodes:' (A2), 'communities:' (A3 — mechanically gated, see
+        `communities()`) — both take the same trailing-colon-required,
+        argument-ignored form: the analysis spans the whole confident
+        subgraph, not a single named symbol.
         """
         verb = parse_query_verb(dsl)
         if not verb:
@@ -1611,10 +1767,15 @@ class CodeGraph:
             # `arg` is ignored (see the docstring above).
             return self.god_nodes()
 
-        # Unreachable today (KNOWN_QUERY_VERBS has exactly the four
+        if verb == "communities":
+            # A3: deterministic label propagation over the confident
+            # subgraph — `arg` is ignored (see the docstring above).
+            return self.communities()
+
+        # Unreachable today (KNOWN_QUERY_VERBS has exactly the five
         # members dispatched above) — NOT dead-code hygiene, a guard
-        # (NEW-3, checker second pass). A1/A2 are expected to add verbs to
-        # KNOWN_QUERY_VERBS; a verb added there without a corresponding
+        # (NEW-3, checker second pass). A1/A2/A3 are expected to add verbs
+        # to KNOWN_QUERY_VERBS; a verb added there without a corresponding
         # dispatch branch above must fail loudly here, not silently fall
         # through and impersonate subclasses_of's empty-with-warning shape
         # (which is exactly what an unconditional final `return` here

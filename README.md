@@ -93,7 +93,7 @@ and can be tightened per deployment.
 | `list_dir` | List a directory, respecting the skip-list (`node_modules`, `vendor/bundle`, `.git`, `.atlas`, …). | ≤200 entries/call, overflow flag if truncated |
 | `search_text` | Ripgrep-backed regex search over a repo-relative scope or glob. Smart-case by default. | ≤50 matches/call, 15s wall-clock timeout |
 | `search_symbol` | Index-backed symbol lookup. Returns definitions + references for a name (optionally filtered by `kind`). | Requires `atlas-aci index` first; central element cap + byte ceiling (truncated + flagged) |
-| `graph_query` | Tiny DSL over the code graph: `callers_of:Sym`, `definitions_of:Name`, `subclasses_of:Class`, `god_nodes:`. | Rejects unknown verbs; central element cap + byte ceiling (truncated + flagged) |
+| `graph_query` | Tiny DSL over the code graph: `callers_of:Sym`, `definitions_of:Name`, `subclasses_of:Class`, `god_nodes:`, `communities:`. | Rejects unknown verbs; central element cap + byte ceiling (truncated + flagged) |
 | `test_dry_run` | Run one test file (optionally filtered by case name) as a subprocess with captured stdout/stderr. | 30s wall-clock, ≤8 KiB stdout+stderr. **Operator must sandbox.** |
 | `memex_read` | Byte-exact retrieval of a previously captured excerpt via its `memex://excerpt/<sha256>` ref, minted by `Memex.write()`. No ATLAS tool currently emits one. | Scoped to the hashed-dir backend |
 
@@ -185,24 +185,28 @@ ambiguity itself: an edge with more than one candidate is reported, not
 dropped. `CodeGraph.confident_edges()` is the query primitive over the
 **confident subgraph** (`EXTRACTED` ∪ `INFERRED`) that excludes AMBIGUOUS
 entirely (no fan-out to candidates, no fractional weight — ambiguity is
-not importance); `god_nodes:` (A2, below) is its first real consumer.
-Community detection (A3) is specified to consume the same primitive and is
-**gated on a pre-registered evidence probe, not yet run as of this
-writing**: a hand-rolled label-propagation implementation ships in
-v2.0.0 **only if** it clears a fixed bar — `LPA_Q >= 0.30` and
-`LPA_Q >= 0.85 x Louvain_Q_median` (with `Louvain_Q_median >= 0.30` as a
-structure-exists precondition) — evaluated independently on two pinned
-reference repos, never averaged. If either repo fails any clause, A3 is
-cut to v2.1 and v2.0.0 ships `god_nodes` alone; the bar was fixed before
-the probe ran specifically so the outcome couldn't be argued with either
-way. See `.spectra/changes/aci-v2-harden-and-augment/probe-lpa-vs-louvain.md`
-for the recorded numbers and verdict once the probe has run.
-"What `graph_query` returns" and "what `god_nodes`/(possibly) communities
-analyze" deliberately differ, and `god_nodes`'s response carries
-`analysis_basis`, `ambiguous_edges_excluded`, and `resolved_edge_count`
-fields making that divergence visible rather than implicit — a consumer
-who ranks via `god_nodes` and then queries `callers_of` and sees AMBIGUOUS
-edges too is not seeing a contradiction; the ranking never included them.
+not importance); `god_nodes:` and `communities:` (both below) are its
+consumers. Community detection (A3) was **gated on a pre-registered
+evidence probe, evaluated before the implementation shipped**: a
+hand-rolled label-propagation implementation ships in v2.0.0 only because
+it cleared a bar fixed before the probe ran — `Louvain_Q_median >= 0.30`,
+`LPA_Q >= 0.30`, and `LPA_Q >= 0.85 x Louvain_Q_median` — evaluated
+independently on two pinned reference repos (solidus, spree), never
+averaged. Both repos passed all three clauses
+(solidus: `LPA_Q=0.6691` vs. `0.85 x Louvain_Q_median=0.6326`; spree:
+`LPA_Q=0.7165` vs. `0.85 x Louvain_Q_median=0.6670`); had either repo
+failed any clause, A3 would have been cut to v2.1 and v2.0.0 would ship
+`god_nodes` alone — the bar was fixed before the probe ran specifically so
+the outcome couldn't be argued with either way. Full numbers (all ten
+Louvain seeds per repo, best/worst/mean/sd, the exact clause arithmetic):
+`.spectra/changes/aci-v2-harden-and-augment/probe-lpa-vs-louvain.md`.
+"What `graph_query` returns" and "what `god_nodes`/`communities` analyze"
+deliberately differ, and both responses carry `analysis_basis`,
+`ambiguous_edges_excluded`, and `resolved_edge_count` fields making that
+divergence visible rather than implicit — a consumer who ranks via
+`god_nodes` (or groups via `communities`) and then queries `callers_of`
+and sees AMBIGUOUS edges too is not seeing a contradiction; the analysis
+never included them.
 
 ### `graph_query` DSL — `god_nodes:` (v2.0.0 / A2)
 
@@ -261,6 +265,53 @@ shape safe to diff/test. Like every other bounded field, an over-cap
 `more_available: true`) rather than silently cut — nested sub-fields get
 the same "never silently incomplete" treatment the top-level `edges` list
 already had.
+
+### `graph_query` DSL — `communities:` (v2.0.0 / A3)
+
+`communities:` (same `verb:argument` shape, trailing colon required,
+argument ignored — the analysis spans the whole confident subgraph)
+returns a deterministic label-propagation community assignment:
+
+```jsonc
+{
+  "communities": [
+    {
+      "path": "mcp-server/src/atlas_aci/codegraph.py",
+      "line": 422,
+      "name": "CodeGraph",
+      "kind": "class",
+      "community_id": 3
+    },
+    // ...
+  ],
+  "community_count": 12,
+  "analysis_basis": "confident_edges",
+  "ambiguous_edges_excluded": 107,
+  "resolved_edge_count": 459
+}
+```
+
+Zero new runtime dependency — a hand-rolled, deterministic asynchronous
+label-propagation algorithm (Raghavan-style) over an undirected/unweighted
+projection of the confident subgraph, single run, no seed, no randomness
+anywhere: nodes are visited every pass in a fixed total order (`path`,
+`line`, `name`), labels start at each node's sorted index, and ties break
+toward the smallest label value — never insertion-order- or
+hash-order-dependent (`PYTHONHASHSEED` has no effect on the output). Final
+`community_id`s are renumbered `0..N-1` by ascending smallest-member node,
+so the numbering itself is reproducible, not just the grouping. AMBIGUOUS
+edges are excluded from community membership the same way `god_nodes`
+excludes them from degree — here it is additionally *algorithmically
+forced*, not merely filtered: an AMBIGUOUS edge has no single target, so
+there is no single node to draw an undirected connection to in the first
+place.
+
+This shipped **only because the D3a probe passed** — see the paragraph
+above and `.spectra/changes/aci-v2-harden-and-augment/probe-lpa-vs-louvain.md`
+for the full measurement. The probe methodology (two pinned reference
+repos, networkx Louvain as the comparison baseline) is a one-time
+gate-clearing exercise, not a shipped runtime path — networkx never
+appears in `mcp-server/pyproject.toml` or `mcp-server/uv.lock`.
 
 ---
 

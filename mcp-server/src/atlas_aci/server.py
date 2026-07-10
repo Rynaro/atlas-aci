@@ -113,9 +113,10 @@ def build_tool_manifest(_config: Config) -> list[dict[str, Any]]:
             "description": (
                 "Query the code graph. DSL: 'callers_of:Symbol', "
                 "'definitions_of:Name', 'subclasses_of:Class', 'god_nodes:' "
-                "(degree-centrality ranking over the confident subgraph). "
-                "Bounded and flagged like every other tool. Run `atlas-aci "
-                "index` first."
+                "(degree-centrality ranking over the confident subgraph), "
+                "'communities:' (deterministic label-propagation communities "
+                "over the confident subgraph). Bounded and flagged like "
+                "every other tool. Run `atlas-aci index` first."
             ),
             "inputSchema": {
                 "type": "object",
@@ -187,6 +188,7 @@ GRAPH_QUERY_VERB_BOUNDED_FIELDS: dict[str, tuple[str, ...]] = {
     "definitions_of": ("definitions", "references"),
     "subclasses_of": ("edges",),
     "god_nodes": ("god_nodes",),
+    "communities": ("communities",),
 }
 
 
