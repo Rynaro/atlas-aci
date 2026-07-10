@@ -105,6 +105,7 @@ declared_scope:
   - "mcp-server/src/atlas_aci/tools/search_symbol.py"
   - "mcp-server/src/atlas_aci/tools/graph_query.py"
   - "mcp-server/src/atlas_aci/tools/view_file.py"
+  - "mcp-server/src/atlas_aci/tools/test_dry_run.py"
   - "mcp-server/tests/*.py"
   - "mcp-server/pyproject.toml"
   - "mcp-server/uv.lock"

@@ -61,6 +61,7 @@ mcp-server/src/atlas_aci/codegraph.py
 mcp-server/src/atlas_aci/tools/graph_query.py
 mcp-server/src/atlas_aci/tools/search_symbol.py
 mcp-server/src/atlas_aci/server.py
+mcp-server/src/atlas_aci/tools/test_dry_run.py
 mcp-server/tests/test_confidence.py
 mcp-server/tests/test_graph_query.py
 
@@ -156,3 +157,8 @@ README.md
   false-*negative* class (evasion by renaming, F-3) remains open BY DESIGN, defended structurally by
   `KNOWN_QUERY_VERBS` reachability + the unconditional `ci.yml` suite, not by the markers. Criteria
   unchanged; the frozen SHA `5c3adddb...` stays.
+- **SCOPE-5 (ramza-drift, maker-disclosed, amendment 2):** `mcp-server/src/atlas_aci/tools/test_dry_run.py`
+  is added to A1 scope (A1 list above). It was one of the two P0 debts the plan explicitly assigned
+  to A1: `test_dry_run` set `truncated` without populating `truncated_fields` (recorded as risk
+  `R13`, 'track for A1' - vigil F-7 residual). Closing R13 required touching it; the maker disclosed
+  it unprompted. Criteria unchanged; frozen SHA `5c3adddb...` stays.

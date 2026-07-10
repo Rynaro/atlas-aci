@@ -172,6 +172,7 @@
     "mcp-server/src/atlas_aci/tools/search_symbol.py",
     "mcp-server/src/atlas_aci/tools/graph_query.py",
     "mcp-server/src/atlas_aci/tools/view_file.py",
+    "mcp-server/src/atlas_aci/tools/test_dry_run.py",
     "mcp-server/tests/*.py",
     "mcp-server/pyproject.toml",
     "mcp-server/uv.lock",
@@ -195,7 +196,7 @@
     "at": "2026-07-09T19:45:44Z"
   },
   "criteria_frozen_at": "2026-07-09T22:39:06Z",
-  "scope_declared_at": "2026-07-09T22:54:38Z",
+  "scope_declared_at": "2026-07-10T01:03:54Z",
   "rubric_arithmetic": {
     "complexity": {
       "dims": {
@@ -402,6 +403,20 @@
       "at": "2026-07-09T22:54:38Z",
       "range": "f56a78e..HEAD",
       "files_changed": 26,
+      "uncovered": []
+    },
+    {
+      "at": "2026-07-10T01:03:13Z",
+      "range": "f56a78e..HEAD",
+      "files_changed": 43,
+      "uncovered": [
+        "mcp-server/src/atlas_aci/tools/test_dry_run.py"
+      ]
+    },
+    {
+      "at": "2026-07-10T01:03:54Z",
+      "range": "f56a78e..HEAD",
+      "files_changed": 43,
       "uncovered": []
     }
   ]

@@ -274,6 +274,12 @@ fixing only the in-scope `config.py` leaves `Memex` crashing serve under `:ro` (
 EROFS) - the real Docker `--read-only`/`:ro` smoke test for AC-H-16 caught it. memex-ref *emission*
 stays deferred; only the best-effort `mkdir` is hardened.
 
+**Epoch churn is invisible to users (A1):** `<epoch>` is a monotonic integer bumped once per schema
+change; A1 alone advanced it 1 -> 5 (committed `SCHEMA_EPOCH = 5`, `EXPECTED_DDL_HASH` verified against
+the HEAD blob, not the working tree). Only the **final** shipped epoch matters to the user-facing
+"reindex" story - the P3 migration doc MUST reference the current committed epoch/`EXPECTED_DDL_HASH`
+at release, never an intermediate value like epoch 2.
+
 If non-derived data is ever stored in the DB, the cache premise breaks and a real ALTER ladder
 becomes necessary (D1 reversal).
 
@@ -387,6 +393,8 @@ SELECTED (elite 87.5).** H-B collapse-hardening REJECTED (weak 41.5). H-C full-p
 | R11 | **NEW-2 / NEW-3** (query_limit re-anchors to a module const; query() fallthrough returns the subclasses_of stub) | Low (latent, guarded) | Now guarded by tests; **track for A1, not a P0 gate** - close when A1 extends the query surface. Owner: vivi. |
 | R12 | **R-1** latent list sub-field escape in the verb-reachability gate | Low (latent) | Registry checks each verb has a non-empty `_bounded_field`, not that it covers every list sub-field a future verb might carry; **track for A1**. Owner: vivi. |
 | R13 | `test_dry_run` sets `truncated:true` without populating `truncated_fields` | Low (contract-shape inconsistency, not silent loss) | **Track for A1**; align to the per-field `truncated_fields` contract. Owner: vivi. |
+| R14 | **Verification-anchor hazard: a `VERIFY:` naming a test that does not exist** | Med (process) | A1 found `AC-H-18`'s `VERIFY:` named `test_server.py::test_truncation_signal_iff_content_withheld`, which existed in no commit and was not run by `harden-gate.yml` - the exact documented-but-not-delivered class this release exists to kill, inside a gate criterion. Resolved by **conforming the code to the frozen criterion** (the test now exists under that exact name, wired into the gate, 6 -> 7 tests); no criteria change, hash unchanged. Standing check (must be **phase-scoped**, against the **committed blob** not the working tree): at each phase exit assert every `VERIFY:` naming a test names a test that exists **for that phase's criteria** (a flat all-71 sweep mid-campaign false-positives on not-yet-built phases - e.g. A2/A3/A4/A5 share test files with earlier phases); a full 71-criteria sweep runs at **archive** (P3 end) when every referenced artefact must exist. Verified at A1: all P0+A1 test-anchored criteria (incl. AC-H-18) exist at HEAD; the only gaps are the A2/A3/A4/A5 workstreams not yet built. Owner: ramza (per-phase + archive) / vivi. |
+| R15 | **File-scoped shadowing guard under-reports `EXTRACTED`** | Low (under-claims, safe direction) | One local assignment shadowing a class name anywhere in a file demotes every reference to that class in that file from EXTRACTED to INFERRED. Under-claims, never over-claims (correct direction), but disclosed only in code comments, not the user-facing `README.md` DSL section. **Track for the P3 doc pass** (not a new criterion). Owner: vivi (P3 doc). |
 
 ## [VERIFY] items
 
