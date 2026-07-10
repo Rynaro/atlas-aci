@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # scripts/test-verify-probe-verdict.sh
 #
-# Self-test for scripts/verify-probe-verdict.py — covers two rounds of the
-# same defect class ("the check measures a proxy instead of the
+# Self-test for scripts/verify-probe-verdict.py — covers three rounds of
+# the same defect class ("the check measures a proxy instead of the
 # invariant"), each found by attacking the previous round's fix:
 #
 #   - Defect 10 (MAJOR-1): the gate used to `grep -qiE "verdict.*:.*pass"`
@@ -11,12 +11,15 @@
 #   - Defect 11: the recomputation it was replaced with still read its
 #     BAR (`q_struct`/`r`) FROM the sidecar under audit — a verifier that
 #     takes its bar from the file it grades can be handed a softened bar
-#     next to failing numbers. Scenario 5 forges exactly that; scenario
-#     5b isolates the declared-bar/frozen-constant comparison itself (a
-#     stale bar declaration with otherwise-genuine, passing numbers).
+#     next to failing numbers. Scenario 5 forges exactly that.
+#   - Defect 12: nothing asserted WHICH repos, or how many, were graded —
+#     AC-A3-4 requires PASS on BOTH pinned repos, independently, and
+#     dropping the inconvenient one is the most direct way to lie about a
+#     two-repo result. Scenarios 6-9 forge a dropped repo, an added repo,
+#     a wrong seed set, and a wrong pinned SHA.
 #
-# This self-test asserts scripts/verify-probe-verdict.py rejects all
-# forgeries below and accepts the real, currently-recorded probe sidecar.
+# This self-test asserts scripts/verify-probe-verdict.py rejects all nine
+# forgeries and accepts the real, currently-recorded probe sidecar.
 #
 # Usage: scripts/test-verify-probe-verdict.sh
 # Exit 0 if every scenario matches its expected outcome, 1 otherwise.
@@ -134,6 +137,61 @@ json.dump(data, open(sys.argv[2], "w"))
 PYEOF
 _assert_exit "forged: stale bar declaration (q_struct=0.5) over otherwise-genuine passing numbers" \
     "$TMP_DIR/forged-stale-bar-only.json" 1
+
+# ---- Scenario 6 (checker defect 12): dropped repo (solidus removed) ----
+python3 - "$REAL_JSON" "$TMP_DIR/forged-dropped-repo.json" << 'PYEOF'
+import json
+import sys
+
+data = json.load(open(sys.argv[1]))
+data["repos"] = [r for r in data["repos"] if r["name"] != "solidus"]
+json.dump(data, open(sys.argv[2], "w"))
+PYEOF
+_assert_exit "forged: solidus dropped from repos (only spree remains)" \
+    "$TMP_DIR/forged-dropped-repo.json" 1
+
+# ---- Scenario 7 (checker defect 12): added repo (a third, unpinned entry) ----
+python3 - "$REAL_JSON" "$TMP_DIR/forged-added-repo.json" << 'PYEOF'
+import json
+import sys
+
+data = json.load(open(sys.argv[1]))
+extra = dict(data["repos"][0])
+extra["name"] = "not-a-pinned-repo"
+extra["pinned_sha"] = "0000000000000000000000000000000000000000"
+data["repos"].append(extra)
+json.dump(data, open(sys.argv[2], "w"))
+PYEOF
+_assert_exit "forged: a third, unpinned repo added to repos" \
+    "$TMP_DIR/forged-added-repo.json" 1
+
+# ---- Scenario 8 (checker defect 12): wrong seed set (seed 9 replaced with seed 10) ----
+python3 - "$REAL_JSON" "$TMP_DIR/forged-wrong-seed-set.json" << 'PYEOF'
+import json
+import sys
+
+data = json.load(open(sys.argv[1]))
+repo = data["repos"][0]
+seeds = repo["louvain_q_by_seed"]
+seeds["10"] = seeds.pop("9")  # still 10 seeds total, but not 0..9
+json.dump(data, open(sys.argv[2], "w"))
+PYEOF
+_assert_exit "forged: wrong seed set (seed 9 relabeled as seed 10)" \
+    "$TMP_DIR/forged-wrong-seed-set.json" 1
+
+# ---- Scenario 9 (checker defect 12): wrong pinned SHA (solidus's SHA altered) ----
+python3 - "$REAL_JSON" "$TMP_DIR/forged-wrong-sha.json" << 'PYEOF'
+import json
+import sys
+
+data = json.load(open(sys.argv[1]))
+for repo in data["repos"]:
+    if repo["name"] == "solidus":
+        repo["pinned_sha"] = "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
+json.dump(data, open(sys.argv[2], "w"))
+PYEOF
+_assert_exit "forged: solidus's pinned_sha altered to an unpinned value" \
+    "$TMP_DIR/forged-wrong-sha.json" 1
 
 echo ""
 echo "$pass_count passed, $fail_count failed"

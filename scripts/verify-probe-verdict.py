@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""D3a probe-verdict verifier — the AC-A3-1/F7 fix (checker defect 11).
+"""D3a probe-verdict verifier — the AC-A3-1/F7 fix (checker defects 11 & 12).
 
 THE FIRST FIX (defect 10, already landed): `.github/workflows/harden-gate.yml`
 used to gate A3 on `grep -qiE "verdict.*:.*pass" "$PROBE_ARTIFACT"` — a check
@@ -22,27 +22,34 @@ was written, specifically so the measurement could never choose the bar
 it is graded against. A verifier that takes the bar FROM the file it is
 auditing hands that power right back to whoever writes the file.
 
-THE FIX: `Q_struct`/`R` (and the rest of the bar: `K`, `seeds`,
-`resolution`) are now this script's OWN facts — sourced from the frozen
-criteria (`sha256:5c3adddbd075a7c12bdd965ee760484a04e5a9a6a4ce05302cbd7bc4147fc7e7`)
+THE TWELFTH DEFECT (checker, this pass): nothing asserted WHICH repos, or
+how many, were being graded. The checker deleted solidus (the
+tighter-margin repo, ratio 0.8991 at the frozen bar) from `repos`
+entirely, and the verifier accepted the file — `AC-A3-4` requires PASS on
+BOTH pinned repos, independently, never averaged, and dropping the
+inconvenient one is the most direct way to lie about a two-repo result.
+
+THE FIX: the frozen constants below AND the pinned repo identities are
+this script's OWN facts — sourced from the frozen criteria
+(`sha256:5c3adddbd075a7c12bdd965ee760484a04e5a9a6a4ce05302cbd7bc4147fc7e7`)
 and FORGE's D3a pre-registration record, HARDCODED here, never read from
-or derived from the sidecar under audit. The sidecar's own declared `bar`
-block is still read and cross-checked against these hardcoded values —
-ANY mismatch is itself a hard failure (a tampered or stale sidecar must
-be loud, never silently re-graded against whatever it happens to claim
-about itself). The pass/fail arithmetic always runs against the
-HARDCODED constants, never the artefact's copies of them, even when the
-two happen to agree.
+or derived from the sidecar under audit. The sidecar's own declared
+`bar`/seeds/repo-SHAs are still read and cross-checked against these
+hardcoded values — ANY mismatch is itself a hard failure (a tampered or
+stale sidecar must be loud, never silently re-graded against whatever it
+happens to claim about itself). The pass/fail arithmetic always runs
+against the HARDCODED constants, never the artefact's copies of them,
+even when the two happen to agree.
 
 Usage:
   python3 scripts/verify-probe-verdict.py <sidecar_json_path>
 
-Exit 0 iff (a) the sidecar's declared bar agrees with the frozen
-constants below, AND (b) the recorded verdict equals the mechanical
-evaluation of the recorded per-seed numbers against those frozen
-constants. Exit 1 on any provenance mismatch OR any verdict/arithmetic
-mismatch, with a diagnostic naming exactly what disagreed. Exit 2 on
-usage / malformed-input errors.
+Exit 0 iff (a) the sidecar's declared bar/seeds/repo-set agree with the
+frozen constants below, AND (b) the recorded verdict equals the
+mechanical evaluation of the recorded per-seed numbers against those
+frozen constants. Exit 1 on any provenance mismatch OR any
+verdict/arithmetic mismatch, with a diagnostic naming exactly what
+disagreed. Exit 2 on usage / malformed-input errors.
 """
 
 from __future__ import annotations
@@ -58,10 +65,10 @@ from typing import Any
 #
 # Checker defect 11: these must NEVER be read from, or derived from, the
 # sidecar under audit — a verifier that takes its bar from the file it is
-# grading can be handed a softened bar next to failing numbers and wave
-# them through. Do not parameterize any of the five values below from
-# JSON input; the sidecar's own copies are cross-checked against these,
-# never substituted for them.
+# grading can be hand a softened bar next to failing numbers and wave them
+# through. Do not parameterize any of the five values below from JSON
+# input; the sidecar's own copies are cross-checked against these, never
+# substituted for them.
 # ---------------------------------------------------------------------------
 FROZEN_Q_STRUCT: float = 0.30
 FROZEN_R: float = 0.85
@@ -69,12 +76,24 @@ FROZEN_K: int = 10
 FROZEN_SEEDS: tuple[int, ...] = tuple(range(10))  # 0..9, frozen
 FROZEN_RESOLUTION: float = 1.0
 
+# Checker defect 12: the pinned repo SET is an external fact too — a
+# verifier that never checks WHICH repos, or how many, is trivially
+# defeated by dropping the one with the tighter margin. Exactly these two,
+# identified by their pinned SHA (the SHA is the pin; a `name` field is
+# just a label and proves nothing on its own).
+FROZEN_PINNED_SHAS: frozenset[str] = frozenset(
+    {
+        "4026945d614e81383c007ed1ab1278a0195ce5d9",  # solidusio/solidus
+        "6699cde44303ea85ef6e56c5e87c44a738ab73fc",  # spree/spree
+    }
+)
+
 
 class ProvenanceError(Exception):
-    """The sidecar's declared facts (here: the bar constants) disagree
-    with the frozen, external constants above. This is raised for ANY
-    such mismatch — never silently reconciled by preferring either side's
-    value; the mismatch itself is the finding."""
+    """The sidecar's declared facts (bar constants, seed set, or repo
+    identity/count) disagree with the frozen, external constants above.
+    This is raised for ANY such mismatch — never silently reconciled by
+    preferring either side's value; the mismatch itself is the finding."""
 
 
 def _check_declared_bar_matches_frozen(bar: dict[str, Any]) -> None:
@@ -103,7 +122,30 @@ def _check_declared_bar_matches_frozen(bar: dict[str, Any]) -> None:
         )
 
 
+def _check_repo_set_matches_frozen(repos: list[dict[str, Any]]) -> None:
+    declared_shas = [repo.get("pinned_sha") for repo in repos]
+    if len(declared_shas) != len(FROZEN_PINNED_SHAS) or set(declared_shas) != FROZEN_PINNED_SHAS:
+        raise ProvenanceError(
+            f"sidecar names {len(declared_shas)} repo(s) with pinned_sha "
+            f"{sorted(s for s in declared_shas if s)!r}; AC-A3-4 requires PASS on "
+            f"EXACTLY the two frozen pinned repos {sorted(FROZEN_PINNED_SHAS)!r} "
+            "-- no additions, omissions, or duplicates."
+        )
+
+
+def _check_repo_seed_set_matches_frozen(
+    repo_name: str, louvain_q_by_seed: dict[str, float]
+) -> None:
+    declared_seeds = tuple(sorted(int(s) for s in louvain_q_by_seed))
+    if declared_seeds != FROZEN_SEEDS or len(louvain_q_by_seed) != FROZEN_K:
+        raise ProvenanceError(
+            f"{repo_name}: louvain_q_by_seed carries seeds {declared_seeds!r}; "
+            f"the frozen bar requires EXACTLY the {FROZEN_K} seeds {FROZEN_SEEDS!r}."
+        )
+
+
 def evaluate_repo(repo: dict[str, Any]) -> dict[str, Any]:
+    _check_repo_seed_set_matches_frozen(repo["name"], repo["louvain_q_by_seed"])
     seed_q = repo["louvain_q_by_seed"]
     # Sorted by seed (as an int, not string-lexically — "10" would
     # otherwise sort before "2") so the recomputation is itself
@@ -139,23 +181,25 @@ def main() -> int:
         print(f"FAIL: could not read/parse sidecar JSON: {e}", file=sys.stderr)
         return 2
 
-    # Provenance gate FIRST, before any arithmetic runs at all — checker
-    # defect 11. Checks the sidecar's OWN bar declaration against the
-    # hardcoded, external facts above; never feeds a sidecar value into
-    # the evaluation itself.
+    # Provenance gates FIRST, before any arithmetic runs at all — checker
+    # defects 11/12. Both check the sidecar's OWN declarations against the
+    # hardcoded, external facts above; neither ever feeds a sidecar value
+    # into the evaluation itself.
     try:
         _check_declared_bar_matches_frozen(data.get("bar", {}))
+        _check_repo_set_matches_frozen(data.get("repos", []))
     except ProvenanceError as e:
         print(f"FAIL (AC-A3-1/F7, provenance): {e}", file=sys.stderr)
         return 1
 
     recorded_verdict = str(data["recorded_verdict"]).strip().upper()
 
-    if not data["repos"]:
-        print("FAIL: sidecar names zero repos — nothing to evaluate.", file=sys.stderr)
-        return 2
+    try:
+        evaluations = [evaluate_repo(repo) for repo in data["repos"]]
+    except ProvenanceError as e:
+        print(f"FAIL (AC-A3-1/F7, provenance): {e}", file=sys.stderr)
+        return 1
 
-    evaluations = [evaluate_repo(repo) for repo in data["repos"]]
     computed_verdict = "PASS" if all(e["repo_pass"] for e in evaluations) else "CUT"
 
     print(f"frozen bar (hardcoded): Q_struct={FROZEN_Q_STRUCT} R={FROZEN_R}")
@@ -184,7 +228,7 @@ def main() -> int:
     print(
         f"OK (AC-A3-1/F7): recorded verdict '{recorded_verdict}' matches the "
         "recomputed verdict under the frozen, hardcoded bar; the sidecar's "
-        "declared bar agrees with those same frozen constants."
+        "declared bar/seeds/repo-set agree with those same frozen constants."
     )
     return 0
 
