@@ -238,7 +238,7 @@ assert set(LANG_BY_EXT.values()) <= set(QUERIES) | UNSUPPORTED_LANGS, (
 #
 # Recompute via:
 #   python -c "from atlas_aci.codegraph import SCHEMA, ddl_hash; print(ddl_hash(SCHEMA))"
-SCHEMA_EPOCH = 3
+SCHEMA_EPOCH = 4
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS symbols (
@@ -275,6 +275,9 @@ CREATE INDEX IF NOT EXISTS idx_symbols_path ON symbols(path);
 -- relation: call | superclass | include | extend | prepend | construct
 -- qualified: Ruby's final syntactic fact (D4/F18); placeholder for others
 -- qualifier_name: Python/JS/TS only, resolve-at-query-time qualifier text
+-- col: 0-based column of the reference site (checker MINOR-4, epoch 4) —
+--   exists ONLY to give `_edges_for`/`confident_edges` a genuine total-order
+--   tiebreak (see `edges.source_col` below); never read for resolution.
 CREATE TABLE IF NOT EXISTS refs (
     id             INTEGER PRIMARY KEY AUTOINCREMENT,
     callee_name    TEXT NOT NULL,
@@ -283,6 +286,7 @@ CREATE TABLE IF NOT EXISTS refs (
     qualifier_name TEXT,
     path           TEXT NOT NULL,
     line           INTEGER NOT NULL,
+    col            INTEGER NOT NULL DEFAULT 0,
     lang           TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_refs_callee ON refs(callee_name);
@@ -306,11 +310,24 @@ CREATE INDEX IF NOT EXISTS idx_refs_callee ON refs(callee_name);
 -- bare `Foo(...)`/`new Foo()`/Ruby `Foo.new` whose name resolves entirely
 -- to class/module symbols is a constructor invocation, not a method call —
 -- kept semantically distinct rather than silently reused as 'call'.
+--
+-- `source_col` (checker MINOR-4, epoch 4): `_edges_for`/`confident_edges`
+-- previously ordered `(source_path, source_line, callee_name)` — two
+-- references to the SAME callee on the SAME line (`foo(foo())`) tie, and a
+-- tie with no further ORDER BY key falls back to SQLite's rowid/insertion
+-- order: same-machine deterministic (a rebuild always inserts in the same
+-- ref-processing order), so AC-A1-8 held, but NOT a genuine total order —
+-- exactly what D6's byte-deterministic export (AC-A5-7/AC-REL-1) would
+-- have discovered on the cross-OS release gate, the worst place to find
+-- it. `source_col` (the reference site's own 0-based column — two distinct
+-- call sites can share a line but never a column) closes the tie
+-- explicitly instead of relying on incidental rowid ordering.
 CREATE TABLE IF NOT EXISTS edges (
     id            INTEGER PRIMARY KEY AUTOINCREMENT,
     relation      TEXT NOT NULL,      -- call | superclass | include | extend | prepend | construct
     source_path   TEXT NOT NULL,
     source_line   INTEGER NOT NULL,
+    source_col    INTEGER NOT NULL DEFAULT 0,  -- total-order tiebreak only (MINOR-4)
     source_name   TEXT,               -- enclosing symbol name at the reference site
     source_kind   TEXT,               -- enclosing symbol kind at the reference site
     callee_name   TEXT NOT NULL,      -- the referenced name, pre-resolution
@@ -370,7 +387,7 @@ def ddl_hash(ddl: str) -> str:
 
 # Hand-maintained — see the SCHEMA_EPOCH docstring above. Do NOT replace this
 # with `ddl_hash(SCHEMA)`; that would make the pairing test a tautology.
-EXPECTED_DDL_HASH = "ef64d212dfcac61f3d224fc30ec46e6c808450f521973d6475bb3dacfc945d9d"
+EXPECTED_DDL_HASH = "63d8ffd92c63c5c72e576cead0de1d3c73183949b0172de5388de8e23e014063"
 
 
 def parse_query_verb(dsl: str) -> str:
@@ -498,12 +515,17 @@ class Reference:
     symbol table exists. Checker finding (MAJOR): capitalization is a
     *proxy* for "is this a class-bound name"; resolving against the symbol
     table the graph already has is the fact itself.
+
+    ``col`` (checker MINOR-4) is the reference site's 0-based column —
+    total-order-tiebreak-only, never read for resolution (see the `edges.
+    source_col` DDL comment).
     """
 
     callee_name: str
     path: str
     line: int
     lang: str
+    col: int = 0
     relation: str = "call"
     qualified: bool = False
     qualifier_name: str | None = None
@@ -764,7 +786,7 @@ class CodeGraph:
             for r in refs:
                 conn.execute(
                     "INSERT INTO refs(callee_name, relation, qualified, qualifier_name, "
-                    "path, line, lang) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                    "path, line, col, lang) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
                     (
                         r.callee_name,
                         r.relation,
@@ -772,6 +794,7 @@ class CodeGraph:
                         r.qualifier_name,
                         r.path,
                         r.line,
+                        r.col,
                         r.lang,
                     ),
                 )
@@ -907,6 +930,7 @@ class CodeGraph:
                             path=rel_path,
                             line=node.start_point[0] + 1,
                             lang=lang,
+                            col=node.start_point[1],
                             relation=relation,
                             qualified=True,
                         )
@@ -923,6 +947,7 @@ class CodeGraph:
                             path=rel_path,
                             line=node.start_point[0] + 1,
                             lang=lang,
+                            col=node.start_point[1],
                             relation="call",
                             qualified=qualified,
                             qualifier_name=qualifier_name,
@@ -1035,8 +1060,8 @@ class CodeGraph:
         edges_added = 0
 
         ref_rows = conn.execute(
-            "SELECT callee_name, relation, qualified, qualifier_name, path, line, lang "
-            "FROM refs ORDER BY path, line, callee_name"
+            "SELECT callee_name, relation, qualified, qualifier_name, path, line, col, lang "
+            "FROM refs ORDER BY path, line, col, callee_name"
         ).fetchall()
 
         for ref in ref_rows:
@@ -1106,13 +1131,15 @@ class CodeGraph:
                 )
 
             conn.execute(
-                "INSERT INTO edges(relation, source_path, source_line, source_name, "
-                "source_kind, callee_name, confidence, target_path, target_line, "
-                "target_name, candidates, lang) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                "INSERT INTO edges(relation, source_path, source_line, source_col, "
+                "source_name, source_kind, callee_name, confidence, target_path, "
+                "target_line, target_name, candidates, lang) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 (
                     effective_relation,
                     ref["path"],
                     ref["line"],
+                    ref["col"],
                     source_name,
                     source_kind,
                     ref["callee_name"],
@@ -1222,7 +1249,7 @@ class CodeGraph:
         """
         rows = self.db.execute(
             "SELECT * FROM edges WHERE confidence IN ('EXTRACTED', 'INFERRED') "
-            "ORDER BY source_path, source_line, callee_name"
+            "ORDER BY source_path, source_line, source_col, callee_name"
         ).fetchall()
         return [self._edge_row_to_dict(r) for r in rows]
 
@@ -1238,11 +1265,21 @@ class CodeGraph:
         cap) bounds SQL work the same way search_symbol/callers_of already
         did pre-A1 (F-1/F-2) — the central bounds chokepoint (server.py)
         still truncates-and-flags the returned list at the response layer.
+
+        `source_col` is the final ORDER BY key (checker MINOR-4): since
+        `callee_name` is invariant across every row this query returns (it
+        is the WHERE filter), two references to the SAME callee on the SAME
+        source line — `foo(foo())` — would otherwise tie on every column
+        selected so far and fall back to SQLite's rowid/insertion order,
+        same-machine deterministic but not a genuine total order. The
+        reference site's own column can never tie for two distinct call
+        sites, so this closes the gap the D6/A5 byte-determinism release
+        gate would otherwise have found first.
         """
         placeholders = ",".join("?" for _ in relations)
         rows = self.db.execute(
             f"SELECT * FROM edges WHERE callee_name = ? AND relation IN ({placeholders}) "
-            f"ORDER BY source_path, source_line, callee_name LIMIT ?",
+            f"ORDER BY source_path, source_line, source_col, callee_name LIMIT ?",
             (callee_name, *relations, self.query_limit),
         ).fetchall()
         return [self._edge_row_to_dict(r) for r in rows]

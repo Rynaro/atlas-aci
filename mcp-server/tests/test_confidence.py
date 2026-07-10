@@ -200,6 +200,54 @@ def test_candidates_total_order_stable(tmp_path: Path) -> None:
     assert json.loads(edge2["candidates"]) == expected
 
 
+# ---- Coordinator MINOR-4 — the edge ENUMERATION is a total order too ----
+#
+# AC-A1-8 only pins candidates[]'s order; the *edge list itself* (returned
+# by callers_of/subclasses_of/confident_edges) is a separate enumeration
+# with its own tie hazard: two references to the SAME callee on the SAME
+# source line (`foo(foo())`) previously tied on every ORDER BY column and
+# fell back to SQLite's rowid/insertion order — same-machine deterministic,
+# so this never failed a test, but not a genuine total order (exactly what
+# D6's cross-OS byte-determinism gate would have discovered last).
+
+
+def test_edge_enumeration_is_a_total_order_not_just_candidates(tmp_path: Path) -> None:
+    """`foo(foo())`: two edges sharing callee_name, source_path, AND
+    source_line — content-identical in every field except the reference
+    site's own column. Indexes the SAME source from scratch twice and diffs
+    the FULL edge enumeration (every field of every edge, in return order),
+    not just `candidates[]` (which AC-A1-8 already covers)."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _write(repo, "app/target.rb", "class Target\n  def foo(x)\n  end\nend\n")
+    _write(repo, "app/hub.rb", "class Hub\n  def call\n    foo(foo(1))\n  end\nend\n")
+
+    graph = CodeGraph(repo=repo)
+    graph.build()
+    edges = graph.callers_of("foo")
+    assert len(edges) == 2, "both the outer and inner foo(...) call sites must resolve"
+
+    # Independently computed expectation: the reference site with the
+    # SMALLER column comes first — a fact about the source text itself
+    # (`foo(foo(1))`: outer call's callee token starts before the inner
+    # one's), not a call into `_edges_for`'s own ordering logic.
+    raw_cols = sorted(
+        r["col"] for r in graph.db.execute("SELECT col FROM refs WHERE callee_name = 'foo'")
+    )
+    assert len(raw_cols) == 2 and raw_cols[0] < raw_cols[1], "fixture must genuinely tie/differ"
+
+    # Same source, indexed from scratch again (fresh DB): the full edge
+    # enumeration — every field, in order — must be byte-for-byte identical,
+    # not merely "the same set in some order".
+    graph2 = CodeGraph(repo=repo)
+    graph2.build()
+    edges2 = graph2.callers_of("foo")
+    assert edges2 == edges, (
+        "the full edge enumeration (not just candidates[]) must be a total "
+        "order stable across independent rebuilds of identical source"
+    )
+
+
 # ---- AC-A1-11 — per-language type-qualified rule (F18) ----
 
 
