@@ -131,13 +131,13 @@ The eight P0 named criteria all *pass*. But three MAJOR defects (F-1, F-2, F-3) 
 
 ### Pre-registration of D3a bar held, but tight
 
-Bar frozen at `R = 0.85` before probe ran. Results: Solidus `LPA_Q = 0.6691476`, `Louvain_Q_median = 0.7449783`, bar `= 0.85 × 0.7449783 = 0.6332316`. Absolute margin: `+0.0359` (Solidus). Ratio: `0.8991`. Spree: ratio `0.9132`, margin `+0.0496`.
+Bar frozen at `R = 0.85` before probe ran. Results: Solidus `LPA_Q = 0.6691476`, `Louvain_Q_median = 0.7449783`, bar `= 0.85 × 0.7449783 = 0.6332316`, margin `+0.0359`. Spree: `LPA_Q = 0.7165340`, `Louvain_Q_median = 0.7846478`, bar `= 0.85 × 0.7846478 = 0.6669506`, margin `+0.0496`. (No ratio figure here — see the Twenty-Third Defect below for why a derived ratio is intentionally not restated.)
 
 Pre-registration: rule cannot move after measurement. At `R = 0.90`, Solidus would fail: `bar = 0.90 × 0.7449783 = 0.6704805`, `LPA_Q = 0.6691476`, shortfall `0.001333` — smaller than Louvain's own seed-to-seed population sd (`0.0025925`). Spree still *passes* at `R = 0.90` (`bar = 0.90 × 0.7846478 = 0.7061830`, `LPA_Q = 0.7165340`, margin `+0.010351`); the pass rule is a strict AND across both repos, so Solidus's failure alone would still have cut the feature at that bar — no wording here should be read as implying both repos would have failed. FORGE predicted bimodal failure (comparable or collapsed). Result was bimodal for Louvain, but LPA landed mid-band, making the constant load-bearing. Principle held anyway *because it could not be moved after data became known*. (probe-lpa-vs-louvain.json: both repos' `louvain_q_by_seed` lists, median recomputation, `lpa_q` values)
 
 ---
 
-## The Twenty-First and Twenty-Second Defects — Two Numbers This Document Could Not Itself Verify
+## The Twenty-First, Twenty-Second, and Twenty-Third Defects — Numbers This Document Could Not Itself Verify
 
 **Attribution from the orchestrator's dispatch transcript (not derived from artefacts):**
 - **Checker (vigil):** ~12 defects
@@ -178,6 +178,20 @@ Checker verdicts quote the orchestrator's findings back to it (`checker-verdict-
 **The claim itself survives; only the numbers were stale.** Solidus still fails the `R = 0.90` bar (`bar = 0.6704805` vs. `LPA_Q = 0.6691476`), the pass rule is a strict AND across both repos, so the feature would still have been cut at that bar — and the shortfall is still smaller than the baseline's own seed-to-seed noise. Spree passes at `R = 0.90` (margin `+0.010351`), and no wording in this document should be read as implying both repos would have failed.
 
 **Why this is the twenty-second instance, not a one-off:** the number was asserted by the orchestrator from data already superseded elsewhere in this repository, then repeated into a document — this one — that had no mechanism to check its own prose against its own sidecar. The retrospective that names "a check that validates the data it was handed, while the provenance of that data goes unchecked, is not a check" shipped exactly that failure about itself, in the released `v2.0.0` tag. Fixed on `main` (not by amending the tag) by recomputing directly from `probe-lpa-vs-louvain.json` rather than trusting a prior draft's arithmetic.
+
+### The Twenty-Third Defect — Same Root Cause, a Third Symptom, One of Its Homes Cannot Be Fixed
+
+**What happened:** The "Pre-registration of D3a bar held, but tight" section above stated Solidus's `LPA_Q`/`Louvain_Q_median` ratio as `0.8991`. Recomputed directly from the committed artefact: `0.6691476098443865 / 0.7449783049502817 = 0.898211` → **`0.8982`**. `0.8991` only falls out of dividing `LPA_Q` by the *same* superseded pre-canonicalization median (`0.7442624844311356`) that produced the Twenty-Second Defect's `0.000688`/`0.002176` pair — the identical stale source, a third symptom of it. Spree's ratio (`0.9132`) is unaffected; its median barely moved under canonicalization. Found by vivi while writing the README, by doing the division instead of copying a previously-asserted figure.
+
+**Fixed here by dropping the ratio, not just correcting it.** The section above no longer states a ratio at all — only the figures traceable directly to the committed artefact (`LPA_Q`, `Louvain_Q_median`, the `0.85 × median` bar, and the margin). A ratio is a *derived* number, and derived numbers are exactly where this pattern keeps recurring: each of the twenty-second and twenty-third defects was arithmetic performed on a stale input, not a stale input asserted directly. Removing the derived figure removes the class of mistake, not just this instance of it.
+
+**Where this number propagated, and what was — and was not — done about each copy:**
+- **This file (`RETRO.md`)** — corrected above; the ratio framing dropped rather than re-stated with a fixed digit.
+- **`checker-verdict-a3.md`** — inherited the number from the orchestrator's dispatch and recorded it as part of the checker's contemporaneous verdict (`"repos clear clause (iii) comfortably (solidus ratio 0.8991, spree 0.9132)"`). **Left unchanged, deliberately.** A checker verdict records what the checker was told and concluded at the time it ran; rewriting it to match a later recomputation would falsify the historical record of what was actually verified — replacing a real, if imperfect, trace of what happened with a retroactively "corrected" fiction. The inherited number is noted here, in the document whose job is retrospective correction, instead.
+- **The nexus's own `CHANGELOG.md`** — corrected on an unmerged branch; nothing shipped from that copy.
+- **The `v2.0.0` annotated git tag's message** — the number is baked into the immutable, signed tag annotation. **This cannot be fixed, and it will not be.** Rewriting an already-published, signed tag (or force-pushing a replacement over it) discards the cryptographic/identity guarantee a tag exists to provide in the first place, and breaks every clone or mirror that already holds the original tag object — strictly worse than leaving a documented, superseded number inside it. The correction for this copy lives in the tag's mutable sibling artefact instead: a GitHub Release erratum attached to `v2.0.0`, published separately from the immutable tag object.
+
+**Why this is the twenty-third instance, not a coincidence:** three numbers, four vehicles, one cause. `0.000688`, `0.002176`, and now `0.8991` are all arithmetic performed against the same superseded pre-canonicalization Louvain medians rather than the canonicalized values `probe-lpa-vs-louvain.json` actually records — asserted once, by the orchestrator, then copied forward without recomputation into a retrospective, a checker verdict, a changelog, and — worst, because it is the one home that cannot be edited after the fact — a signed release tag. The lesson from the Twenty-Second Defect (recompute from the committed artefact; do not copy a prior draft's arithmetic) generalizes exactly as far as it needed to: to every *derived* figure — a ratio, a difference, a percentage — computed from a number that was itself already stale, not only to the original stale number.
 
 ---
 
