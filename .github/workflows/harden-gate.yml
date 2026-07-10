@@ -24,8 +24,16 @@
 #      (AC-NEG-6).
 #   3. IF an A3 (communities) path changed, the D3 probe verdict artefact
 #      must be present (AC-A3-1); IF A3 code exists in the tree at all, the
-#      probe verdict must record PASS, never a cut-to-v2.1 or absent verdict
-#      (AC-A3-4/AC-A3-5) — the mechanical cut-branch never adds networkx.
+#      RECOMPUTED verdict (scripts/verify-probe-verdict.py, run against the
+#      machine-readable probe-lpa-vs-louvain.json sidecar) must equal the
+#      RECORDED verdict, and that recomputed verdict must be PASS
+#      (AC-A3-4/AC-A3-5/F7) — the mechanical cut-branch never adds
+#      networkx. This step used to `grep -qiE "verdict.*:.*pass"` the
+#      artefact's prose, a check of the LABEL, not the arithmetic —
+#      checker MAJOR-1 forged a copy with a failing LPA_Q and an untouched
+#      `verdict: PASS` label and the old check passed it. Fixed: nothing
+#      here trusts a label without recomputing the three frozen clauses
+#      from the raw numbers first.
 #
 # KNOWN LIMITATION, VERIFIED (F-3, checker second pass — not silently
 # swept): step 2's content-marker heuristic is evadable by renaming.
@@ -177,6 +185,7 @@ jobs:
 
           a3_touched="${{ steps.classify.outputs.a3_touched }}"
           PROBE_ARTIFACT=".spectra/changes/aci-v2-harden-and-augment/probe-lpa-vs-louvain.md"
+          PROBE_JSON=".spectra/changes/aci-v2-harden-and-augment/probe-lpa-vs-louvain.json"
 
           if [ "$a3_touched" = "true" ] && [ ! -f "$PROBE_ARTIFACT" ]; then
             echo "FAIL (AC-A3-1): an A3 (communities) path changed but $PROBE_ARTIFACT is not present. The LPA-vs-Louvain modularity probe and its verdict must be recorded before any A3 source path is touched."
@@ -184,10 +193,31 @@ jobs:
           fi
 
           if [ -f mcp-server/tests/test_communities.py ]; then
-            if [ ! -f "$PROBE_ARTIFACT" ] || ! grep -qiE "verdict.*:.*pass" "$PROBE_ARTIFACT"; then
-              echo "FAIL (AC-A3-4/AC-A3-5): A3 community code exists in the tree but the probe verdict does not record PASS. Per DIR-1, a below-threshold probe cuts A3 to v2.1 (ship A2 god-nodes only) — it never adopts networkx/Louvain."
+            # AC-A3-1/F7 (checker MAJOR-1): the recorded verdict must equal
+            # the MECHANICAL evaluation of the recorded numbers — this used
+            # to be `grep -qiE "verdict.*:.*pass" "$PROBE_ARTIFACT"`, a check
+            # of the artefact's PROSE LABEL that never parsed a single Q
+            # value or evaluated a single clause. The checker forged a copy
+            # with LPA_Q=0.11111 (below the 0.30 floor, failing clauses 2
+            # and 3 on both repos) and an untouched `verdict: PASS` label,
+            # and the old check passed it. scripts/verify-probe-verdict.py
+            # reads the machine-readable sidecar ($PROBE_JSON), recomputes
+            # Louvain_Q_median per repo from the raw per-seed values itself
+            # (never trusting a precomputed median), evaluates all three
+            # frozen clauses per repo independently (never averaged), and
+            # fails if the computed verdict differs from the recorded one
+            # in EITHER direction — a recorded CUT over genuinely passing
+            # numbers is equally a lie, not just a recorded PASS over
+            # failing ones. See scripts/test-verify-probe-verdict.sh for
+            # the forged-artefact self-test proving this has teeth.
+            if [ ! -f "$PROBE_ARTIFACT" ] || [ ! -f "$PROBE_JSON" ]; then
+              echo "FAIL (AC-A3-4/AC-A3-5): A3 community code exists in the tree but the probe artefact/sidecar is missing ($PROBE_ARTIFACT, $PROBE_JSON)."
+              exit 1
+            fi
+            if ! python3 scripts/verify-probe-verdict.py "$PROBE_JSON"; then
+              echo "FAIL (AC-A3-4/AC-A3-5/F7): the recorded probe verdict does not equal the mechanical evaluation of its own recorded numbers. Per DIR-1, a below-threshold probe cuts A3 to v2.1 (ship A2 god-nodes only) — it never adopts networkx/Louvain, and it never gets to assert a label the numbers don't support."
               exit 1
             fi
           fi
 
-          echo "A3 probe precondition: clean (no A3 code present, or probe verdict recorded PASS)."
+          echo "A3 probe precondition: clean (no A3 code present, or probe verdict mechanically re-verified against its own recorded numbers)."

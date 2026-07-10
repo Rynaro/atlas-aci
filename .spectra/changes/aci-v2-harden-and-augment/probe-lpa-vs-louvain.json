@@ -1,0 +1,53 @@
+{
+  "_comment": "Machine-readable sidecar for probe-lpa-vs-louvain.md (AC-A3-1/F7). scripts/verify-probe-verdict.py reads THIS file, recomputes median(Louvain_Q) per repo from the raw per-seed values below (never trusting a precomputed median), evaluates the three frozen clauses per repo independently, and fails if the computed verdict differs from recorded_verdict in either direction. The .md's prose numbers are transcribed FROM this file, not the other way around.",
+  "bar": {
+    "q_struct": 0.30,
+    "r": 0.85,
+    "k": 10,
+    "seeds": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    "resolution": 1.0
+  },
+  "recorded_verdict": "PASS",
+  "repos": [
+    {
+      "name": "solidus",
+      "pinned_sha": "4026945d614e81383c007ed1ab1278a0195ce5d9",
+      "node_count": 2676,
+      "edge_count": 4217,
+      "lpa_q": 0.6691476098443865,
+      "lpa_community_count": 228,
+      "louvain_q_by_seed": {
+        "0": 0.7458086443811871,
+        "1": 0.7451503223090207,
+        "2": 0.7418849447359792,
+        "3": 0.7450801432754456,
+        "4": 0.741671146109655,
+        "5": 0.7456979212104264,
+        "6": 0.7464751202673506,
+        "7": 0.7392679640753077,
+        "8": 0.7434448255868258,
+        "9": 0.743328647795667
+      }
+    },
+    {
+      "name": "spree",
+      "pinned_sha": "6699cde44303ea85ef6e56c5e87c44a738ab73fc",
+      "node_count": 5391,
+      "edge_count": 8223,
+      "lpa_q": 0.7165340320731565,
+      "lpa_community_count": 371,
+      "louvain_q_by_seed": {
+        "0": 0.7823565917157614,
+        "1": 0.7819666569990837,
+        "2": 0.7831034076876495,
+        "3": 0.786152866802137,
+        "4": 0.7834588913803953,
+        "5": 0.7871688503469261,
+        "6": 0.7842090200929405,
+        "7": 0.785905335566653,
+        "8": 0.7850854322540173,
+        "9": 0.7868501469488868
+      }
+    }
+  ]
+}

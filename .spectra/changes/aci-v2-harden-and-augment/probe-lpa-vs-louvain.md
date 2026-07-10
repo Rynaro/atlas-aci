@@ -29,6 +29,22 @@ implementation and the `communities:` verb, keep this artefact as the
 record, ship A2 god-nodes alone) — never a fallback to adopting networkx
 (AC-NEG-2 is absolute, DIR-1).
 
+**Machine-readable sidecar (AC-A3-1/F7).** This markdown file's numbers
+are prose ABOUT the evidence; the numbers themselves live in
+[`probe-lpa-vs-louvain.json`](probe-lpa-vs-louvain.json) — per repo, the
+pinned SHA, node/edge counts, `LPA_Q`, and the raw per-seed Louvain `Q`
+values (no precomputed median in the sidecar, deliberately — the
+recomputation must derive it itself, not trust a cached one).
+`scripts/verify-probe-verdict.py` reads that sidecar, recomputes
+`Louvain_Q_median` per repo from the raw seeds, evaluates all three
+clauses per repo independently, and **fails the gate if its own computed
+verdict differs from this file's `verdict:` front-matter in either
+direction** — a prior version of the gate only grepped for the string
+`"verdict...pass"` in this prose, which a forged copy with a failing
+`LPA_Q` and an untouched `verdict: PASS` label sailed straight through
+(checker MAJOR-1). `scripts/test-verify-probe-verdict.sh` is the
+forged-artefact self-test proving the fix has teeth.
+
 **Reader check:** every number below was pasted straight out of the two
 scripts' JSON output (`scripts/probe-export-confident-graph.py` +
 `scripts/probe-modularity.py`), not retyped/rounded by hand except where
