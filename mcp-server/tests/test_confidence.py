@@ -359,3 +359,250 @@ def test_ambiguous_excluded_from_analysis_graph(tmp_path: Path) -> None:
     assert len(ambiguous_via_callers_of) == 1
     assert ambiguous_via_callers_of[0]["confidence"] == "AMBIGUOUS"
     assert len(ambiguous_via_callers_of[0]["candidates"]) == 2
+
+
+# ---- Coordinator findings (post-review): constructor resolution, ----
+# ---- qualification-by-resolution, self/super, unresolved_refs.      ----
+#
+# BLOCKER: a bare `Foo(...)`/`new Foo()`/Ruby `Foo.new` constructor call
+# whose name matches a local class previously resolved against zero
+# candidates (candidate kinds were callable-only) — the entire symbol
+# *kind* was silently excluded from the graph, not merely truncated.
+# `callers_of:CodeGraph` returning `[]` while 51 real call sites exist is
+# indistinguishable, from the response alone, from "CodeGraph is never
+# constructed" — exactly what "never silently incomplete" forbids.
+#
+# Each test below is written from the invariant the coordinator named, not
+# from `_resolve_edges`'s own arithmetic, and was confirmed to fail against
+# the pre-fix `HEAD` (verified manually via `git stash`; not re-asserted
+# here as an automated regression harness would require reverting the
+# fixture code itself).
+
+
+def test_bare_constructor_call_to_local_class_resolves(tmp_path: Path) -> None:
+    """The exact shape of the coordinator's BLOCKER: a local class with
+    call sites via a bare `Foo(...)` constructor must produce real,
+    EXTRACTED `construct` edges — not silence."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _write(repo, "app/target.py", "class Target:\n    def __init__(self):\n        pass\n")
+    _write(
+        repo,
+        "app/hub.py",
+        "class Hub:\n    def call(self):\n        Target()\n        Target()\n",
+    )
+    graph = CodeGraph(repo=repo)
+    graph.build()
+
+    edges = graph.callers_of("Target")
+    assert len(edges) == 2, "both constructor call sites must resolve, not zero"
+    assert all(e["relation"] == "construct" for e in edges)
+    assert all(e["confidence"] == "EXTRACTED" for e in edges)
+    assert all(e["target"]["name"] == "Target" for e in edges)
+
+
+def test_new_expression_constructor_call_resolves(tmp_path: Path) -> None:
+    """JS/TS `new Foo()` — a distinct AST node type from a bare call —
+    must resolve exactly like a bare `Foo()` constructor call."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _write(repo, "app/target.ts", "class Target {}\n")
+    _write(repo, "app/hub.ts", "class Hub {\n  call(): void {\n    new Target();\n  }\n}\n")
+    graph = CodeGraph(repo=repo)
+    graph.build()
+
+    edges = graph.callers_of("Target")
+    assert len(edges) == 1
+    assert edges[0]["relation"] == "construct"
+    assert edges[0]["confidence"] == "EXTRACTED"
+
+
+def test_ruby_dot_new_constructor_call_resolves(tmp_path: Path) -> None:
+    """Ruby's constructor idiom is syntactically `Foo.new`, not `Foo(...)`
+    — the callee node text is literally "new", not the class name, so this
+    needs its own capture (QUERIES["ruby"]'s heritage.construct pattern),
+    not just the candidate-kind widening that fixes Python/JS/TS."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _write(repo, "app/target.rb", "class Target\nend\n")
+    _write(repo, "app/hub.rb", "class Hub\n  def call\n    Target.new\n  end\nend\n")
+    graph = CodeGraph(repo=repo)
+    graph.build()
+
+    edges = graph.callers_of("Target")
+    assert len(edges) == 1
+    assert edges[0]["relation"] == "construct"
+    assert edges[0]["confidence"] == "EXTRACTED"
+
+    # A `.new` call on a NON-constant (local variable) receiver must NOT be
+    # swept into this — Ruby's own grammar already tells constant apart
+    # from identifier, and a `.new` call from a variable receiver isn't
+    # syntactically qualified at all (no heritage.construct match for it).
+    _write(
+        repo,
+        "app/hub2.rb",
+        "class Hub2\n  def call(klass)\n    klass.new\n  end\nend\n",
+    )
+    graph2 = CodeGraph(repo=repo)
+    graph2.build()
+    # `klass.new` produces a *plain* call ref (callee_name="new"), which has
+    # zero method/function/class/module candidates named "new" anywhere in
+    # this fixture — no edge, not a false EXTRACTED/INFERRED.
+    assert graph2.callers_of("new") == []
+
+
+def test_module_qualified_constructor_call_resolves_extracted(tmp_path: Path) -> None:
+    """`some_module.Target()` — a constructor reached through a
+    module-qualified attribute chain, not a bare name. The callee itself
+    (`Target`) is what is being constructed; the qualification question is
+    about the CLASS identity, which is unambiguous once every candidate is
+    class-kind — not about whether the receiver text ("some_module") is
+    itself a known class. Regression guard for a real edge this fix's first
+    pass got wrong (self-indexing atlas-aci surfaced it): reused the
+    receiver-qualification lookup for construct edges too, mis-tiering this
+    exact shape INFERRED."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _write(repo, "app/target.py", "class Target:\n    pass\n")
+    _write(
+        repo,
+        "app/hub.py",
+        "import app.target as some_module\n"
+        "class Hub:\n    def call(self):\n        some_module.Target()\n",
+    )
+    graph = CodeGraph(repo=repo)
+    graph.build()
+
+    edges = graph.callers_of("Target")
+    assert len(edges) == 1
+    assert edges[0]["relation"] == "construct"
+    assert edges[0]["confidence"] == "EXTRACTED"
+
+
+# ---- MAJOR: qualification-by-resolution replaces the capitalization proxy ----
+
+
+def test_lowercase_named_real_class_is_extracted_not_inferred(tmp_path: Path) -> None:
+    """A class literally named with a lowercase identifier (legal Python/
+    JS/Ruby syntax, just unconventional) called directly by that name must
+    be EXTRACTED — capitalization is not the fact, symbol-table membership
+    is. Under the old capitalization proxy this was silently mis-tiered
+    INFERRED."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _write(
+        repo,
+        "app/point.py",
+        "class point:\n    @staticmethod\n    def act():\n        pass\n",
+    )
+    _write(repo, "app/hub.py", "class Hub:\n    def call(self):\n        point.act()\n")
+    graph = CodeGraph(repo=repo)
+    graph.build()
+
+    edges = graph.callers_of("act")
+    assert len(edges) == 1
+    assert edges[0]["relation"] == "call"
+    assert edges[0]["confidence"] == "EXTRACTED"
+
+
+def test_capitalized_non_class_receiver_is_inferred_not_extracted(tmp_path: Path) -> None:
+    """A capitalized identifier that is NOT a known class (e.g. a
+    parameter following an unconventional capitalized naming style) must
+    be INFERRED — capitalization alone must never grant EXTRACTED. Under
+    the old capitalization proxy this was silently mis-tiered EXTRACTED."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _write(repo, "app/target.py", "class Elsewhere:\n    def act(self):\n        pass\n")
+    _write(
+        repo,
+        "app/hub.py",
+        "class Hub:\n    def call(self, Thing):\n        Thing.act()\n",
+    )
+    graph = CodeGraph(repo=repo)
+    graph.build()
+
+    edges = graph.callers_of("act")
+    assert len(edges) == 1
+    assert edges[0]["relation"] == "call"
+    assert edges[0]["confidence"] == "INFERRED"
+
+
+# ---- self/super stay INFERRED — spec.md D4/F18's explicit worked example ----
+
+
+def test_self_receiver_stays_inferred_per_frozen_spec(tmp_path: Path) -> None:
+    """spec.md D4/F18 explicitly worked-examples `self.bar`/`this.bar` as
+    INFERRED for Python/JS/Ruby, by name, in all three per-language rules.
+    Even though the edge's source endpoint now makes the enclosing class
+    known, this implementation does NOT reinterpret that as qualification:
+    doing so would contradict the frozen worked example, and is a spec.md
+    amendment decision, not an implementation one (see the coordinator
+    report — flagged, not silently resolved either way)."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _write(
+        repo,
+        "app/hub.py",
+        "class Hub:\n    def act(self):\n        pass\n    def call(self):\n        self.act()\n",
+    )
+    graph = CodeGraph(repo=repo)
+    graph.build()
+
+    edges = graph.callers_of("act")
+    assert len(edges) == 1
+    assert edges[0]["confidence"] == "INFERRED"
+
+
+def test_ruby_self_receiver_stays_inferred_per_frozen_spec(tmp_path: Path) -> None:
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _write(
+        repo,
+        "app/hub.rb",
+        "class Hub\n  def act\n  end\n\n  def call\n    self.act\n  end\nend\n",
+    )
+    graph = CodeGraph(repo=repo)
+    graph.build()
+
+    edges = graph.callers_of("act")
+    assert len(edges) == 1
+    assert edges[0]["confidence"] == "INFERRED"
+
+
+# ---- Confidence distribution sanity (no longer degenerate) ----
+
+
+def test_extracted_tier_is_not_degenerate_once_constructors_and_direct_class_refs_count(
+    tmp_path: Path,
+) -> None:
+    """Regression guard for the coordinator's finding that EXTRACTED held
+    0.8% of edges on a real repo — a symptom of the constructor-resolution
+    bug, not an inherent property of real code. A small but representative
+    fixture (constructor calls, qualified attribute calls, unqualified
+    calls) must show EXTRACTED as a substantial fraction, not a token
+    handful."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _write(repo, "app/target.py", "class Target:\n    def act(self):\n        pass\n")
+    _write(
+        repo,
+        "app/hub.py",
+        "class Hub:\n"
+        "    def call(self):\n"
+        "        Target()\n"  # construct -> EXTRACTED
+        "        Target()\n"  # construct -> EXTRACTED
+        "        Target.act(self)\n"  # call, qualified -> EXTRACTED
+        "        self.helper()\n"  # call, self -> INFERRED
+        "    def helper(self):\n"
+        "        pass\n",
+    )
+    graph = CodeGraph(repo=repo)
+    graph.build()
+
+    rows = graph.db.execute("SELECT confidence FROM edges").fetchall()
+    confidences = [r["confidence"] for r in rows]
+    extracted = confidences.count("EXTRACTED")
+    total = len(confidences)
+    assert total == 4
+    assert extracted == 3, "2 constructs + 1 qualified attribute call"
+    assert confidences.count("INFERRED") == 1

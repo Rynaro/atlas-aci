@@ -1,6 +1,13 @@
 """Tests for the A1 graph_query DSL surface: real `subclasses_of` edges
 (AC-A1-7) and the F10 response-shape change — caller context from the
 materialized edge's source endpoint, replacing `refs.enclosing` (AC-A1-10).
+
+Also covers two coordinator-review findings, end to end through
+`dispatch_tool_call` (not just the `CodeGraph` method level covered in
+test_confidence.py): `callers_of` on a local class resolving `construct`
+edges (BLOCKER — a whole symbol *kind* was previously excluded from
+resolution), and the `unresolved_refs` field distinguishing a genuinely
+empty answer from an incomplete one (MAJOR).
 """
 
 from __future__ import annotations
@@ -246,3 +253,43 @@ async def test_candidates_subfield_bounded_end_to_end(tmp_path: Path) -> None:
     assert "edges.candidates" in result["truncated_fields"]
     assert result["more_available"] is True
     assert result["retry_hint"] == "narrower_scope"
+
+
+# ---- Coordinator finding, BLOCKER — callers_of on a local class ----
+
+
+async def test_callers_of_on_local_class_resolves_construct_edges_end_to_end(
+    tmp_path: Path,
+) -> None:
+    """The exact bug: `callers_of:CodeGraph`-shaped query on a repo with a
+    local class and real constructor call sites came back an empty,
+    unflagged `edges: []` — indistinguishable from "never constructed".
+    Verified end to end through `dispatch_tool_call`, not just the
+    `CodeGraph` method (test_confidence.py already covers that level)."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    config = Config(repo=repo, memex_root=tmp_path / "memex")
+    enforcement = Enforcement(config)
+    memex = Memex(config.memex_root)
+
+    _write(repo, "app/target.py", "class Target:\n    def __init__(self):\n        pass\n")
+    _write(
+        repo,
+        "app/hub.py",
+        "class Hub:\n    def call(self):\n        Target()\n",
+    )
+    code_graph = CodeGraph(repo=repo)
+    code_graph.build()
+
+    result = await dispatch_tool_call(
+        "graph_query",
+        {"query": "callers_of:Target"},
+        config,
+        enforcement,
+        memex,
+        code_graph,
+    )
+    edges = result["edges"]
+    assert len(edges) == 1, "the constructor call site must not be silently absent"
+    assert edges[0]["relation"] == "construct"
+    assert edges[0]["confidence"] == "EXTRACTED"

@@ -81,16 +81,17 @@ LANG_BY_EXT: dict[str, str] = {
 # used only by `#eq?`/`#match?` predicates and are ignored by `_extract`.
 #
 # A1 (v2): captures whose pattern-level tag starts with `heritage.` (instead
-# of `def.` or `ref.`) feed the materialized edge table's inheritance/mixin
-# relations (superclass | include | extend | prepend) — see `_extract`. Each
-# `heritage.<relation>` pattern captures exactly one `@target_name` node (the
-# referenced class/module, pre-resolution); the *source* endpoint (which
-# class/module declares the relation) is resolved afterwards from line
-# ranges against `symbols`, not captured here (D1's "caller context from the
-# edge source endpoint" — F10). Call patterns (`@ref.call`) additionally
-# capture an optional `@receiver` node (the call's receiver/qualifier, if
-# any) so `_is_call_qualified` can decide EXTRACTED vs INFERRED (D4/F18)
-# without a second parse pass.
+# of `def.` or `ref.`) feed the materialized edge table's inheritance/mixin/
+# construct relations (superclass | include | extend | prepend | construct
+# — the last is Ruby's `Foo.new`) — see `_extract`. Each `heritage.<relation>`
+# pattern captures exactly one `@target_name` node (the referenced
+# class/module, pre-resolution); the *source* endpoint (which class/module
+# declares the relation) is resolved afterwards from line ranges against
+# `symbols`, not captured here (D1's "caller context from the edge source
+# endpoint" — F10). Call patterns (`@ref.call`) additionally capture an
+# optional `@receiver` node (the call's receiver/qualifier, if any) so
+# `_call_qualification` can decide EXTRACTED vs INFERRED (D4/F18) without a
+# second parse pass.
 #
 # Add languages as needed; the Ruby and Python queries below cover the common
 # cases, and the web/markup grammars below cover static-site repos.
@@ -116,6 +117,9 @@ QUERIES: dict[str, str] = {
             method: (identifier) @_verb (#eq? @_verb "prepend")
             arguments: (argument_list
                 [(constant) (scope_resolution)] @target_name)) @heritage.prepend
+        (call
+            receiver: [(constant) (scope_resolution)] @target_name
+            method: (identifier) @_verb (#eq? @_verb "new")) @heritage.construct
     """,
     "python": """
         (class_definition name: (identifier) @name) @def.class
@@ -234,7 +238,7 @@ assert set(LANG_BY_EXT.values()) <= set(QUERIES) | UNSUPPORTED_LANGS, (
 #
 # Recompute via:
 #   python -c "from atlas_aci.codegraph import SCHEMA, ddl_hash; print(ddl_hash(SCHEMA))"
-SCHEMA_EPOCH = 2
+SCHEMA_EPOCH = 3
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS symbols (
@@ -250,24 +254,36 @@ CREATE INDEX IF NOT EXISTS idx_symbols_name ON symbols(name);
 CREATE INDEX IF NOT EXISTS idx_symbols_path ON symbols(path);
 
 -- Raw (pre-resolution) name references — call sites AND heritage
--- (superclass/include/extend/prepend) sites alike. `enclosing` (F10 /
--- AC-A1-9) is DROPPED here: it was schema'd but always NULL
+-- (superclass/include/extend/prepend/construct) sites alike. `enclosing`
+-- (F10 / AC-A1-9) is DROPPED here: it was schema'd but always NULL
 -- (codegraph.py history); caller context now comes from the materialized
 -- `edges` table's source endpoint instead (AC-A1-10), computed from this
--- table plus `symbols` in `_resolve_edges`. `relation`/`qualified` are new
--- in the v2 epoch: `relation` distinguishes a method call from a heritage
--- reference; `qualified` is the syntactic type-qualification fact D4/F18
--- pins per language, captured at extraction time from the AST shape alone
--- (never inferred after the fact) — the sole input to EXTRACTED vs
--- INFERRED when candidate_count == 1.
+-- table plus `symbols` in `_resolve_edges`. `relation`/`qualified`/
+-- `qualifier_name` are new in the v2 epoch (epoch 3 adds `qualifier_name` —
+-- checker second-pass finding, see below): `relation` distinguishes a
+-- method call from a heritage/construct reference. `qualified` is a
+-- *structural grammar fact*, decided at extraction time with no resolution
+-- needed — Ruby's grammar already distinguishes a constant/scope_resolution
+-- receiver from a plain identifier, so this column is the final answer for
+-- Ruby refs. `qualifier_name` (nullable) is the receiver's text (or the
+-- bare callee's own text when there is no receiver) for Python/JS/TS calls,
+-- whose grammars do NOT make that distinction structurally — qualification
+-- for those two languages can only be decided once the *global* symbol
+-- table exists (does `qualifier_name` resolve to a class/module symbol?),
+-- so it is resolved in `_resolve_edges`, not at extraction time. NULL for
+-- Ruby (nothing to look up: `qualified` above already holds the answer).
+-- relation: call | superclass | include | extend | prepend | construct
+-- qualified: Ruby's final syntactic fact (D4/F18); placeholder for others
+-- qualifier_name: Python/JS/TS only, resolve-at-query-time qualifier text
 CREATE TABLE IF NOT EXISTS refs (
-    id          INTEGER PRIMARY KEY AUTOINCREMENT,
-    callee_name TEXT NOT NULL,
-    relation    TEXT NOT NULL DEFAULT 'call',  -- call | superclass | include | extend | prepend
-    qualified   INTEGER NOT NULL DEFAULT 0,    -- syntactic type-qualification (D4/F18), 0/1
-    path        TEXT NOT NULL,
-    line        INTEGER NOT NULL,
-    lang        TEXT NOT NULL
+    id             INTEGER PRIMARY KEY AUTOINCREMENT,
+    callee_name    TEXT NOT NULL,
+    relation       TEXT NOT NULL DEFAULT 'call',
+    qualified      INTEGER NOT NULL DEFAULT 0,
+    qualifier_name TEXT,
+    path           TEXT NOT NULL,
+    line           INTEGER NOT NULL,
+    lang           TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_refs_callee ON refs(callee_name);
 
@@ -286,10 +302,13 @@ CREATE INDEX IF NOT EXISTS idx_refs_callee ON refs(callee_name);
 -- (AC-A1-2/AC-A1-5) — D4a's confident-subgraph exclusion (EXTRACTED union
 -- INFERRED) is an analysis-time filter for the not-yet-built A2/A3, never a
 -- storage-time drop; `confident_edges()` below is the query primitive A2/A3
--- will filter through.
+-- will filter through. `relation` can be 'construct' (checker finding): a
+-- bare `Foo(...)`/`new Foo()`/Ruby `Foo.new` whose name resolves entirely
+-- to class/module symbols is a constructor invocation, not a method call —
+-- kept semantically distinct rather than silently reused as 'call'.
 CREATE TABLE IF NOT EXISTS edges (
     id            INTEGER PRIMARY KEY AUTOINCREMENT,
-    relation      TEXT NOT NULL,      -- call | superclass | include | extend | prepend
+    relation      TEXT NOT NULL,      -- call | superclass | include | extend | prepend | construct
     source_path   TEXT NOT NULL,
     source_line   INTEGER NOT NULL,
     source_name   TEXT,               -- enclosing symbol name at the reference site
@@ -351,7 +370,7 @@ def ddl_hash(ddl: str) -> str:
 
 # Hand-maintained — see the SCHEMA_EPOCH docstring above. Do NOT replace this
 # with `ddl_hash(SCHEMA)`; that would make the pairing test a tautology.
-EXPECTED_DDL_HASH = "a41130cc523b58d7f7652448370516b82fd0a2e487a154fd6dc58a504b884caa"
+EXPECTED_DDL_HASH = "ef64d212dfcac61f3d224fc30ec46e6c808450f521973d6475bb3dacfc945d9d"
 
 
 def parse_query_verb(dsl: str) -> str:
@@ -379,14 +398,38 @@ def parse_query_verb(dsl: str) -> str:
 # dispatchable at all) cannot evade a test that enumerates this set itself.
 KNOWN_QUERY_VERBS: frozenset[str] = frozenset({"callers_of", "definitions_of", "subclasses_of"})
 
-# A1/D4 — edge-resolution candidate kinds, by relation. A call reference
-# only ever resolves against a callable definition; a heritage reference
-# (superclass/include/extend/prepend) only ever resolves against a
-# class/module definition. Keeps `_resolve_edges` from matching, say, a
-# method that happens to share a name with an unrelated class.
+# A1/D4 — edge-resolution candidate kinds, by relation.
+#
+# checker finding (BLOCKER): a bare `Foo(...)`/`new Foo()`/Ruby `Foo.new`
+# constructor call resolves against a *class or module* symbol, never a
+# callable one — the original `_CALL_CANDIDATE_KINDS` (callable-only)
+# silently excluded every constructor call site from the graph (0 edges for
+# `callers_of:CodeGraph` despite 51 real call sites), which is the omission
+# of an entire symbol *kind*, not a truncation — worse than "never silently
+# incomplete" demands. `_CALL_CANDIDATE_KINDS` is therefore the UNION of
+# callable and class/module kinds: a "call"-relation reference now resolves
+# against either, and `_resolve_edges` relabels the edge `relation` to
+# 'construct' when every matched candidate turns out to be a class/module
+# (see `_CLASS_TARGET_RELATIONS` below) — never silently reusing 'call' for
+# a semantically distinct constructor edge.
+_CALLABLE_KINDS: tuple[str, ...] = ("method", "function", "singleton_method")
+_CLASS_KINDS: tuple[str, ...] = ("class", "module")
+_CALL_CANDIDATE_KINDS: tuple[str, ...] = _CALLABLE_KINDS + _CLASS_KINDS
+
+# Heritage relations (superclass/include/extend/prepend) plus 'construct'
+# (Ruby's `.new`, captured directly as 'construct' at extraction time — see
+# QUERIES["ruby"]'s heritage.construct pattern) all resolve exclusively
+# against class/module symbols; a call that resolves entirely to callable
+# symbols is never one of these.
 _HERITAGE_RELATIONS: tuple[str, ...] = ("superclass", "include", "extend", "prepend")
-_CALL_CANDIDATE_KINDS: tuple[str, ...] = ("method", "function", "singleton_method")
-_HERITAGE_CANDIDATE_KINDS: tuple[str, ...] = ("class", "module")
+_CLASS_TARGET_RELATIONS: tuple[str, ...] = (*_HERITAGE_RELATIONS, "construct")
+_HERITAGE_CANDIDATE_KINDS: tuple[str, ...] = _CLASS_KINDS
+
+# The relation set `callers_of` searches: a queried symbol might turn out to
+# be a callable (ordinary 'call' edges) or a class/module (constructor
+# 'construct' edges) — the caller doesn't know which in advance, and
+# shouldn't have to.
+_CALL_RELATIONS: tuple[str, ...] = ("call", "construct")
 
 
 @dataclass
@@ -401,14 +444,25 @@ class Symbol:
 
 @dataclass
 class Reference:
-    """A raw (pre-resolution) name reference — a call site or a heritage
-    (superclass/include/extend/prepend) site. ``enclosing`` is DROPPED (F10 /
-    AC-A1-9): caller context is resolved after the fact, from the `edges`
-    table's source endpoint, not carried on this dataclass. ``qualified`` is
-    the syntactic type-qualification fact (D4/F18) captured from the AST
-    shape at extraction time — the sole input `_resolve_edges` uses to
-    decide EXTRACTED vs INFERRED when a reference resolves to exactly one
-    candidate.
+    """A raw (pre-resolution) name reference — a call site or a heritage/
+    construct (superclass/include/extend/prepend/construct) site.
+    ``enclosing`` is DROPPED (F10 / AC-A1-9): caller context is resolved
+    after the fact, from the `edges` table's source endpoint, not carried
+    on this dataclass.
+
+    ``qualified`` is a *structural grammar fact* for Ruby — decided at
+    extraction time, final, no resolution needed (Ruby's grammar already
+    distinguishes a constant/scope_resolution receiver from a plain
+    identifier). For Python/JS/TS it is a placeholder (their grammars don't
+    make that distinction), superseded by ``qualifier_name``.
+
+    ``qualifier_name`` (Python/JS/TS only, ``None`` for Ruby and for
+    heritage/construct references) is the receiver's text — or the bare
+    callee's own text when there's no receiver — for `_resolve_edges` to
+    look up against ``symbols.kind IN ('class', 'module')`` once the global
+    symbol table exists. Checker finding (MAJOR): capitalization is a
+    *proxy* for "is this a class-bound name"; resolving against the symbol
+    table the graph already has is the fact itself.
     """
 
     callee_name: str
@@ -417,6 +471,7 @@ class Reference:
     lang: str
     relation: str = "call"
     qualified: bool = False
+    qualifier_name: str | None = None
 
 
 class CodeGraph:
@@ -673,9 +728,17 @@ class CodeGraph:
                 symbols_added += 1
             for r in refs:
                 conn.execute(
-                    "INSERT INTO refs(callee_name, relation, qualified, path, line, lang) "
-                    "VALUES (?, ?, ?, ?, ?, ?)",
-                    (r.callee_name, r.relation, int(r.qualified), r.path, r.line, r.lang),
+                    "INSERT INTO refs(callee_name, relation, qualified, qualifier_name, "
+                    "path, line, lang) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                    (
+                        r.callee_name,
+                        r.relation,
+                        int(r.qualified),
+                        r.qualifier_name,
+                        r.path,
+                        r.line,
+                        r.lang,
+                    ),
                 )
                 refs_added += 1
 
@@ -748,10 +811,10 @@ class CodeGraph:
         grouped with the ``@name`` it owns, and ``#eq?``/``#match?`` predicates
         are applied. A match carrying a ``def.*`` capture yields a Symbol named
         from its ``@name``; a match carrying a ``heritage.<relation>`` tag
-        yields an inheritance/mixin Reference (A1); a match carrying
-        ``@callee`` yields a call Reference, with `_is_call_qualified` (D4/
-        F18) deciding its `qualified` flag from the same match's optional
-        ``@receiver`` capture — no second parse pass.
+        yields an inheritance/mixin/construct Reference (A1); a match carrying
+        ``@callee`` yields a call Reference, with `_call_qualification` (D4/
+        F18) deciding its `qualified`/`qualifier_name` fields from the same
+        match's optional ``@receiver`` capture — no second parse pass.
         """
         from tree_sitter import Query, QueryCursor
         from tree_sitter_language_pack import get_language
@@ -786,14 +849,15 @@ class CodeGraph:
                     )
                 )
             elif heritage_cap is not None:
-                # A1/D4: superclass | include | extend | prepend. The
+                # A1/D4: superclass | include | extend | prepend | construct
+                # (the last is Ruby's `Foo.new` — checker finding). The
                 # referenced name (`@target_name`) is, by grammar
                 # construction, always a constant/class/import-style
-                # reference in every shipped language — heritage references
-                # are unconditionally type-qualified (`qualified=True`),
-                # mirroring F18's "a constant receiver ... = type-qualified"
-                # rule applied to the heritage slot itself rather than a call
-                # receiver.
+                # reference in every shipped language — heritage/construct
+                # references are unconditionally type-qualified
+                # (`qualified=True`), mirroring F18's "a constant receiver
+                # ... = type-qualified" rule applied to the heritage slot
+                # itself rather than a call receiver.
                 target_nodes = caps.get("target_name")
                 if not target_nodes:
                     continue
@@ -813,7 +877,7 @@ class CodeGraph:
                         )
                     )
             elif "callee" in caps:
-                qualified = self._is_call_qualified(lang, source, caps)
+                qualified, qualifier_name = self._call_qualification(lang, source, caps)
                 for node in caps["callee"]:
                     name = self._node_text(source, node).strip()
                     if not name:
@@ -826,43 +890,61 @@ class CodeGraph:
                             lang=lang,
                             relation="call",
                             qualified=qualified,
+                            qualifier_name=qualifier_name,
                         )
                     )
 
         return symbols, refs
 
     @staticmethod
-    def _is_call_qualified(lang: str, source: bytes, caps: dict[str, list[Any]]) -> bool:
+    def _call_qualification(
+        lang: str, source: bytes, caps: dict[str, list[Any]]
+    ) -> tuple[bool, str | None]:
         """The D4/F18 syntactic type-qualification rule for a call reference.
 
-        Ruby's grammar already distinguishes constant (capitalized) receivers
-        from plain identifiers at the *node-type* level (`constant` /
-        `scope_resolution` vs `identifier` / `self`), so Ruby needs no
-        further heuristic — mirrors graphify's `type_qualified`, pinned per
-        F18: "a constant receiver or `::` scope resolution ... = type-
-        qualified; a local-variable receiver ... / a bare method = INFERRED".
+        Returns ``(qualified, qualifier_name)``.
+
+        Ruby's grammar already distinguishes constant receivers from plain
+        identifiers at the *node-type* level (`constant` / `scope_resolution`
+        vs `identifier` / `self`) — a real structural fact, not a proxy — so
+        Ruby's `qualified` is final here and `qualifier_name` is always
+        `None` (nothing left to resolve): F18 pins "a constant receiver or
+        `::` scope resolution ... = type-qualified; a local-variable
+        receiver ... / a bare method = INFERRED".
 
         Python and JS/TS grammars do NOT make that distinction structurally
         (a class name and a local variable are both plain `identifier`
-        nodes), so they use the same *syntactic* proxy Ruby's grammar
-        enforces for free: capitalization. `Foo.bar()` / `Foo()` / `new
-        Foo()` with a capitalized qualifier-or-bare-callee is treated as
-        class-or-import-bound (qualified); `self.bar()` / `obj.bar()` /
-        `bar()` is not. This is a pure syntax check — no symbol-table
-        cross-reference, no LLM, no runtime type information (AC-NEG-3).
+        nodes). Checker finding (MAJOR): a prior version of this method used
+        capitalization as a *proxy* for "is this a class-bound name" — but
+        the graph already stores the fact (`symbols.kind = 'class'/'module'`)
+        once the build's global symbol table exists, and capitalization is
+        neither necessary (a real lowercase-named class was mis-tiered
+        INFERRED) nor sufficient (a capitalized local variable or a
+        capitalized *function* was mis-tiered EXTRACTED) for that fact. So
+        for these two languages, `qualified` returned here is a placeholder
+        (always `False`) and `qualifier_name` carries the receiver's text —
+        or the bare callee's own text when there's no receiver — for
+        `_resolve_edges` to resolve against the symbol table once it exists
+        (a lookup, not a guess; still zero-LLM, AC-NEG-3). `self`/`this`
+        never resolve to a class/module symbol (no code defines a class
+        literally named `self`), so they correctly stay unqualified without
+        any special-casing — preserving F18's explicit `self.bar`/`this.bar`
+        = INFERRED worked example.
         """
         receiver_nodes = caps.get("receiver")
         if lang == "ruby":
             if not receiver_nodes:
-                return False
-            return receiver_nodes[0].type in ("constant", "scope_resolution")
+                return False, None
+            return receiver_nodes[0].type in ("constant", "scope_resolution"), None
 
         if receiver_nodes:
-            text = CodeGraph._node_text(source, receiver_nodes[0]).strip()
+            qualifier_name = CodeGraph._node_text(source, receiver_nodes[0]).strip()
         else:
             callee_nodes = caps.get("callee") or []
-            text = CodeGraph._node_text(source, callee_nodes[0]).strip() if callee_nodes else ""
-        return bool(text) and text[0].isupper()
+            qualifier_name = (
+                CodeGraph._node_text(source, callee_nodes[0]).strip() if callee_nodes else ""
+            )
+        return False, (qualifier_name or None)
 
     @staticmethod
     def _node_text(source: bytes, node) -> str:
@@ -888,9 +970,8 @@ class CodeGraph:
         (AC-NEG-3):
           - 0 candidates -> no edge; the reference stays an unresolved name
             in `refs` (AC-A1-6).
-          - 1 candidate  -> EXTRACTED if the reference was syntactically
-            type-qualified at the site (`refs.qualified`, D4/F18), else
-            INFERRED.
+          - 1 candidate  -> EXTRACTED if the reference was type-qualified,
+            else INFERRED.
           - >1 candidates -> AMBIGUOUS, with the full ordered `candidates[]`
             attached (AC-A1-5) — never dropped, unlike graphify's silent
             edge-drop guard.
@@ -898,24 +979,40 @@ class CodeGraph:
         `ORDER BY path, line_start, name` — a fixed total order for
         identical input (AC-A1-8), independent of SQLite rowid/insertion
         order (D6 foundation).
+
+        Qualification (checker finding, MAJOR): for a Ruby ref, `qualified`
+        is already the final answer (a structural grammar fact set at
+        extraction time — see `_call_qualification`). For a Python/JS/TS
+        ref, `qualifier_name` names a symbol to resolve *now*, against the
+        symbol table that only fully exists at this point in the build: is
+        it a known `class`/`module`? That resolution — not capitalization —
+        decides EXTRACTED vs INFERRED for those two languages.
+
+        Constructor calls (checker finding, BLOCKER): a `call`-relation
+        reference resolves against callable *and* class/module candidates
+        (`_CALL_CANDIDATE_KINDS`) — a bare `Foo(...)`/`new Foo()` naming a
+        local class was previously invisible (0 candidates against a
+        callable-only kind filter). When every matched candidate is a
+        class/module, the edge is relabeled `relation='construct'` — a
+        semantically distinct edge, never silently reused as `'call'`.
         """
         conn.execute("DELETE FROM edges")
         edges_added = 0
 
         ref_rows = conn.execute(
-            "SELECT callee_name, relation, qualified, path, line, lang FROM refs "
-            "ORDER BY path, line, callee_name"
+            "SELECT callee_name, relation, qualified, qualifier_name, path, line, lang "
+            "FROM refs ORDER BY path, line, callee_name"
         ).fetchall()
 
         for ref in ref_rows:
             relation = ref["relation"]
-            if relation in _HERITAGE_RELATIONS:
+            if relation in _CLASS_TARGET_RELATIONS:
                 candidate_kinds = _HERITAGE_CANDIDATE_KINDS
             else:
                 candidate_kinds = _CALL_CANDIDATE_KINDS
             placeholders = ",".join("?" for _ in candidate_kinds)
             candidates = conn.execute(
-                f"SELECT name, path, line_start FROM symbols WHERE name = ? "
+                f"SELECT name, path, line_start, kind FROM symbols WHERE name = ? "
                 f"AND kind IN ({placeholders}) ORDER BY path, line_start, name",
                 (ref["callee_name"], *candidate_kinds),
             ).fetchall()
@@ -925,8 +1022,39 @@ class CodeGraph:
 
             source_name, source_kind = self._enclosing_symbol(conn, ref["path"], ref["line"])
 
+            effective_relation = relation
+            if relation == "call" and all(c["kind"] in _CLASS_KINDS for c in candidates):
+                # Every candidate is a class/module: this "call" is really a
+                # constructor invocation (Python/JS `Foo(...)`/`new Foo()`;
+                # Ruby's `.new` is already tagged 'construct' at extraction
+                # and never reaches this branch with relation == "call").
+                effective_relation = "construct"
+
+            if effective_relation == "construct":
+                # A construct edge's `callee_name` (not its receiver, if any)
+                # IS the class/module being instantiated — that is exactly
+                # what "every candidate is class-kind" already established.
+                # Whether it was reached bare (`Foo()`), via `new Foo()`, or
+                # via a module-qualified attribute chain
+                # (`some_module.Foo()`) doesn't change WHAT is being
+                # constructed, so the receiver's own qualification is the
+                # wrong question here — unconditionally qualified, mirroring
+                # Ruby's heritage/construct captures (always qualified=True
+                # at extraction, same reasoning applied at resolution time).
+                qualified = True
+            elif ref["qualifier_name"] is not None:
+                # Python/JS/TS ordinary method calls: resolve the fact,
+                # don't guess it from case.
+                qualifier_hit = conn.execute(
+                    "SELECT 1 FROM symbols WHERE name = ? AND kind IN ('class', 'module') LIMIT 1",
+                    (ref["qualifier_name"],),
+                ).fetchone()
+                qualified = qualifier_hit is not None
+            else:
+                qualified = bool(ref["qualified"])
+
             if len(candidates) == 1:
-                confidence = "EXTRACTED" if ref["qualified"] else "INFERRED"
+                confidence = "EXTRACTED" if qualified else "INFERRED"
                 target = candidates[0]
                 target_path = target["path"]
                 target_line = target["line_start"]
@@ -947,7 +1075,7 @@ class CodeGraph:
                 "source_kind, callee_name, confidence, target_path, target_line, "
                 "target_name, candidates, lang) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 (
-                    relation,
+                    effective_relation,
                     ref["path"],
                     ref["line"],
                     source_name,
@@ -1017,14 +1145,21 @@ class CodeGraph:
         return {"definitions": defs, "references": refs}
 
     def callers_of(self, symbol: str) -> list[dict[str, Any]]:
-        """A1: queries the materialized `edges` table (relation='call'),
-        replacing the pre-A1 `refs`-by-name-string join. Response shape
-        change (F10/AC-A1-9/AC-A1-10): each edge now carries caller context
-        as a `source` object (`{path, line, name, kind}`, resolved from the
-        edge's source endpoint) instead of the old, always-null
-        `enclosing` string — see `_edge_row_to_dict`.
+        """A1: queries the materialized `edges` table (relation IN
+        ('call', 'construct')), replacing the pre-A1 `refs`-by-name-string
+        join. Response shape change (F10/AC-A1-9/AC-A1-10): each edge now
+        carries caller context as a `source` object (`{path, line, name,
+        kind}`, resolved from the edge's source endpoint) instead of the
+        old, always-null `enclosing` string — see `_edge_row_to_dict`.
+
+        Includes `construct` (checker finding, BLOCKER): `symbol` might be
+        an ordinary callable (ordinary `call` edges) or a class/module
+        constructed via a bare `Foo(...)`/`new Foo()`/Ruby `Foo.new` — the
+        caller doesn't know which in advance, and `callers_of:SomeClass`
+        must not silently come back empty just because the symbol happens
+        to be a class.
         """
-        return self._edges_for(symbol, ("call",))
+        return self._edges_for(symbol, _CALL_RELATIONS)
 
     def subclasses_of(self, symbol: str) -> list[dict[str, Any]]:
         """A1 (AC-A1-7): resolves real inheritance/mixin edges — Ruby

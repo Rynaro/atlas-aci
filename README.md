@@ -111,7 +111,7 @@ the returned `edges` list has this shape:
 
 ```jsonc
 {
-  "relation": "call",          // call | superclass | include | extend | prepend
+  "relation": "call",          // call | construct | superclass | include | extend | prepend
   "confidence": "EXTRACTED",   // EXTRACTED | INFERRED | AMBIGUOUS — never LLM-produced
   "source": {                  // caller context — replaces the old, always-null
     "path": "app/tallier.rb",  // `enclosing` field (v1). None/None when the
@@ -137,6 +137,14 @@ aggregates every inheritance/mixin relation (`superclass`, `include`,
 `extend`, `prepend`) under the one verb, since a Rails engine leaning on
 `concerns/` mixins expresses "subclass-of" through all four relations, not
 just `superclass`.
+
+`relation: "construct"` is a bare `Foo(...)` / `new Foo()` (JS/TS) /
+`Foo.new` (Ruby) call that resolves entirely to a class/module symbol — a
+constructor invocation, not a method call, so it is never silently folded
+into `relation: "call"`. `callers_of:SomeClass` returns these: the caller
+doesn't know in advance whether a queried name is a callable or a class, so
+`callers_of` searches both relations for exactly that reason — a symbol's
+*kind* is never a reason a query silently comes back empty.
 
 **The analysis-graph divergence (D4a) — spec'd now, not yet shipped.**
 `graph_query` always returns every *matching* edge, AMBIGUOUS included,
