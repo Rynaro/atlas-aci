@@ -132,6 +132,9 @@ jobs:
       - name: self-test — verify-probe-verdict.py has teeth
         run: bash ../scripts/test-verify-probe-verdict.sh
 
+      - name: self-test — verify-export-size.py has teeth (AC-REL-2)
+        run: bash ../scripts/test-verify-export-size.sh
+
   export-os-matrix:
     # AC-REL-1 (D6 cross-platform release blocker): AC-A5-3's same-machine
     # byte-identical guarantee is necessary but not sufficient -- a locale

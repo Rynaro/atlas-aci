@@ -60,6 +60,18 @@
 #      trust boundary is the same defect this file has now closed
 #      thirteen times over, just moved one level up.
 #
+#   4. IF A5's export path exists in the tree at all (`test_export.py`
+#      present — a permanent post-ship fact, same signal as step 3's
+#      `test_communities.py` check), the one real-world size measurement
+#      AC-REL-2 asks for (exporting the larger pinned reference repo,
+#      Spree, and checking it against a 104,857,600-byte ceiling) must be
+#      RECORDED (`export-size-spree.md`/`.json`) and must mechanically
+#      RE-VERIFY on every PR (`scripts/verify-export-size.py`) — never
+#      re-cloning/re-indexing Spree itself (same measure-once-record-
+#      forever pattern step 3 established for the D3a probe; the number
+#      is deterministic given fixed source, so CI asserts the recorded
+#      value rather than re-deriving it per PR).
+#
 # KNOWN LIMITATION, VERIFIED (F-3, checker second pass — not silently
 # swept): step 2's content-marker heuristic is evadable by renaming.
 # Rename the edges table, import the confidence enum from a differently
@@ -289,3 +301,32 @@ jobs:
           fi
 
           echo "A3 probe precondition: clean (no A3 code present, or probe verdict mechanically re-verified against its own recorded numbers)."
+
+      - name: AC-REL-2 export-size precondition (Spree, measured once at P3)
+        run: |
+          set -euo pipefail
+
+          EXPORT_SIZE_MD=".spectra/changes/aci-v2-harden-and-augment/export-size-spree.md"
+          EXPORT_SIZE_JSON=".spectra/changes/aci-v2-harden-and-augment/export-size-spree.json"
+
+          # A5 shipping (test_export.py existing in the tree) is a
+          # permanent post-ship fact, exactly like test_communities.py is
+          # for A3 above — not a per-diff signal. If A5's export path
+          # exists at all, its one-time, real-world size measurement on
+          # the larger pinned reference repo (AC-REL-2) must be present
+          # and must mechanically re-verify, on every PR, forever after —
+          # never re-cloning/re-indexing Spree itself, only re-checking
+          # the recorded numbers (same measure-once-record-forever pattern
+          # AC-A3-1 established for the D3a probe).
+          if [ -f mcp-server/tests/test_export.py ]; then
+            if [ ! -f "$EXPORT_SIZE_MD" ] || [ ! -f "$EXPORT_SIZE_JSON" ]; then
+              echo "FAIL (AC-REL-2): A5 export code exists in the tree but $EXPORT_SIZE_MD / $EXPORT_SIZE_JSON is missing. The export-size-on-Spree measurement must be recorded before A5 ships."
+              exit 1
+            fi
+            if ! python3 scripts/verify-export-size.py "$EXPORT_SIZE_JSON"; then
+              echo "FAIL (AC-REL-2): the recorded export-size verdict does not equal the mechanical evaluation of its own recorded export_bytes/ceiling_bytes."
+              exit 1
+            fi
+          fi
+
+          echo "AC-REL-2 export-size precondition: clean (no A5 export code present, or the recorded verdict mechanically re-verified against its own recorded numbers)."
