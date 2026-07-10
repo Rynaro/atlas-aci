@@ -1,23 +1,22 @@
 #!/usr/bin/env bash
 # scripts/test-verify-probe-verdict.sh
 #
-# Self-test for scripts/verify-probe-verdict.py — the fix for checker
-# MAJOR-1 (AC-A3-1/F7, the tenth instance of "the check measures a proxy
-# instead of the invariant" in this campaign, and the sharpest one: the
-# criterion literally names the failure mode it exists to close, and the
-# gate reintroduced it).
+# Self-test for scripts/verify-probe-verdict.py — covers two rounds of the
+# same defect class ("the check measures a proxy instead of the
+# invariant"), each found by attacking the previous round's fix:
 #
-# The checker proved the old gate (`grep -qiE "verdict.*:.*pass"` over the
-# artefact's PROSE) was defeatable: forge a copy with LPA_Q=0.11111 (below
-# the 0.30 floor, failing clauses 2 and 3 on both repos), leave
-# `verdict: PASS` untouched, and the old gate passed it — no Q value was
-# ever parsed, no clause ever evaluated.
+#   - Defect 10 (MAJOR-1): the gate used to `grep -qiE "verdict.*:.*pass"`
+#     the artefact's PROSE — never a Q value, never a clause. Scenarios
+#     2-4 below forge failing/flipped numbers under an unchanged label.
+#   - Defect 11: the recomputation it was replaced with still read its
+#     BAR (`q_struct`/`r`) FROM the sidecar under audit — a verifier that
+#     takes its bar from the file it grades can be handed a softened bar
+#     next to failing numbers. Scenario 5 forges exactly that; scenario
+#     5b isolates the declared-bar/frozen-constant comparison itself (a
+#     stale bar declaration with otherwise-genuine, passing numbers).
 #
-# This self-test forges the SAME class of artefact (failing numbers under
-# a recorded PASS) plus its mirror image (a recorded CUT over genuinely
-# passing numbers — "a recorded CUT over passing numbers is equally a
-# lie") and asserts scripts/verify-probe-verdict.py rejects both, then
-# asserts it accepts the real, currently-recorded probe sidecar.
+# This self-test asserts scripts/verify-probe-verdict.py rejects all
+# forgeries below and accepts the real, currently-recorded probe sidecar.
 #
 # Usage: scripts/test-verify-probe-verdict.sh
 # Exit 0 if every scenario matches its expected outcome, 1 otherwise.
@@ -95,6 +94,46 @@ json.dump(data, open(sys.argv[2], "w"))
 PYEOF
 _assert_exit "forged: one repo's Louvain_Q_median below the 0.30 floor, recorded PASS" \
     "$TMP_DIR/forged-median-floor.json" 1
+
+# ---- Scenario 5 (checker defect 11): softened bar alongside a failing LPA_Q ----
+# The verifier must grade against its OWN hardcoded bar, never the
+# sidecar's copy. This forges q_struct/r DOWN and hands it LPA_Q=0.20,
+# which fails the FROZEN bar's clause 2 (>= 0.30) but would pass the
+# forged, softened bar if the verifier ever trusted it.
+python3 - "$REAL_JSON" "$TMP_DIR/forged-softened-bar.json" << 'PYEOF'
+import json
+import sys
+
+data = json.load(open(sys.argv[1]))
+data["bar"]["q_struct"] = 0.01
+data["bar"]["r"] = 0.10
+for repo in data["repos"]:
+    repo["lpa_q"] = 0.20  # fails the FROZEN q_struct=0.30, passes the forged 0.01
+data["recorded_verdict"] = "PASS"
+json.dump(data, open(sys.argv[2], "w"))
+PYEOF
+_assert_exit "forged: softened bar (q_struct=0.01, r=0.10) alongside failing LPA_Q=0.20" \
+    "$TMP_DIR/forged-softened-bar.json" 1
+
+# ---- Scenario 5b: a STALE bar declaration with otherwise-genuine, passing numbers ----
+# Scenario 5 combines a wrong bar with numbers that also fail the frozen
+# bar -- the hardcoded-arithmetic fix alone rejects it, independent of
+# whether the sidecar's own bar/frozen-constant comparison ever runs. This
+# scenario isolates that comparison specifically: the bar block disagrees
+# with the frozen constants, but every number is left exactly as recorded
+# (genuinely passing under the frozen bar) -- only
+# _check_declared_bar_matches_frozen can catch this one; the arithmetic
+# alone would happily compute PASS and match the recorded PASS.
+python3 - "$REAL_JSON" "$TMP_DIR/forged-stale-bar-only.json" << 'PYEOF'
+import json
+import sys
+
+data = json.load(open(sys.argv[1]))
+data["bar"]["q_struct"] = 0.5  # disagrees with the frozen 0.30 -- numbers untouched
+json.dump(data, open(sys.argv[2], "w"))
+PYEOF
+_assert_exit "forged: stale bar declaration (q_struct=0.5) over otherwise-genuine passing numbers" \
+    "$TMP_DIR/forged-stale-bar-only.json" 1
 
 echo ""
 echo "$pass_count passed, $fail_count failed"
