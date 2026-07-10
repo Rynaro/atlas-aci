@@ -192,3 +192,65 @@ def test_export_and_import_are_not_mcp_tools() -> None:
     assert "import" not in READ_ONLY_TOOLS
     assert "export_jsonl" not in READ_ONLY_TOOLS
     assert "import_jsonl" not in READ_ONLY_TOOLS
+
+
+# ---- AC-REL-2's documented bound: warn before `git push` silently rejects ----
+
+
+def _export_reporting_size(repo: Path, out_path: Path, fake_bytes: int):
+    """Invokes the real `export` CLI command but with `export_jsonl`'s
+    returned `bytes_written` patched to a synthetic value -- exercises the
+    warning branches without actually writing tens/hundreds of MB to disk
+    in a test."""
+    from unittest import mock
+
+    real_export = CodeGraph.export_jsonl
+
+    def fake_export(self, path):
+        stats = real_export(self, path)
+        stats["bytes_written"] = fake_bytes
+        return stats
+
+    runner = CliRunner()
+    with mock.patch.object(CodeGraph, "export_jsonl", fake_export):
+        return runner.invoke(cli, ["export", "--repo", str(repo), str(out_path)])
+
+
+def test_export_warns_approaching_github_soft_limit(tmp_path: Path) -> None:
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _write(repo, "app/hello.rb", _FIXTURE)
+    runner = CliRunner()
+    assert runner.invoke(cli, ["index", "--repo", str(repo)]).exit_code == 0
+
+    result = _export_reporting_size(repo, tmp_path / "out.jsonl", fake_bytes=60 * 1024 * 1024)
+    assert result.exit_code == 0  # advisory only -- the export itself never fails
+    assert "export_approaching_github_limit" in result.output
+    assert "50 MiB" in result.output
+
+
+def test_export_warns_at_github_hard_limit(tmp_path: Path) -> None:
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _write(repo, "app/hello.rb", _FIXTURE)
+    runner = CliRunner()
+    assert runner.invoke(cli, ["index", "--repo", str(repo)]).exit_code == 0
+
+    result = _export_reporting_size(repo, tmp_path / "out.jsonl", fake_bytes=120 * 1024 * 1024)
+    assert result.exit_code == 0  # advisory only -- the export itself never fails
+    assert "export_exceeds_github_hard_limit" in result.output
+    assert "100 MiB" in result.output
+
+
+def test_export_no_warning_below_soft_limit(tmp_path: Path) -> None:
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _write(repo, "app/hello.rb", _FIXTURE)
+    runner = CliRunner()
+    assert runner.invoke(cli, ["index", "--repo", str(repo)]).exit_code == 0
+
+    out_path = tmp_path / "out.jsonl"
+    result = runner.invoke(cli, ["export", "--repo", str(repo), str(out_path)])
+    assert result.exit_code == 0
+    assert "export_approaching_github_limit" not in result.output
+    assert "export_exceeds_github_hard_limit" not in result.output

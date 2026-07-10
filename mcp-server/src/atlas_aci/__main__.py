@@ -12,6 +12,21 @@ import structlog
 from atlas_aci.codegraph import DEFAULT_LANGS, CodeGraph
 from atlas_aci.config import Config
 
+# AC-REL-2's documented bound (README.md "Why read-only" section /
+# GITHUB_FILE_HARD_LIMIT_BYTES): GitHub rejects any single committed file
+# >= 100 MiB outright (`git push` fails with "this exceeds GitHub's file
+# size limit"), and separately warns starting at 50 MiB (still committable,
+# but a visible signal something is getting large). Both are GitHub's own
+# documented, well-known thresholds, not invented here — the export CLI
+# reuses them so a user hits this warning BEFORE `git push` rejects a
+# 120 MB blob silently-until-that-moment, exactly the "silent
+# incompleteness" this release exists to eliminate. Measured for real on
+# the larger pinned reference repo (Spree): 88,742,743 bytes, 84.63% of
+# the hard limit — comfortably over the warn threshold, a real data point
+# for why this warning exists, not a hypothetical.
+_GITHUB_FILE_WARN_BYTES = 50 * 1024 * 1024
+_GITHUB_FILE_HARD_LIMIT_BYTES = 100 * 1024 * 1024
+
 
 @click.group()
 @click.option(
@@ -101,6 +116,15 @@ def export(repo: Path, out_path: Path) -> None:
     (`assert_path_in_repo`) does not apply here.
 
     Reads the current-epoch DB read-only; never writes to `.atlas`.
+
+    Warns (never fails — the export itself always succeeds; a size
+    warning is advisory, not a reason to withhold a graph the user asked
+    for) when the output approaches or exceeds GitHub's own committable-file
+    thresholds (50 MiB soft warning, 100 MiB hard rejection at `git push`
+    time) — see README.md's AC-REL-2 section for what to do beyond that
+    bound (compress it out-of-band, or don't commit it and re-index
+    instead; D6/AC-A5-1 freeze the canonical JSONL format itself, so
+    changing the export's shape is not an option here).
     """
     log = structlog.get_logger()
     repo = repo.resolve()
@@ -116,6 +140,35 @@ def export(repo: Path, out_path: Path) -> None:
     log.info("export_start", repo=str(repo), out_path=str(out_path))
     stats = graph.export_jsonl(out_path)
     log.info("export_done", out_path=str(out_path), **stats)
+
+    bytes_written = stats["bytes_written"]
+    if bytes_written >= _GITHUB_FILE_HARD_LIMIT_BYTES:
+        log.warning(
+            "export_exceeds_github_hard_limit",
+            bytes_written=bytes_written,
+            hard_limit_bytes=_GITHUB_FILE_HARD_LIMIT_BYTES,
+            message=(
+                f"This export is {bytes_written} bytes -- at or over GitHub's hard "
+                f"{_GITHUB_FILE_HARD_LIMIT_BYTES}-byte (100 MiB) per-file limit. "
+                "`git push` WILL reject this file outright. See README.md's AC-REL-2 "
+                "section: compress it out-of-band, or don't commit it and re-index "
+                "instead."
+            ),
+        )
+    elif bytes_written >= _GITHUB_FILE_WARN_BYTES:
+        log.warning(
+            "export_approaching_github_limit",
+            bytes_written=bytes_written,
+            warn_threshold_bytes=_GITHUB_FILE_WARN_BYTES,
+            hard_limit_bytes=_GITHUB_FILE_HARD_LIMIT_BYTES,
+            message=(
+                f"This export is {bytes_written} bytes -- over GitHub's "
+                f"{_GITHUB_FILE_WARN_BYTES}-byte (50 MiB) soft-warning threshold. "
+                "Still committable today, but a repository that grows further could "
+                "cross the 100 MiB hard limit with no further warning until `git push` "
+                "rejects it. See README.md's AC-REL-2 section."
+            ),
+        )
 
 
 @cli.command(name="import")
