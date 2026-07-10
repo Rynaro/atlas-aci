@@ -312,35 +312,30 @@ def test_central_bounds_applies_element_cap_then_byte_ceiling(enforcement: Enfor
 
 
 def test_every_tool_and_verb_truncates_and_flags_over_cap(enforcement: Enforcement) -> None:
-    tool_fixtures = {
-        "view_file": {"lines": ["x\n"] * 6},
-        "list_dir": {"entries": [{"name": f"f{i}"} for i in range(6)]},
-        "search_text": {"matches": [{"path": "a", "line": i} for i in range(6)]},
-        "search_symbol": {
-            "definitions": [{"name": "foo"}] * 6,
-            "references": [{"name": "foo"}] * 6,
-        },
-    }
-    for tool, result in tool_fixtures.items():
-        out = apply_central_bounds(tool, {}, dict(result), enforcement)
+    # Checker instruction (the exact fingerprint lesson, applied here): a
+    # SEPARATE hand-maintained fixture dict is the next bug. This used to
+    # hard-list 4 tools / 3 verbs by hand, silently drifting behind
+    # _LIST_BEARING_TOOLS/_LIST_BEARING_VERBS the moment god_nodes/
+    # communities/rationale were added (this test never grew fixtures for
+    # any of them, even though it claims "every tool AND verb"). Deriving
+    # the fixtures FROM the same mechanically-tracked dicts + the shared
+    # `_anchor_list_item` generator closes the CLASS: a future verb/tool
+    # addition is covered here automatically, the moment it's added to
+    # _LIST_BEARING_TOOLS/_LIST_BEARING_VERBS (which
+    # test_every_list_returning_tool_registers_a_bounded_field already
+    # requires be kept current).
+    for tool, fields in _LIST_BEARING_TOOLS.items():
+        result = {field: [_anchor_list_item(field, i) for i in range(6)] for field in fields}
+        out = apply_central_bounds(tool, {}, result, enforcement)
         assert out["truncated"] is True, f"{tool} did not truncate an over-cap fixture"
         assert out["more_available"] is True
         assert out["retry_hint"] == "narrower_scope"
         for field in TOOL_BOUNDED_FIELDS[tool]:
             assert len(out[field]) <= enforcement.config.max_bound_field_elements
 
-    verb_fixtures = {
-        "callers_of": {"edges": [{"path": "a", "line": i} for i in range(6)]},
-        "definitions_of": {
-            "definitions": [{"name": "foo"}] * 6,
-            "references": [{"name": "foo"}] * 6,
-        },
-        "subclasses_of": {"edges": [{"name": f"Sub{i}"} for i in range(6)]},
-    }
-    for verb, result in verb_fixtures.items():
-        out = apply_central_bounds(
-            "graph_query", {"query": f"{verb}:Foo"}, dict(result), enforcement
-        )
+    for verb, fields in _LIST_BEARING_VERBS.items():
+        result = {field: [_anchor_list_item(field, i) for i in range(6)] for field in fields}
+        out = apply_central_bounds("graph_query", {"query": f"{verb}:Foo"}, result, enforcement)
         assert out["truncated"] is True, f"graph_query:{verb} did not truncate an over-cap fixture"
         for field in GRAPH_QUERY_VERB_BOUNDED_FIELDS[verb]:
             assert len(out[field]) <= enforcement.config.max_bound_field_elements
