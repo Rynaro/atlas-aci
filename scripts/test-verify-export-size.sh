@@ -15,13 +15,22 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 VERIFY="$SCRIPT_DIR/verify-export-size.py"
+RESOLVE="$SCRIPT_DIR/resolve-probe-artifact.sh"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-REAL_JSON="$REPO_ROOT/.spectra/changes/aci-v2-harden-and-augment/export-size-spree.json"
 
-if [ ! -f "$REAL_JSON" ]; then
-    echo "SKIP: $REAL_JSON not present (A5's export-size measurement not yet recorded)."
+# Resolved by search under .spectra/changes/ (active or archived), not a
+# path hardcoded to this change's PROPOSED-time location -- the ESL
+# `archive` verb MOVES the change folder once verified, and a hardcoded
+# path here would silently SKIP this self-test forever after that move
+# (exactly the gap discovered when aci-v2-harden-and-augment was
+# archived for real; see scripts/resolve-probe-artifact.sh).
+REAL_JSON="$(cd "$REPO_ROOT" && "$RESOLVE" export-size-spree.json 2>/dev/null)" || REAL_JSON=""
+
+if [ -z "$REAL_JSON" ] || [ ! -f "$REPO_ROOT/$REAL_JSON" ]; then
+    echo "SKIP: no export-size-spree.json found under $REPO_ROOT/.spectra/changes/ (A5's export-size measurement not yet recorded)."
     exit 0
 fi
+REAL_JSON="$REPO_ROOT/$REAL_JSON"
 
 TMP_DIR="$(mktemp -d)"
 trap 'rm -rf "$TMP_DIR"' EXIT

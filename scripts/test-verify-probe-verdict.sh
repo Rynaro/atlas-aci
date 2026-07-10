@@ -47,14 +47,23 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 VERIFY="$SCRIPT_DIR/verify-probe-verdict.py"
 RESOLVE="$SCRIPT_DIR/resolve-probe-artifact.sh"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-SIDECAR_DIR="$REPO_ROOT/.spectra/changes/aci-v2-harden-and-augment"
-REAL_JSON="$SIDECAR_DIR/probe-lpa-vs-louvain.json"
-REAL_BUNDLE="$SIDECAR_DIR/probe-graphs.json.gz"
 
-if [ ! -f "$REAL_JSON" ]; then
-    echo "SKIP: $REAL_JSON not present (A3 not yet built in this tree)."
+# Resolved by search under .spectra/changes/ (active or archived), never
+# a path hardcoded to this change's PROPOSED-time location. A hardcoded
+# SIDECAR_DIR here silently SKIPPED this entire self-test -- all 23
+# forgery/fingerprint scenarios AND the four path-resolution scenarios
+# below -- the moment aci-v2-harden-and-augment was archived for real
+# (a SKIP is exit 0; CI would have stayed green while testing nothing).
+# See scripts/resolve-probe-artifact.sh for the search/ambiguity rules.
+REAL_JSON_REL="$(cd "$REPO_ROOT" && "$RESOLVE" probe-lpa-vs-louvain.json 2>/dev/null)" || REAL_JSON_REL=""
+
+if [ -z "$REAL_JSON_REL" ] || [ ! -f "$REPO_ROOT/$REAL_JSON_REL" ]; then
+    echo "SKIP: no probe-lpa-vs-louvain.json found under $REPO_ROOT/.spectra/changes/ (A3 not yet built in this tree)."
     exit 0
 fi
+REAL_JSON="$REPO_ROOT/$REAL_JSON_REL"
+SIDECAR_DIR="$(dirname "$REAL_JSON")"
+REAL_BUNDLE="$SIDECAR_DIR/probe-graphs.json.gz"
 
 TMP_DIR="$(mktemp -d)"
 trap 'rm -rf "$TMP_DIR"' EXIT
