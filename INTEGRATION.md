@@ -82,10 +82,11 @@ What this produces, rooted at `<repo>/.atlas/`:
 
 | File | What it holds |
 |------|---------------|
-| `graph.db` | SQLite: symbol definitions + caller/callee adjacency |
-| `symbols.db` | SQLite: symbol → definition site lookup |
+| `graph.<epoch>.db` | SQLite: symbols, refs (caller/callee adjacency), and a `manifest` table (schema epoch) and `files` table (per-file incremental-indexing state) — see [`CLAUDE.md`](CLAUDE.md) |
 | `memex/` | Hashed-dir KV store for `memex_read` excerpts (default location) |
-| `manifest.yaml` | Index version, repo SHA, per-language file counts |
+
+There is no separate `symbols.db` or `manifest.yaml` file — everything above
+lives inside the one epoch-namespaced `graph.<epoch>.db` SQLite file.
 
 **Timing.** A ~100k-file Rails monorepo on a modern laptop indexes in
 roughly 30–120 seconds. Python/JS/TS-only repos are faster. Tree-sitter
@@ -109,14 +110,18 @@ Pass a comma-separated list to index only a subset.
 
 | Language | Notes |
 |----------|-------|
-| `ruby` | Uses `tree-sitter-ruby` out of the box. Specialist Ruby AST work (Rails routes, etc.) goes through a separate `prism` adapter — see [`SETUP.md §0`](SETUP.md#0-stack-at-a-glance). |
+| `ruby` | Uses `tree-sitter-ruby` out of the box. There is no separate Ruby specialist mode shipped today — this is the only Ruby support. |
 | `python` | Supported via `tree-sitter-language-pack`. |
-| `javascript` / `typescript` | Supported via `tree-sitter-language-pack`. JSX/TSX is handled by the TS grammar. |
+| `javascript` | Supported via `tree-sitter-language-pack`, including `.jsx`. |
+| `typescript` | Supported via `tree-sitter-language-pack` for `.ts`. **`.tsx` is recognized but not yet queried** — files are skipped with a visible `unsupported extension skipped` report, not silently indexed to nothing. |
 | `scss` | Mixins, functions, placeholders, `$variables`, and class/id selectors become defs; `@include` sites become refs. The SCSS grammar also parses plain `.css`. |
 | `html` | Elements carrying an `id` are indexed as anchor / JS-hook targets. |
 | `yaml` | Every mapping key (incl. nested) is a lookup target — covers `_config.yml`, `_data/*`, and front matter files. |
 | `markdown` | ATX and setext headings index the document outline (`.md` / `.markdown`). |
 | `bash` | Function definitions are defs; command invocations are refs, so `callers_of:<fn>` resolves call sites (`.sh` / `.bash`). |
+
+`.go`, `.rs`, and `.java` are likewise recognized extensions with no query
+support yet — same visible skip behavior, not a coverage commitment.
 
 > The `scss`/`html`/`yaml`/`markdown`/`bash` grammars make ATLAS useful on
 > **static-site repos** (Jekyll, Hugo, plain HTML/SCSS) where the symbols worth
@@ -198,14 +203,18 @@ developer.
 
 ### B — Incremental re-index on `post-commit`
 
-The `--since <git-ref>` flag restricts indexing to files changed since
-a ref. A lightweight `post-commit` hook:
+The `--since <marker>` flag enables incremental mode: it does **not** diff
+the git ref you pass — the marker's value is never read — it keys purely on
+each file's on-disk `(mtime_ns, size)` versus the last indexed pass, skipping
+anything unchanged. Any truthy value works as the marker; `HEAD~1` below is
+just a readable convention, not something the indexer resolves. A
+lightweight `post-commit` hook:
 
 ```bash
 # .git/hooks/post-commit
 #!/usr/bin/env bash
 uv run atlas-aci index --repo "$(git rev-parse --show-toplevel)" \
-    --since HEAD~1 >/dev/null 2>&1 &
+    --since post-commit >/dev/null 2>&1 &
 ```
 
 Fire-and-forget, runs in the background, typically finishes in well

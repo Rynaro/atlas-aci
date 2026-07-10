@@ -1,0 +1,189 @@
+# atlas-aci — the harden-gate (DIR-3 / AC-NEG-6)
+#
+# This is the IN-TREE mechanism for "no augmentation (A1-A5) code merges
+# until the P0 hardening gate is green" (spec.md "GATED harden-first").
+# Branch protection / required-status-checks are documented defence-in-depth
+# ONLY — repo settings are not a reviewable artefact and this suite cannot
+# assert them (checker-critique.md F3). This workflow is: it runs on every
+# PR, it is reviewable in the diff, and it fails the check run under the
+# conditions below regardless of what branch-protection is or isn't
+# configured. Making it a REQUIRED status check (so a red run blocks the
+# merge button) is the one piece of config the repo operator must still do;
+# that is the "defence-in-depth" half, not the mechanism itself.
+#
+# What this job checks, in order:
+#   1. Absolute thesis negatives (AC-NEG-1, AC-NEG-2, AC-NEG-4) — always,
+#      regardless of what changed. Cheap, unconditional, no dependency on
+#      diff detection.
+#   2. IF this PR's diff touches an augmentation (A1-A5) marker path —
+#      either a file that can ONLY exist because A1-A5 landed, or an
+#      augmentation-specific code marker added to one of the shared hot
+#      files (codegraph.py / graph_query.py / search_symbol.py / server.py)
+#      — THEN the P0 gate-criteria tests (AC-H-4/7/8/15, AC-H-9/12) must
+#      exist and pass. Missing or failing any of them fails this job
+#      (AC-NEG-6).
+#   3. IF an A3 (communities) path changed, the D3 probe verdict artefact
+#      must be present (AC-A3-1); IF A3 code exists in the tree at all, the
+#      probe verdict must record PASS, never a cut-to-v2.1 or absent verdict
+#      (AC-A3-4/AC-A3-5) — the mechanical cut-branch never adds networkx.
+#
+# KNOWN LIMITATION, VERIFIED (F-3, checker second pass — not silently
+# swept): step 2's content-marker heuristic is evadable by renaming.
+# Rename the edges table, import the confidence enum from a differently
+# named module, call the test file something other than test_edges.py,
+# and this step reports augmented=false — a grep for literal strings can
+# always be dodged by choosing different identifiers. Do not try to
+# out-guess this by adding more markers ("marker whack-a-mole"); it is not
+# a fixable arms race.
+#
+# What actually closes the gap: `ci.yml`'s `test` job has NO `if:` gating —
+# it runs the full pytest suite, unconditionally, on every PR, independent
+# of anything this workflow decides. Two tests specifically make a
+# newly-added, unbounded capability fail CI regardless of naming:
+#   - test_bounded_field_registry_matches_tool_manifest discovers every
+#     tool from build_tool_manifest() itself (not a hardcoded name list) —
+#     a new top-level tool with no _bounded_field registration fails.
+#   - test_bounded_field_registry_covers_every_known_query_verb discovers
+#     every graph_query verb from codegraph.KNOWN_QUERY_VERBS itself (the
+#     same constant CodeGraph.query() dispatches against) — a new verb
+#     *must* be added there to be reachable at all, and doing so is what
+#     the completeness check keys on, not a string pattern in the diff.
+# So for "does a regression to an existing bound, or a brand-new
+# unbounded tool/verb, get caught" — yes, unconditionally, via ci.yml,
+# regardless of how this step classifies the diff. Step 2's marker
+# heuristic is therefore best-effort/decorative for that specific concern;
+# it is NOT redundant for step 3 below, which ci.yml has no way to enforce
+# at all (it is about *sequencing* — probe-artifact-before-code — not
+# boundedness, and no pytest test can know a probe was supposed to run
+# first). Leaving the markers as they are; the fix that matters lives in
+# the pytest suite, not in a bash grep pattern.
+#
+# SECOND KNOWN LIMITATION, FIXED (checker third pass): the classification
+# logic used to be written inline in this workflow, which made it
+# untestable in isolation. It now lives in scripts/harden-gate-classify.sh
+# — this workflow CALLS that script rather than reimplementing its logic,
+# and scripts/test-harden-gate-classify.sh exercises the exact same file,
+# so a self-test proves something about what CI actually runs instead of
+# about a copy that could silently drift from it. That move is also what
+# fixed a real false positive: a naive grep over added diff lines matched
+# PROSE ABOUT the markers (including this file's own limitation comments,
+# and inline SQL comments on unrelated DDL columns) as readily as real
+# code — see the script's header for the full account and the fix
+# (comment-stripping, not weaker markers).
+
+name: Harden Gate
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  harden-gate:
+    name: harden-gate (DIR-3)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout (full history for diffing)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Absolute thesis negatives (AC-NEG-1, AC-NEG-2, AC-NEG-4)
+        run: |
+          set -euo pipefail
+          fail=0
+
+          if grep -rqi "networkx" mcp-server/pyproject.toml mcp-server/uv.lock 2>/dev/null; then
+            echo "FAIL (AC-NEG-2): networkx found in the dependency tree — absolute and unconditional (DIR-1); a below-threshold D3 probe cuts A3, it never adds networkx."
+            fail=1
+          fi
+
+          if grep -rni "alter table" mcp-server/src 2>/dev/null; then
+            echo "FAIL (AC-NEG-4): an ALTER TABLE migration ladder was found — the DB is pure derived data (D1), no migration ladder is ever permitted."
+            fail=1
+          fi
+
+          if grep -rnE "import anthropic|import openai|import boto3|from anthropic|from openai" mcp-server/src 2>/dev/null; then
+            echo "FAIL (AC-NEG-1): an LLM client is importable from the atlas_aci server package."
+            fail=1
+          fi
+
+          if [ "$fail" -ne 0 ]; then
+            exit 1
+          fi
+          echo "Absolute negatives: clean."
+
+      - name: Classify this PR's diff (augmentation + A3)
+        id: classify
+        run: |
+          set -euo pipefail
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+          scripts/harden-gate-classify.sh "$BASE_SHA" "$HEAD_SHA" | tee /tmp/classification.txt
+          # shellcheck disable=SC1091
+          . /tmp/classification.txt
+          echo "augmented=$augmented" >> "$GITHUB_OUTPUT"
+          echo "a3_touched=$a3_touched" >> "$GITHUB_OUTPUT"
+
+      - name: Install ripgrep
+        if: steps.classify.outputs.augmented == 'true'
+        run: sudo apt-get update && sudo apt-get install -y ripgrep
+
+      - name: Install uv
+        if: steps.classify.outputs.augmented == 'true'
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "latest"
+
+      - name: Set up Python
+        if: steps.classify.outputs.augmented == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: "mcp-server/pyproject.toml"
+
+      - name: Verify the P0 gate criteria are green (AC-NEG-6)
+        if: steps.classify.outputs.augmented == 'true'
+        working-directory: mcp-server
+        run: |
+          set -euo pipefail
+          echo "Augmentation (A1-A5) change detected in this PR's diff — verifying the P0 harden-gate criteria before allowing it (AC-NEG-6)."
+          uv sync --frozen --extra dev
+          # The exact P0 gate_criteria tests (AC-H-4, AC-H-7, AC-H-8, AC-H-15,
+          # AC-H-9, AC-H-12). Missing (collection error) or failing any of
+          # these fails this job — that's what makes a no-op cap or a
+          # never-bumped epoch structurally block augmentation.
+          uv run --frozen pytest -v \
+            "tests/test_server.py::test_every_tool_and_verb_truncates_and_flags_over_cap" \
+            "tests/test_server.py::test_search_symbol_is_bounded" \
+            "tests/test_server.py::test_graph_query_is_bounded" \
+            "tests/test_server.py::test_every_list_returning_tool_registers_a_bounded_field" \
+            "tests/test_schema_epoch.py::test_db_path_is_epoch_namespaced" \
+            "tests/test_schema_epoch.py::test_expected_ddl_hash_matches_current_ddl"
+
+      - name: No-augmentation short-circuit
+        if: steps.classify.outputs.augmented != 'true'
+        run: echo "No augmentation (A1-A5) path changed in this diff — harden-gate is a no-op for this PR."
+
+      - name: A3 probe precondition + mechanical cut-branch (AC-A3-1, AC-A3-4, AC-A3-5)
+        run: |
+          set -euo pipefail
+
+          a3_touched="${{ steps.classify.outputs.a3_touched }}"
+          PROBE_ARTIFACT=".spectra/changes/aci-v2-harden-and-augment/probe-lpa-vs-louvain.md"
+
+          if [ "$a3_touched" = "true" ] && [ ! -f "$PROBE_ARTIFACT" ]; then
+            echo "FAIL (AC-A3-1): an A3 (communities) path changed but $PROBE_ARTIFACT is not present. The LPA-vs-Louvain modularity probe and its verdict must be recorded before any A3 source path is touched."
+            exit 1
+          fi
+
+          if [ -f mcp-server/tests/test_communities.py ]; then
+            if [ ! -f "$PROBE_ARTIFACT" ] || ! grep -qiE "verdict.*:.*pass" "$PROBE_ARTIFACT"; then
+              echo "FAIL (AC-A3-4/AC-A3-5): A3 community code exists in the tree but the probe verdict does not record PASS. Per DIR-1, a below-threshold probe cuts A3 to v2.1 (ship A2 god-nodes only) — it never adopts networkx/Louvain."
+              exit 1
+            fi
+          fi
+
+          echo "A3 probe precondition: clean (no A3 code present, or probe verdict recorded PASS)."

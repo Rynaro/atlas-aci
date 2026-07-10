@@ -1,0 +1,144 @@
+# Machine-readable counterpart of spec.md (ESL full-tier C3 requires both).
+# Where this file and spec.md state the same fact they agree exactly; this file
+# carries only the structured facts a machine consumes, never restated prose.
+schema: "ramza/spec.v1"
+change_id: "aci-v2-harden-and-augment"
+target: "atlas-aci v2.0.0"
+base:
+  repo: "<repo>"
+  head: "f56a78e"
+  tag: "v0.4.0"
+esl:
+  tier: "full"
+  maker: "vivi"
+  checker: "vigil"
+  checker_verdict: "GO-WITH-CONDITIONS"
+acceptance_criteria:
+  file: "acceptance-criteria.md"
+  sha256: "5c3adddbd075a7c12bdd965ee760484a04e5a9a6a4ce05302cbd7bc4147fc7e7"
+  frozen_at: "2026-07-09T22:39:06Z"
+  count_total: 71
+  count_by_track: { H: 18, DOC: 10, A1: 11, A2: 3, A3: 5, A4: 6, A5: 8, REL: 3, NEG: 7 }
+
+ground_truth:
+  G-A: "the .atlas graph DB is pure derived data (gitignored, reconstructable); a cache, not a record"
+  G-B: "no materialized edge set exists yet (refs.callee_name bare string, enclosing NULL); v2 creates the first"
+
+harden_gate:
+  mechanism: ".github/workflows/harden-gate.yml"          # in-tree (DIR-3); branch protection is defence-in-depth only
+  gate_criteria: ["AC-H-1", "AC-H-4", "AC-H-7", "AC-H-8", "AC-H-9", "AC-H-12", "AC-H-15", "AC-H-18", "AC-NEG-6"]
+  three_greens:
+    - "CI runs tests on every PR (AC-H-1)"
+    - "central bound verified: over-cap-per-tool/verb + registry-completeness + truncate-iff-content-withheld invariant, no no-op cap passes (AC-H-4, AC-H-7, AC-H-8, AC-H-15, AC-H-18)"
+    - "schema-epoch substrate landed + DDL-hash pairing (AC-H-9, AC-H-12)"
+
+phase_spine:
+  - phase: "P0"
+    name: "Hardening gate (GATED)"
+    workstreams: ["H0 CI", "H0b harden-gate.yml", "H1 central bounds chokepoint", "H2 route + over-cap/registry tests", "H3 epoch substrate + index-only sweep + serve fail-fast + atomic-rename + rationale-store DDL", "H4 dead-language honesty", "DOC repo-wide doc-honesty + LICENSE"]
+    blocking_preconditions: []
+    exit_criterion: "all three greens (see harden_gate.three_greens); harden-gate.yml blocks augmentation merges in-tree"
+  - phase: "P1"
+    name: "Edges + god nodes"
+    workstreams: ["A1 edge table + confidence enum + candidates + subclasses_of + refs.enclosing DROP + per-language qualification", "A2 degree-centrality god nodes"]
+    blocking_preconditions: ["P0 gate green (all three)", "H3 epoch substrate landed", "A2 after A1 (degree = edge count; G-B)"]
+    exit_criterion: "edge/confidence tests green (AC-A1-1..11); god-node determinism green (AC-A2-1)"
+  - phase: "P2"
+    name: "Communities + rationale"
+    workstreams: ["A3 hand-rolled LPA communities total-ordered OR cut to v2.1", "A4 rationale Ruby->Python->JS/TS"]
+    blocking_preconditions: ["A3 after A1 + A2 + D3 probe (mechanical: harden-gate.yml fails if A3 path changes without probe artefact, AC-A3-1)", "DIR-1 cut-branch: LPA_modularity < Louvain_modularity - 0.05 => A3 cut to v2.1, ship A2 only, never networkx (AC-A3-4, AC-A3-5)", "A4 after P0 gate + H3 only (rationale store in H3, edge-resolution-independent, F9)"]
+    exit_criterion: "LPA determinism + total-order green (AC-A3-2) OR mechanical cut-branch (AC-A3-4, AC-A3-5); rationale tests green (AC-A4-1..6)"
+  - phase: "P3"
+    name: "Export + release"
+    workstreams: ["A5 deterministic sorted JSONL export + idempotent import, no graph/union merge driver", "release-prep: version bump 2.0.0, uv.lock regen, CHANGELOG, migration doc, canary-honesty"]
+    blocking_preconditions: ["A5 after A1, A3 (or its cut), A4 frozen (D6 forces total orders)", "RELEASE BLOCKER: D6 cross-platform byte-determinism (AC-REL-1); same-machine record-order (AC-A5-7, AC-A5-8) catch it first"]
+    exit_criterion: "cross-platform byte-determinism green on CI OS matrix (AC-REL-1); round-trip idempotent import green (AC-A5-4)"
+
+critical_path: ["H0", "H1", "H2", "GATE", "H3", "A1", "A3", "A5"]
+
+decisions:
+  D1:
+    summary: "schema-epoch-namespaced DB path .atlas/graph.<int-epoch>.db; no ALTER ladder; EXPECTED_DDL_HASH paired with epoch; sweep/rebuild index-path only; serve fails fast read-only; atomic-rename single-writer"
+    criteria: ["AC-H-9", "AC-H-10", "AC-H-11", "AC-H-12", "AC-H-16", "AC-H-17", "AC-A1-9"]
+    reversal_condition: "if non-derived data is stored in the DB, the cache premise breaks and a real ALTER ladder is needed; also revisit if full-reindex time on the largest supported repo exceeds an operationally tolerable ceiling"
+  D2:
+    summary: "central bounds chokepoint in _call_tool (element-cap + byte-ceiling via _bounded_field registry); truncate-and-flag; hard-fail only at the absolute byte-ceiling"
+    criteria: ["AC-H-3", "AC-H-4", "AC-H-5", "AC-H-6", "AC-H-7", "AC-H-8", "AC-H-15", "AC-H-18"]
+    reversal_condition: "if a consumer corrupts on flagged partial results, switch that path to hard-fail; if the central gate cannot introspect a response shape, mandate per-tool caps plus a test asserting every registered tool calls a cap helper"
+  D3:
+    summary: "degree-centrality god nodes (A2, zero-dep) ship first; hand-rolled deterministic LPA communities (A3, zero-dep, total-ordered); both over the confident subgraph (EXTRACTED union INFERRED, AMBIGUOUS excluded - D4a); networkx rejected absolutely (probe-time-only in an ephemeral env)"
+    criteria: ["AC-A2-1", "AC-A2-2", "AC-A2-3", "AC-A3-1", "AC-A3-2", "AC-A3-3", "AC-A3-4", "AC-A3-5", "AC-NEG-2", "AC-NEG-7"]
+    probe_required: true
+    threshold: "D3a pre-registered per-repo rule (frozen before the probe runs, anti-circular): pass iff Louvain_Q_median>=Q_struct AND LPA_Q>=Q_struct AND LPA_Q>=R*Louvain_Q_median, with Q_struct=0.30, R=0.85, Louvain baseline=median of K=10 networkx louvain_communities at seeds 0..9 gamma=1.0, LPA=shipped single deterministic run, both over the confident-subgraph undirected unweighted projection; evaluated independently on solidusio/solidus@4026945d614e81383c007ed1ab1278a0195ce5d9 AND spree/spree@6699cde44303ea85ef6e56c5e87c44a738ab73fc, never averaged"
+    reversal_condition: "DIR-1 (amended): if EITHER pinned repo fails ANY clause, A3 communities are CUT from v2.0.0 and deferred to v2.1 (ship A2 only); networkx/Louvain is NEVER adopted (the original networkx flip is deleted); a source-verified-structured repo failing the Louvain precondition is a construction FAIL that cuts A3, not a repo swap; R moves within [0.80,0.90] only on an explicit maintainer brand-vs-quality weight"
+  D4:
+    summary: "deterministic 3-value confidence enum {EXTRACTED, INFERRED, AMBIGUOUS} partitioned on candidate count; zero candidates = no edge; AMBIGUOUS carries ordered candidates[]; no LLM producer; per-language type-qualified rule pinned; D4a: AMBIGUOUS is excluded from the A2/A3/probe analysis graph but still stored and returned by graph_query (AC-A2-3 visibility, AC-NEG-7, AC-A1-10 divergence) - an analysis-time filter, not a drop"
+    criteria: ["AC-A1-1", "AC-A1-2", "AC-A1-3", "AC-A1-4", "AC-A1-5", "AC-A1-6", "AC-A1-7", "AC-A1-8", "AC-A1-10", "AC-A1-11", "AC-NEG-3"]
+    reversal_condition: "if AMBIGUOUS edges are ignored into noise, revert toward the silent guard or an opt-in tier; if over-trusted despite the tag, require an explicit opt-in flag to receive AMBIGUOUS edges"
+  D5:
+    summary: "rationale nodes for CODE languages only, Ruby->Python->JS/TS (store DDL in H3 substrate, separate from edge table); silent-dead-language honesty fix (LANG_BY_EXT<->QUERIES + visible skip report)"
+    criteria: ["AC-A4-1", "AC-A4-2", "AC-A4-3", "AC-A4-4", "AC-A4-5", "AC-A4-6", "AC-H-13", "AC-H-14"]
+    reversal_condition: "if the userbase shifts polyglot/Go/Rust-heavy, upgrade the honesty fix to real query coverage and extend rationale to those languages; if ADR/RFC-in-Ruby/Python proves high-value, promote it to must-have"
+  D6:
+    summary: "normalized sorted canonical JSONL export (relative-path keys, header record, byte-deterministic by construction); no graph/union merge driver, trivial regenerate-on-conflict permitted; record-level total order + sorted file iteration"
+    criteria: ["AC-A5-1", "AC-A5-2", "AC-A5-3", "AC-A5-4", "AC-A5-5", "AC-A5-6", "AC-A5-7", "AC-A5-8", "AC-REL-1", "AC-REL-2"]
+    reversal_condition: "if regeneration is too slow as a conflict resolver, add a record-level (not union) driver; if JSONL exceeds 100 MB (104857600 bytes), add compression/sharding; cross-platform byte-determinism unmet is a RELEASE BLOCKER to fix, not a reversal"
+
+doc_honesty:
+  build: ["item1 bounds via H2 (AC-DOC-1, AC-DOC-10)", "item5 LICENSE (AC-DOC-5)", "item6 refs.enclosing DROP (AC-A1-9, AC-A1-10)"]
+  correct_doc: ["item2 --since repo-wide (AC-DOC-2)", "item3 canary repo-wide (AC-DOC-3)", "item4 prism (AC-DOC-4)", "item7 kind enum (AC-DOC-6)", "item8 CLAUDE.md symbols.db (AC-DOC-7)", "README layout (AC-DOC-8)", "memex manifest string (AC-DOC-9)"]
+  release_integrity: ["uv.lock==pyproject version drift, live v0.4.0 defect (AC-REL-3)"]
+
+release_blockers: ["AC-REL-1 cross-platform byte-determinism", "AC-REL-3 uv.lock version equals pyproject version"]
+
+declared_scope:
+  - ".github/workflows/ci.yml"
+  - ".github/workflows/harden-gate.yml"
+  - "mcp-server/src/atlas_aci/codegraph.py"
+  - "mcp-server/src/atlas_aci/server.py"
+  - "mcp-server/src/atlas_aci/enforcement.py"
+  - "mcp-server/src/atlas_aci/config.py"
+  - "mcp-server/src/atlas_aci/memex.py"
+  - "mcp-server/src/atlas_aci/__main__.py"
+  - "mcp-server/src/atlas_aci/__init__.py"
+  - "mcp-server/src/atlas_aci/export.py"
+  - "mcp-server/src/atlas_aci/tools/search_symbol.py"
+  - "mcp-server/src/atlas_aci/tools/graph_query.py"
+  - "mcp-server/src/atlas_aci/tools/view_file.py"
+  - "mcp-server/tests/*.py"
+  - "mcp-server/pyproject.toml"
+  - "mcp-server/uv.lock"
+  - "mcp-server/Dockerfile"
+  - "mcp-server/README.md"
+  - "README.md"
+  - "INTEGRATION.md"
+  - "SETUP.md"
+  - "CLAUDE.md"
+  - "CHANGELOG.md"
+  - "scripts/run-canaries.py"
+  - "scripts/harden-gate-classify.sh"
+  - "scripts/test-harden-gate-classify.sh"
+  - "LICENSE"
+  - ".gitignore"
+
+verify_items:
+  - id: "V1"
+    item: "reference Rails-scale repo(s) for the D3 probe + AC-REL-2 export-size (F5) - RESOLVED to two SHA-pinned public BSD-3 repos; D3a pass rule frozen before the probe runs"
+    resolver: "ATLAS (v1-reference-repo.md): solidusio/solidus@4026945d614e81383c007ed1ab1278a0195ce5d9 + spree/spree@6699cde44303ea85ef6e56c5e87c44a738ab73fc; probe run pending (executor: ATLAS)"
+    status: "RESOLVED (pending probe run)"
+  - id: "V2"
+    item: "independent plan critic (full-tier maker != checker)"
+    resolver: "vigil (checker-critique.md); recorded via ramza-gate critic --author ramza --checker vigil"
+    status: "RESOLVED"
+  - id: "V3"
+    item: "cross-platform byte-determinism macOS vs Linux (unverifiable single-OS)"
+    resolver: "vivi + CI OS matrix"
+    status: "open"
+  - id: "V4"
+    item: "Rails-scale export size vs 100 MB (104857600 bytes) ceiling"
+    resolver: "vivi"
+    status: "open"
+  - id: "V5"
+    item: "thread the amended criteria SHA-256 into ESL change.json acceptance_checks"
+    resolver: "orchestrator"
+    status: "open"

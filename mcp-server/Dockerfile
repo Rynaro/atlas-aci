@@ -61,7 +61,9 @@ LABEL org.opencontainers.image.title="atlas-aci" \
 
 # System deps:
 #   ripgrep — mandatory; search_text wraps it
-#   git     — used by `atlas-aci index --since <ref>` for incremental runs
+#   git     — general repo tooling for operators/test_dry_run; NOT used by
+#             `atlas-aci index --since <marker>`, which never shells out to
+#             git — it keys purely on each file's on-disk (mtime_ns, size)
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     apt-get update && apt-get install -y --no-install-recommends \

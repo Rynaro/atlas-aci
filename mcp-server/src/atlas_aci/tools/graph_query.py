@@ -5,7 +5,7 @@ from __future__ import annotations
 import time
 from typing import Any
 
-from atlas_aci.codegraph import CodeGraph
+from atlas_aci.codegraph import SCHEMA_EPOCH, CodeGraph
 from atlas_aci.config import Config
 from atlas_aci.enforcement import Enforcement, ToolError
 
@@ -19,10 +19,13 @@ async def graph_query(
     start_t = time.monotonic()
     query = args["query"]
 
-    if not (config.repo / ".atlas" / "graph.db").exists():
+    # H3: see search_symbol.py — ask the CodeGraph instance for the
+    # epoch-namespaced path rather than hardcoding ".atlas/graph.db".
+    if not code_graph.epoch_ok():
         raise ToolError(
             "INDEX_UNAVAILABLE",
-            "Code graph not built. Run: atlas-aci index --repo <repo>.",
+            f"Code graph not built for schema epoch {SCHEMA_EPOCH}. "
+            f"Run: atlas-aci index --repo <repo>.",
             "different_tool",
         )
 

@@ -310,3 +310,47 @@ def test_full_build_populates_files_manifest(tmp_path: Path) -> None:
 
     count = graph.db.execute("SELECT COUNT(*) FROM files").fetchone()[0]
     assert count > 0
+
+
+# ---- H4: dead-language honesty (D5-Q2) ----
+
+
+def test_lang_by_ext_consistent_with_queries() -> None:
+    """Every LANG_BY_EXT value must be either a real QUERIES entry or an
+    explicit UNSUPPORTED_LANGS acknowledgment — never silently neither
+    (the bug this guards: .tsx/.go/.rs/.java recognized but query-less)."""
+    from atlas_aci.codegraph import LANG_BY_EXT, QUERIES, UNSUPPORTED_LANGS
+
+    assert set(LANG_BY_EXT.values()) <= set(QUERIES) | UNSUPPORTED_LANGS
+    # And the acknowledgment set itself must be real: every unsupported lang
+    # must actually be unreachable in QUERIES (else it's a stale entry).
+    assert UNSUPPORTED_LANGS.isdisjoint(QUERIES)
+    # Pin the specific four dead extensions this fix targets so a future
+    # edit that silently drops the acknowledgment (rather than adding a real
+    # QUERIES entry) is caught.
+    for ext, lang in (
+        (".tsx", "tsx"),
+        (".go", "go"),
+        (".rs", "rust"),
+        (".java", "java"),
+    ):
+        assert LANG_BY_EXT[ext] == lang
+        assert lang in UNSUPPORTED_LANGS
+        assert lang not in QUERIES
+
+
+def test_unsupported_extension_skip_is_reported(tmp_path: Path) -> None:
+    graph = _build(
+        tmp_path,
+        {
+            "app/a.rb": "class A\nend\n",
+            "main.go": "package main\n\nfunc main() {}\n",
+            "lib.rs": "fn main() {}\n",
+            "App.java": "class App {}\n",
+        },
+    )
+    stats = graph.build()  # rebuild so the returned stats reflect this tree
+    assert stats["unsupported_skipped"] == {"go": 1, "rust": 1, "java": 1}
+    # And it must not have silently produced phantom symbols from files it
+    # never actually parsed.
+    assert _names(graph.search_symbol("main")["definitions"]) == set()

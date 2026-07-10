@@ -12,7 +12,11 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+import structlog
+
 from atlas_aci.enforcement import ToolError
+
+log = structlog.get_logger()
 
 REF_PREFIX = "memex://excerpt/"
 
@@ -29,7 +33,17 @@ class Memex:
 
     def __init__(self, root: Path):
         self.root = root.resolve()
-        self.root.mkdir(parents=True, exist_ok=True)
+        # Best-effort (AC-H-16 finding, P0): a `serve` deployment whose
+        # --memex-root has landed inside a read-only mount (the default is
+        # `<repo>/.atlas/memex` — see config.py) must not crash the entire
+        # server at construction time just because this directory can't be
+        # created. `memex_read` degrades to NOT_FOUND for any ref if the
+        # directory never exists; no ATLAS tool currently emits a memex ref,
+        # so nothing is lost in the read-only-serve path this fixes.
+        try:
+            self.root.mkdir(parents=True, exist_ok=True)
+        except OSError as e:
+            log.warning("memex_root_not_writable", memex_root=str(self.root), error=str(e))
 
     def _path_for(self, h: str) -> Path:
         # Two-level fanout to keep any one directory small

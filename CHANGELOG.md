@@ -7,6 +7,76 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added (v2.0.0 P0 — hardening gate)
+- **CI that actually runs.** `.github/workflows/ci.yml` runs `pytest`,
+  `ruff check`, `ruff format --check`, and `mypy` on every pull request
+  against `main`. Previously `.github/workflows/` held only the tag-triggered
+  `release.yml`; the 35+ existing tests never ran on a PR.
+- **Central bounds chokepoint (`server.py`'s `apply_central_bounds` /
+  `dispatch_tool_call`).** Every tool response — and every `graph_query`
+  verb — now passes through one dispatch-layer gate that element-caps the
+  tool's declared `_bounded_field`(s) and enforces an absolute serialized-byte
+  ceiling, truncating and flagging (`truncated`, `returned_count`,
+  `more_available`, `retry_hint`) rather than hard-failing except at the
+  byte-ceiling backstop. This closes the two tools that previously called
+  `enforcement.record()` with **no** cap at all — `search_symbol`'s
+  `definitions` list and `graph_query`'s `callers_of` edges were genuinely
+  unbounded, contradicting the README's "mechanical bounds" invariant. A
+  registry-completeness test (`test_every_list_returning_tool_registers_a_
+  bounded_field`) fails the build if any current or future list-returning
+  tool/verb has no non-empty `_bounded_field` registered — a no-op
+  registration cannot pass silently.
+- **Schema-epoch DB substrate.** `.atlas/graph.db` is now
+  `.atlas/graph.<SCHEMA_EPOCH>.db`. The DB is pure derived data (fully
+  reconstructable from source), so there is no in-place schema-migration
+  ladder — a schema change bumps `SCHEMA_EPOCH` and its paired
+  `EXPECTED_DDL_HASH` constant instead. Sweeping stale-epoch files and
+  rebuilding on an epoch mismatch happen *only* on the `index` (write) path;
+  `serve` never mutates `.atlas` — on a mismatch it fails fast with a
+  structured error naming the required `index` command, matching the
+  documented `--read-only`/`:ro` deployment. Full rebuilds write to a
+  temporary file and atomically replace the target path under a
+  single-writer lock, so two concurrent `index` runs (e.g. the documented
+  backgrounded post-commit hook) cannot corrupt the DB. A `rationale`
+  relation (schema only; no confidence-enum column) is folded into this
+  epoch ahead of the rationale-extraction work that will populate it.
+- **Dead-language honesty.** `.tsx`/`.go`/`.rs`/`.java` are recognized
+  extensions with no Tree-sitter query support; the indexer now reports
+  "unsupported extension skipped: N files" instead of silently indexing
+  them to nothing. Not a coverage commitment — no new grammars were added.
+- **`search_symbol`'s `kind` enum** is now derived mechanically from the
+  kinds the indexer actually produces across every shipped language
+  (previously stale: missing `mixin`, `selector`, `heading`, etc.).
+- Added a top-level `LICENSE` (Apache-2.0), matching the identifier already
+  declared in `pyproject.toml`.
+
+### Fixed (doc-honesty batch)
+- Corrected every repo-wide claim that `--since` diffs a git ref — it keys
+  only on each file's on-disk `(mtime_ns, size)` and never reads the marker
+  value (`README.md`, `INTEGRATION.md`, `SETUP.md`, `CLAUDE.md`,
+  `mcp-server/Dockerfile`).
+- Removed the vaporware Prism Ruby-specialist-mode references (`SETUP.md`,
+  `INTEGRATION.md`, `codegraph.py`'s module docstring,
+  `mcp-server/pyproject.toml`'s empty `ruby` extra) — no such mode ships.
+  `.tsx` is also no longer claimed to be "handled by the TS grammar".
+  Ruby, like every other language, is covered by `tree-sitter-language-pack`
+  and nothing else.
+- Corrected the canary-suite pass-rate claims (`README.md`, `SETUP.md`) —
+  the host dispatcher is a `NotImplementedError` stub
+  (`scripts/run-canaries.py`, which now carries an explicit deferred note);
+  there was never a real pass rate behind the quoted 50-60%/≥80% numbers.
+- `mcp-server/README.md`'s tools table no longer describes `search_symbol`
+  as "unbounded (cheap)" or `graph_query` as "implementation-defined" now
+  that both route through the central bounds chokepoint.
+- `CLAUDE.md` no longer references a `.atlas/symbols.db` artifact the code
+  never created; `INTEGRATION.md`/`SETUP.md` correct the same fabricated
+  `symbols.db`/`routes.json`/`manifest.yaml` file list.
+- `README.md`'s repository-layout listing now includes
+  `test_codegraph.py`, `test_server.py`, and `test_schema_epoch.py`
+  (previously only `test_enforcement.py` was listed).
+- `server.py`'s `memex_read` tool description no longer claims other tools
+  return `memex://` refs — none currently do.
+
 ## [0.4.0] - 2026-07-07
 
 ### Added
