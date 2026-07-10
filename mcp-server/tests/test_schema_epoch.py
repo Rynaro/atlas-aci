@@ -1,9 +1,22 @@
 """Tests for the H3 schema-epoch DB substrate (D1).
 
-Covers: the epoch-namespaced DB path, index-path-only sweep/rebuild, serve
-fail-fast on epoch mismatch (never writing), the EXPECTED_DDL_HASH pairing,
-the atomic-rename single-writer-lock build path, and the rationale-relation
-DDL folded into this epoch (AC-A4-6).
+Covers: the epoch-namespaced DB path, index-path-only sweep/rebuild, a
+stale/mismatched epoch never triggering a write, the EXPECTED_DDL_HASH
+pairing, the atomic-rename single-writer-lock build path, and the
+rationale-relation DDL folded into this epoch (AC-A4-6).
+
+The twentieth defect (checker/coordinator): "serve fails fast on epoch
+mismatch" is true, but "fails fast" does not mean "at startup" — every
+reader assumes it does. `serve` itself always starts unconditionally; it
+is a TOOL CALL that touches the code graph (`search_symbol`,
+`graph_query`) that checks the epoch and returns the structured
+`INDEX_UNAVAILABLE` error, only at that point. The tests below that
+exercise this walk the actual functions `run_stdio` wires together
+(`build_server_state`, `dispatch_tool_call`) end to end, rather than
+checking `CodeGraph.epoch_ok()` in isolation and trusting a prose
+description of what happens above it — the exact gap that let a false
+"fails fast [at startup]" claim survive in README.md/CHANGELOG.md
+despite every criterion this file enforces passing cleanly.
 """
 
 from __future__ import annotations
@@ -21,6 +34,9 @@ from atlas_aci.codegraph import (
     CodeGraph,
     ddl_hash,
 )
+from atlas_aci.config import Config
+from atlas_aci.enforcement import ToolError
+from atlas_aci.server import build_server_state, dispatch_tool_call
 
 
 def _write_ruby(repo: Path, rel: str, content: str) -> None:
@@ -193,6 +209,106 @@ def test_serve_fails_fast_on_mismatch_without_writing(tmp_path: Path) -> None:
         assert before_names == after_names, "epoch mismatch must never trigger a write"
     finally:
         atlas_dir.chmod(0o755)
+
+
+# ---- The twentieth defect: the migration path, walked end to end ----
+#
+# The two tests below exercise `build_server_state`/`dispatch_tool_call` --
+# the ACTUAL functions `run_stdio` wires together, the same ones every
+# `test_server.py` dispatch test calls -- rather than asserting `epoch_ok()`
+# in isolation and trusting a description of what happens above it. That
+# gap is exactly what let README.md/CHANGELOG.md both claim "serve ...
+# fails fast" in a way every reader took to mean "at startup," when the
+# real sequence is: serve starts unconditionally; a tool call that
+# touches the code graph is where the error actually surfaces.
+
+
+async def test_serve_starts_on_a_stale_v04_tree_tool_call_returns_index_unavailable(
+    tmp_path: Path,
+) -> None:
+    """The exact scenario a real v0.4.0-to-v2.0.0 upgrader hits: a bare
+    `.atlas/graph.db` (the OLD, pre-epoch filename) with no epoch-named
+    file alongside it. The current code never looks at that file at all
+    -- its own epoch-named path simply doesn't exist, indistinguishable
+    from "never indexed." Walks: (1) `build_server_state` -- what
+    `run_stdio` calls before ever entering its stdio loop -- succeeds
+    without raising, sweeping, or rebuilding; (2) a `search_symbol` AND a
+    `graph_query` call each independently return a structured
+    `INDEX_UNAVAILABLE` ToolError naming `atlas-aci index`; (3) zero
+    writes under `.atlas` throughout, and the stale file is untouched."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _write_ruby(repo, "app/a.rb", "class A\nend\n")
+    atlas_dir = repo / ".atlas"
+    atlas_dir.mkdir()
+    stale_content = "a stale pre-epoch v0.4.0 .atlas/graph.db artifact"
+    (atlas_dir / "graph.db").write_text(stale_content)
+
+    config = Config(repo=repo, memex_root=tmp_path / "memex")
+    before_names = sorted(p.name for p in atlas_dir.iterdir())
+
+    # "serve itself always starts" -- must not raise.
+    enforcement, memex, code_graph = build_server_state(config)
+    assert code_graph.epoch_ok() is False
+
+    with pytest.raises(ToolError) as search_symbol_exc:
+        await dispatch_tool_call(
+            "search_symbol", {"name": "A"}, config, enforcement, memex, code_graph
+        )
+    assert search_symbol_exc.value.code == "INDEX_UNAVAILABLE"
+    assert "atlas-aci index" in search_symbol_exc.value.message
+
+    with pytest.raises(ToolError) as graph_query_exc:
+        await dispatch_tool_call(
+            "graph_query",
+            {"query": "definitions_of:A"},
+            config,
+            enforcement,
+            memex,
+            code_graph,
+        )
+    assert graph_query_exc.value.code == "INDEX_UNAVAILABLE"
+    assert "atlas-aci index" in graph_query_exc.value.message
+
+    after_names = sorted(p.name for p in atlas_dir.iterdir())
+    assert before_names == after_names, "a stale/missing-epoch serve path must write nothing"
+    assert (atlas_dir / "graph.db").read_text() == stale_content, "the stale file must be untouched"
+
+
+async def test_serve_starts_on_a_corrupt_manifest_epoch_tool_call_returns_index_unavailable(
+    tmp_path: Path,
+) -> None:
+    """The AC-H-11 corrupt-manifest variant, walked the same end-to-end
+    way: a real `graph.<epoch>.db` file present, but its in-DB manifest
+    row disagrees with `SCHEMA_EPOCH`. Same result: serve starts, a tool
+    call returns `INDEX_UNAVAILABLE`, nothing is written."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _write_ruby(repo, "app/a.rb", "class A\nend\n")
+
+    writer = CodeGraph(repo=repo)
+    writer.build()
+    conn = sqlite3.connect(writer.db_path)
+    conn.execute("UPDATE manifest SET value = '999999' WHERE key = 'epoch'")
+    conn.commit()
+    conn.close()
+
+    config = Config(repo=repo, memex_root=tmp_path / "memex")
+    atlas_dir = repo / ".atlas"
+    before_names = sorted(p.name for p in atlas_dir.iterdir())
+
+    enforcement, memex, code_graph = build_server_state(config)
+    assert code_graph.epoch_ok() is False
+
+    with pytest.raises(ToolError) as exc_info:
+        await dispatch_tool_call(
+            "search_symbol", {"name": "A"}, config, enforcement, memex, code_graph
+        )
+    assert exc_info.value.code == "INDEX_UNAVAILABLE"
+    assert "atlas-aci index" in exc_info.value.message
+
+    after_names = sorted(p.name for p in atlas_dir.iterdir())
+    assert before_names == after_names, "a corrupt-manifest serve path must write nothing"
 
 
 # ---- AC-H-17 ----

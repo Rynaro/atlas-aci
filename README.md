@@ -95,12 +95,16 @@ always a fresh `.atlas/graph.<SCHEMA_EPOCH>.db` (currently epoch `5`),
 never an `ALTER TABLE` ladder against the old one. Run the command above
 once per repo you've indexed before; there is nothing else to do.
 `serve` never requires this step to be run *for* you and never attempts
-it itself — it detects the epoch mismatch on its own and fails fast with
-a structured error naming this exact command, rather than silently
-serving stale or wrong results, and it performs zero writes under a
-`--read-only`/`:ro` mount either way. A downgrade to an older binary
-finds no matching epoch file and rebuilds its own on its next `index`
-run — one rebuild per direction you move, never a ping-pong.
+it itself. **`serve` itself always starts** — it does not check the
+epoch at startup — but every tool call that touches the code graph
+(`search_symbol`, `graph_query`) independently asks whether the
+current-epoch index exists, and a stale or missing one returns a
+structured `INDEX_UNAVAILABLE` `ToolError` naming this exact command,
+rather than silently serving stale or wrong results. `serve` performs
+zero writes under `.atlas` either way — a mismatch never triggers a
+sweep or a rebuild, only that per-call error. A downgrade to an older
+binary finds no matching epoch file and rebuilds its own on its next
+`index` run — one rebuild per direction you move, never a ping-pong.
 
 ---
 

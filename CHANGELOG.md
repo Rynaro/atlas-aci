@@ -25,10 +25,13 @@ git-committable export of the whole graph.
   changed materially (new `edges`/`rationale` tables, dropped
   `refs.enclosing`). There is no in-place migration — the DB is pure,
   disposable derived data, always rebuilt from source. Run
-  `atlas-aci index --repo <path>` once; `serve` detects the epoch mismatch
-  and fails fast with a structured error naming that exact command,
-  rather than serving stale or wrong results. See `README.md`'s
-  "Migration" section.
+  `atlas-aci index --repo <path>` once. `serve` itself always starts
+  even against a stale or missing index — it does not check the epoch
+  at startup — but any tool call that touches the code graph
+  (`search_symbol`, `graph_query`) returns a structured
+  `INDEX_UNAVAILABLE` error naming that exact command, rather than
+  serving stale or wrong results, and `serve` performs zero writes
+  under `.atlas` either way. See `README.md`'s "Migration" section.
 - **`callers_of` (and `subclasses_of`)'s response shape changed.** Each
   edge now carries a `source: {path, line, name, kind}` object (the real
   caller context, resolved from the materialized edge table) instead of
