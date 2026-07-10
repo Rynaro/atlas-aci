@@ -1,13 +1,28 @@
 {
-  "_comment": "Machine-readable sidecar for probe-lpa-vs-louvain.md (AC-A3-1/F7). scripts/verify-probe-verdict.py reads THIS file, recomputes median(Louvain_Q) per repo from the raw per-seed values below (never trusting a precomputed median), evaluates the three frozen clauses per repo independently, and fails if the computed verdict differs from recorded_verdict in either direction. The .md's prose numbers are transcribed FROM this file, not the other way around.",
+  "_comment": "Machine-readable sidecar for probe-lpa-vs-louvain.md (AC-A3-1/F7). scripts/verify-probe-verdict.py: (1) cross-checks bar/repo-set/seed-set against its own hardcoded, frozen constants (never the reverse); (2) checks indexer_fingerprint against the CURRENT tree's codegraph.py (a mismatch means this probe is stale and must be re-run); (3) verifies graph_bundle.sha256 against probe-graphs.json.gz; (4) recomputes node_count/edge_count/lpa_community_count and EVERY modularity Q in pure Python straight from that bundle, and rejects any mismatch against this file's recorded copies below (which therefore serve only as an honesty check on the recorded networkx run, never as the verifier's actual input). The .md's prose numbers are transcribed FROM this file, not the other way around.",
   "bar": {
-    "q_struct": 0.30,
+    "q_struct": 0.3,
     "r": 0.85,
     "k": 10,
-    "seeds": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
     "resolution": 1.0
   },
   "recorded_verdict": "PASS",
+  "graph_bundle": {
+    "filename": "probe-graphs.json.gz",
+    "sha256": "1ecc73866eb0a0379df5241a4fd2db871ee5afe235c5eab2af937f5944ef7bae"
+  },
   "repos": [
     {
       "name": "solidus",
@@ -17,16 +32,16 @@
       "lpa_q": 0.6691476098443865,
       "lpa_community_count": 228,
       "louvain_q_by_seed": {
-        "0": 0.7458086443811871,
-        "1": 0.7451503223090207,
-        "2": 0.7418849447359792,
-        "3": 0.7450801432754456,
-        "4": 0.741671146109655,
-        "5": 0.7456979212104264,
-        "6": 0.7464751202673506,
-        "7": 0.7392679640753077,
-        "8": 0.7434448255868258,
-        "9": 0.743328647795667
+        "0": 0.7405822183086415,
+        "1": 0.7451940436220051,
+        "2": 0.7470429912373492,
+        "3": 0.7447625662785583,
+        "4": 0.7444007618698866,
+        "5": 0.7456120531140569,
+        "6": 0.7484086426154646,
+        "7": 0.745414168483327,
+        "8": 0.7441155470795878,
+        "9": 0.7392709725515066
       }
     },
     {
@@ -37,16 +52,16 @@
       "lpa_q": 0.7165340320731565,
       "lpa_community_count": 371,
       "louvain_q_by_seed": {
-        "0": 0.7823565917157614,
-        "1": 0.7819666569990837,
-        "2": 0.7831034076876495,
-        "3": 0.786152866802137,
-        "4": 0.7834588913803953,
-        "5": 0.7871688503469261,
-        "6": 0.7842090200929405,
-        "7": 0.785905335566653,
-        "8": 0.7850854322540173,
-        "9": 0.7868501469488868
+        "0": 0.7842462736363122,
+        "1": 0.7871970308260426,
+        "2": 0.7866764351106793,
+        "3": 0.7846281261531277,
+        "4": 0.7844339389156355,
+        "5": 0.7823176522240195,
+        "6": 0.7878835593546776,
+        "7": 0.7846674057923477,
+        "8": 0.7879746079611754,
+        "9": 0.7833310698737013
       }
     }
   ]

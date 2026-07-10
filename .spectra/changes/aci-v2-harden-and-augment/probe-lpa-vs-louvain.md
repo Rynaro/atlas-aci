@@ -29,28 +29,81 @@ implementation and the `communities:` verb, keep this artefact as the
 record, ship A2 god-nodes alone) — never a fallback to adopting networkx
 (AC-NEG-2 is absolute, DIR-1).
 
-**Machine-readable sidecar (AC-A3-1/F7).** This markdown file's numbers
-are prose ABOUT the evidence; the numbers themselves live in
-[`probe-lpa-vs-louvain.json`](probe-lpa-vs-louvain.json) — per repo, the
-pinned SHA, node/edge counts, `LPA_Q`, and the raw per-seed Louvain `Q`
-values (no precomputed median in the sidecar, deliberately — the
-recomputation must derive it itself, not trust a cached one).
-`scripts/verify-probe-verdict.py` reads that sidecar, recomputes
-`Louvain_Q_median` per repo from the raw seeds, evaluates all three
-clauses per repo independently, and **fails the gate if its own computed
-verdict differs from this file's `verdict:` front-matter in either
-direction** — a prior version of the gate only grepped for the string
-`"verdict...pass"` in this prose, which a forged copy with a failing
-`LPA_Q` and an untouched `verdict: PASS` label sailed straight through
-(checker MAJOR-1). `scripts/test-verify-probe-verdict.sh` is the
-forged-artefact self-test proving the fix has teeth.
+## What is actually committed, and why (the recompute-everything closure)
 
-**Reader check:** every number below was pasted straight out of the two
-scripts' JSON output (`scripts/probe-export-confident-graph.py` +
-`scripts/probe-modularity.py`), not retyped/rounded by hand except where
-explicitly noted (4 significant decimal digits in prose; the full
-float64 precision is preserved in the "raw JSON" blocks so the pass/fail
-arithmetic is independently re-checkable without trusting this summary).
+Three rounds of checker attack progressively closed every gap in how
+this bar is graded. Each round is preserved here rather than silently
+overwritten, because the gate's honesty depends on knowing exactly what
+it does and does not check:
+
+1. **The verdict must be recomputed, not read as a label.** The gate
+   originally accepted any artefact whose prose contained the string
+   `"verdict: PASS"` — a forged copy with a failing `LPA_Q` and an
+   untouched label sailed straight through (checker MAJOR-1/defect 10).
+2. **The bar must be hardcoded in the verifier, never read from the
+   artefact.** A verifier that recomputes the three clauses using a
+   `q_struct`/`r` value taken FROM the sidecar can be handed a softened
+   bar next to failing numbers (checker defect 11).
+3. **The repo set and seed set must be asserted exactly.** Nothing
+   checked WHICH repos, or how many, or which seeds, were being graded —
+   dropping the tighter-margin repo (solidus) is the most direct way to
+   lie about a two-repo result (checker defect 12).
+4. **Every `Q` value is an assertion, not a measurement, until it is
+   recomputed from the graph.** A maker could under-report the Louvain
+   baseline (e.g. all ten seeds at `Q=0.35` instead of the real ~0.74)
+   and ship a clusterer scoring `Q=0.31` against a bar that is only as
+   honest as the numbers used to compute it — `0.85 * median` is
+   trivially gameable by lying about the baseline (checker defect 13).
+
+**The fix for (4)** is what is committed alongside this file today:
+
+- **`probe-graphs.json.gz`** (built by
+  `scripts/probe-assemble-graph-bundle.py`): the confident subgraph
+  itself — node identities and the edge list, in the SAME canonical
+  total order `communities()`'s own node ordering already produces — the
+  shipped LPA's partition, and all ten Louvain partitions by seed, for
+  BOTH repos. This is the actual **primitive** data; `node_count`,
+  `edge_count`, `lpa_community_count`, and every modularity `Q` are
+  **derived** from it, never stored as an independent, trust-me number.
+- **`probe-lpa-vs-louvain.json`** (the sidecar) now also carries
+  `graph_bundle.sha256` (the bundle's integrity hash).
+- **`scripts/verify-probe-verdict.py`**, given only these two files (no
+  networkx, no `mcp-server` environment, standard library only), now:
+  1. Verifies the bundle's sha256 against the sidecar's recorded value
+     (a tampered or substituted bundle is loud, not silent).
+  2. Recomputes `node_count`/`edge_count`/`lpa_community_count` straight
+     from the graph and rejects any mismatch against the sidecar's
+     recorded copies.
+  3. Recomputes EVERY modularity `Q` — the shipped LPA's, and each of the
+     ten Louvain runs' — in **pure Python**
+     (`Q = sum_c [ L_c/m - (deg_c/2m)^2 ]`, the standard undirected/
+     unweighted formula at resolution `gamma = 1`), and asserts each
+     recomputed value equals the sidecar's recorded (networkx-computed)
+     value within float tolerance. This does double duty: it independently
+     confirms the recorded networkx run was honest, AND cross-validates
+     this pure-Python formula against `nx.community.modularity` itself —
+     the two agree to within float64 noise (~1e-15) on all 22 values
+     across both repos (see the reproduction table below).
+  4. Uses the **recomputed** values, never the sidecar's, for the actual
+     pass/fail arithmetic from here on.
+
+`scripts/test-verify-probe-verdict.sh` forges thirteen artefacts (every
+round above, plus the graph-bundle attacks) and asserts each is rejected
+while the real, currently-recorded sidecar + bundle are accepted — each
+guard's necessity was proven in isolation by disabling it and confirming
+precisely (and only) the matching scenario flips.
+
+(A remaining gap — nothing yet ties this sidecar to the specific indexer
+that produced it, so a stale probe could silently certify a
+`codegraph.py` that no longer exists once A4/A5 change it — is tracked
+separately and closed next.)
+
+**Reader check:** every number below was pasted straight out of the
+probe scripts' JSON output, not retyped/rounded by hand except where
+explicitly noted (4-6 significant decimal digits in prose; the sidecar
+and graph bundle preserve full float64/exact-integer precision, so the
+pass/fail arithmetic — and the modularity formula itself — is
+independently re-checkable without trusting this summary).
 
 ## Reference repos (pinned, exact SHAs)
 
@@ -62,7 +115,7 @@ arithmetic is independently re-checkable without trusting this summary).
 Both `git rev-parse HEAD` after checkout matched the pinned SHA exactly
 (reproduced at probe time, not asserted from memory).
 
-## Method (two-phase, networkx isolated to a throwaway environment)
+## Method (three-phase, networkx isolated to a throwaway environment)
 
 **Phase 1** (`scripts/probe-export-confident-graph.py`, run under
 `mcp-server`'s own `uv run --frozen` environment — no networkx anywhere
@@ -70,26 +123,28 @@ near this phase): indexes the pinned repo with the shipped `CodeGraph`,
 pulls `confident_edges()`, builds the undirected/unweighted node+edge
 list using the SAME `_resolve_source_node`/`_target_kind` resolution
 `communities()` itself uses (D3a's "identical input to both algorithms"
-requirement — this is not a hand-re-derived approximation of the graph,
-it is the actual graph the shipped LPA analyzed), and separately calls
-the shipped `communities()` to record its partition. A structural
-assertion in the script (`node set mismatch`) fails loudly if the node
-set this script derived ever diverged from `communities()`'s own node
-set — it did not, on either repo. Output: one JSON file per repo.
+requirement), and calls the shipped `communities()` to record its
+partition. Node identities are committed in `communities()`'s own
+canonical total order. A structural assertion in the script (`node set
+mismatch`) fails loudly if the node set this script derived ever
+diverged from `communities()`'s own node set — it did not, on either
+repo.
 
 **Phase 2** (`scripts/probe-modularity.py`, run via
 `uv run --with networkx --no-project` from the **repo root**, which has
 no `pyproject.toml`/`uv.lock` of its own — an ephemeral, single-invocation
 environment, never `uv add networkx` anywhere): reads phase 1's JSON,
-builds one `networkx.Graph`, computes:
-- `LPA_Q` = `nx.community.modularity(g, <shipped LPA's groups>)` — the
-  shipped partition scored by networkx's own reference modularity
-  function, so LPA and Louvain are measured with the identical ruler;
-- ten independent `nx.community.louvain_communities(g, seed=s,
-  resolution=1.0)` runs for `s in 0..9`, each scored the same way.
+builds one `networkx.Graph`, computes `LPA_Q` and ten Louvain runs'
+`Q` (seeds 0..9, resolution 1.0) via `nx.community.modularity`/
+`nx.community.louvain_communities`, and ALSO emits each run's own
+partition (not just its `Q`) for the bundle below.
 
-`networkx==3.6.1` (whatever `uv --with networkx` resolved at probe time;
-recorded per-repo in the raw JSON below).
+**Phase 3** (`scripts/probe-assemble-graph-bundle.py`, dependency-free —
+`json`/`gzip`/`hashlib` only, no networkx, no `mcp-server` environment):
+merges phase 1's graph + phase 2's partitions into the single committed
+`probe-graphs.json.gz`, and prints its sha256 for the sidecar.
+
+`networkx==3.6.1` (whatever `uv --with networkx` resolved at probe time).
 
 ## Solidus — `4026945d614e81383c007ed1ab1278a0195ce5d9`
 
@@ -103,54 +158,37 @@ Confident subgraph (input to BOTH algorithms, identical):
 
 Louvain — 10 runs, seeds 0..9, resolution (gamma) = 1.0:
 
-| seed | Q |
-|---|---|
-| 0 | 0.7458086443811871 |
-| 1 | 0.7451503223090207 |
-| 2 | 0.7418849447359792 |
-| 3 | 0.7450801432754456 |
-| 4 | 0.741671146109655 |
-| 5 | 0.7456979212104264 |
-| 6 | 0.7464751202673506 |
-| 7 | 0.7392679640753077 |
-| 8 | 0.7434448255868258 |
-| 9 | 0.743328647795667 |
+| seed | Q (networkx) | Q (pure-Python recompute) |
+|---|---|---|
+| 0 | 0.7405822183086415 | agrees to ~1e-15 |
+| 1 | 0.7451940436220051 | agrees to ~1e-15 |
+| 2 | 0.7470429912373492 | agrees to ~1e-15 |
+| 3 | 0.7447625662785583 | agrees to ~1e-15 |
+| 4 | 0.7444007618698866 | agrees to ~1e-15 |
+| 5 | 0.7456120531140569 | agrees to ~1e-15 |
+| 6 | 0.7484086426154646 | agrees to ~1e-15 |
+| 7 | 0.745414168483327  | agrees to ~1e-15 |
+| 8 | 0.7441155470795878 | agrees to ~1e-15 |
+| 9 | 0.7392709725515066 | agrees to ~1e-15 |
 
-- **Louvain_Q_median = 0.7442624844311356**
-- Louvain_Q_best = 0.7464751202673506, worst = 0.7392679640753077
-- Louvain_Q_mean = 0.7437809679746865, sd = 0.002175745102662048
+- **Louvain_Q_median = 0.7449783049502817** (recomputed independently from
+  the raw per-seed values by `verify-probe-verdict.py`, never read as a
+  cached field)
+- Louvain_Q_best = 0.7484086426154646, worst = 0.7392709725515066
+- Louvain_Q_mean = 0.7444803965160384, sd = 0.0025925440401239684 (population sd)
 
-- **LPA_Q = 0.6691476098443865**
+- **LPA_Q = 0.6691476098443865** (networkx) — pure-Python recompute agrees
+  to ~1e-15
 
-Clause evaluation (solidus, independently):
+Clause evaluation (solidus, independently, using the recomputed values):
 ```
-Louvain_Q_median >= 0.30   ->  0.744262 >= 0.30           -> PASS
+Louvain_Q_median >= 0.30   ->  0.744978 >= 0.30           -> PASS
 LPA_Q            >= 0.30   ->  0.669148 >= 0.30           -> PASS
 LPA_Q  >= 0.85 * Louvain_Q_median
-      ->  0.85 * 0.7442624844311356 = 0.6326231117664652
-      ->  0.6691476098443865 >= 0.6326231117664652         -> PASS (margin +0.036524)
+      ->  0.85 * 0.7449783049502817 = 0.6332315592077394
+      ->  0.6691476098443865 >= 0.6332315592077394         -> PASS (margin +0.035916)
 ```
 **Solidus verdict: PASS (3/3 clauses).**
-
-<details><summary>raw phase-2 JSON (solidus)</summary>
-
-```json
-{
-  "repo": "/tmp/atlas-aci-probe/solidus",
-  "node_count": 2676,
-  "edge_count": 4217,
-  "lpa_q": 0.6691476098443865,
-  "lpa_community_count": 228,
-  "louvain_median": 0.7442624844311356,
-  "louvain_best": 0.7464751202673506,
-  "louvain_worst": 0.7392679640753077,
-  "louvain_mean": 0.7437809679746865,
-  "louvain_sd": 0.002175745102662048,
-  "networkx_version": "3.6.1"
-}
-```
-
-</details>
 
 ## Spree — `6699cde44303ea85ef6e56c5e87c44a738ab73fc`
 
@@ -164,62 +202,54 @@ Confident subgraph (input to BOTH algorithms, identical):
 
 Louvain — 10 runs, seeds 0..9, resolution (gamma) = 1.0:
 
-| seed | Q |
-|---|---|
-| 0 | 0.7823565917157614 |
-| 1 | 0.7819666569990837 |
-| 2 | 0.7831034076876495 |
-| 3 | 0.786152866802137 |
-| 4 | 0.7834588913803953 |
-| 5 | 0.7871688503469261 |
-| 6 | 0.7842090200929405 |
-| 7 | 0.785905335566653 |
-| 8 | 0.7850854322540173 |
-| 9 | 0.7868501469488868 |
+| seed | Q (networkx) | Q (pure-Python recompute) |
+|---|---|---|
+| 0 | 0.7842462736363122 | agrees to ~1e-15 |
+| 1 | 0.7871970308260426 | agrees to ~1e-15 |
+| 2 | 0.7866764351106793 | agrees to ~1e-15 |
+| 3 | 0.7846281261531277 | agrees to ~1e-15 |
+| 4 | 0.7844339389156355 | agrees to ~1e-15 |
+| 5 | 0.7823176522240195 | agrees to ~1e-15 |
+| 6 | 0.7878835593546776 | agrees to ~1e-15 |
+| 7 | 0.7846674057923477 | agrees to ~1e-15 |
+| 8 | 0.7879746079611754 | agrees to ~1e-15 |
+| 9 | 0.7833310698737013 | agrees to ~1e-15 |
 
-- **Louvain_Q_median = 0.7846472261734789**
-- Louvain_Q_best = 0.7871688503469261, worst = 0.7819666569990837
-- Louvain_Q_mean = 0.7846257199794451, sd = 0.0017795684238646426
+- **Louvain_Q_median = 0.7846477659727378** (recomputed independently)
+- Louvain_Q_best = 0.7879746079611754, worst = 0.7823176522240195
+- Louvain_Q_mean = 0.7853356099847719, sd = 0.0018652613916560594 (population sd)
 
-- **LPA_Q = 0.7165340320731565**
+- **LPA_Q = 0.7165340320731565** (networkx) — pure-Python recompute agrees
+  to ~1e-15
 
-Clause evaluation (spree, independently):
+Clause evaluation (spree, independently, using the recomputed values):
 ```
-Louvain_Q_median >= 0.30   ->  0.784647 >= 0.30           -> PASS
+Louvain_Q_median >= 0.30   ->  0.784648 >= 0.30           -> PASS
 LPA_Q            >= 0.30   ->  0.716534 >= 0.30           -> PASS
 LPA_Q  >= 0.85 * Louvain_Q_median
-      ->  0.85 * 0.7846472261734789 = 0.6669501422474571
-      ->  0.7165340320731565 >= 0.6669501422474571         -> PASS (margin +0.049584)
+      ->  0.85 * 0.7846477659727378 = 0.6669506010768271
+      ->  0.7165340320731565 >= 0.6669506010768271         -> PASS (margin +0.049584)
 ```
 **Spree verdict: PASS (3/3 clauses).**
 
-<details><summary>raw phase-2 JSON (spree)</summary>
+## Note on the recomputed numbers vs. an earlier snapshot of this artefact
 
-```json
-{
-  "repo": "/tmp/atlas-aci-probe/spree/spree",
-  "node_count": 5391,
-  "edge_count": 8223,
-  "lpa_q": 0.7165340320731565,
-  "lpa_community_count": 371,
-  "louvain_median": 0.7846472261734789,
-  "louvain_best": 0.7871688503469261,
-  "louvain_worst": 0.7819666569990837,
-  "louvain_mean": 0.7846257199794451,
-  "louvain_sd": 0.0017795684238646426,
-  "networkx_version": "3.6.1"
-}
-```
-
-</details>
-
-## Overall verdict: PASS — A3 ships
-
-Both repos, independently, pass all three frozen clauses. Per the D3a
-protocol this is a strict AND across repos (either one failing any
-clause would cut A3) — both passed all three, so **A3 (deterministic LPA
-communities) ships**, mechanically justified by the numbers above, not by
-argument.
+An earlier revision of this file recorded slightly different Louvain
+seed values (e.g. solidus median `0.744262` vs. `0.744978` above). The
+underlying confident subgraph is IDENTICAL (same 2,676/4,217 and
+5,391/8,223 node/edge counts, same `LPA_Q` to the last digit, since the
+shipped LPA is a deterministic function of node identity, not of an
+arbitrary integer labeling). The difference is that this revision
+canonicalizes the graph's node-to-integer mapping to `communities()`'s
+own sorted order (needed so the committed bundle has one, reproducible,
+documented node order) — Louvain's result can depend on that integer
+labeling (a known property of the algorithm, not a bug in this probe),
+so re-deriving the bundle under the canonical order produced a
+(negligibly) different set of ten seed values. Both snapshots pass all
+three clauses on both repos with comfortable margin; this is a
+methodological refinement (a documented, reproducible node order,
+required by the recompute-everything closure above), not a re-roll of
+the measurement to chase a better number.
 
 ## networkx isolation, confirmed
 
@@ -231,7 +261,17 @@ mcp-server/uv.lock:0
 networkx never entered `mcp-server/`'s dependency tree — it ran only via
 `uv run --with networkx --no-project` from the repo root (no
 `pyproject.toml` there), a fully ephemeral resolution for the single
-`probe-modularity.py` invocation per repo.
+`probe-modularity.py` invocation per repo. `scripts/verify-probe-verdict.py`
+(the gate's actual check) never imports networkx at all.
+
+## Overall verdict: PASS — A3 ships
+
+Both repos, independently, pass all three frozen clauses, using values
+recomputed from the committed graph bundle in pure Python. Per the D3a
+protocol this is a strict AND across repos (either one failing any
+clause would cut A3) — both passed all three, so **A3 (deterministic LPA
+communities) ships**, mechanically justified by the numbers above, not by
+argument.
 
 ## Reproduction
 
@@ -259,4 +299,14 @@ uv run --frozen python ../scripts/probe-export-confident-graph.py \
 cd ..
 uv run --with networkx --no-project python scripts/probe-modularity.py \
     /tmp/<repo>-graph.json > /tmp/<repo>-modularity.json
+
+# Phase 3 (assemble the committed bundle; dependency-free)
+python3 scripts/probe-assemble-graph-bundle.py \
+    --out .spectra/changes/aci-v2-harden-and-augment/probe-graphs.json.gz \
+    --repo "solidus:/tmp/solidus-graph.json:/tmp/solidus-modularity.json" \
+    --repo "spree:/tmp/spree-graph.json:/tmp/spree-modularity.json"
+
+# Verify (standard library only; no networkx, no mcp-server env)
+python3 scripts/verify-probe-verdict.py \
+    .spectra/changes/aci-v2-harden-and-augment/probe-lpa-vs-louvain.json
 ```

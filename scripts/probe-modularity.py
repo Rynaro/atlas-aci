@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""D3a probe, phase 2 — networkx-side modularity measurement.
+"""D3a probe, phase 2 — networkx-side modularity measurement + partitions.
 
 This script is the ONLY place networkx is ever imported for this probe,
 and it MUST be run in an ephemeral environment, never inside
@@ -29,6 +29,18 @@ requirement), computes:
     statistic, but best/worst/mean/sd are recorded too for the full
     picture in the probe artefact).
 
+Checker defect 13 (recompute-everything closure): this phase now ALSO
+emits each Louvain run's own PARTITION (a community-label array in the
+SAME canonical node order phase 1 committed, renumbered 0..k-1 by
+ascending smallest-member node — same convention the shipped LPA uses),
+not just its `Q`. `scripts/probe-assemble-graph-bundle.py` folds these
+partitions together with phase 1's node/edge/LPA data into
+`probe-graphs.json.gz`, so `scripts/verify-probe-verdict.py` can
+recompute every `Q` in pure Python straight from the graph + partitions —
+trusting no summary number this script prints, including the `lpa_q`/
+`louvain_*` fields below (which remain useful as the "recorded, honesty-
+checked" values, not as the verifier's source of truth).
+
 Prints one JSON object to stdout. Never writes to the repo.
 """
 
@@ -37,6 +49,19 @@ from __future__ import annotations
 import json
 import statistics
 import sys
+
+
+def _renumber_partition(n: int, groups: list[set[int]]) -> list[int]:
+    """A community-label array of length `n` (index = node, value = label),
+    renumbered 0..k-1 by ascending smallest-member node — the same
+    convention `communities()`'s shipped LPA uses, so Louvain partitions
+    are comparable/storable in the identical shape."""
+    ordered_groups = sorted(groups, key=min)
+    labels = [0] * n
+    for label, group in enumerate(ordered_groups):
+        for node in group:
+            labels[node] = label
+    return labels
 
 
 def main() -> None:
@@ -54,7 +79,7 @@ def main() -> None:
     g.add_nodes_from(range(n))
     g.add_edges_from(edges)
 
-    lpa_labels = data["lpa_communities"]
+    lpa_labels = data["lpa_labels"]
     lpa_groups: dict[int, set[int]] = {}
     for node, label in enumerate(lpa_labels):
         lpa_groups.setdefault(label, set()).add(node)
@@ -65,7 +90,8 @@ def main() -> None:
     for seed in range(10):
         comms = nx.community.louvain_communities(g, seed=seed, resolution=1.0)
         q = nx.community.modularity(g, comms)
-        louvain_runs.append({"seed": seed, "q": q})
+        partition_labels = _renumber_partition(n, [set(c) for c in comms])
+        louvain_runs.append({"seed": seed, "q": q, "partition": partition_labels})
 
     qs = [run["q"] for run in louvain_runs]
 

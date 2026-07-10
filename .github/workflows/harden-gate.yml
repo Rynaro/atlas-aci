@@ -33,7 +33,13 @@
 #      checker MAJOR-1 forged a copy with a failing LPA_Q and an untouched
 #      `verdict: PASS` label and the old check passed it. Fixed: nothing
 #      here trusts a label without recomputing the three frozen clauses
-#      from the raw numbers first.
+#      from the raw numbers first — and NOT just the clauses: the D3a
+#      probe's `LPA_Q`/Louvain `Q` values themselves were ALSO taken on
+#      faith until checker defect 13. `scripts/verify-probe-verdict.py`
+#      now recomputes every modularity value in pure Python straight from
+#      a committed graph bundle (`probe-graphs.json.gz`: node/edge
+#      identities + every partition, sha256-pinned in the sidecar) —
+#      trusting no summary field, only the primitive graph data.
 #
 # KNOWN LIMITATION, VERIFIED (F-3, checker second pass — not silently
 # swept): step 2's content-marker heuristic is evadable by renaming.
@@ -193,23 +199,33 @@ jobs:
           fi
 
           if [ -f mcp-server/tests/test_communities.py ]; then
-            # AC-A3-1/F7 (checker MAJOR-1): the recorded verdict must equal
-            # the MECHANICAL evaluation of the recorded numbers — this used
-            # to be `grep -qiE "verdict.*:.*pass" "$PROBE_ARTIFACT"`, a check
-            # of the artefact's PROSE LABEL that never parsed a single Q
-            # value or evaluated a single clause. The checker forged a copy
-            # with LPA_Q=0.11111 (below the 0.30 floor, failing clauses 2
-            # and 3 on both repos) and an untouched `verdict: PASS` label,
-            # and the old check passed it. scripts/verify-probe-verdict.py
-            # reads the machine-readable sidecar ($PROBE_JSON), recomputes
-            # Louvain_Q_median per repo from the raw per-seed values itself
-            # (never trusting a precomputed median), evaluates all three
-            # frozen clauses per repo independently (never averaged), and
-            # fails if the computed verdict differs from the recorded one
-            # in EITHER direction — a recorded CUT over genuinely passing
-            # numbers is equally a lie, not just a recorded PASS over
-            # failing ones. See scripts/test-verify-probe-verdict.sh for
-            # the forged-artefact self-test proving this has teeth.
+            # AC-A3-1/F7 (checker defects 10-13, in order of discovery):
+            # the recorded verdict must equal the MECHANICAL evaluation of
+            # numbers that are THEMSELVES recomputed from a committed
+            # graph, never trusted as printed. This used to be
+            # `grep -qiE "verdict.*:.*pass" "$PROBE_ARTIFACT"` (a check of
+            # the PROSE LABEL only, defect 10); then a recomputation that
+            # read its own bar from the sidecar (defect 11); then one that
+            # never checked WHICH repos/seeds were graded (defect 12); then
+            # one that recomputed the three clauses correctly but still
+            # took every LPA_Q/Louvain Q value ON FAITH from the sidecar,
+            # so an under-reported Louvain baseline could smuggle a weak
+            # clusterer past a self-consistently-lowered bar (defect 13).
+            # scripts/verify-probe-verdict.py now: hardcodes the frozen
+            # bar/repo-SHAs/seeds (never reads them from the sidecar);
+            # verifies the companion graph bundle
+            # (probe-graphs.json.gz)'s sha256 against the sidecar;
+            # recomputes node/edge/community counts AND every modularity Q
+            # in pure Python straight from that bundle; asserts each
+            # recomputed Q matches the sidecar's recorded (networkx)
+            # value within tolerance (an honesty check on the recorded
+            # run). Then, using ONLY the recomputed values, fails if the
+            # computed verdict differs from the recorded one in EITHER
+            # direction — a recorded CUT over genuinely passing numbers is
+            # equally a lie, not just a recorded PASS over failing ones.
+            # See scripts/test-verify-probe-verdict.sh (13 forged
+            # scenarios, each guard's necessity proven by disabling it in
+            # isolation) for the self-test proving this has teeth.
             if [ ! -f "$PROBE_ARTIFACT" ] || [ ! -f "$PROBE_JSON" ]; then
               echo "FAIL (AC-A3-4/AC-A3-5): A3 community code exists in the tree but the probe artefact/sidecar is missing ($PROBE_ARTIFACT, $PROBE_JSON)."
               exit 1

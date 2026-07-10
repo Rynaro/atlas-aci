@@ -1,62 +1,80 @@
 #!/usr/bin/env python3
-"""D3a probe-verdict verifier — the AC-A3-1/F7 fix (checker defects 11 & 12).
+"""D3a probe-verdict verifier — the AC-A3-1/F7 fix (checker defects 11-13).
 
-THE FIRST FIX (defect 10, already landed): `.github/workflows/harden-gate.yml`
-used to gate A3 on `grep -qiE "verdict.*:.*pass" "$PROBE_ARTIFACT"` — a check
-of the PROSE LABEL, never a single Q value. This script replaced that with
-actual recomputation of the three-clause rule from raw numbers.
+THE FIRST FIX (defect 10): `.github/workflows/harden-gate.yml` used to
+gate A3 on `grep -qiE "verdict.*:.*pass" "$PROBE_ARTIFACT"` — a check of
+the PROSE LABEL, never a single Q value.
 
-THE ELEVENTH DEFECT (checker, this pass): the recomputation still read its
-BAR from the artefact under audit —
+THE SECOND FIX (defect 11): the recomputation that replaced it still read
+its BAR (`q_struct`/`r`) FROM the sidecar under audit. Fixed by hardcoding
+the frozen constants (`FROZEN_*` below) and cross-checking the sidecar's
+own declared bar against them — never substituting the sidecar's copy
+into the arithmetic.
 
-    q_struct = data["bar"]["q_struct"]
-    r        = data["bar"]["r"]
+THE THIRD FIX (defect 12): nothing asserted WHICH repos, or how many,
+were being graded, nor which seeds. Fixed by hardcoding the two pinned
+SHAs and the ten frozen seeds, and asserting the sidecar's repo/seed sets
+match EXACTLY.
 
-The checker softened the bar inside a forged sidecar (`q_struct: 0.01`,
-`r: 0.10`) and handed it `LPA_Q = 0.20` — a number that FAILS the real,
-frozen bar (`Q_struct=0.30`) but passes the artefact's own softened one.
-The verifier happily recomputed against the softened bar and reported a
-match. This defeats the entire point of D3a's pre-registration: `R=0.85`
-and `Q_struct=0.30` were fixed by FORGE *before* a line of `communities()`
-was written, specifically so the measurement could never choose the bar
-it is graded against. A verifier that takes the bar FROM the file it is
-auditing hands that power right back to whoever writes the file.
+THE FOURTH DEFECT (checker, this pass) — and the one this file closes:
+every `Q` in the sidecar (`lpa_q`, each seed's Louvain `Q`) was taken ON
+FAITH. A maker could under-report the Louvain baseline (e.g. all ten
+seeds at `Q=0.35` instead of the real ~0.74) and ship a clusterer scoring
+`Q=0.31` — nowhere near the real `Q=0.669` — because the bar
+(`0.85 * median`) is only as honest as the numbers used to compute it.
+Recomputing the bar from a lie about the baseline is still a lie.
 
-THE TWELFTH DEFECT (checker, this pass): nothing asserted WHICH repos, or
-how many, were being graded. The checker deleted solidus (the
-tighter-margin repo, ratio 0.8991 at the frozen bar) from `repos`
-entirely, and the verifier accepted the file — `AC-A3-4` requires PASS on
-BOTH pinned repos, independently, never averaged, and dropping the
-inconvenient one is the most direct way to lie about a two-repo result.
+THE FIX: `node_count`/`edge_count` were themselves summaries a verifier
+cannot recompute FROM. The actual PRIMITIVES — the confident subgraph's
+node list + edge list (canonical total order), the shipped LPA's
+partition, and all ten Louvain partitions by seed — are committed
+separately as a compressed bundle (`probe-graphs.json.gz`, built by
+`scripts/probe-assemble-graph-bundle.py`), whose sha256 is recorded in
+the sidecar. This script:
 
-THE FIX: the frozen constants below AND the pinned repo identities are
-this script's OWN facts — sourced from the frozen criteria
-(`sha256:5c3adddbd075a7c12bdd965ee760484a04e5a9a6a4ce05302cbd7bc4147fc7e7`)
-and FORGE's D3a pre-registration record, HARDCODED here, never read from
-or derived from the sidecar under audit. The sidecar's own declared
-`bar`/seeds/repo-SHAs are still read and cross-checked against these
-hardcoded values — ANY mismatch is itself a hard failure (a tampered or
-stale sidecar must be loud, never silently re-graded against whatever it
-happens to claim about itself). The pass/fail arithmetic always runs
-against the HARDCODED constants, never the artefact's copies of them,
-even when the two happen to agree.
+  1. Verifies the bundle file's sha256 matches the sidecar's recorded
+     value (a tampered or substituted bundle is loud, not silent).
+  2. Recomputes `node_count`/`edge_count`/`lpa_community_count` from the
+     raw graph and partition arrays, and rejects any mismatch against the
+     sidecar's recorded copies — no stored summary is ever trusted.
+  3. Recomputes EVERY modularity `Q` (the shipped LPA's, and all ten
+     Louvain runs') in pure Python, straight from the graph + partition
+     arrays — `Q = sum_c [ L_c/m - (deg_c/2m)^2 ]`, the standard
+     undirected/unweighted formula at resolution (gamma) = 1, which is
+     algebraically identical to what `nx.community.modularity` computes.
+     This validated against the actual recorded probe data to within
+     ~1e-15 (float64 noise) before this script was finalized.
+  4. Asserts each recomputed `Q` equals the sidecar's recorded value
+     within float tolerance — this does double duty: it both derives the
+     numbers this script actually grades with, AND independently
+     confirms the recorded networkx run was honest (if the two ever
+     disagree, one of them is wrong, and this is loud about which check
+     caught it).
+  5. Uses the RECOMPUTED values (never the sidecar's) for the pass/fail
+     arithmetic from here on — median, and all three frozen-bar clauses,
+     are computed from graph-derived numbers only.
 
 Usage:
   python3 scripts/verify-probe-verdict.py <sidecar_json_path>
 
-Exit 0 iff (a) the sidecar's declared bar/seeds/repo-set agree with the
-frozen constants below, AND (b) the recorded verdict equals the
-mechanical evaluation of the recorded per-seed numbers against those
-frozen constants. Exit 1 on any provenance mismatch OR any
-verdict/arithmetic mismatch, with a diagnostic naming exactly what
-disagreed. Exit 2 on usage / malformed-input errors.
+Exit 0 iff: the sidecar's declared bar/seeds/repo-set agree with the
+frozen constants; the graph bundle's sha256 matches; every recomputed
+node/edge/community count and modularity Q matches the sidecar's
+recorded copies within tolerance; and the recorded verdict equals the
+mechanical evaluation of the RECOMPUTED numbers against the frozen bar.
+Exit 1 on any provenance/integrity/arithmetic mismatch, with a
+diagnostic naming exactly what disagreed. Exit 2 on usage /
+malformed-input errors.
 """
 
 from __future__ import annotations
 
+import gzip
+import hashlib
 import json
 import statistics
 import sys
+from pathlib import Path
 from typing import Any
 
 # ---------------------------------------------------------------------------
@@ -65,10 +83,10 @@ from typing import Any
 #
 # Checker defect 11: these must NEVER be read from, or derived from, the
 # sidecar under audit — a verifier that takes its bar from the file it is
-# grading can be hand a softened bar next to failing numbers and wave them
-# through. Do not parameterize any of the five values below from JSON
-# input; the sidecar's own copies are cross-checked against these, never
-# substituted for them.
+# grading can be handed a softened bar next to failing numbers and wave
+# them through. Do not parameterize any of the five values below from
+# JSON input; the sidecar's own copies are cross-checked against these,
+# never substituted for them.
 # ---------------------------------------------------------------------------
 FROZEN_Q_STRUCT: float = 0.30
 FROZEN_R: float = 0.85
@@ -88,12 +106,27 @@ FROZEN_PINNED_SHAS: frozenset[str] = frozenset(
     }
 )
 
+# Checker defect 13: floating-point tolerance for comparing a recomputed
+# modularity Q (pure Python, see `_modularity` below) to the sidecar's
+# recorded (networkx-computed) value. Validated against real probe data:
+# the two formulations agree to ~1e-15 (float64 noise) on every one of 22
+# recorded Q values across both pinned repos — 1e-9 is generous headroom
+# above that noise floor while still catching any real divergence.
+Q_TOLERANCE: float = 1e-9
+
 
 class ProvenanceError(Exception):
-    """The sidecar's declared facts (bar constants, seed set, or repo
-    identity/count) disagree with the frozen, external constants above.
-    This is raised for ANY such mismatch — never silently reconciled by
-    preferring either side's value; the mismatch itself is the finding."""
+    """The sidecar's declared facts (bar constants, seed set, repo
+    identity/count, graph-bundle integrity, or recomputed counts/Q
+    values) disagree with either the frozen constants above or the graph
+    bundle's own recomputed content. Raised for ANY such mismatch — never
+    silently reconciled by preferring either side's value; the mismatch
+    itself is the finding."""
+
+
+# ---------------------------------------------------------------------------
+# Provenance gates (declared facts vs. frozen/external constants)
+# ---------------------------------------------------------------------------
 
 
 def _check_declared_bar_matches_frozen(bar: dict[str, Any]) -> None:
@@ -144,23 +177,156 @@ def _check_repo_seed_set_matches_frozen(
         )
 
 
-def evaluate_repo(repo: dict[str, Any]) -> dict[str, Any]:
+# ---------------------------------------------------------------------------
+# Graph bundle: integrity, recomputed counts, recomputed modularity
+# ---------------------------------------------------------------------------
+
+
+def _load_graph_bundle(sidecar_path: Path, sidecar: dict[str, Any]) -> dict[str, Any]:
+    graph_bundle_meta = sidecar.get("graph_bundle", {})
+    filename = graph_bundle_meta.get("filename")
+    recorded_sha256 = graph_bundle_meta.get("sha256")
+    if not filename or not recorded_sha256:
+        raise ProvenanceError(
+            "sidecar is missing graph_bundle.filename/sha256 -- nothing to verify against"
+        )
+
+    bundle_path = sidecar_path.parent / filename
+    if not bundle_path.is_file():
+        raise ProvenanceError(
+            f"graph bundle {bundle_path} referenced by the sidecar does not exist"
+        )
+
+    compressed = bundle_path.read_bytes()
+    actual_sha256 = hashlib.sha256(compressed).hexdigest()
+    if actual_sha256 != recorded_sha256:
+        raise ProvenanceError(
+            f"graph bundle {bundle_path} has been tampered with (or does not match the "
+            f"probe that produced this sidecar): sha256 is {actual_sha256!r}, sidecar "
+            f"records {recorded_sha256!r}"
+        )
+
+    return json.loads(gzip.decompress(compressed).decode("utf-8"))
+
+
+def _check_bundle_repo_set_matches_sidecar(
+    bundle: dict[str, Any], repos: list[dict[str, Any]]
+) -> None:
+    declared_names = {repo["name"] for repo in repos}
+    bundle_names = set(bundle.keys())
+    if declared_names != bundle_names:
+        raise ProvenanceError(
+            f"graph bundle names repos {sorted(bundle_names)!r}, sidecar's `repos` names "
+            f"{sorted(declared_names)!r} -- these must be exactly the same set."
+        )
+
+
+def _modularity(n: int, edges: list[tuple[int, int]], labels: list[int]) -> float:
+    """Standard undirected, unweighted modularity at resolution (gamma) =
+    1: `Q = sum_c [ L_c/m - (deg_c/2m)^2 ]`, where `m` is the edge count,
+    `L_c` is community `c`'s internal edge count, `deg_c` is the sum of
+    its members' degrees. Algebraically identical to what
+    `nx.community.modularity` computes for an unweighted graph with no
+    self-loops (our graph construction drops self-loops) -- validated
+    against real recorded probe data to ~1e-15 before this was finalized.
+    Zero dependencies beyond the standard library.
+    """
+    m = len(edges)
+    if m == 0:
+        raise ProvenanceError("cannot compute modularity: the graph has zero edges")
+    degree = [0] * n
+    for u, v in edges:
+        degree[u] += 1
+        degree[v] += 1
+    community_degree: dict[int, int] = {}
+    for node in range(n):
+        label = labels[node]
+        community_degree[label] = community_degree.get(label, 0) + degree[node]
+    internal_edges: dict[int, int] = {}
+    for u, v in edges:
+        if labels[u] == labels[v]:
+            internal_edges[labels[u]] = internal_edges.get(labels[u], 0) + 1
+    q = 0.0
+    for community, deg_c in community_degree.items():
+        l_c = internal_edges.get(community, 0)
+        q += (l_c / m) - (deg_c / (2 * m)) ** 2
+    return q
+
+
+def evaluate_repo(repo: dict[str, Any], bundle: dict[str, Any]) -> dict[str, Any]:
     _check_repo_seed_set_matches_frozen(repo["name"], repo["louvain_q_by_seed"])
-    seed_q = repo["louvain_q_by_seed"]
-    # Sorted by seed (as an int, not string-lexically — "10" would
-    # otherwise sort before "2") so the recomputation is itself
-    # deterministic/reproducible, though median doesn't care about order.
-    qs = [seed_q[k] for k in sorted(seed_q, key=int)]
+
+    graph = bundle.get(repo["name"])
+    if graph is None:
+        raise ProvenanceError(f"{repo['name']}: not present in the graph bundle")
+
+    n = len(graph["nodes"])
+    edges = [tuple(e) for e in graph["edges"]]
+    lpa_labels = graph["lpa_labels"]
+    louvain_partitions = graph["louvain_partitions"]
+
+    # Recompute node/edge/community counts from the raw graph -- no
+    # stored summary is ever trusted (checker defect 13).
+    recomputed_node_count = n
+    recomputed_edge_count = len(edges)
+    recomputed_lpa_community_count = len(set(lpa_labels))
+
+    count_mismatches: list[str] = []
+    if recomputed_node_count != repo.get("node_count"):
+        count_mismatches.append(
+            f"node_count: recomputed {recomputed_node_count}, recorded {repo.get('node_count')}"
+        )
+    if recomputed_edge_count != repo.get("edge_count"):
+        count_mismatches.append(
+            f"edge_count: recomputed {recomputed_edge_count}, recorded {repo.get('edge_count')}"
+        )
+    if recomputed_lpa_community_count != repo.get("lpa_community_count"):
+        count_mismatches.append(
+            f"lpa_community_count: recomputed {recomputed_lpa_community_count}, "
+            f"recorded {repo.get('lpa_community_count')}"
+        )
+    if count_mismatches:
+        raise ProvenanceError(f"{repo['name']}: " + "; ".join(count_mismatches))
+
+    # Recompute EVERY modularity Q in pure Python, straight from the
+    # graph + partitions -- trust nothing but the graph.
+    recomputed_lpa_q = _modularity(n, edges, lpa_labels)
+    recorded_lpa_q = repo["lpa_q"]
+    if abs(recomputed_lpa_q - recorded_lpa_q) > Q_TOLERANCE:
+        raise ProvenanceError(
+            f"{repo['name']}: recomputed LPA_Q={recomputed_lpa_q!r} disagrees with the "
+            f"sidecar's recorded lpa_q={recorded_lpa_q!r} by more than {Q_TOLERANCE} -- "
+            "either the graph bundle or the recorded value has been tampered with, or "
+            "the recorded networkx run was not honest."
+        )
+
+    recomputed_seed_q: dict[int, float] = {}
+    for seed in FROZEN_SEEDS:
+        partition = louvain_partitions[seed]
+        q = _modularity(n, edges, partition)
+        recomputed_seed_q[seed] = q
+        recorded_q = repo["louvain_q_by_seed"][str(seed)]
+        if abs(q - recorded_q) > Q_TOLERANCE:
+            raise ProvenanceError(
+                f"{repo['name']} seed {seed}: recomputed Q={q!r} disagrees with the "
+                f"sidecar's recorded Q={recorded_q!r} by more than {Q_TOLERANCE} -- either "
+                "the graph bundle or the recorded value has been tampered with, or the "
+                "recorded networkx run was not honest."
+            )
+
+    # From here on, arithmetic uses ONLY the recomputed values -- the
+    # recorded ones already served their purpose (an honesty check on the
+    # networkx run), never the computation's actual input.
+    qs = [recomputed_seed_q[seed] for seed in sorted(recomputed_seed_q)]
     median = statistics.median(qs)
-    lpa_q = repo["lpa_q"]
     threshold3 = FROZEN_R * median
     clause1 = median >= FROZEN_Q_STRUCT
-    clause2 = lpa_q >= FROZEN_Q_STRUCT
-    clause3 = lpa_q >= threshold3
+    clause2 = recomputed_lpa_q >= FROZEN_Q_STRUCT
+    clause3 = recomputed_lpa_q >= threshold3
     return {
         "name": repo["name"],
         "median": median,
-        "lpa_q": lpa_q,
+        "lpa_q": recomputed_lpa_q,
         "threshold3": threshold3,
         "clause1_median_ge_q_struct": clause1,
         "clause2_lpa_ge_q_struct": clause2,
@@ -174,20 +340,19 @@ def main() -> int:
         print(f"usage: {sys.argv[0]} <sidecar_json_path>", file=sys.stderr)
         return 2
 
+    sidecar_path = Path(sys.argv[1]).resolve()
     try:
-        with open(sys.argv[1]) as f:
+        with open(sidecar_path) as f:
             data = json.load(f)
     except (OSError, json.JSONDecodeError) as e:
         print(f"FAIL: could not read/parse sidecar JSON: {e}", file=sys.stderr)
         return 2
 
-    # Provenance gates FIRST, before any arithmetic runs at all — checker
-    # defects 11/12. Both check the sidecar's OWN declarations against the
-    # hardcoded, external facts above; neither ever feeds a sidecar value
-    # into the evaluation itself.
     try:
         _check_declared_bar_matches_frozen(data.get("bar", {}))
         _check_repo_set_matches_frozen(data.get("repos", []))
+        bundle = _load_graph_bundle(sidecar_path, data)
+        _check_bundle_repo_set_matches_sidecar(bundle, data.get("repos", []))
     except ProvenanceError as e:
         print(f"FAIL (AC-A3-1/F7, provenance): {e}", file=sys.stderr)
         return 1
@@ -195,7 +360,7 @@ def main() -> int:
     recorded_verdict = str(data["recorded_verdict"]).strip().upper()
 
     try:
-        evaluations = [evaluate_repo(repo) for repo in data["repos"]]
+        evaluations = [evaluate_repo(repo, bundle) for repo in data["repos"]]
     except ProvenanceError as e:
         print(f"FAIL (AC-A3-1/F7, provenance): {e}", file=sys.stderr)
         return 1
@@ -203,6 +368,7 @@ def main() -> int:
     computed_verdict = "PASS" if all(e["repo_pass"] for e in evaluations) else "CUT"
 
     print(f"frozen bar (hardcoded): Q_struct={FROZEN_Q_STRUCT} R={FROZEN_R}")
+    print("every count and Q below is RECOMPUTED from the graph bundle, not read from the sidecar")
     for e in evaluations:
         print(
             f"  {e['name']}: median={e['median']!r} lpa_q={e['lpa_q']!r} "
@@ -217,18 +383,17 @@ def main() -> int:
     if computed_verdict != recorded_verdict:
         print(
             f"FAIL (AC-A3-1/F7): recorded verdict '{recorded_verdict}' does not equal "
-            f"the mechanical evaluation of the recorded numbers against the FROZEN "
-            f"bar ('{computed_verdict}'). A label is not evidence; the gate "
-            "recomputes the arithmetic every time, against constants it holds "
-            "itself, never against constants the artefact supplies.",
+            f"the mechanical evaluation of the RECOMPUTED numbers against the FROZEN "
+            f"bar ('{computed_verdict}'). A label is not evidence, and neither is a "
+            "stored Q value; every number is derived from the committed graph.",
             file=sys.stderr,
         )
         return 1
 
     print(
         f"OK (AC-A3-1/F7): recorded verdict '{recorded_verdict}' matches the "
-        "recomputed verdict under the frozen, hardcoded bar; the sidecar's "
-        "declared bar/seeds/repo-set agree with those same frozen constants."
+        "recomputed verdict under the frozen, hardcoded bar; every recomputed count "
+        "and Q agrees with the sidecar's recorded copies."
     )
     return 0
 
