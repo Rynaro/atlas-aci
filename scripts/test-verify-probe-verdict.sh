@@ -45,6 +45,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 VERIFY="$SCRIPT_DIR/verify-probe-verdict.py"
+RESOLVE="$SCRIPT_DIR/resolve-probe-artifact.sh"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 SIDECAR_DIR="$REPO_ROOT/.spectra/changes/aci-v2-harden-and-augment"
 REAL_JSON="$SIDECAR_DIR/probe-lpa-vs-louvain.json"
@@ -566,6 +567,106 @@ open(path, 'w').write(src.replace(old, new, 1))
 _assert_fingerprint_after_edit \
     "an unrelated new build_stats field does NOT flip the behavioural fingerprint" no
 mv "$_CODEGRAPH_COPY.bak" "$_CODEGRAPH_COPY"
+
+## ---- Path-resolution scenarios (post-ESL-archive robustness) ----
+#
+# harden-gate.yml used to hardcode this change's probe artefacts at their
+# PROPOSED-time path (.spectra/changes/aci-v2-harden-and-augment/). The
+# ESL `archive` verb MOVES (never copies) a verified change folder to
+# .spectra/changes/archive/<date>-<change-id>/ once it reaches its
+# lifecycle terminus -- silently breaking that hardcoded path on the very
+# next PR touching an A3 path. scripts/resolve-probe-artifact.sh replaces
+# the fixed path with a search under .spectra/changes/ (one recursive
+# search covers active AND archive/ subtrees) that fails loudly on zero
+# or more than one match rather than picking a first match. These four
+# scenarios build disposable .spectra/changes/ trees (never the real repo
+# tree) and prove: (A) resolves + verifies in the CURRENT active-location
+# layout, (B) resolves + verifies IDENTICALLY once moved to a simulated
+# archive/2026-07-10-aci-v2-harden-and-augment/ folder, (C) fails loudly
+# when the artefact is absent, (D) fails loudly when it is duplicated
+# across both an active and an archived copy (ambiguity is an error, not
+# a first-match fallback).
+
+if [ ! -x "$RESOLVE" ]; then
+    echo "FAIL: $RESOLVE is missing or not executable"
+    fail_count=$((fail_count + 1))
+else
+    PATHRES_ROOT="$TMP_DIR/pathres"
+    mkdir -p "$PATHRES_ROOT"
+
+    _assert_resolve_and_verify() {
+        local scenario="$1" search_root="$2" expected_path="$3"
+        local resolved resolve_exit=0
+        resolved="$("$RESOLVE" probe-lpa-vs-louvain.json "$search_root" 2>&1)" || resolve_exit=$?
+        if [ "$resolve_exit" -ne 0 ]; then
+            echo "FAIL: $scenario -- resolve-probe-artifact.sh exited $resolve_exit: $resolved"
+            fail_count=$((fail_count + 1))
+            return
+        fi
+        if [ "$resolved" != "$expected_path" ]; then
+            echo "FAIL: $scenario -- resolved '$resolved', expected '$expected_path'"
+            fail_count=$((fail_count + 1))
+            return
+        fi
+        if python3 "$VERIFY" "$resolved" > /dev/null 2>&1; then
+            echo "PASS: $scenario (resolved=$resolved, verify-probe-verdict.py: PASS)"
+            pass_count=$((pass_count + 1))
+        else
+            echo "FAIL: $scenario -- resolved correctly but verify-probe-verdict.py rejected it"
+            fail_count=$((fail_count + 1))
+        fi
+    }
+
+    _assert_resolve_fails() {
+        local scenario="$1" search_root="$2"
+        local output resolve_exit=0
+        output="$("$RESOLVE" probe-lpa-vs-louvain.json "$search_root" 2>&1)" || resolve_exit=$?
+        if [ "$resolve_exit" -ne 0 ]; then
+            echo "PASS: $scenario (exit=$resolve_exit: $output)"
+            pass_count=$((pass_count + 1))
+        else
+            echo "FAIL: $scenario -- expected a non-zero exit, got 0 (resolved: $output)"
+            fail_count=$((fail_count + 1))
+        fi
+    }
+
+    # ---- Scenario A: CURRENT active-location layout ----
+    dir="$PATHRES_ROOT/active/.spectra/changes/aci-v2-harden-and-augment"
+    mkdir -p "$dir"
+    cp "$REAL_JSON" "$dir/probe-lpa-vs-louvain.json"
+    cp "$REAL_BUNDLE" "$dir/probe-graphs.json.gz"
+    _assert_resolve_and_verify \
+        "gate resolves + verifies against the ACTIVE change-folder location" \
+        "$PATHRES_ROOT/active/.spectra/changes" \
+        "$dir/probe-lpa-vs-louvain.json"
+
+    # ---- Scenario B: simulated archived location (post `tonberry archive`) ----
+    dir="$PATHRES_ROOT/archived/.spectra/changes/archive/2026-07-10-aci-v2-harden-and-augment"
+    mkdir -p "$dir"
+    cp "$REAL_JSON" "$dir/probe-lpa-vs-louvain.json"
+    cp "$REAL_BUNDLE" "$dir/probe-graphs.json.gz"
+    _assert_resolve_and_verify \
+        "gate resolves + verifies IDENTICALLY against the ARCHIVED location (simulated archive/2026-07-10-aci-v2-harden-and-augment/)" \
+        "$PATHRES_ROOT/archived/.spectra/changes" \
+        "$dir/probe-lpa-vs-louvain.json"
+
+    # ---- Scenario C: absent -- must fail loudly, never silently pass zero artefacts ----
+    dir="$PATHRES_ROOT/absent/.spectra/changes"
+    mkdir -p "$dir"
+    _assert_resolve_fails \
+        "gate fails loudly when no probe artefact exists anywhere under .spectra/changes/" \
+        "$dir"
+
+    # ---- Scenario D: duplicated across active AND archived -- ambiguity is a hard error ----
+    dup_root="$PATHRES_ROOT/duplicated/.spectra/changes"
+    mkdir -p "$dup_root/aci-v2-harden-and-augment" \
+             "$dup_root/archive/2026-07-10-aci-v2-harden-and-augment"
+    cp "$REAL_JSON" "$dup_root/aci-v2-harden-and-augment/probe-lpa-vs-louvain.json"
+    cp "$REAL_JSON" "$dup_root/archive/2026-07-10-aci-v2-harden-and-augment/probe-lpa-vs-louvain.json"
+    _assert_resolve_fails \
+        "gate fails loudly when the probe artefact is duplicated (active AND archived copies both present)" \
+        "$dup_root"
+fi
 
 echo ""
 echo "$pass_count passed, $fail_count failed"

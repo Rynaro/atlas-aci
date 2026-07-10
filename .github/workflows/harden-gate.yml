@@ -227,12 +227,36 @@ jobs:
           set -euo pipefail
 
           a3_touched="${{ steps.classify.outputs.a3_touched }}"
-          PROBE_ARTIFACT=".spectra/changes/aci-v2-harden-and-augment/probe-lpa-vs-louvain.md"
-          PROBE_JSON=".spectra/changes/aci-v2-harden-and-augment/probe-lpa-vs-louvain.json"
 
-          if [ "$a3_touched" = "true" ] && [ ! -f "$PROBE_ARTIFACT" ]; then
-            echo "FAIL (AC-A3-1): an A3 (communities) path changed but $PROBE_ARTIFACT is not present. The LPA-vs-Louvain modularity probe and its verdict must be recorded before any A3 source path is touched."
-            exit 1
+          # AC-A3-1/AC-A3-4/AC-A3-5 used to hardcode this change's probe
+          # artefacts at their PROPOSED-time path
+          # (.spectra/changes/aci-v2-harden-and-augment/). The ESL
+          # `archive` verb MOVES (never copies) a verified change folder to
+          # .spectra/changes/archive/<date>-<change-id>/ once it reaches
+          # its lifecycle terminus -- a fixed path is a proxy that breaks
+          # silently the moment that happens. The actual invariant this
+          # gate needs is "exactly one valid probe record exists";
+          # scripts/resolve-probe-artifact.sh enforces that directly by
+          # searching the whole .spectra/changes/ subtree (which nests
+          # archive/ underneath it, so one search covers an active OR an
+          # archived change folder) and treating zero or multiple matches
+          # as a hard failure rather than a first-match guess. See that
+          # script's header for the full rationale;
+          # scripts/test-verify-probe-verdict.sh proves this resolves
+          # identically whether the change folder is still active or has
+          # been archived, and fails loudly when the artefact is absent or
+          # duplicated.
+          resolve_or_fail() {
+            local basename="$1" ac_label="$2" resolved
+            if ! resolved="$(scripts/resolve-probe-artifact.sh "$basename")"; then
+              echo "FAIL ($ac_label): could not resolve exactly one $basename under .spectra/changes/ (active or archived) -- $resolved" >&2
+              exit 1
+            fi
+            echo "$resolved"
+          }
+
+          if [ "$a3_touched" = "true" ]; then
+            PROBE_ARTIFACT="$(resolve_or_fail probe-lpa-vs-louvain.md AC-A3-1)"
           fi
 
           if [ -f mcp-server/tests/test_communities.py ]; then
@@ -290,10 +314,8 @@ jobs:
             # verify" section for the one trust boundary that remains
             # (the graph bundle's fidelity to the two pinned repo SHAs,
             # attested by independent reproduction, not a mechanical check).
-            if [ ! -f "$PROBE_ARTIFACT" ] || [ ! -f "$PROBE_JSON" ]; then
-              echo "FAIL (AC-A3-4/AC-A3-5): A3 community code exists in the tree but the probe artefact/sidecar is missing ($PROBE_ARTIFACT, $PROBE_JSON)."
-              exit 1
-            fi
+            PROBE_ARTIFACT="$(resolve_or_fail probe-lpa-vs-louvain.md AC-A3-4/AC-A3-5)"
+            PROBE_JSON="$(resolve_or_fail probe-lpa-vs-louvain.json AC-A3-4/AC-A3-5)"
             if ! python3 scripts/verify-probe-verdict.py "$PROBE_JSON"; then
               echo "FAIL (AC-A3-4/AC-A3-5/F7): the recorded probe verdict does not equal the mechanical evaluation of its own recorded numbers. Per DIR-1, a below-threshold probe cuts A3 to v2.1 (ship A2 god-nodes only) — it never adopts networkx/Louvain, and it never gets to assert a label the numbers don't support."
               exit 1
