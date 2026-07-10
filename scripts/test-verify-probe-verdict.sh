@@ -22,6 +22,11 @@
 #   - The staleness hole (defect 15's context): nothing tied the sidecar
 #     to the indexer that produced it. Scenario 13 forges a stale
 #     `indexer_fingerprint`.
+#   - Two closures the checker named directly: node-identity uniqueness
+#     (scenario 14: two node indices claiming the same identity) and the
+#     shipped LPA partition, re-derived rather than trusted (scenario 15:
+#     a pure relabeling that preserves Q/count but disagrees with a
+#     genuine re-run of the algorithm).
 #   - Defect 17: hashing `codegraph.py` verbatim still only certified
 #     "source text matches," not "this code builds the same graph" — the
 #     fingerprint is now BEHAVIOURAL (runs the real export path against a
@@ -318,6 +323,71 @@ data["indexer_fingerprint"] = "0" * 64  # does not match the current tree's code
 json.dump(data, open(sys.argv[2], "w"))
 PYEOF
 _assert_exit "forged: stale indexer_fingerprint (does not match the current tree)" \
+    "$dir/probe-lpa-vs-louvain.json" 1
+
+# ---- Scenario 14 (checker instruction): duplicate node identity ----
+# Nothing else in this bundle would catch two different node INDICES
+# claiming the identical (path, line, name) triple -- indices stay valid
+# integers, edges stay well-formed pairs, node_count still matches.
+# Degree/modularity would silently be computed over an aliased,
+# ill-formed node set. Renames node index 1's identity to be identical to
+# node index 0's (re-signing sha256 to match the tampered bytes).
+dir="$(_scenario_dir scenario-14)"
+python3 - "$dir/probe-graphs.json.gz" "$REAL_JSON" "$dir/probe-lpa-vs-louvain.json" << 'PYEOF'
+import gzip
+import hashlib
+import json
+import sys
+
+bundle_path, sidecar_path, out_sidecar_path = sys.argv[1:4]
+
+bundle = json.loads(gzip.decompress(open(bundle_path, "rb").read()).decode("utf-8"))
+solidus = bundle["solidus"]
+solidus["nodes"][1] = list(solidus["nodes"][0])  # index 1 now claims index 0's identity
+tampered = gzip.compress(json.dumps(bundle, separators=(",", ":")).encode("utf-8"), mtime=0)
+open(bundle_path, "wb").write(tampered)
+new_sha256 = hashlib.sha256(tampered).hexdigest()
+
+sidecar = json.load(open(sidecar_path))
+sidecar["graph_bundle"]["sha256"] = new_sha256
+json.dump(sidecar, open(out_sidecar_path, "w"))
+PYEOF
+_assert_exit "forged: two node indices claim the identical (path, line, name) identity" \
+    "$dir/probe-lpa-vs-louvain.json" 1
+
+# ---- Scenario 15 (checker instruction): shipped LPA partition mismatch ----
+# Isolating this from the count/Q guards specifically: swaps community
+# IDs 0 and 1 throughout `lpa_labels` -- a pure relabeling that preserves
+# the PARTITION (same grouping, so node_count/edge_count/
+# lpa_community_count/LPA_Q are all UNCHANGED, since modularity and
+# community counts are invariant under any bijective relabeling of
+# community IDs) but no longer matches the SPECIFIC canonical numbering
+# (0..N-1 by ascending smallest-member node) the shipped algorithm
+# actually assigns. Only a genuine re-run of the algorithm -- not a count
+# or a Q check -- can catch a mislabeling that preserves both.
+dir="$(_scenario_dir scenario-15)"
+python3 - "$dir/probe-graphs.json.gz" "$REAL_JSON" "$dir/probe-lpa-vs-louvain.json" << 'PYEOF'
+import gzip
+import hashlib
+import json
+import sys
+
+bundle_path, sidecar_path, out_sidecar_path = sys.argv[1:4]
+
+bundle = json.loads(gzip.decompress(open(bundle_path, "rb").read()).decode("utf-8"))
+solidus = bundle["solidus"]
+labels = solidus["lpa_labels"]
+solidus["lpa_labels"] = [1 if label == 0 else 0 if label == 1 else label for label in labels]
+tampered = gzip.compress(json.dumps(bundle, separators=(",", ":")).encode("utf-8"), mtime=0)
+open(bundle_path, "wb").write(tampered)
+new_sha256 = hashlib.sha256(tampered).hexdigest()
+
+sidecar = json.load(open(sidecar_path))
+sidecar["graph_bundle"]["sha256"] = new_sha256
+json.dump(sidecar, open(out_sidecar_path, "w"))
+PYEOF
+_assert_exit \
+    "forged: lpa_labels relabeled (community IDs 0/1 swapped, same partition/Q/count) disagrees with the shipped algorithm re-run" \
     "$dir/probe-lpa-vs-louvain.json" 1
 
 # ---- Behavioural fingerprint (checker defect 17): the fingerprint now

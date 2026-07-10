@@ -25,6 +25,7 @@ from typing import TYPE_CHECKING, Any, cast
 import structlog
 
 from atlas_aci.config import DEFAULT_MAX_BOUND_FIELD_ELEMENTS
+from atlas_aci.label_propagation import label_propagation
 
 if TYPE_CHECKING:
     from tree_sitter_language_pack import SupportedLanguage
@@ -1793,42 +1794,17 @@ class CodeGraph:
             adjacency[source_key].add(target_key)
             adjacency[target_key].add(source_key)
 
+        # The actual LPA algorithm is factored into label_propagation.py —
+        # a dependency-free module scripts/verify-probe-verdict.py ALSO
+        # imports (by file path, never through this package's own
+        # __init__) to re-run the identical algorithm against a committed
+        # graph bundle's edge list and assert the result matches what was
+        # shipped, rather than trusting it as printed. This method's own
+        # job is exactly the part that CANNOT be dependency-free: building
+        # `adjacency` from the DB-backed confident subgraph.
+        community_of = label_propagation(adjacency, _LPA_MAX_ITERATIONS)
         nodes_sorted = sorted(adjacency)
-        labels: dict[tuple[str, int, str], int] = {node: i for i, node in enumerate(nodes_sorted)}
-
-        for _pass_number in range(_LPA_MAX_ITERATIONS):
-            changed = False
-            for node in nodes_sorted:
-                neighbors = adjacency[node]
-                if not neighbors:
-                    continue
-                counts: dict[int, int] = {}
-                for neighbor in neighbors:
-                    label = labels[neighbor]
-                    counts[label] = counts.get(label, 0) + 1
-                max_count = max(counts.values())
-                # Deterministic tie-break: the smallest label among those
-                # tied for most-frequent — never "random", never
-                # insertion/hash-order-dependent.
-                new_label = min(label for label, count in counts.items() if count == max_count)
-                if new_label != labels[node]:
-                    labels[node] = new_label
-                    changed = True
-            if not changed:
-                break
-
-        groups: dict[int, list[tuple[str, int, str]]] = {}
-        for node in nodes_sorted:
-            groups.setdefault(labels[node], []).append(node)
-        # Renumber 0..N-1, ordered by each group's smallest member — the
-        # propagated label VALUES are arbitrary leftover node-indices;
-        # the total order lives in the node identities, not the labels.
-        ordered_groups = sorted(groups.values(), key=min)
-        community_of: dict[tuple[str, int, str], int] = {
-            node: community_id
-            for community_id, group in enumerate(ordered_groups)
-            for node in group
-        }
+        community_count = len(set(community_of.values()))
 
         members = [
             {
@@ -1843,7 +1819,7 @@ class CodeGraph:
 
         return {
             "communities": members,
-            "community_count": len(ordered_groups),
+            "community_count": community_count,
             "analysis_basis": "confident_edges",
             "ambiguous_edges_excluded": self._ambiguous_edge_count(),
             "resolved_edge_count": len(confident),

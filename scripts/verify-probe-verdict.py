@@ -92,6 +92,20 @@ proxy for behaviour. See `compute_indexer_fingerprint`'s own docstring
 for the full account, including why reproducibility across runs is not
 assumed but proven (A1/A3's total orders make it so).
 
+TWO MORE CLOSURES (checker instruction, same pass as defect 17): (a)
+nothing asserted that two node indices in the bundle couldn't claim the
+identical `(path, line, name)` identity — degree/modularity are computed
+over those identities, and a duplicate would silently alias two distinct
+nodes without any other check noticing. Fixed:
+`_check_node_identities_unique` runs before any `Q` is computed. (b) the
+shipped LPA's own partition (`lpa_labels`) was committed and trusted as
+printed, never re-derived — "the last assertion in the chain." Fixed:
+the deterministic LPA algorithm itself was factored out of
+`CodeGraph.communities()` into `label_propagation.py` (zero heavy
+imports), which this script now loads by file path (bypassing
+`atlas_aci`'s package `__init__`) and RE-RUNS against the bundle's own
+edge list, asserting the result equals the committed partition.
+
 THE DOCUMENTED TERMINUS: after all of the above, the one input this
 script still cannot independently verify is that the committed graph
 bundle is a FAITHFUL export of the two pinned repo SHAs — that requires
@@ -106,20 +120,23 @@ Usage:
   python3 scripts/verify-probe-verdict.py <sidecar_json_path>
 
 Exit 0 iff: the sidecar's declared bar/seeds/repo-set agree with the
-frozen constants; the graph bundle's sha256 matches; every recomputed
-node/edge/community count and modularity Q matches the sidecar's
-recorded copies within tolerance; the BEHAVIOURAL indexer fingerprint
-(the actual export of a committed fixture, not source text) matches;
-and the recorded verdict equals the mechanical evaluation of the
-RECOMPUTED numbers against the frozen bar. Exit 1 on any provenance/
-integrity/arithmetic mismatch, with a diagnostic naming exactly what
-disagreed. Exit 2 on usage / malformed-input errors.
+frozen constants; the graph bundle's sha256 matches; every node identity
+in the bundle is unique; every recomputed node/edge/community count and
+modularity Q matches the sidecar's recorded copies within tolerance; a
+genuine re-run of the shipped label-propagation algorithm against the
+bundle's own edges matches the committed partition; the BEHAVIOURAL
+indexer fingerprint (the actual export of a committed fixture, not
+source text) matches; and the recorded verdict equals the mechanical
+evaluation of the RECOMPUTED numbers against the frozen bar. Exit 1 on
+any provenance/integrity/arithmetic mismatch, with a diagnostic naming
+exactly what disagreed. Exit 2 on usage / malformed-input errors.
 """
 
 from __future__ import annotations
 
 import gzip
 import hashlib
+import importlib.util
 import json
 import re
 import shutil
@@ -179,6 +196,16 @@ Q_TOLERANCE: float = 1e-9
 CODEGRAPH_RELATIVE_PATH = "mcp-server/src/atlas_aci/codegraph.py"
 PROBE_EXPORT_SCRIPT_RELATIVE_PATH = "scripts/probe-export-confident-graph.py"
 FIXTURE_RELATIVE_PATH = "scripts/fingerprint-fixture"
+
+# The last assertion in the chain (checker instruction): the shipped
+# LPA's own partition was committed into the graph bundle and never
+# re-derived by this script -- `lpa_labels` was trusted as printed. Fixed
+# by loading `label_propagation.py` DIRECTLY BY FILE PATH (bypassing
+# `atlas_aci`'s package `__init__` entirely, via `importlib.util` below)
+# -- that module has zero imports beyond the standard library (no
+# `sqlite3`, no `tree_sitter`), so importing it does not pull `atlas_aci`
+# or any of its heavy dependencies into this script's own process.
+LABEL_PROPAGATION_RELATIVE_PATH = "mcp-server/src/atlas_aci/label_propagation.py"
 
 
 class ProvenanceError(Exception):
@@ -319,17 +346,97 @@ def _modularity(n: int, edges: list[tuple[int, int]], labels: list[int]) -> floa
     return q
 
 
-def evaluate_repo(repo: dict[str, Any], bundle: dict[str, Any]) -> dict[str, Any]:
+def _check_node_identities_unique(repo_name: str, nodes: list[list[Any]]) -> None:
+    """Degree and modularity are computed over node IDENTITIES —
+    `(path, line, name)` triples — addressed everywhere else in this
+    bundle (edges, partitions) by their POSITION in this list. If two
+    different positions claimed the identical triple, that identity
+    would silently alias two distinct graph nodes into one without
+    anything else ever noticing — indices stay valid integers, edges
+    stay well-formed pairs, nothing else fails. Checked before any Q is
+    computed, not after."""
+    seen: dict[tuple[Any, ...], int] = {}
+    for index, node in enumerate(nodes):
+        key = tuple(node)
+        if key in seen:
+            raise ProvenanceError(
+                f"{repo_name}: duplicate node identity {key!r} claimed by both index "
+                f"{seen[key]} and index {index} in the graph bundle -- degree/modularity "
+                "would be computed over an ill-formed node set."
+            )
+        seen[key] = index
+
+
+_label_propagation_module: Any = None
+
+
+def _load_label_propagation(repo_root: Path) -> Any:
+    """Loads `label_propagation.py` DIRECTLY BY FILE PATH — bypassing
+    `atlas_aci`'s package `__init__` entirely — so importing it never
+    pulls `atlas_aci`, `sqlite3`, or `tree_sitter` into this script's own
+    process. That module has zero imports beyond the standard library by
+    construction; this loader doesn't rely on that being true elsewhere,
+    it just never asks the package machinery to resolve anything."""
+    global _label_propagation_module
+    if _label_propagation_module is not None:
+        return _label_propagation_module
+    path = repo_root / LABEL_PROPAGATION_RELATIVE_PATH
+    if not path.is_file():
+        raise ProvenanceError(f"cannot re-run label propagation: {path} does not exist")
+    spec = importlib.util.spec_from_file_location("label_propagation", path)
+    if spec is None or spec.loader is None:
+        raise ProvenanceError(f"cannot load the label_propagation module from {path}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    _label_propagation_module = module
+    return module
+
+
+def _check_lpa_partition_matches_rerun(
+    repo_name: str,
+    n: int,
+    edges: list[tuple[int, int]],
+    lpa_labels: list[int],
+    repo_root: Path,
+) -> None:
+    """The last assertion in the chain (checker instruction): the shipped
+    LPA's own partition was, until now, committed into the bundle and
+    trusted as printed — nothing re-derived it. This re-runs the EXACT
+    SAME deterministic algorithm `CodeGraph.communities()` uses
+    (`label_propagation.py`, the identical module, imported by file path)
+    against THIS bundle's own edge list, and asserts the result equals
+    the committed `lpa_labels` — derived, not merely asserted."""
+    module = _load_label_propagation(repo_root)
+    adjacency: dict[int, set[int]] = {i: set() for i in range(n)}
+    for u, v in edges:
+        adjacency[u].add(v)
+        adjacency[v].add(u)
+    community_of = module.label_propagation(adjacency)
+    rerun_labels = [community_of[i] for i in range(n)]
+    if rerun_labels != lpa_labels:
+        raise ProvenanceError(
+            f"{repo_name}: re-running the shipped label-propagation algorithm on this "
+            "bundle's own edge list produces a DIFFERENT partition than the committed "
+            "lpa_labels -- the shipped LPA partition is not what the algorithm actually "
+            "produces from this graph."
+        )
+
+
+def evaluate_repo(repo: dict[str, Any], bundle: dict[str, Any], repo_root: Path) -> dict[str, Any]:
     _check_repo_seed_set_matches_frozen(repo["name"], repo["louvain_q_by_seed"])
 
     graph = bundle.get(repo["name"])
     if graph is None:
         raise ProvenanceError(f"{repo['name']}: not present in the graph bundle")
 
+    _check_node_identities_unique(repo["name"], graph["nodes"])
+
     n = len(graph["nodes"])
     edges = [tuple(e) for e in graph["edges"]]
     lpa_labels = graph["lpa_labels"]
     louvain_partitions = graph["louvain_partitions"]
+
+    _check_lpa_partition_matches_rerun(repo["name"], n, edges, lpa_labels, repo_root)
 
     # Recompute node/edge/community counts from the raw graph -- no
     # stored summary is ever trusted (checker defect 13).
@@ -610,7 +717,7 @@ def main() -> int:
     recorded_verdict = str(data["recorded_verdict"]).strip().upper()
 
     try:
-        evaluations = [evaluate_repo(repo, bundle) for repo in data["repos"]]
+        evaluations = [evaluate_repo(repo, bundle, repo_root) for repo in data["repos"]]
     except ProvenanceError as e:
         print(f"FAIL (AC-A3-1/F7, provenance): {e}", file=sys.stderr)
         return 1
