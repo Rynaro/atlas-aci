@@ -133,11 +133,11 @@ The eight P0 named criteria all *pass*. But three MAJOR defects (F-1, F-2, F-3) 
 
 Bar frozen at `R = 0.85` before probe ran. Results: Solidus `LPA_Q = 0.6691476`, `Louvain_Q_median = 0.7449783`, bar `= 0.85 × 0.7449783 = 0.6332316`. Absolute margin: `+0.0359` (Solidus). Ratio: `0.8991`. Spree: ratio `0.9132`, margin `+0.0496`.
 
-Pre-registration: rule cannot move after measurement. `R = 0.90` would cut feature on Solidus shortfall of `0.000688` — smaller than Louvain's own seed-to-seed sd (`0.002176`). FORGE predicted bimodal failure (comparable or collapsed). Result was bimodal for Louvain, but LPA landed mid-band, making constant load-bearing. Principle held anyway *because it could not be moved after data became known*. (probe-lpa-vs-louvain.json: both repos' `louvain_q_by_seed` lists, median recomputation, `lpa_q` values)
+Pre-registration: rule cannot move after measurement. At `R = 0.90`, Solidus would fail: `bar = 0.90 × 0.7449783 = 0.6704805`, `LPA_Q = 0.6691476`, shortfall `0.001333` — smaller than Louvain's own seed-to-seed population sd (`0.0025925`). Spree still *passes* at `R = 0.90` (`bar = 0.90 × 0.7846478 = 0.7061830`, `LPA_Q = 0.7165340`, margin `+0.010351`); the pass rule is a strict AND across both repos, so Solidus's failure alone would still have cut the feature at that bar — no wording here should be read as implying both repos would have failed. FORGE predicted bimodal failure (comparable or collapsed). Result was bimodal for Louvain, but LPA landed mid-band, making the constant load-bearing. Principle held anyway *because it could not be moved after data became known*. (probe-lpa-vs-louvain.json: both repos' `louvain_q_by_seed` lists, median recomputation, `lpa_q` values)
 
 ---
 
-## The Twenty-First Defect — Twenty Defects Were Found; One Number Cannot Be Verified
+## The Twenty-First and Twenty-Second Defects — Two Numbers This Document Could Not Itself Verify
 
 **Attribution from the orchestrator's dispatch transcript (not derived from artefacts):**
 - **Checker (vigil):** ~12 defects
@@ -170,6 +170,14 @@ Checker verdicts quote the orchestrator's findings back to it (`checker-verdict-
 **The core finding:** This campaign kept no machine-checkable record of provenance for its own findings. Twenty defects were found, each one a check whose input provenance went unverified. The one number the retrospective cannot itself verify is *who found them* — because the system that caught the defects never recorded that. The orchestrator's transcript is the only witness, and it is not an artefact.
 
 **The recommendation:** A future campaign should write a finding record at the moment of discovery — finder, defect, evidence, timestamp — as an artefact. That single change would make attribution derived rather than remembered, and would turn this section from an assertion into a query.
+
+### The Twenty-Second Defect — A Stale Number, Shipped Inside the Document That Names the Pattern
+
+**What happened:** The "Pre-registration of D3a bar held, but tight" section above (in this same document, released in tag `v2.0.0`) originally read: "`R = 0.90` would cut feature on Solidus shortfall of `0.000688` — smaller than Louvain's own seed-to-seed sd (`0.002176`)." Neither number traces to the committed probe artefact, `probe-lpa-vs-louvain.json` (committed alongside this file, wherever this change folder currently lives — active or archived). They are **pre-canonicalization** medians — exactly the superseded values this same file's own "Note on the recomputed numbers vs. an earlier snapshot of this artefact" paragraph already documents, from when the graph bundle's node-to-integer labeling was canonicalized to `communities()`'s own sorted order. Recomputed directly from the committed artefact: Solidus's shortfall at `R = 0.90` is `0.001333` against a population sd of `0.0025925` (not `0.000688` / `0.002176`).
+
+**The claim itself survives; only the numbers were stale.** Solidus still fails the `R = 0.90` bar (`bar = 0.6704805` vs. `LPA_Q = 0.6691476`), the pass rule is a strict AND across both repos, so the feature would still have been cut at that bar — and the shortfall is still smaller than the baseline's own seed-to-seed noise. Spree passes at `R = 0.90` (margin `+0.010351`), and no wording in this document should be read as implying both repos would have failed.
+
+**Why this is the twenty-second instance, not a one-off:** the number was asserted by the orchestrator from data already superseded elsewhere in this repository, then repeated into a document — this one — that had no mechanism to check its own prose against its own sidecar. The retrospective that names "a check that validates the data it was handed, while the provenance of that data goes unchecked, is not a check" shipped exactly that failure about itself, in the released `v2.0.0` tag. Fixed on `main` (not by amending the tag) by recomputing directly from `probe-lpa-vs-louvain.json` rather than trusting a prior draft's arithmetic.
 
 ---
 

@@ -228,7 +228,10 @@ failed any clause, A3 would have been cut to v2.1 and v2.0.0 would ship
 `god_nodes` alone — the bar was fixed before the probe ran specifically so
 the outcome couldn't be argued with either way. Full numbers (all ten
 Louvain seeds per repo, best/worst/mean/sd, the exact clause arithmetic):
-`.spectra/changes/aci-v2-harden-and-augment/probe-lpa-vs-louvain.md`.
+`probe-lpa-vs-louvain.md`, committed under `.spectra/changes/` (the
+`aci-v2-harden-and-augment` change folder; archived to
+`.spectra/changes/archive/` once verified — search there if the exact
+path has moved).
 "What `graph_query` returns" and "what `god_nodes`/`communities` analyze"
 deliberately differ, and both responses carry `analysis_basis`,
 `ambiguous_edges_excluded`, and `resolved_edge_count` fields making that
@@ -336,9 +339,9 @@ there is no single node to draw an undirected connection to in the first
 place.
 
 This shipped **only because the D3a probe passed** — see the paragraph
-above and `.spectra/changes/aci-v2-harden-and-augment/probe-lpa-vs-louvain.md`
-for the full measurement. The probe methodology (two pinned reference
-repos, networkx Louvain as the comparison baseline) is a one-time
+above and `probe-lpa-vs-louvain.md` (see the note above on where that's
+committed) for the full measurement. The probe methodology (two pinned
+reference repos, networkx Louvain as the comparison baseline) is a one-time
 gate-clearing exercise, not a shipped runtime path — networkx never
 appears in `mcp-server/pyproject.toml` or `mcp-server/uv.lock`.
 
