@@ -240,6 +240,62 @@ def test_import_rejects_wrong_schema_epoch(tmp_path: Path) -> None:
         imported.import_jsonl(tampered)
 
 
+def test_import_rejects_truncated_header_with_a_clean_diagnostic(tmp_path: Path) -> None:
+    """A crash mid-write (a partial `scp`/`git checkout`) can truncate the
+    export file's FIRST line -- the header -- before `json.loads` ever
+    sees a complete object. This must raise the same kind of diagnosable
+    `ValueError` every other corruption path raises, never a raw
+    `json.JSONDecodeError` traceback with no "regenerate from source"
+    guidance attached (a real gap this test caught and
+    `import_jsonl` was fixed to close)."""
+    graph = _build(tmp_path, "repo", _FILES)
+    out_path = tmp_path / "export.jsonl"
+    graph.export_jsonl(out_path)
+
+    raw = out_path.read_bytes()
+    lines = raw.split(b"\n")
+    truncated_header = lines[0][:-5]  # cut mid-JSON-object, before the closing brace
+    tampered = tmp_path / "truncated-header.jsonl"
+    tampered.write_bytes(truncated_header + b"\n" + b"\n".join(lines[1:]))
+
+    target_repo = tmp_path / "target"
+    target_repo.mkdir()
+    imported = CodeGraph(repo=target_repo)
+    with pytest.raises(ValueError, match="header record is not valid JSON"):
+        imported.import_jsonl(tampered)
+
+
+def test_import_rejects_truncated_body_line_with_a_clean_diagnostic(tmp_path: Path) -> None:
+    """The body-line counterpart: a body record cut mid-JSON must also
+    raise a diagnosable `ValueError`, not a raw traceback -- even though
+    the content_hash check above already catches this in the overwhelming
+    common case (any body tampering changes the recomputed hash), this
+    isolates the second guard specifically by re-signing the header's
+    content_hash to match the ALREADY-truncated body, so the hash check
+    passes and the json.loads guard is what actually fires."""
+    graph = _build(tmp_path, "repo", _FILES)
+    out_path = tmp_path / "export.jsonl"
+    graph.export_jsonl(out_path)
+
+    lines = out_path.read_text().splitlines()
+    body_lines = lines[1:]
+    body_lines[-1] = body_lines[-1][:-5]  # truncate the last body record mid-JSON
+    body_text = "".join(line + "\n" for line in body_lines)
+    new_hash = hashlib.sha256(body_text.encode("utf-8")).hexdigest()
+
+    header = json.loads(lines[0])
+    header["content_hash"] = new_hash
+    new_lines = [json.dumps(header, sort_keys=True, separators=(",", ":")), *body_lines]
+    tampered = tmp_path / "truncated-body.jsonl"
+    tampered.write_text("\n".join(new_lines) + "\n")
+
+    target_repo = tmp_path / "target"
+    target_repo.mkdir()
+    imported = CodeGraph(repo=target_repo)
+    with pytest.raises(ValueError, match="body record is not valid JSON"):
+        imported.import_jsonl(tampered)
+
+
 # ---- AC-A5-5: no graph/union merge driver ships ----
 
 

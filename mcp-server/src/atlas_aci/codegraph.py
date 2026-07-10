@@ -2190,7 +2190,21 @@ class CodeGraph:
         if not lines:
             raise ValueError(f"{in_path}: empty export file, no header record")
 
-        header = json.loads(lines[0])
+        # Every `json.loads` below is wrapped: a truncated/corrupted line
+        # (a crash mid-write, a partial `scp`/`git checkout`) is exactly the
+        # scenario this method exists to reject loudly -- a raw
+        # `json.JSONDecodeError` traceback is not a diagnosable, actionable
+        # error message, and this is index-path-only, write-adjacent code
+        # where "the file is bad" must read as clearly as every other
+        # integrity failure this method already raises.
+        try:
+            header = json.loads(lines[0])
+        except json.JSONDecodeError as e:
+            raise ValueError(
+                f"{in_path}: header record is not valid JSON ({e}) -- the export is truncated "
+                "or corrupted. Regenerate it from source (`atlas-aci index` + a fresh export) "
+                "-- there is no semantic merge for this format (AC-A5-5)."
+            ) from e
         if header.get("type") != "header":
             raise ValueError(
                 f"{in_path}: first record is not a header (type={header.get('type')!r})"
@@ -2213,7 +2227,22 @@ class CodeGraph:
                 "version; cross-epoch import is never attempted (D1)."
             )
 
-        records = [json.loads(line) for line in lines[1:]]
+        # The content_hash check above already gates against a corrupted BODY
+        # line in the overwhelmingly common case (any tampering changes the
+        # recomputed hash) -- this second try/except exists for the
+        # remaining, harder-to-reach edge: a body line whose corruption
+        # happens to co-occur with a header whose OWN content_hash was
+        # separately (mis)computed to still match. Same principle either
+        # way: never let a raw JSONDecodeError traceback stand in for a
+        # diagnosable message.
+        try:
+            records = [json.loads(line) for line in lines[1:]]
+        except json.JSONDecodeError as e:
+            raise ValueError(
+                f"{in_path}: a body record is not valid JSON ({e}) -- the export is truncated "
+                "or corrupted. Regenerate it from source (`atlas-aci index` + a fresh export) "
+                "-- there is no semantic merge for this format (AC-A5-5)."
+            ) from e
 
         self.atlas_dir.mkdir(parents=True, exist_ok=True)
         tmp_path = self.atlas_dir / f".graph.{SCHEMA_EPOCH}.db.import-tmp.{os.getpid()}"
