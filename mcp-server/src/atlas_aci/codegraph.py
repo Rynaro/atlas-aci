@@ -1409,11 +1409,28 @@ class CodeGraph:
         node_kind: dict[tuple[str, int, str], str | None] = {}
 
         for edge in confident:
+            # Checker MINOR-1: this guard is a second, redundant barrier,
+            # not the only one — `confident_edges()`'s own SQL filter
+            # (`WHERE confidence IN ('EXTRACTED', 'INFERRED')`) already
+            # means no edge reaching this loop has `target is None` in
+            # practice (only an AMBIGUOUS-shaped row can carry that). The
+            # docstring above claims AMBIGUOUS "cannot leak into degree by
+            # construction, not because a filter happened to be applied
+            # correctly" — that claim used to be true only for in_degree
+            # (gated on `target is not None`) and false for out_degree
+            # (the source/out-degree branch ran unconditionally, on the
+            # unstated assumption that `target` is never `None` here).
+            # Skipping the WHOLE edge when `target is None` — matching
+            # `communities()`'s identical guard below — makes both
+            # in_degree and out_degree share the same structural
+            # AMBIGUOUS-can't-reach-here guarantee the docstring claims,
+            # rather than one path merely happening to be safe today.
             target = edge["target"]
-            if target is not None:
-                key = (target["path"], target["line"], target["name"])
-                in_degree[key] = in_degree.get(key, 0) + 1
-                node_kind.setdefault(key, self._target_kind(target))
+            if target is None:
+                continue
+            key = (target["path"], target["line"], target["name"])
+            in_degree[key] = in_degree.get(key, 0) + 1
+            node_kind.setdefault(key, self._target_kind(target))
 
             source_key, source_kind = self._resolve_source_node(edge["source"])
             if source_key is not None:

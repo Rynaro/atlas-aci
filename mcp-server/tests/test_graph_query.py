@@ -592,3 +592,35 @@ def test_ambiguous_edges_never_contribute_to_god_node_degree(tmp_path: Path) -> 
     assert "dup_name" not in names
     assert not names & {"DupA", "DupB"}
     assert result["god_nodes"] == [], "the only edge in this fixture is AMBIGUOUS"
+
+
+def test_god_nodes_out_degree_double_guarded_against_target_none(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Checker MINOR-1: `god_nodes()`'s out-degree branch used to run
+    unconditionally, even for an edge shaped like an AMBIGUOUS row
+    (`target is None`) — safe in production only because
+    `confident_edges()`'s own SQL filter never actually produces such a
+    row, not because `god_nodes()` itself refused one. This monkeypatches
+    `confident_edges()` to return exactly one AMBIGUOUS-shaped edge (a
+    resolvable source, `target=None`) and asserts BOTH `in_degree` and
+    `out_degree` stay at zero everywhere — the same double-barrier
+    `communities()` already has (`if target is None: continue`, guarding
+    the whole edge, not just the in-degree half)."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _rb(repo, "app/hub.rb", "class Hub\n  def call\n  end\nend\n")
+    graph = CodeGraph(repo=repo)
+    graph.build()
+
+    # Sanity: this fixture has zero real confident edges (nothing calls
+    # `call`) — any degree seen below can only come from the monkeypatch.
+    assert graph.confident_edges() == []
+
+    fake_source = {"path": "app/hub.rb", "line": 2, "name": "call", "kind": "method"}
+    monkeypatch.setattr(graph, "confident_edges", lambda: [{"source": fake_source, "target": None}])
+    result = graph.god_nodes()
+    assert result["god_nodes"] == [], (
+        "an edge with target=None must contribute zero degree anywhere — "
+        "not even out_degree via a resolvable source"
+    )
