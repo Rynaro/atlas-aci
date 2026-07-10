@@ -93,7 +93,7 @@ and can be tightened per deployment.
 | `list_dir` | List a directory, respecting the skip-list (`node_modules`, `vendor/bundle`, `.git`, `.atlas`, …). | ≤200 entries/call, overflow flag if truncated |
 | `search_text` | Ripgrep-backed regex search over a repo-relative scope or glob. Smart-case by default. | ≤50 matches/call, 15s wall-clock timeout |
 | `search_symbol` | Index-backed symbol lookup. Returns definitions + references for a name (optionally filtered by `kind`). | Requires `atlas-aci index` first; central element cap + byte ceiling (truncated + flagged) |
-| `graph_query` | Tiny DSL over the code graph: `callers_of:Sym`, `definitions_of:Name`, `subclasses_of:Class`. | Rejects unknown verbs; central element cap + byte ceiling (truncated + flagged) |
+| `graph_query` | Tiny DSL over the code graph: `callers_of:Sym`, `definitions_of:Name`, `subclasses_of:Class`, `god_nodes:`. | Rejects unknown verbs; central element cap + byte ceiling (truncated + flagged) |
 | `test_dry_run` | Run one test file (optionally filtered by case name) as a subprocess with captured stdout/stderr. | 30s wall-clock, ≤8 KiB stdout+stderr. **Operator must sandbox.** |
 | `memex_read` | Byte-exact retrieval of a previously captured excerpt via its `memex://excerpt/<sha256>` ref, minted by `Memex.write()`. No ATLAS tool currently emits one. | Scoped to the hashed-dir backend |
 
@@ -178,21 +178,70 @@ per the same principle, never over-claiming. Confidence tiers can
 therefore be conservative; treat `EXTRACTED` as a floor, not an exact
 count.
 
-**The analysis-graph divergence (D4a) — spec'd now, not yet shipped.**
-`graph_query` always returns every *matching* edge, AMBIGUOUS included,
-with its full ordered `candidates[]` attached — this project's "never
-silently incomplete" thesis extends to ambiguity itself: an edge with more
-than one candidate is reported, not dropped. A1 also ships
-`CodeGraph.confident_edges()`, a query primitive over the **confident
-subgraph** (`EXTRACTED` ∪ `INFERRED`) that excludes AMBIGUOUS entirely (no
-fan-out to candidates, no fractional weight — ambiguity is not importance).
-Degree-centrality god nodes and community detection (A2/A3, **not part of
-this release** — tracked separately) are specified to consume exactly that
-primitive as their analysis input, never the raw `graph_query` edge set.
-When those verbs ship, "what `graph_query` returns" and "what god-nodes/
-communities analyze" will deliberately differ, and their responses will
-carry `analysis_basis`, `ambiguous_edges_excluded`, and `resolved_edge_count`
-fields making that divergence visible rather than implicit.
+**The analysis-graph divergence (D4a).** `graph_query` always returns every
+*matching* edge, AMBIGUOUS included, with its full ordered `candidates[]`
+attached — this project's "never silently incomplete" thesis extends to
+ambiguity itself: an edge with more than one candidate is reported, not
+dropped. `CodeGraph.confident_edges()` is the query primitive over the
+**confident subgraph** (`EXTRACTED` ∪ `INFERRED`) that excludes AMBIGUOUS
+entirely (no fan-out to candidates, no fractional weight — ambiguity is
+not importance); `god_nodes:` (A2, below) is its first real consumer.
+Community detection (A3, **not part of this release** — cut pending the
+D3a probe) is specified to consume the same primitive when/if it ships.
+"What `graph_query` returns" and "what `god_nodes`/(future) communities
+analyze" deliberately differ, and `god_nodes`'s response carries
+`analysis_basis`, `ambiguous_edges_excluded`, and `resolved_edge_count`
+fields making that divergence visible rather than implicit — a consumer
+who ranks via `god_nodes` and then queries `callers_of` and sees AMBIGUOUS
+edges too is not seeing a contradiction; the ranking never included them.
+
+### `graph_query` DSL — `god_nodes:` (v2.0.0 / A2)
+
+`god_nodes:` (the trailing colon is required by the DSL's `verb:argument`
+shape; the argument itself is ignored — the ranking is computed over the
+whole confident subgraph, not a single named symbol) returns a
+degree-centrality ranking:
+
+```jsonc
+{
+  "god_nodes": [
+    {
+      "path": "mcp-server/src/atlas_aci/codegraph.py",
+      "line": 422,
+      "name": "CodeGraph",
+      "kind": "class",
+      "in_degree": 75,    // confident edges reaching this symbol
+      "out_degree": 3,    // confident edges originating from it
+      "degree": 78        // in_degree + out_degree — the primary rank key
+    },
+    // ...
+  ],
+  "analysis_basis": "confident_edges",
+  "ambiguous_edges_excluded": 107,  // AMBIGUOUS edges in the FULL edges table
+  "resolved_edge_count": 459        // edges the ranking was actually computed over
+}
+```
+
+No clustering, no cluster/community detection, no graph-algorithm runtime
+dependency — pure arithmetic over `confident_edges()`'s own output, which
+is what makes AMBIGUOUS structurally unable to leak into the ranking (not
+merely a filter that happened to be applied correctly). A node's identity
+is a *specific* symbol definition (`path`, `line`, `name`), never a bare
+name string, so two identically-named methods in different classes rank
+as two different nodes.
+
+**In-degree vs out-degree — a judgment call, not a criterion mandate.**
+The frozen acceptance criteria don't specify which direction (or
+combination) "degree centrality" means; FORGE's design record states that
+both are computed over the confident subgraph and frames a god node as "a
+symbol many references *definitely/probably* reach" (an in-degree
+reading), while computing out-degree too for consistency with future
+analysis consumers. This implementation exposes **both** on every node and
+ranks by their **sum** — "degree centrality," read literally and
+unqualified, in the graph-theory sense. If you specifically want "the
+things everyone calls" (fan-in) or "the things that call everything"
+(fan-out), re-sort the returned list by `in_degree` or `out_degree`
+yourself; the response gives you both, not just the combined rank.
 
 `candidates[]` (and every edge enumeration) is emitted in a fixed total
 order (`path`, `line`, `name`) for identical input — required for the

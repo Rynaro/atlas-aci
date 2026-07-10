@@ -14,6 +14,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
+
 from atlas_aci.codegraph import CodeGraph
 from atlas_aci.config import Config
 from atlas_aci.enforcement import Enforcement
@@ -338,3 +340,255 @@ async def test_unresolved_refs_field_present_end_to_end(tmp_path: Path) -> None:
     )
     assert incomplete["edges"] == []
     assert incomplete["unresolved_refs"] == 2
+
+
+# ---- A2 — degree-centrality god nodes ----
+#
+# No clustering, no cluster/community detection of any kind — pure
+# arithmetic over confident_edges()'s own output. Every fixture below is built so the
+# *independently expected* degree counts are computed by hand in the test
+# (never by calling into `god_nodes()`'s own arithmetic), per the lesson
+# that AC-A1-6 once passed vacuously because the candidate count was
+# computed over a symbol set that excluded the answer.
+
+
+def _rb(repo: Path, rel: str, content: str) -> None:
+    _write(repo, rel, content)
+
+
+async def test_god_nodes_response_shape_end_to_end(tmp_path: Path) -> None:
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    config = Config(repo=repo, memex_root=tmp_path / "memex")
+    enforcement = Enforcement(config)
+    memex = Memex(config.memex_root)
+
+    _rb(repo, "app/enforcement.rb", "class Enforcement\n  def enforce\n  end\nend\n")
+    _rb(
+        repo,
+        "app/hub.rb",
+        "class Hub\n  def call\n    Enforcement.enforce\n    Enforcement.enforce\n  end\nend\n",
+    )
+    code_graph = CodeGraph(repo=repo)
+    code_graph.build()
+
+    result = await dispatch_tool_call(
+        "graph_query", {"query": "god_nodes:"}, config, enforcement, memex, code_graph
+    )
+    assert result["analysis_basis"] == "confident_edges"
+    assert result["resolved_edge_count"] == 2
+    assert result["ambiguous_edges_excluded"] == 0
+    nodes = result["god_nodes"]
+    assert len(nodes) == 2
+    enforce_node = next(n for n in nodes if n["name"] == "enforce")
+    assert enforce_node["in_degree"] == 2
+    assert enforce_node["out_degree"] == 0
+    assert enforce_node["degree"] == 2
+    assert enforce_node["kind"] == "method"
+    call_node = next(n for n in nodes if n["name"] == "call")
+    assert call_node["out_degree"] == 2
+    assert call_node["in_degree"] == 0
+    # Ranked by degree DESC — both nodes tie at degree 2 here, broken by
+    # (path, line, name); enforcement.rb sorts before hub.rb.
+    assert nodes[0]["path"] == "app/enforcement.rb"
+
+
+# ---- AC-A2-1 — deterministic total order, INCLUDING at the tail (ties) ----
+
+
+def test_god_nodes_degree_centrality_deterministic(tmp_path: Path) -> None:
+    """Ties at the same degree are the norm, not the exception (checker
+    finding) — this fixture deliberately creates three same-degree nodes,
+    written to disk in an order that does NOT match the expected tiebreak
+    (mirroring AC-A1-8's z_last/a_first trick), and indexes the identical
+    source from scratch twice, diffing the FULL ranking (not just the top
+    N) for byte-for-byte identity."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    # Three distinct methods, each called exactly once -> degree 1 each,
+    # a genuine three-way tie. Files written in an order that would
+    # surface a rowid/insertion-order bug immediately.
+    _rb(repo, "app/z_target.rb", "class ZTarget\n  def z_method\n  end\nend\n")
+    _rb(repo, "app/a_target.rb", "class ATarget\n  def a_method\n  end\nend\n")
+    _rb(repo, "app/m_target.rb", "class MTarget\n  def m_method\n  end\nend\n")
+    _rb(
+        repo,
+        "app/hub.rb",
+        "class Hub\n"
+        "  def call\n"
+        "    ZTarget.z_method\n"
+        "    ATarget.a_method\n"
+        "    MTarget.m_method\n"
+        "  end\n"
+        "end\n",
+    )
+
+    graph1 = CodeGraph(repo=repo)
+    graph1.build()
+    result1 = graph1.god_nodes()
+
+    graph2 = CodeGraph(repo=repo)
+    graph2.build()
+    result2 = graph2.god_nodes()
+
+    assert result1["god_nodes"] == result2["god_nodes"], (
+        "the full ranking (not just the top entry) must be byte-identical "
+        "across independent rebuilds of identical source"
+    )
+    # Independently computed expectation: the three degree-1 targets sort
+    # by (path, line, name) ASC among themselves — a_target before
+    # m_target before z_target — regardless of disk-write order.
+    target_names = [n["name"] for n in result1["god_nodes"] if n["name"] != "call"]
+    assert target_names == ["a_method", "m_method", "z_method"]
+
+
+# ---- AC-A2-2 — no graph-algorithm runtime dependency ----
+
+
+def test_god_nodes_uses_only_edge_counts() -> None:
+    import re
+
+    src_path = Path(__file__).resolve().parent.parent / "src" / "atlas_aci" / "codegraph.py"
+    source = src_path.read_text()
+    assert not re.search(r"\bimport networkx\b|\bfrom networkx\b", source)
+    assert not re.search(r"\bimport igraph\b|\bfrom igraph\b", source)
+    assert not re.search(r"\bimport graspologic\b|\bfrom graspologic\b", source)
+
+
+async def test_god_nodes_uses_only_edge_counts_end_to_end(tmp_path: Path) -> None:
+    """Not just a grep — confirms the actual computation is arithmetic over
+    `edges` counts by cross-checking against independently-computed totals
+    (a direct `SELECT COUNT(*)` per node), not a call into `god_nodes()`'s
+    own logic."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _rb(repo, "app/target.rb", "class Target\n  def act\n  end\nend\n")
+    _rb(
+        repo,
+        "app/hub.rb",
+        "class Hub\n  def call\n    Target.act\n    Target.act\n    Target.act\n  end\nend\n",
+    )
+    graph = CodeGraph(repo=repo)
+    graph.build()
+
+    expected_in_degree = graph.db.execute(
+        "SELECT COUNT(*) FROM edges WHERE target_name = 'act' "
+        "AND confidence IN ('EXTRACTED', 'INFERRED')"
+    ).fetchone()[0]
+
+    result = graph.god_nodes()
+    act_node = next(n for n in result["god_nodes"] if n["name"] == "act")
+    assert act_node["in_degree"] == expected_in_degree == 3
+
+
+# ---- AC-A2-3 — analysis_basis / ambiguous_edges_excluded / resolved_edge_count ----
+
+
+async def test_analysis_basis_fields_present(tmp_path: Path) -> None:
+    """A fixture where all three numbers DIFFER from each other and from
+    the trivial 0-or-all cases — a fixture where they coincide proves
+    nothing (checker instruction). Total edges in this fixture: 3 resolved
+    (confident) + 2 ambiguous = 5; `ambiguous_edges_excluded` (2) and
+    `resolved_edge_count` (3) must each be their own distinct number, not a
+    stand-in for "all" or "none"."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    config = Config(repo=repo, memex_root=tmp_path / "memex")
+    enforcement = Enforcement(config)
+    memex = Memex(config.memex_root)
+
+    # Two confident (unique) targets, called 3 times combined.
+    _rb(repo, "app/target.rb", "class Target\n  def act\n  end\nend\n")
+    _rb(repo, "app/other.rb", "class Other\n  def go\n  end\nend\n")
+    # One ambiguous target (two candidates), called twice.
+    _rb(repo, "app/dup_a.rb", "class DupA\n  def dup_name\n  end\nend\n")
+    _rb(repo, "app/dup_b.rb", "class DupB\n  def dup_name\n  end\nend\n")
+    _rb(
+        repo,
+        "app/hub.rb",
+        "class Hub\n"
+        "  def call\n"
+        "    Target.act\n"
+        "    Target.act\n"
+        "    Other.go\n"
+        "    dup_name()\n"
+        "    dup_name()\n"
+        "  end\n"
+        "end\n",
+    )
+    code_graph = CodeGraph(repo=repo)
+    code_graph.build()
+
+    # Independently computed expectations, straight from the edges table.
+    expected_resolved = code_graph.db.execute(
+        "SELECT COUNT(*) FROM edges WHERE confidence IN ('EXTRACTED', 'INFERRED')"
+    ).fetchone()[0]
+    expected_ambiguous = code_graph.db.execute(
+        "SELECT COUNT(*) FROM edges WHERE confidence = 'AMBIGUOUS'"
+    ).fetchone()[0]
+    assert expected_resolved == 3
+    assert expected_ambiguous == 2
+    assert expected_resolved != expected_ambiguous  # non-degenerate fixture
+
+    result = await dispatch_tool_call(
+        "graph_query", {"query": "god_nodes:"}, config, enforcement, memex, code_graph
+    )
+    assert result["analysis_basis"] == "confident_edges"
+    assert result["resolved_edge_count"] == expected_resolved == 3
+    assert result["ambiguous_edges_excluded"] == expected_ambiguous == 2
+    # The ambiguous target must not appear anywhere in the ranking.
+    assert not any(n["name"] == "dup_name" for n in result["god_nodes"])
+
+
+# ---- AC-NEG-7 — structurally impossible for AMBIGUOUS to leak into degree ----
+
+
+async def test_god_nodes_input_is_exactly_confident_edges(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The strongest form of AC-NEG-7 for god_nodes: not merely "the
+    numbers came out right this time" but "there is no OTHER path into the
+    ranking." Monkeypatches `confident_edges` to return an empty list and
+    asserts the ranking is empty too, proving `god_nodes()` has no
+    independent route to `edges` for degree purposes — only through
+    `confident_edges()`."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _rb(repo, "app/target.rb", "class Target\n  def act\n  end\nend\n")
+    _rb(repo, "app/hub.rb", "class Hub\n  def call\n    Target.act\n  end\nend\n")
+    graph = CodeGraph(repo=repo)
+    graph.build()
+
+    # Sanity: without the patch, there IS a ranking.
+    assert graph.god_nodes()["god_nodes"], "fixture must produce a non-empty ranking normally"
+
+    monkeypatch.setattr(graph, "confident_edges", lambda: [])
+    patched = graph.god_nodes()
+    assert patched["god_nodes"] == []
+    assert patched["resolved_edge_count"] == 0
+    # ambiguous_edges_excluded is independent of confident_edges() (it
+    # counts the full `edges` table directly) and must be unaffected by
+    # the patch — this fixture has zero AMBIGUOUS edges either way.
+    assert patched["ambiguous_edges_excluded"] == 0
+
+
+def test_ambiguous_edges_never_contribute_to_god_node_degree(tmp_path: Path) -> None:
+    """AC-NEG-7, direct form: a name with 2+ candidates (AMBIGUOUS, no
+    fan-out) must contribute ZERO degree anywhere — not to the ambiguous
+    name's own (nonexistent) node, and not fractionally split across its
+    candidates."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _rb(repo, "app/dup_a.rb", "class DupA\n  def dup_name\n  end\nend\n")
+    _rb(repo, "app/dup_b.rb", "class DupB\n  def dup_name\n  end\nend\n")
+    _rb(repo, "app/hub.rb", "class Hub\n  def call\n    dup_name()\n  end\nend\n")
+    graph = CodeGraph(repo=repo)
+    graph.build()
+
+    result = graph.god_nodes()
+    # No node for the ambiguous callee itself, and neither DupA nor DupB
+    # picked up any fractional/fanned-out in_degree from it.
+    names = {n["name"] for n in result["god_nodes"]}
+    assert "dup_name" not in names
+    assert not names & {"DupA", "DupB"}
+    assert result["god_nodes"] == [], "the only edge in this fixture is AMBIGUOUS"

@@ -99,6 +99,7 @@ _LIST_BEARING_VERBS = {
     "callers_of": ("edges",),
     "definitions_of": ("definitions", "references"),
     "subclasses_of": ("edges",),
+    "god_nodes": ("god_nodes",),
 }
 
 
@@ -1006,12 +1007,13 @@ _ANCHOR_TOOL_SCENARIOS: list[tuple[str, dict[str, list[dict[str, str]]], str]] =
 ]
 
 # (query_string, static_extra_fields, field_under_test) — every graph_query
-# verb, including subclasses_of (AC-A1-7/AC-A1-10).
+# verb, including subclasses_of (AC-A1-7/AC-A1-10) and god_nodes (A2).
 _ANCHOR_VERB_SCENARIOS: list[tuple[str, dict[str, list[dict[str, str]]], str]] = [
     ("callers_of:Foo", {}, "edges"),
     ("definitions_of:Foo", {"references": [{"name": "safe"}]}, "definitions"),
     ("definitions_of:Foo", {"definitions": [{"name": "safe"}]}, "references"),
     ("subclasses_of:Foo", {}, "edges"),
+    ("god_nodes:", {}, "god_nodes"),
 ]
 
 
@@ -1029,6 +1031,16 @@ def _anchor_list_item(field: str, i: int) -> Any:
             "source": {"path": "a.rb", "line": i, "name": None, "kind": None},
             "target": {"path": "b.rb", "line": i, "name": "x"},
             "candidates": None,
+        }
+    if field == "god_nodes":
+        return {
+            "path": "a.rb",
+            "line": i,
+            "name": f"Node{i}",
+            "kind": "class",
+            "in_degree": i,
+            "out_degree": 0,
+            "degree": i,
         }
     raise AssertionError(f"unhandled field {field!r} in anchor test fixture")
 

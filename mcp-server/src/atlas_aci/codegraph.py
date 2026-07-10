@@ -449,7 +449,9 @@ def parse_query_verb(dsl: str) -> str:
 # grep for literal strings like "label_propagation" is evadable by simply
 # choosing different names; a verb landing here (which it must, to be
 # dispatchable at all) cannot evade a test that enumerates this set itself.
-KNOWN_QUERY_VERBS: frozenset[str] = frozenset({"callers_of", "definitions_of", "subclasses_of"})
+KNOWN_QUERY_VERBS: frozenset[str] = frozenset(
+    {"callers_of", "definitions_of", "subclasses_of", "god_nodes"}
+)
 
 # A1/D4 — edge-resolution candidate kinds, by relation.
 #
@@ -1333,21 +1335,141 @@ class CodeGraph:
 
     def confident_edges(self) -> list[dict[str, Any]]:
         """The confident subgraph (EXTRACTED union INFERRED — D4a) as a
-        cheap, ready-made query: the object A2's degree-centrality god
-        nodes, A3's community detection, and the D3a probe are all
-        specified to consume (none of those are built by A1 — this is the
-        storage+retrieval primitive they will filter through). AMBIGUOUS is
-        excluded here — never fanned out to its candidates, never given
-        fractional weight (AC-NEG-7) — but this is an *analysis-time*
-        filter, not a storage-time drop: AMBIGUOUS edges remain in `edges`
-        and are still returned in full by `callers_of`/`subclasses_of`
-        (D4a, AC-A1-2/AC-A1-5 preserved).
+        cheap, ready-made query: the object A2's `god_nodes()`, a future
+        A3's community detection, and the D3a probe are all specified to
+        consume — this is the storage+retrieval primitive they filter
+        through. AMBIGUOUS is excluded here — never fanned out to its
+        candidates, never given fractional weight (AC-NEG-7) — but this is
+        an *analysis-time* filter, not a storage-time drop: AMBIGUOUS edges
+        remain in `edges` and are still returned in full by
+        `callers_of`/`subclasses_of` (D4a, AC-A1-2/AC-A1-5 preserved).
         """
         rows = self.db.execute(
             "SELECT * FROM edges WHERE confidence IN ('EXTRACTED', 'INFERRED') "
             "ORDER BY source_path, source_line, source_col, callee_name"
         ).fetchall()
         return [self._edge_row_to_dict(r) for r in rows]
+
+    def god_nodes(self) -> dict[str, Any]:
+        """A2 (D3/D4a): degree-centrality ranking over the confident
+        subgraph. No clustering, no cluster/community detection of any
+        kind (that is a separate, not-yet-built workstream), no
+        graph-algorithm runtime dependency (AC-A2-2) — pure Python
+        arithmetic over `confident_edges()`'s own output.
+
+        Structural AC-NEG-7 compliance: this method's *entire* analysis
+        input is `self.confident_edges()`'s return value — not a second,
+        independently-written SQL filter that could silently drift from it.
+        AMBIGUOUS cannot leak into degree by construction, not because a
+        filter happened to be applied correctly this time
+        (`test_god_nodes_input_is_exactly_confident_edges` pins this by
+        monkeypatching `confident_edges` and checking the ranking follows).
+
+        Degree semantics — a judgment call the frozen AC-A2-1 leaves open,
+        surfaced rather than resolved silently: D4a states plainly that
+        "degree centrality (both in- and out-degree) is computed over the
+        confident subgraph," and frames a god node as "a symbol many
+        references *definitely/probably* reach" — an IN-degree definition
+        (things reaching this symbol). Out-degree is computed for the same
+        reason D4a computes it: one shared analysis graph, consistent with
+        what A3/the D3a probe need. This implementation exposes BOTH
+        `in_degree` and `out_degree` on every node, and ranks by their SUM
+        (`degree`) as the primary sort key — "degree centrality" read
+        literally, unqualified, sums both directions. A consumer who wants
+        the "many things call this" reading specifically can re-sort the
+        returned list by `in_degree`.
+
+        A node's identity is (path, line, name) — a *specific* symbol
+        definition, not a bare name string (two same-named methods in two
+        different classes are two different god nodes, never conflated).
+        In-degree keys directly off `target` (`_resolve_edges` already
+        resolves it to an exact `(path, line_start, name)` triple — no
+        ambiguity). Out-degree requires resolving the edge's `source` (the
+        call site's enclosing symbol) back to that SAME kind of exact
+        identity: `edges.source_line` is the *call site's* line, not the
+        enclosing symbol's own `line_start`, so a plain `(source_path,
+        source_name, source_kind)` grouping could conflate two identically-
+        named-and-kinded definitions in the same file (rare, but real) —
+        the lookup below re-derives the exact enclosing definition (name +
+        kind + line-range containment against `symbols`) per edge instead.
+        """
+        confident = self.confident_edges()
+
+        in_degree: dict[tuple[str, int, str], int] = {}
+        out_degree: dict[tuple[str, int, str], int] = {}
+        node_kind: dict[tuple[str, int, str], str | None] = {}
+
+        for edge in confident:
+            target = edge["target"]
+            if target is not None:
+                key = (target["path"], target["line"], target["name"])
+                in_degree[key] = in_degree.get(key, 0) + 1
+                if key not in node_kind:
+                    row = self.db.execute(
+                        "SELECT kind FROM symbols WHERE path = ? AND line_start = ? "
+                        "AND name = ? LIMIT 1",
+                        key,
+                    ).fetchone()
+                    node_kind[key] = row["kind"] if row is not None else None
+
+            source = edge["source"]
+            if source["name"] is not None:
+                row = self.db.execute(
+                    "SELECT path, line_start, name, kind FROM symbols WHERE path = ? "
+                    "AND name = ? AND kind = ? AND line_start <= ? AND line_end >= ? "
+                    "ORDER BY line_start LIMIT 1",
+                    (
+                        source["path"],
+                        source["name"],
+                        source["kind"],
+                        source["line"],
+                        source["line"],
+                    ),
+                ).fetchone()
+                if row is not None:
+                    key = (row["path"], row["line_start"], row["name"])
+                    out_degree[key] = out_degree.get(key, 0) + 1
+                    node_kind.setdefault(key, row["kind"])
+
+        nodes: list[dict[str, Any]] = [
+            {
+                "path": key[0],
+                "line": key[1],
+                "name": key[2],
+                "kind": node_kind.get(key),
+                "in_degree": in_degree.get(key, 0),
+                "out_degree": out_degree.get(key, 0),
+                "degree": in_degree.get(key, 0) + out_degree.get(key, 0),
+            }
+            for key in (set(in_degree) | set(out_degree))
+        ]
+        # Total order (D6/checker MINOR-4 lesson): degree ties are common at
+        # the tail, so rank is never left to dict/set iteration order —
+        # degree DESC primary, then (path, line, name) ASC, a key that is
+        # unique per node.
+        nodes.sort(key=lambda n: (-cast(int, n["degree"]), n["path"], n["line"], n["name"]))
+
+        ambiguous_edges_excluded = self.db.execute(
+            "SELECT COUNT(*) FROM edges WHERE confidence = 'AMBIGUOUS'"
+        ).fetchone()[0]
+
+        return {
+            "god_nodes": nodes,
+            # AC-A2-3: makes the analysis-graph-versus-returned-edges
+            # divergence visible. `analysis_basis` names WHAT was analyzed;
+            # `ambiguous_edges_excluded` is the count of edges in the FULL
+            # `edges` table that were withheld from that analysis (every
+            # AMBIGUOUS row, full stop — not merely ones that happen to
+            # touch a ranked node); `resolved_edge_count` is exactly
+            # `len(confident_edges())`, i.e. how many edges the ranking
+            # WAS computed over. A consumer who then calls `callers_of`/
+            # `subclasses_of` and sees AMBIGUOUS edges too is not seeing a
+            # contradiction — these three fields say plainly that the
+            # ranking never included them.
+            "analysis_basis": "confident_edges",
+            "ambiguous_edges_excluded": ambiguous_edges_excluded,
+            "resolved_edge_count": len(confident),
+        }
 
     def _edges_for(self, callee_name: str, relations: tuple[str, ...]) -> list[dict[str, Any]]:
         """Shared query path for `callers_of`/`subclasses_of`: both filter
@@ -1448,7 +1570,11 @@ class CodeGraph:
 
         Forms: 'callers_of:RecordVote#call',
         'subclasses_of:ApplicationRepository',
-        'definitions_of:Tallier'.
+        'definitions_of:Tallier',
+        'god_nodes:' (A2 — the trailing colon is required by this DSL's
+        `verb:argument` shape; the argument itself is ignored, since the
+        ranking is computed over the whole confident subgraph, not a
+        single named symbol).
         """
         verb = parse_query_verb(dsl)
         if not verb:
@@ -1480,9 +1606,14 @@ class CodeGraph:
                 "unresolved_refs": self.unresolved_ref_count(arg, _HERITAGE_RELATIONS),
             }
 
-        # Unreachable today (KNOWN_QUERY_VERBS has exactly the three
+        if verb == "god_nodes":
+            # A2: degree-centrality ranking over the confident subgraph —
+            # `arg` is ignored (see the docstring above).
+            return self.god_nodes()
+
+        # Unreachable today (KNOWN_QUERY_VERBS has exactly the four
         # members dispatched above) — NOT dead-code hygiene, a guard
-        # (NEW-3, checker second pass). A1 is expected to add verbs to
+        # (NEW-3, checker second pass). A1/A2 are expected to add verbs to
         # KNOWN_QUERY_VERBS; a verb added there without a corresponding
         # dispatch branch above must fail loudly here, not silently fall
         # through and impersonate subclasses_of's empty-with-warning shape
