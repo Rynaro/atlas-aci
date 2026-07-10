@@ -393,6 +393,94 @@ from `assert_read_only` before any code runs. If your workflow needs
 to apply edits, run migrations, or deploy code, use a different
 server — don't hollow out this one.
 
+### `atlas-aci export` / `atlas-aci import` — CLI-only, by design (v2.0.0 / A5)
+
+v2.0.0 adds a deterministic, portable JSONL export/import of the code
+graph (D6) — the point being "one person builds the graph, everyone
+else benefits immediately on `git pull`" instead of everyone re-parsing
+the same repo. Both are **CLI commands only**
+(`atlas-aci export --repo <repo> <out.jsonl>` / `atlas-aci import --repo
+<repo> <in.jsonl>`) — neither is registered as an MCP tool, and neither
+ever will be without a deliberate, separately-reviewed decision to widen
+the read-only thesis above.
+
+**`import` is a mutating primitive, full stop.** It replaces the entire
+`.atlas/graph.<epoch>.db` from the bytes of a file on disk (index-path
+only, DIR-2 — same write category as `atlas-aci index` itself). The
+threat model this project defends is explicit: **the agent is the
+untrusted party**, `serve` is read-only by construction (`READ_ONLY_TOOLS`
+is a closed, source-level allowlist — see above), and every read tool's
+correctness assumes the index it queries reflects the real repository. An
+agent-callable `import` would hand that same untrusted party a way to
+silently replace the ENTIRE index — every future `search_symbol`,
+`graph_query`, `callers_of` result — with attacker-chosen content, from
+any file reachable on the container's filesystem. The export format's
+`content_hash` check only proves a file wasn't truncated in transit; it
+proves nothing about *provenance* — a hand-crafted JSONL with a
+self-consistent, freshly-computed hash passes the exact same check a
+genuine `atlas-aci export` output does. There is no way to distinguish
+"a real export" from "a plausible forgery" from inside `import_jsonl`
+itself. That is precisely why this is an operator-invoked, human-in-the-loop
+CLI command, never a tool a served agent can reach.
+
+**`export` is a closer call, argued through rather than assumed.** It
+never touches `.atlas` — it opens the DB read-only and writes a NEW file
+computed entirely from content already exposed by the seven read tools
+(`search_symbol`, `graph_query`, and friends already let an agent read
+every symbol/edge/rationale row this export would serialize). Nothing
+export produces is new information. The case *for* a tool: it wouldn't
+leak anything a sufficiently persistent agent couldn't already reconstruct
+by paging through `graph_query` results. The case *against*, which wins:
+`READ_ONLY_TOOLS` today has a property enforceable by inspection alone —
+every tool in it performs zero filesystem writes, full stop, no need to
+reason about scope or destination per tool. An `export` tool would be the
+first exception, and would need its own path-scoping argument (limit
+`out_path` to inside the repo? inside `.atlas`? either narrows the "commit
+this artifact anywhere" use case the CLI command exists for) forever after.
+The `write_file`-shaped capability — "let the model choose a path and put
+bytes there" — is exactly the primitive this project's whole thesis
+excludes, regardless of how well-scoped the bytes are. Keeping `export`
+CLI-only preserves a clean, mechanically-checkable invariant over
+carving out a single well-reasoned exception; `enforcement.py`'s
+`READ_ONLY_TOOLS` frozenset stays the complete, closed tool set either
+way.
+
+**Cold-start workflow** (the reason this exists): commit the JSONL
+export alongside your repo (or publish it as a CI artifact / fetch it
+from a shared cache), then on a fresh checkout run
+
+```bash
+atlas-aci import --repo /path/to/checkout /path/to/graph-export.jsonl
+```
+
+instead of a full `atlas-aci index` — this skips re-parsing every source
+file entirely. `import` is idempotent (repeat imports of the same file
+reproduce the identical DB) and rejects a truncated, hand-edited, or
+wrong-`schema_epoch` file with a clean, actionable error rather than a
+partial or silently-wrong index. `import` also validates every path in
+the file is repository-relative and repository-contained before
+inserting a single row — a hand-edited or foreign export containing
+`../../etc/passwd` (or an absolute path) is rejected, never inserted
+verbatim; `content_hash` proves the bytes weren't truncated, never that
+the paths inside them are safe, so that check is separate and mandatory.
+
+**Known, named cross-OS hazards (not mechanically closed).** Byte-determinism
+is verified on the macOS/Linux CI matrix (both POSIX, both forward-slash
+path separators) for this project's own source and the two pinned
+reference repos, but three hazards remain, disclosed rather than silently
+assumed away: (0) a Windows backslash-separated relative path (outside
+the macOS/Linux CI matrix AC-REL-1 itself is scoped to) is a real,
+separate hazard this export does not close; (1) unicode filename normalization — macOS
+traditionally presents decomposed (NFD) filenames, Linux presents
+whatever bytes were written (typically composed, NFC) — could change an
+exported path's bytes for a non-ASCII filename across operating systems
+(mitigated in practice by git's default `core.precomposeUnicode` on
+macOS; neither pinned reference repo has non-ASCII filenames); (2)
+case-only-colliding filenames (`Foo.rb` / `foo.rb`) are two distinct
+files on a case-sensitive filesystem but alias to one on a
+case-insensitive macOS volume — a real filesystem-level data difference
+before export ever runs, not something any export format can paper over.
+
 ---
 
 ## Quick start
@@ -414,6 +502,20 @@ uv run atlas-aci index --repo /path/to/your/repo \
 # Start the stdio server (this is what a host launches under the hood).
 uv run atlas-aci serve --repo /path/to/your/repo
 ```
+
+Already have a teammate's index? Skip the parse entirely:
+
+```bash
+# One person builds it once...
+uv run atlas-aci export --repo /path/to/your/repo /path/to/graph-export.jsonl
+
+# ...everyone else reproduces it on `git pull`, cold-start, no re-parsing.
+uv run atlas-aci import --repo /path/to/your/repo /path/to/graph-export.jsonl
+```
+
+`export`/`import` are CLI-only, operator-invoked commands, never MCP
+tools a served agent can call — see [Why read-only](#why-read-only) for
+the threat-model reasoning.
 
 Inspect the tool manifest without booting a host:
 

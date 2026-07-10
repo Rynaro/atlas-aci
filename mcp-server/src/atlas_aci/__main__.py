@@ -1,4 +1,4 @@
-"""CLI entry point: `atlas-aci serve | index | tools`."""
+"""CLI entry point: `atlas-aci serve | index | export | import | tools`."""
 
 from __future__ import annotations
 
@@ -81,6 +81,75 @@ def index(repo: Path, langs: str, since: str | None) -> None:
     graph = CodeGraph(repo=repo, langs=lang_list)
     stats = graph.build(since=since)
     log.info("index_done", **stats)
+
+
+@cli.command()
+@click.option(
+    "--repo", required=True, type=click.Path(exists=True, file_okay=False, path_type=Path)
+)
+@click.argument("out_path", type=click.Path(path_type=Path))
+def export(repo: Path, out_path: Path) -> None:
+    """Export the code-graph index as canonical, deterministic JSONL (A5).
+
+    The output is a portable, committable artifact (D6): `atlas-aci import
+    <out_path> --repo <another-checkout>` reproduces a valid current-epoch
+    DB without re-parsing a single source file. `OUT_PATH` may point
+    anywhere on disk, including outside `--repo` — this is a CLI-only,
+    operator-invoked command, never an MCP tool a served agent can call
+    (see README.md's "Why read-only" section for the threat-model
+    reasoning), so the enforcement layer's in-repo path restriction
+    (`assert_path_in_repo`) does not apply here.
+
+    Reads the current-epoch DB read-only; never writes to `.atlas`.
+    """
+    log = structlog.get_logger()
+    repo = repo.resolve()
+    out_path = out_path.resolve()
+
+    graph = CodeGraph(repo=repo, read_only=True)
+    if not graph.epoch_ok():
+        raise click.ClickException(
+            f"no current-epoch index found under {repo}/.atlas -- run "
+            f"`atlas-aci index --repo {repo}` first."
+        )
+
+    log.info("export_start", repo=str(repo), out_path=str(out_path))
+    stats = graph.export_jsonl(out_path)
+    log.info("export_done", out_path=str(out_path), **stats)
+
+
+@cli.command(name="import")
+@click.option(
+    "--repo", required=True, type=click.Path(exists=True, file_okay=False, path_type=Path)
+)
+@click.argument("in_path", type=click.Path(exists=True, dir_okay=False, path_type=Path))
+def import_(repo: Path, in_path: Path) -> None:
+    """Import a canonical JSONL export, reproducing a current-epoch DB (A5).
+
+    The cold-start workflow this exists for: commit a JSONL export
+    alongside your repo (or fetch one from CI/a shared cache), then run
+    `atlas-aci import <in_path> --repo <repo>` on a fresh checkout instead
+    of a full `atlas-aci index` — skips re-parsing every source file.
+
+    `import` WRITES to `<repo>/.atlas` (index-path only, DIR-2) and is
+    NEVER exposed as an MCP tool — see README.md's "Why read-only" section
+    for the threat-model reasoning: the agent is the untrusted party,
+    `serve` is read-only by construction, and `import` replaces the
+    entire index from bytes an agent could otherwise have supplied or
+    influenced. This is an operator-invoked, human-in-the-loop command,
+    exactly like `atlas-aci index` itself.
+    """
+    log = structlog.get_logger()
+    repo = repo.resolve()
+    in_path = in_path.resolve()
+
+    log.info("import_start", repo=str(repo), in_path=str(in_path))
+    graph = CodeGraph(repo=repo)
+    try:
+        stats = graph.import_jsonl(in_path)
+    except ValueError as e:
+        raise click.ClickException(str(e)) from e
+    log.info("import_done", in_path=str(in_path), **stats)
 
 
 @cli.command()

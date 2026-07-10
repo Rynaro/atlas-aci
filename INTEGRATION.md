@@ -220,23 +220,40 @@ uv run atlas-aci index --repo "$(git rev-parse --show-toplevel)" \
 Fire-and-forget, runs in the background, typically finishes in well
 under a second per commit on incremental runs.
 
-### C — CI job on `main`
+### C — CI job on `main` + a portable JSONL export (v2.0.0 / A5, preferred)
 
-For teams, index once per merge to `main` and ship the resulting
-`.atlas/` tarball to a shared cache (S3, artifact store, whatever).
-Developers then pull the pre-built index instead of building locally.
-Sketch of a GitHub Actions step:
+For teams, index once per merge to `main` and ship the graph, so
+developers pull a pre-built index instead of building locally. As of
+v2.0.0, prefer `atlas-aci export` over tarring up the raw `.atlas/`
+SQLite file: the export is canonical, byte-deterministic JSONL (D6) —
+git-diffable, and reproduces an identical DB on `import` regardless of
+which machine built it or which one imports it. The raw `.atlas/`
+tarball still works (nothing in v2.0.0 removes it), but it ships an
+opaque binary blob tied to the exact `SCHEMA_EPOCH` it was built under,
+with no way to diff or verify it, and no defined merge/conflict story.
 
 ```yaml
-- name: Build atlas-aci index
+- name: Build and export the atlas-aci graph
   run: |
     uv run atlas-aci index --repo . --langs ruby,python,javascript,typescript
-    tar czf atlas-index.tgz .atlas/
+    uv run atlas-aci export --repo . graph-export.jsonl
 - uses: actions/upload-artifact@v4
   with:
-    name: atlas-index
-    path: atlas-index.tgz
+    name: atlas-graph-export
+    path: graph-export.jsonl
 ```
+
+Developers then run `atlas-aci import --repo . graph-export.jsonl`
+instead of `atlas-aci index` — a cold start with no re-parsing. `import`
+is idempotent and rejects a truncated, hand-edited, or wrong-epoch file
+with a clean error rather than a partial or silently-wrong index.
+`export`/`import` are CLI-only (never MCP tools a served agent can call)
+— see [`README.md` § Why read-only](README.md#why-read-only) for why.
+
+If your conflict-resolution workflow ever needs to reconcile two
+divergent exports, the answer is: **regenerate, don't merge.** There is
+no semantic graph/union merge driver, by design (D6-Q2) — discard the
+conflicted file and re-run `index` + `export`.
 
 ---
 
