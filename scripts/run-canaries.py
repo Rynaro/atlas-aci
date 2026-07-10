@@ -35,7 +35,6 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Protocol
 
-
 # ----------------------------------------------------------------------------
 # Data model
 # ----------------------------------------------------------------------------
@@ -46,8 +45,8 @@ class CanaryMission:
     """A single canary mission and its expected outcomes."""
 
     id: str
-    mission_md: str            # contents of mission.md
-    expected_answer_md: str    # contents of expected/answer.md
+    mission_md: str  # contents of mission.md
+    expected_answer_md: str  # contents of expected/answer.md
     expected_findings: list[str]  # finding-content fingerprints
     expected_handoff_recipient: str
 
@@ -183,9 +182,7 @@ def score_decision(report: dict[str, Any], expected_answer_md: str) -> bool:
         return False
 
     # Flatten the report's answer section to a single string
-    answer_blob = " ".join(
-        a.get("prose", "") for a in report.get("answer", [])
-    )
+    answer_blob = " ".join(a.get("prose", "") for a in report.get("answer", []))
 
     found = sum(1 for tok in expected_tokens if tok in answer_blob)
     return found / len(expected_tokens) >= 0.8
@@ -263,8 +260,7 @@ def run_one(
     telemetry = report.get("telemetry", {})
     phases = telemetry.get("phases", {})
     tokens_total = sum(
-        (p or {}).get("tokens_in", 0) + (p or {}).get("tokens_out", 0)
-        for p in phases.values()
+        (p or {}).get("tokens_in", 0) + (p or {}).get("tokens_out", 0) for p in phases.values()
     )
     tool_calls_total = sum((p or {}).get("tool_calls", 0) for p in phases.values())
 
@@ -318,15 +314,27 @@ def _failure_breakdown(results: list[CanaryResult]) -> dict[str, int]:
 def main() -> int:
     p = argparse.ArgumentParser()
     p.add_argument("--repo", required=True, type=Path)
-    p.add_argument("--canaries-dir", required=True, type=Path,
-                   help="Directory containing one subdirectory per canary mission.")
-    p.add_argument("--host", default="stub",
-                   choices=["stub", "claude-code-api", "copilot", "cursor"])
+    p.add_argument(
+        "--canaries-dir",
+        required=True,
+        type=Path,
+        help="Directory containing one subdirectory per canary mission.",
+    )
+    p.add_argument(
+        "--host", default="stub", choices=["stub", "claude-code-api", "copilot", "cursor"]
+    )
     p.add_argument("--output", required=True, type=Path)
-    p.add_argument("--ci-gate", action="store_true",
-                   help="Exit 1 if pass rate < 0.8 or any regression vs baseline.")
-    p.add_argument("--baseline", type=Path, default=None,
-                   help="Previous canary result file for regression comparison.")
+    p.add_argument(
+        "--ci-gate",
+        action="store_true",
+        help="Exit 1 if pass rate < 0.8 or any regression vs baseline.",
+    )
+    p.add_argument(
+        "--baseline",
+        type=Path,
+        default=None,
+        help="Previous canary result file for regression comparison.",
+    )
     args = p.parse_args()
 
     # Load all canary missions
@@ -366,7 +374,9 @@ def main() -> int:
             return 1
         if args.baseline and args.baseline.exists():
             baseline = json.loads(args.baseline.read_text())
-            baseline_passed = {r["mission_id"] for r in baseline["results"] if r["status"] == "pass"}
+            baseline_passed = {
+                r["mission_id"] for r in baseline["results"] if r["status"] == "pass"
+            }
             current_passed = {r.mission_id for r in results if r.status == "pass"}
             regressions = baseline_passed - current_passed
             if regressions:

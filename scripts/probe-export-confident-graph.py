@@ -49,7 +49,13 @@ def main() -> None:
     repo_path = Path(sys.argv[1]).resolve()
     out_path = Path(sys.argv[2]).resolve()
 
-    from atlas_aci.codegraph import CodeGraph
+    # atlas_aci ships no py.typed marker, and this import is resolved from
+    # OUTSIDE src/ (this file lives in ../scripts/, one level above
+    # mcp-server/) -- mypy can only see it as an untyped, installed
+    # package from here, never as first-party source the way `mypy src/`
+    # sees it from inside mcp-server/. Suppressed at this one import line
+    # only; every other name in this file is still fully typechecked.
+    from atlas_aci.codegraph import CodeGraph  # type: ignore[import-untyped]
 
     graph = CodeGraph(repo=repo_path)
     build_stats = graph.build()

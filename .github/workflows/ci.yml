@@ -12,6 +12,40 @@
 # defence-in-depth configured by the repo operator — out-of-tree, not
 # something this workflow (or the acceptance suite) can assert.
 #
+# WHY `scripts/` IS LINTED/TYPECHECKED/SELF-TESTED HERE TOO, UNCONDITIONALLY
+# (checker, CI-wiring condition): `scripts/verify-probe-verdict.py` and
+# `scripts/harden-gate-classify.sh` are the guards that decide whether A3
+# ships — twenty forged-scenario self-tests (14 + 6) demonstrated their
+# teeth by disabling each guard in isolation and confirming precisely the
+# matching scenario flips. Until this job existed, NOTHING executed those
+# self-tests: harden-gate.yml *runs* verify-probe-verdict.py against real
+# data (so a wrong verdict on real data would surface), but the self-tests
+# that prove its individual guards still work were invoked by nobody but a
+# maker, by hand. A bad merge, a "helpful" refactor, an accidentally
+# commented-out check in either script would have shipped silently — the
+# exact "documented but not mechanically enforced" defect class this
+# release exists to eliminate, sitting one layer above where it was
+# already closed. The steps below run BOTH self-tests, and lint+typecheck
+# `scripts/` the same way `src/`/`tests/` already are, on EVERY PR — not
+# gated behind `harden-gate.yml`'s `augmented` classification, because a
+# PR touching only `scripts/` (weakening a guard without ever touching
+# codegraph.py) must not be able to slip past that gate unobserved.
+#
+# THE TERMINUS: this is where the regress of "who checks the checker"
+# actually ends, and it is worth writing down rather than leaving
+# implicit (the same discipline `probe-lpa-vs-louvain.md` and
+# `harden-gate.yml` apply to the D3a probe's own trust boundary). CI runs
+# `scripts/test-verify-probe-verdict.sh` and
+# `scripts/test-harden-gate-classify.sh` on every PR; both self-tests have
+# demonstrated teeth (every guard, disabled in isolation, was shown to
+# flip precisely its own matching scenario(s) and nothing else); and CI's
+# execution of them is OBSERVABLE — a named, independently red/green
+# check in the PR's check list, not a claim anyone has to take on faith.
+# An observable, executed check is a genuine terminus. An unexecuted
+# self-test sitting in the repo, however well it was proven to work once,
+# is not — it is the same unverified assertion this campaign keeps
+# finding, one layer further out each time.
+#
 # `--frozen` is used throughout: it uses the committed `uv.lock` exactly
 # as-is and never rewrites it — the failure mode that already bit this
 # project once (a bare `uv run` silently re-locking `atlas-aci` from 0.3.1
@@ -78,6 +112,21 @@ jobs:
 
       - name: mypy
         run: uv run --frozen mypy src/
+
+      - name: ruff check (scripts/ — repo root, lint the guards too)
+        run: uv run --frozen ruff check ../scripts/
+
+      - name: ruff format --check (scripts/)
+        run: uv run --frozen ruff format --check ../scripts/
+
+      - name: mypy (scripts/)
+        run: uv run --frozen mypy ../scripts/
+
+      - name: self-test — harden-gate-classify.sh has teeth
+        run: bash ../scripts/test-harden-gate-classify.sh
+
+      - name: self-test — verify-probe-verdict.py has teeth
+        run: bash ../scripts/test-verify-probe-verdict.sh
 
   serve-read-only-smoke:
     # AC-H-16: the pytest-level chmod simulation the checker ruled an

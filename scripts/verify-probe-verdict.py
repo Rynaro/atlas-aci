@@ -447,18 +447,27 @@ def main() -> int:
         print(f"FAIL (AC-A3-1/F7, provenance): {e}", file=sys.stderr)
         return 1
 
-    computed_verdict = "PASS" if all(e["repo_pass"] for e in evaluations) else "CUT"
+    # Deliberately NOT named `e` — an earlier revision reused that name for
+    # both `except ... as e` (three times, above) and this per-repo result
+    # loop variable. Python's runtime scoping made it harmless (a `for`
+    # target rebinds cleanly; generator-expression targets are scoped to
+    # the genexpr itself), but mypy's control-flow analysis read the
+    # `except` blocks' implicit `del e` as still in effect and flagged
+    # every use below as "reading a deleted variable" — a false positive,
+    # but the ambiguity itself (one name, two unrelated meanings, in one
+    # function) was a real readability defect worth fixing on its own.
+    computed_verdict = "PASS" if all(ev["repo_pass"] for ev in evaluations) else "CUT"
 
     print(f"frozen bar (hardcoded): Q_struct={FROZEN_Q_STRUCT} R={FROZEN_R}")
     print("every count and Q below is RECOMPUTED from the graph bundle, not read from the sidecar")
-    for e in evaluations:
+    for ev in evaluations:
         print(
-            f"  {e['name']}: median={e['median']!r} lpa_q={e['lpa_q']!r} "
-            f"r*median={e['threshold3']!r} | "
-            f"clause1(median>=Q_struct)={e['clause1_median_ge_q_struct']} "
-            f"clause2(lpa_q>=Q_struct)={e['clause2_lpa_ge_q_struct']} "
-            f"clause3(lpa_q>=R*median)={e['clause3_lpa_ge_r_times_median']} "
-            f"-> repo_pass={e['repo_pass']}"
+            f"  {ev['name']}: median={ev['median']!r} lpa_q={ev['lpa_q']!r} "
+            f"r*median={ev['threshold3']!r} | "
+            f"clause1(median>=Q_struct)={ev['clause1_median_ge_q_struct']} "
+            f"clause2(lpa_q>=Q_struct)={ev['clause2_lpa_ge_q_struct']} "
+            f"clause3(lpa_q>=R*median)={ev['clause3_lpa_ge_r_times_median']} "
+            f"-> repo_pass={ev['repo_pass']}"
         )
     print(f"computed_verdict={computed_verdict} recorded_verdict={recorded_verdict}")
 

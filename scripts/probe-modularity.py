@@ -69,9 +69,10 @@ def main() -> None:
         print(f"usage: {sys.argv[0]} <graph_json_path>", file=sys.stderr)
         raise SystemExit(2)
 
-    import networkx as nx
+    import networkx as nx  # type: ignore[import-untyped]  # never in mcp-server's own env (AC-NEG-2)
 
-    data = json.loads(open(sys.argv[1]).read())
+    with open(sys.argv[1]) as f:
+        data = json.load(f)
     n = data["node_count"]
     edges = [tuple(e) for e in data["edges"]]
 
