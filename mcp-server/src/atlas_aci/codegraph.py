@@ -1094,17 +1094,35 @@ class CodeGraph:
         return best.path, best.line_start, best.name
 
     def _iter_source_files(self):
-        """Yield source files, respecting the skip list."""
+        """Yield source files, respecting the skip list, in a deterministic
+        sorted order (AC-A5-8).
+
+        `Path.rglob("*")` yields in raw filesystem/directory-entry order —
+        not stable across filesystems, OSes, or even two runs on the same
+        machine after an unrelated file-touch reorders directory entries.
+        `_run_build` folds every file it indexes straight into `INSERT`
+        statements against autoincrement-PK tables, so an unsorted iteration
+        order was, until now, silently baked into `symbols`/`edges`/
+        `rationale` row IDs — invisible on a single machine (nothing reads
+        rowid as meaning), but exactly the kind of hidden non-determinism
+        D6's byte-deterministic export (AC-A5-3/AC-REL-1) exists to catch,
+        and the reason this project's total-order discipline treats sorted
+        iteration as foundational rather than cosmetic. Sorting here, once,
+        removes the need for every downstream consumer to defend against it.
+        """
         from atlas_aci.config import DEFAULT_SKIP_PATTERNS
 
         skip = set(DEFAULT_SKIP_PATTERNS)
+        candidates = []
         for path in self.repo.rglob("*"):
             if not path.is_file():
                 continue
             rel_parts = path.relative_to(self.repo).parts
             if any(p in skip for p in rel_parts):
                 continue
-            yield path
+            candidates.append(path)
+        candidates.sort(key=lambda p: str(p.relative_to(self.repo)))
+        yield from candidates
 
     def _extract(
         self, tree, source: bytes, rel_path: str, lang: str
@@ -1964,6 +1982,333 @@ class CodeGraph:
             for r in rows
         ]
         return {"rationale": items, "rationale_count": len(items)}
+
+    # ---- A5 — Deterministic export / idempotent import (D6) ----
+    #
+    # The portable artifact is `symbols` + `edges` + `rationale` only —
+    # never `refs`/`assignment_targets`/`files` (indexing-internal
+    # bookkeeping: `refs` is the pre-resolution intermediate `edges` is
+    # already derived from, `assignment_targets` is a resolution-time input,
+    # `files` is per-file `--since` state). A subsequent `--since`
+    # incremental `index` run against an imported DB has no bookkeeping to
+    # compare against, so it treats every file as new and fully
+    # re-extracts — converging back to source-of-truth rather than
+    # corrupting anything. Documented here rather than left implicit: the
+    # exported JSONL is a snapshot of derived, query-facing graph state, not
+    # a substitute for re-indexing bookkeeping (a "documented terminus," not
+    # an oversight).
+    #
+    # No merge/union driver ships (AC-A5-5, D6-Q2): on a conflicting
+    # concurrent export, the workflow is to discard the conflicted artifact
+    # and regenerate it (`atlas-aci index` + a fresh export) — never a
+    # semantic graph/union merge (there is no `nx.compose`-style code
+    # anywhere in this project, checked by AC-NEG-2 and
+    # `test_export.py::test_no_merge_driver_shipped`). A trivial
+    # regenerate-on-conflict git merge driver would be permitted but is not
+    # shipped; nothing here registers a `git config merge.<x>.driver` entry.
+    EXPORT_RECORD_TYPES = ("edge", "rationale", "symbol")
+
+    @staticmethod
+    def _canonical_json_line(record: dict[str, Any]) -> str:
+        """One canonical JSON line (AC-A5-1): sorted keys, no insignificant
+        whitespace (`separators=(",", ":")`), `ensure_ascii=True` (so the
+        byte output never depends on a filesystem/terminal encoding or
+        locale — `json.dumps` never consults `locale` at all, unlike e.g.
+        `str.format` with thousands separators). "Fixed float formatting" is
+        enforced as a mechanical negative-space guarantee, not an aspiration
+        the schema happens to satisfy today: no column in `SCHEMA` is a
+        float, so this asserts that fact on every call rather than silently
+        emitting a platform-dependent `repr(float)` if one is ever added
+        without updating this function first.
+        """
+        for key, value in record.items():
+            if isinstance(value, float):
+                raise TypeError(
+                    f"export record field {key!r} is a float ({value!r}) -- no column in "
+                    "SCHEMA is a float today; a canonical, explicitly-tested float format "
+                    "must be added to _canonical_json_line before one ships (AC-A5-1)."
+                )
+        return json.dumps(record, sort_keys=True, separators=(",", ":"), ensure_ascii=True)
+
+    def export_jsonl(self, out_path: Path) -> dict[str, Any]:
+        """Canonical, byte-deterministic JSONL export (A5/D6).
+
+        One JSON object per line: a header record first
+        (`{"type": "header", "schema_epoch", "content_hash", "record_count"}`
+        — AC-A5-6), then every symbol/edge/rationale row, each carrying a
+        `"type"` discriminator. `content_hash` is the sha256 of the BODY
+        (every line after the header, exactly as written) — the importer
+        recomputes it and refuses a truncated/corrupted file rather than
+        silently importing a partial graph.
+
+        Record-level canonical order (AC-A5-7, F8): records are grouped by
+        `type` in a FIXED order (`EXPORT_RECORD_TYPES` — "edge" <
+        "rationale" < "symbol", alphabetical), and *within* each type, by an
+        explicit `ORDER BY` naming every column that could otherwise tie —
+        never relying on SQLite's rowid/insertion order as an incidental
+        tiebreak (the exact hazard AC-A1-8/D6 already named once for
+        `confident_edges`/`callers_of`, generalized here to the full export).
+        This is independent of insertion order BY CONSTRUCTION: the query
+        never references `id`/rowid, so shuffling the order rows were
+        `INSERT`-ed in cannot change the emitted order.
+
+        Path keys are already repository-relative (AC-A5-2): `_run_build`
+        stores `str(path.relative_to(self.repo))` for every path column, so
+        no re-anchoring transform is needed on export; the artifact
+        re-anchors purely by virtue of being imported against whatever
+        `CodeGraph(repo=...)` instance calls `import_jsonl`.
+
+        LF line endings (AC-A5-1): written with `newline="\\n"` explicitly,
+        so Python's universal-newline translation on write (a no-op on
+        POSIX, but NOT a no-op on Windows, where the default would emit
+        `\\r\\n`) never fires — every line ends in a single `\\n` regardless
+        of platform. Cross-platform byte-determinism (AC-REL-1) is scoped by
+        its own VERIFY text to the macOS/Linux CI OS matrix — both POSIX,
+        both already forward-slash path separators — so a Windows
+        backslash-separated relative path (`Path.relative_to` on Windows
+        would emit `app\\foo.rb`) is a real, separate hazard this export
+        does NOT close; naming it here rather than leaving it implicit.
+        """
+        edge_rows = self.db.execute(
+            "SELECT relation, source_path, source_line, source_col, source_name, "
+            "source_kind, callee_name, confidence, target_path, target_line, "
+            "target_name, candidates, lang FROM edges "
+            "ORDER BY source_path, source_line, source_col, callee_name, relation, "
+            "confidence, target_path, target_line, target_name, lang"
+        ).fetchall()
+        rationale_rows = self.db.execute(
+            "SELECT path, line, text, label, target_path, target_line, target_name, lang "
+            "FROM rationale ORDER BY path, line, text, label, target_path, target_line, "
+            "target_name, lang"
+        ).fetchall()
+        symbol_rows = self.db.execute(
+            "SELECT name, kind, path, line_start, line_end, lang FROM symbols "
+            "ORDER BY path, line_start, name, kind, line_end, lang"
+        ).fetchall()
+
+        records: list[dict[str, Any]] = []
+        for r in edge_rows:
+            records.append(
+                {
+                    "type": "edge",
+                    "relation": r["relation"],
+                    "source_path": r["source_path"],
+                    "source_line": r["source_line"],
+                    "source_col": r["source_col"],
+                    "source_name": r["source_name"],
+                    "source_kind": r["source_kind"],
+                    "callee_name": r["callee_name"],
+                    "confidence": r["confidence"],
+                    "target_path": r["target_path"],
+                    "target_line": r["target_line"],
+                    "target_name": r["target_name"],
+                    "candidates": json.loads(r["candidates"]) if r["candidates"] else None,
+                    "lang": r["lang"],
+                }
+            )
+        for r in rationale_rows:
+            records.append(
+                {
+                    "type": "rationale",
+                    "path": r["path"],
+                    "line": r["line"],
+                    "text": r["text"],
+                    "label": r["label"],
+                    "target_path": r["target_path"],
+                    "target_line": r["target_line"],
+                    "target_name": r["target_name"],
+                    "lang": r["lang"],
+                }
+            )
+        for r in symbol_rows:
+            records.append(
+                {
+                    "type": "symbol",
+                    "name": r["name"],
+                    "kind": r["kind"],
+                    "path": r["path"],
+                    "line_start": r["line_start"],
+                    "line_end": r["line_end"],
+                    "lang": r["lang"],
+                }
+            )
+
+        body_lines = [self._canonical_json_line(rec) for rec in records]
+        body_text = "".join(line + "\n" for line in body_lines)
+        content_hash = hashlib.sha256(body_text.encode("utf-8")).hexdigest()
+        header = {
+            "type": "header",
+            "schema_epoch": SCHEMA_EPOCH,
+            "content_hash": content_hash,
+            "record_count": len(records),
+        }
+        full_text = self._canonical_json_line(header) + "\n" + body_text
+
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(out_path, "w", encoding="utf-8", newline="\n") as f:
+            f.write(full_text)
+
+        return {
+            "records_written": len(records),
+            "edges": len(edge_rows),
+            "rationale": len(rationale_rows),
+            "symbols": len(symbol_rows),
+            "content_hash": content_hash,
+            "schema_epoch": SCHEMA_EPOCH,
+            "bytes_written": len(full_text.encode("utf-8")),
+        }
+
+    def import_jsonl(self, in_path: Path) -> dict[str, Any]:
+        """Idempotent import of a canonical export (AC-A5-4): rebuilds
+        `symbols`/`edges`/`rationale` from scratch into a FRESH temp DB file,
+        then atomically replaces `self.db_path` (mirrors `_build_full_atomic`
+        — F17's crash-safety property applies here too: a crash mid-import
+        leaves any previous DB untouched). Always a full rebuild-from-import,
+        never an incremental patch, so repeat imports of the same file are
+        trivially idempotent by construction — there is no accumulated state
+        for a second import to duplicate or diverge from.
+
+        Integrity check (AC-A5-4/AC-A5-6): the header's `content_hash` is
+        recomputed from the body actually read and compared before a single
+        row is inserted; a mismatch raises loudly, naming "regenerate from
+        source" as the recovery path (AC-A5-5) rather than attempting any
+        kind of partial or best-effort import. `schema_epoch` must match
+        this build's `SCHEMA_EPOCH` exactly — no cross-epoch migration is
+        attempted (D1: a schema change is always a fresh epoch, never an
+        in-place migration, and that applies to imported data too).
+        """
+        if self.read_only:
+            raise RuntimeError(
+                "CodeGraph.import_jsonl() is index-path only (DIR-2); a "
+                "read_only CodeGraph (as `serve` constructs) never writes to .atlas."
+            )
+
+        text = in_path.read_text(encoding="utf-8")
+        lines = text.split("\n")
+        if lines and lines[-1] == "":
+            lines.pop()
+        if not lines:
+            raise ValueError(f"{in_path}: empty export file, no header record")
+
+        header = json.loads(lines[0])
+        if header.get("type") != "header":
+            raise ValueError(
+                f"{in_path}: first record is not a header (type={header.get('type')!r})"
+            )
+
+        body_text = "".join(line + "\n" for line in lines[1:])
+        recomputed_hash = hashlib.sha256(body_text.encode("utf-8")).hexdigest()
+        if recomputed_hash != header.get("content_hash"):
+            raise ValueError(
+                f"{in_path}: content_hash mismatch -- recorded "
+                f"{header.get('content_hash')!r}, recomputed {recomputed_hash!r}. The export "
+                "is truncated or corrupted (or was hand-edited/merged). Regenerate it from "
+                "source (`atlas-aci index` + a fresh export) -- there is no semantic merge "
+                "for this format (AC-A5-5)."
+            )
+        if header.get("schema_epoch") != SCHEMA_EPOCH:
+            raise ValueError(
+                f"{in_path}: schema_epoch {header.get('schema_epoch')!r} does not match this "
+                f"build's SCHEMA_EPOCH {SCHEMA_EPOCH} -- re-export from a matching atlas-aci "
+                "version; cross-epoch import is never attempted (D1)."
+            )
+
+        records = [json.loads(line) for line in lines[1:]]
+
+        self.atlas_dir.mkdir(parents=True, exist_ok=True)
+        tmp_path = self.atlas_dir / f".graph.{SCHEMA_EPOCH}.db.import-tmp.{os.getpid()}"
+        if tmp_path.exists():
+            tmp_path.unlink()
+        conn = sqlite3.connect(tmp_path)
+        conn.executescript(SCHEMA)
+        conn.row_factory = sqlite3.Row
+        symbols_added = edges_added = rationale_added = 0
+        try:
+            for rec in records:
+                rtype = rec.get("type")
+                if rtype == "symbol":
+                    conn.execute(
+                        "INSERT INTO symbols(name, kind, path, line_start, line_end, lang) "
+                        "VALUES (?, ?, ?, ?, ?, ?)",
+                        (
+                            rec["name"],
+                            rec["kind"],
+                            rec["path"],
+                            rec["line_start"],
+                            rec["line_end"],
+                            rec["lang"],
+                        ),
+                    )
+                    symbols_added += 1
+                elif rtype == "edge":
+                    candidates_json = (
+                        json.dumps(rec["candidates"]) if rec.get("candidates") is not None else None
+                    )
+                    conn.execute(
+                        "INSERT INTO edges(relation, source_path, source_line, source_col, "
+                        "source_name, source_kind, callee_name, confidence, target_path, "
+                        "target_line, target_name, candidates, lang) "
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                        (
+                            rec["relation"],
+                            rec["source_path"],
+                            rec["source_line"],
+                            rec["source_col"],
+                            rec["source_name"],
+                            rec["source_kind"],
+                            rec["callee_name"],
+                            rec["confidence"],
+                            rec["target_path"],
+                            rec["target_line"],
+                            rec["target_name"],
+                            candidates_json,
+                            rec["lang"],
+                        ),
+                    )
+                    edges_added += 1
+                elif rtype == "rationale":
+                    conn.execute(
+                        "INSERT INTO rationale(path, line, text, label, target_path, "
+                        "target_line, target_name, lang) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                        (
+                            rec["path"],
+                            rec["line"],
+                            rec["text"],
+                            rec["label"],
+                            rec["target_path"],
+                            rec["target_line"],
+                            rec["target_name"],
+                            rec["lang"],
+                        ),
+                    )
+                    rationale_added += 1
+                else:
+                    raise ValueError(f"{in_path}: unknown record type {rtype!r}")
+
+            conn.execute(
+                "INSERT OR REPLACE INTO manifest(key, value) VALUES ('epoch', ?)",
+                (str(SCHEMA_EPOCH),),
+            )
+            conn.commit()
+        finally:
+            conn.close()
+
+        self._db = None  # drop any stale handle before the swap (mirrors _build_full_atomic)
+        os.replace(tmp_path, self.db_path)
+
+        if not self.epoch_ok():
+            raise ValueError(
+                f"{in_path}: import completed but the resulting DB failed the epoch "
+                "integrity check -- this should be unreachable; treat it as a bug, not a "
+                "data problem."
+            )
+
+        return {
+            "symbols": symbols_added,
+            "edges": edges_added,
+            "rationale": rationale_added,
+            "schema_epoch": SCHEMA_EPOCH,
+        }
 
     def query(self, dsl: str) -> dict[str, Any]:
         """Tiny DSL.

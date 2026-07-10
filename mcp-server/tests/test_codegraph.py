@@ -415,4 +415,29 @@ def test_scss_mixin_include_resolves_to_a_real_edge(tmp_path: Path) -> None:
     # mirroring F18's own "a bare method with a unique name = INFERRED"
     # rule for the languages it does cover.
     assert edges[0]["confidence"] == "INFERRED"
-    assert edges[0]["target"]["name"] == "rounded"
+
+
+# ---- AC-A5-8: source-file iteration is deterministically sorted ----
+
+
+def test_source_file_iteration_sorted(tmp_path: Path) -> None:
+    """`_iter_source_files` used to be bare `self.repo.rglob("*")` —
+    filesystem/directory-entry order, not a content-derived total order.
+    Files are deliberately created in REVERSE-of-sorted order (many
+    filesystems, ext4/tmpfs included, tend to preserve insertion order for
+    small directories absent htree indexing), so a regression back to raw
+    `rglob` has a real chance of being caught here rather than only in a
+    cross-machine CI OS-matrix run — the same "same-machine teeth before
+    the cross-OS gate" property D6/F8 established for record-level order."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    rels = ["zeta.rb", "mu.rb", "beta/gamma.rb", "alpha.rb"]  # reverse-of-sorted creation order
+    for rel in rels:
+        p = repo / rel
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text("class Foo\nend\n")
+
+    graph = CodeGraph(repo=repo)
+    seen = [str(p.relative_to(repo)) for p in graph._iter_source_files()]
+
+    assert seen == sorted(rels)

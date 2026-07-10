@@ -132,6 +132,100 @@ jobs:
       - name: self-test — verify-probe-verdict.py has teeth
         run: bash ../scripts/test-verify-probe-verdict.sh
 
+  export-os-matrix:
+    # AC-REL-1 (D6 cross-platform release blocker): AC-A5-3's same-machine
+    # byte-identical guarantee is necessary but not sufficient -- a locale
+    # difference, a filesystem path-separator quirk, or an OS-dependent
+    # dict/float/newline behavior could still diverge only across machines.
+    # This job builds the SAME small fixture repo on both members of the OS
+    # matrix and uploads each export as an artifact; `export-os-matrix-diff`
+    # below downloads both and fails the build on any byte difference. This
+    # is scoped to macOS + Linux specifically (the pair AC-REL-1's own
+    # VERIFY text names) -- both are POSIX, both already forward-slash path
+    # separators, so a Windows backslash-separated relative path is a real,
+    # separate, and deliberately out-of-scope hazard (see
+    # `CodeGraph.export_jsonl`'s own docstring).
+    name: export byte-determinism (AC-REL-1, ${{ matrix.os }})
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: mcp-server
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "latest"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: "mcp-server/pyproject.toml"
+
+      - name: Sync dependencies (frozen — never silently re-locks)
+        run: uv sync --frozen --extra dev
+
+      - name: Build a small fixture repo and export it
+        run: |
+          set -euo pipefail
+          mkdir -p "${{ runner.temp }}/rel1-fixture/app"
+          cat > "${{ runner.temp }}/rel1-fixture/app/hello.rb" <<'RUBY'
+          class Hello
+            def call
+              helper(1)
+            end
+
+            def helper(x)
+              x
+            end
+          end
+          RUBY
+          uv run --frozen python -c "
+          from pathlib import Path
+          from atlas_aci.codegraph import CodeGraph
+          repo = Path('${{ runner.temp }}/rel1-fixture')
+          g = CodeGraph(repo=repo)
+          g.build()
+          g.export_jsonl(Path('${{ runner.temp }}/rel1-export.jsonl'))
+          "
+
+      - name: Upload this OS's export
+        uses: actions/upload-artifact@v4
+        with:
+          name: rel1-export-${{ matrix.os }}
+          path: ${{ runner.temp }}/rel1-export.jsonl
+
+  export-os-matrix-diff:
+    name: export byte-determinism diff (AC-REL-1)
+    needs: export-os-matrix
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download the ubuntu-latest export
+        uses: actions/download-artifact@v4
+        with:
+          name: rel1-export-ubuntu-latest
+          path: ubuntu-export
+
+      - name: Download the macos-latest export
+        uses: actions/download-artifact@v4
+        with:
+          name: rel1-export-macos-latest
+          path: macos-export
+
+      - name: Diff the two OS exports — must be byte-identical (AC-REL-1)
+        run: |
+          set -euo pipefail
+          if ! diff -u ubuntu-export/rel1-export.jsonl macos-export/rel1-export.jsonl; then
+            echo "FAIL (AC-REL-1): export differs between macOS and Linux -- cross-platform byte-determinism broken. Release cannot proceed until this is restored."
+            exit 1
+          fi
+          echo "PASS (AC-REL-1): export is byte-identical across macOS and Linux."
+
   serve-read-only-smoke:
     # AC-H-16: the pytest-level chmod simulation the checker ruled an
     # unfaithful proxy (root ignores mode bits; chmod cannot simulate the
