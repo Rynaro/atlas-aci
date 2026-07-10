@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""D3a probe-verdict verifier — the AC-A3-1/F7 fix (checker defects 11-13, 15).
+"""D3a probe-verdict verifier — the AC-A3-1/F7 fix (checker defects 11-13, 15, 17).
 
 THE FIRST FIX (defect 10): `.github/workflows/harden-gate.yml` used to
 gate A3 on `grep -qiE "verdict.*:.*pass" "$PROBE_ARTIFACT"` — a check of
@@ -69,13 +69,28 @@ body — but the committed graph's edge set is ALSO determined by
 `_resolve_source_node()` (can drop an edge whose source doesn't resolve)
 and `_enclosing_symbol()` (feeds `_resolve_source_node`'s underlying data
 via `_resolve_edges()` — a data-flow dependency, not a direct call, so a
-naive call-graph closure would miss it) and `_target_kind()`. See
-`compute_indexer_fingerprint`'s own docstring for the fix: rather than
-hand-list every graph-determining function ("a hand-maintained list of
-function names is the next bug" — the same lesson `_CALL_CANDIDATE_KINDS`
-taught), it now hashes `codegraph.py` IN FULL, verbatim, plus the two
-probe scripts that decide what gets exported/assembled — closing the
-CLASS of "which function did I forget," not just this one instance.
+naive call-graph closure would miss it) and `_target_kind()`. Fixed by
+hashing `codegraph.py` IN FULL, verbatim, plus the two probe scripts —
+closing the CLASS of "which function did I forget," not just this one
+instance.
+
+THE SEVENTEENTH DEFECT (checker, found IN the fifteenth defect's own fix — same
+pass, one level deeper again): hashing `codegraph.py` verbatim still only
+certifies "source text matches a recorded value," not "this code builds
+the same graph." A4's rationale-extraction commit proved the point: it
+edited `codegraph.py` (new QUERIES captures, a new dataclass, new writes
+to a SEPARATE table) without touching a single graph-determining
+function, and the fingerprint still flipped — requiring a human to diff
+four function names and assert, in a commit message, that the graph
+hadn't changed. A mechanical guard whose outcome depends on that
+judgment, redone by someone with less context on every future edit, is a
+ritual, not a guard. Fixed: `compute_indexer_fingerprint` now runs the
+actual export path against a small, committed, multi-language fixture
+(`scripts/fingerprint-fixture/`) and hashes what the indexer ACTUALLY
+PRODUCES, not the text that is supposed to produce it — behaviour, not a
+proxy for behaviour. See `compute_indexer_fingerprint`'s own docstring
+for the full account, including why reproducibility across runs is not
+assumed but proven (A1/A3's total orders make it so).
 
 THE DOCUMENTED TERMINUS: after all of the above, the one input this
 script still cannot independently verify is that the committed graph
@@ -93,11 +108,12 @@ Usage:
 Exit 0 iff: the sidecar's declared bar/seeds/repo-set agree with the
 frozen constants; the graph bundle's sha256 matches; every recomputed
 node/edge/community count and modularity Q matches the sidecar's
-recorded copies within tolerance; the indexer fingerprint matches the
-current tree; and the recorded verdict equals the mechanical evaluation
-of the RECOMPUTED numbers against the frozen bar. Exit 1 on any
-provenance/integrity/arithmetic mismatch, with a diagnostic naming
-exactly what disagreed. Exit 2 on usage / malformed-input errors.
+recorded copies within tolerance; the BEHAVIOURAL indexer fingerprint
+(the actual export of a committed fixture, not source text) matches;
+and the recorded verdict equals the mechanical evaluation of the
+RECOMPUTED numbers against the frozen bar. Exit 1 on any provenance/
+integrity/arithmetic mismatch, with a diagnostic naming exactly what
+disagreed. Exit 2 on usage / malformed-input errors.
 """
 
 from __future__ import annotations
@@ -106,8 +122,11 @@ import gzip
 import hashlib
 import json
 import re
+import shutil
 import statistics
+import subprocess
 import sys
+import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -148,15 +167,18 @@ FROZEN_PINNED_SHAS: frozenset[str] = frozenset(
 # above that noise floor while still catching any real divergence.
 Q_TOLERANCE: float = 1e-9
 
-# Checker defect 13 (staleness hole) / defect 15 (under-coverage, found in
-# the fix for defect 13): the indexer fingerprint is computed straight
-# from these three files' own SOURCE TEXT — never by importing
-# `atlas_aci` (this script must run without `mcp-server`'s environment,
-# and without networkx, AC-NEG-2). See `compute_indexer_fingerprint` for
-# why all three (not just `codegraph.py`) are in scope.
+# Checker defect 13 (staleness hole) / defect 15 (under-coverage) / defect
+# 16 (source-text-is-a-proxy, this fix): the indexer fingerprint is now
+# BEHAVIOURAL — it runs the exact export path the D3a probe uses
+# (`probe-export-confident-graph.py`, via `uv run --frozen` inside
+# `mcp-server`'s own environment, the ONE place this script delegates to
+# a subprocess rather than importing `atlas_aci` directly) against a
+# small, committed, multi-language fixture repo, and hashes what actually
+# comes out — not source text that is merely supposed to produce it. See
+# `compute_indexer_fingerprint` for the full account.
 CODEGRAPH_RELATIVE_PATH = "mcp-server/src/atlas_aci/codegraph.py"
 PROBE_EXPORT_SCRIPT_RELATIVE_PATH = "scripts/probe-export-confident-graph.py"
-PROBE_ASSEMBLE_SCRIPT_RELATIVE_PATH = "scripts/probe-assemble-graph-bundle.py"
+FIXTURE_RELATIVE_PATH = "scripts/fingerprint-fixture"
 
 
 class ProvenanceError(Exception):
@@ -385,67 +407,161 @@ def evaluate_repo(repo: dict[str, Any], bundle: dict[str, Any]) -> dict[str, Any
 
 
 def compute_indexer_fingerprint(repo_root: Path) -> str:
-    """Hashes everything that determines the committed graph bundle.
+    """Hashes what the indexer's confident subgraph EXPORT ACTUALLY
+    PRODUCES on a small, committed, multi-language fixture — not the
+    source text that is supposed to produce it.
 
-    Checker defect 15 (found in the fix for defect 13's staleness hole,
-    the same pass deeper): an earlier revision hashed `SCHEMA_EPOCH` +
-    `EXPECTED_DDL_HASH` + ONLY `confident_edges()`'s own body. But the
-    committed graph's edge set is jointly determined by `confident_edges()`
-    AND `_resolve_source_node()` (which resolves -- and can DROP -- each
-    edge's source endpoint) AND `_enclosing_symbol()` (which feeds
-    `_resolve_source_node`'s underlying `source_name`/`source_kind` data by
-    way of `_resolve_edges()`, not a direct call — a data-flow dependency a
-    naive self-call closure would miss) AND `_target_kind()`. A change to
-    any of these alters every `Q` in the bundle without necessarily
-    touching `confident_edges()` itself — a stale bundle would certify as
-    fresh, and no workflow would ask for a re-run.
+    Checker defect 17 (found IN defect 15's own fix, same pass one level
+    deeper): hashing `codegraph.py` verbatim closes the "which function
+    did I forget" gap, but it still certifies "source text matches a
+    recorded value," not "this code builds the same graph." A4's
+    rationale-extraction commit proved the point: it edited
+    `codegraph.py` (comment-capture QUERIES entries, a new dataclass, new
+    DB writes to a SEPARATE table) without touching a single
+    graph-determining function, and the fingerprint STILL flipped,
+    requiring a human to diff four function names and a commit message
+    to assert "trust me, the graph didn't change." A mechanical guard
+    whose pass/fail depends on that judgment, repeated by someone with
+    less context on every future edit, is a ritual wearing a guard's
+    clothes.
 
-    THE FIX closes the CLASS, not the instance (the same lesson
-    `_CALL_CANDIDATE_KINDS`/`PRODUCED_KINDS` already taught this codebase):
-    rather than hand-list every graph-determining function — "a
-    hand-maintained list of function names is the next bug" — this hashes
-    `codegraph.py` IN FULL, verbatim, plus the two probe scripts that
-    decide what the export pipeline reads and writes
-    (`probe-export-confident-graph.py`, `probe-assemble-graph-bundle.py`).
-    Hashing the whole file cannot omit a graph-determining function *by
-    construction* — there is no list to fall out of date. The tradeoff is
-    conservatism, not blindness: an edit ANYWHERE in `codegraph.py` (even
-    an unrelated docstring) flips the fingerprint and forces a probe
-    re-run, which is the safe failure direction (an unnecessary "please
-    re-run" is cheap; a silent false "fresh" on a changed indexer is the
-    defect this exists to prevent). `scripts/test-verify-probe-verdict.sh`
-    proves this by editing `_resolve_source_node`, `_enclosing_symbol`,
-    `_target_kind`, and `confident_edges` in turn (one at a time, in a
-    throwaway copy) and confirming EACH edit alone flips the fingerprint —
-    the same "prove it has teeth" discipline as every other guard here.
+    THE FIX: measure the BEHAVIOUR, not the text that is supposed to
+    produce it. `scripts/fingerprint-fixture/` is a small, committed,
+    multi-language repo (Ruby/Python/TS: a mixin, a constructor call, an
+    AMBIGUOUS name, two unresolved external calls) — deliberately
+    exercising EXTRACTED/INFERRED/AMBIGUOUS, superclass/include/construct/
+    call relations, and zero-candidate refs in one pass. This function
+    copies that fixture to a throwaway directory, runs it through the
+    EXACT SAME export path the D3a probe itself uses
+    (`scripts/probe-export-confident-graph.py`, via `uv run --frozen`
+    inside `mcp-server`'s own environment — this is the one place in this
+    script that needs `atlas_aci`/tree-sitter, delegated to a subprocess
+    rather than imported directly, so this file's own import graph stays
+    dependency-free), and hashes the resulting canonical node/edge/
+    LPA-label structure (the ephemeral tmp path itself excluded, since it
+    is random per invocation and carries no information about the
+    indexer). `SCHEMA_EPOCH`/`EXPECTED_DDL_HASH` are folded in too, as a
+    cheap belt for a schema change that happens not to move this specific
+    fixture's tiny graph.
 
-    Dependency-free (no `atlas_aci` import, no `mcp-server` environment,
-    no networkx) -- reads three files as plain text, nothing else.
+    Reproducibility is not assumed: A1's total-ordered edge enumeration
+    and A3's total-ordered node/community ordering make the exported
+    structure invariant to file-processing order already (proven:
+    indexing this exact fixture twice, into two independent tmp
+    directories, produces byte-identical output modulo the tmp path
+    itself) — this is exactly why those total orders were built, and this
+    fingerprint is the first thing that cashes in on that guarantee
+    rather than merely relying on it by convention.
+
+    Now: A4-style edits (new QUERIES captures, new dataclasses, new
+    tables) that do not change what this fixture's confident subgraph
+    looks like leave the fingerprint UNCHANGED — no trip, no refresh, no
+    human ruling (verified directly: the post-A4 tree and a pre-A4
+    checkout of `codegraph.py` produce the IDENTICAL fingerprint against
+    this fixture). A change to `confident_edges`/`_resolve_source_node`/
+    `_enclosing_symbol`/either probe script's OWN OUTPUT that DOES change
+    the fixture's exported graph flips it.
+
+    `_target_kind()` is a deliberate, defended exception, not an
+    oversight: it resolves only the "kind" METADATA `god_nodes()`/
+    `communities()` attach to a node for display — it has no path into
+    which nodes/edges exist, the LPA algorithm's outcome, or anything
+    `probe-export-confident-graph.py` currently exports (the exported
+    `nodes` are bare `[path, line, name]` triples; kind is never in that
+    output). A change to it correctly does NOT flip this fingerprint,
+    tested explicitly in `scripts/test-verify-probe-verdict.sh` rather
+    than silently assumed — the earlier whole-file hash could not tell a
+    function that determines the graph's SHAPE apart from one that only
+    decorates it; this one can, because it measures the shape directly.
+
+    Also: only genuine BEHAVIOURAL edits move this fingerprint — inserting
+    a bare `pass` before a function's existing logic, or appending a
+    trailing comment to the export script, changes nothing at runtime
+    (proved this the hard way: those were the first self-test edits
+    tried, and they correctly failed to flip anything, because they
+    weren't real changes either). `scripts/test-verify-probe-verdict.sh`
+    uses genuine short-circuit returns and an output-shape edit instead,
+    and proves both directions: a semantically null source edit (a
+    comment near `SCHEMA_EPOCH`) does not move it; a real short-circuit
+    inside `_resolve_source_node`/`_enclosing_symbol`/`confident_edges`,
+    or a real output-shape change in the export script, does.
     """
     codegraph_path = repo_root / CODEGRAPH_RELATIVE_PATH
     export_script_path = repo_root / PROBE_EXPORT_SCRIPT_RELATIVE_PATH
-    assemble_script_path = repo_root / PROBE_ASSEMBLE_SCRIPT_RELATIVE_PATH
-    for path in (codegraph_path, export_script_path, assemble_script_path):
-        if not path.is_file():
+    fixture_path = repo_root / FIXTURE_RELATIVE_PATH
+    mcp_server_dir = repo_root / "mcp-server"
+    for path in (codegraph_path, export_script_path, fixture_path, mcp_server_dir):
+        if not path.exists():
             raise ProvenanceError(f"cannot compute the indexer fingerprint: {path} does not exist")
 
     codegraph_source = codegraph_path.read_text()
-    export_script_source = export_script_path.read_text()
-    assemble_script_source = assemble_script_path.read_text()
-
     epoch_match = re.search(r"^SCHEMA_EPOCH\s*=\s*(\d+)", codegraph_source, re.MULTILINE)
     if not epoch_match:
         raise ProvenanceError(f"could not find SCHEMA_EPOCH in {codegraph_path}")
-
     ddl_match = re.search(r'^EXPECTED_DDL_HASH\s*=\s*"([0-9a-f]+)"', codegraph_source, re.MULTILINE)
     if not ddl_match:
         raise ProvenanceError(f"could not find EXPECTED_DDL_HASH in {codegraph_path}")
 
+    with tempfile.TemporaryDirectory(prefix="atlas-aci-fingerprint-fixture-") as tmp_dir:
+        fixture_copy = Path(tmp_dir) / "fixture"
+        shutil.copytree(fixture_path, fixture_copy)
+        output_path = Path(tmp_dir) / "graph.json"
+
+        proc = subprocess.run(
+            [
+                "uv",
+                "run",
+                "--frozen",
+                "python",
+                str(export_script_path),
+                str(fixture_copy),
+                str(output_path),
+            ],
+            cwd=mcp_server_dir,
+            capture_output=True,
+            text=True,
+        )
+        if proc.returncode != 0:
+            raise ProvenanceError(
+                "cannot compute the behavioural indexer fingerprint: "
+                f"indexing the fingerprint fixture failed (exit {proc.returncode}).\n"
+                f"stdout: {proc.stdout}\nstderr: {proc.stderr}"
+            )
+
+        try:
+            with open(output_path) as f:
+                graph = json.load(f)
+        except (OSError, json.JSONDecodeError) as e:
+            raise ProvenanceError(f"cannot compute the behavioural indexer fingerprint: {e}") from e
+
+    # Select ONLY the fields that define the confident subgraph itself —
+    # an explicit allowlist, not "everything except a denylist". Verified
+    # the hard way (checker instinct, this fix): `repo` (the ephemeral tmp
+    # path) obviously doesn't belong, but `build_stats` doesn't either —
+    # A4 added a `rationale` COUNT to that dict (indexing statistics about
+    # an entirely separate table), and hashing the whole dict made THAT
+    # incidental, graph-irrelevant key flip the fingerprint even on this
+    # exact fixture, where the confident subgraph itself never moved.
+    # Caught by literally diffing a pre-A4 and post-A4 export of this
+    # fixture side by side before finalizing this fix — the only
+    # difference was `build_stats["rationale"]` appearing. An allowlist
+    # can't accumulate that kind of incidental drift the way "hash
+    # everything but repo" can.
+    canonical_fields = {
+        "nodes": graph["nodes"],
+        "edges": graph["edges"],
+        "lpa_labels": graph["lpa_labels"],
+        "node_count": graph["node_count"],
+        "edge_count": graph["edge_count"],
+        "lpa_community_count": graph["lpa_community_count"],
+        "resolved_edge_count": graph["resolved_edge_count"],
+        "ambiguous_edges_excluded": graph["ambiguous_edges_excluded"],
+    }
+    canonical_graph = json.dumps(canonical_fields, sort_keys=True, separators=(",", ":"))
+
     fingerprint_input = (
         f"epoch={epoch_match.group(1)}|ddl_hash={ddl_match.group(1)}|"
-        f"codegraph_source={codegraph_source}|"
-        f"export_script={export_script_source}|"
-        f"assemble_script={assemble_script_source}"
+        f"confident_subgraph={canonical_graph}"
     )
     return hashlib.sha256(fingerprint_input.encode("utf-8")).hexdigest()
 
@@ -460,9 +576,9 @@ def _check_indexer_fingerprint_matches_tree(sidecar: dict[str, Any], repo_root: 
     if current != recorded:
         raise ProvenanceError(
             f"indexer_fingerprint mismatch: sidecar records {recorded!r}, the CURRENT tree "
-            f"computes {current!r}. The probe is STALE relative to the current indexer "
-            "(codegraph.py and/or the probe export/assembly scripts changed since the probe "
-            "ran) and must be re-run -- a stale probe must never certify a changed indexer."
+            f"computes {current!r}. The fixture repo's confident subgraph (what the indexer "
+            "ACTUALLY produces, not its source text) has changed since the probe ran -- the "
+            "probe is STALE relative to the current indexer and must be re-run."
         )
 
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # scripts/test-verify-probe-verdict.sh
 #
-# Self-test for scripts/verify-probe-verdict.py — covers five rounds of
+# Self-test for scripts/verify-probe-verdict.py — covers seven rounds of
 # the same defect class ("the check measures a proxy instead of the
 # invariant"), each found by attacking the previous round's fix:
 #
@@ -19,8 +19,15 @@
 #     10 forges exactly that; scenarios 11/12 attack the graph BUNDLE
 #     this was fixed with (a tampered bundle, and a bundle edited so a
 #     recomputed Q genuinely diverges from its recorded value).
-#   - The staleness hole: nothing tied the sidecar to the indexer that
-#     produced it. Scenario 13 forges a stale `indexer_fingerprint`.
+#   - The staleness hole (defect 15's context): nothing tied the sidecar
+#     to the indexer that produced it. Scenario 13 forges a stale
+#     `indexer_fingerprint`.
+#   - Defect 17: hashing `codegraph.py` verbatim still only certified
+#     "source text matches," not "this code builds the same graph" — the
+#     fingerprint is now BEHAVIOURAL (runs the real export path against a
+#     committed fixture and hashes the output). The scenarios after
+#     "stale indexer_fingerprint" below prove both directions plus one
+#     deliberately-defended exception (`_target_kind`).
 #
 # This self-test asserts scripts/verify-probe-verdict.py rejects every
 # forgery below and accepts the real, currently-recorded probe sidecar +
@@ -313,87 +320,182 @@ PYEOF
 _assert_exit "forged: stale indexer_fingerprint (does not match the current tree)" \
     "$dir/probe-lpa-vs-louvain.json" 1
 
-# ---- Fingerprint coverage (checker defect 15): every graph-determining
-# function, and both probe scripts, must flip compute_indexer_fingerprint()
-# when edited -- proving the whole-file-hash fix actually covers what it
-# claims to, not just confident_edges() (the under-coverage the checker
-# found IN the defect-13 fix itself). Builds a throwaway copy of the real
-# repo tree, edits exactly ONE function (or script) at a time, and asserts
-# the fingerprint changes relative to an untouched baseline copy.
-_fingerprint_dir="$TMP_DIR/fingerprint-coverage"
-mkdir -p "$_fingerprint_dir/baseline/mcp-server/src/atlas_aci" "$_fingerprint_dir/baseline/scripts"
-cp "$REPO_ROOT/mcp-server/src/atlas_aci/codegraph.py" \
-    "$_fingerprint_dir/baseline/mcp-server/src/atlas_aci/codegraph.py"
-cp "$REPO_ROOT/scripts/probe-export-confident-graph.py" \
-    "$_fingerprint_dir/baseline/scripts/probe-export-confident-graph.py"
-cp "$REPO_ROOT/scripts/probe-assemble-graph-bundle.py" \
-    "$_fingerprint_dir/baseline/scripts/probe-assemble-graph-bundle.py"
+# ---- Behavioural fingerprint (checker defect 17): the fingerprint now
+# runs scripts/fingerprint-fixture/ through the ACTUAL export path
+# (probe-export-confident-graph.py, via `uv run --frozen` inside a real
+# mcp-server environment) and hashes what comes out, not codegraph.py's
+# source text. Proving this needs a REAL, runnable copy of the repo (a
+# full mcp-server/ + scripts/ tree, uv-synced once) -- one throwaway copy
+# is built here and reused across every scenario below (editing one file,
+# measuring, then reverting that same file), rather than a fresh
+# from-scratch tree per scenario, since each scenario would otherwise pay
+# a full `uv sync` cost.
+_fp_root="$TMP_DIR/fingerprint-behavioural"
+mkdir -p "$_fp_root"
+rsync -a --exclude='.venv' --exclude='.atlas' --exclude='__pycache__' \
+    --exclude='.pytest_cache' --exclude='*.pyc' \
+    "$REPO_ROOT/mcp-server/" "$_fp_root/mcp-server/"
+mkdir -p "$_fp_root/scripts"
+cp "$REPO_ROOT/scripts/probe-export-confident-graph.py" "$_fp_root/scripts/"
+cp -r "$REPO_ROOT/scripts/fingerprint-fixture" "$_fp_root/scripts/"
 
-_fingerprint_of() {
-    local root="$1"
+_fingerprint_of_fp_root() {
     python3 -c "
-import importlib.util, sys
+import importlib.util
 from pathlib import Path
 spec = importlib.util.spec_from_file_location('verify_probe_verdict', '$VERIFY')
 mod = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(mod)
-print(mod.compute_indexer_fingerprint(Path('$root')))
+print(mod.compute_indexer_fingerprint(Path('$_fp_root')))
 "
 }
 
-baseline_fp="$(_fingerprint_of "$_fingerprint_dir/baseline")"
+echo "(building the one-time throwaway uv environment for behavioural fingerprint scenarios...)"
+baseline_fp="$(_fingerprint_of_fp_root)"
 
-_assert_fingerprint_flips() {
-    local scenario="$1" edited_root="$2"
+_CODEGRAPH_COPY="$_fp_root/mcp-server/src/atlas_aci/codegraph.py"
+_EXPORT_SCRIPT_COPY="$_fp_root/scripts/probe-export-confident-graph.py"
+
+_assert_fingerprint_after_edit() {
+    local scenario="$1" expect_flip="$2"
     local edited_fp
-    edited_fp="$(_fingerprint_of "$edited_root")"
-    if [ "$edited_fp" != "$baseline_fp" ]; then
-        echo "PASS: $scenario (fingerprint flipped)"
+    edited_fp="$(_fingerprint_of_fp_root)"
+    if { [ "$expect_flip" = "yes" ] && [ "$edited_fp" != "$baseline_fp" ]; } || \
+       { [ "$expect_flip" = "no" ] && [ "$edited_fp" = "$baseline_fp" ]; }; then
+        echo "PASS: $scenario"
         pass_count=$((pass_count + 1))
     else
-        echo "FAIL: $scenario -- fingerprint did NOT change; this function/script is NOT covered"
+        echo "FAIL: $scenario -- expected flip=$expect_flip, baseline=$baseline_fp got=$edited_fp"
         fail_count=$((fail_count + 1))
     fi
 }
 
-for fn in confident_edges _resolve_source_node _enclosing_symbol _target_kind; do
-    edited_dir="$_fingerprint_dir/edit-$fn"
-    mkdir -p "$edited_dir/mcp-server/src/atlas_aci" "$edited_dir/scripts"
-    cp "$_fingerprint_dir/baseline/scripts/probe-export-confident-graph.py" "$edited_dir/scripts/"
-    cp "$_fingerprint_dir/baseline/scripts/probe-assemble-graph-bundle.py" "$edited_dir/scripts/"
-    python3 - "$_fingerprint_dir/baseline/mcp-server/src/atlas_aci/codegraph.py" \
-        "$edited_dir/mcp-server/src/atlas_aci/codegraph.py" "$fn" << 'PYEOF'
+# ---- Direction 1: a semantically-null edit must NOT move the fingerprint ----
+cp "$_CODEGRAPH_COPY" "$_CODEGRAPH_COPY.bak"
+python3 -c "
+path = '$_CODEGRAPH_COPY'
+src = open(path).read()
+old = 'SCHEMA_EPOCH = 5'
+assert old in src
+open(path, 'w').write(src.replace(old, old + '  # semantically-null comment, verification only', 1))
+"
+_assert_fingerprint_after_edit "semantically-null comment edit does NOT flip the fingerprint" no
+mv "$_CODEGRAPH_COPY.bak" "$_CODEGRAPH_COPY"
+
+# ---- Direction 2: editing a graph-determining function alone MUST flip it ----
+# Checker-instinct self-correction: inserting a bare `pass` as the first
+# statement before a function's EXISTING logic changes nothing at
+# runtime (the docstring just stops being `__doc__`, the rest of the
+# body still executes identically) -- that trick only ever worked
+# against the OLD source-text hash, where any textual change sufficed.
+# A behavioural fingerprint needs a genuine short-circuit: return a
+# DIFFERENT value immediately, of the same type the function actually
+# returns, so the rest of the body never runs.
+declare -A _SHORT_CIRCUIT=(
+    [confident_edges]="return []"
+    [_resolve_source_node]="return None, None"
+    [_enclosing_symbol]="return None, None"
+    [_target_kind]="return None"
+)
+# `_target_kind` deliberately excluded from the "must flip" loop below —
+# see the dedicated "must NOT flip" scenario right after it, and its
+# comment, for why: verified this is a considered, defended exclusion,
+# not a silent omission.
+for fn in confident_edges _resolve_source_node _enclosing_symbol; do
+    cp "$_CODEGRAPH_COPY" "$_CODEGRAPH_COPY.bak"
+    python3 - "$_CODEGRAPH_COPY" "$fn" "${_SHORT_CIRCUIT[$fn]}" << 'PYEOF'
 import re
 import sys
 
-src_path, out_path, fn_name = sys.argv[1:4]
-source = open(src_path).read()
+path, fn_name, short_circuit = sys.argv[1:4]
+source = open(path).read()
 pattern = re.compile(rf"(    def {re.escape(fn_name)}\([^)]*\)[^:]*:\n)")
 match = pattern.search(source)
 if not match:
-    raise SystemExit(f"could not find def {fn_name}( in {src_path}")
+    raise SystemExit(f"could not find def {fn_name}( in {path}")
 insertion = match.end()
 edited = (
     source[:insertion]
-    + "        pass  # VERIFICATION-ONLY: proving the fingerprint covers this function\n"
+    + f"        {short_circuit}  # VERIFICATION-ONLY: a genuine short-circuit, not a no-op\n"
     + source[insertion:]
 )
-open(out_path, "w").write(edited)
+open(path, "w").write(edited)
 PYEOF
-    _assert_fingerprint_flips "editing $fn() alone flips the indexer fingerprint" "$edited_dir"
+    _assert_fingerprint_after_edit "editing $fn() alone flips the behavioural fingerprint" yes
+    mv "$_CODEGRAPH_COPY.bak" "$_CODEGRAPH_COPY"
 done
 
-for script in probe-export-confident-graph.py probe-assemble-graph-bundle.py; do
-    edited_dir="$_fingerprint_dir/edit-$script"
-    mkdir -p "$edited_dir/mcp-server/src/atlas_aci" "$edited_dir/scripts"
-    cp "$_fingerprint_dir/baseline/mcp-server/src/atlas_aci/codegraph.py" \
-        "$edited_dir/mcp-server/src/atlas_aci/"
-    cp "$_fingerprint_dir/baseline/scripts/probe-export-confident-graph.py" "$edited_dir/scripts/"
-    cp "$_fingerprint_dir/baseline/scripts/probe-assemble-graph-bundle.py" "$edited_dir/scripts/"
-    printf '\n# VERIFICATION-ONLY: proving the fingerprint covers this script\n' \
-        >> "$edited_dir/scripts/$script"
-    _assert_fingerprint_flips "editing $script alone flips the indexer fingerprint" "$edited_dir"
-done
+# ---- The export script itself must also be covered ----
+# Same correction as above: this script's SOURCE TEXT is no longer
+# hashed at all (only its OUTPUT is) -- a trailing comment is exactly as
+# inert here as `pass` was for the functions above. The genuine
+# behavioural edit: force the exported edge list empty, the same shape
+# of change a real regression in this script's own logic would produce.
+cp "$_EXPORT_SCRIPT_COPY" "$_EXPORT_SCRIPT_COPY.bak"
+python3 -c "
+path = '$_EXPORT_SCRIPT_COPY'
+src = open(path).read()
+old = '\"edges\": [list(e) for e in canonical_edges],'
+assert old in src, 'anchor not found -- probe-export-confident-graph.py output shape changed'
+open(path, 'w').write(src.replace(old, '\"edges\": [],  # VERIFICATION-ONLY: a genuine output change', 1))
+"
+_assert_fingerprint_after_edit "editing probe-export-confident-graph.py's own output alone flips the behavioural fingerprint" yes
+mv "$_EXPORT_SCRIPT_COPY.bak" "$_EXPORT_SCRIPT_COPY"
+
+# ---- `_target_kind` must NOT flip it — a considered, defended exclusion ----
+# `_target_kind()` resolves only the decorative "kind" METADATA field
+# god_nodes()/communities() attach to each member for display -- it does
+# NOT determine which nodes/edges exist, the LPA algorithm's outcome, or
+# any field probe-export-confident-graph.py currently exports (the
+# exported "nodes" are bare [path, line, name] triples; "kind" is never
+# in that output at all). It has no path into the confident subgraph's
+# actual SHAPE. A behavioural fingerprint that measures the shape
+# correctly stays silent on a change that does not touch the shape --
+# this is more honest than the earlier whole-file hash's "include it
+# defensively, just in case," which could not tell the difference
+# between a function that determines the graph and one that only
+# decorates it. Tested here, not silently assumed.
+cp "$_CODEGRAPH_COPY" "$_CODEGRAPH_COPY.bak"
+python3 - "$_CODEGRAPH_COPY" "_target_kind" "${_SHORT_CIRCUIT[_target_kind]}" << 'PYEOF'
+import re
+import sys
+
+path, fn_name, short_circuit = sys.argv[1:4]
+source = open(path).read()
+pattern = re.compile(rf"(    def {re.escape(fn_name)}\([^)]*\)[^:]*:\n)")
+match = pattern.search(source)
+if not match:
+    raise SystemExit(f"could not find def {fn_name}( in {path}")
+insertion = match.end()
+edited = (
+    source[:insertion]
+    + f"        {short_circuit}  # VERIFICATION-ONLY: a genuine short-circuit, not a no-op\n"
+    + source[insertion:]
+)
+open(path, "w").write(edited)
+PYEOF
+_assert_fingerprint_after_edit \
+    "editing _target_kind() alone does NOT flip the behavioural fingerprint (decorative metadata only)" no
+mv "$_CODEGRAPH_COPY.bak" "$_CODEGRAPH_COPY"
+
+# ---- A4-shaped edit (unrelated new field in build_stats) must NOT flip it ----
+# The exact regression this fix closed: an earlier revision hashed the
+# WHOLE export dict including `build_stats`, so A4 adding an unrelated
+# `rationale` count there flipped the fingerprint even though the
+# confident subgraph never moved. Reproduces that shape directly against
+# the export script's own output construction.
+cp "$_CODEGRAPH_COPY" "$_CODEGRAPH_COPY.bak"
+python3 -c "
+path = '$_CODEGRAPH_COPY'
+src = open(path).read()
+old = '\"schema_epoch\": SCHEMA_EPOCH,\n        }'
+assert old in src, 'anchor not found -- build_stats dict shape changed'
+new = '\"schema_epoch\": SCHEMA_EPOCH,\n            \"unrelated_new_stat\": 12345,\n        }'
+open(path, 'w').write(src.replace(old, new, 1))
+"
+_assert_fingerprint_after_edit \
+    "an unrelated new build_stats field does NOT flip the behavioural fingerprint" no
+mv "$_CODEGRAPH_COPY.bak" "$_CODEGRAPH_COPY"
 
 echo ""
 echo "$pass_count passed, $fail_count failed"

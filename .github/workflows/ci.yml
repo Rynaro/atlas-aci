@@ -114,10 +114,14 @@ jobs:
         run: uv run --frozen mypy src/
 
       - name: ruff check (scripts/ — repo root, lint the guards too)
-        run: uv run --frozen ruff check ../scripts/
+        # --exclude fingerprint-fixture: that directory is deliberately
+        # "broken" Python (an unresolved external call, a name ambiguous
+        # across two files) -- fixture data for the behavioural indexer
+        # fingerprint (checker defect 17), not real project code.
+        run: uv run --frozen ruff check ../scripts/ --exclude fingerprint-fixture
 
       - name: ruff format --check (scripts/)
-        run: uv run --frozen ruff format --check ../scripts/
+        run: uv run --frozen ruff format --check ../scripts/ --exclude fingerprint-fixture
 
       - name: mypy (scripts/)
         run: uv run --frozen mypy ../scripts/

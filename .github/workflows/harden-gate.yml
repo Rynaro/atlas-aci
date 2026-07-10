@@ -166,13 +166,19 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y ripgrep
 
       - name: Install uv
-        if: steps.classify.outputs.augmented == 'true'
+        # Unconditional (checker defect 17): the A3 probe precondition step
+        # below is ALSO unconditional and, once A3 code exists in the tree
+        # at all (a permanent fact post-ship, not a per-PR one), invokes
+        # `uv run --frozen` itself to compute the BEHAVIOURAL indexer
+        # fingerprint (it actually runs the export path against a fixture,
+        # not just reading source text) — that needs uv/Python available
+        # regardless of whether THIS diff happens to touch an augmentation
+        # marker.
         uses: astral-sh/setup-uv@v5
         with:
           version: "latest"
 
       - name: Set up Python
-        if: steps.classify.outputs.augmented == 'true'
         uses: actions/setup-python@v5
         with:
           python-version-file: "mcp-server/pyproject.toml"
@@ -240,19 +246,33 @@ jobs:
             # value within tolerance (an honesty check on the recorded
             # run); and recomputes an indexer_fingerprint from the CURRENT
             # tree, failing loudly if the probe is stale relative to the
-            # indexer that would actually run today. That fingerprint
-            # (defect 15, found IN the defect-13 staleness fix) hashes
-            # codegraph.py IN FULL plus both probe scripts — an earlier
-            # version hashed only confident_edges()'s own body, missing
-            # _resolve_source_node()/_enclosing_symbol()/_target_kind(),
-            # which also determine the committed graph's edge set. Then,
-            # using ONLY the recomputed values, fails if the computed
-            # verdict differs from the recorded one in EITHER direction —
-            # a recorded CUT over genuinely passing numbers is equally a
-            # lie, not just a recorded PASS over failing ones. See
-            # scripts/test-verify-probe-verdict.sh (20 scenarios: 14 forged
-            # sidecars + 6 fingerprint-coverage checks, each guard's
-            # necessity proven by disabling it in isolation)
+            # indexer that would actually run today. That fingerprint went
+            # through two more rounds: defect 15 (hashing only
+            # confident_edges()'s body missed _resolve_source_node()/
+            # _enclosing_symbol()/_target_kind(), also graph-determining —
+            # fixed by hashing codegraph.py IN FULL) and defect 17 (hashing
+            # codegraph.py verbatim still only certified "source text
+            # matches," not "this code builds the same graph" — A4 edited
+            # unrelated logic and the fingerprint flipped anyway, needing a
+            # human diff to rule it a false alarm). Fixed: the fingerprint
+            # now RUNS the actual export path
+            # (scripts/probe-export-confident-graph.py, via `uv run
+            # --frozen` inside mcp-server's own env) against a small,
+            # committed, multi-language fixture
+            # (scripts/fingerprint-fixture/) and hashes what the indexer
+            # ACTUALLY PRODUCES — behaviour, not a proxy for it. A4-shaped
+            # edits that don't change the fixture's confident subgraph no
+            # longer trip it at all. Then, using ONLY the recomputed
+            # values, fails if the computed verdict differs from the
+            # recorded one in EITHER direction — a recorded CUT over
+            # genuinely passing numbers is equally a lie, not just a
+            # recorded PASS over failing ones. See
+            # scripts/test-verify-probe-verdict.sh (21 scenarios: 14 forged
+            # sidecars + 7 behavioural-fingerprint checks, including both
+            # directions — a semantically null edit does not move it, a
+            # real one does — and a deliberately-defended exception:
+            # _target_kind() only resolves display metadata, never the
+            # graph's shape, so it correctly does NOT flip the fingerprint)
             # for the self-test proving this has teeth, and
             # probe-lpa-vs-louvain.md's "one input this cannot mechanically
             # verify" section for the one trust boundary that remains

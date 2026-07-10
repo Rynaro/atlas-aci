@@ -19,7 +19,7 @@
     "resolution": 1.0
   },
   "recorded_verdict": "PASS",
-  "indexer_fingerprint": "00bdd469dd2d6967e1e3555fcce306e02f2ed6133c4e1744b40a0b589e08e8e5",
+  "indexer_fingerprint": "927c006c24f5a6b95b8ed3442d73ed018043b43b539c34b8dcb546eeb21690fc",
   "graph_bundle": {
     "filename": "probe-graphs.json.gz",
     "sha256": "1ecc73866eb0a0379df5241a4fd2db871ee5afe235c5eab2af937f5944ef7bae"
