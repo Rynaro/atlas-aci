@@ -186,9 +186,18 @@ dropped. `CodeGraph.confident_edges()` is the query primitive over the
 **confident subgraph** (`EXTRACTED` ∪ `INFERRED`) that excludes AMBIGUOUS
 entirely (no fan-out to candidates, no fractional weight — ambiguity is
 not importance); `god_nodes:` (A2, below) is its first real consumer.
-Community detection (A3, **not part of this release** — cut pending the
-D3a probe) is specified to consume the same primitive when/if it ships.
-"What `graph_query` returns" and "what `god_nodes`/(future) communities
+Community detection (A3) is specified to consume the same primitive and is
+**gated on a pre-registered evidence probe, not yet run as of this
+writing**: a hand-rolled label-propagation implementation ships in
+v2.0.0 **only if** it clears a fixed bar — `LPA_Q >= 0.30` and
+`LPA_Q >= 0.85 x Louvain_Q_median` (with `Louvain_Q_median >= 0.30` as a
+structure-exists precondition) — evaluated independently on two pinned
+reference repos, never averaged. If either repo fails any clause, A3 is
+cut to v2.1 and v2.0.0 ships `god_nodes` alone; the bar was fixed before
+the probe ran specifically so the outcome couldn't be argued with either
+way. See `.spectra/changes/aci-v2-harden-and-augment/probe-lpa-vs-louvain.md`
+for the recorded numbers and verdict once the probe has run.
+"What `graph_query` returns" and "what `god_nodes`/(possibly) communities
 analyze" deliberately differ, and `god_nodes`'s response carries
 `analysis_basis`, `ambiguous_edges_excluded`, and `resolved_edge_count`
 fields making that divergence visible rather than implicit — a consumer
