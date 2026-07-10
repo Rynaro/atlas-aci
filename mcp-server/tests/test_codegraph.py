@@ -354,3 +354,65 @@ def test_unsupported_extension_skip_is_reported(tmp_path: Path) -> None:
     # And it must not have silently produced phantom symbols from files it
     # never actually parsed.
     assert _names(graph.search_symbol("main")["definitions"]) == set()
+
+
+# ---- A1 checker MINOR-1 (condition 2): call-candidate-kind completeness ----
+
+
+def test_produced_kinds_are_fully_classified_for_call_resolution() -> None:
+    """Every kind PRODUCED_KINDS can actually produce (derived mechanically
+    from QUERIES, same source AC-DOC-6 uses for the search_symbol kind enum)
+    must fall into exactly one of: `_CALLABLE_KINDS` (a "call"-relation ref
+    can resolve to it), `_CLASS_KINDS` (a heritage/construct ref resolves to
+    it), or `_NON_CALLABLE_KINDS` (deliberately excluded, with a reason in
+    the source comment). This is the guard the BLOCKER's post-mortem should
+    have left behind: excluding a kind is now a listed decision, not an
+    oversight that surfaces only when someone happens to query it (`mixin`
+    was found this way — non-silent thanks to `unresolved_refs`, but the
+    same shape as the class-resolution bug)."""
+    from atlas_aci.codegraph import (
+        _CALLABLE_KINDS,
+        _CLASS_KINDS,
+        _NON_CALLABLE_KINDS,
+        PRODUCED_KINDS,
+    )
+
+    classified = set(_CALLABLE_KINDS) | set(_CLASS_KINDS) | set(_NON_CALLABLE_KINDS)
+    assert set(PRODUCED_KINDS) <= classified, (
+        f"kind(s) {set(PRODUCED_KINDS) - classified} are produced by QUERIES but "
+        f"classified nowhere — a future callers_of on that kind would silently "
+        f"resolve to zero candidates"
+    )
+    # The three buckets must be pairwise disjoint — a kind classified twice
+    # (e.g. both callable and excluded) is as much a bug as unclassified.
+    assert set(_CALLABLE_KINDS).isdisjoint(_CLASS_KINDS)
+    assert set(_CALLABLE_KINDS).isdisjoint(_NON_CALLABLE_KINDS)
+    assert set(_CLASS_KINDS).isdisjoint(_NON_CALLABLE_KINDS)
+    # Pin the specific kinds this fix targets, so a future edit that quietly
+    # drops `mixin` back out (or re-adds the dead `singleton_method`) is
+    # caught rather than silently reopening the same bug shape.
+    assert "mixin" in _CALLABLE_KINDS
+    assert "singleton_method" not in _CALLABLE_KINDS
+
+
+def test_scss_mixin_include_resolves_to_a_real_edge(tmp_path: Path) -> None:
+    """End-to-end regression for the exact MINOR-1 reproduction:
+    `callers_of:rounded` on an scss `@include rounded;` site must resolve,
+    not return an unresolved-but-silent-looking empty edge list."""
+    graph = _build(
+        tmp_path,
+        {
+            "_sass/_mixins.scss": "@mixin rounded {\n  border-radius: 4px;\n}\n",
+            "_sass/_card.scss": ".card {\n  @include rounded;\n}\n",
+        },
+    )
+    edges = graph.callers_of("rounded")
+    assert len(edges) == 1
+    assert edges[0]["relation"] == "call"
+    # `@include <name>;` has no receiver/qualifier syntax at all (unlike
+    # Ruby/Python/JS-TS calls) — F18 defines no qualification rule for it,
+    # so a bare, unqualified mixin name is INFERRED (name-uniqueness),
+    # mirroring F18's own "a bare method with a unique name = INFERRED"
+    # rule for the languages it does cover.
+    assert edges[0]["confidence"] == "INFERRED"
+    assert edges[0]["target"]["name"] == "rounded"

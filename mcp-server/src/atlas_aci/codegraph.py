@@ -412,8 +412,43 @@ KNOWN_QUERY_VERBS: frozenset[str] = frozenset({"callers_of", "definitions_of", "
 # 'construct' when every matched candidate turns out to be a class/module
 # (see `_CLASS_TARGET_RELATIONS` below) — never silently reusing 'call' for
 # a semantically distinct constructor edge.
-_CALLABLE_KINDS: tuple[str, ...] = ("method", "function", "singleton_method")
+#
+# checker finding (MINOR-1, condition 2): `mixin` (scss `@include foo` — see
+# QUERIES["scss"]'s `@ref.include` pattern, extracted as an ordinary 'call'-
+# relation ref) was the *next* excluded kind — same shape as the BLOCKER,
+# just non-silent this time (`unresolved_refs` surfaced it instead of hiding
+# it). The fix is not "add mixin and move on": every kind `QUERIES` can
+# actually produce (`PRODUCED_KINDS`, derived mechanically from the query
+# table, same idiom as AC-DOC-6/AC-H-13) must be classified into EXACTLY one
+# of the three sets below — callable, class-target, or deliberately
+# excluded with a reason — so forgetting a kind is a listed decision, never
+# an oversight. test_codegraph.py::test_produced_kinds_are_fully_classified
+# fails the build if a kind falls through every bucket, mirroring H4's
+# LANG_BY_EXT-vs-QUERIES consistency assert for extensions.
+#
+# `singleton_method` (never actually a kind value — Ruby's
+# `(singleton_method ...) @def.method` pattern stores it as plain "method",
+# same as an instance method) has been removed: it could never appear in
+# `symbols.kind` and its presence here was dead weight, not a documented
+# decision.
+_CALLABLE_KINDS: tuple[str, ...] = ("method", "function", "mixin")
 _CLASS_KINDS: tuple[str, ...] = ("class", "module")
+# Deliberately excluded from call/construct resolution: QUERIES never
+# captures a call/construct-relation reference whose callee_name could
+# match one of these — they are definition-only lookup targets for
+# search_symbol (an HTML anchor id, a YAML mapping key, a Markdown heading,
+# an SCSS class/id selector or `$variable`), never something another
+# reference "calls". If a future QUERIES change adds a capture that
+# references one of these by name, this set — and the classification test
+# — must be revisited.
+_NON_CALLABLE_KINDS: tuple[str, ...] = (
+    "heading",
+    "id",
+    "key",
+    "placeholder",
+    "selector",
+    "variable",
+)
 _CALL_CANDIDATE_KINDS: tuple[str, ...] = _CALLABLE_KINDS + _CLASS_KINDS
 
 # Heritage relations (superclass/include/extend/prepend) plus 'construct'
