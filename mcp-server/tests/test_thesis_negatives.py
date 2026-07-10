@@ -9,6 +9,7 @@ criterion is that it needs no judgement call.
 from __future__ import annotations
 
 import re
+import tomllib
 from pathlib import Path
 
 SRC_ROOT = Path(__file__).resolve().parent.parent / "src"
@@ -69,4 +70,38 @@ def test_no_new_runtime_dependency(tmp_path: Path) -> None:
     assert core_deps == expected, (
         f"core [project.dependencies] changed: {core_deps} != baseline {expected} "
         f"(v0.4.0 core set) — v2.0.0 P0 must add no new runtime dependency"
+    )
+
+
+# ---- AC-REL-3 ----
+
+
+def test_uv_lock_atlas_aci_version_matches_pyproject() -> None:
+    """The defect that started release-prep: the shipped v0.4.0 tag's
+    `uv.lock` pinned `atlas-aci` at `0.3.1` (`git show HEAD:mcp-server/
+    uv.lock:37`) while `pyproject.toml:3` said `0.4.0` — a released
+    lockfile disagreeing with itself. `uv.lock`'s self-referential
+    `[[package]] name = "atlas-aci"` stanza (an editable, local package
+    listing itself as one of its own resolved dependencies) has no
+    registry to cross-check its own version against — nothing but this
+    assertion catches a future version bump that forgets to `uv lock`
+    afterward. Parses both files as TOML (stdlib `tomllib`, no new
+    dependency — AC-NEG-5) rather than a fragile line-anchored regex, so a
+    harmless reformat of either file can't break this check."""
+    pyproject_data = tomllib.loads(PYPROJECT.read_text())
+    pyproject_version = pyproject_data["project"]["version"]
+
+    uv_lock_data = tomllib.loads(UV_LOCK.read_text())
+    atlas_aci_stanzas = [p for p in uv_lock_data.get("package", []) if p.get("name") == "atlas-aci"]
+    assert len(atlas_aci_stanzas) == 1, (
+        f"expected exactly one atlas-aci [[package]] stanza in uv.lock, found "
+        f"{len(atlas_aci_stanzas)}"
+    )
+    uv_lock_version = atlas_aci_stanzas[0]["version"]
+
+    assert uv_lock_version == pyproject_version, (
+        f"uv.lock pins atlas-aci at {uv_lock_version!r} but pyproject.toml declares "
+        f"{pyproject_version!r} -- exactly the AC-REL-3 defect (the shipped v0.4.0 tag's "
+        "uv.lock pinned 0.3.1 against a 0.4.0 pyproject.toml). Run `uv lock` after any "
+        "version bump."
     )
