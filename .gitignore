@@ -14,8 +14,19 @@ dist/
 .pytest_cache/
 .ruff_cache/
 
-# Atlas index artifacts
-.atlas/
+# Atlas index artifacts: the DB (and memex store) are ephemeral,
+# machine-local, always-rebuilt-from-source derived data (D1: pure derived
+# data, never hand-edited, no in-place migration) -- ignored by default.
+# `.atlas/export/` is the one exception: the portable, byte-deterministic
+# JSONL export (A5/D6) is exactly the artefact meant to be committed and
+# shared, so it must NOT be swallowed by the blanket ignore above it.
+# `.atlas/*` (not `.atlas/` alone) is deliberate -- gitignore will not
+# recurse into a directory ignored via a trailing-slash pattern to find a
+# negation inside it, so the un-ignore below would silently not work
+# against a bare `.atlas/` entry.
+.atlas/*
+!.atlas/export/
+!.atlas/export/**
 
 # Editor / OS
 .DS_Store

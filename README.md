@@ -47,6 +47,7 @@ not by convention. Mechanically.
 ## Contents
 
 - [Status](#status)
+- [Migration](#migration)
 - [The seven tools](#the-seven-tools)
 - [Why read-only](#why-read-only)
 - [Quick start](#quick-start)
@@ -76,6 +77,30 @@ Claude Code, GitHub Copilot custom agents, and Cursor.
 > code alone cannot enforce it. See
 > [`SETUP.md §8`](SETUP.md#8-production-hardening-checklist) for the
 > full hardening checklist.
+
+---
+
+## Migration
+
+Upgrading to v2.0.0 (or any release that bumps `SCHEMA_EPOCH`)? One
+command:
+
+```bash
+atlas-aci index --repo /path/to/your/repo
+```
+
+The on-disk index is pure, disposable derived data — always rebuilt
+fully from source, never migrated in place — so a schema change is
+always a fresh `.atlas/graph.<SCHEMA_EPOCH>.db` (currently epoch `5`),
+never an `ALTER TABLE` ladder against the old one. Run the command above
+once per repo you've indexed before; there is nothing else to do.
+`serve` never requires this step to be run *for* you and never attempts
+it itself — it detects the epoch mismatch on its own and fails fast with
+a structured error naming this exact command, rather than silently
+serving stale or wrong results, and it performs zero writes under a
+`--read-only`/`:ro` mount either way. A downgrade to an older binary
+finds no matching epoch file and rebuilds its own on its next `index`
+run — one rebuild per direction you move, never a ping-pong.
 
 ---
 
@@ -424,8 +449,10 @@ itself. That is precisely why this is an operator-invoked, human-in-the-loop
 CLI command, never a tool a served agent can reach.
 
 **`export` is a closer call, argued through rather than assumed.** It
-never touches `.atlas` — it opens the DB read-only and writes a NEW file
-computed entirely from content already exposed by the seven read tools
+never WRITES to the index DB itself — it opens `.atlas/graph.<epoch>.db`
+read-only and writes a NEW file, at whatever `out_path` the caller
+chooses (conventionally `.atlas/export/`, see below, but not required to
+be), computed entirely from content already exposed by the seven read tools
 (`search_symbol`, `graph_query`, and friends already let an agent read
 every symbol/edge/rationale row this export would serialize). Nothing
 export produces is new information. The case *for* a tool: it wouldn't
@@ -445,12 +472,19 @@ carving out a single well-reasoned exception; `enforcement.py`'s
 `READ_ONLY_TOOLS` frozenset stays the complete, closed tool set either
 way.
 
-**Cold-start workflow** (the reason this exists): commit the JSONL
-export alongside your repo (or publish it as a CI artifact / fetch it
-from a shared cache), then on a fresh checkout run
+**Cold-start workflow** (the reason this exists): commit the JSONL export
+alongside your repo — conventionally at `.atlas/export/graph-export.jsonl`
+(see `.gitignore`: `.atlas/*` is ignored, `.atlas/export/` is explicitly
+NOT — derived data stays out, the portable artefact goes in), or publish
+it as a CI artifact / fetch it from a shared cache instead — then on a
+fresh checkout run
 
 ```bash
-atlas-aci import --repo /path/to/checkout /path/to/graph-export.jsonl
+atlas-aci export --repo /path/to/your/repo .atlas/export/graph-export.jsonl
+git add .atlas/export/graph-export.jsonl && git commit
+
+# ...on a fresh checkout:
+atlas-aci import --repo /path/to/checkout .atlas/export/graph-export.jsonl
 ```
 
 instead of a full `atlas-aci index` — this skips re-parsing every source
@@ -481,6 +515,44 @@ files on a case-sensitive filesystem but alias to one on a
 case-insensitive macOS volume — a real filesystem-level data difference
 before export ever runs, not something any export format can paper over.
 
+### Export size ceiling (v2.0.0 / AC-REL-2)
+
+Read this before committing a large repo's export. GitHub rejects any
+single committed file at or above **100 MB** outright (`git push`
+fails); it separately warns starting around **50 MB** (still
+committable, but a visible signal). Measured once, for real, on the
+larger of this project's two pinned Rails-scale reference repos:
+
+| Repo | Files (Ruby) | Export size | % of the 100 MB ceiling |
+|------|--------------|-------------|--------------------------|
+| Spree @ `6699cde4` | 2,181 | **88,742,743 bytes (~84.6 MB)** | **84.63%** |
+
+That is a **15% margin, not a 10x one.** A Rails application moderately
+larger than Spree — or the same repo after this project's own extracted-grammar
+coverage widens — produces an export that cannot be committed at all,
+with the entire point of A5 (D6: *"one person builds the graph, everyone
+else benefits immediately on `git pull`"*) silently stopping working right
+at that boundary. This is a **documented bound, not a silent one**: `atlas-aci
+export` itself warns (to stderr, never fails the export) once its output
+crosses the 50 MB soft threshold, and warns more insistently at or past
+the 100 MB hard limit — see `_GITHUB_FILE_WARN_BYTES`/
+`_GITHUB_FILE_HARD_LIMIT_BYTES` in
+[`mcp-server/src/atlas_aci/__main__.py`](mcp-server/src/atlas_aci/__main__.py).
+
+**What to do if your export crosses the ceiling** (deliberately NOT fixed
+by changing the export format — D6/AC-A5-1 freeze canonical, uncompressed
+JSONL; a compressed-by-default export is a v2.1 design decision, not a
+release-prep edit):
+- **Compress it out-of-band.** `gzip -9 graph-export.jsonl` and commit the
+  `.gz` instead (JSONL compresses well — repetitive keys, sorted paths);
+  `import` does not read gzip directly today, so decompress before
+  `atlas-aci import`.
+- **Don't commit it.** Publish the export as a CI artifact or to a shared
+  cache instead of `git add`-ing it, and have each checkout fetch it
+  before `import` (see `INTEGRATION.md`'s Strategy C).
+- **Re-index instead of importing**, for a one-off — `atlas-aci index`
+  never has this ceiling; only the *portable, committed* artifact does.
+
 ---
 
 ## Quick start
@@ -506,11 +578,12 @@ uv run atlas-aci serve --repo /path/to/your/repo
 Already have a teammate's index? Skip the parse entirely:
 
 ```bash
-# One person builds it once...
-uv run atlas-aci export --repo /path/to/your/repo /path/to/graph-export.jsonl
+# One person builds it once and commits the portable export...
+uv run atlas-aci export --repo /path/to/your/repo .atlas/export/graph-export.jsonl
+git add .atlas/export/graph-export.jsonl && git commit
 
 # ...everyone else reproduces it on `git pull`, cold-start, no re-parsing.
-uv run atlas-aci import --repo /path/to/your/repo /path/to/graph-export.jsonl
+uv run atlas-aci import --repo /path/to/your/repo .atlas/export/graph-export.jsonl
 ```
 
 `export`/`import` are CLI-only, operator-invoked commands, never MCP
@@ -743,11 +816,12 @@ atlas-aci/
 │   ├── .dockerignore
 │   ├── README.md                      ← package-scoped quick start
 │   ├── src/atlas_aci/
-│   │   ├── __main__.py                ← Click CLI: serve | index | tools
+│   │   ├── __main__.py                ← Click CLI: serve | index | export | import | tools
 │   │   ├── server.py                  ← MCP stdio wiring + dispatcher
 │   │   ├── enforcement.py             ← read-only guard, bounds, rate limit, telemetry
-│   │   ├── config.py                  ← Config dataclass + skip patterns
-│   │   ├── codegraph.py               ← tree-sitter indexer + SQLite queries
+│   │   ├── config.py                  ← Config dataclass + skip patterns + path_is_within
+│   │   ├── codegraph.py               ← tree-sitter indexer + SQLite queries + export/import (A5)
+│   │   ├── label_propagation.py       ← dependency-free deterministic LPA core (A3)
 │   │   ├── memex.py                   ← hashed-dir excerpt store
 │   │   └── tools/
 │   │       ├── view_file.py
@@ -759,16 +833,29 @@ atlas-aci/
 │   └── tests/
 │       ├── test_enforcement.py        ← safety invariants
 │       ├── test_codegraph.py          ← indexer + language-table honesty
+│       ├── test_confidence.py         ← A1 confidence enum (EXTRACTED/INFERRED/AMBIGUOUS)
+│       ├── test_communities.py        ← A3 label propagation + D3a probe gate
+│       ├── test_rationale.py          ← A4 rationale nodes
+│       ├── test_export.py             ← A5 export/import (CodeGraph API level)
+│       ├── test_cli_export_import.py  ← A5 export/import (CLI reachability level)
+│       ├── test_graph_query.py        ← graph_query DSL dispatch
 │       ├── test_server.py             ← central bounds chokepoint (D2)
-│       └── test_schema_epoch.py       ← epoch-namespaced DB substrate (D1)
+│       ├── test_schema_epoch.py       ← epoch-namespaced DB substrate (D1)
+│       └── test_thesis_negatives.py   ← Track NEG / AC-REL-3 (no LLM, no networkx, ...)
 │
 ├── hosts/
 │   ├── claude-code.md
 │   ├── copilot.md
 │   └── cursor.md
 │
-└── scripts/
-    └── run-canaries.py                ← canary mission orchestrator
+└── scripts/                           ← guards for the augmentation workstreams (A1-A5), not
+    │                                     shipped project code — see each file's own header
+    ├── run-canaries.py                ← canary mission orchestrator
+    ├── verify-probe-verdict.py        ← D3a probe verdict verifier (AC-A3-1/F7)
+    ├── verify-export-size.py          ← AC-REL-2 export-size-on-Spree verifier
+    ├── harden-gate-classify.sh        ← harden-gate.yml's diff classifier
+    └── fingerprint-fixture/           ← committed multi-language fixture for the
+                                          behavioural indexer fingerprint
 ```
 
 ---

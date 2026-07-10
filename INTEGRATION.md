@@ -255,6 +255,12 @@ divergent exports, the answer is: **regenerate, don't merge.** There is
 no semantic graph/union merge driver, by design (D6-Q2) — discard the
 conflicted file and re-run `index` + `export`.
 
+Prefer committing the export directly over a CI artifact? Export to
+`.atlas/export/graph-export.jsonl` and `git add` it — `.gitignore`
+excludes everything else under `.atlas/` but explicitly keeps that one
+subpath. See `README.md`'s "Migration"/"Why read-only" sections for that
+workflow and its documented 100 MB size ceiling (`AC-REL-2`).
+
 ---
 
 ## Step 7 — Wire your editor
