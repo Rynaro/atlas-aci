@@ -93,6 +93,19 @@ LANG_BY_EXT: dict[str, str] = {
 # `_call_qualification` can decide EXTRACTED vs INFERRED (D4/F18) without a
 # second parse pass.
 #
+# checker finding (MAJOR-1, condition 5): `@assign.target` (Python/JS/TS
+# only — Ruby doesn't need it, see `_resolve_edges`'s shadowing-guard
+# comment) captures the LHS identifier of a plain assignment
+# (`Foo = ...`) / variable declarator (`let`/`const`/`var Foo = ...`).
+# `_extract` collects these into a per-file name set persisted in
+# `assignment_targets`, consulted at resolution time to demote a qualifier
+# match to INFERRED when the same name is ALSO a local variable in that
+# file (`Config = load_config(); Config.reload()` must not assert EXTRACTED
+# certainty the resolver doesn't have). Deliberately narrow: only a plain
+# identifier target is captured (tuple-unpacking, attribute assignment,
+# and augmented assignment are out of scope) — a cheap, best-effort
+# shadowing signal, not a full scope analysis.
+#
 # Add languages as needed; the Ruby and Python queries below cover the common
 # cases, and the web/markup grammars below cover static-site repos.
 QUERIES: dict[str, str] = {
@@ -134,6 +147,7 @@ QUERIES: dict[str, str] = {
         (class_definition
             superclasses: (argument_list
                 (attribute attribute: (identifier) @target_name))) @heritage.superclass
+        (assignment left: (identifier) @assign.target)
     """,
     "typescript": """
         (class_declaration name: (type_identifier) @name) @def.class
@@ -147,6 +161,8 @@ QUERIES: dict[str, str] = {
         (new_expression constructor: (identifier) @callee) @ref.call
         (class_declaration
             (class_heritage (extends_clause value: (identifier) @target_name))) @heritage.superclass
+        (variable_declarator name: (identifier) @assign.target)
+        (assignment_expression left: (identifier) @assign.target)
     """,
     "javascript": """
         (class_declaration name: (identifier) @name) @def.class
@@ -159,6 +175,8 @@ QUERIES: dict[str, str] = {
                 property: (property_identifier) @callee)) @ref.call
         (new_expression constructor: (identifier) @callee) @ref.call
         (class_declaration (class_heritage (identifier) @target_name)) @heritage.superclass
+        (variable_declarator name: (identifier) @assign.target)
+        (assignment_expression left: (identifier) @assign.target)
     """,
     # Stylesheets: jump to where a mixin/function/placeholder/`$variable` is
     # defined or a class/id selector is styled; `@include` sites become refs.
@@ -238,7 +256,7 @@ assert set(LANG_BY_EXT.values()) <= set(QUERIES) | UNSUPPORTED_LANGS, (
 #
 # Recompute via:
 #   python -c "from atlas_aci.codegraph import SCHEMA, ddl_hash; print(ddl_hash(SCHEMA))"
-SCHEMA_EPOCH = 4
+SCHEMA_EPOCH = 5
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS symbols (
@@ -377,6 +395,24 @@ CREATE TABLE IF NOT EXISTS files (
     lang        TEXT NOT NULL,
     indexed_at  TEXT
 );
+
+-- checker finding (MAJOR-1, epoch 5): every plain-identifier assignment
+-- target (`Foo = ...` / `let`|`const`|`var Foo = ...`) captured per file,
+-- Python/JS/TS only (see QUERIES' `@assign.target` comment; Ruby's
+-- grammar makes a constant receiver lexically un-shadowable by a local
+-- variable, so it never needs this). `_resolve_edges` consults this before
+-- crediting a `qualifier_name` match against `symbols.kind IN ('class',
+-- 'module')` as EXTRACTED: if the SAME name is ALSO assigned to as a local
+-- variable in the SAME file, the resolver cannot rule out shadowing
+-- (`Config = load_config(); Config.reload()`), so it demotes to INFERRED —
+-- an honest "I don't know for certain" rather than a confident, possibly
+-- wrong, EXTRACTED. Purely a resolution-time input; never queried by
+-- graph_query directly.
+CREATE TABLE IF NOT EXISTS assignment_targets (
+    path TEXT NOT NULL,
+    name TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_assignment_targets_path_name ON assignment_targets(path, name);
 """
 
 
@@ -387,7 +423,7 @@ def ddl_hash(ddl: str) -> str:
 
 # Hand-maintained — see the SCHEMA_EPOCH docstring above. Do NOT replace this
 # with `ddl_hash(SCHEMA)`; that would make the pairing test a tautology.
-EXPECTED_DDL_HASH = "63d8ffd92c63c5c72e576cead0de1d3c73183949b0172de5388de8e23e014063"
+EXPECTED_DDL_HASH = "d08bb7e7d889ed81088b38043f4e883d20f4d4f8d5e1aa3c268698d08c349a50"
 
 
 def parse_query_verb(dsl: str) -> str:
@@ -734,6 +770,7 @@ class CodeGraph:
         if not incremental:
             conn.execute("DELETE FROM symbols")
             conn.execute("DELETE FROM refs")
+            conn.execute("DELETE FROM assignment_targets")
             conn.execute("DELETE FROM files")
 
         stored_files: dict[str, tuple[int, int]] = {}
@@ -787,8 +824,14 @@ class CodeGraph:
                 # a rename/removal-within-file doesn't leave duplicate entries.
                 conn.execute("DELETE FROM symbols WHERE path = ?", (rel,))
                 conn.execute("DELETE FROM refs WHERE path = ?", (rel,))
+                conn.execute("DELETE FROM assignment_targets WHERE path = ?", (rel,))
 
-            symbols, refs = self._extract(tree, source, rel, lang)
+            symbols, refs, assignment_targets = self._extract(tree, source, rel, lang)
+            for target_name in assignment_targets:
+                conn.execute(
+                    "INSERT INTO assignment_targets(path, name) VALUES (?, ?)",
+                    (rel, target_name),
+                )
             for s in symbols:
                 conn.execute(
                     "INSERT INTO symbols(name, kind, path, line_start, line_end, lang) "
@@ -824,6 +867,7 @@ class CodeGraph:
             for rel in set(stored_files) - seen_paths:
                 conn.execute("DELETE FROM symbols WHERE path = ?", (rel,))
                 conn.execute("DELETE FROM refs WHERE path = ?", (rel,))
+                conn.execute("DELETE FROM assignment_targets WHERE path = ?", (rel,))
                 conn.execute("DELETE FROM files WHERE path = ?", (rel,))
                 files_removed += 1
 
@@ -875,8 +919,9 @@ class CodeGraph:
 
     def _extract(
         self, tree, source: bytes, rel_path: str, lang: str
-    ) -> tuple[list[Symbol], list[Reference]]:
-        """Run the language-specific Tree-sitter query and pull out defs + refs.
+    ) -> tuple[list[Symbol], list[Reference], list[str]]:
+        """Run the language-specific Tree-sitter query and pull out defs +
+        refs + assignment targets.
 
         Iterates *matches* (not raw captures) so each ``@def.<kind>`` node stays
         grouped with the ``@name`` it owns, and ``#eq?``/``#match?`` predicates
@@ -885,7 +930,10 @@ class CodeGraph:
         yields an inheritance/mixin/construct Reference (A1); a match carrying
         ``@callee`` yields a call Reference, with `_call_qualification` (D4/
         F18) deciding its `qualified`/`qualifier_name` fields from the same
-        match's optional ``@receiver`` capture — no second parse pass.
+        match's optional ``@receiver`` capture — no second parse pass. A match
+        carrying ``@assign.target`` (checker MAJOR-1, condition 5) yields a
+        plain assignment-target name, collected for the shadowing guard
+        `_resolve_edges` consults — Python/JS/TS only, see QUERIES' comment.
         """
         from tree_sitter import Query, QueryCursor
         from tree_sitter_language_pack import get_language
@@ -896,11 +944,13 @@ class CodeGraph:
 
         symbols: list[Symbol] = []
         refs: list[Reference] = []
+        assignment_targets: list[str] = []
 
         # Each match arrives as (pattern_index, {capture_name: [nodes]}).
         for _pattern_index, caps in matches:
             def_cap = next((c for c in caps if c.startswith("def.")), None)
             heritage_cap = next((c for c in caps if c.startswith("heritage.")), None)
+            assign_cap = next((c for c in caps if c.startswith("assign.")), None)
             if def_cap is not None:
                 name_nodes = caps.get("name")
                 if not name_nodes:
@@ -948,6 +998,11 @@ class CodeGraph:
                             qualified=True,
                         )
                     )
+            elif assign_cap is not None:
+                for node in caps[assign_cap]:
+                    name = self._node_text(source, node).strip()
+                    if name:
+                        assignment_targets.append(name)
             elif "callee" in caps:
                 qualified, qualifier_name = self._call_qualification(lang, source, caps)
                 for node in caps["callee"]:
@@ -967,7 +1022,7 @@ class CodeGraph:
                         )
                     )
 
-        return symbols, refs
+        return symbols, refs, assignment_targets
 
     @staticmethod
     def _call_qualification(
@@ -1103,6 +1158,29 @@ class CodeGraph:
                 # and never reaches this branch with relation == "call").
                 effective_relation = "construct"
 
+            # checker finding (MAJOR-1, condition 5): a Python/JS/TS
+            # qualifier_name that globally matches a class/module symbol
+            # might ALSO be a local variable in THIS file shadowing that
+            # class (`Config = load_config(); Config.reload()` — or the
+            # construct-relation equivalent, a class name rebound to a
+            # callable and invoked). The resolver has no scope analysis, so
+            # it cannot rule out shadowing when the SAME name is ALSO an
+            # assignment target in the same file — the cheap, deterministic,
+            # zero-LLM signal is "don't claim certainty you don't have":
+            # demote to unqualified (INFERRED) rather than assert EXTRACTED.
+            # A false EXTRACTED is worse than an honest INFERRED; this is
+            # local (per-file), erring toward under-claiming, never
+            # over-claiming. Ruby is unaffected — `qualifier_name` is always
+            # None there (its grammar makes a constant lexically
+            # un-shadowable by a local variable in the first place).
+            qualifier_shadowed = False
+            if ref["qualifier_name"] is not None:
+                shadow_hit = conn.execute(
+                    "SELECT 1 FROM assignment_targets WHERE path = ? AND name = ? LIMIT 1",
+                    (ref["path"], ref["qualifier_name"]),
+                ).fetchone()
+                qualifier_shadowed = shadow_hit is not None
+
             if effective_relation == "construct":
                 # A construct edge's `callee_name` (not its receiver, if any)
                 # IS the class/module being instantiated — that is exactly
@@ -1113,16 +1191,21 @@ class CodeGraph:
                 # constructed, so the receiver's own qualification is the
                 # wrong question here — unconditionally qualified, mirroring
                 # Ruby's heritage/construct captures (always qualified=True
-                # at extraction, same reasoning applied at resolution time).
-                qualified = True
+                # at extraction, same reasoning applied at resolution time) —
+                # UNLESS the shadowing guard above fired.
+                qualified = not qualifier_shadowed
             elif ref["qualifier_name"] is not None:
                 # Python/JS/TS ordinary method calls: resolve the fact,
                 # don't guess it from case.
-                qualifier_hit = conn.execute(
-                    "SELECT 1 FROM symbols WHERE name = ? AND kind IN ('class', 'module') LIMIT 1",
-                    (ref["qualifier_name"],),
-                ).fetchone()
-                qualified = qualifier_hit is not None
+                if qualifier_shadowed:
+                    qualified = False
+                else:
+                    qualifier_hit = conn.execute(
+                        "SELECT 1 FROM symbols WHERE name = ? AND kind IN ('class', 'module') "
+                        "LIMIT 1",
+                        (ref["qualifier_name"],),
+                    ).fetchone()
+                    qualified = qualifier_hit is not None
             else:
                 qualified = bool(ref["qualified"])
 

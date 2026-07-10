@@ -153,6 +153,24 @@ doesn't know in advance whether a queried name is a callable or a class, so
 `callers_of` searches both relations for exactly that reason — a symbol's
 *kind* is never a reason a query silently comes back empty.
 
+**EXTRACTED vs INFERRED, and a known, guarded limitation.** Ruby's grammar
+distinguishes a constant receiver (`Foo.bar`) from a plain identifier
+(`obj.bar`, `self.bar`) structurally — a real syntactic fact, no lookup
+needed. Python/JS/TS grammars don't make that distinction, so those two
+languages resolve `qualifier_name` (the receiver, or the bare callee itself)
+against the symbol table: does it name a known `class`/`module`? A local
+variable that happens to share a class's name — `Config = load_config()`
+then `Config.reload()` — would otherwise be indistinguishable from the
+class itself under a name-only check with no scope analysis. The resolver
+guards against exactly this: if `qualifier_name` is ALSO assigned to as a
+plain local variable anywhere in the same file, the edge is demoted to
+`INFERRED` rather than asserting `EXTRACTED` certainty it doesn't have — a
+false `EXTRACTED` is worse than an honest `INFERRED`. This guard is
+deliberately narrow (a plain `identifier` assignment target only — tuple
+unpacking, attribute assignment, and augmented assignment aren't tracked),
+so it can under-claim in rare cases the reverse way, but it never
+over-claims.
+
 **The analysis-graph divergence (D4a) — spec'd now, not yet shipped.**
 `graph_query` always returns every *matching* edge, AMBIGUOUS included,
 with its full ordered `candidates[]` attached — this project's "never

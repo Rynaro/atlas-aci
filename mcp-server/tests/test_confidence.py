@@ -626,6 +626,138 @@ def test_capitalized_non_class_receiver_is_inferred_not_extracted(tmp_path: Path
     assert edges[0]["confidence"] == "INFERRED"
 
 
+# ---- Coordinator MAJOR-1 (condition 5) — shadowing demotes to INFERRED ----
+#
+# checker (vigil) reproduction: `Config = load_config()` then
+# `Config.reload()` was mis-tiered EXTRACTED, because the resolver
+# name-matches `qualifier_name` against the GLOBAL symbol table with no
+# scope analysis — a local variable happening to share a class's name is
+# indistinguishable from the class itself under that check alone. Fix: a
+# cheap, deterministic guard — if `qualifier_name` is ALSO an assignment
+# target in the same file, demote to INFERRED (cannot rule out shadowing).
+# A false EXTRACTED is worse than an honest INFERRED.
+
+
+def test_shadowed_class_name_demotes_to_inferred_not_extracted(tmp_path: Path) -> None:
+    """The coordinator's exact reproduction: `Config` is a real class
+    elsewhere, but re-bound to a local variable in THIS file before being
+    used as a receiver — the resolver cannot tell the two apart, so it must
+    not claim EXTRACTED certainty it doesn't have."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _write(
+        repo,
+        "app/config.py",
+        "class Config:\n    def reload(self):\n        pass\n"
+        "def load_config():\n    return object()\n",
+    )
+    _write(
+        repo,
+        "app/hub.py",
+        "class Hub:\n"
+        "    def do_it(self):\n"
+        "        Config = load_config()\n"  # local var shadows class Config
+        "        Config.reload()\n",
+    )
+    graph = CodeGraph(repo=repo)
+    graph.build()
+
+    edges = graph.callers_of("reload")
+    assert len(edges) == 1
+    assert edges[0]["confidence"] == "INFERRED", (
+        "a qualifier_name that is ALSO a local assignment target in this file "
+        "must never be credited as EXTRACTED"
+    )
+    # The resolved TARGET stays correct — only the *confidence* about how
+    # certain that resolution is changes (checker's "bounded" finding).
+    assert edges[0]["target"]["name"] == "reload"
+
+
+def test_shadowed_construct_target_demotes_to_inferred(tmp_path: Path) -> None:
+    """The same root cause, on the construct path: a class name rebound to
+    a callable and invoked. `_resolve_edges` still (correctly) classifies
+    this as `relation='construct'` — every candidate matching the name is
+    class-kind — but must not claim EXTRACTED given the shadowing risk."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _write(repo, "app/target.py", "class Target:\n    def __init__(self):\n        pass\n")
+    _write(
+        repo,
+        "app/hub.py",
+        "class Hub:\n"
+        "    def do_it(self):\n"
+        "        Target = get_factory()\n"  # rebinds the class name locally
+        "        Target()\n",
+    )
+    graph = CodeGraph(repo=repo)
+    graph.build()
+
+    edges = graph.callers_of("Target")
+    assert len(edges) == 1
+    assert edges[0]["relation"] == "construct"
+    assert edges[0]["confidence"] == "INFERRED"
+
+
+def test_unshadowed_class_reference_still_extracted(tmp_path: Path) -> None:
+    """Regression guard: a file with NO local reassignment of the class
+    name must be unaffected by the shadowing guard — still EXTRACTED."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _write(repo, "app/target.py", "class Target:\n    def act(self):\n        pass\n")
+    _write(repo, "app/hub.py", "class Hub:\n    def call(self):\n        Target.act(self)\n")
+    graph = CodeGraph(repo=repo)
+    graph.build()
+
+    edges = graph.callers_of("act")
+    assert len(edges) == 1
+    assert edges[0]["confidence"] == "EXTRACTED"
+
+
+def test_js_shadowed_class_name_demotes_to_inferred(tmp_path: Path) -> None:
+    """Same guard, JS/TS: `let Config = loadConfig();` shadows class
+    `Config` in this file."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _write(
+        repo,
+        "app/config.js",
+        "class Config {\n  reload() {}\n}\nfunction loadConfig() {\n  return {};\n}\n",
+    )
+    _write(
+        repo,
+        "app/hub.js",
+        "class Hub {\n  doIt() {\n    let Config = loadConfig();\n    Config.reload();\n  }\n}\n",
+    )
+    graph = CodeGraph(repo=repo)
+    graph.build()
+
+    edges = graph.callers_of("reload")
+    assert len(edges) == 1
+    assert edges[0]["confidence"] == "INFERRED"
+
+
+def test_ruby_qualifier_name_is_always_none_immune_to_this_guard(tmp_path: Path) -> None:
+    """Ruby needs no shadowing guard at all: its grammar makes a constant
+    receiver lexically un-shadowable by a local variable (a capitalized
+    bare word is always parsed as a `constant` node, never as an
+    `identifier`, regardless of any local assignment) — confirmed directly
+    against `refs.qualifier_name`, which must be NULL for every Ruby ref."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _write(repo, "app/target.rb", "class Target\n  def act\n  end\nend\n")
+    _write(
+        repo,
+        "app/hub.rb",
+        "class Hub\n  def call\n    Target = 5\n    Target.act\n  end\nend\n",
+    )
+    graph = CodeGraph(repo=repo)
+    graph.build()
+
+    rows = graph.db.execute("SELECT qualifier_name FROM refs WHERE lang = 'ruby'").fetchall()
+    assert rows
+    assert all(r["qualifier_name"] is None for r in rows)
+
+
 # ---- self/super stay INFERRED — spec.md D4/F18's explicit worked example ----
 
 
