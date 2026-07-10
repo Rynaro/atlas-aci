@@ -61,6 +61,57 @@ def test_every_call_inheritance_edge_confidence_in_closed_enum(tmp_path: Path) -
     assert confidences == {"EXTRACTED", "INFERRED", "AMBIGUOUS"}
 
 
+# ---- Coordinator MINOR-3 (condition 4) — edges.relation is a closed set too ----
+
+
+def test_edge_relation_is_a_closed_set(tmp_path: Path) -> None:
+    """`confidence` has a test-enforced closed set (AC-A1-2); `relation` had
+    no equivalent guard — a future `@heritage.<newrelation>` capture or a
+    new `_resolve_edges` branch could silently introduce a fourth+ value.
+    `edges.relation` has no DDL CHECK constraint, matching `confidence`'s
+    own test-only pinning (not a new asymmetry, a deliberate consistency
+    choice — see `KNOWN_EDGE_RELATIONS`'s docstring for why this doesn't
+    bump SCHEMA_EPOCH). Exercises every relation value the resolver can
+    currently produce so the assertion is non-vacuous."""
+    from atlas_aci.codegraph import KNOWN_EDGE_RELATIONS
+
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _write(
+        repo,
+        "app/models.rb",
+        "class ApplicationRepository\nend\n"
+        "module Auditable\nend\n"
+        "module Sluggable\nend\n"
+        "module Timestamped\nend\n"
+        "class VoteRepository < ApplicationRepository\n"
+        "  include Auditable\n"
+        "  extend Sluggable\n"
+        "  prepend Timestamped\n"
+        "  def call\n"
+        "    unique_call_target()\n"
+        "    ApplicationRepository.new\n"
+        "  end\n"
+        "end\n"
+        "class UniqueCallTarget\n"
+        "  def unique_call_target\n"
+        "  end\n"
+        "end\n",
+    )
+    graph = CodeGraph(repo=repo)
+    graph.build()
+
+    relations = {r["relation"] for r in graph.db.execute("SELECT DISTINCT relation FROM edges")}
+    assert relations, "expected at least one edge"
+    assert relations <= KNOWN_EDGE_RELATIONS, (
+        f"relation(s) {relations - KNOWN_EDGE_RELATIONS} are produced but not in the "
+        f"closed set — a new relation value must be added to KNOWN_EDGE_RELATIONS deliberately"
+    )
+    # Non-vacuous: every currently-producible relation is actually
+    # exercised here, not just a trivial subset of the closed set.
+    assert relations == {"call", "construct", "superclass", "include", "extend", "prepend"}
+
+
 # ---- AC-A1-3 / AC-A1-11 — single type-qualified candidate -> EXTRACTED ----
 
 

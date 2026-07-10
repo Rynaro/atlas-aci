@@ -483,6 +483,19 @@ _HERITAGE_CANDIDATE_KINDS: tuple[str, ...] = _CLASS_KINDS
 # shouldn't have to.
 _CALL_RELATIONS: tuple[str, ...] = ("call", "construct")
 
+# checker finding (MINOR-3, condition 4): `edges.relation` had no closed-set
+# guarantee analogous to `confidence`'s (AC-A1-2) — a future
+# `@heritage.<newrelation>` capture or a new `effective_relation` branch in
+# `_resolve_edges` could silently introduce a fourth+ relation value with
+# nothing to catch it. `confidence` itself is pinned by TEST alone (no
+# CHECK constraint in SCHEMA — see `test_every_call_inheritance_edge_
+# confidence_in_closed_enum`), so `relation` is pinned the same way here,
+# for consistency, rather than adding a CHECK constraint (which would be a
+# real DDL/SCHEMA_EPOCH change for a guarantee the sibling column doesn't
+# have either). `test_codegraph.py::test_edge_relation_is_a_closed_set`
+# is the enforcement point; this frozenset is what it checks against.
+KNOWN_EDGE_RELATIONS: frozenset[str] = frozenset({"call", *_CLASS_TARGET_RELATIONS})
+
 
 @dataclass
 class Symbol:
