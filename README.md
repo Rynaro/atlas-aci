@@ -169,7 +169,14 @@ false `EXTRACTED` is worse than an honest `INFERRED`. This guard is
 deliberately narrow (a plain `identifier` assignment target only — tuple
 unpacking, attribute assignment, and augmented assignment aren't tracked),
 so it can under-claim in rare cases the reverse way, but it never
-over-claims.
+over-claims. The guard is **file-scoped, not scope-scoped**: it has no
+notion of function/block scope, so a single local assignment shadowing a
+class name *anywhere* in a file demotes *every* reference to that class
+name in that file, even ones in unrelated functions that never see the
+shadowing variable — under-claiming further than strictly necessary, but,
+per the same principle, never over-claiming. Confidence tiers can
+therefore be conservative; treat `EXTRACTED` as a floor, not an exact
+count.
 
 **The analysis-graph divergence (D4a) — spec'd now, not yet shipped.**
 `graph_query` always returns every *matching* edge, AMBIGUOUS included,
