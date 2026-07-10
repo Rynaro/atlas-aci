@@ -1,0 +1,36 @@
+{
+  "_comment": "Machine-readable sidecar for export-size-spree.md (AC-REL-2). scripts/verify-export-size.py: (1) asserts repo.pinned_sha against its own hardcoded, frozen constant (never the reverse -- same discipline as scripts/verify-probe-verdict.py's bar/repo-set checks); (2) recomputes the verdict as export_bytes <= ceiling_bytes in pure Python, never trusting the recorded verdict label as printed; (3) rejects a mismatch between the recorded verdict and the mechanical evaluation in EITHER direction. Measured once at P3/release-prep (owner vivi, per plan-state.json V4), matching the AC-A3-1 measure-once-and-record pattern -- CI asserts this recorded number, it never re-clones or re-indexes Spree per PR.",
+  "repo": {
+    "name": "spree",
+    "url": "https://github.com/spree/spree",
+    "pinned_sha": "6699cde44303ea85ef6e56c5e87c44a738ab73fc",
+    "sparse_checkout": "spree/"
+  },
+  "reproduction": {
+    "clone": "git init && git remote add origin https://github.com/spree/spree.git && git config core.sparseCheckout true && echo 'spree/*' > .git/info/sparse-checkout && git fetch --depth 1 origin 6699cde44303ea85ef6e56c5e87c44a738ab73fc && git checkout FETCH_HEAD",
+    "index": "atlas-aci index --repo <clone>/spree --langs ruby",
+    "export": "atlas-aci export --repo <clone>/spree export.jsonl"
+  },
+  "index_stats": {
+    "files_indexed": 2181,
+    "symbols": 9347,
+    "refs": 175341,
+    "edges": 51129,
+    "rationale": 33,
+    "schema_epoch": 5
+  },
+  "export_stats": {
+    "records_written": 60509,
+    "symbols": 9347,
+    "edges": 51129,
+    "rationale": 33,
+    "content_hash": "b7c9974a7e4d4f82a7993d702de287f23ac8daa2fd83afb4576ca0ace9770fa0"
+  },
+  "export_bytes": 88742743,
+  "ceiling_bytes": 104857600,
+  "headroom_bytes": 16114857,
+  "pct_of_ceiling": 84.63,
+  "recorded_verdict": "PASS",
+  "measured_at": "2026-07-10",
+  "atlas_aci_version": "0.4.0"
+}

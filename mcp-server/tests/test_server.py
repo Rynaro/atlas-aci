@@ -11,6 +11,7 @@ built so a no-op cap (an empty/missing `_bounded_field`) fails it.
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -98,6 +99,9 @@ _LIST_BEARING_VERBS = {
     "callers_of": ("edges",),
     "definitions_of": ("definitions", "references"),
     "subclasses_of": ("edges",),
+    "god_nodes": ("god_nodes",),
+    "communities": ("communities",),
+    "rationale": ("rationale",),
 }
 
 
@@ -179,6 +183,115 @@ def test_undispatched_known_verb_raises_rather_than_impersonating_a_stub(
         graph.query("widgets_of:Anything")
 
 
+# ---- R-1 — nested sub-field escape (candidates[] inside edges[]) ----
+#
+# The `_bounded_field` registry (AC-H-15) protects every top-level list
+# field. A1 introduces a sub-field NESTED one level inside an already-capped
+# field's own elements: an AMBIGUOUS graph_query edge's `candidates[]`
+# (AC-A1-5, "the full ordered candidates[] attached, never dropped") is
+# itself unbounded. These tests compute the expected post-cap shape
+# independently of apply_central_bounds's own arithmetic (a fresh slice in
+# the test), per the boundary-testing lesson the P0 pass learned four times.
+
+
+def test_nested_bounded_field_registry_covers_every_verb_with_a_sub_list() -> None:
+    from atlas_aci.server import GRAPH_QUERY_VERB_NESTED_BOUNDED_FIELDS
+
+    assert GRAPH_QUERY_VERB_NESTED_BOUNDED_FIELDS["callers_of"] == {"edges": "candidates"}
+    assert GRAPH_QUERY_VERB_NESTED_BOUNDED_FIELDS["subclasses_of"] == {"edges": "candidates"}
+
+
+def test_candidates_subfield_is_capped_and_flagged_when_over_cap(enforcement: Enforcement) -> None:
+    cap = enforcement.config.max_bound_field_elements  # 3, from the `config` fixture
+    over_cap_candidates = [{"path": "a.rb", "line": i, "name": "Foo"} for i in range(cap + 3)]
+    result = {
+        "edges": [
+            {
+                "relation": "call",
+                "confidence": "AMBIGUOUS",
+                "source": {"path": "b.rb", "line": 1, "name": "call", "kind": "method"},
+                "target": None,
+                "candidates": over_cap_candidates,
+            }
+        ]
+    }
+    out = apply_central_bounds("graph_query", {"query": "callers_of:foo"}, result, enforcement)
+
+    assert len(out["edges"]) == 1, "the top-level edges list itself was under cap"
+    assert out["edges"][0]["candidates"] == over_cap_candidates[:cap], (
+        "candidates[] must be capped on a whole-element boundary, computed independently here"
+    )
+    assert out["truncated"] is True
+    assert "edges.candidates" in out["truncated_fields"]
+    assert out["returned_count"]["edges.candidates"] == cap
+    assert out["more_available"] is True
+    assert out["retry_hint"] == "narrower_scope"
+
+
+def test_candidates_subfield_exactly_at_cap_is_not_falsely_flagged(
+    enforcement: Enforcement,
+) -> None:
+    cap = enforcement.config.max_bound_field_elements
+    exact_candidates = [{"path": "a.rb", "line": i, "name": "Foo"} for i in range(cap)]
+    result = {
+        "edges": [
+            {
+                "relation": "call",
+                "confidence": "AMBIGUOUS",
+                "source": {"path": "b.rb", "line": 1, "name": "call", "kind": "method"},
+                "target": None,
+                "candidates": exact_candidates,
+            }
+        ]
+    }
+    out = apply_central_bounds("graph_query", {"query": "subclasses_of:Foo"}, result, enforcement)
+
+    assert out["edges"][0]["candidates"] == exact_candidates
+    assert "truncated" not in out, "an exact-fit candidates[] must not be flagged as truncated"
+
+
+def test_candidates_subfield_under_cap_across_multiple_edges_not_flagged(
+    enforcement: Enforcement,
+) -> None:
+    """Every edge's candidates[] individually under cap: no truncation, even
+    though the tool returns several AMBIGUOUS edges at once."""
+    cap = enforcement.config.max_bound_field_elements
+    result = {
+        "edges": [
+            {
+                "relation": "call",
+                "confidence": "AMBIGUOUS",
+                "source": {"path": "b.rb", "line": i, "name": "call", "kind": "method"},
+                "target": None,
+                "candidates": [{"path": "a.rb", "line": 1, "name": "Foo"}],
+            }
+            for i in range(cap - 1)
+        ]
+    }
+    out = apply_central_bounds("graph_query", {"query": "callers_of:foo"}, result, enforcement)
+    assert "truncated" not in out
+
+
+def test_extracted_edge_with_null_candidates_is_unaffected(enforcement: Enforcement) -> None:
+    """An EXTRACTED/INFERRED edge carries `candidates: None`, never a list
+    (AC-A1-2/AC-A1-5 mutual exclusivity) — the nested cap must not choke on
+    that shape."""
+    result = {
+        "edges": [
+            {
+                "relation": "call",
+                "confidence": "EXTRACTED",
+                "source": {"path": "b.rb", "line": 1, "name": "call", "kind": "method"},
+                "target": {"path": "a.rb", "line": 2, "name": "Foo"},
+                "candidates": None,
+            }
+        ]
+    }
+    out = apply_central_bounds("graph_query", {"query": "callers_of:foo"}, result, enforcement)
+    assert "truncated" not in out
+    assert out["edges"][0]["candidates"] is None
+
+
 # ---- AC-H-3 — element cap before byte ceiling ----
 
 
@@ -199,35 +312,30 @@ def test_central_bounds_applies_element_cap_then_byte_ceiling(enforcement: Enfor
 
 
 def test_every_tool_and_verb_truncates_and_flags_over_cap(enforcement: Enforcement) -> None:
-    tool_fixtures = {
-        "view_file": {"lines": ["x\n"] * 6},
-        "list_dir": {"entries": [{"name": f"f{i}"} for i in range(6)]},
-        "search_text": {"matches": [{"path": "a", "line": i} for i in range(6)]},
-        "search_symbol": {
-            "definitions": [{"name": "foo"}] * 6,
-            "references": [{"name": "foo"}] * 6,
-        },
-    }
-    for tool, result in tool_fixtures.items():
-        out = apply_central_bounds(tool, {}, dict(result), enforcement)
+    # Checker instruction (the exact fingerprint lesson, applied here): a
+    # SEPARATE hand-maintained fixture dict is the next bug. This used to
+    # hard-list 4 tools / 3 verbs by hand, silently drifting behind
+    # _LIST_BEARING_TOOLS/_LIST_BEARING_VERBS the moment god_nodes/
+    # communities/rationale were added (this test never grew fixtures for
+    # any of them, even though it claims "every tool AND verb"). Deriving
+    # the fixtures FROM the same mechanically-tracked dicts + the shared
+    # `_anchor_list_item` generator closes the CLASS: a future verb/tool
+    # addition is covered here automatically, the moment it's added to
+    # _LIST_BEARING_TOOLS/_LIST_BEARING_VERBS (which
+    # test_every_list_returning_tool_registers_a_bounded_field already
+    # requires be kept current).
+    for tool, fields in _LIST_BEARING_TOOLS.items():
+        result = {field: [_anchor_list_item(field, i) for i in range(6)] for field in fields}
+        out = apply_central_bounds(tool, {}, result, enforcement)
         assert out["truncated"] is True, f"{tool} did not truncate an over-cap fixture"
         assert out["more_available"] is True
         assert out["retry_hint"] == "narrower_scope"
         for field in TOOL_BOUNDED_FIELDS[tool]:
             assert len(out[field]) <= enforcement.config.max_bound_field_elements
 
-    verb_fixtures = {
-        "callers_of": {"edges": [{"path": "a", "line": i} for i in range(6)]},
-        "definitions_of": {
-            "definitions": [{"name": "foo"}] * 6,
-            "references": [{"name": "foo"}] * 6,
-        },
-        "subclasses_of": {"edges": [{"name": f"Sub{i}"} for i in range(6)]},
-    }
-    for verb, result in verb_fixtures.items():
-        out = apply_central_bounds(
-            "graph_query", {"query": f"{verb}:Foo"}, dict(result), enforcement
-        )
+    for verb, fields in _LIST_BEARING_VERBS.items():
+        result = {field: [_anchor_list_item(field, i) for i in range(6)] for field in fields}
+        out = apply_central_bounds("graph_query", {"query": f"{verb}:Foo"}, result, enforcement)
         assert out["truncated"] is True, f"graph_query:{verb} did not truncate an over-cap fixture"
         for field in GRAPH_QUERY_VERB_BOUNDED_FIELDS[verb]:
             assert len(out[field]) <= enforcement.config.max_bound_field_elements
@@ -685,6 +793,13 @@ async def test_search_symbol_is_bounded(
 async def test_graph_query_is_bounded(
     config: Config, enforcement: Enforcement, memex: Memex
 ) -> None:
+    # A1: callers_of now queries the materialized `edges` table, which only
+    # carries a row for a reference that resolves to >=1 candidate
+    # (AC-A1-6) — so the fixture must define `record_vote` somewhere for
+    # its 6 call sites to become edges at all (a single definition ->
+    # candidate_count == 1 -> each call site resolves INFERRED, since these
+    # are bare unqualified calls).
+    _rb(config.repo, "app/hub.rb", "class Hub\n  def record_vote(n)\n  end\nend\n")
     for i in range(6):
         _rb(
             config.repo,
@@ -774,6 +889,16 @@ async def test_callers_of_at_sql_limit_boundary_are_not_silently_swallowed(
     cap = config.max_bound_field_elements
     query_limit = cap + 1
 
+    # A1: callers_of now queries the materialized `edges` table, which only
+    # carries a row for a reference resolving to >=1 candidate (AC-A1-6) —
+    # so both callees must be defined somewhere for their call sites to
+    # become edges (each resolves to exactly 1 candidate -> INFERRED, bare
+    # unqualified calls).
+    _rb(
+        config.repo,
+        "app/targets.rb",
+        "class Targets\n  def callee_exact\n  end\n  def callee_over\n  end\nend\n",
+    )
     calls_exact = "\n    ".join(["callee_exact()"] * cap)
     calls_over = "\n    ".join(["callee_over()"] * (cap + 1))
     _rb(
@@ -835,3 +960,220 @@ def test_search_symbol_kind_enum_superset_of_produced_kinds(config: Config) -> N
     search_symbol_tool = next(t for t in manifest if t["name"] == "search_symbol")
     enum = set(search_symbol_tool["inputSchema"]["properties"]["kind"]["enum"])
     assert set(PRODUCED_KINDS) <= enum
+
+
+# ---- AC-H-18 — the mechanical anchor (checker MINOR-2 / condition 1) ----
+#
+# The frozen criterion names this exact test:
+# `test_server.py::test_truncation_signal_iff_content_withheld`. Before this
+# commit that name existed nowhere in the repository's history — only inside
+# `acceptance-criteria.md` itself, a pointer to nothing. That is precisely
+# the "documented but not delivered" class of defect this release exists to
+# eliminate, so this test IS the mechanical anchor from here on, not a
+# restatement of tests that already existed.
+#
+# The invariant (verbatim from AC-H-18): for every tool and every
+# graph_query verb, a truncation signal SHALL be set if and only if content
+# that both exists and was requested was withheld; and no continuation
+# cursor SHALL point beyond the end of the available content. Two
+# independent halves:
+#
+#   (1) "truncated iff withheld" — exercised at cap-1/cap/cap+1 across every
+#       tool, every graph_query verb (including `subclasses_of`), and the
+#       nested `edges[].candidates` sub-field (R-1) — via `apply_central_bounds`
+#       directly, the actual mechanism that enforces the invariant.
+#   (2) "no cursor past the end" — exercised end-to-end through
+#       `dispatch_tool_call` against `view_file` (the one tool with a
+#       continuation cursor today), reusing `_expected_view_file_outcome`'s
+#       already-independent formula (defined above) rather than duplicating
+#       it — a real regression on either half fails this single test.
+#
+# Every expected value is computed from a fresh formula here, never by
+# calling into `apply_central_bounds`/the tool code itself.
+
+# (tool_name, static_extra_fields, field_under_test) — simple single-field
+# and multi-field list-bearing tools. `static_extra_fields` pins any OTHER
+# bounded field of a multi-field tool at a small, always-safe count so only
+# the field under test can trip the invariant.
+_ANCHOR_TOOL_SCENARIOS: list[tuple[str, dict[str, list[dict[str, str]]], str]] = [
+    ("view_file", {}, "lines"),
+    ("list_dir", {}, "entries"),
+    ("search_text", {}, "matches"),
+    ("search_symbol", {"references": [{"name": "safe"}]}, "definitions"),
+    ("search_symbol", {"definitions": [{"name": "safe"}]}, "references"),
+]
+
+# (query_string, static_extra_fields, field_under_test) — every graph_query
+# verb, including subclasses_of (AC-A1-7/AC-A1-10), god_nodes (A2),
+# communities (A3), and rationale (A4).
+_ANCHOR_VERB_SCENARIOS: list[tuple[str, dict[str, list[dict[str, str]]], str]] = [
+    ("callers_of:Foo", {}, "edges"),
+    ("definitions_of:Foo", {"references": [{"name": "safe"}]}, "definitions"),
+    ("definitions_of:Foo", {"definitions": [{"name": "safe"}]}, "references"),
+    ("subclasses_of:Foo", {}, "edges"),
+    ("god_nodes:", {}, "god_nodes"),
+    ("communities:", {}, "communities"),
+    ("rationale:", {}, "rationale"),
+]
+
+
+def _anchor_list_item(field: str, i: int) -> Any:
+    if field in ("definitions", "references", "entries"):
+        return {"name": f"x{i}"}
+    if field == "matches":
+        return {"path": "a.rb", "line": i}
+    if field == "lines":
+        return f"line{i}\n"
+    if field == "edges":
+        return {
+            "relation": "call",
+            "confidence": "INFERRED",
+            "source": {"path": "a.rb", "line": i, "name": None, "kind": None},
+            "target": {"path": "b.rb", "line": i, "name": "x"},
+            "candidates": None,
+        }
+    if field == "god_nodes":
+        return {
+            "path": "a.rb",
+            "line": i,
+            "name": f"Node{i}",
+            "kind": "class",
+            "in_degree": i,
+            "out_degree": 0,
+            "degree": i,
+        }
+    if field == "communities":
+        return {
+            "path": "a.rb",
+            "line": i,
+            "name": f"Node{i}",
+            "kind": "class",
+            "community_id": i,
+        }
+    if field == "rationale":
+        return {
+            "path": "a.rb",
+            "line": i,
+            "text": f"# NOTE: rationale {i}",
+            "label": None,
+            "target": {"path": "a.rb", "line": i, "name": f"Node{i}"},
+            "lang": "ruby",
+        }
+    raise AssertionError(f"unhandled field {field!r} in anchor test fixture")
+
+
+def _assert_truncation_iff_withheld(
+    out: dict[str, Any], field: str, cap: int, expected_withheld: bool
+) -> None:
+    """The invariant, checked directly: `truncated`/`field in
+    truncated_fields`/`more_available`/`retry_hint` present if and only if
+    `expected_withheld` — never proxied by whether the request merely
+    *looked* clamped (the exact F-1/NEW-1 defect class)."""
+    assert bool(out.get("truncated")) is expected_withheld
+    truncated_fields = out.get("truncated_fields", [])
+    if expected_withheld:
+        assert field in truncated_fields
+        assert out.get("more_available") is True
+        assert out.get("retry_hint") == "narrower_scope"
+        assert len(out[field]) == cap, "content withheld must still cap at an element boundary"
+    else:
+        assert field not in truncated_fields
+
+
+@pytest.mark.parametrize(
+    "requested_offset", [-1, 0, 1], ids=["cap_minus_1", "at_cap", "cap_plus_1"]
+)
+async def test_truncation_signal_iff_content_withheld(
+    tmp_path: Path, enforcement: Enforcement, requested_offset: int
+) -> None:
+    cap = enforcement.config.max_bound_field_elements
+    n = cap + requested_offset
+    expected_withheld = n > cap  # independent of any implementation arithmetic
+
+    # ---- Half 1: every tool, every verb, and the nested candidates[] ----
+
+    for tool, extra, field in _ANCHOR_TOOL_SCENARIOS:
+        result = dict(extra)
+        result[field] = [_anchor_list_item(field, i) for i in range(n)]
+        out = apply_central_bounds(tool, {}, result, enforcement)
+        _assert_truncation_iff_withheld(out, field, cap, expected_withheld)
+
+    for query, extra, field in _ANCHOR_VERB_SCENARIOS:
+        result = dict(extra)
+        result[field] = [_anchor_list_item(field, i) for i in range(n)]
+        out = apply_central_bounds("graph_query", {"query": query}, result, enforcement)
+        _assert_truncation_iff_withheld(out, field, cap, expected_withheld)
+
+    # Nested edges[].candidates (R-1) — for BOTH callers_of and subclasses_of,
+    # since AC-A1-7 gave subclasses_of the identical AMBIGUOUS/candidates
+    # shape callers_of has.
+    for verb in ("callers_of", "subclasses_of"):
+        nested_result = {
+            "edges": [
+                {
+                    "relation": "call",
+                    "confidence": "AMBIGUOUS",
+                    "source": {"path": "a.rb", "line": 1, "name": None, "kind": None},
+                    "target": None,
+                    "candidates": [{"path": "c.rb", "line": i, "name": "c"} for i in range(n)],
+                }
+            ]
+        }
+        out = apply_central_bounds(
+            "graph_query", {"query": f"{verb}:Foo"}, nested_result, enforcement
+        )
+        assert len(out["edges"]) == 1, "the outer edges list itself is under cap in this scenario"
+        nested_key = "edges.candidates"
+        assert bool(out.get("truncated")) is expected_withheld
+        if expected_withheld:
+            assert nested_key in out.get("truncated_fields", [])
+            assert len(out["edges"][0]["candidates"]) == cap
+            assert out.get("more_available") is True
+            assert out.get("retry_hint") == "narrower_scope"
+        else:
+            assert nested_key not in out.get("truncated_fields", [])
+            assert len(out["edges"][0]["candidates"]) == n
+
+    # ---- Half 2: no continuation cursor ever points past the end ----
+    # Only run once (not per requested_offset) — this half exercises a
+    # different axis (file length vs. requested window) already covering
+    # under/at/over-cap shapes on its own; re-running it per offset would
+    # only repeat identical assertions.
+    if requested_offset != 0:
+        return
+
+    repo = tmp_path / "repo"
+    repo.mkdir(exist_ok=True)  # `enforcement`'s own `config` fixture may already own tmp_path/repo
+    isolated_config = Config(repo=repo, memex_root=tmp_path / "memex")
+    isolated_enforcement = Enforcement(isolated_config)
+    isolated_memex = Memex(isolated_config.memex_root)
+    code_graph = CodeGraph(repo=repo)
+
+    for total_lines, start, end in (
+        (10, 1, 5000),  # request nominally clamped, file far shorter: nothing withheld
+        (200, 1, 5000),  # request clamped AND file long enough: genuine withholding
+        (200, 1, 100),  # request exactly satisfied, more file remains after
+        (10, 1, 10),  # exact full-file read: nothing more, nothing withheld
+    ):
+        lines = [f"line{i}\n" for i in range(1, total_lines + 1)]
+        (repo / "f.txt").write_text("".join(lines))
+
+        expected_got, expected_overflow, expected_next_cursor, expected_total = (
+            _expected_view_file_outcome(total_lines, start, end, isolated_config.max_lines_per_view)
+        )
+
+        result = await dispatch_tool_call(
+            "view_file",
+            {"path": "f.txt", "start_line": start, "end_line": end},
+            isolated_config,
+            isolated_enforcement,
+            isolated_memex,
+            code_graph,
+        )
+
+        assert len(result["lines"]) == expected_got
+        assert bool(result.get("truncated", False)) is expected_overflow
+        assert result.get("next_cursor") == expected_next_cursor
+        if expected_next_cursor is not None:
+            assert expected_next_cursor <= total_lines, "a cursor must never point past EOF"
+        assert result.get("total_lines") == expected_total

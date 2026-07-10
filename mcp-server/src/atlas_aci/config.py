@@ -43,6 +43,27 @@ DEFAULT_SKIP_PATTERNS: tuple[str, ...] = (
 )
 
 
+def path_is_within(repo: Path, p: Path) -> bool:
+    """The core path-containment check (path-traversal guard): resolves
+    symlinks and normalizes any `..`/`.` components, then checks the
+    result stays under `repo`. Factored out of `Config.is_in_repo` so
+    there is exactly ONE implementation of "is this path contained" —
+    shared by the MCP tool-facing guard (`Config.is_in_repo` /
+    `enforcement.assert_path_in_repo`) and `CodeGraph.import_jsonl`'s
+    imported-path validation (AC-A5-2 / checker MAJOR-1, the nineteenth
+    defect: `content_hash` proves byte integrity, never path semantics —
+    an imported `path`/`target_path`/candidate `path` needs the SAME
+    containment guarantee `README.md` already promises for tool calls,
+    reused rather than reimplemented a second time to silently drift).
+    """
+    try:
+        resolved = (repo / p).resolve() if not p.is_absolute() else p.resolve()
+        resolved.relative_to(repo)
+    except (ValueError, OSError):
+        return False
+    return True
+
+
 @dataclass
 class Config:
     """Server-wide configuration. One instance per server process."""
@@ -111,12 +132,7 @@ class Config:
 
     def is_in_repo(self, p: Path) -> bool:
         """Path-traversal guard. Resolves symlinks; rejects anything outside the repo."""
-        try:
-            resolved = (self.repo / p).resolve() if not p.is_absolute() else p.resolve()
-            resolved.relative_to(self.repo)
-        except (ValueError, OSError):
-            return False
-        return True
+        return path_is_within(self.repo, p)
 
     def should_skip(self, p: Path) -> bool:
         """Hardcoded ignore: should we exclude this path from listings/searches?"""

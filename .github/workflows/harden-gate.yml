@@ -19,13 +19,58 @@
 #      either a file that can ONLY exist because A1-A5 landed, or an
 #      augmentation-specific code marker added to one of the shared hot
 #      files (codegraph.py / graph_query.py / search_symbol.py / server.py)
-#      — THEN the P0 gate-criteria tests (AC-H-4/7/8/15, AC-H-9/12) must
+#      — THEN the P0 gate-criteria tests (AC-H-4/7/8/15/18, AC-H-9/12) must
 #      exist and pass. Missing or failing any of them fails this job
 #      (AC-NEG-6).
 #   3. IF an A3 (communities) path changed, the D3 probe verdict artefact
 #      must be present (AC-A3-1); IF A3 code exists in the tree at all, the
-#      probe verdict must record PASS, never a cut-to-v2.1 or absent verdict
-#      (AC-A3-4/AC-A3-5) — the mechanical cut-branch never adds networkx.
+#      RECOMPUTED verdict (scripts/verify-probe-verdict.py, run against the
+#      machine-readable probe-lpa-vs-louvain.json sidecar) must equal the
+#      RECORDED verdict, and that recomputed verdict must be PASS
+#      (AC-A3-4/AC-A3-5/F7) — the mechanical cut-branch never adds
+#      networkx. This step used to `grep -qiE "verdict.*:.*pass"` the
+#      artefact's prose, a check of the LABEL, not the arithmetic —
+#      checker MAJOR-1 forged a copy with a failing LPA_Q and an untouched
+#      `verdict: PASS` label and the old check passed it. Fixed: nothing
+#      here trusts a label without recomputing the three frozen clauses
+#      from the raw numbers first — and NOT just the clauses: the D3a
+#      probe's `LPA_Q`/Louvain `Q` values themselves were ALSO taken on
+#      faith until checker defect 13. `scripts/verify-probe-verdict.py`
+#      now recomputes every modularity value in pure Python straight from
+#      a committed graph bundle (`probe-graphs.json.gz`: node/edge
+#      identities + every partition, sha256-pinned in the sidecar), and
+#      an `indexer_fingerprint` (hashing `SCHEMA_EPOCH`/
+#      `EXPECTED_DDL_HASH`/`confident_edges()`'s own source) ties the
+#      sidecar to the CURRENT tree's indexer, failing loudly ("stale
+#      probe, re-run it") if A4/A5 ever change the confident-edge
+#      selection logic without a fresh probe run.
+#
+#      THE DOCUMENTED TERMINUS: after all of the above, the one input
+#      this job CANNOT mechanically verify is that the committed graph
+#      bundle is a FAITHFUL export of the two pinned repo SHAs — that
+#      requires cloning and indexing two full Rails applications, which
+#      this CI job does not do on every PR. That specific link is
+#      attested by INDEPENDENT REPRODUCTION, not a mechanical check: the
+#      checker re-cloned both pinned repos, re-indexed them with the
+#      shipped `CodeGraph`, re-exported the confident subgraph, and
+#      re-scored it with an ephemeral networkx run, reproducing every
+#      load-bearing float to the last digit (recorded in
+#      `probe-lpa-vs-louvain.md`). Stating this bound here, rather than
+#      leaving it implicit, is itself part of the fix — an undocumented
+#      trust boundary is the same defect this file has now closed
+#      thirteen times over, just moved one level up.
+#
+#   4. IF A5's export path exists in the tree at all (`test_export.py`
+#      present — a permanent post-ship fact, same signal as step 3's
+#      `test_communities.py` check), the one real-world size measurement
+#      AC-REL-2 asks for (exporting the larger pinned reference repo,
+#      Spree, and checking it against a 104,857,600-byte ceiling) must be
+#      RECORDED (`export-size-spree.md`/`.json`) and must mechanically
+#      RE-VERIFY on every PR (`scripts/verify-export-size.py`) — never
+#      re-cloning/re-indexing Spree itself (same measure-once-record-
+#      forever pattern step 3 established for the D3a probe; the number
+#      is deterministic given fixed source, so CI asserts the recorded
+#      value rather than re-deriving it per PR).
 #
 # KNOWN LIMITATION, VERIFIED (F-3, checker second pass — not silently
 # swept): step 2's content-marker heuristic is evadable by renaming.
@@ -133,13 +178,19 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y ripgrep
 
       - name: Install uv
-        if: steps.classify.outputs.augmented == 'true'
+        # Unconditional (checker defect 17): the A3 probe precondition step
+        # below is ALSO unconditional and, once A3 code exists in the tree
+        # at all (a permanent fact post-ship, not a per-PR one), invokes
+        # `uv run --frozen` itself to compute the BEHAVIOURAL indexer
+        # fingerprint (it actually runs the export path against a fixture,
+        # not just reading source text) — that needs uv/Python available
+        # regardless of whether THIS diff happens to touch an augmentation
+        # marker.
         uses: astral-sh/setup-uv@v5
         with:
           version: "latest"
 
       - name: Set up Python
-        if: steps.classify.outputs.augmented == 'true'
         uses: actions/setup-python@v5
         with:
           python-version-file: "mcp-server/pyproject.toml"
@@ -152,14 +203,18 @@ jobs:
           echo "Augmentation (A1-A5) change detected in this PR's diff — verifying the P0 harden-gate criteria before allowing it (AC-NEG-6)."
           uv sync --frozen --extra dev
           # The exact P0 gate_criteria tests (AC-H-4, AC-H-7, AC-H-8, AC-H-15,
-          # AC-H-9, AC-H-12). Missing (collection error) or failing any of
-          # these fails this job — that's what makes a no-op cap or a
-          # never-bumped epoch structurally block augmentation.
+          # AC-H-9, AC-H-12, AC-H-18). Missing (collection error) or failing
+          # any of these fails this job — that's what makes a no-op cap, a
+          # never-bumped epoch, or a truncation-signal regression
+          # structurally block augmentation. AC-H-18's
+          # test_truncation_signal_iff_content_withheld is parametrized
+          # (cap-1/cap/cap+1) — passing the bare node ID runs every variant.
           uv run --frozen pytest -v \
             "tests/test_server.py::test_every_tool_and_verb_truncates_and_flags_over_cap" \
             "tests/test_server.py::test_search_symbol_is_bounded" \
             "tests/test_server.py::test_graph_query_is_bounded" \
             "tests/test_server.py::test_every_list_returning_tool_registers_a_bounded_field" \
+            "tests/test_server.py::test_truncation_signal_iff_content_withheld" \
             "tests/test_schema_epoch.py::test_db_path_is_epoch_namespaced" \
             "tests/test_schema_epoch.py::test_expected_ddl_hash_matches_current_ddl"
 
@@ -173,6 +228,7 @@ jobs:
 
           a3_touched="${{ steps.classify.outputs.a3_touched }}"
           PROBE_ARTIFACT=".spectra/changes/aci-v2-harden-and-augment/probe-lpa-vs-louvain.md"
+          PROBE_JSON=".spectra/changes/aci-v2-harden-and-augment/probe-lpa-vs-louvain.json"
 
           if [ "$a3_touched" = "true" ] && [ ! -f "$PROBE_ARTIFACT" ]; then
             echo "FAIL (AC-A3-1): an A3 (communities) path changed but $PROBE_ARTIFACT is not present. The LPA-vs-Louvain modularity probe and its verdict must be recorded before any A3 source path is touched."
@@ -180,10 +236,97 @@ jobs:
           fi
 
           if [ -f mcp-server/tests/test_communities.py ]; then
-            if [ ! -f "$PROBE_ARTIFACT" ] || ! grep -qiE "verdict.*:.*pass" "$PROBE_ARTIFACT"; then
-              echo "FAIL (AC-A3-4/AC-A3-5): A3 community code exists in the tree but the probe verdict does not record PASS. Per DIR-1, a below-threshold probe cuts A3 to v2.1 (ship A2 god-nodes only) — it never adopts networkx/Louvain."
+            # AC-A3-1/F7 (checker defects 10-13, in order of discovery):
+            # the recorded verdict must equal the MECHANICAL evaluation of
+            # numbers that are THEMSELVES recomputed from a committed
+            # graph, never trusted as printed. This used to be
+            # `grep -qiE "verdict.*:.*pass" "$PROBE_ARTIFACT"` (a check of
+            # the PROSE LABEL only, defect 10); then a recomputation that
+            # read its own bar from the sidecar (defect 11); then one that
+            # never checked WHICH repos/seeds were graded (defect 12); then
+            # one that recomputed the three clauses correctly but still
+            # took every LPA_Q/Louvain Q value ON FAITH from the sidecar,
+            # so an under-reported Louvain baseline could smuggle a weak
+            # clusterer past a self-consistently-lowered bar (defect 13).
+            # scripts/verify-probe-verdict.py now: hardcodes the frozen
+            # bar/repo-SHAs/seeds (never reads them from the sidecar);
+            # verifies the companion graph bundle
+            # (probe-graphs.json.gz)'s sha256 against the sidecar;
+            # recomputes node/edge/community counts AND every modularity Q
+            # in pure Python straight from that bundle; asserts each
+            # recomputed Q matches the sidecar's recorded (networkx)
+            # value within tolerance (an honesty check on the recorded
+            # run); and recomputes an indexer_fingerprint from the CURRENT
+            # tree, failing loudly if the probe is stale relative to the
+            # indexer that would actually run today. That fingerprint went
+            # through two more rounds: defect 15 (hashing only
+            # confident_edges()'s body missed _resolve_source_node()/
+            # _enclosing_symbol()/_target_kind(), also graph-determining —
+            # fixed by hashing codegraph.py IN FULL) and defect 17 (hashing
+            # codegraph.py verbatim still only certified "source text
+            # matches," not "this code builds the same graph" — A4 edited
+            # unrelated logic and the fingerprint flipped anyway, needing a
+            # human diff to rule it a false alarm). Fixed: the fingerprint
+            # now RUNS the actual export path
+            # (scripts/probe-export-confident-graph.py, via `uv run
+            # --frozen` inside mcp-server's own env) against a small,
+            # committed, multi-language fixture
+            # (scripts/fingerprint-fixture/) and hashes what the indexer
+            # ACTUALLY PRODUCES — behaviour, not a proxy for it. A4-shaped
+            # edits that don't change the fixture's confident subgraph no
+            # longer trip it at all. Then, using ONLY the recomputed
+            # values, fails if the computed verdict differs from the
+            # recorded one in EITHER direction — a recorded CUT over
+            # genuinely passing numbers is equally a lie, not just a
+            # recorded PASS over failing ones. See
+            # scripts/test-verify-probe-verdict.sh (21 scenarios: 14 forged
+            # sidecars + 7 behavioural-fingerprint checks, including both
+            # directions — a semantically null edit does not move it, a
+            # real one does — and a deliberately-defended exception:
+            # _target_kind() only resolves display metadata, never the
+            # graph's shape, so it correctly does NOT flip the fingerprint)
+            # for the self-test proving this has teeth, and
+            # probe-lpa-vs-louvain.md's "one input this cannot mechanically
+            # verify" section for the one trust boundary that remains
+            # (the graph bundle's fidelity to the two pinned repo SHAs,
+            # attested by independent reproduction, not a mechanical check).
+            if [ ! -f "$PROBE_ARTIFACT" ] || [ ! -f "$PROBE_JSON" ]; then
+              echo "FAIL (AC-A3-4/AC-A3-5): A3 community code exists in the tree but the probe artefact/sidecar is missing ($PROBE_ARTIFACT, $PROBE_JSON)."
+              exit 1
+            fi
+            if ! python3 scripts/verify-probe-verdict.py "$PROBE_JSON"; then
+              echo "FAIL (AC-A3-4/AC-A3-5/F7): the recorded probe verdict does not equal the mechanical evaluation of its own recorded numbers. Per DIR-1, a below-threshold probe cuts A3 to v2.1 (ship A2 god-nodes only) — it never adopts networkx/Louvain, and it never gets to assert a label the numbers don't support."
               exit 1
             fi
           fi
 
-          echo "A3 probe precondition: clean (no A3 code present, or probe verdict recorded PASS)."
+          echo "A3 probe precondition: clean (no A3 code present, or probe verdict mechanically re-verified against its own recorded numbers)."
+
+      - name: AC-REL-2 export-size precondition (Spree, measured once at P3)
+        run: |
+          set -euo pipefail
+
+          EXPORT_SIZE_MD=".spectra/changes/aci-v2-harden-and-augment/export-size-spree.md"
+          EXPORT_SIZE_JSON=".spectra/changes/aci-v2-harden-and-augment/export-size-spree.json"
+
+          # A5 shipping (test_export.py existing in the tree) is a
+          # permanent post-ship fact, exactly like test_communities.py is
+          # for A3 above — not a per-diff signal. If A5's export path
+          # exists at all, its one-time, real-world size measurement on
+          # the larger pinned reference repo (AC-REL-2) must be present
+          # and must mechanically re-verify, on every PR, forever after —
+          # never re-cloning/re-indexing Spree itself, only re-checking
+          # the recorded numbers (same measure-once-record-forever pattern
+          # AC-A3-1 established for the D3a probe).
+          if [ -f mcp-server/tests/test_export.py ]; then
+            if [ ! -f "$EXPORT_SIZE_MD" ] || [ ! -f "$EXPORT_SIZE_JSON" ]; then
+              echo "FAIL (AC-REL-2): A5 export code exists in the tree but $EXPORT_SIZE_MD / $EXPORT_SIZE_JSON is missing. The export-size-on-Spree measurement must be recorded before A5 ships."
+              exit 1
+            fi
+            if ! python3 scripts/verify-export-size.py "$EXPORT_SIZE_JSON"; then
+              echo "FAIL (AC-REL-2): the recorded export-size verdict does not equal the mechanical evaluation of its own recorded export_bytes/ceiling_bytes."
+              exit 1
+            fi
+          fi
+
+          echo "AC-REL-2 export-size precondition: clean (no A5 export code present, or the recorded verdict mechanically re-verified against its own recorded numbers)."

@@ -1,0 +1,69 @@
+{
+  "_comment": "Machine-readable sidecar for probe-lpa-vs-louvain.md (AC-A3-1/F7). scripts/verify-probe-verdict.py: (1) cross-checks bar/repo-set/seed-set against its own hardcoded, frozen constants (never the reverse); (2) checks indexer_fingerprint against the CURRENT tree's codegraph.py (a mismatch means this probe is stale and must be re-run); (3) verifies graph_bundle.sha256 against probe-graphs.json.gz; (4) recomputes node_count/edge_count/lpa_community_count and EVERY modularity Q in pure Python straight from that bundle, and rejects any mismatch against this file's recorded copies below (which therefore serve only as an honesty check on the recorded networkx run, never as the verifier's actual input). The .md's prose numbers are transcribed FROM this file, not the other way around.",
+  "bar": {
+    "q_struct": 0.3,
+    "r": 0.85,
+    "k": 10,
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "resolution": 1.0
+  },
+  "recorded_verdict": "PASS",
+  "indexer_fingerprint": "927c006c24f5a6b95b8ed3442d73ed018043b43b539c34b8dcb546eeb21690fc",
+  "graph_bundle": {
+    "filename": "probe-graphs.json.gz",
+    "sha256": "1ecc73866eb0a0379df5241a4fd2db871ee5afe235c5eab2af937f5944ef7bae"
+  },
+  "repos": [
+    {
+      "name": "solidus",
+      "pinned_sha": "4026945d614e81383c007ed1ab1278a0195ce5d9",
+      "node_count": 2676,
+      "edge_count": 4217,
+      "lpa_q": 0.6691476098443865,
+      "lpa_community_count": 228,
+      "louvain_q_by_seed": {
+        "0": 0.7405822183086415,
+        "1": 0.7451940436220051,
+        "2": 0.7470429912373492,
+        "3": 0.7447625662785583,
+        "4": 0.7444007618698866,
+        "5": 0.7456120531140569,
+        "6": 0.7484086426154646,
+        "7": 0.745414168483327,
+        "8": 0.7441155470795878,
+        "9": 0.7392709725515066
+      }
+    },
+    {
+      "name": "spree",
+      "pinned_sha": "6699cde44303ea85ef6e56c5e87c44a738ab73fc",
+      "node_count": 5391,
+      "edge_count": 8223,
+      "lpa_q": 0.7165340320731565,
+      "lpa_community_count": 371,
+      "louvain_q_by_seed": {
+        "0": 0.7842462736363122,
+        "1": 0.7871970308260426,
+        "2": 0.7866764351106793,
+        "3": 0.7846281261531277,
+        "4": 0.7844339389156355,
+        "5": 0.7823176522240195,
+        "6": 0.7878835593546776,
+        "7": 0.7846674057923477,
+        "8": 0.7879746079611754,
+        "9": 0.7833310698737013
+      }
+    }
+  ]
+}

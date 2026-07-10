@@ -7,75 +7,166 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added (v2.0.0 P0 — hardening gate)
+## [2.0.0] - 2026-07-10
+
+A code-exploration server that was previously silently over-promising —
+three responses had no size cap despite a documented "mechanical bounds"
+guarantee, `serve` could crash under its own documented read-only
+deployment, and several docs described behavior the code didn't have —
+is now mechanically honest, and gains a real code graph: confidence-tagged
+call/inheritance edges, degree-centrality "god nodes," deterministic
+community detection, comment-derived rationale nodes, and a portable,
+git-committable export of the whole graph.
+
+**Read this before upgrading — action required and one behavior change:**
+
+- **You must re-index.** The on-disk DB moved to
+  `.atlas/graph.<SCHEMA_EPOCH>.db` (currently epoch `5`) and its schema
+  changed materially (new `edges`/`rationale` tables, dropped
+  `refs.enclosing`). There is no in-place migration — the DB is pure,
+  disposable derived data, always rebuilt from source. Run
+  `atlas-aci index --repo <path>` once. `serve` itself always starts
+  even against a stale or missing index — it does not check the epoch
+  at startup — but any tool call that touches the code graph
+  (`search_symbol`, `graph_query`) returns a structured
+  `INDEX_UNAVAILABLE` error naming that exact command, rather than
+  serving stale or wrong results, and `serve` performs zero writes
+  under `.atlas` either way. See `README.md`'s "Migration" section.
+- **`callers_of` (and `subclasses_of`)'s response shape changed.** Each
+  edge now carries a `source: {path, line, name, kind}` object (the real
+  caller context, resolved from the materialized edge table) instead of
+  the old field, which was named `enclosing` and was **always `null`** —
+  no release ever populated it. If you parsed `enclosing` expecting a
+  value, you were always getting `null`; the new `source` object is the
+  first version of this data that actually exists.
+
+### Fixed
+
+- **The "mechanical bounds" guarantee is now actually mechanical.** Three
+  response surfaces had no cap at all, despite the README's documented
+  invariant that every tool response is bounded: `search_symbol`'s
+  `definitions` list, `graph_query`'s `callers_of` `edges` list, and — one
+  level deeper, found while building the new edge table below — an
+  `AMBIGUOUS` edge's own nested `candidates[]` list. All three now route
+  through one central dispatch-layer chokepoint (`server.py`'s
+  `apply_central_bounds`) that element-caps every tool's declared
+  list field(s) and enforces an absolute serialized-byte ceiling,
+  truncating and flagging (`truncated`, `returned_count`, `more_available`,
+  `retry_hint`) rather than silently returning everything. A
+  registry-completeness test fails the build if any current or future
+  list-returning tool/verb — top-level or nested — has no cap registered,
+  so this can't quietly regress.
+- **`serve` no longer crashes under its own documented `--read-only`
+  deployment.** `Config`/`Memex` unconditionally created their working
+  directories on startup; under the README's own documented
+  `--read-only`/`:ro` Docker mount with no separately-mounted writable
+  memex volume, that `mkdir` raised `EROFS` and took the whole server down
+  at startup. Both are now best-effort: a missing/unwritable memex root
+  degrades to `memex_read` returning `NOT_FOUND` (no tool currently emits
+  a memex ref anyway), while every other tool is unaffected. Verified with
+  a real `docker run --read-only` smoke test, not a permission-bit
+  simulation — the earlier check couldn't reproduce this at all, since
+  root ignores file-mode bits and a `chmod` can't simulate the kernel-level
+  `EROFS` a real read-only mount enforces.
+- **`--since` was never documented accurately.** It does not diff a git
+  ref — it keys purely on each file's on-disk `(mtime_ns, size)` against
+  the last indexed pass, and the marker value you pass (`HEAD~1`, etc.) is
+  never read. Every doc claiming otherwise is corrected (`README.md`,
+  `INTEGRATION.md`, `SETUP.md`, `CLAUDE.md`, `mcp-server/Dockerfile`); the
+  documented `post-commit` hook example still works, but only because it
+  happens to enable incremental mode, not because the ref is diffed.
+- **The shipped `v0.4.0` tag's lockfile disagreed with itself.**
+  `mcp-server/uv.lock` pinned `atlas-aci` at `0.3.1` while
+  `mcp-server/pyproject.toml` said `0.4.0` — a released tag whose own
+  lockfile named the wrong version of the package it locks. Both are now
+  `2.0.0`, `uv.lock` was deliberately re-locked (a 1-line diff — nothing
+  else had drifted), and a test asserts the two agree on every `pytest`
+  run so this exact regression can't ship silently again.
+- **Doc-honesty batch**, corrected repo-wide rather than at a single site:
+  removed the vaporware Prism Ruby-specialist-mode references (no such
+  mode ships — Ruby is `tree-sitter-language-pack`, same as every other
+  language); corrected the canary-suite pass-rate claims (the host
+  dispatcher is a `NotImplementedError` stub with an explicit deferred
+  note, and there was never a real pass rate behind the quoted numbers);
+  `mcp-server/README.md`'s tools table no longer calls `search_symbol`
+  "unbounded (cheap)" or `graph_query` "implementation-defined"; `CLAUDE.md`
+  no longer references a `.atlas/symbols.db` artifact the code never
+  created; `README.md`'s repository-layout listing includes
+  `test_codegraph.py`/`test_server.py`/`test_schema_epoch.py`/`test_export.py`;
+  `server.py`'s `memex_read` description no longer implies another tool
+  emits a memex ref (none does); added the top-level `LICENSE` (Apache-2.0)
+  the README already promised.
+
+### Added
+
+- **Materialized call/inheritance edge table with a deterministic
+  confidence enum.** Every reference is now resolved once, at index time,
+  into `EXTRACTED` (single, syntactically-qualified candidate),
+  `INFERRED` (single candidate, name-unique but unqualified), or
+  `AMBIGUOUS` (more than one candidate — always returned in full, never
+  dropped, never given fractional weight). Deterministic and rule-based;
+  no LLM is ever in this path. `subclasses_of` is now real (it was
+  previously an empty stub with a warning) and resolves Ruby
+  `superclass`/`include`/`extend`/`prepend` and the Python/JS/TS
+  superclass-equivalent.
+- **God nodes** (`graph_query`'s `god_nodes:` verb) — degree-centrality ranking
+  over the confident (`EXTRACTED` ∪ `INFERRED`) subgraph. Pure Python
+  arithmetic; no graph-algorithm dependency.
+- **Communities** (`graph_query`'s `communities:` verb) — a hand-rolled,
+  deterministic label-propagation implementation, shipped only after
+  passing a pre-registered probe against a `networkx` Louvain baseline on
+  two real Rails-scale reference repos (the probe itself runs `networkx`
+  in a throwaway, ephemeral environment that never touches this project's
+  own dependency tree — `networkx` appears nowhere in
+  `pyproject.toml`/`uv.lock`, absolutely and unconditionally).
+- **Rationale nodes** (`graph_query`'s `rationale:` verb) — comment-derived "why"
+  annotations (`NOTE:`/`HACK:`/`TODO:`/ADR-and-RFC references, in
+  Ruby → Python → JS/TS order) promoted to first-class nodes linked to the
+  code they explain via a `rationale_for` edge. A structurally separate
+  relation from call/inheritance edges — a rationale node can never enter
+  `god_nodes`/`communities`/any confidence-based resolution.
+- **Portable, deterministic export/import** (`atlas-aci export <path>` /
+  `atlas-aci import <path>` — CLI-only; see "Why read-only" in
+  `README.md` for why neither is an MCP tool). The export is canonical,
+  byte-deterministic JSONL — sorted keys, explicit record-level ordering
+  independent of insertion order, LF-only line endings, verified
+  byte-identical across a macOS/Linux CI matrix — so one person can build
+  the graph and commit it, and everyone else reproduces the identical DB
+  on `import` without re-parsing a single source file. `import` validates
+  every path in the file is repository-relative and repository-contained
+  before inserting a row (an absolute or `../`-escaping path is rejected,
+  never inserted verbatim) and rejects a truncated, hand-edited, or
+  wrong-schema-epoch file with a clean error. **Known bound, not silently
+  hit:** GitHub rejects a committed file at or above 100 MB; the larger of
+  this project's two pinned reference repos (Spree) exports to ~84.6 MB
+  (84.63% of that ceiling) — `atlas-aci export` warns as its output
+  approaches and crosses this bound; see README.md's AC-REL-2 section for
+  what to do beyond it.
 - **CI that actually runs.** `.github/workflows/ci.yml` runs `pytest`,
   `ruff check`, `ruff format --check`, and `mypy` on every pull request
-  against `main`. Previously `.github/workflows/` held only the tag-triggered
-  `release.yml`; the 35+ existing tests never ran on a PR.
-- **Central bounds chokepoint (`server.py`'s `apply_central_bounds` /
-  `dispatch_tool_call`).** Every tool response — and every `graph_query`
-  verb — now passes through one dispatch-layer gate that element-caps the
-  tool's declared `_bounded_field`(s) and enforces an absolute serialized-byte
-  ceiling, truncating and flagging (`truncated`, `returned_count`,
-  `more_available`, `retry_hint`) rather than hard-failing except at the
-  byte-ceiling backstop. This closes the two tools that previously called
-  `enforcement.record()` with **no** cap at all — `search_symbol`'s
-  `definitions` list and `graph_query`'s `callers_of` edges were genuinely
-  unbounded, contradicting the README's "mechanical bounds" invariant. A
-  registry-completeness test (`test_every_list_returning_tool_registers_a_
-  bounded_field`) fails the build if any current or future list-returning
-  tool/verb has no non-empty `_bounded_field` registered — a no-op
-  registration cannot pass silently.
+  against `main` (previously only a tag-triggered release workflow
+  existed — the test suite never ran on a PR); a cross-platform
+  (macOS + Linux) job verifies the export's byte-determinism; a
+  `--read-only`/`:ro` Docker smoke test verifies `serve` stays alive and
+  writes nothing under `.atlas`; and a separate `harden-gate.yml` workflow
+  blocks any augmentation-path PR while these checks are absent or
+  failing, regardless of branch-protection configuration.
 - **Schema-epoch DB substrate.** `.atlas/graph.db` is now
-  `.atlas/graph.<SCHEMA_EPOCH>.db`. The DB is pure derived data (fully
-  reconstructable from source), so there is no in-place schema-migration
-  ladder — a schema change bumps `SCHEMA_EPOCH` and its paired
-  `EXPECTED_DDL_HASH` constant instead. Sweeping stale-epoch files and
-  rebuilding on an epoch mismatch happen *only* on the `index` (write) path;
-  `serve` never mutates `.atlas` — on a mismatch it fails fast with a
-  structured error naming the required `index` command, matching the
-  documented `--read-only`/`:ro` deployment. Full rebuilds write to a
-  temporary file and atomically replace the target path under a
-  single-writer lock, so two concurrent `index` runs (e.g. the documented
-  backgrounded post-commit hook) cannot corrupt the DB. A `rationale`
-  relation (schema only; no confidence-enum column) is folded into this
-  epoch ahead of the rationale-extraction work that will populate it.
+  `.atlas/graph.<SCHEMA_EPOCH>.db` (currently epoch `5`). The DB is pure
+  derived data, so there is no in-place schema-migration ladder — a schema
+  change bumps `SCHEMA_EPOCH` (and its paired `EXPECTED_DDL_HASH`
+  constant) instead. Sweeping stale-epoch files and rebuilding happen
+  *only* on the `index` (write) path; `serve` never mutates `.atlas`.
+  Full rebuilds write to a temporary file and atomically replace the
+  target under a single-writer lock, so two concurrent `index` runs (e.g.
+  the documented post-commit hook) cannot corrupt the DB.
 - **Dead-language honesty.** `.tsx`/`.go`/`.rs`/`.java` are recognized
-  extensions with no Tree-sitter query support; the indexer now reports
+  extensions with no Tree-sitter query support; the indexer reports
   "unsupported extension skipped: N files" instead of silently indexing
   them to nothing. Not a coverage commitment — no new grammars were added.
-- **`search_symbol`'s `kind` enum** is now derived mechanically from the
-  kinds the indexer actually produces across every shipped language
-  (previously stale: missing `mixin`, `selector`, `heading`, etc.).
-- Added a top-level `LICENSE` (Apache-2.0), matching the identifier already
-  declared in `pyproject.toml`.
-
-### Fixed (doc-honesty batch)
-- Corrected every repo-wide claim that `--since` diffs a git ref — it keys
-  only on each file's on-disk `(mtime_ns, size)` and never reads the marker
-  value (`README.md`, `INTEGRATION.md`, `SETUP.md`, `CLAUDE.md`,
-  `mcp-server/Dockerfile`).
-- Removed the vaporware Prism Ruby-specialist-mode references (`SETUP.md`,
-  `INTEGRATION.md`, `codegraph.py`'s module docstring,
-  `mcp-server/pyproject.toml`'s empty `ruby` extra) — no such mode ships.
-  `.tsx` is also no longer claimed to be "handled by the TS grammar".
-  Ruby, like every other language, is covered by `tree-sitter-language-pack`
-  and nothing else.
-- Corrected the canary-suite pass-rate claims (`README.md`, `SETUP.md`) —
-  the host dispatcher is a `NotImplementedError` stub
-  (`scripts/run-canaries.py`, which now carries an explicit deferred note);
-  there was never a real pass rate behind the quoted 50-60%/≥80% numbers.
-- `mcp-server/README.md`'s tools table no longer describes `search_symbol`
-  as "unbounded (cheap)" or `graph_query` as "implementation-defined" now
-  that both route through the central bounds chokepoint.
-- `CLAUDE.md` no longer references a `.atlas/symbols.db` artifact the code
-  never created; `INTEGRATION.md`/`SETUP.md` correct the same fabricated
-  `symbols.db`/`routes.json`/`manifest.yaml` file list.
-- `README.md`'s repository-layout listing now includes
-  `test_codegraph.py`, `test_server.py`, and `test_schema_epoch.py`
-  (previously only `test_enforcement.py` was listed).
-- `server.py`'s `memex_read` tool description no longer claims other tools
-  return `memex://` refs — none currently do.
+- `search_symbol`'s `kind` enum is now derived mechanically from the kinds
+  the indexer actually produces across every shipped language (previously
+  stale: missing `mixin`, `selector`, `heading`, etc.).
 
 ## [0.4.0] - 2026-07-07
 

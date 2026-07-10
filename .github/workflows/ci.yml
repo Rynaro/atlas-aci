@@ -12,21 +12,64 @@
 # defence-in-depth configured by the repo operator — out-of-tree, not
 # something this workflow (or the acceptance suite) can assert.
 #
+# WHY `scripts/` IS LINTED/TYPECHECKED/SELF-TESTED HERE TOO, UNCONDITIONALLY
+# (checker, CI-wiring condition): `scripts/verify-probe-verdict.py` and
+# `scripts/harden-gate-classify.sh` are the guards that decide whether A3
+# ships — twenty forged-scenario self-tests (14 + 6) demonstrated their
+# teeth by disabling each guard in isolation and confirming precisely the
+# matching scenario flips. Until this job existed, NOTHING executed those
+# self-tests: harden-gate.yml *runs* verify-probe-verdict.py against real
+# data (so a wrong verdict on real data would surface), but the self-tests
+# that prove its individual guards still work were invoked by nobody but a
+# maker, by hand. A bad merge, a "helpful" refactor, an accidentally
+# commented-out check in either script would have shipped silently — the
+# exact "documented but not mechanically enforced" defect class this
+# release exists to eliminate, sitting one layer above where it was
+# already closed. The steps below run BOTH self-tests, and lint+typecheck
+# `scripts/` the same way `src/`/`tests/` already are, on EVERY PR — not
+# gated behind `harden-gate.yml`'s `augmented` classification, because a
+# PR touching only `scripts/` (weakening a guard without ever touching
+# codegraph.py) must not be able to slip past that gate unobserved.
+#
+# THE TERMINUS: this is where the regress of "who checks the checker"
+# actually ends, and it is worth writing down rather than leaving
+# implicit (the same discipline `probe-lpa-vs-louvain.md` and
+# `harden-gate.yml` apply to the D3a probe's own trust boundary). CI runs
+# `scripts/test-verify-probe-verdict.sh` and
+# `scripts/test-harden-gate-classify.sh` on every PR; both self-tests have
+# demonstrated teeth (every guard, disabled in isolation, was shown to
+# flip precisely its own matching scenario(s) and nothing else); and CI's
+# execution of them is OBSERVABLE — a named, independently red/green
+# check in the PR's check list, not a claim anyone has to take on faith.
+# An observable, executed check is a genuine terminus. An unexecuted
+# self-test sitting in the repo, however well it was proven to work once,
+# is not — it is the same unverified assertion this campaign keeps
+# finding, one layer further out each time.
+#
 # `--frozen` is used throughout: it uses the committed `uv.lock` exactly
 # as-is and never rewrites it — the failure mode that already bit this
 # project once (a bare `uv run` silently re-locking `atlas-aci` from 0.3.1
-# to 0.4.0). `--frozen` does NOT validate that the lock is up to date with
-# `pyproject.toml` — that is `--locked`'s job, not this flag's (verified:
-# `uv sync --locked` exits non-zero and reports "needs to be updated" when
-# they disagree; `--frozen` exits 0 regardless). We deliberately do NOT use
-# `--locked` here yet: `mcp-server/uv.lock` is *currently* stale relative to
-# `pyproject.toml` (the atlas-aci package version pin — AC-REL-3, a real,
-# separately-tracked defect owned by phase P3's release-prep), so switching
-# to `--locked` today would fail every PR's CI run on an unrelated,
-# already-known issue. `--frozen` is the correct choice until AC-REL-3
-# lands; AC-REL-3 itself should add a `--locked` (or `uv lock --check`) step
-# once the lock is current, so lock/pyproject drift can never silently ship
-# again.
+# to 0.4.0, shipped in the v0.4.0 tag with a lockfile disagreeing with its
+# own pyproject.toml — AC-REL-3). `--frozen` does NOT validate that the
+# lock is up to date with `pyproject.toml` — that was `--locked`'s job,
+# not this flag's, and until AC-REL-3 landed the lock genuinely WAS stale
+# (the atlas-aci version pin), so turning on `--locked` here would have
+# failed every PR's CI run on an unrelated, already-known issue.
+#
+# AC-REL-3 landed (release-prep, v2.0.0): the version bump was followed by
+# a deliberate `uv lock` re-lock (a 1-line diff — only the atlas-aci
+# stanza's version changed, confirming nothing else had drifted), and
+# `mcp-server/tests/test_thesis_negatives.py::
+# test_uv_lock_atlas_aci_version_matches_pyproject` now asserts the two
+# agree on every `pytest` run, local or CI. The "Lock is current" step
+# below is the promised follow-through: `uv lock --check` fails fast,
+# with a clearly attributable step name, if a FUTURE version bump forgets
+# to re-lock — the exact regression this whole fix exists to prevent from
+# ever shipping silently again. `uv sync --frozen` still does the actual
+# install immediately after — deterministic, never a silent re-lock —
+# rather than switching the sync itself to `--locked` (functionally
+# almost identical, but conflates "is the lock stale" with "install
+# exactly what's locked" into one step's failure message).
 
 name: CI
 
@@ -64,6 +107,9 @@ jobs:
         with:
           python-version-file: "mcp-server/pyproject.toml"
 
+      - name: Lock is current (AC-REL-3 — fails fast on drift, never silently)
+        run: uv lock --check
+
       - name: Sync dependencies (frozen — never silently re-locks)
         run: uv sync --frozen --extra dev
 
@@ -78,6 +124,122 @@ jobs:
 
       - name: mypy
         run: uv run --frozen mypy src/
+
+      - name: ruff check (scripts/ — repo root, lint the guards too)
+        # --exclude fingerprint-fixture: that directory is deliberately
+        # "broken" Python (an unresolved external call, a name ambiguous
+        # across two files) -- fixture data for the behavioural indexer
+        # fingerprint (checker defect 17), not real project code.
+        run: uv run --frozen ruff check ../scripts/ --exclude fingerprint-fixture
+
+      - name: ruff format --check (scripts/)
+        run: uv run --frozen ruff format --check ../scripts/ --exclude fingerprint-fixture
+
+      - name: mypy (scripts/)
+        run: uv run --frozen mypy ../scripts/
+
+      - name: self-test — harden-gate-classify.sh has teeth
+        run: bash ../scripts/test-harden-gate-classify.sh
+
+      - name: self-test — verify-probe-verdict.py has teeth
+        run: bash ../scripts/test-verify-probe-verdict.sh
+
+      - name: self-test — verify-export-size.py has teeth (AC-REL-2)
+        run: bash ../scripts/test-verify-export-size.sh
+
+  export-os-matrix:
+    # AC-REL-1 (D6 cross-platform release blocker): AC-A5-3's same-machine
+    # byte-identical guarantee is necessary but not sufficient -- a locale
+    # difference, a filesystem path-separator quirk, or an OS-dependent
+    # dict/float/newline behavior could still diverge only across machines.
+    # This job builds the SAME small fixture repo on both members of the OS
+    # matrix and uploads each export as an artifact; `export-os-matrix-diff`
+    # below downloads both and fails the build on any byte difference. This
+    # is scoped to macOS + Linux specifically (the pair AC-REL-1's own
+    # VERIFY text names) -- both are POSIX, both already forward-slash path
+    # separators, so a Windows backslash-separated relative path is a real,
+    # separate, and deliberately out-of-scope hazard (see
+    # `CodeGraph.export_jsonl`'s own docstring).
+    name: export byte-determinism (AC-REL-1, ${{ matrix.os }})
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: mcp-server
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "latest"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: "mcp-server/pyproject.toml"
+
+      - name: Sync dependencies (frozen — never silently re-locks)
+        run: uv sync --frozen --extra dev
+
+      - name: Build a small fixture repo and export it
+        run: |
+          set -euo pipefail
+          mkdir -p "${{ runner.temp }}/rel1-fixture/app"
+          cat > "${{ runner.temp }}/rel1-fixture/app/hello.rb" <<'RUBY'
+          class Hello
+            def call
+              helper(1)
+            end
+
+            def helper(x)
+              x
+            end
+          end
+          RUBY
+          uv run --frozen python -c "
+          from pathlib import Path
+          from atlas_aci.codegraph import CodeGraph
+          repo = Path('${{ runner.temp }}/rel1-fixture')
+          g = CodeGraph(repo=repo)
+          g.build()
+          g.export_jsonl(Path('${{ runner.temp }}/rel1-export.jsonl'))
+          "
+
+      - name: Upload this OS's export
+        uses: actions/upload-artifact@v4
+        with:
+          name: rel1-export-${{ matrix.os }}
+          path: ${{ runner.temp }}/rel1-export.jsonl
+
+  export-os-matrix-diff:
+    name: export byte-determinism diff (AC-REL-1)
+    needs: export-os-matrix
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download the ubuntu-latest export
+        uses: actions/download-artifact@v4
+        with:
+          name: rel1-export-ubuntu-latest
+          path: ubuntu-export
+
+      - name: Download the macos-latest export
+        uses: actions/download-artifact@v4
+        with:
+          name: rel1-export-macos-latest
+          path: macos-export
+
+      - name: Diff the two OS exports — must be byte-identical (AC-REL-1)
+        run: |
+          set -euo pipefail
+          if ! diff -u ubuntu-export/rel1-export.jsonl macos-export/rel1-export.jsonl; then
+            echo "FAIL (AC-REL-1): export differs between macOS and Linux -- cross-platform byte-determinism broken. Release cannot proceed until this is restored."
+            exit 1
+          fi
+          echo "PASS (AC-REL-1): export is byte-identical across macOS and Linux."
 
   serve-read-only-smoke:
     # AC-H-16: the pytest-level chmod simulation the checker ruled an

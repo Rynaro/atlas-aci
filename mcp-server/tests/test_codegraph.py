@@ -67,6 +67,85 @@ def test_ruby_defs_and_refs(tmp_path: Path) -> None:
     assert graph.search_symbol("record_vote")["references"]
 
 
+# ---- Checker MINOR-1 + the PRODUCED_KINDS sweep it prompted ----
+#
+# `(method name: (identifier) @name)` silently missed every Ruby method
+# definition whose name is a `setter` or `operator` grammar node instead of a
+# plain `identifier` -- confirmed via a raw tree-sitter parse before fixing:
+# `def foo=` wraps its name in a `setter` node, `def +`/`def []`/`def []=`/
+# `def ==`/etc. wrap theirs in an `operator` node. Neither was ever captured
+# as a symbol, which also meant neither could ever be an enclosing scope for
+# `callers_of`/rationale-target attribution (the exact solidus finding:
+# `taxon.rb:105`'s `# NOTE:` inside `def child_index=` attributed to the
+# class `Taxon` instead, because the setter was invisible to the symbol
+# table entirely, not merely coarsely resolved).
+
+
+def test_ruby_setter_method_is_captured_as_a_symbol(tmp_path: Path) -> None:
+    graph = _build(
+        tmp_path,
+        {
+            "app/taxon.rb": (
+                "class Taxon\n  def child_index=(idx)\n    @child_index = idx\n  end\nend\n"
+            ),
+        },
+    )
+    assert _kind_of(graph, "child_index=") == {"method"}
+
+
+def test_ruby_operator_method_is_captured_as_a_symbol(tmp_path: Path) -> None:
+    graph = _build(
+        tmp_path,
+        {
+            "app/money.rb": (
+                "class Money\n"
+                "  def +(other)\n  end\n"
+                "  def [](i)\n  end\n"
+                "  def []=(i, v)\n  end\n"
+                "  def ==(other)\n  end\n"
+                "end\n"
+            ),
+        },
+    )
+    for op_name in ("+", "[]", "[]=", "=="):
+        assert _kind_of(graph, op_name) == {"method"}, f"operator method {op_name!r} not captured"
+
+
+def test_ruby_singleton_setter_and_operator_methods_are_captured(tmp_path: Path) -> None:
+    graph = _build(
+        tmp_path,
+        {
+            "app/config.rb": (
+                "class Config\n  def self.value=(v)\n  end\n  def self.+(other)\n  end\nend\n"
+            ),
+        },
+    )
+    assert _kind_of(graph, "value=") == {"method"}
+    assert _kind_of(graph, "+") == {"method"}
+
+
+def test_ts_private_method_is_captured_as_a_symbol_and_a_call_resolves(tmp_path: Path) -> None:
+    """`#privateMethod` uses a `private_property_identifier` name node, NOT
+    `property_identifier` -- distinct on both the definition side
+    (`method_definition name:`) and the call site
+    (`member_expression property:`, e.g. `this.#privateMethod()`)."""
+    graph = _build(
+        tmp_path,
+        {
+            "app/widget.ts": (
+                "class Widget {\n"
+                "  #privateMethod() {\n    return 1;\n  }\n"
+                "  run() {\n    return this.#privateMethod();\n  }\n"
+                "}\n"
+            ),
+        },
+    )
+    assert _kind_of(graph, "#privateMethod") == {"method"}
+    edges = graph.callers_of("#privateMethod")
+    assert len(edges) == 1
+    assert edges[0]["source"]["name"] == "run"
+
+
 # ---- SCSS ----
 
 
@@ -354,3 +433,90 @@ def test_unsupported_extension_skip_is_reported(tmp_path: Path) -> None:
     # And it must not have silently produced phantom symbols from files it
     # never actually parsed.
     assert _names(graph.search_symbol("main")["definitions"]) == set()
+
+
+# ---- A1 checker MINOR-1 (condition 2): call-candidate-kind completeness ----
+
+
+def test_produced_kinds_are_fully_classified_for_call_resolution() -> None:
+    """Every kind PRODUCED_KINDS can actually produce (derived mechanically
+    from QUERIES, same source AC-DOC-6 uses for the search_symbol kind enum)
+    must fall into exactly one of: `_CALLABLE_KINDS` (a "call"-relation ref
+    can resolve to it), `_CLASS_KINDS` (a heritage/construct ref resolves to
+    it), or `_NON_CALLABLE_KINDS` (deliberately excluded, with a reason in
+    the source comment). This is the guard the BLOCKER's post-mortem should
+    have left behind: excluding a kind is now a listed decision, not an
+    oversight that surfaces only when someone happens to query it (`mixin`
+    was found this way — non-silent thanks to `unresolved_refs`, but the
+    same shape as the class-resolution bug)."""
+    from atlas_aci.codegraph import (
+        _CALLABLE_KINDS,
+        _CLASS_KINDS,
+        _NON_CALLABLE_KINDS,
+        PRODUCED_KINDS,
+    )
+
+    classified = set(_CALLABLE_KINDS) | set(_CLASS_KINDS) | set(_NON_CALLABLE_KINDS)
+    assert set(PRODUCED_KINDS) <= classified, (
+        f"kind(s) {set(PRODUCED_KINDS) - classified} are produced by QUERIES but "
+        f"classified nowhere — a future callers_of on that kind would silently "
+        f"resolve to zero candidates"
+    )
+    # The three buckets must be pairwise disjoint — a kind classified twice
+    # (e.g. both callable and excluded) is as much a bug as unclassified.
+    assert set(_CALLABLE_KINDS).isdisjoint(_CLASS_KINDS)
+    assert set(_CALLABLE_KINDS).isdisjoint(_NON_CALLABLE_KINDS)
+    assert set(_CLASS_KINDS).isdisjoint(_NON_CALLABLE_KINDS)
+    # Pin the specific kinds this fix targets, so a future edit that quietly
+    # drops `mixin` back out (or re-adds the dead `singleton_method`) is
+    # caught rather than silently reopening the same bug shape.
+    assert "mixin" in _CALLABLE_KINDS
+    assert "singleton_method" not in _CALLABLE_KINDS
+
+
+def test_scss_mixin_include_resolves_to_a_real_edge(tmp_path: Path) -> None:
+    """End-to-end regression for the exact MINOR-1 reproduction:
+    `callers_of:rounded` on an scss `@include rounded;` site must resolve,
+    not return an unresolved-but-silent-looking empty edge list."""
+    graph = _build(
+        tmp_path,
+        {
+            "_sass/_mixins.scss": "@mixin rounded {\n  border-radius: 4px;\n}\n",
+            "_sass/_card.scss": ".card {\n  @include rounded;\n}\n",
+        },
+    )
+    edges = graph.callers_of("rounded")
+    assert len(edges) == 1
+    assert edges[0]["relation"] == "call"
+    # `@include <name>;` has no receiver/qualifier syntax at all (unlike
+    # Ruby/Python/JS-TS calls) — F18 defines no qualification rule for it,
+    # so a bare, unqualified mixin name is INFERRED (name-uniqueness),
+    # mirroring F18's own "a bare method with a unique name = INFERRED"
+    # rule for the languages it does cover.
+    assert edges[0]["confidence"] == "INFERRED"
+
+
+# ---- AC-A5-8: source-file iteration is deterministically sorted ----
+
+
+def test_source_file_iteration_sorted(tmp_path: Path) -> None:
+    """`_iter_source_files` used to be bare `self.repo.rglob("*")` —
+    filesystem/directory-entry order, not a content-derived total order.
+    Files are deliberately created in REVERSE-of-sorted order (many
+    filesystems, ext4/tmpfs included, tend to preserve insertion order for
+    small directories absent htree indexing), so a regression back to raw
+    `rglob` has a real chance of being caught here rather than only in a
+    cross-machine CI OS-matrix run — the same "same-machine teeth before
+    the cross-OS gate" property D6/F8 established for record-level order."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    rels = ["zeta.rb", "mu.rb", "beta/gamma.rb", "alpha.rb"]  # reverse-of-sorted creation order
+    for rel in rels:
+        p = repo / rel
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text("class Foo\nend\n")
+
+    graph = CodeGraph(repo=repo)
+    seen = [str(p.relative_to(repo)) for p in graph._iter_source_files()]
+
+    assert seen == sorted(rels)
