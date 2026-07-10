@@ -11,6 +11,7 @@ built so a no-op cap (an empty/missing `_bounded_field`) fails it.
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -961,3 +962,189 @@ def test_search_symbol_kind_enum_superset_of_produced_kinds(config: Config) -> N
     search_symbol_tool = next(t for t in manifest if t["name"] == "search_symbol")
     enum = set(search_symbol_tool["inputSchema"]["properties"]["kind"]["enum"])
     assert set(PRODUCED_KINDS) <= enum
+
+
+# ---- AC-H-18 — the mechanical anchor (checker MINOR-2 / condition 1) ----
+#
+# The frozen criterion names this exact test:
+# `test_server.py::test_truncation_signal_iff_content_withheld`. Before this
+# commit that name existed nowhere in the repository's history — only inside
+# `acceptance-criteria.md` itself, a pointer to nothing. That is precisely
+# the "documented but not delivered" class of defect this release exists to
+# eliminate, so this test IS the mechanical anchor from here on, not a
+# restatement of tests that already existed.
+#
+# The invariant (verbatim from AC-H-18): for every tool and every
+# graph_query verb, a truncation signal SHALL be set if and only if content
+# that both exists and was requested was withheld; and no continuation
+# cursor SHALL point beyond the end of the available content. Two
+# independent halves:
+#
+#   (1) "truncated iff withheld" — exercised at cap-1/cap/cap+1 across every
+#       tool, every graph_query verb (including `subclasses_of`), and the
+#       nested `edges[].candidates` sub-field (R-1) — via `apply_central_bounds`
+#       directly, the actual mechanism that enforces the invariant.
+#   (2) "no cursor past the end" — exercised end-to-end through
+#       `dispatch_tool_call` against `view_file` (the one tool with a
+#       continuation cursor today), reusing `_expected_view_file_outcome`'s
+#       already-independent formula (defined above) rather than duplicating
+#       it — a real regression on either half fails this single test.
+#
+# Every expected value is computed from a fresh formula here, never by
+# calling into `apply_central_bounds`/the tool code itself.
+
+# (tool_name, static_extra_fields, field_under_test) — simple single-field
+# and multi-field list-bearing tools. `static_extra_fields` pins any OTHER
+# bounded field of a multi-field tool at a small, always-safe count so only
+# the field under test can trip the invariant.
+_ANCHOR_TOOL_SCENARIOS: list[tuple[str, dict[str, list[dict[str, str]]], str]] = [
+    ("view_file", {}, "lines"),
+    ("list_dir", {}, "entries"),
+    ("search_text", {}, "matches"),
+    ("search_symbol", {"references": [{"name": "safe"}]}, "definitions"),
+    ("search_symbol", {"definitions": [{"name": "safe"}]}, "references"),
+]
+
+# (query_string, static_extra_fields, field_under_test) — every graph_query
+# verb, including subclasses_of (AC-A1-7/AC-A1-10).
+_ANCHOR_VERB_SCENARIOS: list[tuple[str, dict[str, list[dict[str, str]]], str]] = [
+    ("callers_of:Foo", {}, "edges"),
+    ("definitions_of:Foo", {"references": [{"name": "safe"}]}, "definitions"),
+    ("definitions_of:Foo", {"definitions": [{"name": "safe"}]}, "references"),
+    ("subclasses_of:Foo", {}, "edges"),
+]
+
+
+def _anchor_list_item(field: str, i: int) -> Any:
+    if field in ("definitions", "references", "entries"):
+        return {"name": f"x{i}"}
+    if field == "matches":
+        return {"path": "a.rb", "line": i}
+    if field == "lines":
+        return f"line{i}\n"
+    if field == "edges":
+        return {
+            "relation": "call",
+            "confidence": "INFERRED",
+            "source": {"path": "a.rb", "line": i, "name": None, "kind": None},
+            "target": {"path": "b.rb", "line": i, "name": "x"},
+            "candidates": None,
+        }
+    raise AssertionError(f"unhandled field {field!r} in anchor test fixture")
+
+
+def _assert_truncation_iff_withheld(
+    out: dict[str, Any], field: str, cap: int, expected_withheld: bool
+) -> None:
+    """The invariant, checked directly: `truncated`/`field in
+    truncated_fields`/`more_available`/`retry_hint` present if and only if
+    `expected_withheld` — never proxied by whether the request merely
+    *looked* clamped (the exact F-1/NEW-1 defect class)."""
+    assert bool(out.get("truncated")) is expected_withheld
+    truncated_fields = out.get("truncated_fields", [])
+    if expected_withheld:
+        assert field in truncated_fields
+        assert out.get("more_available") is True
+        assert out.get("retry_hint") == "narrower_scope"
+        assert len(out[field]) == cap, "content withheld must still cap at an element boundary"
+    else:
+        assert field not in truncated_fields
+
+
+@pytest.mark.parametrize(
+    "requested_offset", [-1, 0, 1], ids=["cap_minus_1", "at_cap", "cap_plus_1"]
+)
+async def test_truncation_signal_iff_content_withheld(
+    tmp_path: Path, enforcement: Enforcement, requested_offset: int
+) -> None:
+    cap = enforcement.config.max_bound_field_elements
+    n = cap + requested_offset
+    expected_withheld = n > cap  # independent of any implementation arithmetic
+
+    # ---- Half 1: every tool, every verb, and the nested candidates[] ----
+
+    for tool, extra, field in _ANCHOR_TOOL_SCENARIOS:
+        result = dict(extra)
+        result[field] = [_anchor_list_item(field, i) for i in range(n)]
+        out = apply_central_bounds(tool, {}, result, enforcement)
+        _assert_truncation_iff_withheld(out, field, cap, expected_withheld)
+
+    for query, extra, field in _ANCHOR_VERB_SCENARIOS:
+        result = dict(extra)
+        result[field] = [_anchor_list_item(field, i) for i in range(n)]
+        out = apply_central_bounds("graph_query", {"query": query}, result, enforcement)
+        _assert_truncation_iff_withheld(out, field, cap, expected_withheld)
+
+    # Nested edges[].candidates (R-1) — for BOTH callers_of and subclasses_of,
+    # since AC-A1-7 gave subclasses_of the identical AMBIGUOUS/candidates
+    # shape callers_of has.
+    for verb in ("callers_of", "subclasses_of"):
+        nested_result = {
+            "edges": [
+                {
+                    "relation": "call",
+                    "confidence": "AMBIGUOUS",
+                    "source": {"path": "a.rb", "line": 1, "name": None, "kind": None},
+                    "target": None,
+                    "candidates": [{"path": "c.rb", "line": i, "name": "c"} for i in range(n)],
+                }
+            ]
+        }
+        out = apply_central_bounds(
+            "graph_query", {"query": f"{verb}:Foo"}, nested_result, enforcement
+        )
+        assert len(out["edges"]) == 1, "the outer edges list itself is under cap in this scenario"
+        nested_key = "edges.candidates"
+        assert bool(out.get("truncated")) is expected_withheld
+        if expected_withheld:
+            assert nested_key in out.get("truncated_fields", [])
+            assert len(out["edges"][0]["candidates"]) == cap
+            assert out.get("more_available") is True
+            assert out.get("retry_hint") == "narrower_scope"
+        else:
+            assert nested_key not in out.get("truncated_fields", [])
+            assert len(out["edges"][0]["candidates"]) == n
+
+    # ---- Half 2: no continuation cursor ever points past the end ----
+    # Only run once (not per requested_offset) — this half exercises a
+    # different axis (file length vs. requested window) already covering
+    # under/at/over-cap shapes on its own; re-running it per offset would
+    # only repeat identical assertions.
+    if requested_offset != 0:
+        return
+
+    repo = tmp_path / "repo"
+    repo.mkdir(exist_ok=True)  # `enforcement`'s own `config` fixture may already own tmp_path/repo
+    isolated_config = Config(repo=repo, memex_root=tmp_path / "memex")
+    isolated_enforcement = Enforcement(isolated_config)
+    isolated_memex = Memex(isolated_config.memex_root)
+    code_graph = CodeGraph(repo=repo)
+
+    for total_lines, start, end in (
+        (10, 1, 5000),  # request nominally clamped, file far shorter: nothing withheld
+        (200, 1, 5000),  # request clamped AND file long enough: genuine withholding
+        (200, 1, 100),  # request exactly satisfied, more file remains after
+        (10, 1, 10),  # exact full-file read: nothing more, nothing withheld
+    ):
+        lines = [f"line{i}\n" for i in range(1, total_lines + 1)]
+        (repo / "f.txt").write_text("".join(lines))
+
+        expected_got, expected_overflow, expected_next_cursor, expected_total = (
+            _expected_view_file_outcome(total_lines, start, end, isolated_config.max_lines_per_view)
+        )
+
+        result = await dispatch_tool_call(
+            "view_file",
+            {"path": "f.txt", "start_line": start, "end_line": end},
+            isolated_config,
+            isolated_enforcement,
+            isolated_memex,
+            code_graph,
+        )
+
+        assert len(result["lines"]) == expected_got
+        assert bool(result.get("truncated", False)) is expected_overflow
+        assert result.get("next_cursor") == expected_next_cursor
+        if expected_next_cursor is not None:
+            assert expected_next_cursor <= total_lines, "a cursor must never point past EOF"
+        assert result.get("total_lines") == expected_total

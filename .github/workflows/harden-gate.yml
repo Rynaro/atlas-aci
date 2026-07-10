@@ -19,7 +19,7 @@
 #      either a file that can ONLY exist because A1-A5 landed, or an
 #      augmentation-specific code marker added to one of the shared hot
 #      files (codegraph.py / graph_query.py / search_symbol.py / server.py)
-#      — THEN the P0 gate-criteria tests (AC-H-4/7/8/15, AC-H-9/12) must
+#      — THEN the P0 gate-criteria tests (AC-H-4/7/8/15/18, AC-H-9/12) must
 #      exist and pass. Missing or failing any of them fails this job
 #      (AC-NEG-6).
 #   3. IF an A3 (communities) path changed, the D3 probe verdict artefact
@@ -152,14 +152,18 @@ jobs:
           echo "Augmentation (A1-A5) change detected in this PR's diff — verifying the P0 harden-gate criteria before allowing it (AC-NEG-6)."
           uv sync --frozen --extra dev
           # The exact P0 gate_criteria tests (AC-H-4, AC-H-7, AC-H-8, AC-H-15,
-          # AC-H-9, AC-H-12). Missing (collection error) or failing any of
-          # these fails this job — that's what makes a no-op cap or a
-          # never-bumped epoch structurally block augmentation.
+          # AC-H-9, AC-H-12, AC-H-18). Missing (collection error) or failing
+          # any of these fails this job — that's what makes a no-op cap, a
+          # never-bumped epoch, or a truncation-signal regression
+          # structurally block augmentation. AC-H-18's
+          # test_truncation_signal_iff_content_withheld is parametrized
+          # (cap-1/cap/cap+1) — passing the bare node ID runs every variant.
           uv run --frozen pytest -v \
             "tests/test_server.py::test_every_tool_and_verb_truncates_and_flags_over_cap" \
             "tests/test_server.py::test_search_symbol_is_bounded" \
             "tests/test_server.py::test_graph_query_is_bounded" \
             "tests/test_server.py::test_every_list_returning_tool_registers_a_bounded_field" \
+            "tests/test_server.py::test_truncation_signal_iff_content_withheld" \
             "tests/test_schema_epoch.py::test_db_path_is_epoch_namespaced" \
             "tests/test_schema_epoch.py::test_expected_ddl_hash_matches_current_ddl"
 
