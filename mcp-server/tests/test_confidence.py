@@ -569,6 +569,62 @@ def test_ruby_self_receiver_stays_inferred_per_frozen_spec(tmp_path: Path) -> No
     assert edges[0]["confidence"] == "INFERRED"
 
 
+# ---- MAJOR: unresolved_refs distinguishes "empty" from "incomplete" ----
+
+
+def test_unresolved_refs_nonzero_when_refs_exist_but_dont_resolve(tmp_path: Path) -> None:
+    """A callee referenced only via external/gem-style calls (no local
+    definition anywhere) must surface a nonzero `unresolved_refs` count —
+    an empty `edges` list alone cannot tell a consumer whether nothing
+    calls this symbol or whether calls exist but couldn't be resolved."""
+    from atlas_aci.codegraph import _CALL_RELATIONS
+
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _write(
+        repo,
+        "app/hub.rb",
+        "class Hub\n  def call\n    totally_external_gem_method()\n"
+        "    totally_external_gem_method()\n  end\nend\n",
+    )
+    graph = CodeGraph(repo=repo)
+    graph.build()
+
+    assert graph.callers_of("totally_external_gem_method") == []
+    unresolved = graph.unresolved_ref_count("totally_external_gem_method", _CALL_RELATIONS)
+    assert unresolved == 2
+
+
+def test_unresolved_refs_zero_when_genuinely_no_callers(tmp_path: Path) -> None:
+    """A defined-but-never-called method: `edges == []` AND
+    `unresolved_refs == 0` — the genuinely-empty case, distinguishable from
+    the incomplete one above only by the count, never by the edges list
+    alone."""
+    from atlas_aci.codegraph import _CALL_RELATIONS
+
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _write(repo, "app/a.rb", "class A\n  def never_called\n  end\nend\n")
+    graph = CodeGraph(repo=repo)
+    graph.build()
+
+    assert graph.callers_of("never_called") == []
+    assert graph.unresolved_ref_count("never_called", _CALL_RELATIONS) == 0
+
+
+def test_unresolved_refs_zero_when_fully_resolved(tmp_path: Path) -> None:
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _write(repo, "app/target.rb", "class Target\n  def bar\n  end\nend\n")
+    _write(repo, "app/hub.rb", "class Hub\n  def call\n    Target.bar\n  end\nend\n")
+    graph = CodeGraph(repo=repo)
+    graph.build()
+
+    edges = graph.callers_of("bar")
+    assert len(edges) == 1
+    assert graph.unresolved_ref_count("bar", ("call", "construct")) == 0
+
+
 # ---- Confidence distribution sanity (no longer degenerate) ----
 
 

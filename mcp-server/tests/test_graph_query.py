@@ -293,3 +293,48 @@ async def test_callers_of_on_local_class_resolves_construct_edges_end_to_end(
     assert len(edges) == 1, "the constructor call site must not be silently absent"
     assert edges[0]["relation"] == "construct"
     assert edges[0]["confidence"] == "EXTRACTED"
+    assert result["unresolved_refs"] == 0
+
+
+# ---- Coordinator finding, MAJOR — unresolved_refs distinguishes empty vs incomplete ----
+
+
+async def test_unresolved_refs_field_present_end_to_end(tmp_path: Path) -> None:
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    config = Config(repo=repo, memex_root=tmp_path / "memex")
+    enforcement = Enforcement(config)
+    memex = Memex(config.memex_root)
+
+    _write(
+        repo,
+        "app/hub.rb",
+        "class Hub\n  def call\n    external_gem_method()\n    external_gem_method()\n  end\nend\n",
+    )
+    code_graph = CodeGraph(repo=repo)
+    code_graph.build()
+
+    # Genuinely nothing to find at all: zero refs, zero edges.
+    nothing = await dispatch_tool_call(
+        "graph_query",
+        {"query": "callers_of:absolutely_nothing_like_this_anywhere"},
+        config,
+        enforcement,
+        memex,
+        code_graph,
+    )
+    assert nothing["edges"] == []
+    assert nothing["unresolved_refs"] == 0
+
+    # Refs exist, but the callee has no local definition: an incomplete
+    # answer, not an empty one — the count is what tells them apart.
+    incomplete = await dispatch_tool_call(
+        "graph_query",
+        {"query": "callers_of:external_gem_method"},
+        config,
+        enforcement,
+        memex,
+        code_graph,
+    )
+    assert incomplete["edges"] == []
+    assert incomplete["unresolved_refs"] == 2

@@ -1212,6 +1212,37 @@ class CodeGraph:
         ).fetchall()
         return [self._edge_row_to_dict(r) for r in rows]
 
+    def unresolved_ref_count(self, callee_name: str, relations: tuple[str, ...]) -> int:
+        """Checker finding (MAJOR): an empty `edges` list is otherwise
+        indistinguishable between "genuinely zero callers" and "callers
+        exist but none resolved" (e.g. an external/gem method with no local
+        definition) — exactly the confusion that hid the `callers_of:
+        CodeGraph` bug (a whole symbol *kind* silently excluded, surfacing
+        as a plausible-looking empty answer). Counts raw `refs` matching
+        `callee_name`/`relations` that produced no `edges` row.
+
+        A given `(callee_name, relation-class)` pair resolves uniformly —
+        `_resolve_edges` computes the same candidate set for every ref
+        sharing that pair, so it is never the case that *some* matching
+        refs resolve and others don't: either every one of them became an
+        edge, or none did. `relations` is passed straight through as the
+        edges-side filter too (Python/JS/TS constructor calls are stored
+        as `refs.relation='call'` but may be relabeled `'construct'` in
+        `edges`, so counting edges over the same `relations` tuple the
+        caller queried — e.g. `_CALL_RELATIONS` — accounts for both without
+        the caller needing to know which raw refs became which edge kind).
+        """
+        placeholders = ",".join("?" for _ in relations)
+        total_refs = self.db.execute(
+            f"SELECT COUNT(*) FROM refs WHERE callee_name = ? AND relation IN ({placeholders})",
+            (callee_name, *relations),
+        ).fetchone()[0]
+        total_edges = self.db.execute(
+            f"SELECT COUNT(*) FROM edges WHERE callee_name = ? AND relation IN ({placeholders})",
+            (callee_name, *relations),
+        ).fetchone()[0]
+        return max(total_refs - total_edges, 0)
+
     @staticmethod
     def _edge_row_to_dict(row: sqlite3.Row) -> dict[str, Any]:
         """Shapes one `edges` row into the graph_query response contract
@@ -1262,7 +1293,13 @@ class CodeGraph:
         if verb == "callers_of":
             # Strip Class#method → method
             method = arg.split("#", 1)[-1] if "#" in arg else arg
-            return {"edges": self.callers_of(method)}
+            # `unresolved_refs` (checker finding, MAJOR): distinguishes a
+            # genuinely-empty answer from an incomplete one — see
+            # `unresolved_ref_count`.
+            return {
+                "edges": self.callers_of(method),
+                "unresolved_refs": self.unresolved_ref_count(method, _CALL_RELATIONS),
+            }
 
         if verb == "definitions_of":
             return self.search_symbol(arg)
@@ -1270,7 +1307,10 @@ class CodeGraph:
         if verb == "subclasses_of":
             # A1 (AC-A1-7): real inheritance/mixin edges, replacing the MVP
             # empty-stub-with-warning.
-            return {"edges": self.subclasses_of(arg)}
+            return {
+                "edges": self.subclasses_of(arg),
+                "unresolved_refs": self.unresolved_ref_count(arg, _HERITAGE_RELATIONS),
+            }
 
         # Unreachable today (KNOWN_QUERY_VERBS has exactly the three
         # members dispatched above) — NOT dead-code hygiene, a guard

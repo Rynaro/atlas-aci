@@ -129,14 +129,21 @@ the returned `edges` list has this shape:
                                 // exclusive with `target`.
 }
 ```
+`callers_of`/`subclasses_of` responses also carry a top-level
+`unresolved_refs` count: the number of raw references matching the queried
+name that exist in the index but resolved to **no** edge (typically an
+external/gem method with no local definition). An empty `edges: []` alone
+cannot tell a consumer "nothing calls this" apart from "calls exist but
+didn't resolve" — `unresolved_refs` makes that distinction explicit instead
+of leaving both cases looking identical.
 
 A **zero-candidate** reference (the callee resolves to no known definition
 anywhere in the index) never becomes an edge at all — it stays an
-unresolved name, exactly as `refs` recorded it pre-v2. `subclasses_of`
-aggregates every inheritance/mixin relation (`superclass`, `include`,
-`extend`, `prepend`) under the one verb, since a Rails engine leaning on
-`concerns/` mixins expresses "subclass-of" through all four relations, not
-just `superclass`.
+unresolved name, exactly as `refs` recorded it pre-v2 (and is counted in
+`unresolved_refs` above). `subclasses_of` aggregates every inheritance/mixin
+relation (`superclass`, `include`, `extend`, `prepend`) under the one verb,
+since a Rails engine leaning on `concerns/` mixins expresses "subclass-of"
+through all four relations, not just `superclass`.
 
 `relation: "construct"` is a bare `Foo(...)` / `new Foo()` (JS/TS) /
 `Foo.new` (Ruby) call that resolves entirely to a class/module symbol — a
