@@ -24,7 +24,7 @@ from typing import TYPE_CHECKING, Any, cast
 
 import structlog
 
-from atlas_aci.config import DEFAULT_MAX_BOUND_FIELD_ELEMENTS
+from atlas_aci.config import DEFAULT_MAX_BOUND_FIELD_ELEMENTS, path_is_within
 from atlas_aci.label_propagation import label_propagation
 
 if TYPE_CHECKING:
@@ -128,12 +128,33 @@ LANG_BY_EXT: dict[str, str] = {
 #
 # Add languages as needed; the Ruby and Python queries below cover the common
 # cases, and the web/markup grammars below cover static-site repos.
+#
+# checker MINOR-1 + the PRODUCED_KINDS sweep it prompted (the same class of
+# bug, generalized): `(method name: (identifier) @name)` silently missed
+# every Ruby method definition whose NAME is not a plain `identifier` node at
+# the grammar level. tree-sitter-ruby wraps a setter method's name
+# (`def foo=`) in a `setter` node (`identifier` + `=` token) and an operator
+# overload's name (`def +`/`def []`/`def []=`/`def ==`/...) in an `operator`
+# node — neither is an `identifier`, so BOTH kinds of definition were
+# entirely invisible to `symbols` (not just mis-attributed — absent), which
+# also meant `callers_of`/rationale-target resolution could never see them
+# as an enclosing scope. Verified via a raw tree-sitter parse of
+# `def foo=(x)`/`def +(other)`/`def [](i)`/`def []=(i, v)` before adding
+# these — each produces a `setter`/`operator` name node, confirmed empirically
+# (this is the same "close the class, not the instance" fix `_CALL_CANDIDATE_
+# KINDS`/`PRODUCED_KINDS` already established elsewhere in this file). The
+# `setter`/`operator` node's own text (`"foo="`, `"+"`, `"[]="`) is captured
+# as `@name` — the correct, conventional Ruby name for these definitions.
 QUERIES: dict[str, str] = {
     "ruby": """
         (class name: (constant) @name) @def.class
         (module name: (constant) @name) @def.module
         (method name: (identifier) @name) @def.method
+        (method name: (setter) @name) @def.method
+        (method name: (operator) @name) @def.method
         (singleton_method name: (identifier) @name) @def.method
+        (singleton_method name: (setter) @name) @def.method
+        (singleton_method name: (operator) @name) @def.method
         (call receiver: (_)? @receiver method: (identifier) @callee) @ref.call
         (class
             superclass: (superclass
@@ -175,11 +196,16 @@ QUERIES: dict[str, str] = {
         (class_declaration name: (type_identifier) @name) @def.class
         (function_declaration name: (identifier) @name) @def.function
         (method_definition name: (property_identifier) @name) @def.method
+        (method_definition name: (private_property_identifier) @name) @def.method
         (call_expression function: (identifier) @callee) @ref.call
         (call_expression
             function: (member_expression
                 object: (_) @receiver
                 property: (property_identifier) @callee)) @ref.call
+        (call_expression
+            function: (member_expression
+                object: (_) @receiver
+                property: (private_property_identifier) @callee)) @ref.call
         (new_expression constructor: (identifier) @callee) @ref.call
         (class_declaration
             (class_heritage (extends_clause value: (identifier) @target_name))) @heritage.superclass
@@ -191,11 +217,16 @@ QUERIES: dict[str, str] = {
         (class_declaration name: (identifier) @name) @def.class
         (function_declaration name: (identifier) @name) @def.function
         (method_definition name: (property_identifier) @name) @def.method
+        (method_definition name: (private_property_identifier) @name) @def.method
         (call_expression function: (identifier) @callee) @ref.call
         (call_expression
             function: (member_expression
                 object: (_) @receiver
                 property: (property_identifier) @callee)) @ref.call
+        (call_expression
+            function: (member_expression
+                object: (_) @receiver
+                property: (private_property_identifier) @callee)) @ref.call
         (new_expression constructor: (identifier) @callee) @ref.call
         (class_declaration (class_heritage (identifier) @target_name)) @heritage.superclass
         (variable_declarator name: (identifier) @assign.target)
@@ -2068,6 +2099,42 @@ class CodeGraph:
         backslash-separated relative path (`Path.relative_to` on Windows
         would emit `app\\foo.rb`) is a real, separate hazard this export
         does NOT close; naming it here rather than leaving it implicit.
+
+        Two more cross-OS hazards named for the same reason (checker
+        MINOR-4 [SUSPECT] — undisclosed, not "closed by coincidence"):
+        neither has been observed to fail AC-REL-1's actual macOS/Linux CI
+        diff on this project's own source (or the two pinned reference
+        repos), but neither is mechanically prevented, so both are named
+        rather than left implicit.
+
+        1. **Unicode filename normalization.** macOS's filesystem
+           traditionally presents decomposed (NFD) unicode filenames;
+           Linux presents whatever bytes were written, typically composed
+           (NFC). Two checkouts of the identical commit could theoretically
+           report a different byte sequence for the SAME logical filename
+           if it contains non-ASCII characters, changing the exported path
+           string (and therefore the export's bytes) across OSes. Not
+           fixed here: normalizing at export time alone (without also
+           normalizing at extraction time, where `_run_build` first stores
+           `path.relative_to(self.repo)`) would make an export/re-import
+           round-trip silently change a symbol's recorded path relative to
+           what a same-machine query would use to look it up — trading one
+           hazard for a subtler one under time pressure, so left open and
+           named rather than half-fixed. `git`'s `core.precomposeUnicode`
+           (default-on for macOS checkouts) avoids this in the common case;
+           neither pinned reference repo (solidus, spree) has non-ASCII
+           filenames, so it does not currently bite AC-REL-1's CI diff.
+        2. **Case-only-colliding filenames.** `app/Foo.rb` and
+           `app/foo.rb` are two distinct files on Linux's (typically)
+           case-sensitive filesystem but alias to ONE file on a
+           case-insensitive macOS volume (the default HFS+/APFS
+           configuration). This is not a hazard the exporter can close at
+           all — the underlying DATA differs (two files indexed vs. one)
+           before export ever runs, a real filesystem-level ambiguity, not
+           an export-format bug. Worth naming as a known limitation of
+           depending on a real checkout's filesystem for this guarantee,
+           not something either `atlas-aci index` or `export_jsonl` can
+           detect or correct.
         """
         edge_rows = self.db.execute(
             "SELECT relation, source_path, source_line, source_col, source_name, "
@@ -2158,6 +2225,128 @@ class CodeGraph:
             "bytes_written": len(full_text.encode("utf-8")),
         }
 
+    _SYMBOL_REQUIRED_FIELDS = ("name", "kind", "path", "line_start", "line_end", "lang")
+    _EDGE_REQUIRED_FIELDS = (
+        "relation",
+        "source_path",
+        "source_line",
+        "source_col",
+        "source_name",
+        "source_kind",
+        "callee_name",
+        "confidence",
+        "target_path",
+        "target_line",
+        "target_name",
+        "candidates",
+        "lang",
+    )
+    _RATIONALE_REQUIRED_FIELDS = (
+        "path",
+        "line",
+        "text",
+        "label",
+        "target_path",
+        "target_line",
+        "target_name",
+        "lang",
+    )
+    _DRIVE_LETTER_RE = re.compile(r"^[A-Za-z]:[\\/]")
+
+    def _validate_relative_repo_path(self, value: Any, in_path: Path, field_name: str) -> None:
+        """Checker MAJOR-1 (the nineteenth defect): `content_hash` proves
+        the bytes are what the header claims, and says NOTHING about
+        whether those bytes are repository-relative, repository-contained
+        path strings. Without this, an imported symbol/edge/rationale
+        `path` (or an edge's `target_path`/an AMBIGUOUS candidate's own
+        `path`) was inserted VERBATIM — a hand-crafted export with
+        `path: "../../etc/passwd"` or an absolute path imported cleanly,
+        silently breaking AC-A5-2's "re-anchors on load" guarantee for
+        anything but a well-behaved relative path. Rejects: empty/non-
+        string values, POSIX-absolute paths (leading `/`), Windows-style
+        absolute paths (a leading `\\` or a drive letter, `C:\\...`) even
+        though this project runs on POSIX (cheap to close, no reason to
+        leave it open), and any `..` traversal component. The final check
+        delegates to `config.path_is_within` — the SAME function
+        `Config.is_in_repo`/`enforcement.assert_path_in_repo` already use
+        to guarantee "paths resolving outside the repo are rejected" for
+        every MCP tool call (checker instruction: reuse the invariant
+        `README.md` already promises, never reimplement it a second time
+        to silently drift from it).
+        """
+        if not isinstance(value, str) or not value:
+            raise ValueError(
+                f"{in_path}: {field_name} {value!r} is not a non-empty string -- imported "
+                "paths must be repository-relative (AC-A5-2)."
+            )
+        if value.startswith("/") or value.startswith("\\") or self._DRIVE_LETTER_RE.match(value):
+            raise ValueError(
+                f"{in_path}: {field_name} {value!r} is an absolute path -- imported paths must "
+                "be repository-relative (AC-A5-2). Regenerate from source; there is no "
+                "semantic merge for this format (AC-A5-5)."
+            )
+        normalized_parts = [p for p in value.replace("\\", "/").split("/") if p not in ("", ".")]
+        if ".." in normalized_parts:
+            raise ValueError(
+                f"{in_path}: {field_name} {value!r} contains a '..' traversal component -- "
+                "imported paths must stay within the repository (AC-A5-2)."
+            )
+        if not path_is_within(self.repo, Path(value)):
+            raise ValueError(
+                f"{in_path}: {field_name} {value!r} resolves outside the repository root -- "
+                "rejected (AC-A5-2)."
+            )
+
+    def _validate_import_record(self, rec: dict[str, Any], in_path: Path) -> None:
+        """Checker MINOR-2 + MAJOR-1, closed together: every required field
+        must be PRESENT (a missing key used to raise a raw `KeyError` deep
+        inside the insert loop, the same defect class as the truncated-line
+        self-catch, one field-access layer deeper -- fixed by validating
+        record shape BEFORE any row is inserted, not by wrapping each
+        access), and every path-shaped field (including an AMBIGUOUS edge's
+        own `candidates[].path`, easy to miss) must pass
+        `_validate_relative_repo_path`.
+        """
+        rtype = rec.get("type")
+        required: tuple[str, ...]
+        if rtype == "symbol":
+            required = self._SYMBOL_REQUIRED_FIELDS
+            path_fields = [("path", rec.get("path"))]
+        elif rtype == "edge":
+            required = self._EDGE_REQUIRED_FIELDS
+            path_fields = [
+                ("source_path", rec.get("source_path")),
+                ("target_path", rec.get("target_path")),
+            ]
+        elif rtype == "rationale":
+            required = self._RATIONALE_REQUIRED_FIELDS
+            path_fields = [("path", rec.get("path")), ("target_path", rec.get("target_path"))]
+        else:
+            raise ValueError(f"{in_path}: unknown record type {rtype!r}")
+
+        missing = [f for f in required if f not in rec]
+        if missing:
+            raise ValueError(
+                f"{in_path}: a {rtype!r} record is missing required field(s) {missing} -- the "
+                "export is truncated or corrupted (or was hand-edited). Regenerate it from "
+                "source (`atlas-aci index` + a fresh export) -- there is no semantic merge for "
+                "this format (AC-A5-5)."
+            )
+
+        for field_name, value in path_fields:
+            if value is not None:
+                self._validate_relative_repo_path(value, in_path, field_name)
+
+        if rtype == "edge" and rec.get("candidates") is not None:
+            for i, candidate in enumerate(rec["candidates"]):
+                if "path" not in candidate:
+                    raise ValueError(
+                        f"{in_path}: edge candidates[{i}] is missing required field 'path'"
+                    )
+                self._validate_relative_repo_path(
+                    candidate["path"], in_path, f"candidates[{i}].path"
+                )
+
     def import_jsonl(self, in_path: Path) -> dict[str, Any]:
         """Idempotent import of a canonical export (AC-A5-4): rebuilds
         `symbols`/`edges`/`rationale` from scratch into a FRESH temp DB file,
@@ -2176,6 +2365,16 @@ class CodeGraph:
         this build's `SCHEMA_EPOCH` exactly — no cross-epoch migration is
         attempted (D1: a schema change is always a fresh epoch, never an
         in-place migration, and that applies to imported data too).
+
+        Checker MAJOR-1/MINOR-2/MINOR-3 (the nineteenth defect and its two
+        siblings, all found in the SAME pass): `content_hash` proves byte
+        integrity; it proves nothing about path semantics (an absolute or
+        `../`-escaping path used to import verbatim), record shape (a
+        missing required field used to raise a raw `KeyError`), or the
+        header's own `record_count` (never compared to the actual body
+        length). All three are validated in a dedicated pass over every
+        parsed record BEFORE any row is inserted or any temp DB file is
+        even opened.
         """
         if self.read_only:
             raise RuntimeError(
@@ -2243,6 +2442,30 @@ class CodeGraph:
                 "or corrupted. Regenerate it from source (`atlas-aci index` + a fresh export) "
                 "-- there is no semantic merge for this format (AC-A5-5)."
             ) from e
+
+        # Checker MINOR-3: `record_count` was a decorative header field --
+        # never compared to the actual body length, so a header claiming
+        # 999 against a genuinely two-record body (with an otherwise-valid
+        # content_hash) imported silently. Recomputed and asserted here
+        # (never deleted): after eighteen prior defects about a number
+        # nobody recomputed, the fix is to recompute it, not to remove the
+        # only field whose entire job was to be checked.
+        if header.get("record_count") != len(records):
+            raise ValueError(
+                f"{in_path}: header record_count {header.get('record_count')!r} does not match "
+                f"the actual number of body records ({len(records)}) -- the export is "
+                "truncated or corrupted. Regenerate it from source (`atlas-aci index` + a "
+                "fresh export) -- there is no semantic merge for this format (AC-A5-5)."
+            )
+
+        # Checker MAJOR-1/MINOR-2 (the nineteenth defect and its sibling):
+        # every record is validated -- required fields present, every
+        # path-shaped field repository-relative and repository-contained --
+        # BEFORE a single row is inserted or even the temp DB file is
+        # opened. `content_hash` above proves byte integrity; it proves
+        # NOTHING about path semantics or record shape.
+        for rec in records:
+            self._validate_import_record(rec, in_path)
 
         self.atlas_dir.mkdir(parents=True, exist_ok=True)
         tmp_path = self.atlas_dir / f".graph.{SCHEMA_EPOCH}.db.import-tmp.{os.getpid()}"

@@ -30,6 +30,25 @@ def _write(repo: Path, rel: str, content: str) -> None:
     p.write_text(content)
 
 
+def _forge_export(real_export_path: Path, forged_path: Path, mutate_body) -> None:
+    """Reads a REAL export, applies `mutate_body` to the parsed body
+    records in place, then re-signs the header's `content_hash` AND
+    `record_count` to match the mutated body -- isolating whatever
+    OTHER guard `mutate_body`'s change is meant to trip (never the
+    content_hash/record_count checks themselves, which are covered by
+    their own dedicated tests above)."""
+    lines = real_export_path.read_text().splitlines()
+    header = json.loads(lines[0])
+    body = [json.loads(line) for line in lines[1:]]
+    mutate_body(body)
+    body_lines = [json.dumps(r, sort_keys=True, separators=(",", ":")) for r in body]
+    body_text = "".join(line + "\n" for line in body_lines)
+    header["content_hash"] = hashlib.sha256(body_text.encode("utf-8")).hexdigest()
+    header["record_count"] = len(body)
+    header_line = json.dumps(header, sort_keys=True, separators=(",", ":"))
+    forged_path.write_text(header_line + "\n" + body_text)
+
+
 def _build(tmp_path: Path, name: str, files: dict[str, str]) -> CodeGraph:
     repo = tmp_path / name
     repo.mkdir()
@@ -435,3 +454,212 @@ def test_export_size_recorded_for_this_repo(tmp_path: Path) -> None:
     stats = graph.export_jsonl(out_path)
     assert stats["bytes_written"] < 10 * 1024 * 1024  # sane ceiling for this project's own size
     assert stats["bytes_written"] == out_path.stat().st_size
+
+
+# ---- Checker MAJOR-1 (the nineteenth defect): import path-traversal matrix ----
+#
+# content_hash proves byte integrity; it proves NOTHING about path
+# semantics. Every scenario below forges a VALID-HASH export (via
+# _forge_export, which re-signs content_hash/record_count to match the
+# mutated body) so each test isolates the path-validation guard
+# specifically, not the integrity checks already covered above.
+
+
+def _import_target(tmp_path: Path, name: str) -> Path:
+    target = tmp_path / name
+    target.mkdir()
+    return target
+
+
+def test_import_rejects_absolute_path(tmp_path: Path) -> None:
+    graph = _build(tmp_path, "repo", _FILES)
+    real_export = tmp_path / "export.jsonl"
+    graph.export_jsonl(real_export)
+
+    forged = tmp_path / "forged-absolute.jsonl"
+    _forge_export(
+        real_export,
+        forged,
+        lambda body: [r.update(path="/etc/passwd") for r in body if r["type"] == "symbol"],
+    )
+
+    target = _import_target(tmp_path, "target-absolute")
+    with pytest.raises(ValueError, match="is an absolute path"):
+        CodeGraph(repo=target).import_jsonl(forged)
+
+
+def test_import_rejects_dotdot_traversal(tmp_path: Path) -> None:
+    graph = _build(tmp_path, "repo", _FILES)
+    real_export = tmp_path / "export.jsonl"
+    graph.export_jsonl(real_export)
+
+    forged = tmp_path / "forged-dotdot.jsonl"
+    _forge_export(
+        real_export,
+        forged,
+        lambda body: [r.update(path="../../etc/passwd") for r in body if r["type"] == "symbol"],
+    )
+
+    target = _import_target(tmp_path, "target-dotdot")
+    with pytest.raises(ValueError, match="traversal component"):
+        CodeGraph(repo=target).import_jsonl(forged)
+
+
+def test_import_rejects_windows_style_separator_traversal(tmp_path: Path) -> None:
+    """This project runs POSIX-only, but a hostile export can still
+    contain a Windows-style `..\\..\\` string -- cheap to close, no
+    reason to leave it open."""
+    graph = _build(tmp_path, "repo", _FILES)
+    real_export = tmp_path / "export.jsonl"
+    graph.export_jsonl(real_export)
+
+    forged = tmp_path / "forged-windows-sep.jsonl"
+    _forge_export(
+        real_export,
+        forged,
+        lambda body: [r.update(path="..\\..\\secret") for r in body if r["type"] == "symbol"],
+    )
+
+    target = _import_target(tmp_path, "target-windows-sep")
+    with pytest.raises(ValueError, match="traversal component"):
+        CodeGraph(repo=target).import_jsonl(forged)
+
+
+def test_import_rejects_windows_drive_letter(tmp_path: Path) -> None:
+    graph = _build(tmp_path, "repo", _FILES)
+    real_export = tmp_path / "export.jsonl"
+    graph.export_jsonl(real_export)
+
+    forged = tmp_path / "forged-drive-letter.jsonl"
+    _forge_export(
+        real_export,
+        forged,
+        lambda body: [
+            r.update(path="C:\\Windows\\System32\\config") for r in body if r["type"] == "symbol"
+        ],
+    )
+
+    target = _import_target(tmp_path, "target-drive-letter")
+    with pytest.raises(ValueError, match="is an absolute path"):
+        CodeGraph(repo=target).import_jsonl(forged)
+
+
+def test_import_rejects_path_that_escapes_only_via_a_symlink(tmp_path: Path) -> None:
+    """The case the checker explicitly asked for: "a path that
+    normalises out of the repo only after resolve()". Lexically,
+    `app/escape_link/secret.txt` contains no `..` and is not absolute --
+    the manual string check alone would PASS it. Only `resolve()`
+    following a REAL on-disk symlink (`config.path_is_within`, shared
+    with `enforcement.assert_path_in_repo`) catches this, proving the
+    belt-and-suspenders second check earns its place rather than being
+    decorative."""
+    outside = tmp_path / "outside-the-repo"
+    outside.mkdir()
+    (outside / "secret.txt").write_text("top secret\n")
+
+    graph = _build(tmp_path, "repo", _FILES)
+    real_export = tmp_path / "export.jsonl"
+    graph.export_jsonl(real_export)
+
+    forged = tmp_path / "forged-symlink.jsonl"
+    _forge_export(
+        real_export,
+        forged,
+        lambda body: [
+            r.update(path="app/escape_link/secret.txt") for r in body if r["type"] == "symbol"
+        ],
+    )
+
+    target = _import_target(tmp_path, "target-symlink")
+    (target / "app").mkdir()
+    (target / "app" / "escape_link").symlink_to(outside)
+
+    with pytest.raises(ValueError, match="resolves outside the repository root"):
+        CodeGraph(repo=target).import_jsonl(forged)
+
+
+def test_import_rejects_ambiguous_edge_candidate_path_escape(tmp_path: Path) -> None:
+    """MAJOR-1 also covers an AMBIGUOUS edge's OWN `candidates[].path` --
+    easy to miss since it is nested inside the edge record, not a
+    top-level field."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _write(repo, "app/a.rb", "def dup_name(x)\nend\n")
+    _write(repo, "app/b.rb", "def dup_name(x)\nend\n")
+    _write(repo, "app/caller.rb", "class Caller\n  def call\n    dup_name(1)\n  end\nend\n")
+    graph = CodeGraph(repo=repo)
+    graph.build()
+    real_export = tmp_path / "export.jsonl"
+    graph.export_jsonl(real_export)
+
+    forged = tmp_path / "forged-candidate.jsonl"
+
+    def mutate(body):
+        for r in body:
+            if r["type"] == "edge" and r.get("candidates"):
+                r["candidates"][0]["path"] = "../../etc/passwd"
+
+    _forge_export(real_export, forged, mutate)
+
+    target = _import_target(tmp_path, "target-candidate")
+    with pytest.raises(ValueError, match="candidates\\[0\\]\\.path"):
+        CodeGraph(repo=target).import_jsonl(forged)
+
+
+def test_import_rejects_missing_required_field(tmp_path: Path) -> None:
+    """Checker MINOR-2: a valid-hash body record missing a required
+    field used to raise a raw KeyError deep in the insert loop."""
+    graph = _build(tmp_path, "repo", _FILES)
+    real_export = tmp_path / "export.jsonl"
+    graph.export_jsonl(real_export)
+
+    forged = tmp_path / "forged-missing-field.jsonl"
+    _forge_export(
+        real_export,
+        forged,
+        lambda body: [r.pop("line_end", None) for r in body if r["type"] == "symbol"],
+    )
+
+    target = _import_target(tmp_path, "target-missing-field")
+    with pytest.raises(ValueError, match="missing required field"):
+        CodeGraph(repo=target).import_jsonl(forged)
+
+
+def test_import_rejects_wrong_record_count(tmp_path: Path) -> None:
+    """Checker MINOR-3: header record_count is recomputed and asserted,
+    not merely a decorative stored field. Forges record_count AFTER
+    _forge_export has already re-signed it correctly, isolating this
+    guard from the content_hash guard."""
+    graph = _build(tmp_path, "repo", _FILES)
+    real_export = tmp_path / "export.jsonl"
+    graph.export_jsonl(real_export)
+
+    lines = real_export.read_text().splitlines()
+    header = json.loads(lines[0])
+    body_lines = lines[1:]
+    body_text = "".join(line + "\n" for line in body_lines)
+    # content_hash left CORRECT (matches the real, untouched body) --
+    # only record_count is wrong, isolating this guard specifically.
+    header["content_hash"] = hashlib.sha256(body_text.encode("utf-8")).hexdigest()
+    header["record_count"] = 999
+    new_lines = [json.dumps(header, sort_keys=True, separators=(",", ":")), *body_lines]
+    forged = tmp_path / "forged-record-count.jsonl"
+    forged.write_text("\n".join(new_lines) + "\n")
+
+    target = _import_target(tmp_path, "target-record-count")
+    with pytest.raises(ValueError, match="record_count"):
+        CodeGraph(repo=target).import_jsonl(forged)
+
+
+def test_import_accepts_a_genuinely_valid_export_after_all_these_guards(tmp_path: Path) -> None:
+    """Control case: every guard above must reject a FORGED file while
+    still accepting the real, unmutated export -- a validation pass
+    strict enough to reject every attack but broken enough to also
+    reject genuine input would be just as much a defect."""
+    graph = _build(tmp_path, "repo", _FILES)
+    real_export = tmp_path / "export.jsonl"
+    graph.export_jsonl(real_export)
+
+    target = _import_target(tmp_path, "target-genuine")
+    stats = CodeGraph(repo=target).import_jsonl(real_export)
+    assert stats["symbols"] > 0

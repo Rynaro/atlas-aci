@@ -67,6 +67,85 @@ def test_ruby_defs_and_refs(tmp_path: Path) -> None:
     assert graph.search_symbol("record_vote")["references"]
 
 
+# ---- Checker MINOR-1 + the PRODUCED_KINDS sweep it prompted ----
+#
+# `(method name: (identifier) @name)` silently missed every Ruby method
+# definition whose name is a `setter` or `operator` grammar node instead of a
+# plain `identifier` -- confirmed via a raw tree-sitter parse before fixing:
+# `def foo=` wraps its name in a `setter` node, `def +`/`def []`/`def []=`/
+# `def ==`/etc. wrap theirs in an `operator` node. Neither was ever captured
+# as a symbol, which also meant neither could ever be an enclosing scope for
+# `callers_of`/rationale-target attribution (the exact solidus finding:
+# `taxon.rb:105`'s `# NOTE:` inside `def child_index=` attributed to the
+# class `Taxon` instead, because the setter was invisible to the symbol
+# table entirely, not merely coarsely resolved).
+
+
+def test_ruby_setter_method_is_captured_as_a_symbol(tmp_path: Path) -> None:
+    graph = _build(
+        tmp_path,
+        {
+            "app/taxon.rb": (
+                "class Taxon\n  def child_index=(idx)\n    @child_index = idx\n  end\nend\n"
+            ),
+        },
+    )
+    assert _kind_of(graph, "child_index=") == {"method"}
+
+
+def test_ruby_operator_method_is_captured_as_a_symbol(tmp_path: Path) -> None:
+    graph = _build(
+        tmp_path,
+        {
+            "app/money.rb": (
+                "class Money\n"
+                "  def +(other)\n  end\n"
+                "  def [](i)\n  end\n"
+                "  def []=(i, v)\n  end\n"
+                "  def ==(other)\n  end\n"
+                "end\n"
+            ),
+        },
+    )
+    for op_name in ("+", "[]", "[]=", "=="):
+        assert _kind_of(graph, op_name) == {"method"}, f"operator method {op_name!r} not captured"
+
+
+def test_ruby_singleton_setter_and_operator_methods_are_captured(tmp_path: Path) -> None:
+    graph = _build(
+        tmp_path,
+        {
+            "app/config.rb": (
+                "class Config\n  def self.value=(v)\n  end\n  def self.+(other)\n  end\nend\n"
+            ),
+        },
+    )
+    assert _kind_of(graph, "value=") == {"method"}
+    assert _kind_of(graph, "+") == {"method"}
+
+
+def test_ts_private_method_is_captured_as_a_symbol_and_a_call_resolves(tmp_path: Path) -> None:
+    """`#privateMethod` uses a `private_property_identifier` name node, NOT
+    `property_identifier` -- distinct on both the definition side
+    (`method_definition name:`) and the call site
+    (`member_expression property:`, e.g. `this.#privateMethod()`)."""
+    graph = _build(
+        tmp_path,
+        {
+            "app/widget.ts": (
+                "class Widget {\n"
+                "  #privateMethod() {\n    return 1;\n  }\n"
+                "  run() {\n    return this.#privateMethod();\n  }\n"
+                "}\n"
+            ),
+        },
+    )
+    assert _kind_of(graph, "#privateMethod") == {"method"}
+    edges = graph.callers_of("#privateMethod")
+    assert len(edges) == 1
+    assert edges[0]["source"]["name"] == "run"
+
+
 # ---- SCSS ----
 
 
