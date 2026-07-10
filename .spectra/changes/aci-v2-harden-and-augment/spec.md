@@ -214,6 +214,12 @@ Per-language fixtures decide EXTRACTED vs INFERRED accordingly (AC-A1-3/4/11).
   Mechanical cut-branch: the release fails if any A3 code exists while the probe verdict is not PASS
   on both repos (AC-A3-4/AC-A3-5). **The probe runs networkx only in an ephemeral env (uvx/throwaway
   venv), never in `pyproject.toml`/`uv.lock` - that is what keeps AC-NEG-2 intact (AC-A3-1 note).**
+- **Probe outcome + attestation terminus (probe PASSED both repos; `probe-lpa-vs-louvain.{md,json}`).**
+  CI recomputes everything downstream of the confident subgraph from committed data (graph bundle +
+  `verify-probe-verdict.py`, ~1e-15 vs networkx); the graph's fidelity to the two pinned repo SHAs is
+  attested by the **checker's independent re-clone/re-index/re-score**, because CI cannot clone and
+  index two Rails apps per PR. That bound is honest and documented (an undocumented bound would be the
+  gate-defect a sixth time - R16).
 
 ### D5 — Rationale scope + dead-language honesty (A4, H4)
 
@@ -395,19 +401,24 @@ SELECTED (elite 87.5).** H-B collapse-hardening REJECTED (weak 41.5). H-C full-p
 | R13 | `test_dry_run` sets `truncated:true` without populating `truncated_fields` | Low (contract-shape inconsistency, not silent loss) | **Track for A1**; align to the per-field `truncated_fields` contract. Owner: vivi. |
 | R14 | **Verification-anchor hazard: a `VERIFY:` naming a test that does not exist** | Med (process) | A1 found `AC-H-18`'s `VERIFY:` named `test_server.py::test_truncation_signal_iff_content_withheld`, which existed in no commit and was not run by `harden-gate.yml` - the exact documented-but-not-delivered class this release exists to kill, inside a gate criterion. Resolved by **conforming the code to the frozen criterion** (the test now exists under that exact name, wired into the gate, 6 -> 7 tests); no criteria change, hash unchanged. Standing check (must be **phase-scoped**, against the **committed blob** not the working tree): at each phase exit assert every `VERIFY:` naming a test names a test that exists **for that phase's criteria** (a flat all-71 sweep mid-campaign false-positives on not-yet-built phases - e.g. A2/A3/A4/A5 share test files with earlier phases); a full 71-criteria sweep runs at **archive** (P3 end) when every referenced artefact must exist. Verified at A1: all P0+A1 test-anchored criteria (incl. AC-H-18) exist at HEAD; the only gaps are the A2/A3/A4/A5 workstreams not yet built. Owner: ramza (per-phase + archive) / vivi. |
 | R15 | **File-scoped shadowing guard under-reports `EXTRACTED`** | Low (under-claims, safe direction) | One local assignment shadowing a class name anywhere in a file demotes every reference to that class in that file from EXTRACTED to INFERRED. Under-claims, never over-claims (correct direction), but disclosed only in code comments, not the user-facing `README.md` DSL section. **Track for the P3 doc pass** (not a new criterion). Owner: vivi (P3 doc). |
+| R16 | **Gate-defect class: a check that validates the data it was handed while the provenance and completeness of that data go unchecked is not a check** (the D3a verdict-verifier exhibited it five ways) | High (meta, now closed) | (1) `grep -qiE "verdict.*:.*pass"` cleared a forged `LPA_Q=0.11111` under a PASS label; (2) the fix read the bar (R, Q_struct) FROM the artefact it audited, so `r:0.10` defeated the pre-registered anti-circularity guarantee; (3) it never asserted WHICH repos were present, so deleting solidus (tighter margin) passed; (4) both Q values were assertions never derived, so under-reporting the Louvain baseline lowers the `0.85*median` bar (median=0.35, LPA=0.31 cleared, shipping a 0.31 clusterer vs a real 0.669); (5) the 20 forged-scenario guards were executed by NO workflow (the two `harden-gate.yml` mentions were comments). All closed: constants + pinned SHAs hardcoded as external facts in the verifier, every Q recomputed in pure Python from a committed sha256+indexer-fingerprinted bundle (~1e-15 vs networkx), self-tests unconditional in `ci.yml`. **Principle: thresholds and required-record-sets are external facts and belong in the verifier, never in the artefact under audit; gates concentrate defects because nothing checks the gate.** Feeds the R14 pre-archive check. Owner: vivi (closed) / ramza (generalization). |
+| R17 | **Checker attestation covers pre-canonicalization Louvain medians** | Low (verdict robust, attestation stale) | Bundle node-labeling canonicalization shifted Louvain medians at the 5th-6th decimal (solidus 0.7442625 -> 0.7449783); `LPA_Q` is bit-identical (label-independent); the verdict margin (~0.036 on solidus) dwarfs the ~0.0006 bar shift, so PASS is not at risk. But the checker reproduced the OLD numbers; the current committed medians are not yet independently reproduced under the new labeling. **RAMZA recommends a bundle-only re-attestation before P3 archive** (recompute Louvain medians + LPA_Q from the committed canonicalized bundle, confirm the recorded numbers + all three clauses; no Rails re-clone - the bundle is the committed sha256+fingerprinted artefact). Owner: vigil. |
 
 ## [VERIFY] items
 
-- **[VERIFY] Reference Rails-scale repos (F5) - RESOLVED (pending probe run).** Pinned to two
-  SHA-pinned public BSD-3 repos (ATLAS `v1-reference-repo.md`): `solidusio/solidus@4026945d...` and
-  `spree/spree@6699cde4...` (SHAs, not tags). The D3a pass rule and constants (Q_struct=0.30, R=0.85,
-  K=10 seeds 0..9 gamma=1.0 median Louvain baseline, shipped single-run LPA, confident-subgraph
-  undirected unweighted projection) are frozen in the criteria before the probe runs. Probe RUN is
-  still pending; executor: **ATLAS**.
-- **[VERIFY] D3 evidence probe** - LPA-vs-Louvain modularity per repo on both pinned SHAs. Resolver:
-  **ATLAS**. Hard, mechanical precondition on P2/A3 (AC-A3-1: verdict == mechanical eval of recorded
-  numbers); feeds the DIR-1 proceed-or-cut branch. networkx is used only in a probe-time ephemeral
-  env, never in pyproject/uv.lock (AC-NEG-2).
+- **[VERIFY] Reference Rails-scale repos (F5) - RESOLVED; probe PASSED both repos.** Pinned by SHA
+  (ATLAS `v1-reference-repo.md`): `solidusio/solidus@4026945d...`, `spree/spree@6699cde4...`. The D3a
+  rule + constants (Q_struct=0.30, R=0.85, K=10 seeds 0..9 gamma=1.0 median Louvain, shipped single-run
+  LPA, confident-subgraph undirected unweighted projection) were frozen before the probe ran
+  (anti-circularity). Committed verdict PASS (`probe-lpa-vs-louvain.json`): solidus LPA_Q=0.6691476 vs
+  Louvain median 0.7449783; spree LPA_Q=0.7165340 vs 0.7846478 - all three clauses each, never averaged.
+  Communities ship in v2.0.0.
+- **[VERIFY] D3 evidence probe - RESOLVED (PASS).** AC-A3-1 verdict == mechanical eval of recorded
+  numbers, enforced by `scripts/verify-probe-verdict.py` (constants + SHAs hardcoded as external facts,
+  every Q recomputed in pure Python from a committed sha256+indexer-fingerprinted bundle, ~1e-15 vs
+  networkx, self-tests unconditional in ci.yml). networkx ran only in a probe-time ephemeral env
+  (AC-NEG-2 held: grep pyproject/uv.lock -> 0 0). Caveat: the checker reproduced the PRE-canonicalization
+  Louvain medians (R17).
 - **[VERIFY] Cross-platform byte-determinism** — macOS vs Linux; unverifiable single-OS. Resolver:
   **vivi + CI OS matrix** at P3 (AC-REL-1). Release blocker.
 - **[VERIFY] Rails-scale export size** — unmeasured (D6 residual). Resolver: **vivi** at P3 (AC-REL-2).

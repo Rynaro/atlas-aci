@@ -186,6 +186,11 @@
     "scripts/run-canaries.py",
     "scripts/harden-gate-classify.sh",
     "scripts/test-harden-gate-classify.sh",
+    "scripts/probe-export-confident-graph.py",
+    "scripts/probe-modularity.py",
+    "scripts/probe-assemble-graph-bundle.py",
+    "scripts/verify-probe-verdict.py",
+    "scripts/test-verify-probe-verdict.sh",
     "LICENSE",
     ".gitignore"
   ],
@@ -196,7 +201,7 @@
     "at": "2026-07-09T19:45:44Z"
   },
   "criteria_frozen_at": "2026-07-09T22:39:06Z",
-  "scope_declared_at": "2026-07-10T01:03:54Z",
+  "scope_declared_at": "2026-07-10T03:17:02Z",
   "rubric_arithmetic": {
     "complexity": {
       "dims": {
@@ -221,19 +226,19 @@
       "note": "re-scored at Assemble after vigil GO-WITH-CONDITIONS + F1-F18/DIR-1/2/3 applied; residual [VERIFY] (reference repo, cross-platform determinism) are now mechanically bounded."
     }
   },
-  "selected_hypothesis": "H-A (encode FORGE constraint-graph spine) — explore elite 87.5; rejected H-B collapse-hardening (weak 41.5), H-C full-parallel (weak 40.5)",
+  "selected_hypothesis": "H-A (encode FORGE constraint-graph spine) \u2014 explore elite 87.5; rejected H-B collapse-hardening (weak 41.5), H-C full-parallel (weak 40.5)",
   "phase_spine": [
     {
       "phase": "P0",
-      "name": "Hardening gate (GATED; in-tree harden-gate.yml is the mechanism — DIR-3)",
+      "name": "Hardening gate (GATED; in-tree harden-gate.yml is the mechanism \u2014 DIR-3)",
       "workstreams": [
-        "H0 — CI: pytest + ruff + mypy on every PR (.github/workflows/ci.yml)",
-        "H0b — committed harden-gate.yml: fails when an A1-A5 path changes while hardening checks are absent/failing (DIR-3/F3)",
-        "H1 — central bounds chokepoint in _call_tool (element-cap + byte-ceiling; _bounded_field registry)",
-        "H2 — route search_symbol + graph_query through H1 + over-cap-per-tool/verb test + registry-completeness test (F2)",
-        "H3 — schema-epoch DB path .atlas/graph.<epoch>.db + EXPECTED_DDL_HASH pairing (F1) + sweep/rebuild INDEX-PATH ONLY + serve fail-fast (DIR-2/F16) + atomic-rename single-writer (F17) + rationale-store DDL (F9)",
-        "H4 — silent-dead-language honesty (LANG_BY_EXT<->QUERIES) + kind-enum honesty",
-        "DOC — repo-wide doc-honesty batch (F11/F12/F13) + add LICENSE"
+        "H0 \u2014 CI: pytest + ruff + mypy on every PR (.github/workflows/ci.yml)",
+        "H0b \u2014 committed harden-gate.yml: fails when an A1-A5 path changes while hardening checks are absent/failing (DIR-3/F3)",
+        "H1 \u2014 central bounds chokepoint in _call_tool (element-cap + byte-ceiling; _bounded_field registry)",
+        "H2 \u2014 route search_symbol + graph_query through H1 + over-cap-per-tool/verb test + registry-completeness test (F2)",
+        "H3 \u2014 schema-epoch DB path .atlas/graph.<epoch>.db + EXPECTED_DDL_HASH pairing (F1) + sweep/rebuild INDEX-PATH ONLY + serve fail-fast (DIR-2/F16) + atomic-rename single-writer (F17) + rationale-store DDL (F9)",
+        "H4 \u2014 silent-dead-language honesty (LANG_BY_EXT<->QUERIES) + kind-enum honesty",
+        "DOC \u2014 repo-wide doc-honesty batch (F11/F12/F13) + add LICENSE"
       ],
       "blocking_preconditions": [],
       "exit_gate": "ALL THREE green: CI-runs-tests-on-PR (AC-H-1) AND over-cap+registry+truncation-invariant cap tests (AC-H-4, AC-H-7, AC-H-8, AC-H-15, AC-H-18 - no no-op cap passes; AC-H-18 pins the truncate-iff-content-withheld invariant the P0 F-1/NEW-1 defect class violated) AND epoch-substrate+DDL-hash (AC-H-9, AC-H-12). harden-gate.yml enforces in-tree; branch protection is defence-in-depth.",
@@ -253,7 +258,7 @@
       "phase": "P1",
       "name": "Edges + god nodes",
       "workstreams": [
-        "A1 — materialize call/inheritance edge table + deterministic confidence enum {EXTRACTED/INFERRED/AMBIGUOUS} + ordered candidates[] + subclasses_of via real inheritance edges + refs.enclosing DROP (caller-context from edge source) + per-language type-qualified rule (F18)",
+        "A1 \u2014 materialize call/inheritance edge table + deterministic confidence enum {EXTRACTED/INFERRED/AMBIGUOUS} + ordered candidates[] + subclasses_of via real inheritance edges + refs.enclosing DROP (caller-context from edge source) + per-language type-qualified rule (F18)",
         "A2 - degree-centrality god nodes over the CONFIDENT subgraph (EXTRACTED union INFERRED; AMBIGUOUS excluded from degree, D4a), zero-dep; responses carry analysis_basis/ambiguous_edges_excluded/resolved_edge_count (AC-A2-3)"
       ],
       "blocking_preconditions": [
@@ -265,15 +270,15 @@
     },
     {
       "phase": "P2",
-      "name": "Communities + rationale (A3 conditional — DIR-1)",
+      "name": "Communities + rationale (A3 conditional \u2014 DIR-1)",
       "workstreams": [
         "A3 - hand-rolled deterministic LPA communities over the confident subgraph (AMBIGUOUS never fanned out, D4a), total-ordered IDs (zero-dep) OR cut to v2.1 if the D3a probe fails",
-        "A4 — rationale nodes Ruby -> Python -> JS/TS (parallel; rationale-store DDL folded into H3, edge-resolution-independent)"
+        "A4 \u2014 rationale nodes Ruby -> Python -> JS/TS (parallel; rationale-store DDL folded into H3, edge-resolution-independent)"
       ],
       "blocking_preconditions": [
-        "A3 blocked on A1 (trustworthy edges) + A2 (ordered first) + the D3 evidence probe (HARD, MECHANICAL: harden-gate.yml fails if an A3 path changes without probe-lpa-vs-louvain.md — AC-A3-1)",
+        "A3 blocked on A1 (trustworthy edges) + A2 (ordered first) + the D3 evidence probe (HARD, MECHANICAL: harden-gate.yml fails if an A3 path changes without probe-lpa-vs-louvain.md \u2014 AC-A3-1)",
         "DIR-1/D3a branch (pre-registered, anti-circular): pass per repo iff Louvain_Q_median>=0.30 AND LPA_Q>=0.30 AND LPA_Q>=0.85*Louvain_Q_median (Q_struct=0.30, R=0.85 maintainer-confirmed; Louvain baseline = median of K=10 networkx louvain_communities at seeds 0..9, gamma=1.0; LPA = shipped single deterministic run; both over the confident-subgraph undirected unweighted projection), evaluated INDEPENDENTLY on solidus@4026945d AND spree@6699cde4, never averaged; either repo failing any clause => A3 CUT to v2.1, ship A2 only, NEVER networkx/Louvain (AC-A3-4/AC-A3-5; AC-NEG-2 absolute; networkx runs probe-time-only in an ephemeral env, never in pyproject/uv.lock)",
-        "A4 blocked on P0 gate + H3 only (rationale store in H3 substrate; independent of A1 edge resolution — F9)",
+        "A4 blocked on P0 gate + H3 only (rationale store in H3 substrate; independent of A1 edge resolution \u2014 F9)",
         "D4a: AMBIGUOUS edges excluded from the A2/A3/probe analysis graph but still returned by graph_query (AC-A2-3 visibility fields, AC-NEG-7 no ambiguity-as-importance, AC-A1-10 DSL divergence); AC-A1-2/AC-A1-5 preserved (analysis-time filter, not a drop)"
       ],
       "exit_gate": "LPA determinism + total-order test green (AC-A3-2) OR mechanical cut-branch (AC-A3-4/5); analysis-basis fields on communities (AC-A2-3); rationale tests green (AC-A4-1..6)."
@@ -282,8 +287,8 @@
       "phase": "P3",
       "name": "Export + release",
       "workstreams": [
-        "A5 — deterministic sorted canonical JSONL export (record-level ORDER BY + sorted _iter_source_files — F8) + idempotent import (NO graph/union merge driver; trivial regenerate-on-conflict permitted)",
-        "Release-prep — version bump 2.0.0, uv.lock regen (F14), CHANGELOG, migration/upgrade doc, canary-honesty"
+        "A5 \u2014 deterministic sorted canonical JSONL export (record-level ORDER BY + sorted _iter_source_files \u2014 F8) + idempotent import (NO graph/union merge driver; trivial regenerate-on-conflict permitted)",
+        "Release-prep \u2014 version bump 2.0.0, uv.lock regen (F14), CHANGELOG, migration/upgrade doc, canary-honesty"
       ],
       "blocking_preconditions": [
         "A5 blocked on A1, A3 (or its cut), A4 frozen (export freezes the on-disk contract LAST; D6 forces total orders on A3 IDs + A1 candidates + A5 records)",
@@ -298,7 +303,7 @@
       "item": "Reference Rails-scale repo(s) for the D3 probe + AC-REL-2 export-size (F5) - RESOLVED to two SHA-pinned public BSD-3 repos; D3a pass rule frozen before the probe runs (anti-circularity)",
       "resolver": "ATLAS (v1-reference-repo.md): solidusio/solidus@4026945d614e81383c007ed1ab1278a0195ce5d9 + spree/spree@6699cde44303ea85ef6e56c5e87c44a738ab73fc; rule Q_struct=0.30, R=0.85, median K=10 seeds 0..9 gamma=1.0 Louvain baseline vs shipped single-run LPA over the confident subgraph, per repo. Probe RUN still pending (executor: ATLAS)",
       "gates": "P2/A3 + P3/REL",
-      "status": "RESOLVED (pending probe run)"
+      "status": "RESOLVED (probe PASSED both repos; Louvain medians canonicalized, checker re-attestation of the new numbers pending - R17)"
     },
     {
       "id": "V2",
@@ -309,14 +314,14 @@
     },
     {
       "id": "V3",
-      "item": "Cross-platform byte-determinism (macOS vs Linux) — unverifiable single-OS",
+      "item": "Cross-platform byte-determinism (macOS vs Linux) \u2014 unverifiable single-OS",
       "resolver": "vivi + CI OS matrix",
       "gates": "P3 release blocker (AC-REL-1)",
       "status": "open"
     },
     {
       "id": "V4",
-      "item": "Rails-scale export size vs 100 MB (104857600 bytes) ceiling — unmeasured",
+      "item": "Rails-scale export size vs 100 MB (104857600 bytes) ceiling \u2014 unmeasured",
       "resolver": "vivi",
       "gates": "P3 (AC-REL-2)",
       "status": "open"
@@ -417,6 +422,24 @@
       "at": "2026-07-10T01:03:54Z",
       "range": "f56a78e..HEAD",
       "files_changed": 43,
+      "uncovered": []
+    },
+    {
+      "at": "2026-07-10T03:15:59Z",
+      "range": "f56a78e..HEAD",
+      "files_changed": 54,
+      "uncovered": [
+        "scripts/probe-assemble-graph-bundle.py",
+        "scripts/probe-export-confident-graph.py",
+        "scripts/probe-modularity.py",
+        "scripts/test-verify-probe-verdict.sh",
+        "scripts/verify-probe-verdict.py"
+      ]
+    },
+    {
+      "at": "2026-07-10T03:17:02Z",
+      "range": "f56a78e..HEAD",
+      "files_changed": 54,
       "uncovered": []
     }
   ]

@@ -77,6 +77,11 @@ mcp-server/src/atlas_aci/codegraph.py
 mcp-server/src/atlas_aci/tools/graph_query.py
 mcp-server/tests/test_communities.py
 .spectra/changes/aci-v2-harden-and-augment/probe-lpa-vs-louvain.md
+scripts/probe-export-confident-graph.py
+scripts/probe-modularity.py
+scripts/probe-assemble-graph-bundle.py
+scripts/verify-probe-verdict.py
+scripts/test-verify-probe-verdict.sh
 
 # A4 — rationale nodes Ruby -> Python -> JS/TS (parallel; store DDL folded into H3, edge-graph-resolution-independent)
 mcp-server/src/atlas_aci/codegraph.py
@@ -162,3 +167,13 @@ README.md
   to A1: `test_dry_run` set `truncated` without populating `truncated_fields` (recorded as risk
   `R13`, 'track for A1' - vigil F-7 residual). Closing R13 required touching it; the maker disclosed
   it unprompted. Criteria unchanged; frozen SHA `5c3adddb...` stays.
+- **SCOPE-6 (ramza-drift, amendment 2):** the D3a probe machinery is added to P2/A3 scope:
+  `scripts/probe-export-confident-graph.py`, `scripts/probe-modularity.py`,
+  `scripts/probe-assemble-graph-bundle.py` (three-phase pipeline; phase 2 is the ONLY networkx import,
+  in a throwaway env), plus `scripts/verify-probe-verdict.py` + `scripts/test-verify-probe-verdict.sh`
+  (mechanical verdict verifier + its 14 forged-artefact scenarios). Reason: `AC-A3-1` demands the
+  recorded verdict equal the mechanical evaluation of the recorded numbers, which took a real verifier
+  plus a committed graph bundle. The `.spectra/` probe artefacts (`probe-lpa-vs-louvain.{md,json}`,
+  `probe-graphs.json.gz` 168 KB, `checker-verdict-a1.md`, `checker-verdict-a3.md`) are covered by the
+  standing `.spectra/*` allow. **The probe PASSED both pinned repos** (committed verdict PASS); AC-NEG-2
+  held (networkx grep on pyproject/uv.lock -> 0 0). Criteria unchanged; frozen SHA `5c3adddb...` stays.
