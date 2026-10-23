@@ -3,7 +3,7 @@
   "issue_url": "https://github.com/Rynaro/atlas-aci/issues/25",
   "criteria_sha256": "cdbaf9c448dc62b55c50a4c1326e30e458cc115e1fe7149df903299e1d3a9cb5",
   "base_commit": "feec071f0f1cfbb967fe1849065f23f4e6713120",
-  "output_commit": null,
+  "output_commit": "d7aa74ca9b388f477dea44d04551dbb49f1700d6",
   "declared_paths": [
     "mcp-server/src/atlas_aci/codegraph.py",
     "mcp-server/tests/slices/test_s02_*.py",
@@ -20,8 +20,22 @@
     ".spectra/changes/aci-s02-probe/aci-s02-probe-lpa-vs-louvain.json",
     ".spectra/changes/aci-s02-probe/probe-graphs.json.gz"
   ],
-  "output_digests": {},
-  "status": "IN_PROGRESS",
+  "output_digests": {
+    ".github/workflows/harden-gate.yml": "56103d2a1e931458e0b69d529ddc7fdcbf967dc718a35a47ad53331278b054fb",
+    ".spectra/changes/aci-s02-probe/aci-s02-probe-lpa-vs-louvain.json": "e18351cdce974d6a1105c2c53e37daf5731a674a1df667b6998a584c5018822b",
+    ".spectra/changes/aci-s02-probe/aci-s02-probe-lpa-vs-louvain.md": "8a59e37949e0d3ea09754c090ae013f9d5ea6434f9e1bf4f3ff76ec5245543b9",
+    ".spectra/changes/aci-s02-probe/probe-graphs.json.gz": "e2e3eb28a6fecd4fa44b840954f1810e97eb95fd77e203e0e04f8cfb205a2bd3",
+    "mcp-server/src/atlas_aci/codegraph.py": "cb13abaf72e673071d1f8d8c5af624bb472a38c8ed57431107145df2c8f10cb7",
+    "mcp-server/tests/slices/test_s02_contract.py": "8b1853f7f0cb2e3145e23e14d6f4ab210ba581dd505ea8f9272cec71d3cf5811",
+    "mcp-server/tests/test_communities.py": "bdf2132894508bfd9cc3caaf644c4d2f42429b38f078cb9d9871ae837ce2b193",
+    "mcp-server/tests/test_confidence.py": "bf93c2e585c893d8d373f9a434bec4c3ae49c33c7b697e51a6f6690905ee2b79",
+    "mcp-server/tests/test_export.py": "d30bb6107093024d8df629edbc313c5a2ae3a6e48c0b684c11799da902c8ba1b",
+    "mcp-server/tests/test_graph_query.py": "512867b8efe966dcf23aea4b7486939fce6cdd4347d75afaa37b175ccefadfe3",
+    "mcp-server/tests/test_schema_epoch.py": "4e270b3c950bdbfb49e18c076e6be0c0e9dd4da924b6ca6c56e37fc28c6504a0",
+    "mcp-server/tests/test_server.py": "c6cf6820d3a4234bd06b6b01f7e2e3fbc092c54d97c28fbfde5c39b6d22f964f",
+    "scripts/test-verify-probe-verdict.sh": "6904465b530bcfb9763c3545e1eb875b870c9d309784173fcb83089ae6e36c15"
+  },
+  "status": "COMPLETE",
   "acceptance_results": [
     {
       "ac_id": "AC-S02-001",
@@ -66,6 +80,17 @@
       "evidence": [
         ".spectra/evidence/aci-s02/interrupted-execution.json",
         ".spectra/evidence/aci-s02/resume-identity.json"
+      ]
+    },
+    {
+      "ac_id": "AC-S02-RUN-01",
+      "command": "mcp-server/.venv/bin/python /tmp/atlas-aci-aci-s02-reentry/.spectra/evidence/aci-s02/verify_execution.py --root /tmp/atlas-aci-aci-s02-reentry --receipt /tmp/atlas-aci-aci-s02/.spectra/state/aci-s02.execution.json",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s02/reentry-candidate.json",
+        ".spectra/evidence/aci-s02/reentry-complete.json",
+        ".spectra/evidence/aci-s02/before-reentry.sha256.json",
+        ".spectra/evidence/aci-s02/after-reentry.sha256.json"
       ]
     }
   ],
