@@ -1,0 +1,11 @@
+{
+  "original_implementation_commit": "d7aa74ca9b388f477dea44d04551dbb49f1700d6",
+  "files_verified": 4,
+  "verification": "Each gzip decompressed byte-for-byte equal to git show original_implementation_commit:logical_path, with matching original Git blob IDs, sizes and SHA-256 hashes; repeated gzip encoding identical.",
+  "exit_code": 0,
+  "implementation_digest_count": 13,
+  "all_implementation_digests_unchanged": true,
+  "receipt_identity_unchanged": true,
+  "raw_bytes": 2030647,
+  "compressed_bytes": 169472
+}

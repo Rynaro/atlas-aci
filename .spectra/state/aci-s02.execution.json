@@ -194,5 +194,11 @@
     "remote Docker read-only smoke",
     "cross-OS export comparison"
   ],
-  "evidence_normalization": "Trailing console alignment whitespace stripped from root-level captured logs; every observed message retained."
+  "evidence_normalization": "Trailing console alignment whitespace stripped from root-level captured logs; every observed message retained.",
+  "evidence_packaging": {
+    "manifest": ".spectra/evidence/aci-s02/probe/raw-packaging.json",
+    "verification": ".spectra/evidence/aci-s02/packaging-verification.json",
+    "lossless": true,
+    "original_implementation_commit": "d7aa74ca9b388f477dea44d04551dbb49f1700d6"
+  }
 }
