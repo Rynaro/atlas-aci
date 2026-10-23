@@ -1,7 +1,1 @@
-{
-  "slice_id": "ACI-S01",
-  "criteria_sha256": "d0570c2647fcb993176bc789651fa9a92612a33282105443d2798b7335c5c537",
-  "authoritative_receipt": ".spectra/state/aci-s01.execution.json",
-  "initial_status": "IN_PROGRESS",
-  "identity_preserved": true
-}
+{"authoritative_receipt": ".spectra/state/aci-s01.execution.json", "criteria_sha256": "d0570c2647fcb993176bc789651fa9a92612a33282105443d2798b7335c5c537", "identity_preserved": true, "slice_id": "ACI-S01"}
