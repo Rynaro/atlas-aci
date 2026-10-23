@@ -3,7 +3,7 @@
   "issue_url": "https://github.com/Rynaro/atlas-aci/issues/28",
   "criteria_sha256": "ea6a3baf17e73a01314bea6662c3903840b29265fb4e92d37c5d1eda09f5333a",
   "base_commit": "f81231ef3fd4bbc89fd444f213be521d6063e99e",
-  "output_commit": null,
+  "output_commit": "b6db95925e175ea5581c9aacd73f860dfe9add54",
   "declared_paths": [
     "mcp-server/src/atlas_aci/config.py",
     "mcp-server/src/atlas_aci/server.py",
@@ -12,8 +12,15 @@
     "README.md",
     "mcp-server/tests/test_server.py"
   ],
-  "output_digests": {},
-  "status": "IN_PROGRESS",
+  "output_digests": {
+    "README.md": "c3804e1a04dd1895783766dbd1af10a46a2b8c812a99eedea9312f697954d120",
+    "mcp-server/src/atlas_aci/config.py": "f66cfb7e68cb54eef3c2aa7fdd02d09e06faf9b574d9a80f5a2dab957a4cfaea",
+    "mcp-server/src/atlas_aci/server.py": "a9425b5c3d3a5d7d6ef57273dccc3b6730636cc3b63ac16133254fe764660ae4",
+    "mcp-server/src/atlas_aci/tools/test_dry_run.py": "21affeb347ce7aeaf4350b321b81bbcbd798c29078851633d2cb9d0fa83b4ca5",
+    "mcp-server/tests/slices/test_s05_contract.py": "ca1118a011be7147446a3c2d8a87e2fe28d29858bdd0f9fed63f81ce071377d5",
+    "mcp-server/tests/test_server.py": "a1cd6c76a55ecceedebf388a581bc6934ad989d63ea8bd62f4879d1db7867cfc"
+  },
+  "status": "COMPLETE",
   "acceptance_results": [
     {
       "ac_id": "AC-S05-001",
@@ -52,6 +59,17 @@
       "evidence": [
         ".spectra/evidence/aci-s05/interrupted-execution.json",
         ".spectra/evidence/aci-s05/resume-identity.json"
+      ]
+    },
+    {
+      "ac_id": "AC-S05-RUN-01",
+      "command": "mcp-server/.venv/bin/python /tmp/atlas-aci-aci-s05-reentry/.spectra/evidence/aci-s05/verify_execution.py --root /tmp/atlas-aci-aci-s05-reentry --receipt /tmp/atlas-aci-aci-s05/.spectra/state/aci-s05.execution.json",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s05/reentry-candidate.json",
+        ".spectra/evidence/aci-s05/reentry-complete.json",
+        ".spectra/evidence/aci-s05/before-reentry.sha256.json",
+        ".spectra/evidence/aci-s05/after-reentry.sha256.json"
       ]
     }
   ],
@@ -127,5 +145,6 @@
     "Opt-in runs repository code with server permissions; no OS sandbox.",
     "Timeout kills and reaps the immediate subprocess; descendant cleanup not guaranteed.",
     "CRYSTALIUM persistence not attempted after earlier automatic review rejection."
-  ]
+  ],
+  "evidence_normalization": "Trailing console alignment whitespace stripped from captured anchors-red.log; messages preserved."
 }

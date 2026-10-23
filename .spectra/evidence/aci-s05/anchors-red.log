@@ -46,8 +46,8 @@ monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10a7faa20>
 >       cfg = config(repository, test_execution_enabled=True, test_dry_run_timeout_s=1)
               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-mcp-server/tests/slices/test_s05_contract.py:129: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+mcp-server/tests/slices/test_s05_contract.py:129:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
 repo = PosixPath('/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-13/test_timeout_preserved0/repo')
 kwargs = {'test_dry_run_timeout_s': 1, 'test_execution_enabled': True}
@@ -67,8 +67,8 @@ repository = PosixPath('/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T
 >           cfg = config(repository, test_execution_enabled=enabled)
                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-mcp-server/tests/slices/test_s05_contract.py:142: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+mcp-server/tests/slices/test_s05_contract.py:142:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
 repo = PosixPath('/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-13/test_profile_visible0/repo')
 kwargs = {'test_execution_enabled': False}
