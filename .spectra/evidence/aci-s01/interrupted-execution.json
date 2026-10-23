@@ -1,0 +1,15 @@
+{
+  "slice_id": "ACI-S01",
+  "issue_url": "https://github.com/Rynaro/atlas-aci/issues/24",
+  "criteria_sha256": "d0570c2647fcb993176bc789651fa9a92612a33282105443d2798b7335c5c537",
+  "base_commit": "0506243e2e3a495b1a87f7a3efe55b5d511629c0",
+  "output_commit": null,
+  "declared_paths": [
+    "scripts/run-canaries.py",
+    "atlas/evals/*",
+    "mcp-server/tests/slices/test_s01_*.py"
+  ],
+  "output_digests": {},
+  "status": "IN_PROGRESS",
+  "acceptance_results": []
+}

@@ -1,0 +1,17 @@
+{
+  "schema": "atlas/task-manifest.v1",
+  "repository": {
+    "revision": "8f6cc0fa24a80651401e7b689cfe09f2bb484fcc"
+  },
+  "model": null,
+  "tasks": [
+    {
+      "id": "search-baseline",
+      "tool": "search_symbol",
+      "arguments": {
+        "name": "baseline_target"
+      },
+      "expect_text": "baseline_target"
+    }
+  ]
+}

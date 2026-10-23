@@ -1,0 +1,9 @@
+{
+  "plan": "aci-s01",
+  "tier": "lite",
+  "phase": "DONE",
+  "next": "DONE",
+  "refine_cycles": 0,
+  "skips": [],
+  "criteria_frozen": true
+}

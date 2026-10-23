@@ -1,0 +1,13 @@
+{
+  "validated_at": "2026-10-23T19:21:46.605385+00:00",
+  "full_schemas": [
+    "ecl-envelope.v2.json",
+    "plan-state.v1.json"
+  ],
+  "spec_sha256": "2fc67b49690e240bc4cdee849ea2236373835b35197b0b4e382b4668d0e962c3",
+  "criteria_sha256": "d0570c2647fcb993176bc789651fa9a92612a33282105443d2798b7335c5c537",
+  "spec_size_bytes": 14682,
+  "exit_code": 0,
+  "metadata_paths_refreshed": true,
+  "receiver_verify_trace": ".spectra/evidence/aci-s01/handoff-verify.jsonl"
+}

@@ -1,0 +1,5 @@
+2026-10-23T19:19:51.310354Z [info     ] index_start                    langs=['ruby', 'python', 'typescript', 'javascript', 'scss', 'html', 'yaml', 'markdown', 'bash'] repo=/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/atlas-s01-ghj61xf9/repo since=None
+2026-10-23T19:19:51.320541Z [info     ] index_done                     edges=0 files_indexed=1 files_removed=0 files_skipped=0 rationale=0 refs=0 schema_epoch=5 symbols=1 unsupported_skipped={}
+2026-10-23T19:19:51.706202Z [info     ] server_starting                memex=/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/atlas-s01-ghj61xf9/repo/.atlas/memex repo=/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/atlas-s01-ghj61xf9/repo
+2026-10-23T19:19:51.710024Z [info     ] tool_call                      args={'name': 'baseline_target'} bytes_out=42 error=None ms=0 overflow=False tool=search_symbol
+{"failed": 0, "passed": 1, "tasks": 1}

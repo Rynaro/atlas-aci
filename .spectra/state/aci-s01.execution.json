@@ -1,0 +1,125 @@
+{
+  "slice_id": "ACI-S01",
+  "issue_url": "https://github.com/Rynaro/atlas-aci/issues/24",
+  "criteria_sha256": "d0570c2647fcb993176bc789651fa9a92612a33282105443d2798b7335c5c537",
+  "base_commit": "0506243e2e3a495b1a87f7a3efe55b5d511629c0",
+  "output_commit": null,
+  "declared_paths": [
+    "scripts/run-canaries.py",
+    "atlas/evals/*",
+    "mcp-server/tests/slices/test_s01_*.py"
+  ],
+  "output_digests": {},
+  "status": "IN_PROGRESS",
+  "acceptance_results": [
+    {
+      "ac_id": "AC-S01-001",
+      "command": "PYTHONPATH=<worktree>/mcp-server/src <worktree>/mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s01_contract.py -q",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s01/product-tests.log"
+    },
+    {
+      "ac_id": "AC-S01-002",
+      "command": "PYTHONPATH=<worktree>/mcp-server/src <worktree>/mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s01_contract.py -q",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s01/product-tests.log"
+    },
+    {
+      "ac_id": "AC-S01-003",
+      "command": "PYTHONPATH=<worktree>/mcp-server/src <worktree>/mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s01_contract.py -q",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s01/product-tests.log"
+    },
+    {
+      "ac_id": "AC-S01-004",
+      "command": "PYTHONPATH=<worktree>/mcp-server/src <worktree>/mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s01_contract.py -q",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s01/product-tests.log"
+    },
+    {
+      "ac_id": "AC-S01-005",
+      "command": "PYTHONPATH=<worktree>/mcp-server/src <worktree>/mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s01_contract.py -q",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s01/product-tests.log"
+    },
+    {
+      "ac_id": "AC-S01-006",
+      "command": "PYTHONPATH=<worktree>/mcp-server/src <worktree>/mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s01_contract.py -q",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s01/product-tests.log"
+    },
+    {
+      "ac_id": "AC-S01-007",
+      "command": "PYTHONPATH=<worktree>/mcp-server/src <worktree>/mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s01_contract.py -q",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s01/product-tests.log"
+    },
+    {
+      "ac_id": "AC-S01-RUN-02",
+      "command": "ramza-gate status --state .spectra/plans/aci-s01.state.json; ramza-freeze --state .spectra/plans/aci-s01.state.json --criteria .spectra/plans/aci-s01.criteria.md --verify; compare authoritative receipt with interrupted-execution.json on slice_id/criteria_sha256",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s01/interrupted-execution.json"
+    }
+  ],
+  "checks": [
+    {
+      "command": "uv run --frozen pytest -q",
+      "cwd": "mcp-server",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s01/pytest.log"
+    },
+    {
+      "command": "uv run --frozen ruff check src/ tests/ ../scripts/ ../atlas/evals/ --exclude fingerprint-fixture",
+      "cwd": "mcp-server",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s01/lint.log"
+    },
+    {
+      "command": "uv run --frozen ruff format --check src/ tests/ ../scripts/ ../atlas/evals/ --exclude fingerprint-fixture",
+      "cwd": "mcp-server",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s01/format.log"
+    },
+    {
+      "command": "uv run --frozen mypy src/ ../scripts/ ../atlas/evals/",
+      "cwd": "mcp-server",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s01/types.log"
+    },
+    {
+      "command": "bash ../scripts/test-verify-probe-verdict.sh",
+      "cwd": "mcp-server",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s01/probe.log"
+    },
+    {
+      "command": "bash ../scripts/test-harden-gate-classify.sh",
+      "cwd": "mcp-server",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s01/harden.log"
+    },
+    {
+      "command": "bash ../scripts/test-verify-export-size.sh",
+      "cwd": "mcp-server",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s01/export_size.log"
+    },
+    {
+      "command": "uv lock --check",
+      "cwd": "mcp-server",
+      "exit_code": 0,
+      "evidence": "47 packages resolved; lock unchanged"
+    }
+  ],
+  "environment": {
+    "python": "3.12.13",
+    "uv": "0.13.5",
+    "uv_path": "/tmp/aci-s01-tools/bin/uv",
+    "cache": "/tmp/aci-s01-uv-cache",
+    "dependency_source": "uv sync --frozen --extra dev"
+  },
+  "not_run": [
+    "remote Docker read-only smoke",
+    "macOS/Linux export matrix comparison"
+  ]
+}
