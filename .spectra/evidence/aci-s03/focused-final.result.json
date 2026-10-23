@@ -1,0 +1,1 @@
+{"command": "uv run --frozen pytest tests/slices/test_s03_contract.py -q", "exit_code": 0}

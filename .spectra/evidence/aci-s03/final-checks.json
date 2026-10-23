@@ -1,0 +1,83 @@
+[
+  {
+    "name": "lint",
+    "command": "uv run --frozen ruff check src/ tests/ ../scripts/ --exclude fingerprint-fixture",
+    "working_directory": "mcp-server",
+    "exit_code": 0,
+    "evidence": ".spectra/evidence/aci-s03/lint-final.log"
+  },
+  {
+    "name": "format",
+    "command": "uv run --frozen ruff format --check src/ tests/ ../scripts/ --exclude fingerprint-fixture",
+    "working_directory": "mcp-server",
+    "exit_code": 0,
+    "evidence": ".spectra/evidence/aci-s03/format-final.log"
+  },
+  {
+    "name": "types",
+    "command": "uv run --frozen mypy src/ ../scripts/",
+    "working_directory": "mcp-server",
+    "exit_code": 0,
+    "evidence": ".spectra/evidence/aci-s03/types-final.log"
+  },
+  {
+    "name": "lock",
+    "command": "uv lock --check",
+    "working_directory": "mcp-server",
+    "exit_code": 0,
+    "evidence": ".spectra/evidence/aci-s03/lock-final.log"
+  },
+  {
+    "name": "criteria",
+    "command": "/Users/henrique/workspace/oss/agents/atlas-aci/.eidolons/ramza/bin/ramza-freeze --state .spectra/plans/aci-s03.state.json --criteria .spectra/plans/aci-s03.criteria.md --verify",
+    "working_directory": ".",
+    "exit_code": 0,
+    "evidence": ".spectra/evidence/aci-s03/criteria-final.log"
+  },
+  {
+    "name": "plan-lint",
+    "command": "/Users/henrique/workspace/oss/agents/atlas-aci/.eidolons/ramza/bin/ramza-lint --plan .spectra/plans/aci-s03.md --state .spectra/plans/aci-s03.state.json",
+    "working_directory": ".",
+    "exit_code": 0,
+    "evidence": ".spectra/evidence/aci-s03/plan-lint-final.log"
+  },
+  {
+    "name": "ears",
+    "command": "/Users/henrique/workspace/oss/agents/atlas-aci/.eidolons/ramza/bin/ramza-ears-lint --criteria .spectra/plans/aci-s03.criteria.md",
+    "working_directory": ".",
+    "exit_code": 2,
+    "evidence": ".spectra/evidence/aci-s03/ears-final.log"
+  },
+  {
+    "name": "probe-verifier",
+    "command": "mcp-server/.venv/bin/python scripts/verify-probe-verdict.py .spectra/changes/aci-s02-probe/aci-s02-probe-lpa-vs-louvain.json",
+    "working_directory": ".",
+    "exit_code": 0,
+    "evidence": ".spectra/evidence/aci-s03/probe-verifier-final.log"
+  },
+  {
+    "name": "diff",
+    "command": "git diff --check",
+    "working_directory": ".",
+    "exit_code": 0,
+    "evidence": ".spectra/evidence/aci-s03/diff-final.log"
+  },
+  {
+    "name": "ears-corrected",
+    "command": "ramza-ears-lint .spectra/plans/aci-s03.criteria.md",
+    "exit_code": 0,
+    "evidence": ".spectra/evidence/aci-s03/ears-corrected.log"
+  },
+  {
+    "name": "drift",
+    "command": "ramza-drift --state .spectra/plans/aci-s03.state.json --repo /tmp/atlas-aci-aci-s03 --allow '.spectra/evidence/aci-s03/* .spectra/plans/aci-s03* .spectra/state/aci-s03.execution.json'",
+    "exit_code": 0,
+    "evidence": ".spectra/evidence/aci-s03/drift.log"
+  },
+  {
+    "name": "adherence",
+    "command": "ramza-adherence --state .spectra/plans/aci-s03.state.json --min 0.95",
+    "exit_code": 0,
+    "evidence": ".spectra/evidence/aci-s03/adherence.log"
+  }
+]

@@ -1,0 +1,46 @@
+[
+  {
+    "identity": "atlas-s03-code-checker",
+    "verdict": "APPROVE",
+    "source_sha256": "90cf3049060789b1b3e766698d7efea6820ab34e80ebf81f8c2150cfe0d2ba42",
+    "scope": "Corrected product provenance validation, build/import open/schema cleanup, immutable readers/publishers",
+    "observed_commands": [
+      {
+        "command": "pytest tests/slices/test_s03_contract.py::test_incomplete_self_consistent_provenance_is_unavailable tests/slices/test_s03_contract.py::test_empty_repository_and_source_free_empty_import -q",
+        "exit_code": 0,
+        "result": "6 passed in 0.34s"
+      },
+      {
+        "command": "independent real-DB fault recheck script",
+        "exit_code": 0,
+        "result": "Incomplete self-consistent configuration/producer rejected read-only; stage failures cleaned, G1 preserved, retry succeeds"
+      }
+    ],
+    "reported_by": "root independently executing ATLAS review; results delivered by collaboration message"
+  },
+  {
+    "identity": "atlas-s03-final-checker",
+    "verdict": "APPROVE",
+    "source_sha256": "16b580df7ff19ad30451b7d7ef53a4f449cc7738e571bde24bad3fb684571d01",
+    "scope": "Final test/gate and formatting equivalence audit",
+    "observed_commands": [
+      {
+        "command": "Independent concurrent-reader, publisher/import writer-lock, exactly-once cleanup and response-overflow pytest checks",
+        "exit_code": 0,
+        "result": "7 passed in 0.28s"
+      },
+      {
+        "command": "Offline unchanged probe verifier",
+        "exit_code": 0,
+        "result": "computed PASS / recorded PASS, both repositories"
+      },
+      {
+        "command": "bash scripts/test-verify-probe-verdict.sh",
+        "exit_code": 0,
+        "result": "27 PASS lines; final 27 passed, 0 failed"
+      }
+    ],
+    "findings": "Real SQLite/thread-owned barriers, controlled cancellation and staging faults are non-vacuous; no timing sleeps/fake query results. Reconstructed approved source SHA90cf exactly from wrapping; AST equivalent. DDL/epoch/portable graph fingerprint and prior artifacts unchanged. No legacy tests changed.",
+    "reported_by": "root independently executing ATLAS review; results delivered by collaboration message"
+  }
+]

@@ -1,0 +1,14 @@
+usage: ramza-ears-lint FILE
+
+Lints acceptance criteria written in the RAMZA EARS template
+(templates/acceptance-criteria.md). Expected block shape:
+
+  ### AC-001 (event-driven)
+  GIVEN <precondition>
+  WHEN  <trigger>
+  THEN  <single assertion — no " AND ">
+  VERIFY: <mechanical check: test name, command, or gate>
+
+Forms (closed set, ESL 1.1 §2.5): ubiquitous, event-driven, state-driven,
+unwanted-behavior, optional-feature.
+Violations print to stdout (one per line); exit 1 if any, else 0.

@@ -1,0 +1,92 @@
+{
+  "slice_id": "ACI-S03",
+  "issue_url": "https://github.com/Rynaro/atlas-aci/issues/26",
+  "criteria_sha256": "19aa50b06e7bd201094eed9132c7e4e391459a35f917bd89734a142e6888cbbc",
+  "base_commit": "f9e72ed8e3769cec8b7731ec9feb4e945bb8ccb3",
+  "output_commit": null,
+  "declared_paths": [
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/src/atlas_aci/server.py",
+    "mcp-server/tests/slices/test_s03_*.py",
+    "mcp-server/tests/test_schema_epoch.py",
+    "mcp-server/tests/test_codegraph.py",
+    "mcp-server/tests/test_export.py",
+    "mcp-server/tests/test_cli_export_import.py"
+  ],
+  "output_digests": {},
+  "status": "IN_PROGRESS",
+  "acceptance_results": [
+    {
+      "ac_id": "AC-S03-001",
+      "command": "uv run --frozen pytest tests/slices/test_s03_contract.py::test_new_request_new_generation -q",
+      "working_directory": "mcp-server",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s03/test_new_request_new_generation.log"
+      ]
+    },
+    {
+      "ac_id": "AC-S03-002",
+      "command": "uv run --frozen pytest tests/slices/test_s03_contract.py::test_active_request_pinned -q",
+      "working_directory": "mcp-server",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s03/test_active_request_pinned.log"
+      ]
+    },
+    {
+      "ac_id": "AC-S03-003",
+      "command": "uv run --frozen pytest tests/slices/test_s03_contract.py::test_failed_publish -q",
+      "working_directory": "mcp-server",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s03/test_failed_publish.log"
+      ]
+    },
+    {
+      "ac_id": "AC-S03-004",
+      "command": "uv run --frozen pytest tests/slices/test_s03_contract.py::test_same_epoch_replacement -q",
+      "working_directory": "mcp-server",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s03/test_same_epoch_replacement.log"
+      ]
+    },
+    {
+      "ac_id": "AC-S03-005",
+      "command": "uv run --frozen pytest tests/slices/test_s03_contract.py::test_reader_release -q",
+      "working_directory": "mcp-server",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s03/test_reader_release.log"
+      ]
+    },
+    {
+      "ac_id": "AC-S03-006",
+      "command": "uv run --frozen pytest tests/slices/test_s03_contract.py::test_generation_replay -q",
+      "working_directory": "mcp-server",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s03/test_generation_replay.log"
+      ]
+    },
+    {
+      "ac_id": "AC-S03-RUN-02",
+      "command": "python3 .spectra/evidence/aci-s03/verify_resume.py",
+      "working_directory": ".",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s03/interrupted-execution.json",
+        ".spectra/evidence/aci-s03/resume-identity.json"
+      ]
+    }
+  ],
+  "verification_evidence": [
+    ".spectra/evidence/aci-s03/final-checks.json",
+    ".spectra/evidence/aci-s03/full.log",
+    ".spectra/evidence/aci-s03/targeted.log",
+    ".spectra/evidence/aci-s03/probe-selftest.result.json",
+    ".spectra/evidence/aci-s03/vivi-pass2-result.json",
+    ".spectra/evidence/aci-s03/independent-review.json"
+  ]
+}

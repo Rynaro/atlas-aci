@@ -1,0 +1,6 @@
+{
+  "reviewed_sha256": "90cf3049060789b1b3e766698d7efea6820ab34e80ebf81f8c2150cfe0d2ba42",
+  "final_sha256": "16b580df7ff19ad30451b7d7ef53a4f449cc7738e571bde24bad3fb684571d01",
+  "ast_equivalent": true,
+  "change": "Adjacent error-string literal wrapping only; runtime string unchanged."
+}

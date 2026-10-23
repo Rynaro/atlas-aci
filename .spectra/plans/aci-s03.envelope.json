@@ -1,0 +1,50 @@
+{
+  "envelope_version": "2.0",
+  "message_id": "8e8e5a08-c19b-457f-910f-94fd155fc4ca",
+  "thread_id": "1a97534b-2fba-4bf3-99a4-74ad556dc6dc",
+  "parent_id": null,
+  "from": {
+    "eidolon": "ramza",
+    "version": "1.1.0"
+  },
+  "to": {
+    "eidolon": "vivi",
+    "version": "n/a"
+  },
+  "performative": "PROPOSE",
+  "edge_origin": "roster",
+  "objective": "Implement ACI-S03 request-pinned reader leases, canonical generation identity and staged publication with real SQLite lifecycle evidence.",
+  "artifact": {
+    "kind": "spec",
+    "schema_version": "1.0",
+    "path": "aci-s03.md",
+    "sha256": "7f73ee745ebe6acbec415b8a0793115651384acd95c2c78657181bf3dd62bdc0",
+    "size_bytes": 21716
+  },
+  "integrity": {
+    "method": "sha256",
+    "value": "7f73ee745ebe6acbec415b8a0793115651384acd95c2c78657181bf3dd62bdc0"
+  },
+  "trace": {
+    "ts": "2026-10-23T23:41:50.213627+00:00",
+    "host": "codex",
+    "model": "gpt-6-astra",
+    "tier": "standard"
+  },
+  "ise": {
+    "assertion_grade": "validated",
+    "provenance": {
+      "methodology_version": "ramza-1.1.0"
+    },
+    "receiver_authorization": {
+      "auto_route": true,
+      "auto_merge": false,
+      "auto_deploy": false
+    }
+  },
+  "confidence": 0.9125,
+  "x_ramza_acceptance_criteria": {
+    "path": "aci-s03.criteria.md",
+    "sha256": "19aa50b06e7bd201094eed9132c7e4e391459a35f917bd89734a142e6888cbbc"
+  }
+}
