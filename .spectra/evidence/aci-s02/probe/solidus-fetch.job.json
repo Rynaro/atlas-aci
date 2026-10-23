@@ -1,0 +1,19 @@
+{
+  "name": "solidus-fetch",
+  "command": [
+    "git",
+    "fetch",
+    "--depth",
+    "1",
+    "origin",
+    "4026945d614e81383c007ed1ab1278a0195ce5d9"
+  ],
+  "cwd": "/tmp/aci-s02-probe-inputs/solidus",
+  "exit_code": 0,
+  "timed_out": false,
+  "duration_seconds": 1.3935071249943576,
+  "peak_memory_bytes": 8830976,
+  "stdout": ".spectra/evidence/aci-s02/probe/solidus-fetch.stdout.log",
+  "stderr": ".spectra/evidence/aci-s02/probe/solidus-fetch.stderr.log",
+  "source_sha256": "cb13abaf72e673071d1f8d8c5af624bb472a38c8ed57431107145df2c8f10cb7"
+}

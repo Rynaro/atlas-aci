@@ -1,0 +1,42 @@
+{
+  "slice_id": "ACI-S02",
+  "amendment_id": "S02-PATH-03",
+  "authorization": "Explicit orchestrator approval after stale historical probe and obsolete self-test controls were observed",
+  "additional_paths": [
+    "scripts/test-verify-probe-verdict.sh",
+    ".github/workflows/harden-gate.yml",
+    ".spectra/changes/aci-s02-probe/aci-s02-probe-lpa-vs-louvain.md",
+    ".spectra/changes/aci-s02-probe/aci-s02-probe-lpa-vs-louvain.json",
+    ".spectra/changes/aci-s02-probe/probe-graphs.json.gz"
+  ],
+  "evidence_root": ".spectra/evidence/aci-s02/probe/",
+  "historical_evidence_immutable": true,
+  "criteria_changed": false,
+  "limits": {
+    "serial": true,
+    "seconds_per_measurement_job": 600,
+    "seconds_total": 2700
+  },
+  "pins": {
+    "solidus": "4026945d614e81383c007ed1ab1278a0195ce5d9",
+    "spree": "6699cde44303ea85ef6e56c5e87c44a738ab73fc"
+  },
+  "fixed_bar": {
+    "q_struct": 0.3,
+    "r": 0.85,
+    "k": 10,
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "resolution": 1.0
+  }
+}

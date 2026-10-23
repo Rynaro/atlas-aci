@@ -1,0 +1,48 @@
+{
+  "schema": "atlas-aci/lossless-probe-packaging.v1",
+  "original_implementation_commit": "d7aa74ca9b388f477dea44d04551dbb49f1700d6",
+  "compression": {
+    "format": "gzip",
+    "mtime": 0,
+    "filename": "",
+    "compresslevel": 9
+  },
+  "files": [
+    {
+      "logical_path": ".spectra/evidence/aci-s02/probe/solidus-graph.json",
+      "original_git_blob": "dd56e397e835a528bd85aa785514ea273b96b279",
+      "uncompressed_bytes": 271614,
+      "uncompressed_sha256": "363a1adf37fa096a1514f5c7977c6083c421a6bd10b0dbcb0157d6a05e2eefef",
+      "compressed_path": ".spectra/evidence/aci-s02/probe/solidus-graph.json.gz",
+      "compressed_bytes": 30330,
+      "compressed_sha256": "d9fc376cf17ac1c95ed6759740c4c8ea8386ac8300e5e2db67c9e816c02a0dfb"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s02/probe/spree-graph.json",
+      "original_git_blob": "724cf1be9128c0dd71475d7fe8b9c7fce22083d2",
+      "uncompressed_bytes": 852163,
+      "uncompressed_sha256": "5ab7aa762e9b049787afd493d4c464e4b22bed14a1f0f115046f922c146399da",
+      "compressed_path": ".spectra/evidence/aci-s02/probe/spree-graph.json.gz",
+      "compressed_bytes": 81210,
+      "compressed_sha256": "f5d7b22739d8fbfa81535244333f462e6f536f22b99090c51427052c50108e08"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s02/probe/solidus-modularity.stdout.log",
+      "original_git_blob": "28862cf275be901032d3c7965127d4ad1b12780c",
+      "uncompressed_bytes": 224664,
+      "uncompressed_sha256": "a7645bcd7d19c59a710184397b67663ee649b0376d8db81653094e97e1744cac",
+      "compressed_path": ".spectra/evidence/aci-s02/probe/solidus-modularity.stdout.log.gz",
+      "compressed_bytes": 10769,
+      "compressed_sha256": "4246b8ae960a3905eb81cd1827f8551fc33ab485b9436f0d0f612c49fe9c9fa8"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s02/probe/spree-modularity.stdout.log",
+      "original_git_blob": "d15b7ef2ae6105332f52e475aff2a7574dad05f0",
+      "uncompressed_bytes": 682206,
+      "uncompressed_sha256": "5951bba44f12db9972c9989841394e7f8c5b289d9761989d57c1dd0c695fb3b8",
+      "compressed_path": ".spectra/evidence/aci-s02/probe/spree-modularity.stdout.log.gz",
+      "compressed_bytes": 47163,
+      "compressed_sha256": "a1c68df2557fa2ef89699ac8e1155af64e6e488dcf8dc5a1b0060fee94202147"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "checker": "atlas-s02-gate-checker",
+  "verdict": "APPROVE",
+  "git_diff_check_exit_code": 0,
+  "observed": [
+    "Unchanged verifier exit0,computed_verdict=PASS,recorded_verdict=PASS; all three clauses true for both repositories.",
+    "Matched raw graph hashes/counts/pins/clean-source logs,seededQmaps,nodes/edges/LPA labels,and all20Louvainpartitions to raw producer records.",
+    "Verifier,resolver,producers,lock and historicalarchive unchanged."
+  ],
+  "checks": [
+    {
+      "command": "env -u PYTHONPATH PATH=/tmp/aci-s01-tools/bin:$PATH UV_CACHE_DIR=/tmp/aci-s01-uv-cache UV_OFFLINE=1 PYTHONDONTWRITEBYTECODE=1 /bin/bash scripts/test-verify-probe-verdict.sh",
+      "exit_code": 0,
+      "final_marker": "27 passed, 0 failed",
+      "all_controls_executed": true
+    }
+  ],
+  "initial_attempt": {
+    "exit_code": 1,
+    "reason": "Online environment DNS failure; not a pass."
+  },
+  "source": "Independent ATLAS report relayed by orchestrator",
+  "scope": "Final probe/workflow/gate evidence"
+}

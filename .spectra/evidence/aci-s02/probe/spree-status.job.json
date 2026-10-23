@@ -1,0 +1,17 @@
+{
+  "name": "spree-status",
+  "command": [
+    "git",
+    "status",
+    "--porcelain",
+    "--untracked-files=no"
+  ],
+  "cwd": "/tmp/aci-s02-probe-inputs/spree",
+  "exit_code": 0,
+  "timed_out": false,
+  "duration_seconds": 0.07750775000022259,
+  "peak_memory_bytes": 7831552,
+  "stdout": ".spectra/evidence/aci-s02/probe/spree-status.stdout.log",
+  "stderr": ".spectra/evidence/aci-s02/probe/spree-status.stderr.log",
+  "source_sha256": "cb13abaf72e673071d1f8d8c5af624bb472a38c8ed57431107145df2c8f10cb7"
+}

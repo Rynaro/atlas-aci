@@ -1,0 +1,22 @@
+{
+  "slice_id": "ACI-S02",
+  "amendment_id": "S02-PATH-02",
+  "authorization": "Orchestrator approved narrow compatibility fixture correction after observed failures",
+  "additional_paths": [
+    "mcp-server/tests/test_server.py",
+    "mcp-server/tests/test_communities.py"
+  ],
+  "evidence": ".spectra/evidence/aci-s02/full.log",
+  "reason": "Existing bounds and analysis tests used cross-owner bare calls or constant-to-instance methods; restore valid owned candidates without weakening cardinality/ambiguity assertions.",
+  "allowed_tests": {
+    "test_server.py": [
+      "test_graph_query_is_bounded",
+      "test_callers_of_at_sql_limit_boundary_are_not_silently_swallowed"
+    ],
+    "test_communities.py": [
+      "test_analysis_basis_fields_present_for_communities",
+      "test_ambiguous_edges_never_join_a_community"
+    ]
+  },
+  "criteria_changed": false
+}

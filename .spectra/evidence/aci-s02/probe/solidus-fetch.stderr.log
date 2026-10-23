@@ -1,0 +1,20 @@
+From https://github.com/solidusio/solidus
+ * branch            4026945d614e81383c007ed1ab1278a0195ce5d9 -> FETCH_HEAD
+        1.38 real         0.14 user         0.07 sys
+             8830976  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+                4163  page reclaims
+                 296  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                  17  messages sent
+                2943  messages received
+                   0  signals received
+                2367  voluntary context switches
+                2393  involuntary context switches
+           118987809  instructions retired
+            63644472  cycles elapsed
+             2621752  peak memory footprint

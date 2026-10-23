@@ -1,0 +1,21 @@
+{"edges": [{"candidates": null, "confidence": "EXTRACTED", "relation": "call", "source": {"kind": "function", "line": 8, "name": "request", "path": "example.py"}, "target": {"line": 5, "name": "close", "path": "example.py"}}], "unresolved_refs": 0}
+F
+=================================== FAILURES ===================================
+___________________________ test_unrelated_receiver ____________________________
+
+tmp_path = PosixPath('/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-23/test_unrelated_receiver0')
+
+    def test_unrelated_receiver(tmp_path: Path) -> None:
+        graph = index(tmp_path, {'example.py': 'class Widget:\n    pass\nclass Other:\n    @staticmethod\n    def close():\n        pass\ndef request():\n    Widget.close()\n'})
+        result = graph.query('callers_of:close')
+        print(json.dumps(result, sort_keys=True))
+>       assert result['edges'] == []
+E       AssertionError: assert [{'candidates...le.py'}, ...}] == []
+E
+E         Left contains one more item: {'candidates': None, 'confidence': 'EXTRACTED', 'relation': 'call', 'source': {'kind': 'function', 'line': 8, 'name': 'request', 'path': 'example.py'}, ...}
+E         Use -v to get more diff
+
+mcp-server/tests/slices/test_s02_contract.py:26: AssertionError
+=========================== short test summary info ============================
+FAILED mcp-server/tests/slices/test_s02_contract.py::test_unrelated_receiver
+1 failed in 0.03s

@@ -1,0 +1,19 @@
+{
+  "checker": "atlas-s02-test-checker",
+  "verdict": "APPROVE",
+  "observed": "3 independently selected legacy regressions passed in0.47s; git diff --check0.",
+  "tests": [
+    "test_ambiguous_edges_never_join_a_community",
+    "test_callers_of_at_sql_limit_boundary_are_not_silently_swallowed",
+    "test_import_rejects_ambiguous_edge_candidate_path_escape"
+  ],
+  "findings": [
+    "All three confidence tiers and exact ordered candidates remain exercised.",
+    "SQL limits/overflow counts unchanged.",
+    "Community ambiguity is proved non-vacuously before exclusion; analysis counts remain 3 resolved and1 ambiguous.",
+    "Export escape fixture proves two candidates and still rejects forged path.",
+    "No actual test_schema_epoch diff."
+  ],
+  "scope": "Final legacy test corrections only; excludes pending probe/workflow verification",
+  "source": "Independent ATLAS report relayed by orchestrator"
+}

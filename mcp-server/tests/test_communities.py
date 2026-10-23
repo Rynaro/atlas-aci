@@ -72,12 +72,13 @@ def test_ambiguous_edges_never_join_a_community(tmp_path: Path) -> None:
     fused into a community through the ambiguous reference either."""
     repo = tmp_path / "repo"
     repo.mkdir()
-    _write(repo, "app/dup_a.rb", "class DupA\n  def dup_name\n  end\nend\n")
-    _write(repo, "app/dup_b.rb", "class DupB\n  def dup_name\n  end\nend\n")
+    _write(repo, "app/dup_a.rb", "class Hub\n  def dup_name\n  end\nend\n")
+    _write(repo, "app/dup_b.rb", "class Hub\n  def dup_name\n  end\nend\n")
     _write(repo, "app/hub.rb", "class Hub\n  def call\n    dup_name()\n  end\nend\n")
     graph = CodeGraph(repo=repo)
     graph.build()
 
+    assert graph.callers_of("dup_name")[0]["confidence"] == "AMBIGUOUS"
     result = graph.communities()
     names = {m["name"] for m in result["communities"]}
     assert "dup_name" not in names
@@ -191,8 +192,8 @@ async def test_analysis_basis_fields_present_for_communities(tmp_path: Path) -> 
         "  def a2\n    a3()\n  end\n"
         "  def a3\n  end\nend\n",
     )
-    _write(repo, "app/dup_a.rb", "class DupA\n  def dup_name\n  end\nend\n")
-    _write(repo, "app/dup_b.rb", "class DupB\n  def dup_name\n  end\nend\n")
+    _write(repo, "app/dup_a.rb", "class Hub\n  def dup_name\n  end\nend\n")
+    _write(repo, "app/dup_b.rb", "class Hub\n  def dup_name\n  end\nend\n")
     _write(repo, "app/hub.rb", "class Hub\n  def call\n    dup_name()\n  end\nend\n")
     code_graph = CodeGraph(repo=repo)
     code_graph.build()

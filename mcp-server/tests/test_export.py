@@ -584,11 +584,12 @@ def test_import_rejects_ambiguous_edge_candidate_path_escape(tmp_path: Path) -> 
     top-level field."""
     repo = tmp_path / "repo"
     repo.mkdir()
-    _write(repo, "app/a.rb", "def dup_name(x)\nend\n")
-    _write(repo, "app/b.rb", "def dup_name(x)\nend\n")
-    _write(repo, "app/caller.rb", "class Caller\n  def call\n    dup_name(1)\n  end\nend\n")
+    _write(repo, "app/a.rb", "class Hub\n def dup_name(x)\n end\nend\n")
+    _write(repo, "app/b.rb", "class Hub\n def dup_name(x)\n end\nend\n")
+    _write(repo, "app/caller.rb", "class Hub\n  def call\n    dup_name(1)\n  end\nend\n")
     graph = CodeGraph(repo=repo)
     graph.build()
+    assert len(graph.callers_of("dup_name")[0]["candidates"]) == 2
     real_export = tmp_path / "export.jsonl"
     graph.export_jsonl(real_export)
 

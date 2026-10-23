@@ -1,0 +1,17 @@
+{
+  "name": "spree-checkout",
+  "command": [
+    "git",
+    "checkout",
+    "--detach",
+    "FETCH_HEAD"
+  ],
+  "cwd": "/tmp/aci-s02-probe-inputs/spree",
+  "exit_code": 0,
+  "timed_out": false,
+  "duration_seconds": 0.39123716700123623,
+  "peak_memory_bytes": 13484032,
+  "stdout": ".spectra/evidence/aci-s02/probe/spree-checkout.stdout.log",
+  "stderr": ".spectra/evidence/aci-s02/probe/spree-checkout.stderr.log",
+  "source_sha256": "cb13abaf72e673071d1f8d8c5af624bb472a38c8ed57431107145df2c8f10cb7"
+}

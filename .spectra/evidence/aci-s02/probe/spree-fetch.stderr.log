@@ -1,0 +1,20 @@
+From https://github.com/spree/spree
+ * branch            6699cde44303ea85ef6e56c5e87c44a738ab73fc -> FETCH_HEAD
+        6.99 real         2.10 user         0.66 sys
+            13631488  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+                4648  page reclaims
+                  85  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                  32  messages sent
+               25444  messages received
+                   0  signals received
+               17395  voluntary context switches
+                2661  involuntary context switches
+           286094917  instructions retired
+           186990630  cycles elapsed
+             2720056  peak memory footprint

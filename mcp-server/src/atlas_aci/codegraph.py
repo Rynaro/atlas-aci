@@ -311,7 +311,7 @@ assert set(LANG_BY_EXT.values()) <= set(QUERIES) | UNSUPPORTED_LANGS, (
 #
 # Recompute via:
 #   python -c "from atlas_aci.codegraph import SCHEMA, ddl_hash; print(ddl_hash(SCHEMA))"
-SCHEMA_EPOCH = 5
+SCHEMA_EPOCH = 6
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS symbols (
@@ -321,7 +321,8 @@ CREATE TABLE IF NOT EXISTS symbols (
     path        TEXT NOT NULL,
     line_start  INTEGER NOT NULL,
     line_end    INTEGER NOT NULL,
-    lang        TEXT NOT NULL
+    lang        TEXT NOT NULL,
+    binding     TEXT NOT NULL DEFAULT '{}'
 );
 CREATE INDEX IF NOT EXISTS idx_symbols_name ON symbols(name);
 CREATE INDEX IF NOT EXISTS idx_symbols_path ON symbols(path);
@@ -360,7 +361,9 @@ CREATE TABLE IF NOT EXISTS refs (
     path           TEXT NOT NULL,
     line           INTEGER NOT NULL,
     col            INTEGER NOT NULL DEFAULT 0,
-    lang           TEXT NOT NULL
+    lang           TEXT NOT NULL,
+    binding        TEXT NOT NULL DEFAULT '{}',
+    unresolved_reason TEXT
 );
 CREATE INDEX IF NOT EXISTS idx_refs_callee ON refs(callee_name);
 
@@ -465,7 +468,10 @@ CREATE TABLE IF NOT EXISTS files (
 -- graph_query directly.
 CREATE TABLE IF NOT EXISTS assignment_targets (
     path TEXT NOT NULL,
-    name TEXT NOT NULL
+    name TEXT NOT NULL,
+    scope TEXT NOT NULL DEFAULT 'root',
+    binding_kind TEXT NOT NULL DEFAULT 'assignment',
+    byte_start INTEGER NOT NULL DEFAULT 0
 );
 CREATE INDEX IF NOT EXISTS idx_assignment_targets_path_name ON assignment_targets(path, name);
 """
@@ -478,7 +484,7 @@ def ddl_hash(ddl: str) -> str:
 
 # Hand-maintained — see the SCHEMA_EPOCH docstring above. Do NOT replace this
 # with `ddl_hash(SCHEMA)`; that would make the pairing test a tautology.
-EXPECTED_DDL_HASH = "d08bb7e7d889ed81088b38043f4e883d20f4d4f8d5e1aa3c268698d08c349a50"
+EXPECTED_DDL_HASH = "52f933ea7a2a38074fb436d473b2caedb1e8b439584483077896e0e92ea622c3"
 
 
 def parse_query_verb(dsl: str) -> str:
@@ -607,6 +613,7 @@ class Symbol:
     line_start: int
     line_end: int
     lang: str
+    binding: str = "{}"
 
 
 @dataclass
@@ -644,6 +651,7 @@ class Reference:
     relation: str = "call"
     qualified: bool = False
     qualifier_name: str | None = None
+    binding: str = "{}"
 
 
 @dataclass
@@ -1002,22 +1010,23 @@ class CodeGraph:
             symbols, refs, assignment_targets, rationale_comments = self._extract(
                 tree, source, rel, lang
             )
-            for target_name in assignment_targets:
+            for target_name, scope, binding_kind, byte_start in assignment_targets:
                 conn.execute(
-                    "INSERT INTO assignment_targets(path, name) VALUES (?, ?)",
-                    (rel, target_name),
+                    "INSERT INTO assignment_targets(path, name, scope, binding_kind, byte_start) "
+                    "VALUES (?, ?, ?, ?, ?)",
+                    (rel, target_name, scope, binding_kind, byte_start),
                 )
             for s in symbols:
                 conn.execute(
-                    "INSERT INTO symbols(name, kind, path, line_start, line_end, lang) "
-                    "VALUES (?, ?, ?, ?, ?, ?)",
-                    (s.name, s.kind, s.path, s.line_start, s.line_end, s.lang),
+                    "INSERT INTO symbols(name, kind, path, line_start, line_end, lang, binding) "
+                    "VALUES (?, ?, ?, ?, ?, ?, ?)",
+                    (s.name, s.kind, s.path, s.line_start, s.line_end, s.lang, s.binding),
                 )
                 symbols_added += 1
             for r in refs:
                 conn.execute(
                     "INSERT INTO refs(callee_name, relation, qualified, qualifier_name, "
-                    "path, line, col, lang) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                    "path, line, col, lang, binding) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     (
                         r.callee_name,
                         r.relation,
@@ -1027,6 +1036,7 @@ class CodeGraph:
                         r.line,
                         r.col,
                         r.lang,
+                        r.binding,
                     ),
                 )
                 refs_added += 1
@@ -1157,7 +1167,9 @@ class CodeGraph:
 
     def _extract(
         self, tree, source: bytes, rel_path: str, lang: str
-    ) -> tuple[list[Symbol], list[Reference], list[str], list[RationaleComment]]:
+    ) -> tuple[
+        list[Symbol], list[Reference], list[tuple[str, str, str, int]], list[RationaleComment]
+    ]:
         """Run the language-specific Tree-sitter query and pull out defs +
         refs + assignment targets + rationale comments.
 
@@ -1188,7 +1200,6 @@ class CodeGraph:
 
         symbols: list[Symbol] = []
         refs: list[Reference] = []
-        assignment_targets: list[str] = []
         rationale_comments: list[RationaleComment] = []
 
         # Each match arrives as (pattern_index, {capture_name: [nodes]}).
@@ -1213,6 +1224,7 @@ class CodeGraph:
                         line_start=def_node.start_point[0] + 1,
                         line_end=def_node.end_point[0] + 1,
                         lang=lang,
+                        binding=self._symbol_binding(lang, source, def_node, rel_path),
                     )
                 )
             elif heritage_cap is not None:
@@ -1242,13 +1254,13 @@ class CodeGraph:
                             col=node.start_point[1],
                             relation=relation,
                             qualified=True,
+                            binding=json.dumps(
+                                self._binding_context(lang, source, node, rel_path), sort_keys=True
+                            ),
                         )
                     )
             elif assign_cap is not None:
-                for node in caps[assign_cap]:
-                    name = self._node_text(source, node).strip()
-                    if name:
-                        assignment_targets.append(name)
+                continue  # structural blockers below include parameters/imports too
             elif comment_cap is not None:
                 # A4/D5: every `comment`-kind node arrives here; most are
                 # NOT rationale comments (ordinary prose) and are silently
@@ -1285,10 +1297,500 @@ class CodeGraph:
                             relation="call",
                             qualified=qualified,
                             qualifier_name=qualifier_name,
+                            binding=json.dumps(
+                                {
+                                    **self._binding_context(lang, source, node, rel_path),
+                                    "receiver": self._node_text(source, caps["receiver"][0]).strip()
+                                    if caps.get("receiver")
+                                    else None,
+                                },
+                                sort_keys=True,
+                            ),
                         )
                     )
 
-        return symbols, refs, assignment_targets, rationale_comments
+        return (
+            symbols,
+            refs,
+            self._binding_blockers(tree.root_node, source, lang, rel_path),
+            rationale_comments,
+        )
+
+    @staticmethod
+    def _scope_key(node, rel_path: str, lang: str) -> str:
+        return f"{lang}:{rel_path}:{node.type}:{node.start_byte}:{node.end_byte}"
+
+    @staticmethod
+    def _ancestors(node) -> list[Any]:
+        result = []
+        while node is not None:
+            result.append(node)
+            node = node.parent
+        return result
+
+    @staticmethod
+    def _scope_nodes(node, lang: str) -> list[Any]:
+        kinds = {
+            "python": {"function_definition", "class_definition", "lambda"},
+            "ruby": {
+                "method",
+                "singleton_method",
+                "class",
+                "module",
+                "singleton_class",
+                "block",
+                "do_block",
+            },
+            "javascript": {
+                "function_declaration",
+                "function_expression",
+                "arrow_function",
+                "method_definition",
+                "class_declaration",
+                "statement_block",
+                "catch_clause",
+                "for_statement",
+                "for_in_statement",
+            },
+            "typescript": {
+                "function_declaration",
+                "function_expression",
+                "arrow_function",
+                "method_definition",
+                "class_declaration",
+                "statement_block",
+                "catch_clause",
+                "for_statement",
+                "for_in_statement",
+            },
+        }.get(lang, set())
+        result = []
+        function_seen = False
+        for ancestor in CodeGraph._ancestors(node):
+            if ancestor.type not in kinds:
+                continue
+            if lang == "python" and ancestor.type == "class_definition" and function_seen:
+                continue  # a method/closure never inherits the class-body namespace
+            result.append(ancestor)
+            if ancestor.type in {"function_definition", "lambda"}:
+                function_seen = True
+        return result
+
+    @staticmethod
+    def _binding_context(
+        lang: str, source: bytes, node, rel_path: str, *, declaration: bool = False
+    ) -> dict[str, Any]:
+        ancestors = CodeGraph._ancestors(node.parent if declaration else node)
+        scopes = CodeGraph._scope_nodes(node.parent if declaration else node, lang)
+        classes = [
+            n
+            for n in ancestors
+            if n.type in {"class", "module", "class_definition", "class_declaration"}
+        ]
+        owner = None
+        namespace = "::".join(
+            CodeGraph._node_text(source, n.child_by_field_name("name"))
+            for n in reversed(classes)
+            if n.child_by_field_name("name") is not None
+        )
+        if classes:
+            owner = (
+                "ruby:" + namespace
+                if lang == "ruby"
+                else CodeGraph._scope_key(classes[0], rel_path, lang)
+            )
+        functions = [
+            n
+            for n in ancestors
+            if n.type
+            in {
+                "function_definition",
+                "function_declaration",
+                "function_expression",
+                "arrow_function",
+                "method_definition",
+                "method",
+                "singleton_method",
+            }
+        ]
+        method = None
+        for fn in functions:
+            parents = CodeGraph._ancestors(fn.parent)
+            # Python decorated_definition and class-body block are transparent.
+            container = next(
+                (
+                    p
+                    for p in parents
+                    if p.type
+                    in {
+                        "class",
+                        "module",
+                        "class_definition",
+                        "class_declaration",
+                        "function_definition",
+                        "function_declaration",
+                        "method",
+                        "method_definition",
+                        "singleton_method",
+                    }
+                ),
+                None,
+            )
+            if container is not None and container.type in {
+                "class",
+                "module",
+                "class_definition",
+                "class_declaration",
+            }:
+                method = fn
+                break
+        category = "static" if lang == "ruby" and owner else "free"
+        self_name = self_scope = None
+        if method is not None:
+            category = "instance"
+            if lang == "ruby":
+                if method.type == "singleton_method" or any(
+                    n.type == "singleton_class"
+                    for n in CodeGraph._ancestors(method.parent)
+                    if not classes or n.start_byte >= classes[0].start_byte
+                ):
+                    category = "static"
+            elif lang in {"javascript", "typescript"}:
+                if any(c.type == "static" for c in method.children):
+                    category = "static"
+                if any(c.type in {"get", "set"} for c in method.children):
+                    category = "unknown"
+            elif lang == "python":
+                if method.parent is not None and method.parent.type == "decorated_definition":
+                    decorators = [
+                        CodeGraph._node_text(source, c).lstrip("@").strip()
+                        for c in method.parent.named_children
+                        if c.type == "decorator"
+                    ]
+                    category = dict(staticmethod="static", classmethod="class").get(
+                        decorators[0] if len(decorators) == 1 else "", "unknown"
+                    )
+                params = method.child_by_field_name("parameters")
+                if (
+                    category == "instance"
+                    and params is not None
+                    and params.named_children
+                    and params.named_children[0].type == "identifier"
+                ):
+                    self_name = CodeGraph._node_text(source, params.named_children[0])
+                    self_scope = CodeGraph._scope_key(method, rel_path, lang)
+        source_node = next(
+            (
+                n
+                for n in ancestors
+                if n.type
+                in {
+                    "class",
+                    "module",
+                    "class_definition",
+                    "class_declaration",
+                    "function_definition",
+                    "function_declaration",
+                    "method_definition",
+                    "method",
+                    "singleton_method",
+                }
+            ),
+            None,
+        )
+        source_name = source_kind = None
+        if source_node is not None:
+            name = source_node.child_by_field_name("name")
+            source_name = CodeGraph._node_text(source, name) if name is not None else None
+            source_kind = (
+                "class"
+                if source_node.type in {"class", "class_definition", "class_declaration"}
+                else "module"
+                if source_node.type == "module"
+                else "method"
+                if source_node.type in {"method", "singleton_method", "method_definition"}
+                else "function"
+            )
+        return {
+            "scope": CodeGraph._scope_key(scopes[0], rel_path, lang)
+            if scopes
+            else f"{lang}:{rel_path}:root",
+            "scopes": [CodeGraph._scope_key(n, rel_path, lang) for n in scopes]
+            + [f"{lang}:{rel_path}:root"],
+            "identity": CodeGraph._scope_key(node, rel_path, lang),
+            "byte": node.start_byte,
+            "owner": owner,
+            "namespace": namespace,
+            "category": category,
+            "self_name": self_name,
+            "self_scope": self_scope,
+            "this_allowed": method is not None
+            and all(fn.type == "arrow_function" for fn in functions[: functions.index(method)]),
+            "source_name": source_name,
+            "source_kind": source_kind,
+            "receiver": CodeGraph._node_text(source, node.parent.child_by_field_name("object"))
+            if lang == "python"
+            and node.parent is not None
+            and node.parent.type == "attribute"
+            and node.parent.child_by_field_name("attribute") == node
+            else None,
+            "unsupported": any(
+                n.type
+                in {
+                    "list_comprehension",
+                    "dictionary_comprehension",
+                    "set_comprehension",
+                    "generator_expression",
+                    "lambda",
+                    "singleton_class",
+                }
+                for n in ancestors
+            ),
+        }
+
+    @staticmethod
+    def _symbol_binding(lang: str, source: bytes, node, rel_path: str) -> str:
+        result = CodeGraph._binding_context(lang, source, node, rel_path, declaration=True)
+        # The declaration's method category is its own, not its enclosing method.
+        own = CodeGraph._binding_context(lang, source, node, rel_path)
+        result["category"] = own["category"]
+        if node.type in {"class", "module", "class_definition", "class_declaration"}:
+            result["category"] = "class"
+            result["namespace"] = "::".join(
+                filter(
+                    None,
+                    [
+                        result["namespace"],
+                        CodeGraph._node_text(source, node.child_by_field_name("name")),
+                    ],
+                )
+            )
+        if node.type in {"function_definition", "function_declaration", "function_expression"}:
+            container = next(
+                (
+                    n
+                    for n in CodeGraph._ancestors(node.parent)
+                    if n.type
+                    in {
+                        "class_definition",
+                        "class_declaration",
+                        "function_definition",
+                        "function_declaration",
+                        "method_definition",
+                    }
+                ),
+                None,
+            )
+            if container is None or container.type not in {"class_definition", "class_declaration"}:
+                result["owner"] = None
+                result["category"] = "free"
+        if node.type == "singleton_method":
+            receiver = node.child_by_field_name("object")
+            if receiver is not None and receiver.type == "constant":
+                result["owner"] = "ruby:" + CodeGraph._node_text(source, receiver)
+            elif receiver is None or receiver.type != "self":
+                result["category"] = "unknown"
+        if (
+            lang == "python"
+            and node.parent is not None
+            and node.parent.type == "decorated_definition"
+            and own["category"] == "free"
+        ):
+            result["category"] = "unknown"
+        return json.dumps(result, sort_keys=True)
+
+    @staticmethod
+    def _binding_blockers(
+        root, source: bytes, lang: str, rel_path: str
+    ) -> list[tuple[str, str, str, int]]:
+        """Small structural blocker set, never a type or import resolver."""
+        if lang not in {"python", "ruby", "javascript", "typescript"}:
+            return []
+        result = []
+        stack = [root]
+        while stack:
+            node = stack.pop()
+            stack.extend(reversed(node.named_children))
+            kind = None
+            targets = []
+            scope_node = node
+            if node.type in {
+                "parameters",
+                "formal_parameters",
+                "method_parameters",
+                "lambda_parameters",
+            }:
+                kind = "parameter"
+                targets = list(node.named_children)
+            elif node.type in {
+                "assignment",
+                "assignment_expression",
+                "augmented_assignment",
+                "named_expression",
+            }:
+                kind = "assignment"
+                left = node.child_by_field_name("left") or node.child_by_field_name("name")
+                targets = [left] if left is not None else []
+            elif lang == "python" and node.type == "for_statement":
+                kind = "assignment"
+                target = node.child_by_field_name("left")
+                targets = [target] if target is not None else []
+            elif lang == "python" and node.type == "as_pattern":
+                kind = "assignment"
+                target = node.child_by_field_name("alias")
+                targets = [target] if target is not None else []
+            elif lang == "python" and node.type == "delete_statement":
+                kind = "unsupported"
+                targets = list(node.named_children)
+            elif lang in {"javascript", "typescript"} and node.type == "for_in_statement":
+                kind = "assignment"
+                target = node.child_by_field_name("left")
+                targets = [target] if target is not None else []
+                if not any(c.type in {"let", "const"} for c in node.children):
+                    scope_node = next(
+                        (
+                            p
+                            for p in CodeGraph._ancestors(node)
+                            if p.type
+                            in {
+                                "function_declaration",
+                                "function_expression",
+                                "arrow_function",
+                                "method_definition",
+                            }
+                        ),
+                        root,
+                    )
+            elif node.type == "catch_clause":
+                kind = "parameter"
+                target = node.child_by_field_name("parameter")
+                targets = [target] if target is not None else []
+            elif node.type == "variable_declarator":
+                kind = "assignment"
+                target = node.child_by_field_name("name")
+                targets = [target] if target is not None else []
+                if node.parent is not None and node.parent.type == "variable_declaration":
+                    scope_node = next(
+                        (
+                            p
+                            for p in CodeGraph._ancestors(node)
+                            if p.type
+                            in {
+                                "function_declaration",
+                                "function_expression",
+                                "arrow_function",
+                                "method_definition",
+                            }
+                        ),
+                        root,
+                    )
+            elif node.type in {"global_statement", "nonlocal_statement"}:
+                kind = "unsupported"
+                targets = list(node.named_children)
+            elif node.type in {"import_statement", "import_from_statement"}:
+                kind = "import"
+                if lang == "python":
+                    for child in node.named_children:
+                        if child == node.child_by_field_name("module_name"):
+                            continue
+                        if child.type == "aliased_import":
+                            target = child.child_by_field_name("alias")
+                            if target is not None:
+                                targets.append(target)
+                        elif child.type == "dotted_name":
+                            targets.extend(child.named_children[:1])
+                        elif child.type == "wildcard_import":
+                            scopes = CodeGraph._scope_nodes(node, lang)
+                            scope = (
+                                CodeGraph._scope_key(scopes[0], rel_path, lang)
+                                if scopes
+                                else f"{lang}:{rel_path}:root"
+                            )
+                            result.append(("*", scope, "unsupported", node.start_byte))
+                else:
+                    clause = next(
+                        (c for c in node.named_children if c.type == "import_clause"), None
+                    )
+                    if clause is not None:
+                        pending = list(clause.named_children)
+                        while pending:
+                            child = pending.pop()
+                            if child.type == "import_specifier":
+                                target = child.child_by_field_name(
+                                    "alias"
+                                ) or child.child_by_field_name("name")
+                                if target is not None:
+                                    targets.append(target)
+                            elif child.type == "identifier":
+                                targets.append(child)
+                            else:
+                                pending.extend(child.named_children)
+            if kind is None:
+                continue
+            scopes = CodeGraph._scope_nodes(scope_node, lang)
+            scope = (
+                CodeGraph._scope_key(scopes[0], rel_path, lang)
+                if scopes
+                else f"{lang}:{rel_path}:root"
+            )
+            pending = list(targets)
+            while pending:
+                target = pending.pop()
+                if target.type in {
+                    "identifier",
+                    "constant",
+                    "shorthand_property_identifier_pattern",
+                }:
+                    result.append(
+                        (CodeGraph._node_text(source, target), scope, kind, target.start_byte)
+                    )
+                elif target.type in {
+                    "default_parameter",
+                    "typed_parameter",
+                    "typed_default_parameter",
+                    "optional_parameter",
+                    "required_parameter",
+                }:
+                    name = target.child_by_field_name("name") or target.child_by_field_name(
+                        "pattern"
+                    )
+                    if name is None:
+                        name = next(
+                            (c for c in target.named_children if c.type == "identifier"), None
+                        )
+                    if name is not None:
+                        pending.append(name)
+                elif target.type in {
+                    "tuple_pattern",
+                    "as_pattern_target",
+                    "pattern_list",
+                    "list_pattern",
+                    "list_splat_pattern",
+                    "dictionary_splat_pattern",
+                    "rest_pattern",
+                    "array_pattern",
+                    "object_pattern",
+                    "pair_pattern",
+                }:
+                    pending.extend(target.named_children)
+                elif target.type == "assignment_pattern":
+                    left = target.child_by_field_name("left")
+                    if left is not None:
+                        pending.append(left)
+                elif target.type not in {
+                    "attribute",
+                    "member_expression",
+                    "subscript",
+                    "subscript_expression",
+                    "element_reference",
+                    "instance_variable",
+                    "class_variable",
+                    "global_variable",
+                }:
+                    # Unknown binding patterns invalidate this scope instead of
+                    # silently borrowing a convenient outer declaration.
+                    result.append(("*", scope, "unsupported", target.start_byte))
+        return sorted(set(result))
 
     @staticmethod
     def _call_qualification(
@@ -1329,7 +1831,9 @@ class CodeGraph:
         if lang == "ruby":
             if not receiver_nodes:
                 return False, None
-            return receiver_nodes[0].type in ("constant", "scope_resolution"), None
+            return receiver_nodes[0].type in ("constant", "scope_resolution"), CodeGraph._node_text(
+                source, receiver_nodes[0]
+            ).strip()
 
         if receiver_nodes:
             qualifier_name = CodeGraph._node_text(source, receiver_nodes[0]).strip()
@@ -1347,140 +1851,178 @@ class CodeGraph:
     # ---- Edge resolution (A1/D4/G-B) ----
 
     def _resolve_edges(self, conn: sqlite3.Connection) -> int:
-        """Materialize the v2 call/inheritance edge table from the raw
-        `refs` + `symbols` relations `_run_build` just brought up to date.
-
-        Always a full recompute (`DELETE FROM edges` then re-derive): the DB
-        is pure derived data (G-A), and candidate resolution is inherently
-        *global* — a single changed file cannot know its own candidate
-        count without seeing every other file's symbols — so incrementally
-        patching `edges` per changed file would either be wrong or require
-        tracking a full dependency graph. Recomputing this cheap, SQL-only
-        pass from the already-correct `refs`/`symbols` tables is both
-        simpler and correct by construction, on every build call (full or
-        `--since`).
-
-        Partitions strictly on candidate count (D4), never an LLM path
-        (AC-NEG-3):
-          - 0 candidates -> no edge; the reference stays an unresolved name
-            in `refs` (AC-A1-6).
-          - 1 candidate  -> EXTRACTED if the reference was type-qualified,
-            else INFERRED.
-          - >1 candidates -> AMBIGUOUS, with the full ordered `candidates[]`
-            attached (AC-A1-5) — never dropped, unlike graphify's silent
-            edge-drop guard.
-        Candidate rows (and therefore `candidates[]`) are always fetched
-        `ORDER BY path, line_start, name` — a fixed total order for
-        identical input (AC-A1-8), independent of SQLite rowid/insertion
-        order (D6 foundation).
-
-        Qualification (checker finding, MAJOR): for a Ruby ref, `qualified`
-        is already the final answer (a structural grammar fact set at
-        extraction time — see `_call_qualification`). For a Python/JS/TS
-        ref, `qualifier_name` names a symbol to resolve *now*, against the
-        symbol table that only fully exists at this point in the build: is
-        it a known `class`/`module`? That resolution — not capitalization —
-        decides EXTRACTED vs INFERRED for those two languages.
-
-        Constructor calls (checker finding, BLOCKER): a `call`-relation
-        reference resolves against callable *and* class/module candidates
-        (`_CALL_CANDIDATE_KINDS`) — a bare `Foo(...)`/`new Foo()` naming a
-        local class was previously invisible (0 candidates against a
-        callable-only kind filter). When every matched candidate is a
-        class/module, the edge is relabeled `relation='construct'` — a
-        semantically distinct edge, never silently reused as `'call'`.
+        """Filter structural applicability before assigning confidence. No global
+        name fallback is permitted for the scoped programming languages.
         """
         conn.execute("DELETE FROM edges")
+        conn.execute("UPDATE refs SET unresolved_reason = NULL")
+        symbols: dict[tuple[str, str], list[dict[str, Any]]] = {}
+        for row in conn.execute("SELECT * FROM symbols ORDER BY path, line_start, name, id"):
+            item = dict(row)
+            item["context"] = json.loads(item["binding"])
+            symbols.setdefault((item["lang"], item["name"]), []).append(item)
+        blockers: dict[tuple[str, str, str], list[str]] = {}
+        for row in conn.execute(
+            "SELECT * FROM assignment_targets ORDER BY path, scope, name, byte_start"
+        ):
+            blockers.setdefault((row["path"], row["scope"], row["name"]), []).append(
+                row["binding_kind"]
+            )
+
+        def visible(ref, context, name):
+            for scope in context.get("scopes", ["root"]):
+                hits = blockers.get((ref["path"], scope, name), [])
+                if blockers.get((ref["path"], scope, "*")):
+                    return [], "unsupported_scope"
+                if hits:
+                    return (
+                        [],
+                        "unknown_import_alias"
+                        if "import" in hits
+                        else "unsupported_scope"
+                        if "unsupported" in hits
+                        else "shadowed_noncallable",
+                    )
+                found = [
+                    c
+                    for c in symbols.get((ref["lang"], name), [])
+                    if c["path"] == ref["path"]
+                    and c["context"].get("scope") == scope
+                    and not (ref["lang"] in {"javascript", "typescript"} and c["kind"] == "method")
+                ]
+                if found:
+                    if any(c["context"].get("category") == "unknown" for c in found):
+                        return [], "unsupported_scope"
+                    if ref["lang"] in {"javascript", "typescript"} and any(
+                        c["kind"] == "class"
+                        and c["context"].get("byte", 0) > context.get("byte", 0)
+                        for c in found
+                    ):
+                        return [], "unsupported_scope"
+                    return found, None
+            return [], "no_visible_target"
+
+        def ruby_classes(ref, context, name):
+            for scope in context.get("scopes", ["root"]):
+                if blockers.get((ref["path"], scope, name)):
+                    return [], "shadowed_noncallable"
+            parts = context.get("namespace", "").split("::") if context.get("namespace") else []
+            namespaces = ["::".join(parts[:i]) for i in range(len(parts), -1, -1)]
+            for namespace in namespaces:
+                full = (
+                    name.lstrip(":") if "::" in name else "::".join(filter(None, [namespace, name]))
+                )
+                found = [
+                    c
+                    for c in symbols.get(("ruby", name.split("::")[-1]), [])
+                    if c["kind"] in _CLASS_KINDS and c["context"].get("namespace") == full
+                ]
+                if found:
+                    return found, None
+            return [], "no_visible_target"
+
         edges_added = 0
-
-        ref_rows = conn.execute(
-            "SELECT callee_name, relation, qualified, qualifier_name, path, line, col, lang "
-            "FROM refs ORDER BY path, line, col, callee_name"
-        ).fetchall()
-
-        for ref in ref_rows:
+        for ref in conn.execute(
+            "SELECT * FROM refs ORDER BY path, line, col, callee_name"
+        ).fetchall():
+            context = json.loads(ref["binding"])
             relation = ref["relation"]
-            if relation in _CLASS_TARGET_RELATIONS:
-                candidate_kinds = _HERITAGE_CANDIDATE_KINDS
+            receiver = context.get("receiver")
+            qualified = False
+            reason = None
+            lang = ref["lang"]
+            if lang not in {"python", "ruby", "javascript", "typescript"}:
+                candidates = symbols.get((lang, ref["callee_name"]), [])
+            elif context.get("unsupported"):
+                candidates, reason = [], "unsupported_scope"
+            elif relation in _CLASS_TARGET_RELATIONS:
+                if receiver:
+                    candidates, reason = [], "unknown_receiver"
+                else:
+                    candidates, reason = (
+                        ruby_classes(ref, context, ref["callee_name"])
+                        if lang == "ruby"
+                        else visible(ref, context, ref["callee_name"])
+                    )
+                qualified = True
+            elif receiver or (lang == "ruby" and context.get("owner")):
+                owners = []
+                category = None
+                if (
+                    (lang == "ruby" and receiver in {None, "self"})
+                    or (lang in {"javascript", "typescript"} and receiver == "this")
+                    or (lang == "python" and receiver and receiver == context.get("self_name"))
+                ):
+                    owner = context.get("owner")
+                    category = context.get("category")
+                    allowed = bool(owner)
+                    if lang == "python":
+                        allowed = category == "instance" and receiver == context.get("self_name")
+                        found_parameter = False
+                        for scope in context.get("scopes", []):
+                            hits = blockers.get((ref["path"], scope, receiver), [])
+                            if hits:
+                                found_parameter = scope == context.get("self_scope") and hits == [
+                                    "parameter"
+                                ]
+                                break
+                        allowed = allowed and found_parameter
+                    elif lang in {"javascript", "typescript"}:
+                        allowed = allowed and context.get("this_allowed", False)
+                    owners = [owner] if allowed else []
+                    reason = "unknown_receiver" if not allowed else None
+                else:
+                    known, reason = (
+                        ruby_classes(ref, context, receiver)
+                        if lang == "ruby" and ref["qualified"]
+                        else visible(ref, context, receiver)
+                    )
+                    known = [c for c in known if c["kind"] in _CLASS_KINDS]
+                    owners = [
+                        "ruby:" + c["context"]["namespace"]
+                        if lang == "ruby"
+                        else c["context"]["identity"]
+                        for c in known
+                    ]
+                    category = "static" if lang in {"ruby", "javascript", "typescript"} else None
+                    qualified = bool(owners)
+                    if not owners and reason in {None, "no_visible_target"}:
+                        reason = "unknown_receiver"
+                candidates = [
+                    c
+                    for c in symbols.get((lang, ref["callee_name"]), [])
+                    if c["context"].get("owner") in owners
+                    and (lang == "ruby" or c["path"] == ref["path"])
+                    and c["context"].get("category") != "unknown"
+                    and (category is None or c["context"].get("category") == category)
+                ]
+                if owners and not candidates:
+                    reason = "owner_has_no_member"
             else:
-                candidate_kinds = _CALL_CANDIDATE_KINDS
-            placeholders = ",".join("?" for _ in candidate_kinds)
-            candidates = conn.execute(
-                f"SELECT name, path, line_start, kind FROM symbols WHERE name = ? "
-                f"AND kind IN ({placeholders}) ORDER BY path, line_start, name",
-                (ref["callee_name"], *candidate_kinds),
-            ).fetchall()
-
+                candidates, reason = visible(ref, context, ref["callee_name"])
+            kinds = (
+                _HERITAGE_CANDIDATE_KINDS
+                if relation in _CLASS_TARGET_RELATIONS
+                else _CALL_CANDIDATE_KINDS
+            )
+            candidates = [c for c in candidates if c["kind"] in kinds]
             if not candidates:
-                continue  # AC-A1-6: zero candidates — no edge, ever.
-
-            source_name, source_kind = self._enclosing_symbol(conn, ref["path"], ref["line"])
-
+                conn.execute(
+                    "UPDATE refs SET unresolved_reason = ? WHERE id = ?",
+                    (reason or "no_visible_target", ref["id"]),
+                )
+                continue
             effective_relation = relation
             if relation == "call" and all(c["kind"] in _CLASS_KINDS for c in candidates):
-                # Every candidate is a class/module: this "call" is really a
-                # constructor invocation (Python/JS `Foo(...)`/`new Foo()`;
-                # Ruby's `.new` is already tagged 'construct' at extraction
-                # and never reaches this branch with relation == "call").
                 effective_relation = "construct"
-
-            # checker finding (MAJOR-1, condition 5): a Python/JS/TS
-            # qualifier_name that globally matches a class/module symbol
-            # might ALSO be a local variable in THIS file shadowing that
-            # class (`Config = load_config(); Config.reload()` — or the
-            # construct-relation equivalent, a class name rebound to a
-            # callable and invoked). The resolver has no scope analysis, so
-            # it cannot rule out shadowing when the SAME name is ALSO an
-            # assignment target in the same file — the cheap, deterministic,
-            # zero-LLM signal is "don't claim certainty you don't have":
-            # demote to unqualified (INFERRED) rather than assert EXTRACTED.
-            # A false EXTRACTED is worse than an honest INFERRED; this is
-            # local (per-file), erring toward under-claiming, never
-            # over-claiming. Ruby is unaffected — `qualifier_name` is always
-            # None there (its grammar makes a constant lexically
-            # un-shadowable by a local variable in the first place).
-            qualifier_shadowed = False
-            if ref["qualifier_name"] is not None:
-                shadow_hit = conn.execute(
-                    "SELECT 1 FROM assignment_targets WHERE path = ? AND name = ? LIMIT 1",
-                    (ref["path"], ref["qualifier_name"]),
-                ).fetchone()
-                qualifier_shadowed = shadow_hit is not None
-
-            if effective_relation == "construct":
-                # A construct edge's `callee_name` (not its receiver, if any)
-                # IS the class/module being instantiated — that is exactly
-                # what "every candidate is class-kind" already established.
-                # Whether it was reached bare (`Foo()`), via `new Foo()`, or
-                # via a module-qualified attribute chain
-                # (`some_module.Foo()`) doesn't change WHAT is being
-                # constructed, so the receiver's own qualification is the
-                # wrong question here — unconditionally qualified, mirroring
-                # Ruby's heritage/construct captures (always qualified=True
-                # at extraction, same reasoning applied at resolution time) —
-                # UNLESS the shadowing guard above fired.
-                qualified = not qualifier_shadowed
-            elif ref["qualifier_name"] is not None:
-                # Python/JS/TS ordinary method calls: resolve the fact,
-                # don't guess it from case.
-                if qualifier_shadowed:
-                    qualified = False
-                else:
-                    qualifier_hit = conn.execute(
-                        "SELECT 1 FROM symbols WHERE name = ? AND kind IN ('class', 'module') "
-                        "LIMIT 1",
-                        (ref["qualifier_name"],),
-                    ).fetchone()
-                    qualified = qualifier_hit is not None
-            else:
-                qualified = bool(ref["qualified"])
-
+                qualified = True
             if len(candidates) == 1:
                 confidence = "EXTRACTED" if qualified else "INFERRED"
-                target = candidates[0]
-                target_path = target["path"]
-                target_line = target["line_start"]
-                target_name = target["name"]
+                target_path, target_line, target_name = (
+                    candidates[0]["path"],
+                    candidates[0]["line_start"],
+                    candidates[0]["name"],
+                )
                 candidates_json = None
             else:
                 confidence = "AMBIGUOUS"
@@ -1491,12 +2033,13 @@ class CodeGraph:
                         for c in candidates
                     ]
                 )
-
+            source_name, source_kind = context.get("source_name"), context.get("source_kind")
+            if lang not in {"python", "ruby", "javascript", "typescript"}:
+                source_name, source_kind = self._enclosing_symbol(conn, ref["path"], ref["line"])
             conn.execute(
-                "INSERT INTO edges(relation, source_path, source_line, source_col, "
-                "source_name, source_kind, callee_name, confidence, target_path, "
-                "target_line, target_name, candidates, lang) "
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                "INSERT INTO edges(relation, source_path, source_line, source_col, source_name, "
+                "source_kind, callee_name, confidence, target_path, target_line, target_name, "
+                "candidates, lang) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 (
                     effective_relation,
                     ref["path"],
@@ -1510,11 +2053,10 @@ class CodeGraph:
                     target_line,
                     target_name,
                     candidates_json,
-                    ref["lang"],
+                    lang,
                 ),
             )
             edges_added += 1
-
         return edges_added
 
     @staticmethod
@@ -1566,6 +2108,8 @@ class CodeGraph:
             ).fetchall()
         ]
 
+        for row in [*defs, *refs]:
+            row.pop("binding", None)
         return {"definitions": defs, "references": refs}
 
     def callers_of(self, symbol: str) -> list[dict[str, Any]]:
@@ -1906,35 +2450,20 @@ class CodeGraph:
         return [self._edge_row_to_dict(r) for r in rows]
 
     def unresolved_ref_count(self, callee_name: str, relations: tuple[str, ...]) -> int:
-        """Checker finding (MAJOR): an empty `edges` list is otherwise
-        indistinguishable between "genuinely zero callers" and "callers
-        exist but none resolved" (e.g. an external/gem method with no local
-        definition) — exactly the confusion that hid the `callers_of:
-        CodeGraph` bug (a whole symbol *kind* silently excluded, surfacing
-        as a plausible-looking empty answer). Counts raw `refs` matching
-        `callee_name`/`relations` that produced no `edges` row.
+        """Count unresolved source occurrences, including mixed per-name bindings.
 
-        A given `(callee_name, relation-class)` pair resolves uniformly —
-        `_resolve_edges` computes the same candidate set for every ref
-        sharing that pair, so it is never the case that *some* matching
-        refs resolve and others don't: either every one of them became an
-        edge, or none did. `relations` is passed straight through as the
-        edges-side filter too (Python/JS/TS constructor calls are stored
-        as `refs.relation='call'` but may be relabeled `'construct'` in
-        `edges`, so counting edges over the same `relations` tuple the
-        caller queried — e.g. `_CALL_RELATIONS` — accounts for both without
-        the caller needing to know which raw refs became which edge kind).
+        Constructor relabeling must not count a successfully bound raw call as
+        unresolved. Imported exports contain edges but no raw refs.
         """
         placeholders = ",".join("?" for _ in relations)
-        total_refs = self.db.execute(
-            f"SELECT COUNT(*) FROM refs WHERE callee_name = ? AND relation IN ({placeholders})",
+        return self.db.execute(
+            f"SELECT COUNT(*) FROM refs r WHERE callee_name = ? AND relation IN ({placeholders}) "
+            "AND NOT EXISTS (SELECT 1 FROM edges e WHERE e.source_path=r.path "
+            "AND e.source_line=r.line AND e.source_col=r.col AND e.lang=r.lang "
+            "AND e.callee_name=r.callee_name AND (e.relation=r.relation "
+            "OR (r.relation='call' AND e.relation='construct')))",
             (callee_name, *relations),
         ).fetchone()[0]
-        total_edges = self.db.execute(
-            f"SELECT COUNT(*) FROM edges WHERE callee_name = ? AND relation IN ({placeholders})",
-            (callee_name, *relations),
-        ).fetchone()[0]
-        return max(total_refs - total_edges, 0)
 
     @staticmethod
     def _edge_row_to_dict(row: sqlite3.Row) -> dict[str, Any]:

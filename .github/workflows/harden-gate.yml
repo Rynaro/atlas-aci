@@ -256,7 +256,7 @@ jobs:
           }
 
           if [ "$a3_touched" = "true" ]; then
-            PROBE_ARTIFACT="$(resolve_or_fail probe-lpa-vs-louvain.md AC-A3-1)"
+            PROBE_ARTIFACT="$(resolve_or_fail aci-s02-probe-lpa-vs-louvain.md AC-A3-1)"
           fi
 
           if [ -f mcp-server/tests/test_communities.py ]; then
@@ -314,8 +314,8 @@ jobs:
             # verify" section for the one trust boundary that remains
             # (the graph bundle's fidelity to the two pinned repo SHAs,
             # attested by independent reproduction, not a mechanical check).
-            PROBE_ARTIFACT="$(resolve_or_fail probe-lpa-vs-louvain.md AC-A3-4/AC-A3-5)"
-            PROBE_JSON="$(resolve_or_fail probe-lpa-vs-louvain.json AC-A3-4/AC-A3-5)"
+            PROBE_ARTIFACT="$(resolve_or_fail aci-s02-probe-lpa-vs-louvain.md AC-A3-4/AC-A3-5)"
+            PROBE_JSON="$(resolve_or_fail aci-s02-probe-lpa-vs-louvain.json AC-A3-4/AC-A3-5)"
             if ! python3 scripts/verify-probe-verdict.py "$PROBE_JSON"; then
               echo "FAIL (AC-A3-4/AC-A3-5/F7): the recorded probe verdict does not equal the mechanical evaluation of its own recorded numbers. Per DIR-1, a below-threshold probe cuts A3 to v2.1 (ship A2 god-nodes only) — it never adopts networkx/Louvain, and it never gets to assert a label the numbers don't support."
               exit 1

@@ -1,0 +1,19 @@
+{
+  "name": "spree-fetch",
+  "command": [
+    "git",
+    "fetch",
+    "--depth",
+    "1",
+    "origin",
+    "6699cde44303ea85ef6e56c5e87c44a738ab73fc"
+  ],
+  "cwd": "/tmp/aci-s02-probe-inputs/spree",
+  "exit_code": 0,
+  "timed_out": false,
+  "duration_seconds": 7.010096499994688,
+  "peak_memory_bytes": 13631488,
+  "stdout": ".spectra/evidence/aci-s02/probe/spree-fetch.stdout.log",
+  "stderr": ".spectra/evidence/aci-s02/probe/spree-fetch.stderr.log",
+  "source_sha256": "cb13abaf72e673071d1f8d8c5af624bb472a38c8ed57431107145df2c8f10cb7"
+}

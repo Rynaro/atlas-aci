@@ -55,7 +55,7 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 # below -- the moment aci-v2-harden-and-augment was archived for real
 # (a SKIP is exit 0; CI would have stayed green while testing nothing).
 # See scripts/resolve-probe-artifact.sh for the search/ambiguity rules.
-REAL_JSON_REL="$(cd "$REPO_ROOT" && "$RESOLVE" probe-lpa-vs-louvain.json 2>/dev/null)" || REAL_JSON_REL=""
+REAL_JSON_REL="$(cd "$REPO_ROOT" && "$RESOLVE" aci-s02-probe-lpa-vs-louvain.json 2>/dev/null)" || REAL_JSON_REL=""
 
 if [ -z "$REAL_JSON_REL" ] || [ ! -f "$REPO_ROOT/$REAL_JSON_REL" ]; then
     echo "SKIP: no probe-lpa-vs-louvain.json found under $REPO_ROOT/.spectra/changes/ (A3 not yet built in this tree)."
@@ -455,8 +455,10 @@ cp "$_CODEGRAPH_COPY" "$_CODEGRAPH_COPY.bak"
 python3 -c "
 path = '$_CODEGRAPH_COPY'
 src = open(path).read()
-old = 'SCHEMA_EPOCH = 5'
-assert old in src
+import re
+match = re.search(r'^SCHEMA_EPOCH = [0-9]+$', src, re.MULTILINE)
+assert match
+old = match.group(0)
 open(path, 'w').write(src.replace(old, old + '  # semantically-null comment, verification only', 1))
 "
 _assert_fingerprint_after_edit "semantically-null comment edit does NOT flip the fingerprint" no
@@ -471,19 +473,19 @@ mv "$_CODEGRAPH_COPY.bak" "$_CODEGRAPH_COPY"
 # A behavioural fingerprint needs a genuine short-circuit: return a
 # DIFFERENT value immediately, of the same type the function actually
 # returns, so the rest of the body never runs.
-declare -A _SHORT_CIRCUIT=(
-    [confident_edges]="return []"
-    [_resolve_source_node]="return None, None"
-    [_enclosing_symbol]="return None, None"
-    [_target_kind]="return None"
-)
+# Use a case rather than Bash 4 associative arrays: macOS ships Bash 3.2.
 # `_target_kind` deliberately excluded from the "must flip" loop below —
 # see the dedicated "must NOT flip" scenario right after it, and its
 # comment, for why: verified this is a considered, defended exclusion,
 # not a silent omission.
-for fn in confident_edges _resolve_source_node _enclosing_symbol; do
+for fn in confident_edges _resolve_source_node _resolve_edges; do
+    case "$fn" in
+        confident_edges) short_circuit="return []" ;;
+        _resolve_source_node) short_circuit="return None, None" ;;
+        _resolve_edges) short_circuit="return 0" ;;
+    esac
     cp "$_CODEGRAPH_COPY" "$_CODEGRAPH_COPY.bak"
-    python3 - "$_CODEGRAPH_COPY" "$fn" "${_SHORT_CIRCUIT[$fn]}" << 'PYEOF'
+    python3 - "$_CODEGRAPH_COPY" "$fn" "$short_circuit" << 'PYEOF'
 import re
 import sys
 
@@ -536,7 +538,7 @@ mv "$_EXPORT_SCRIPT_COPY.bak" "$_EXPORT_SCRIPT_COPY"
 # between a function that determines the graph and one that only
 # decorates it. Tested here, not silently assumed.
 cp "$_CODEGRAPH_COPY" "$_CODEGRAPH_COPY.bak"
-python3 - "$_CODEGRAPH_COPY" "_target_kind" "${_SHORT_CIRCUIT[_target_kind]}" << 'PYEOF'
+python3 - "$_CODEGRAPH_COPY" "_target_kind" "return None" << 'PYEOF'
 import re
 import sys
 

@@ -1,0 +1,65 @@
+FFF                                                                      [100%]
+=================================== FAILURES ===================================
+___________________ test_cross_file_owner_spans_do_not_alias ___________________
+
+tmp_path = PosixPath('/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-29/test_cross_file_owner_spans_do0')
+
+    def test_cross_file_owner_spans_do_not_alias(tmp_path: Path) -> None:
+        graph = index(tmp_path, {
+            'a.py': 'class Widget:\n    @staticmethod\n    def empty():\n        pass\nWidget.close()\n',
+            'b.py': 'class OtherX:\n    @staticmethod\n    def close():\n        pass\n',
+        })
+>       assert graph.callers_of('close') == []
+E       AssertionError: assert [{'candidates...'a.py'}, ...}] == []
+E
+E         Left contains one more item: {'candidates': None, 'confidence': 'EXTRACTED', 'relation': 'call', 'source': {'kind': 'module', 'line': 5, 'name': None, 'path': 'a.py'}, ...}
+E         Use -v to get more diff
+
+mcp-server/tests/slices/test_s02_contract.py:183: AssertionError
+____________________ test_control_flow_and_import_blockers _____________________
+
+tmp_path = PosixPath('/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-29/test_control_flow_and_import_b0')
+
+    def test_control_flow_and_import_blockers(tmp_path: Path) -> None:
+        samples = [
+            ('loop.py', 'def target():\n    pass\ndef request(values):\n    for target in values:\n        target()\n'),
+            ('catch.js', 'function target() {}\nfunction request() { try { throw 1; } catch (target) { target(); } }'),
+            ('wildcard.py', 'def target():\n    pass\nfrom external import *\ndef request():\n    target()\n'),
+        ]
+        for i, (name, source) in enumerate(samples):
+            directory = tmp_path / str(i)
+            directory.mkdir()
+            graph = index(directory, {name: source})
+>           assert graph.callers_of('target') == []
+E           AssertionError: assert [{'candidates...op.py'}, ...}] == []
+E
+E             Left contains one more item: {'candidates': None, 'confidence': 'INFERRED', 'relation': 'call', 'source': {'kind': 'function', 'line': 5, 'name': 'request', 'path': 'loop.py'}, ...}
+E             Use -v to get more diff
+
+mcp-server/tests/slices/test_s02_contract.py:197: AssertionError
+_________________ test_receiver_keywords_are_language_specific _________________
+
+tmp_path = PosixPath('/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-29/test_receiver_keywords_are_lan0')
+
+    def test_receiver_keywords_are_language_specific(tmp_path: Path) -> None:
+        samples = [
+            ('js_self.js', 'class A { close() {} request(self) { self.close(); } }'),
+            ('ruby_this.rb', 'class A\n def close; end\n def request(this); this.close; end\nend'),
+            ('nested_this.js', 'class A { close() {} request() { function nested() { const f = () => this.close(); } } }'),
+        ]
+        for i, (name, source) in enumerate(samples):
+            directory = tmp_path / str(i)
+            directory.mkdir()
+            graph = index(directory, {name: source})
+>           assert graph.callers_of('close') == []
+E           AssertionError: assert [{'candidates...lf.js'}, ...}] == []
+E
+E             Left contains one more item: {'candidates': None, 'confidence': 'INFERRED', 'relation': 'call', 'source': {'kind': 'method', 'line': 1, 'name': 'request', 'path': 'js_self.js'}, ...}
+E             Use -v to get more diff
+
+mcp-server/tests/slices/test_s02_contract.py:211: AssertionError
+=========================== short test summary info ============================
+FAILED mcp-server/tests/slices/test_s02_contract.py::test_cross_file_owner_spans_do_not_alias
+FAILED mcp-server/tests/slices/test_s02_contract.py::test_control_flow_and_import_blockers
+FAILED mcp-server/tests/slices/test_s02_contract.py::test_receiver_keywords_are_language_specific
+3 failed in 0.09s
