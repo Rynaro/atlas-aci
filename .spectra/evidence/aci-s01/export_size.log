@@ -1,0 +1,7 @@
+PASS: real recorded export-size sidecar (genuine PASS) (exit=0)
+PASS: forged: export_bytes one byte over ceiling, recorded_verdict left at PASS (exit=1)
+PASS: forged: recorded CUT over a genuinely passing export_bytes (exit=1)
+PASS: forged: pinned_sha does not match the frozen AC-REL-2 SHA (exit=1)
+PASS: forged: ceiling_bytes does not match the frozen AC-REL-2 ceiling (exit=1)
+
+5 passed, 0 failed

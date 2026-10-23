@@ -1,0 +1,157 @@
+{
+  "slice_id": "ACI-S01",
+  "issue_url": "https://github.com/Rynaro/atlas-aci/issues/24",
+  "criteria_sha256": "d0570c2647fcb993176bc789651fa9a92612a33282105443d2798b7335c5c537",
+  "base_commit": "0506243e2e3a495b1a87f7a3efe55b5d511629c0",
+  "output_commit": "3116ce7cc37f7a547b72d4a071bd0b827054ac94",
+  "declared_paths": [
+    "scripts/run-canaries.py",
+    "atlas/evals/*",
+    "mcp-server/tests/slices/test_s01_*.py"
+  ],
+  "output_digests": {
+    "atlas/evals/README.md": "ab8f86ca8663e9b0d4f7d9e439b3db761418c9b151bd34b90116a7b13adf8090",
+    "atlas/evals/baseline/result.json": "c0c1fb070adedf759e2dc9c784ce972a5cf83989c080279bb62bb02c5eca9bd2",
+    "atlas/evals/baseline/result.ledger/bf20850b5f531f764c8ff770b4d554835a890dbb1d76a851a957c160b2a0d1ed/payloads/search-baseline.request.json": "dbf4f33a837d0b380d6d0e094ee7d3074e861d4810739af7afccab5760551823",
+    "atlas/evals/baseline/result.ledger/bf20850b5f531f764c8ff770b4d554835a890dbb1d76a851a957c160b2a0d1ed/payloads/search-baseline.response.json": "ab2b4a24fb802964761ec65899c0cf64d18b5981d5ceda01bc6a6a4de1232e24",
+    "atlas/evals/baseline/result.ledger/bf20850b5f531f764c8ff770b4d554835a890dbb1d76a851a957c160b2a0d1ed/run.json": "c0c1fb070adedf759e2dc9c784ce972a5cf83989c080279bb62bb02c5eca9bd2",
+    "atlas/evals/baseline/result.ledger/bf20850b5f531f764c8ff770b4d554835a890dbb1d76a851a957c160b2a0d1ed/tasks/search-baseline.json": "f81e489a0434aaec2906edef6fabc9ea58d958764566ee8078bfc82769fb985a",
+    "atlas/evals/baseline/result.tasks.json": "45d2948f229aa79a40206b55653646ecfda3e02a5f9c811fe5f471dda71d7109",
+    "atlas/evals/record_baseline.py": "fad658afb2be71ac1647208bd76c899e4b01fca6152f5837e3897c904da4ba62",
+    "atlas/evals/stdio_runner.py": "b1dfb47500893872fd3a67b9e69d51008f57cc208c2a3d07060cce29a5e5f3d2",
+    "mcp-server/tests/slices/test_s01_contract.py": "27b263fb1ec2721e00c36e4a4e95a3dfdcf24e6e47a8d6aebb000e3f349a81d7",
+    "scripts/run-canaries.py": "76ec8d5f7a36540dc6ae396e4ec6ad40f39d408c40ac2230378ea02f5543bb33"
+  },
+  "status": "COMPLETE",
+  "acceptance_results": [
+    {
+      "ac_id": "AC-S01-001",
+      "command": "env PYTHONPATH=/tmp/atlas-aci-aci-s01/mcp-server/src /tmp/atlas-aci-aci-s01/mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s01_contract.py -q",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s01/product-tests.log"
+    },
+    {
+      "ac_id": "AC-S01-002",
+      "command": "env PYTHONPATH=/tmp/atlas-aci-aci-s01/mcp-server/src /tmp/atlas-aci-aci-s01/mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s01_contract.py -q",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s01/product-tests.log"
+    },
+    {
+      "ac_id": "AC-S01-003",
+      "command": "env PYTHONPATH=/tmp/atlas-aci-aci-s01/mcp-server/src /tmp/atlas-aci-aci-s01/mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s01_contract.py -q",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s01/product-tests.log"
+    },
+    {
+      "ac_id": "AC-S01-004",
+      "command": "env PYTHONPATH=/tmp/atlas-aci-aci-s01/mcp-server/src /tmp/atlas-aci-aci-s01/mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s01_contract.py -q",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s01/product-tests.log"
+    },
+    {
+      "ac_id": "AC-S01-005",
+      "command": "env PYTHONPATH=/tmp/atlas-aci-aci-s01/mcp-server/src /tmp/atlas-aci-aci-s01/mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s01_contract.py -q",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s01/product-tests.log"
+    },
+    {
+      "ac_id": "AC-S01-006",
+      "command": "env PYTHONPATH=/tmp/atlas-aci-aci-s01/mcp-server/src /tmp/atlas-aci-aci-s01/mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s01_contract.py -q",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s01/product-tests.log"
+    },
+    {
+      "ac_id": "AC-S01-007",
+      "command": "env PYTHONPATH=/tmp/atlas-aci-aci-s01/mcp-server/src /tmp/atlas-aci-aci-s01/mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s01_contract.py -q",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s01/product-tests.log"
+    },
+    {
+      "ac_id": "AC-S01-RUN-02",
+      "command": "mcp-server/.venv/bin/python .spectra/evidence/aci-s01/verify_resume.py",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s01/interrupted-execution.json",
+        ".spectra/evidence/aci-s01/resume-identity.json",
+        ".spectra/evidence/aci-s01/verify_resume.py"
+      ]
+    },
+    {
+      "ac_id": "AC-S01-RUN-01",
+      "command": "mcp-server/.venv/bin/python /tmp/atlas-aci-aci-s01-reentry/.spectra/evidence/aci-s01/verify_execution.py --root /tmp/atlas-aci-aci-s01-reentry --receipt /tmp/atlas-aci-aci-s01/.spectra/state/aci-s01.execution.json",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s01/reentry-candidate.json",
+        ".spectra/evidence/aci-s01/reentry-complete.json",
+        ".spectra/evidence/aci-s01/before-reentry.sha256.json",
+        ".spectra/evidence/aci-s01/after-reentry.sha256.json"
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "command": "uv run --frozen pytest -q",
+      "cwd": "mcp-server",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s01/pytest.log"
+    },
+    {
+      "command": "uv run --frozen ruff check src/ tests/ ../scripts/ ../atlas/evals/ --exclude fingerprint-fixture",
+      "cwd": "mcp-server",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s01/lint.log"
+    },
+    {
+      "command": "uv run --frozen ruff format --check src/ tests/ ../scripts/ ../atlas/evals/ --exclude fingerprint-fixture",
+      "cwd": "mcp-server",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s01/format.log"
+    },
+    {
+      "command": "uv run --frozen mypy src/ ../scripts/ ../atlas/evals/",
+      "cwd": "mcp-server",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s01/types.log"
+    },
+    {
+      "command": "bash ../scripts/test-verify-probe-verdict.sh",
+      "cwd": "mcp-server",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s01/probe.log"
+    },
+    {
+      "command": "bash ../scripts/test-harden-gate-classify.sh",
+      "cwd": "mcp-server",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s01/harden.log"
+    },
+    {
+      "command": "bash ../scripts/test-verify-export-size.sh",
+      "cwd": "mcp-server",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s01/export_size.log"
+    },
+    {
+      "command": "uv lock --check",
+      "cwd": "mcp-server",
+      "exit_code": 0,
+      "evidence": "47 packages resolved; lock unchanged"
+    }
+  ],
+  "environment": {
+    "python": "3.12.13",
+    "uv": "0.13.5",
+    "uv_path": "/tmp/aci-s01-tools/bin/uv",
+    "cache": "/tmp/aci-s01-uv-cache",
+    "dependency_source": "uv sync --frozen --extra dev"
+  },
+  "not_run": [
+    "remote Docker read-only smoke",
+    "macOS/Linux export matrix comparison"
+  ],
+  "limitations": [
+    "Transport baseline only; no live model telemetry or coding-task success measurement.",
+    "One writer per ledger directory; concurrent writers are outside scope.",
+    "CRYSTALIUM memory persistence omitted after automatic approval review rejected unverified external destination."
+  ]
+}

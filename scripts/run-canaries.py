@@ -5,30 +5,22 @@ Loads canary missions, dispatches each to a host, captures the resulting
 scout report, and scores against ground truth. Emits a JSON results file
 suitable for CI gating.
 
-This is a thin orchestrator. The actual host dispatch is pluggable —
-implement an adapter for your host (Claude Code via API, Copilot via
-GitHub Action, Cursor via headless mode) and select it with `--host`.
-
-DEFERRED IN v2.0.0 (doc-honesty batch, AC-DOC-3): no real dispatcher is
-implemented yet. `--host stub` (the default and only wired choice) uses
-`StubDispatcher`, whose `dispatch()` deliberately raises
-`NotImplementedError` — see below. Any other `--host` value raises the same
-in `main()`. There is therefore no canary pass-rate to quote against a real
-host today; do not cite one in docs until a real dispatcher lands. The
-sketched adapters below (Claude Code API, etc.) are comments, not code.
+The stdio adapter executes pinned tasks through a real Atlas MCP subprocess.
+It records transport evidence only; model usage and coding-task success remain
+unavailable. See atlas/evals/README.md for the manifest and replay command.
+Legacy scout-report scoring and host spellings remain available; adapters other
+than stdio are still unsupported.
 
 Usage:
-  uv run python scripts/run-canaries.py \\
-    --repo ~/code/your-repo \\
-    --canaries-dir ~/code/atlas/evals/canaries/ \\
-    --host claude-code-api \\
-    --output /tmp/canary-results.json
+  python scripts/run-canaries.py --repo /path/to/indexed/repo \
+    --canaries-dir /path/to/tasks --host stdio --output /tmp/baseline.json
 """
 
 from __future__ import annotations
 
 import argparse
 import json
+import runpy
 import sys
 import time
 from dataclasses import asdict, dataclass, field
@@ -86,38 +78,14 @@ class HostDispatcher(Protocol):
 class StubDispatcher:
     """Reference dispatcher that does nothing — replace with a real adapter.
 
-    DEFERRED IN v2.0.0: this is the only wired dispatcher today. There is no
-    real host adapter, so there is no canary pass-rate to report yet.
+    Retained for legacy scout-report callers. The stdio task adapter is wired
+    separately and does not manufacture scout reports or model metrics.
     """
 
     def dispatch(self, mission_md: str, repo: Path) -> dict[str, Any]:
         raise NotImplementedError(
             "Implement a real dispatcher for your host. See module docstring."
         )
-
-
-# Real dispatcher examples (sketches — fill in for your environment):
-#
-# class ClaudeCodeAPIDispatcher:
-#     def __init__(self, api_key: str, model: str = "claude-sonnet-4-5"):
-#         self.client = Anthropic(api_key=api_key)
-#         self.model = model
-#
-#     def dispatch(self, mission_md: str, repo: Path) -> dict[str, Any]:
-#         # Use the Anthropic API with MCP tool support
-#         response = self.client.beta.messages.create(
-#             model=self.model,
-#             max_tokens=8000,
-#             system=open("atlas/agent.md").read(),
-#             messages=[{"role": "user", "content": mission_md}],
-#             mcp_servers=[{
-#                 "type": "url",
-#                 "url": f"stdio:atlas-aci serve --repo {repo}",
-#                 "name": "atlas-aci",
-#             }],
-#         )
-#         # Parse the resulting scout report from response.content
-#         ...
 
 
 # ----------------------------------------------------------------------------
@@ -321,7 +289,9 @@ def main() -> int:
         help="Directory containing one subdirectory per canary mission.",
     )
     p.add_argument(
-        "--host", default="stub", choices=["stub", "claude-code-api", "copilot", "cursor"]
+        "--host",
+        default="stdio",
+        choices=["stdio", "stub", "claude-code-api", "copilot", "cursor"],
     )
     p.add_argument("--output", required=True, type=Path)
     p.add_argument(
@@ -335,7 +305,18 @@ def main() -> int:
         default=None,
         help="Previous canary result file for regression comparison.",
     )
+    p.add_argument(
+        "--deadline",
+        type=float,
+        default=10.0,
+        help="Initialization plus tool call deadline in seconds.",
+    )
     args = p.parse_args()
+    if args.host == "stdio":
+        adapter = runpy.run_path(
+            str(Path(__file__).resolve().parents[1] / "atlas/evals/stdio_runner.py")
+        )
+        return int(adapter["run_cli"](args))
 
     # Load all canary missions
     canary_dirs = sorted([d for d in args.canaries_dir.iterdir() if d.is_dir()])
@@ -353,7 +334,10 @@ def main() -> int:
         raise NotImplementedError(f"Dispatcher {args.host!r} not yet implemented.")
 
     # Run
-    print(f"Running {len(missions)} canary missions against repo {args.repo}...", file=sys.stderr)
+    print(
+        f"Running {len(missions)} canary missions against repo {args.repo}...",
+        file=sys.stderr,
+    )
     results = [run_one(m, dispatcher, args.repo) for m in missions]
     summary = aggregate(results)
 
@@ -380,7 +364,10 @@ def main() -> int:
             current_passed = {r.mission_id for r in results if r.status == "pass"}
             regressions = baseline_passed - current_passed
             if regressions:
-                print(f"CI gate FAILED: regressions in {sorted(regressions)}", file=sys.stderr)
+                print(
+                    f"CI gate FAILED: regressions in {sorted(regressions)}",
+                    file=sys.stderr,
+                )
                 return 1
     return 0
 

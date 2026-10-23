@@ -1,0 +1,1 @@
+{"content":[{"text":"{\n  \"definitions\": [\n    {\n      \"id\": 1,\n      \"name\": \"baseline_target\",\n      \"kind\": \"function\",\n      \"path\": \"example.py\",\n      \"line_start\": 1,\n      \"line_end\": 2,\n      \"lang\": \"python\"\n    }\n  ],\n  \"references\": []\n}","type":"text"}],"isError":false}
