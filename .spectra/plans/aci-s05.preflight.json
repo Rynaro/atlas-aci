@@ -1,0 +1,19 @@
+{
+  "base_commit": "f81231ef3fd4bbc89fd444f213be521d6063e99e",
+  "stable_marker": "atlas-aci:slice:ACI-S05",
+  "criteria_sha256": "ea6a3baf17e73a01314bea6662c3903840b29265fb4e92d37c5d1eda09f5333a",
+  "criteria_extraction": "complete lines between marker lines, preserve final LF",
+  "predecessors": [],
+  "existing_s05_state": false,
+  "scope_amendment": "S05-PATH-01: existing test_server.py bounded-output test explicitly opts in",
+  "self_consistency": {
+    "views": [
+      "runtime sequence",
+      "file ownership",
+      "failure scenarios"
+    ],
+    "shared_product_responsibilities": 5,
+    "covered_product_ac": 5,
+    "coverage_percent": 100
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "checker": "atlas-s05-code-checker",
+  "verdict": "APPROVE",
+  "blocking_findings": [],
+  "scope": "product diff; execution receipt not yet complete",
+  "commands": [
+    {
+      "cwd": "mcp-server",
+      "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/tmp/atlas-aci-aci-s05/mcp-server/src .venv/bin/python -m pytest -p no:cacheprovider tests/slices/test_s05_contract.py::test_profile_visible tests/slices/test_s05_contract.py::test_environment_is_snapshotted_per_config tests/slices/test_s05_contract.py::test_timeout_preserved -q",
+      "exit_code": 0,
+      "observed": "3 passed in 1.57s"
+    },
+    {
+      "command": "git diff --check",
+      "exit_code": 0
+    }
+  ],
+  "findings": [
+    "Literal True tool guard precedes arguments, path work and spawn.",
+    "Config exact operator value 1 uses per-instance default; explicit False wins.",
+    "Actual MCP manifest serializes enabled metadata and readOnlyHint False.",
+    "Enabled timeout/output body unchanged; immediate child kill/reap observed.",
+    "README states immediate-child policy and absence of OS sandbox."
+  ],
+  "source": "Independent ATLAS report delivered through orchestrator"
+}

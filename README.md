@@ -72,7 +72,7 @@ and can be tightened per deployment.
 | `search_text` | Ripgrep-backed regex search over a repo-relative scope or glob. Smart-case by default. | ≤50 matches/call, 15s wall-clock timeout |
 | `search_symbol` | Index-backed symbol lookup. Returns definitions + references for a name (optionally filtered by `kind`). | Requires `atlas-aci index` first; central element cap + byte ceiling (truncated + flagged) |
 | `graph_query` | Tiny DSL over the code graph: `callers_of:Sym`, `definitions_of:Name`, `subclasses_of:Class`, `god_nodes:`, `communities:`, `rationale:`. | Rejects unknown verbs; central element cap + byte ceiling (truncated + flagged) |
-| `test_dry_run` | Run one test file (optionally filtered by case name) as a subprocess with captured stdout/stderr. | 30s wall-clock, ≤8 KiB stdout+stderr. **Operator must sandbox.** |
+| `test_dry_run` | **Disabled by default.** After explicit operator opt-in, run one test file, optionally filtered by case name. | 30s wall-clock; stdout and stderr each capped at 8 KiB. **No OS sandbox.** |
 | `memex_read` | Byte-exact retrieval of a previously captured excerpt via its `memex://excerpt/<sha256>` ref, minted by `Memex.write()`. No ATLAS tool currently emits one. | Scoped to the hashed-dir backend |
 
 Process-wide: **200 calls/minute** sliding-window rate limit. Every call
@@ -233,11 +233,34 @@ other mutating primitive. Attempts to call them return `FORBIDDEN` from
 edits, run migrations, or deploy code, **use a different server** — don't
 hollow out this one.
 
-> **Security boundary.** `test_dry_run` spawns a subprocess inside the
-> repo. For untrusted models, the operator must sandbox this at the OS
-> level — DevContainer, Firecracker microVM, or equivalent. The code
-> alone cannot enforce it. See
-> [`SETUP.md §8`](SETUP.md#8-production-hardening-checklist).
+### Repository test execution requires operator opt-in
+
+`test_dry_run` is disabled by default. Requests receive a deterministic
+`FORBIDDEN` error before test-path inspection or subprocess creation. Request
+fields and repository files cannot enable it. To enable execution for a trusted
+repository, set the exact operator environment value when starting the server:
+
+```sh
+ATLAS_ACI_ENABLE_TEST_EXECUTION=1 atlas-aci serve --repo /path/to/repo
+```
+
+Only `1` enables it; missing, empty, `0`, `false`, or malformed values leave it
+disabled. Configuration snapshots this choice at startup. Programmatic callers
+may explicitly set `Config(test_execution_enabled=True, ...)`; explicit `False`
+overrides the environment. Read-only navigation tools remain available either way.
+
+The tool remains discoverable in `tools/list`. Its description and
+`_meta["atlas-aci/test_execution_enabled"]` identify the active state. Enabling
+it retains the supported runners, case filtering, path containment, timeout,
+separate stdout/stderr caps, truncation fields, and central response ceiling.
+On timeout, Atlas kills and waits for the **immediate child subprocess**; it does
+not guarantee cleanup of descendants.
+
+**Security boundary:** enabled tests execute repository code with the server's
+permissions and may write files or access the network. A timeout and output caps
+are not an OS sandbox. For untrusted code or models, the operator must supply
+isolation such as a DevContainer or microVM and appropriate filesystem/network
+restrictions. See [`SETUP.md §8`](SETUP.md#8-production-hardening-checklist).
 
 ### `export` / `import` — CLI-only, by design
 
@@ -527,7 +550,7 @@ follow-up work in [`SETUP.md §7`](SETUP.md#7-run-the-canary-suite).
 **Production hardening** — before letting `atlas-aci` run unattended on
 shared infrastructure, work through the full checklist in
 [`SETUP.md §8`](SETUP.md#8-production-hardening-checklist). The two items
-most commonly skipped: sandboxing `test_dry_run` at the OS level, and
+most commonly skipped: OS isolation when opting into `test_dry_run`, and
 mounting the repo read-only at the OS level (a stronger guarantee than
 any code-level check, and one that survives mis-configuration of the
 server itself).

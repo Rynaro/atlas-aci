@@ -712,7 +712,12 @@ async def test_test_dry_run_truncated_reflects_actual_bytes_not_a_proxy(
 
     repo = tmp_path / "repo"
     repo.mkdir()
-    config = Config(repo=repo, memex_root=tmp_path / "memex", max_bytes_per_call=10)
+    config = Config(
+        repo=repo,
+        memex_root=tmp_path / "memex",
+        max_bytes_per_call=10,
+        test_execution_enabled=True,
+    )
     enforcement = Enforcement(config)
     test_file = repo / "test_x.py"
     test_file.write_text("def test_x():\n    pass\n")

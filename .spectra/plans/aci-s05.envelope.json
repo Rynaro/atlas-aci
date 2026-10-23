@@ -1,0 +1,50 @@
+{
+  "envelope_version": "2.0",
+  "message_id": "5f046588-6b85-4ff1-921f-81849659c8e3",
+  "thread_id": "712a66c2-87bd-4dbf-9dd9-bf6dc8bfe6dd",
+  "parent_id": null,
+  "from": {
+    "eidolon": "ramza",
+    "version": "1.1.0"
+  },
+  "to": {
+    "eidolon": "vivi",
+    "version": "n/a"
+  },
+  "performative": "PROPOSE",
+  "edge_origin": "roster",
+  "objective": "Implement ACI-S05 default-disabled repository test execution with explicit operator opt-in and real process evidence.",
+  "artifact": {
+    "kind": "spec",
+    "schema_version": "1.0",
+    "path": "aci-s05.md",
+    "sha256": "864ed737d2e055ab69ac0ceeefdcfc4717257ae23a9643d432c6af70e91d312f",
+    "size_bytes": 17382
+  },
+  "integrity": {
+    "method": "sha256",
+    "value": "864ed737d2e055ab69ac0ceeefdcfc4717257ae23a9643d432c6af70e91d312f"
+  },
+  "trace": {
+    "ts": "2026-10-23T19:35:19.366761+00:00",
+    "host": "codex",
+    "model": "gpt-6-astra",
+    "tier": "standard"
+  },
+  "ise": {
+    "assertion_grade": "validated",
+    "provenance": {
+      "methodology_version": "ramza-1.1.0"
+    },
+    "receiver_authorization": {
+      "auto_route": true,
+      "auto_merge": false,
+      "auto_deploy": false
+    }
+  },
+  "confidence": 0.9625,
+  "x_ramza_acceptance_criteria": {
+    "path": "aci-s05.criteria.md",
+    "sha256": "ea6a3baf17e73a01314bea6662c3903840b29265fb4e92d37c5d1eda09f5333a"
+  }
+}

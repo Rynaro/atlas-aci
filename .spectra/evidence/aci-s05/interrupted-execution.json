@@ -1,0 +1,18 @@
+{
+  "slice_id": "ACI-S05",
+  "issue_url": "https://github.com/Rynaro/atlas-aci/issues/28",
+  "criteria_sha256": "ea6a3baf17e73a01314bea6662c3903840b29265fb4e92d37c5d1eda09f5333a",
+  "base_commit": "f81231ef3fd4bbc89fd444f213be521d6063e99e",
+  "output_commit": null,
+  "declared_paths": [
+    "mcp-server/src/atlas_aci/config.py",
+    "mcp-server/src/atlas_aci/server.py",
+    "mcp-server/src/atlas_aci/tools/test_dry_run.py",
+    "mcp-server/tests/slices/test_s05_*.py",
+    "README.md",
+    "mcp-server/tests/test_server.py"
+  ],
+  "output_digests": {},
+  "status": "IN_PROGRESS",
+  "acceptance_results": []
+}
