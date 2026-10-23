@@ -1,0 +1,20 @@
+{
+  "name": "spree-export",
+  "command": [
+    "/tmp/aci-s01-tools/bin/uv",
+    "run",
+    "--frozen",
+    "python",
+    "../scripts/probe-export-confident-graph.py",
+    "/tmp/aci-s02-probe-inputs/spree",
+    "/tmp/aci-s02-probe-spree-graph.json"
+  ],
+  "cwd": "/private/tmp/atlas-aci-aci-s02/mcp-server",
+  "exit_code": 0,
+  "timed_out": false,
+  "duration_seconds": 83.51979933399707,
+  "peak_memory_bytes": 418971648,
+  "stdout": ".spectra/evidence/aci-s02/probe/spree-export.stdout.log",
+  "stderr": ".spectra/evidence/aci-s02/probe/spree-export.stderr.log",
+  "source_sha256": "cb13abaf72e673071d1f8d8c5af624bb472a38c8ed57431107145df2c8f10cb7"
+}

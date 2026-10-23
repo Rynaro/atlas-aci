@@ -1,0 +1,19 @@
+HEAD is now at 6699cde Bump spree to 5.5.2
+        0.34 real         0.03 user         0.20 sys
+            13484032  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+                1397  page reclaims
+                  14  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 730  voluntary context switches
+                  75  involuntary context switches
+          3813877761  instructions retired
+           982499936  cycles elapsed
+             6029696  peak memory footprint

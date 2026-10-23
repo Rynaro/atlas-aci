@@ -1,0 +1,15 @@
+{
+  "checker": "atlas-s02-code-checker",
+  "verdict": "APPROVE",
+  "source_sha256": "cb13abaf72e673071d1f8d8c5af624bb472a38c8ed57431107145df2c8f10cb7",
+  "independent_counterexamples_and_controls": 17,
+  "observed": "All counterexamples: zero concrete edges, unresolved count1, stable nonempty reasons; source hash unchanged. Three positive pytest checks passed in0.13s; git diff --check0.",
+  "positive_tests": [
+    "test_owned_receiver",
+    "test_shadowed_name",
+    "test_instance_self_and_static_categories"
+  ],
+  "findings": [],
+  "scope": "Corrected product only, excludes final probe/workflow changes",
+  "source": "Independent ATLAS report relayed by orchestrator"
+}

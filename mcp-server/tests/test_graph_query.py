@@ -120,7 +120,7 @@ async def test_callers_of_caller_context_from_edge_source(tmp_path: Path) -> Non
     enforcement = Enforcement(config)
     memex = Memex(config.memex_root)
 
-    _write(repo, "app/target.rb", "class Target\n  def record_vote\n  end\nend\n")
+    _write(repo, "app/target.rb", "class Target\n  def self.record_vote\n  end\nend\n")
     _write(
         repo,
         "app/tallier.rb",
@@ -168,7 +168,7 @@ async def test_callers_of_source_is_none_outside_any_known_symbol(tmp_path: Path
     enforcement = Enforcement(config)
     memex = Memex(config.memex_root)
 
-    _write(repo, "app/target.rb", "class Target\n  def act\n  end\nend\n")
+    _write(repo, "app/target.rb", "class Target\n  def self.act\n  end\nend\n")
     _write(repo, "app/script.rb", "Target.act\n")
     code_graph = CodeGraph(repo=repo)
     code_graph.build()
@@ -198,8 +198,8 @@ async def test_callers_of_returns_ambiguous_edges_with_candidates(tmp_path: Path
     enforcement = Enforcement(config)
     memex = Memex(config.memex_root)
 
-    _write(repo, "app/a.rb", "class A\n  def dup_name\n  end\nend\n")
-    _write(repo, "app/b.rb", "class B\n  def dup_name\n  end\nend\n")
+    _write(repo, "app/a.rb", "class Hub\n  def dup_name\n  end\nend\n")
+    _write(repo, "app/b.rb", "class Hub\n  def dup_name\n  end\nend\n")
     _write(repo, "app/hub.rb", "class Hub\n  def call\n    dup_name()\n  end\nend\n")
     code_graph = CodeGraph(repo=repo)
     code_graph.build()
@@ -235,7 +235,7 @@ async def test_candidates_subfield_bounded_end_to_end(tmp_path: Path) -> None:
     memex = Memex(config.memex_root)
 
     for i in range(cap + 2):  # cap + 2 same-named definitions -> AMBIGUOUS
-        _write(repo, f"app/dup_{i}.rb", f"class Dup{i}\n  def shared_name\n  end\nend\n")
+        _write(repo, f"app/dup_{i}.rb", "class Hub\n  def shared_name\n  end\nend\n")
     _write(repo, "app/hub.rb", "class Hub\n  def call\n    shared_name()\n  end\nend\n")
     code_graph = CodeGraph(repo=repo, query_limit=config.max_bound_field_elements + 1)
     code_graph.build()
@@ -280,6 +280,9 @@ async def test_callers_of_on_local_class_resolves_construct_edges_end_to_end(
         "app/hub.py",
         "class Hub:\n    def call(self):\n        Target()\n",
     )
+    hub = repo / "app/hub.py"
+    hub.write_text((repo / "app/target.py").read_text() + hub.read_text())
+    (repo / "app/target.py").unlink()
     code_graph = CodeGraph(repo=repo)
     code_graph.build()
 
@@ -363,7 +366,7 @@ async def test_god_nodes_response_shape_end_to_end(tmp_path: Path) -> None:
     enforcement = Enforcement(config)
     memex = Memex(config.memex_root)
 
-    _rb(repo, "app/enforcement.rb", "class Enforcement\n  def enforce\n  end\nend\n")
+    _rb(repo, "app/enforcement.rb", "class Enforcement\n  def self.enforce\n  end\nend\n")
     _rb(
         repo,
         "app/hub.rb",
@@ -408,9 +411,9 @@ def test_god_nodes_degree_centrality_deterministic(tmp_path: Path) -> None:
     # Three distinct methods, each called exactly once -> degree 1 each,
     # a genuine three-way tie. Files written in an order that would
     # surface a rowid/insertion-order bug immediately.
-    _rb(repo, "app/z_target.rb", "class ZTarget\n  def z_method\n  end\nend\n")
-    _rb(repo, "app/a_target.rb", "class ATarget\n  def a_method\n  end\nend\n")
-    _rb(repo, "app/m_target.rb", "class MTarget\n  def m_method\n  end\nend\n")
+    _rb(repo, "app/z_target.rb", "class ZTarget\n  def self.z_method\n  end\nend\n")
+    _rb(repo, "app/a_target.rb", "class ATarget\n  def self.a_method\n  end\nend\n")
+    _rb(repo, "app/m_target.rb", "class MTarget\n  def self.m_method\n  end\nend\n")
     _rb(
         repo,
         "app/hub.rb",
@@ -462,7 +465,7 @@ async def test_god_nodes_uses_only_edge_counts_end_to_end(tmp_path: Path) -> Non
     own logic."""
     repo = tmp_path / "repo"
     repo.mkdir()
-    _rb(repo, "app/target.rb", "class Target\n  def act\n  end\nend\n")
+    _rb(repo, "app/target.rb", "class Target\n  def self.act\n  end\nend\n")
     _rb(
         repo,
         "app/hub.rb",
@@ -498,11 +501,11 @@ async def test_analysis_basis_fields_present(tmp_path: Path) -> None:
     memex = Memex(config.memex_root)
 
     # Two confident (unique) targets, called 3 times combined.
-    _rb(repo, "app/target.rb", "class Target\n  def act\n  end\nend\n")
-    _rb(repo, "app/other.rb", "class Other\n  def go\n  end\nend\n")
+    _rb(repo, "app/target.rb", "class Target\n  def self.act\n  end\nend\n")
+    _rb(repo, "app/other.rb", "class Other\n  def self.go\n  end\nend\n")
     # One ambiguous target (two candidates), called twice.
-    _rb(repo, "app/dup_a.rb", "class DupA\n  def dup_name\n  end\nend\n")
-    _rb(repo, "app/dup_b.rb", "class DupB\n  def dup_name\n  end\nend\n")
+    _rb(repo, "app/dup_a.rb", "class Hub\n  def dup_name\n  end\nend\n")
+    _rb(repo, "app/dup_b.rb", "class Hub\n  def dup_name\n  end\nend\n")
     _rb(
         repo,
         "app/hub.rb",
@@ -554,7 +557,7 @@ async def test_god_nodes_input_is_exactly_confident_edges(
     `confident_edges()`."""
     repo = tmp_path / "repo"
     repo.mkdir()
-    _rb(repo, "app/target.rb", "class Target\n  def act\n  end\nend\n")
+    _rb(repo, "app/target.rb", "class Target\n  def self.act\n  end\nend\n")
     _rb(repo, "app/hub.rb", "class Hub\n  def call\n    Target.act\n  end\nend\n")
     graph = CodeGraph(repo=repo)
     graph.build()

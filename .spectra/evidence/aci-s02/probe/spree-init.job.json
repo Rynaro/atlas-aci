@@ -1,0 +1,16 @@
+{
+  "name": "spree-init",
+  "command": [
+    "git",
+    "init",
+    "-q"
+  ],
+  "cwd": "/tmp/aci-s02-probe-inputs/spree",
+  "exit_code": 0,
+  "timed_out": false,
+  "duration_seconds": 0.03788620900013484,
+  "peak_memory_bytes": 4751360,
+  "stdout": ".spectra/evidence/aci-s02/probe/spree-init.stdout.log",
+  "stderr": ".spectra/evidence/aci-s02/probe/spree-init.stderr.log",
+  "source_sha256": "cb13abaf72e673071d1f8d8c5af624bb472a38c8ed57431107145df2c8f10cb7"
+}

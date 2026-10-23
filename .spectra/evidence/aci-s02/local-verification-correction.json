@@ -1,0 +1,25 @@
+{
+  "correction": "Earlier local all-guard-checks-passed reports were incorrect: preserved macOS Bash 3.2 self-test logs stop at unsupported associative-array expansion before final controls, despite tool invocation exit having been reported as zero.",
+  "prior_artifacts_modified": false,
+  "prior_log_observations": {
+    "aci-s01": {
+      "path": ".spectra/evidence/aci-s01/probe.log",
+      "observed_tail": [
+        "(building the one-time throwaway uv environment for behavioural fingerprint scenarios...)",
+        "PASS: semantically-null comment edit does NOT flip the fingerprint",
+        "../scripts/test-verify-probe-verdict.sh: line 474: confident_edges: unbound variable"
+      ]
+    },
+    "aci-s05": {
+      "path": ".spectra/evidence/aci-s05/probe.log",
+      "observed_tail": [
+        "(building the one-time throwaway uv environment for behavioural fingerprint scenarios...)",
+        "PASS: semantically-null comment edit does NOT flip the fingerprint",
+        "../scripts/test-verify-probe-verdict.sh: line 474: confident_edges: unbound variable"
+      ]
+    }
+  },
+  "remote_ci_distinction": "Orchestrator reported previously observed Linux GitHub CI passed; this correction concerns the incomplete local macOS run.",
+  "current_remedy": "Portable case selection preserves all controls; direct subprocess return code plus explicit 27 passed, 0 failed marker are required.",
+  "current_result": ".spectra/evidence/aci-s02/probe-selftest-result.json"
+}

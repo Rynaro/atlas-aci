@@ -1,0 +1,11 @@
+{
+  "slice_id": "ACI-S02",
+  "base_commit": "feec071f0f1cfbb967fe1849065f23f4e6713120",
+  "criteria_sha256": "cdbaf9c448dc62b55c50a4c1326e30e458cc115e1fe7149df903299e1d3a9cb5",
+  "predecessors": [],
+  "existing_state": false,
+  "source_evidence": "ATLAS preflight plus targeted resolver, count, confidence/schema/export test inspection",
+  "product_reproduction": "required before product edits; not performed by planner",
+  "scope_amendment": "S02-PATH-01",
+  "prior_slice_artifacts": "immutable"
+}

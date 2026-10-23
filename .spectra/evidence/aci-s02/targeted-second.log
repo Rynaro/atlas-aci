@@ -1,0 +1,178 @@
+F.......F.....F...........................F............................. [ 87%]
+......F...                                                               [100%]
+=================================== FAILURES ===================================
+__________ test_every_call_inheritance_edge_confidence_in_closed_enum __________
+
+tmp_path = PosixPath('/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-28/test_every_call_inheritance_ed0')
+
+    def test_every_call_inheritance_edge_confidence_in_closed_enum(tmp_path: Path) -> None:
+        repo = tmp_path / "repo"
+        repo.mkdir()
+        # One EXTRACTED (qualified, unique), one INFERRED (bare, unique), one
+        # AMBIGUOUS (two same-named candidates), one heritage EXTRACTED.
+        _write(repo, "app/target.rb", "class Target\n  def self.bar\n  end\nend\n")
+        _write(
+            repo,
+            "app/hub.rb",
+            "class Hub\n  def call\n    Target.bar\n    bar()\n  end\nend\n",
+        )
+        _write(repo, "app/a.rb", "class Hub\n  def dup_name\n  end\nend\n")
+        _write(repo, "app/b.rb", "class Hub\n  def dup_name\n  end\nend\n")
+        _write(repo, "app/caller.rb", "class Hub\n  def call\n    dup_name()\n  end\nend\n")
+        _write(repo, "app/base.rb", "class Base\nend\nclass Child < Base\nend\n")
+
+        graph = CodeGraph(repo=repo)
+        graph.build()
+
+        rows = graph.db.execute("SELECT confidence FROM edges").fetchall()
+        assert rows, "expected at least one materialized edge"
+        confidences = {r["confidence"] for r in rows}
+        assert confidences <= {"EXTRACTED", "INFERRED", "AMBIGUOUS"}
+        # All three values are actually exercised by this fixture, not just a subset.
+>       assert confidences == {"EXTRACTED", "INFERRED", "AMBIGUOUS"}
+E       AssertionError: assert {'AMBIGUOUS', 'EXTRACTED'} == {'AMBIGUOUS',...', 'INFERRED'}
+E
+E         Extra items in the right set:
+E         'INFERRED'
+E         Use -v to get more diff
+
+mcp-server/tests/test_confidence.py:72: AssertionError
+____________________ test_type_qualified_rule_per_language _____________________
+
+tmp_path = PosixPath('/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-28/test_type_qualified_rule_per_l0')
+
+    def test_type_qualified_rule_per_language(tmp_path: Path) -> None:
+        # Ruby: `Foo.bar` (constant receiver) = EXTRACTED; `obj.bar` (local/
+        # identifier receiver) = INFERRED.
+        ruby_repo = tmp_path / "ruby_repo"
+        ruby_repo.mkdir()
+        _write(ruby_repo, "app/target.rb", "class Target\n  def act\n  end\nend\n")
+        _write(
+            ruby_repo,
+            "app/hub.rb",
+            "class Hub\n  def call(obj)\n    Target.act\n  end\nend\n"
+            "class Hub2\n  def call(obj)\n    obj.act\n  end\nend\n",
+        )
+        ruby_graph = CodeGraph(repo=ruby_repo)
+        ruby_graph.build()
+        # Both call sites live in the same file (hub.rb) at different lines —
+        # disambiguate by source_line rather than path.
+        ruby_by_line = {
+            e["source_line"]: e["confidence"] for e in _edges(ruby_graph, callee_name="act")
+        }
+>       assert ruby_by_line[3] == "EXTRACTED"  # Target.act
+               ^^^^^^^^^^^^^^^
+E       KeyError: 3
+
+mcp-server/tests/test_confidence.py:335: KeyError
+________________ test_new_expression_constructor_call_resolves _________________
+
+tmp_path = PosixPath('/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-28/test_new_expression_constructo0')
+
+    def test_new_expression_constructor_call_resolves(tmp_path: Path) -> None:
+        """JS/TS `new Foo()` — a distinct AST node type from a bare call —
+        must resolve exactly like a bare `Foo()` constructor call."""
+        repo = tmp_path / "repo"
+        repo.mkdir()
+        _write(repo, "app/target.ts", "class Target {}\n")
+        _write(repo, "app/hub.ts", "class Hub {\n  call(): void {\n    new Target();\n  }\n}\n")
+        _merge_modules(repo)
+        graph = CodeGraph(repo=repo)
+        graph.build()
+
+        edges = graph.callers_of("Target")
+>       assert len(edges) == 1
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+mcp-server/tests/test_confidence.py:529: AssertionError
+______________________ test_analysis_basis_fields_present ______________________
+
+tmp_path = PosixPath('/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-28/test_analysis_basis_fields_pre0')
+
+    async def test_analysis_basis_fields_present(tmp_path: Path) -> None:
+        """A fixture where all three numbers DIFFER from each other and from
+        the trivial 0-or-all cases — a fixture where they coincide proves
+        nothing (checker instruction). Total edges in this fixture: 3 resolved
+        (confident) + 2 ambiguous = 5; `ambiguous_edges_excluded` (2) and
+        `resolved_edge_count` (3) must each be their own distinct number, not a
+        stand-in for "all" or "none"."""
+        repo = tmp_path / "repo"
+        repo.mkdir()
+        config = Config(repo=repo, memex_root=tmp_path / "memex")
+        enforcement = Enforcement(config)
+        memex = Memex(config.memex_root)
+
+        # Two confident (unique) targets, called 3 times combined.
+        _rb(repo, "app/target.rb", "class Target\n  def self.act\n  end\nend\n")
+        _rb(repo, "app/other.rb", "class Other\n  def go\n  end\nend\n")
+        # One ambiguous target (two candidates), called twice.
+        _rb(repo, "app/dup_a.rb", "class DupA\n  def dup_name\n  end\nend\n")
+        _rb(repo, "app/dup_b.rb", "class DupB\n  def dup_name\n  end\nend\n")
+        _rb(
+            repo,
+            "app/hub.rb",
+            "class Hub\n"
+            "  def call\n"
+            "    Target.act\n"
+            "    Target.act\n"
+            "    Other.go\n"
+            "    dup_name()\n"
+            "    dup_name()\n"
+            "  end\n"
+            "end\n",
+        )
+        code_graph = CodeGraph(repo=repo)
+        code_graph.build()
+
+        # Independently computed expectations, straight from the edges table.
+        expected_resolved = code_graph.db.execute(
+            "SELECT COUNT(*) FROM edges WHERE confidence IN ('EXTRACTED', 'INFERRED')"
+        ).fetchone()[0]
+        expected_ambiguous = code_graph.db.execute(
+            "SELECT COUNT(*) FROM edges WHERE confidence = 'AMBIGUOUS'"
+        ).fetchone()[0]
+>       assert expected_resolved == 3
+E       assert 2 == 3
+
+mcp-server/tests/test_graph_query.py:532: AssertionError
+___________ test_import_rejects_ambiguous_edge_candidate_path_escape ___________
+
+tmp_path = PosixPath('/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-28/test_import_rejects_ambiguous_0')
+
+    def test_import_rejects_ambiguous_edge_candidate_path_escape(tmp_path: Path) -> None:
+        """MAJOR-1 also covers an AMBIGUOUS edge's OWN `candidates[].path` --
+        easy to miss since it is nested inside the edge record, not a
+        top-level field."""
+        repo = tmp_path / "repo"
+        repo.mkdir()
+        _write(repo, "app/a.rb", "def dup_name(x)\nend\n")
+        _write(repo, "app/b.rb", "def dup_name(x)\nend\n")
+        _write(repo, "app/caller.rb", "class Hub\n  def call\n    dup_name(1)\n  end\nend\n")
+        graph = CodeGraph(repo=repo)
+        graph.build()
+        real_export = tmp_path / "export.jsonl"
+        graph.export_jsonl(real_export)
+
+        forged = tmp_path / "forged-candidate.jsonl"
+
+        def mutate(body):
+            for r in body:
+                if r["type"] == "edge" and r.get("candidates"):
+                    r["candidates"][0]["path"] = "../../etc/passwd"
+
+        _forge_export(real_export, forged, mutate)
+
+        target = _import_target(tmp_path, "target-candidate")
+>       with pytest.raises(ValueError, match="candidates\\[0\\]\\.path"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+mcp-server/tests/test_export.py:605: Failed
+=========================== short test summary info ============================
+FAILED mcp-server/tests/test_confidence.py::test_every_call_inheritance_edge_confidence_in_closed_enum
+FAILED mcp-server/tests/test_confidence.py::test_type_qualified_rule_per_language
+FAILED mcp-server/tests/test_confidence.py::test_new_expression_constructor_call_resolves
+FAILED mcp-server/tests/test_graph_query.py::test_analysis_basis_fields_present
+FAILED mcp-server/tests/test_export.py::test_import_rejects_ambiguous_edge_candidate_path_escape
+5 failed, 77 passed in 5.67s

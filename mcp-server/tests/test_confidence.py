@@ -22,6 +22,20 @@ def _write(repo: Path, rel: str, content: str) -> None:
     p.write_text(content)
 
 
+def _merge_modules(repo: Path) -> None:
+    """These positives require same-module declarations, not guessed imports."""
+    for extension in ("py", "js", "ts"):
+        paths = sorted(
+            repo.rglob("*." + extension),
+            key=lambda p: (p.stem not in {"target", "base", "point"}, str(p)),
+        )
+        if len(paths) > 1:
+            combined = "\n".join(p.read_text() for p in paths)
+            for path in paths:
+                path.unlink()
+            (repo / ("local." + extension)).write_text(combined)
+
+
 def _edges(graph: CodeGraph, **where: str) -> list[dict]:
     clauses = " AND ".join(f"{k} = ?" for k in where)
     sql = "SELECT * FROM edges"
@@ -39,15 +53,15 @@ def test_every_call_inheritance_edge_confidence_in_closed_enum(tmp_path: Path) -
     repo.mkdir()
     # One EXTRACTED (qualified, unique), one INFERRED (bare, unique), one
     # AMBIGUOUS (two same-named candidates), one heritage EXTRACTED.
-    _write(repo, "app/target.rb", "class Target\n  def bar\n  end\nend\n")
+    _write(repo, "app/target.rb", "class Target\n  def self.bar\n  end\nend\n")
     _write(
         repo,
         "app/hub.rb",
-        "class Hub\n  def call\n    Target.bar\n    bar()\n  end\nend\n",
+        "class Hub\n  def bar; end\n  def call\n    Target.bar\n    bar()\n  end\nend\n",
     )
-    _write(repo, "app/a.rb", "class A\n  def dup_name\n  end\nend\n")
-    _write(repo, "app/b.rb", "class B\n  def dup_name\n  end\nend\n")
-    _write(repo, "app/caller.rb", "class Caller\n  def call\n    dup_name()\n  end\nend\n")
+    _write(repo, "app/a.rb", "class Hub\n  def dup_name\n  end\nend\n")
+    _write(repo, "app/b.rb", "class Hub\n  def dup_name\n  end\nend\n")
+    _write(repo, "app/caller.rb", "class Hub\n  def call\n    dup_name()\n  end\nend\n")
     _write(repo, "app/base.rb", "class Base\nend\nclass Child < Base\nend\n")
 
     graph = CodeGraph(repo=repo)
@@ -93,7 +107,7 @@ def test_edge_relation_is_a_closed_set(tmp_path: Path) -> None:
         "    ApplicationRepository.new\n"
         "  end\n"
         "end\n"
-        "class UniqueCallTarget\n"
+        "class VoteRepository\n"
         "  def unique_call_target\n"
         "  end\n"
         "end\n",
@@ -120,7 +134,7 @@ def test_single_type_qualified_is_extracted(tmp_path: Path) -> None:
     to exactly one definition anywhere in the repo."""
     repo = tmp_path / "repo"
     repo.mkdir()
-    _write(repo, "app/target.rb", "class Target\n  def unique_name\n  end\nend\n")
+    _write(repo, "app/target.rb", "class Target\n  def self.unique_name\n  end\nend\n")
     _write(
         repo,
         "app/hub.rb",
@@ -144,7 +158,7 @@ def test_single_heuristic_is_inferred(tmp_path: Path) -> None:
     exactly one definition."""
     repo = tmp_path / "repo"
     repo.mkdir()
-    _write(repo, "app/target.rb", "class Target\n  def unique_name\n  end\nend\n")
+    _write(repo, "app/target.rb", "class Hub\n  def unique_name\n  end\nend\n")
     _write(
         repo,
         "app/hub.rb",
@@ -165,8 +179,8 @@ def test_single_heuristic_is_inferred(tmp_path: Path) -> None:
 def test_multi_candidate_is_ambiguous_with_candidates(tmp_path: Path) -> None:
     repo = tmp_path / "repo"
     repo.mkdir()
-    _write(repo, "app/a.rb", "class A\n  def dup_name\n  end\nend\n")
-    _write(repo, "app/b.rb", "class B\n  def dup_name\n  end\nend\n")
+    _write(repo, "app/a.rb", "class Hub\n  def dup_name\n  end\nend\n")
+    _write(repo, "app/b.rb", "class Hub\n  def dup_name\n  end\nend\n")
     _write(
         repo,
         "app/hub.rb",
@@ -225,9 +239,9 @@ def test_candidates_total_order_stable(tmp_path: Path) -> None:
     path, line, name` convention."""
     repo = tmp_path / "repo"
     repo.mkdir()
-    _write(repo, "app/z_last.rb", "class ZLast\n  def bar\n  end\nend\n")
-    _write(repo, "app/a_first.rb", "class AFirst\n  def bar\n  end\nend\n")
-    _write(repo, "app/m_mid.rb", "class MMid\n  def bar\n  end\nend\n")
+    _write(repo, "app/z_last.rb", "class Hub\n  def bar\n  end\nend\n")
+    _write(repo, "app/a_first.rb", "class Hub\n  def bar\n  end\nend\n")
+    _write(repo, "app/m_mid.rb", "class Hub\n  def bar\n  end\nend\n")
     _write(repo, "app/hub.rb", "class Hub\n  def call\n    bar()\n  end\nend\n")
 
     expected = sorted(
@@ -270,7 +284,7 @@ def test_edge_enumeration_is_a_total_order_not_just_candidates(tmp_path: Path) -
     not just `candidates[]` (which AC-A1-8 already covers)."""
     repo = tmp_path / "repo"
     repo.mkdir()
-    _write(repo, "app/target.rb", "class Target\n  def foo(x)\n  end\nend\n")
+    _write(repo, "app/target.rb", "class Hub\n  def foo(x)\n  end\nend\n")
     _write(repo, "app/hub.rb", "class Hub\n  def call\n    foo(foo(1))\n  end\nend\n")
 
     graph = CodeGraph(repo=repo)
@@ -303,60 +317,47 @@ def test_edge_enumeration_is_a_total_order_not_just_candidates(tmp_path: Path) -
 
 
 def test_type_qualified_rule_per_language(tmp_path: Path) -> None:
-    # Ruby: `Foo.bar` (constant receiver) = EXTRACTED; `obj.bar` (local/
-    # identifier receiver) = INFERRED.
-    ruby_repo = tmp_path / "ruby_repo"
-    ruby_repo.mkdir()
-    _write(ruby_repo, "app/target.rb", "class Target\n  def act\n  end\nend\n")
-    _write(
-        ruby_repo,
-        "app/hub.rb",
-        "class Hub\n  def call(obj)\n    Target.act\n  end\nend\n"
-        "class Hub2\n  def call(obj)\n    obj.act\n  end\nend\n",
-    )
-    ruby_graph = CodeGraph(repo=ruby_repo)
-    ruby_graph.build()
-    # Both call sites live in the same file (hub.rb) at different lines —
-    # disambiguate by source_line rather than path.
-    ruby_by_line = {
-        e["source_line"]: e["confidence"] for e in _edges(ruby_graph, callee_name="act")
+    """Known class/static receivers qualify; owned self/this stay inferred.
+
+    Unknown parameters retain an unresolved occurrence, never a global target.
+    """
+    samples = {
+        "example.rb": (
+            "class Target\n"
+            " def self.act; end\n"
+            "end\n"
+            "class Hub\n"
+            " def act; end\n"
+            " def call; Target.act; self.act; end\n"
+            " def unknown(obj); obj.act; end\n"
+            "end\n"
+        ),
+        "example.py": (
+            "class Target:\n"
+            "    @staticmethod\n"
+            "    def act(): pass\n"
+            "class Hub:\n"
+            "    def act(self): pass\n"
+            "    def call(self):\n"
+            "        Target.act()\n"
+            "        self.act()\n"
+            "    def unknown(self, obj): obj.act()\n"
+        ),
+        "example.js": (
+            "class Target { static act() {} }\n"
+            "class Hub { act() {} call(){Target.act(); this.act();} "
+            "unknown(obj){obj.act();}}\n"
+        ),
     }
-    assert ruby_by_line[3] == "EXTRACTED"  # Target.act
-    assert ruby_by_line[8] == "INFERRED"  # obj.act
-
-    # Python: `Foo.bar()` / `Foo()` where Foo is class-bound (capitalized) =
-    # EXTRACTED; `self.bar()` / `obj.bar()` = INFERRED.
-    py_repo = tmp_path / "py_repo"
-    py_repo.mkdir()
-    _write(py_repo, "app/target.py", "class Target:\n    def act(self):\n        pass\n")
-    _write(
-        py_repo,
-        "app/hub.py",
-        "class Hub:\n    def call(self, obj):\n        Target.act()\n"
-        "class Hub2:\n    def call(self, obj):\n        self.act()\n",
-    )
-    py_graph = CodeGraph(repo=py_repo)
-    py_graph.build()
-    py_by_line = {e["source_line"]: e["confidence"] for e in _edges(py_graph, callee_name="act")}
-    assert py_by_line[3] == "EXTRACTED"  # Target.act()
-    assert py_by_line[6] == "INFERRED"  # self.act()
-
-    # JS/TS: `Foo.bar()` / `new Foo()` where Foo is class-bound (capitalized)
-    # = EXTRACTED; `this.bar()` / `obj.bar()` = INFERRED.
-    js_repo = tmp_path / "js_repo"
-    js_repo.mkdir()
-    _write(js_repo, "app/target.js", "class Target {\n  act() {}\n}\n")
-    _write(
-        js_repo,
-        "app/hub.js",
-        "class Hub {\n  call() {\n    Target.act();\n  }\n}\n"
-        "class Hub2 {\n  call() {\n    this.act();\n  }\n}\n",
-    )
-    js_graph = CodeGraph(repo=js_repo)
-    js_graph.build()
-    js_by_line = {e["source_line"]: e["confidence"] for e in _edges(js_graph, callee_name="act")}
-    assert js_by_line[3] == "EXTRACTED"  # Target.act()
-    assert js_by_line[8] == "INFERRED"  # this.act()
+    for i, (name, source) in enumerate(samples.items()):
+        repo = tmp_path / str(i)
+        repo.mkdir()
+        _write(repo, name, source)
+        graph = CodeGraph(repo=repo)
+        graph.build()
+        edges = graph.callers_of("act")
+        assert sorted(e["confidence"] for e in edges) == ["EXTRACTED", "INFERRED"]
+        assert graph.unresolved_ref_count("act", ("call", "construct")) == 1
 
 
 # ---- AC-A1-7 — real inheritance edges via QUERIES heritage capture ----
@@ -369,6 +370,7 @@ def test_python_and_jsts_heritage_captured(tmp_path: Path) -> None:
     py_repo.mkdir()
     _write(py_repo, "app/base.py", "class Base:\n    pass\n")
     _write(py_repo, "app/child.py", "class Child(Base):\n    pass\n")
+    _merge_modules(py_repo)
     py_graph = CodeGraph(repo=py_repo)
     py_graph.build()
     py_super = _edges(py_graph, callee_name="Base", relation="superclass")
@@ -380,6 +382,7 @@ def test_python_and_jsts_heritage_captured(tmp_path: Path) -> None:
     ts_repo.mkdir()
     _write(ts_repo, "app/base.ts", "class Base {}\n")
     _write(ts_repo, "app/child.ts", "class Child extends Base {}\n")
+    _merge_modules(ts_repo)
     ts_graph = CodeGraph(repo=ts_repo)
     ts_graph.build()
     ts_super = _edges(ts_graph, callee_name="Base", relation="superclass")
@@ -407,8 +410,8 @@ def test_ambiguous_producer_is_deterministic_only(tmp_path: Path) -> None:
     candidate-count rule, never a run-dependent (or LLM-dependent) output."""
     repo = tmp_path / "repo"
     repo.mkdir()
-    _write(repo, "app/a.rb", "class A\n  def dup_name\n  end\nend\n")
-    _write(repo, "app/b.rb", "class B\n  def dup_name\n  end\nend\n")
+    _write(repo, "app/a.rb", "class Hub\n  def dup_name\n  end\nend\n")
+    _write(repo, "app/b.rb", "class Hub\n  def dup_name\n  end\nend\n")
     _write(repo, "app/hub.rb", "class Hub\n  def call\n    dup_name()\n  end\nend\n")
 
     first = CodeGraph(repo=repo)
@@ -433,9 +436,9 @@ def test_ambiguous_excluded_from_analysis_graph(tmp_path: Path) -> None:
     queryable (never dropped) via `callers_of`/`subclasses_of` (D4a)."""
     repo = tmp_path / "repo"
     repo.mkdir()
-    _write(repo, "app/target.rb", "class Target\n  def unique_name\n  end\nend\n")
-    _write(repo, "app/a.rb", "class A\n  def dup_name\n  end\nend\n")
-    _write(repo, "app/b.rb", "class B\n  def dup_name\n  end\nend\n")
+    _write(repo, "app/target.rb", "class Target\n  def self.unique_name\n  end\nend\n")
+    _write(repo, "app/a.rb", "class Hub\n  def dup_name\n  end\nend\n")
+    _write(repo, "app/b.rb", "class Hub\n  def dup_name\n  end\nend\n")
     _write(
         repo,
         "app/hub.rb",
@@ -490,6 +493,7 @@ def test_bare_constructor_call_to_local_class_resolves(tmp_path: Path) -> None:
         "app/hub.py",
         "class Hub:\n    def call(self):\n        Target()\n        Target()\n",
     )
+    _merge_modules(repo)
     graph = CodeGraph(repo=repo)
     graph.build()
 
@@ -507,6 +511,7 @@ def test_new_expression_constructor_call_resolves(tmp_path: Path) -> None:
     repo.mkdir()
     _write(repo, "app/target.ts", "class Target {}\n")
     _write(repo, "app/hub.ts", "class Hub {\n  call(): void {\n    new Target();\n  }\n}\n")
+    _merge_modules(repo)
     graph = CodeGraph(repo=repo)
     graph.build()
 
@@ -572,10 +577,9 @@ def test_module_qualified_constructor_call_resolves_extracted(tmp_path: Path) ->
     graph = CodeGraph(repo=repo)
     graph.build()
 
-    edges = graph.callers_of("Target")
-    assert len(edges) == 1
-    assert edges[0]["relation"] == "construct"
-    assert edges[0]["confidence"] == "EXTRACTED"
+    assert graph.callers_of("Target") == []
+    refs = graph.search_symbol("Target")["references"]
+    assert refs and all(r["unresolved_reason"] for r in refs)
 
 
 # ---- MAJOR: qualification-by-resolution replaces the capitalization proxy ----
@@ -595,6 +599,7 @@ def test_lowercase_named_real_class_is_extracted_not_inferred(tmp_path: Path) ->
         "class point:\n    @staticmethod\n    def act():\n        pass\n",
     )
     _write(repo, "app/hub.py", "class Hub:\n    def call(self):\n        point.act()\n")
+    _merge_modules(repo)
     graph = CodeGraph(repo=repo)
     graph.build()
 
@@ -620,10 +625,9 @@ def test_capitalized_non_class_receiver_is_inferred_not_extracted(tmp_path: Path
     graph = CodeGraph(repo=repo)
     graph.build()
 
-    edges = graph.callers_of("act")
-    assert len(edges) == 1
-    assert edges[0]["relation"] == "call"
-    assert edges[0]["confidence"] == "INFERRED"
+    assert graph.callers_of("act") == []
+    refs = graph.search_symbol("act")["references"]
+    assert refs and all(r["unresolved_reason"] for r in refs)
 
 
 # ---- Coordinator MAJOR-1 (condition 5) — shadowing demotes to INFERRED ----
@@ -662,15 +666,9 @@ def test_shadowed_class_name_demotes_to_inferred_not_extracted(tmp_path: Path) -
     graph = CodeGraph(repo=repo)
     graph.build()
 
-    edges = graph.callers_of("reload")
-    assert len(edges) == 1
-    assert edges[0]["confidence"] == "INFERRED", (
-        "a qualifier_name that is ALSO a local assignment target in this file "
-        "must never be credited as EXTRACTED"
-    )
-    # The resolved TARGET stays correct — only the *confidence* about how
-    # certain that resolution is changes (checker's "bounded" finding).
-    assert edges[0]["target"]["name"] == "reload"
+    assert graph.callers_of("reload") == []
+    refs = graph.search_symbol("reload")["references"]
+    assert refs and all(r["unresolved_reason"] for r in refs)
 
 
 def test_shadowed_construct_target_demotes_to_inferred(tmp_path: Path) -> None:
@@ -692,10 +690,9 @@ def test_shadowed_construct_target_demotes_to_inferred(tmp_path: Path) -> None:
     graph = CodeGraph(repo=repo)
     graph.build()
 
-    edges = graph.callers_of("Target")
-    assert len(edges) == 1
-    assert edges[0]["relation"] == "construct"
-    assert edges[0]["confidence"] == "INFERRED"
+    assert graph.callers_of("Target") == []
+    refs = graph.search_symbol("Target")["references"]
+    assert refs and all(r["unresolved_reason"] for r in refs)
 
 
 def test_unshadowed_class_reference_still_extracted(tmp_path: Path) -> None:
@@ -705,6 +702,7 @@ def test_unshadowed_class_reference_still_extracted(tmp_path: Path) -> None:
     repo.mkdir()
     _write(repo, "app/target.py", "class Target:\n    def act(self):\n        pass\n")
     _write(repo, "app/hub.py", "class Hub:\n    def call(self):\n        Target.act(self)\n")
+    _merge_modules(repo)
     graph = CodeGraph(repo=repo)
     graph.build()
 
@@ -731,9 +729,9 @@ def test_js_shadowed_class_name_demotes_to_inferred(tmp_path: Path) -> None:
     graph = CodeGraph(repo=repo)
     graph.build()
 
-    edges = graph.callers_of("reload")
-    assert len(edges) == 1
-    assert edges[0]["confidence"] == "INFERRED"
+    assert graph.callers_of("reload") == []
+    refs = graph.search_symbol("reload")["references"]
+    assert refs and all(r["unresolved_reason"] for r in refs)
 
 
 def test_ruby_qualifier_name_is_always_none_immune_to_this_guard(tmp_path: Path) -> None:
@@ -755,7 +753,8 @@ def test_ruby_qualifier_name_is_always_none_immune_to_this_guard(tmp_path: Path)
 
     rows = graph.db.execute("SELECT qualifier_name FROM refs WHERE lang = 'ruby'").fetchall()
     assert rows
-    assert all(r["qualifier_name"] is None for r in rows)
+    assert any(r["qualifier_name"] == "Target" for r in rows)
+    assert graph.callers_of("act") == []
 
 
 # ---- self/super stay INFERRED — spec.md D4/F18's explicit worked example ----
@@ -846,7 +845,7 @@ def test_unresolved_refs_zero_when_genuinely_no_callers(tmp_path: Path) -> None:
 def test_unresolved_refs_zero_when_fully_resolved(tmp_path: Path) -> None:
     repo = tmp_path / "repo"
     repo.mkdir()
-    _write(repo, "app/target.rb", "class Target\n  def bar\n  end\nend\n")
+    _write(repo, "app/target.rb", "class Target\n  def self.bar\n  end\nend\n")
     _write(repo, "app/hub.rb", "class Hub\n  def call\n    Target.bar\n  end\nend\n")
     graph = CodeGraph(repo=repo)
     graph.build()
@@ -883,6 +882,7 @@ def test_extracted_tier_is_not_degenerate_once_constructors_and_direct_class_ref
         "    def helper(self):\n"
         "        pass\n",
     )
+    _merge_modules(repo)
     graph = CodeGraph(repo=repo)
     graph.build()
 

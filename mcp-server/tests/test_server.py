@@ -809,7 +809,7 @@ async def test_graph_query_is_bounded(
         _rb(
             config.repo,
             f"app/m{i}.rb",
-            f"class M{i}\n  def call\n    record_vote(1)\n  end\nend\n",
+            "class Hub\n  def call\n    record_vote(1)\n  end\nend\n",
         )
     code_graph = CodeGraph(repo=config.repo, query_limit=config.max_bound_field_elements + 1)
     code_graph.build()
@@ -902,7 +902,7 @@ async def test_callers_of_at_sql_limit_boundary_are_not_silently_swallowed(
     _rb(
         config.repo,
         "app/targets.rb",
-        "class Targets\n  def callee_exact\n  end\n  def callee_over\n  end\nend\n",
+        "class Hub\n  def callee_exact\n  end\n  def callee_over\n  end\nend\n",
     )
     calls_exact = "\n    ".join(["callee_exact()"] * cap)
     calls_over = "\n    ".join(["callee_over()"] * (cap + 1))

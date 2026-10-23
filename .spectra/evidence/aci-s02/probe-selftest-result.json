@@ -1,0 +1,13 @@
+{
+  "command": [
+    "bash",
+    "scripts/test-verify-probe-verdict.sh"
+  ],
+  "exit_code": 0,
+  "duration_seconds": 4.411024249995535,
+  "explicit_final_marker": "27 passed, 0 failed",
+  "observed_pass_lines": 27,
+  "all_controls_observed": true,
+  "source_sha256": "cb13abaf72e673071d1f8d8c5af624bb472a38c8ed57431107145df2c8f10cb7",
+  "bash_version": "GNU bash, version 3.2.57(1)-release (arm64-apple-darwin26)"
+}

@@ -1,0 +1,50 @@
+{
+  "envelope_version": "2.0",
+  "message_id": "76763119-f1dd-426d-b8e7-370299a6607c",
+  "thread_id": "2ca743c9-5e61-4c80-825a-042d267a5580",
+  "parent_id": null,
+  "from": {
+    "eidolon": "ramza",
+    "version": "1.1.0"
+  },
+  "to": {
+    "eidolon": "vivi",
+    "version": "n/a"
+  },
+  "performative": "PROPOSE",
+  "edge_origin": "roster",
+  "objective": "Implement ACI-S02 conservative ownership and lexical-scope filtering with real parser regression evidence and schema compatibility.",
+  "artifact": {
+    "kind": "spec",
+    "schema_version": "1.0",
+    "path": "aci-s02.md",
+    "sha256": "ee3311e774b673ceb551b577fdb19d2ba4017f17e4828ed46140b1aea029c0de",
+    "size_bytes": 19382
+  },
+  "integrity": {
+    "method": "sha256",
+    "value": "ee3311e774b673ceb551b577fdb19d2ba4017f17e4828ed46140b1aea029c0de"
+  },
+  "trace": {
+    "ts": "2026-10-23T20:47:20.817601+00:00",
+    "host": "codex",
+    "model": "gpt-6-astra",
+    "tier": "standard"
+  },
+  "ise": {
+    "assertion_grade": "validated",
+    "provenance": {
+      "methodology_version": "ramza-1.1.0"
+    },
+    "receiver_authorization": {
+      "auto_route": true,
+      "auto_merge": false,
+      "auto_deploy": false
+    }
+  },
+  "confidence": 0.8875,
+  "x_ramza_acceptance_criteria": {
+    "path": "aci-s02.criteria.md",
+    "sha256": "cdbaf9c448dc62b55c50a4c1326e30e458cc115e1fe7149df903299e1d3a9cb5"
+  }
+}

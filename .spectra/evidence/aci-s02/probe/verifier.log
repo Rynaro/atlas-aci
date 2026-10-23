@@ -1,0 +1,6 @@
+frozen bar (hardcoded): Q_struct=0.3 R=0.85
+every count and Q below is RECOMPUTED from the graph bundle, not read from the sidecar
+  solidus: median=0.961363154377373 lpa_q=0.9278116284250444 r*median=0.817158681220767 | clause1(median>=Q_struct)=True clause2(lpa_q>=Q_struct)=True clause3(lpa_q>=R*median)=True -> repo_pass=True
+  spree: median=0.9586603613844409 lpa_q=0.8741089563019508 r*median=0.8148613071767747 | clause1(median>=Q_struct)=True clause2(lpa_q>=Q_struct)=True clause3(lpa_q>=R*median)=True -> repo_pass=True
+computed_verdict=PASS recorded_verdict=PASS
+OK (AC-A3-1/F7): recorded verdict 'PASS' matches the recomputed verdict under the frozen, hardcoded bar; every recomputed count and Q agrees with the sidecar's recorded copies; the indexer fingerprint matches the current tree.
