@@ -1,0 +1,326 @@
+FFFFFFFFFFFFFFFF                                                         [100%]
+=================================== FAILURES ===================================
+____________________________ test_default_no_spawn _____________________________
+
+repository = PosixPath('/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-13/test_default_no_spawn0/repo')
+
+    async def test_default_no_spawn(repository: Path) -> None:
+        cfg = config(repository)
+        enforcement, memex, graph = build_server_state(cfg)
+        marker = repository / "sentinel.jsonl"
+        before = marker.read_bytes()
+        requests = [
+            {"path": "test_case.py"},
+            {"path": "test_case.py", "enabled": True, "execution_profile": True},
+            {},
+            {"path": "../../outside.py"},
+        ]
+        for request in requests:
+>           with pytest.raises(ToolError) as direct:
+                 ^^^^^^^^^^^^^^^^^^^^^^^^
+E           Failed: DID NOT RAISE <class 'atlas_aci.enforcement.ToolError'>
+
+mcp-server/tests/slices/test_s05_contract.py:85: Failed
+----------------------------- Captured stdout call -----------------------------
+2026-10-23 16:38:16 [info     ] tool_call                      args={'path': 'test_case.py'} bytes_out=16384 error=None ms=196 overflow=True tool=test_dry_run
+__________________________ test_explicit_enabled_mode __________________________
+
+repository = PosixPath('/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-13/test_explicit_enabled_mode0/repo')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10a7fa3f0>
+
+    async def test_explicit_enabled_mode(repository: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.setenv("ATLAS_ACI_ENABLE_TEST_EXECUTION", "1")
+        cfg = config(repository, max_bytes_per_call=32)
+>       assert cfg.test_execution_enabled is True
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'Config' object has no attribute 'test_execution_enabled'
+
+mcp-server/tests/slices/test_s05_contract.py:102: AttributeError
+____________________________ test_timeout_preserved ____________________________
+
+repository = PosixPath('/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-13/test_timeout_preserved0/repo')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10a7faa20>
+
+    async def test_timeout_preserved(repository: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.setenv("S05_SENTINEL_MODE", "timeout")
+>       cfg = config(repository, test_execution_enabled=True, test_dry_run_timeout_s=1)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+mcp-server/tests/slices/test_s05_contract.py:129: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+repo = PosixPath('/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-13/test_timeout_preserved0/repo')
+kwargs = {'test_dry_run_timeout_s': 1, 'test_execution_enabled': True}
+
+    def config(repo: Path, **kwargs: Any) -> Config:
+>       return Config(repo=repo, memex_root=repo.parent / "memex", **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: Config.__init__() got an unexpected keyword argument 'test_execution_enabled'
+
+mcp-server/tests/slices/test_s05_contract.py:49: TypeError
+_____________________________ test_profile_visible _____________________________
+
+repository = PosixPath('/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-13/test_profile_visible0/repo')
+
+    async def test_profile_visible(repository: Path) -> None:
+        for enabled in (False, True):
+>           cfg = config(repository, test_execution_enabled=enabled)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+mcp-server/tests/slices/test_s05_contract.py:142: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+repo = PosixPath('/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-13/test_profile_visible0/repo')
+kwargs = {'test_execution_enabled': False}
+
+    def config(repo: Path, **kwargs: Any) -> Config:
+>       return Config(repo=repo, memex_root=repo.parent / "memex", **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: Config.__init__() got an unexpected keyword argument 'test_execution_enabled'
+
+mcp-server/tests/slices/test_s05_contract.py:49: TypeError
+______________________________ test_denial_replay ______________________________
+  + Exception Group Traceback (most recent call last):
+  |   File "/private/tmp/atlas-aci-aci-s05/mcp-server/tests/slices/test_s05_contract.py", line 169, in test_denial_replay
+  |     async with host(repository) as session:
+  |                ^^^^^^^^^^^^^^^^
+  |   File "/Users/henrique/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/contextlib.py", line 210, in __aenter__
+  |     return await anext(self.gen)
+  |            ^^^^^^^^^^^^^^^^^^^^^
+  |   File "/private/tmp/atlas-aci-aci-s05/mcp-server/tests/slices/test_s05_contract.py", line 63, in host
+  |     async with stdio_client(params) as (read, write), ClientSession(read, write) as session:
+  |                ^^^^^^^^^^^^^^^^^^^^
+  |   File "/Users/henrique/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/contextlib.py", line 231, in __aexit__
+  |     await self.gen.athrow(value)
+  |   File "/private/tmp/atlas-aci-aci-s05/mcp-server/.venv/lib/python3.12/site-packages/mcp/client/stdio/__init__.py", line 183, in stdio_client
+  |     anyio.create_task_group() as tg,
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+  |   File "/private/tmp/atlas-aci-aci-s05/mcp-server/.venv/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 799, in __aexit__
+  |     raise BaseExceptionGroup(
+  | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+  +-+---------------- 1 ----------------
+    | Exception Group Traceback (most recent call last):
+    |   File "/private/tmp/atlas-aci-aci-s05/mcp-server/.venv/lib/python3.12/site-packages/mcp/client/stdio/__init__.py", line 189, in stdio_client
+    |     yield read_stream, write_stream
+    |   File "/private/tmp/atlas-aci-aci-s05/mcp-server/tests/slices/test_s05_contract.py", line 63, in host
+    |     async with stdio_client(params) as (read, write), ClientSession(read, write) as session:
+    |                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/private/tmp/atlas-aci-aci-s05/mcp-server/.venv/lib/python3.12/site-packages/mcp/shared/session.py", line 238, in __aexit__
+    |     return await self._task_group.__aexit__(exc_type, exc_val, exc_tb)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/private/tmp/atlas-aci-aci-s05/mcp-server/.venv/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 799, in __aexit__
+    |     raise BaseExceptionGroup(
+    | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+    +-+---------------- 1 ----------------
+      | Traceback (most recent call last):
+      |   File "/private/tmp/atlas-aci-aci-s05/mcp-server/tests/slices/test_s05_contract.py", line 64, in host
+      |     with asyncio.timeout(10):
+      |          ^^^^^^^^^^^^^^^^^^^
+      | TypeError: 'Timeout' object does not support the context manager protocol
+      +------------------------------------
+----------------------------- Captured stderr call -----------------------------
+2026-10-23T19:38:16.424032Z [info     ] server_starting                memex=/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-13/test_denial_replay0/repo/.atlas/memex repo=/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-13/test_denial_replay0/repo
+_________________ test_only_exact_operator_value_enables[None] _________________
+
+repository = PosixPath('/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-13/test_only_exact_operator_value0/repo')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10a89dee0>
+value = None
+
+    @pytest.mark.parametrize("value", [None, "", "0", "false", "true", "yes", " 1", "1 ", "01", "1"])
+    def test_only_exact_operator_value_enables(
+        repository: Path, monkeypatch: pytest.MonkeyPatch, value: str | None
+    ) -> None:
+        if value is not None:
+            monkeypatch.setenv("ATLAS_ACI_ENABLE_TEST_EXECUTION", value)
+>       assert config(repository).test_execution_enabled is (value == "1")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'Config' object has no attribute 'test_execution_enabled'
+
+mcp-server/tests/slices/test_s05_contract.py:185: AttributeError
+___________________ test_only_exact_operator_value_enables[] ___________________
+
+repository = PosixPath('/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-13/test_only_exact_operator_value1/repo')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10a7ed970>
+value = ''
+
+    @pytest.mark.parametrize("value", [None, "", "0", "false", "true", "yes", " 1", "1 ", "01", "1"])
+    def test_only_exact_operator_value_enables(
+        repository: Path, monkeypatch: pytest.MonkeyPatch, value: str | None
+    ) -> None:
+        if value is not None:
+            monkeypatch.setenv("ATLAS_ACI_ENABLE_TEST_EXECUTION", value)
+>       assert config(repository).test_execution_enabled is (value == "1")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'Config' object has no attribute 'test_execution_enabled'
+
+mcp-server/tests/slices/test_s05_contract.py:185: AttributeError
+__________________ test_only_exact_operator_value_enables[0] ___________________
+
+repository = PosixPath('/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-13/test_only_exact_operator_value2/repo')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10a7ec590>
+value = '0'
+
+    @pytest.mark.parametrize("value", [None, "", "0", "false", "true", "yes", " 1", "1 ", "01", "1"])
+    def test_only_exact_operator_value_enables(
+        repository: Path, monkeypatch: pytest.MonkeyPatch, value: str | None
+    ) -> None:
+        if value is not None:
+            monkeypatch.setenv("ATLAS_ACI_ENABLE_TEST_EXECUTION", value)
+>       assert config(repository).test_execution_enabled is (value == "1")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'Config' object has no attribute 'test_execution_enabled'
+
+mcp-server/tests/slices/test_s05_contract.py:185: AttributeError
+________________ test_only_exact_operator_value_enables[false] _________________
+
+repository = PosixPath('/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-13/test_only_exact_operator_value3/repo')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10a7fb1d0>
+value = 'false'
+
+    @pytest.mark.parametrize("value", [None, "", "0", "false", "true", "yes", " 1", "1 ", "01", "1"])
+    def test_only_exact_operator_value_enables(
+        repository: Path, monkeypatch: pytest.MonkeyPatch, value: str | None
+    ) -> None:
+        if value is not None:
+            monkeypatch.setenv("ATLAS_ACI_ENABLE_TEST_EXECUTION", value)
+>       assert config(repository).test_execution_enabled is (value == "1")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'Config' object has no attribute 'test_execution_enabled'
+
+mcp-server/tests/slices/test_s05_contract.py:185: AttributeError
+_________________ test_only_exact_operator_value_enables[true] _________________
+
+repository = PosixPath('/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-13/test_only_exact_operator_value4/repo')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10a7fbb00>
+value = 'true'
+
+    @pytest.mark.parametrize("value", [None, "", "0", "false", "true", "yes", " 1", "1 ", "01", "1"])
+    def test_only_exact_operator_value_enables(
+        repository: Path, monkeypatch: pytest.MonkeyPatch, value: str | None
+    ) -> None:
+        if value is not None:
+            monkeypatch.setenv("ATLAS_ACI_ENABLE_TEST_EXECUTION", value)
+>       assert config(repository).test_execution_enabled is (value == "1")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'Config' object has no attribute 'test_execution_enabled'
+
+mcp-server/tests/slices/test_s05_contract.py:185: AttributeError
+_________________ test_only_exact_operator_value_enables[yes] __________________
+
+repository = PosixPath('/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-13/test_only_exact_operator_value5/repo')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10a7faff0>
+value = 'yes'
+
+    @pytest.mark.parametrize("value", [None, "", "0", "false", "true", "yes", " 1", "1 ", "01", "1"])
+    def test_only_exact_operator_value_enables(
+        repository: Path, monkeypatch: pytest.MonkeyPatch, value: str | None
+    ) -> None:
+        if value is not None:
+            monkeypatch.setenv("ATLAS_ACI_ENABLE_TEST_EXECUTION", value)
+>       assert config(repository).test_execution_enabled is (value == "1")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'Config' object has no attribute 'test_execution_enabled'
+
+mcp-server/tests/slices/test_s05_contract.py:185: AttributeError
+__________________ test_only_exact_operator_value_enables[ 1] __________________
+
+repository = PosixPath('/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-13/test_only_exact_operator_value6/repo')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10a7f9340>
+value = ' 1'
+
+    @pytest.mark.parametrize("value", [None, "", "0", "false", "true", "yes", " 1", "1 ", "01", "1"])
+    def test_only_exact_operator_value_enables(
+        repository: Path, monkeypatch: pytest.MonkeyPatch, value: str | None
+    ) -> None:
+        if value is not None:
+            monkeypatch.setenv("ATLAS_ACI_ENABLE_TEST_EXECUTION", value)
+>       assert config(repository).test_execution_enabled is (value == "1")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'Config' object has no attribute 'test_execution_enabled'
+
+mcp-server/tests/slices/test_s05_contract.py:185: AttributeError
+__________________ test_only_exact_operator_value_enables[1 ] __________________
+
+repository = PosixPath('/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-13/test_only_exact_operator_value7/repo')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10a89c770>
+value = '1 '
+
+    @pytest.mark.parametrize("value", [None, "", "0", "false", "true", "yes", " 1", "1 ", "01", "1"])
+    def test_only_exact_operator_value_enables(
+        repository: Path, monkeypatch: pytest.MonkeyPatch, value: str | None
+    ) -> None:
+        if value is not None:
+            monkeypatch.setenv("ATLAS_ACI_ENABLE_TEST_EXECUTION", value)
+>       assert config(repository).test_execution_enabled is (value == "1")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'Config' object has no attribute 'test_execution_enabled'
+
+mcp-server/tests/slices/test_s05_contract.py:185: AttributeError
+__________________ test_only_exact_operator_value_enables[01] __________________
+
+repository = PosixPath('/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-13/test_only_exact_operator_value8/repo')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10a89cb60>
+value = '01'
+
+    @pytest.mark.parametrize("value", [None, "", "0", "false", "true", "yes", " 1", "1 ", "01", "1"])
+    def test_only_exact_operator_value_enables(
+        repository: Path, monkeypatch: pytest.MonkeyPatch, value: str | None
+    ) -> None:
+        if value is not None:
+            monkeypatch.setenv("ATLAS_ACI_ENABLE_TEST_EXECUTION", value)
+>       assert config(repository).test_execution_enabled is (value == "1")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'Config' object has no attribute 'test_execution_enabled'
+
+mcp-server/tests/slices/test_s05_contract.py:185: AttributeError
+__________________ test_only_exact_operator_value_enables[1] ___________________
+
+repository = PosixPath('/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-13/test_only_exact_operator_value9/repo')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10a89d4f0>
+value = '1'
+
+    @pytest.mark.parametrize("value", [None, "", "0", "false", "true", "yes", " 1", "1 ", "01", "1"])
+    def test_only_exact_operator_value_enables(
+        repository: Path, monkeypatch: pytest.MonkeyPatch, value: str | None
+    ) -> None:
+        if value is not None:
+            monkeypatch.setenv("ATLAS_ACI_ENABLE_TEST_EXECUTION", value)
+>       assert config(repository).test_execution_enabled is (value == "1")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'Config' object has no attribute 'test_execution_enabled'
+
+mcp-server/tests/slices/test_s05_contract.py:185: AttributeError
+__________________ test_environment_is_snapshotted_per_config __________________
+
+repository = PosixPath('/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-13/test_environment_is_snapshotte0/repo')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10a89f020>
+
+    async def test_environment_is_snapshotted_per_config(
+        repository: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        disabled = config(repository)
+        monkeypatch.setenv("ATLAS_ACI_ENABLE_TEST_EXECUTION", "1")
+        enabled = config(repository)
+>       assert enabled.test_execution_enabled is True
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'Config' object has no attribute 'test_execution_enabled'
+
+mcp-server/tests/slices/test_s05_contract.py:194: AttributeError
+=========================== short test summary info ============================
+FAILED mcp-server/tests/slices/test_s05_contract.py::test_default_no_spawn - ...
+FAILED mcp-server/tests/slices/test_s05_contract.py::test_explicit_enabled_mode
+FAILED mcp-server/tests/slices/test_s05_contract.py::test_timeout_preserved
+FAILED mcp-server/tests/slices/test_s05_contract.py::test_profile_visible - T...
+FAILED mcp-server/tests/slices/test_s05_contract.py::test_denial_replay - Typ...
+FAILED mcp-server/tests/slices/test_s05_contract.py::test_only_exact_operator_value_enables[None]
+FAILED mcp-server/tests/slices/test_s05_contract.py::test_only_exact_operator_value_enables[]
+FAILED mcp-server/tests/slices/test_s05_contract.py::test_only_exact_operator_value_enables[0]
+FAILED mcp-server/tests/slices/test_s05_contract.py::test_only_exact_operator_value_enables[false]
+FAILED mcp-server/tests/slices/test_s05_contract.py::test_only_exact_operator_value_enables[true]
+FAILED mcp-server/tests/slices/test_s05_contract.py::test_only_exact_operator_value_enables[yes]
+FAILED mcp-server/tests/slices/test_s05_contract.py::test_only_exact_operator_value_enables[ 1]
+FAILED mcp-server/tests/slices/test_s05_contract.py::test_only_exact_operator_value_enables[1 ]
+FAILED mcp-server/tests/slices/test_s05_contract.py::test_only_exact_operator_value_enables[01]
+FAILED mcp-server/tests/slices/test_s05_contract.py::test_only_exact_operator_value_enables[1]
+FAILED mcp-server/tests/slices/test_s05_contract.py::test_environment_is_snapshotted_per_config
+16 failed in 1.27s

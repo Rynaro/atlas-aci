@@ -30,7 +30,7 @@ from atlas_aci.tools.view_file import view_file
 log = structlog.get_logger()
 
 
-def build_tool_manifest(_config: Config) -> list[dict[str, Any]]:
+def build_tool_manifest(config: Config) -> list[dict[str, Any]]:
     """The tool descriptors served via tools/list. Bounds embedded in descriptions."""
     return [
         {
@@ -129,11 +129,16 @@ def build_tool_manifest(_config: Config) -> list[dict[str, Any]]:
         {
             "name": "test_dry_run",
             "description": (
-                "Run a single test file (optionally filtered by case name) with a "
-                "30s timeout. Output capped at 8KiB. SANDBOXING IS THE OPERATOR'S "
-                "RESPONSIBILITY — do not enable for untrusted models without a "
-                "DevContainer or microVM."
+                "Repository test execution is "
+                f"{'enabled' if config.test_execution_enabled else 'disabled'}. "
+                "Requires operator opt-in ATLAS_ACI_ENABLE_TEST_EXECUTION=1. "
+                "Run one test file, optionally filtered by case name, with a "
+                f"{config.test_dry_run_timeout_s}s timeout and "
+                f"{config.max_bytes_per_call} bytes per stdout/stderr stream. "
+                "No OS sandbox; isolation is the operator's responsibility."
             ),
+            "_meta": {"atlas-aci/test_execution_enabled": config.test_execution_enabled},
+            "annotations": {"readOnlyHint": False},
             "inputSchema": {
                 "type": "object",
                 "required": ["path"],

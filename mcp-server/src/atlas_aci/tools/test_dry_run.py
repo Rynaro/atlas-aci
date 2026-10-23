@@ -1,16 +1,9 @@
-"""test_dry_run — sandboxed test execution.
+"""test_dry_run — explicitly enabled repository test execution.
 
-WARNING: This tool runs code. The MVP impl is intentionally restrictive
-(timeout, output cap, repo-relative path requirement). For production:
-
-- Run inside a DevContainer or Firecracker microVM.
-- Mount the repo read-only inside the sandbox.
-- Block egress at the network namespace level.
-- Run as a dedicated low-privilege user.
-
-The current implementation does NONE of that. It is fine for local dev
-against your own repos. Do not expose it to untrusted models without
-hardening.
+Disabled unless the operator opts in. Enabled execution preserves a deadline
+and output caps, but supplies no OS sandbox or network/filesystem isolation.
+On timeout the immediate subprocess is killed and reaped; descendant-process
+cleanup is not guaranteed. Operators must provide isolation for untrusted code.
 """
 
 from __future__ import annotations
@@ -29,6 +22,13 @@ async def test_dry_run(
     config: Config,
     enforcement: Enforcement,
 ) -> dict[str, Any]:
+    if config.test_execution_enabled is not True:
+        raise ToolError(
+            "FORBIDDEN",
+            "Repository test execution is disabled. The operator must enable "
+            "ATLAS_ACI_ENABLE_TEST_EXECUTION=1 before starting the server.",
+            "none",
+        )
     start_t = time.monotonic()
     path_str = args["path"]
     case = args.get("case")

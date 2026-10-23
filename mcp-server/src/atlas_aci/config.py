@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -77,6 +78,11 @@ class Config:
     max_matches_per_search: int = 50
     max_bytes_per_call: int = 8 * 1024
     test_dry_run_timeout_s: int = 30
+    # Snapshot explicit operator consent once per server. Request arguments and
+    # later environment changes cannot grant execution to this Config instance.
+    test_execution_enabled: bool = field(
+        default_factory=lambda: os.environ.get("ATLAS_ACI_ENABLE_TEST_EXECUTION") == "1"
+    )
 
     # The D2 central-bounds-chokepoint backstop (server.py `_call_tool`):
     # every tool/verb's declared `_bounded_field` is truncated to this many

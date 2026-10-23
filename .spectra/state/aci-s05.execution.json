@@ -1,0 +1,131 @@
+{
+  "slice_id": "ACI-S05",
+  "issue_url": "https://github.com/Rynaro/atlas-aci/issues/28",
+  "criteria_sha256": "ea6a3baf17e73a01314bea6662c3903840b29265fb4e92d37c5d1eda09f5333a",
+  "base_commit": "f81231ef3fd4bbc89fd444f213be521d6063e99e",
+  "output_commit": null,
+  "declared_paths": [
+    "mcp-server/src/atlas_aci/config.py",
+    "mcp-server/src/atlas_aci/server.py",
+    "mcp-server/src/atlas_aci/tools/test_dry_run.py",
+    "mcp-server/tests/slices/test_s05_*.py",
+    "README.md",
+    "mcp-server/tests/test_server.py"
+  ],
+  "output_digests": {},
+  "status": "IN_PROGRESS",
+  "acceptance_results": [
+    {
+      "ac_id": "AC-S05-001",
+      "command": "env PYTHONPATH=/tmp/atlas-aci-aci-s05/mcp-server/src /tmp/atlas-aci-aci-s05/mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s05_contract.py -q",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s05/product-tests.log"
+    },
+    {
+      "ac_id": "AC-S05-002",
+      "command": "env PYTHONPATH=/tmp/atlas-aci-aci-s05/mcp-server/src /tmp/atlas-aci-aci-s05/mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s05_contract.py -q",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s05/product-tests.log"
+    },
+    {
+      "ac_id": "AC-S05-003",
+      "command": "env PYTHONPATH=/tmp/atlas-aci-aci-s05/mcp-server/src /tmp/atlas-aci-aci-s05/mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s05_contract.py -q",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s05/product-tests.log"
+    },
+    {
+      "ac_id": "AC-S05-004",
+      "command": "env PYTHONPATH=/tmp/atlas-aci-aci-s05/mcp-server/src /tmp/atlas-aci-aci-s05/mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s05_contract.py -q",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s05/product-tests.log"
+    },
+    {
+      "ac_id": "AC-S05-005",
+      "command": "env PYTHONPATH=/tmp/atlas-aci-aci-s05/mcp-server/src /tmp/atlas-aci-aci-s05/mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s05_contract.py -q",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s05/product-tests.log"
+    },
+    {
+      "ac_id": "AC-S05-RUN-02",
+      "command": "mcp-server/.venv/bin/python .spectra/evidence/aci-s05/verify_resume.py",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s05/interrupted-execution.json",
+        ".spectra/evidence/aci-s05/resume-identity.json"
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "command": "uv run --frozen pytest -q",
+      "cwd": "mcp-server",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s05/pytest.log"
+    },
+    {
+      "command": "uv run --frozen ruff check src/ tests/ ../scripts/ --exclude fingerprint-fixture",
+      "cwd": "mcp-server",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s05/lint.log"
+    },
+    {
+      "command": "uv run --frozen ruff format --check src/ tests/ ../scripts/ --exclude fingerprint-fixture",
+      "cwd": "mcp-server",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s05/format.log"
+    },
+    {
+      "command": "uv run --frozen mypy src/ ../scripts/",
+      "cwd": "mcp-server",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s05/types.log"
+    },
+    {
+      "command": "bash ../scripts/test-verify-probe-verdict.sh",
+      "cwd": "mcp-server",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s05/probe.log"
+    },
+    {
+      "command": "bash ../scripts/test-harden-gate-classify.sh",
+      "cwd": "mcp-server",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s05/harden.log"
+    },
+    {
+      "command": "bash ../scripts/test-verify-export-size.sh",
+      "cwd": "mcp-server",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s05/export_size.log"
+    },
+    {
+      "command": "uv lock --check",
+      "cwd": "mcp-server",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s05/lock.log"
+    }
+  ],
+  "independent_checker_evidence": ".spectra/evidence/aci-s05/independent-checker.json",
+  "environment": {
+    "python": "3.12.13",
+    "uv": "0.13.5",
+    "uv_path": "/tmp/aci-s01-tools/bin/uv",
+    "UV_CACHE_DIR": "/tmp/aci-s01-uv-cache",
+    "UV_OFFLINE": "1",
+    "PATH_prefix": [
+      "/tmp/aci-s01-tools/bin",
+      "/tmp/atlas-aci-aci-s05/mcp-server/.venv/bin"
+    ],
+    "source": "editable installation at /tmp/atlas-aci-aci-s05/mcp-server/src",
+    "setup": "uv sync --offline --frozen --extra dev"
+  },
+  "not_run": [
+    "remote Docker read-only smoke",
+    "cross-OS export comparison"
+  ],
+  "limitations": [
+    "Opt-in runs repository code with server permissions; no OS sandbox.",
+    "Timeout kills and reaps the immediate subprocess; descendant cleanup not guaranteed.",
+    "CRYSTALIUM persistence not attempted after earlier automatic review rejection."
+  ]
+}
