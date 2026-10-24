@@ -17,6 +17,7 @@ import importlib.metadata
 import json
 import os
 import re
+import secrets
 import sqlite3
 import tempfile
 from contextlib import contextmanager
@@ -1002,6 +1003,495 @@ class CodeGraph:
             },
         }
 
+    @staticmethod
+    def _status_hash(value: Any) -> str:
+        return hashlib.sha256(CodeGraph._canonical_generation(value).encode()).hexdigest()
+
+    def _capabilities(self, enabled: list[str] | None = None) -> dict[str, Any]:
+        """Describe query captures as they are persisted by _extract/_resolve_edges."""
+        languages = []
+        for lang in sorted(set(LANG_BY_EXT.values())):
+            query = QUERIES.get(lang, "")
+            definitions = sorted(set(re.findall(r"@def\.(\w+)", query)))
+            # _extract persists any @callee as call, including SCSS @ref.include.
+            relations = set(re.findall(r"@heritage\.(\w+)", query))
+            if "@callee" in query:
+                relations.add("call")
+                # _resolve_edges turns a call to a class into construct.
+                if "class" in definitions:
+                    relations.add("construct")
+            if "@comment.rationale" in query:
+                relations.add("rationale_for")
+            reason = "bounded_structural_queries" if query else "no_extraction_query"
+            state = "partial" if query else "unsupported"
+            if enabled is not None and lang not in enabled and query:
+                state, reason = "unsupported", "language_disabled"
+            languages.append(
+                {
+                    "language": lang,
+                    "extensions": sorted(
+                        ext for ext, value in LANG_BY_EXT.items() if value == lang
+                    ),
+                    "extraction": {"state": state, "reason": reason},
+                    "definitions": definitions,
+                    "relations": sorted(relations),
+                    "semantic_binding": {"state": "unsupported", "reason": "no_compiler_provider"},
+                }
+            )
+        return {
+            "format": "atlas-capabilities.v1",
+            "producer": self._producer_inputs(),
+            "producers": [
+                {
+                    "name": "tree-sitter",
+                    "operation": "structural_extraction",
+                    "semantic_binding": {"state": "unsupported", "reason": "no_compiler_provider"},
+                }
+            ],
+            "languages": languages,
+        }
+
+    @staticmethod
+    def _observation_counts(files: list[dict[str, Any]]) -> dict[str, int]:
+        return {
+            state: sum(f["state"] == state for f in files)
+            for state in ("indexed", "unsupported", "disabled")
+        }
+
+    def _publication_base(self) -> tuple[str | None, str | None]:
+        """Read only the completed generation while the caller holds writer lock."""
+        try:
+            with self.reader_lease() as reader:
+                row = reader.db.execute(
+                    "SELECT value FROM manifest WHERE key='diagnostic_publication_token'"
+                ).fetchone()
+                return reader.generation_id, row[0] if row else None
+        except Exception:
+            return None, None
+
+    @staticmethod
+    def _new_publication_token(conn: sqlite3.Connection) -> None:
+        conn.execute(
+            "INSERT OR REPLACE INTO manifest(key,value) VALUES (?,?)",
+            ("diagnostic_publication_token", secrets.token_hex(32)),
+        )
+
+    def _write_attempt(self, base: tuple[str | None, str | None]) -> None:
+        observation = self._build_observation
+        snapshot = {
+            "format": "atlas-index-attempt.v1",
+            "base_generation_id": base[0],
+            "base_publication_token": base[1],
+            "observation": observation,
+            "attempt_id": self._status_hash(observation),
+        }
+        fd, name = tempfile.mkstemp(prefix=".index-attempt.", dir=self.atlas_dir)
+        try:
+            with os.fdopen(fd, "w", encoding="utf-8") as stream:
+                stream.write(self._canonical_generation(snapshot) + "\n")
+            os.replace(name, self.atlas_dir / "index-attempt.v1.json")
+        finally:
+            Path(name).unlink(missing_ok=True)
+
+    @staticmethod
+    def _valid_status_provenance(producer: Any, configuration: Any) -> bool:
+        if not isinstance(producer, dict) or set(producer) != {
+            "codegraph_sha256",
+            "queries_sha256",
+            "packages",
+        }:
+            return False
+        if any(
+            not isinstance(producer[k], str) or re.fullmatch(r"[0-9a-f]{64}", producer[k]) is None
+            for k in ("codegraph_sha256", "queries_sha256")
+        ):
+            return False
+        packages = producer["packages"]
+        if (
+            not isinstance(packages, dict)
+            or set(packages) != {"tree-sitter", "tree-sitter-language-pack"}
+            or any(not isinstance(v, str) or not v for v in packages.values())
+        ):
+            return False
+        if not isinstance(configuration, dict) or set(configuration) != {
+            "languages",
+            "skip_patterns",
+        }:
+            return False
+        for key in ("languages", "skip_patterns"):
+            if not isinstance(configuration[key], list) or any(
+                not isinstance(v, str) or not v for v in configuration[key]
+            ):
+                return False
+        return configuration["languages"] == sorted(set(configuration["languages"]))
+
+    @staticmethod
+    def _valid_capabilities(
+        caps: Any, producer: dict[str, Any], configuration: dict[str, Any]
+    ) -> bool:
+        if (
+            not isinstance(caps, dict)
+            or set(caps) != {"format", "producer", "producers", "languages"}
+            or caps["format"] != "atlas-capabilities.v1"
+            or caps["producer"] != producer
+        ):
+            return False
+        unsupported = {"state": "unsupported", "reason": "no_compiler_provider"}
+        if caps["producers"] != [
+            {
+                "name": "tree-sitter",
+                "operation": "structural_extraction",
+                "semantic_binding": unsupported,
+            }
+        ]:
+            return False
+        if not isinstance(caps["languages"], list):
+            return False
+        names = []
+        for item in caps["languages"]:
+            if not isinstance(item, dict) or set(item) != {
+                "language",
+                "extensions",
+                "extraction",
+                "definitions",
+                "relations",
+                "semantic_binding",
+            }:
+                return False
+            if item["semantic_binding"] != unsupported or not isinstance(item["language"], str):
+                return False
+            names.append(item["language"])
+            if (
+                not isinstance(item["extraction"], dict)
+                or set(item["extraction"]) != {"state", "reason"}
+                or item["extraction"]["state"] not in {"partial", "unsupported"}
+                or item["extraction"]["reason"]
+                not in {"bounded_structural_queries", "no_extraction_query", "language_disabled"}
+            ):
+                return False
+            extraction = item["extraction"]
+            enabled = item["language"] in configuration["languages"]
+            if extraction["state"] == "partial":
+                if not enabled or extraction["reason"] != "bounded_structural_queries":
+                    return False
+            elif extraction["reason"] == "language_disabled":
+                if enabled:
+                    return False
+            elif extraction["reason"] == "no_extraction_query":
+                if item["definitions"] or item["relations"]:
+                    return False
+            else:
+                return False
+            for key in ("extensions", "definitions", "relations"):
+                values = item[key]
+                if (
+                    not isinstance(values, list)
+                    or any(not isinstance(v, str) or not v for v in values)
+                    or values != sorted(set(values))
+                ):
+                    return False
+        return names == sorted(set(LANG_BY_EXT.values()))
+
+    @staticmethod
+    def _valid_observed_files(files: Any, *, failed: bool) -> bool:
+        if not isinstance(files, list):
+            return False
+        for item in files:
+            if not isinstance(item, dict) or set(item) != {
+                "path",
+                "language",
+                "state",
+                "source_sha256",
+                "reason",
+                "location",
+            }:
+                return False
+            if (
+                not isinstance(item["path"], str)
+                or not item["path"]
+                or Path(item["path"]).is_absolute()
+                or ".." in Path(item["path"]).parts
+                or item["language"] not in LANG_BY_EXT.values()
+                or item["state"] not in {"indexed", "disabled", "unsupported", "failed"}
+                or (item["state"] == "failed" and not failed)
+            ):
+                return False
+            source_hash = item["source_sha256"]
+            if source_hash is not None and (
+                not isinstance(source_hash, str)
+                or re.fullmatch(r"[0-9a-f]{64}", source_hash) is None
+            ):
+                return False
+            if item["state"] == "indexed" and source_hash is None:
+                return False
+            if item["reason"] is not None and not isinstance(item["reason"], str):
+                return False
+            loc = item["location"]
+            if loc is not None and (
+                not isinstance(loc, dict)
+                or set(loc) != {"line", "column", "end_line", "end_column"}
+                or any(type(n) is not int or n < 0 for n in loc.values())
+            ):
+                return False
+        paths = [f["path"] for f in files]
+        return paths == sorted(set(paths))
+
+    def _read_attempt(self) -> tuple[dict[str, Any] | None, str | None]:
+        try:
+            raw = (self.atlas_dir / "index-attempt.v1.json").read_bytes()
+        except FileNotFoundError:
+            return None, None
+        except OSError:
+            return None, "diagnostics_unreadable"
+        try:
+            data = json.loads(raw)
+            if not (
+                isinstance(data, dict)
+                and set(data)
+                == {
+                    "format",
+                    "base_generation_id",
+                    "base_publication_token",
+                    "observation",
+                    "attempt_id",
+                }
+            ):
+                raise ValueError("Invalid status metadata")
+            if not (data["format"] == "atlas-index-attempt.v1"):
+                raise ValueError("Invalid status metadata")
+            for key in ("base_generation_id", "base_publication_token", "attempt_id"):
+                value = data[key]
+                if not (
+                    (value is None and key != "attempt_id")
+                    or (isinstance(value, str) and re.fullmatch(r"[0-9a-f]{64}", value))
+                ):
+                    raise ValueError("Invalid status metadata")
+            observation = data["observation"]
+            if not (
+                isinstance(observation, dict)
+                and set(observation)
+                == {
+                    "format",
+                    "producer",
+                    "configuration",
+                    "files",
+                    "enumeration",
+                    "excluded_count",
+                    "failure_reason",
+                }
+            ):
+                raise ValueError("Invalid status metadata")
+            if not (
+                observation["format"] == "atlas-observation.v1"
+                and observation["enumeration"] == "observed_prefix"
+            ):
+                raise ValueError("Invalid status metadata")
+            if not (
+                self._valid_status_provenance(observation["producer"], observation["configuration"])
+            ):
+                raise ValueError("Invalid status metadata")
+            if not (
+                observation["excluded_count"] is None
+                and isinstance(observation["failure_reason"], str)
+            ):
+                raise ValueError("Invalid status metadata")
+            if not (self._valid_observed_files(observation["files"], failed=True)):
+                raise ValueError("Invalid status metadata")
+            if not (data["attempt_id"] == self._status_hash(observation)):
+                raise ValueError("Invalid status metadata")
+            return data, None
+        except (ValueError, TypeError, KeyError, AssertionError):
+            return None, "diagnostics_invalid"
+
+    def _read_coverage(self, reader: CodeGraph, inputs: dict[str, Any]) -> dict[str, Any] | None:
+        try:
+            row = reader.db.execute(
+                "SELECT value FROM manifest WHERE key='coverage_snapshot'"
+            ).fetchone()
+            if row is None:
+                return None
+            data = json.loads(row[0])
+            if not (
+                isinstance(data, dict)
+                and set(data)
+                == {
+                    "format",
+                    "generation_id",
+                    "configuration",
+                    "producer",
+                    "capabilities",
+                    "files",
+                    "counts",
+                    "enumeration",
+                    "excluded_count",
+                }
+            ):
+                raise ValueError("Invalid status metadata")
+            if not (
+                data["format"] == "atlas-coverage.v1"
+                and data["generation_id"] == reader.generation_id
+            ):
+                raise ValueError("Invalid status metadata")
+            if not (data["enumeration"] == "complete" and data["excluded_count"] is None):
+                raise ValueError("Invalid status metadata")
+            if not (
+                data["configuration"] == inputs["configuration"]
+                and data["producer"] == inputs["producer"]
+            ):
+                raise ValueError("Invalid status metadata")
+            if not (self._valid_observed_files(data["files"], failed=False)):
+                raise ValueError("Invalid status metadata")
+            if not (data["counts"] == self._observation_counts(data["files"])):
+                raise ValueError("Invalid status metadata")
+            if not (
+                {f["path"]: f["source_sha256"] for f in data["files"] if f["state"] == "indexed"}
+                == inputs["source_hashes"]
+            ):
+                raise ValueError("Invalid status metadata")
+            caps = data["capabilities"]
+            if not (self._valid_capabilities(caps, inputs["producer"], inputs["configuration"])):
+                raise ValueError("Invalid status metadata")
+            return data
+        except (ValueError, KeyError, TypeError, AssertionError):
+            return None
+
+    def status(self) -> dict[str, Any]:
+        """Canonical operator snapshot: one read-only lease and one sidecar read."""
+        from atlas_aci.enforcement import ToolError
+
+        runtime = self._capabilities()
+        generation = None
+        token = None
+        inputs: dict[str, Any] = {}
+        coverage = None
+        fact_paths: set[str] = set()
+        try:
+            with self.reader_lease() as reader:
+                generation = reader.generation_id
+                inputs = cast("tuple[dict[str, Any], str]", reader._generation_data(reader.db))[0]
+                fact_paths = {
+                    row[0]
+                    for row in reader.db.execute(
+                        "SELECT path FROM symbols UNION SELECT path FROM refs "
+                        "UNION SELECT path FROM rationale"
+                    )
+                }
+                row = reader.db.execute(
+                    "SELECT value FROM manifest WHERE key='diagnostic_publication_token'"
+                ).fetchone()
+                token = row[0] if row and re.fullmatch(r"[0-9a-f]{64}", row[0]) else None
+                if inputs["kind"] == "build" and token is not None:
+                    coverage = self._read_coverage(reader, inputs)
+                attempt, problem = self._read_attempt()
+        except ToolError:
+            attempt, problem = self._read_attempt()
+        if problem:
+            applicability = "unavailable"
+        elif attempt is None:
+            applicability = "none"
+        elif generation is None:
+            applicability = (
+                "unbound_no_generation" if attempt["base_generation_id"] is None else "mismatch"
+            )
+        elif attempt["base_generation_id"] != generation:
+            applicability = "mismatch"
+        elif token is None:
+            applicability = "uncorrelated_missing_token"
+        elif attempt["base_publication_token"] != token:
+            applicability = "mismatch"
+        else:
+            applicability = "matching"
+        state = "complete" if coverage else ("unknown" if generation else "unavailable")
+        reason = (
+            "observed_complete"
+            if coverage
+            else ("source_coverage_unknown" if generation else "INDEX_UNAVAILABLE")
+        )
+        fact_hashes = inputs.get("source_hashes", {})
+        files = [
+            {
+                "path": path,
+                "fact_source_sha256": source_hash,
+                "failed_source_sha256": None,
+                "observed_source_sha256": None,
+                "retained_facts": path in fact_paths,
+                "stale": False if coverage else None,
+                "refresh_verification": "last_published",
+            }
+            for path, source_hash in sorted(fact_hashes.items())
+        ]
+        observed = {f["path"]: f for f in attempt["observation"]["files"]} if attempt else {}
+        if applicability == "matching":
+            state, reason = "failed", "refresh_failed_observed_prefix"
+            observation = cast("dict[str, Any]", attempt)["observation"]
+            compatible = observation["producer"] == inputs.get("producer") and observation[
+                "configuration"
+            ] == inputs.get("configuration")
+            for item in files:
+                entry = observed.get(item["path"])
+                item["refresh_verification"] = "not_processed"
+                item["stale"] = None
+                if entry is not None:
+                    item["observed_source_sha256"] = entry["source_sha256"]
+                    unchanged = entry["source_sha256"] == item["fact_source_sha256"]
+                    item["refresh_verification"] = (
+                        "verified_unchanged"
+                        if entry["state"] == "indexed" and unchanged
+                        else "observed_not_published"
+                    )
+                    item["stale"] = item["retained_facts"] and (
+                        entry["state"] == "failed" or not unchanged
+                    )
+                    if not compatible:
+                        item["refresh_verification"] = "incompatible_provenance"
+                        item["stale"] = None
+                    if entry["state"] == "failed":
+                        item["failed_source_sha256"] = entry["source_sha256"]
+        elif applicability in {"unavailable", "uncorrelated_missing_token"}:
+            state, reason = "unknown", problem or "attempt_correlation_unknown"
+            for item in files:
+                item["stale"] = None
+        payload = {
+            "format": "atlas-status.v1",
+            "generation_id": generation,
+            "runtime": runtime,
+            "indexed": {
+                "configuration": inputs.get("configuration"),
+                "capabilities": coverage["capabilities"] if coverage else None,
+                "producer": inputs.get("producer", inputs.get("importer")),
+                "coverage_id": self._status_hash(coverage) if coverage else None,
+            },
+            "completeness": {
+                "state": state,
+                "reason": reason,
+                "files": files,
+                "counts": coverage["counts"]
+                if coverage and applicability == "none"
+                else (
+                    self._observation_counts(
+                        cast("dict[str, Any]", attempt)["observation"]["files"]
+                    )
+                    if applicability == "matching"
+                    else (coverage["counts"] if coverage and applicability == "mismatch" else None)
+                ),
+                "excluded_count": None,
+                "total_count": None,
+                "enumeration": "observed_prefix"
+                if applicability == "matching"
+                else ("complete" if coverage else "unknown"),
+            },
+            "attempt": {
+                "observed_failed_count": sum(f["state"] == "failed" for f in observed.values())
+                if attempt
+                else None,
+                "applicability": applicability,
+                "reason": problem,
+                "attempt_id": attempt["attempt_id"] if attempt else None,
+                "observation": attempt["observation"] if attempt else None,
+            },
+        }
+        return {**payload, "status_id": self._status_hash(payload)}
+
     def _build_inputs(self) -> dict[str, Any]:
         from atlas_aci.config import DEFAULT_SKIP_PATTERNS
 
@@ -1079,7 +1569,24 @@ class CodeGraph:
             swept = self._sweep_stale_epoch_files()
             if swept:
                 log.info("stale_epoch_files_swept", files=swept)
-            return self._build_atomic(get_parser, since)
+            base = self._publication_base()
+            self._build_observation = {
+                "format": "atlas-observation.v1",
+                "producer": self._producer_inputs(),
+                "configuration": self._build_inputs()["configuration"],
+                "files": [],
+                "enumeration": "observed_prefix",
+                "excluded_count": None,
+                "failure_reason": "index_failed",
+            }
+            try:
+                return self._build_atomic(get_parser, since)
+            except Exception:
+                try:
+                    self._write_attempt(base)
+                except Exception:
+                    log.warning("index_attempt_write_failed", reason="diagnostics_unavailable")
+                raise
 
     def _sweep_stale_epoch_files(self) -> list[str]:
         """Index-path only (DIR-2): remove ``.atlas/graph.*.db`` files whose
@@ -1130,9 +1637,7 @@ class CodeGraph:
     def _run_build(
         self, conn: sqlite3.Connection, get_parser: Any, since: str | None
     ) -> dict[str, Any]:
-        """The core indexing loop against an already-open connection. Shared
-        by the in-place incremental path and the full-rebuild-into-temp-file
-        path so the extraction logic itself never duplicates."""
+        """Index into staging; reuse only exact-buffer hashes and compatible facts."""
         base_inputs = self._build_inputs()
         previous_generation = self._generation_data(conn) if since is not None else None
         previous_inputs = previous_generation[0] if previous_generation is not None else {}
@@ -1168,22 +1673,40 @@ class CodeGraph:
             ext = path.suffix
             lang = LANG_BY_EXT.get(ext)
 
+            rel = str(path.relative_to(self.repo))
+            if lang is not None:
+                observation: dict[str, Any] = {
+                    "path": rel,
+                    "language": lang,
+                    "state": "indexed",
+                    "source_sha256": None,
+                    "reason": None,
+                    "location": None,
+                }
+                self._build_observation["files"].append(observation)
             if lang is not None and lang not in QUERIES:
+                observation.update(state="unsupported", reason="no_extraction_query")
                 # Recognized extension, no query support (D5-Q2) — report,
                 # don't silently no-op.
                 unsupported_skipped[lang] = unsupported_skipped.get(lang, 0) + 1
                 continue
 
             if not lang or lang not in self.langs or lang not in QUERIES:
+                if lang is not None:
+                    observation.update(state="disabled", reason="language_disabled")
                 continue
 
-            rel = str(path.relative_to(self.repo))
-            stat = path.stat()
-            mtime_ns, size = stat.st_mtime_ns, stat.st_size
-
-            source = path.read_bytes()
+            try:
+                stat = path.stat()
+                mtime_ns, size = stat.st_mtime_ns, stat.st_size
+                source = path.read_bytes()
+            except OSError:
+                observation.update(state="failed", reason="read_error")
+                self._build_observation["failure_reason"] = "read_error"
+                raise
             source_hash = hashlib.sha256(source).hexdigest()
             source_hashes[rel] = source_hash
+            observation["source_sha256"] = source_hash
             if incremental:
                 seen_paths.add(rel)
                 if rel in stored_files and previous_hashes.get(rel) == source_hash:
@@ -1196,7 +1719,30 @@ class CodeGraph:
                 parser = get_parser(cast("SupportedLanguage", lang))
                 tree = parser.parse(source)
             except Exception as exc:
+                observation.update(state="failed", reason="parser_exception")
+                self._build_observation["failure_reason"] = "parser_exception"
                 raise RuntimeError(f"Cannot index eligible source {rel}") from exc
+            if tree.root_node.has_error:
+                pending = [tree.root_node]
+                error_node = tree.root_node
+                while pending:
+                    node = pending.pop()
+                    if node.type == "ERROR" or node.is_missing:
+                        error_node = node
+                        break
+                    pending.extend(reversed(node.children))
+                observation.update(
+                    state="failed",
+                    reason="parse_error",
+                    location={
+                        "line": error_node.start_point[0] + 1,
+                        "column": error_node.start_point[1],
+                        "end_line": error_node.end_point[0] + 1,
+                        "end_column": error_node.end_point[1],
+                    },
+                )
+                self._build_observation["failure_reason"] = "parse_error"
+                raise RuntimeError(f"Cannot index eligible source {rel}: parse_error")
 
             if incremental:
                 # New or changed file — drop stale rows before re-extracting so
@@ -1206,9 +1752,14 @@ class CodeGraph:
                 conn.execute("DELETE FROM assignment_targets WHERE path = ?", (rel,))
                 conn.execute("DELETE FROM rationale WHERE path = ?", (rel,))
 
-            symbols, refs, assignment_targets, rationale_comments = self._extract(
-                tree, source, rel, lang
-            )
+            try:
+                symbols, refs, assignment_targets, rationale_comments = self._extract(
+                    tree, source, rel, lang
+                )
+            except Exception:
+                observation.update(state="failed", reason="extraction_error")
+                self._build_observation["failure_reason"] = "extraction_error"
+                raise
             for target_name, scope, binding_kind, byte_start in assignment_targets:
                 conn.execute(
                     "INSERT INTO assignment_targets(path, name, scope, binding_kind, byte_start) "
@@ -1298,7 +1849,25 @@ class CodeGraph:
         # *global* symbol table — G-B/D4).
         edges_added = self._resolve_edges(conn)
 
-        self._store_generation(conn, {**base_inputs, "source_hashes": source_hashes})
+        generation_id = self._store_generation(
+            conn, {**base_inputs, "source_hashes": source_hashes}
+        )
+        coverage = {
+            "format": "atlas-coverage.v1",
+            "generation_id": generation_id,
+            "configuration": base_inputs["configuration"],
+            "producer": base_inputs["producer"],
+            "capabilities": self._capabilities(sorted(self.langs)),
+            "files": self._build_observation["files"],
+            "counts": self._observation_counts(self._build_observation["files"]),
+            "enumeration": "complete",
+            "excluded_count": None,
+        }
+        conn.execute(
+            "INSERT OR REPLACE INTO manifest(key,value) VALUES ('coverage_snapshot',?)",
+            (self._canonical_generation(coverage),),
+        )
+        self._new_publication_token(conn)
         conn.commit()
         return {
             "files_indexed": files_indexed,
@@ -3284,6 +3853,7 @@ class CodeGraph:
                         "source_provenance": "unavailable",
                     },
                 )
+                self._new_publication_token(conn)
                 conn.commit()
                 conn.close()
                 conn = None

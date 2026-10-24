@@ -1,0 +1,13 @@
+RUF059 Unpacked variable `repo` is never used
+   --> tests/slices/test_s04_contract.py:205:5
+    |
+204 | def test_source_free_import_unknown(tmp_path: Path):
+205 |     repo, _, graph = build_repo(tmp_path)
+    |     ^^^^
+206 |     portable = tmp_path / "graph.jsonl"
+207 |     graph.export_jsonl(portable)
+    |
+help: Prefix it with an underscore or any other dummy variable pattern
+
+Found 1 error.
+No fixes available (1 hidden fix can be enabled with the `--unsafe-fixes` option).

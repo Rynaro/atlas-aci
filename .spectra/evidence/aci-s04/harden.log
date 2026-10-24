@@ -1,0 +1,8 @@
+PASS: clean hardening diff (augmented=false, a3_touched=false)
+PASS: augmentation marker path (test_confidence.py) (augmented=true, a3_touched=false)
+PASS: A3-exclusive path (test_communities.py) (augmented=true, a3_touched=true)
+PASS: whole-line comment mentioning markers (Python #) (augmented=false, a3_touched=false)
+PASS: inline SQL trailing-comment marker mention (augmented=false, a3_touched=false)
+PASS: real code marker (EXTRACTED, no comment) (augmented=true, a3_touched=false)
+
+6 passed, 0 failed

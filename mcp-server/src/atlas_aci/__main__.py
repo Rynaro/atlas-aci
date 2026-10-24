@@ -1,8 +1,9 @@
-"""CLI entry point: `atlas-aci serve | index | export | import | tools`."""
+"""CLI entry point: `atlas-aci serve | index | export | import | status | tools`."""
 
 from __future__ import annotations
 
 import asyncio
+import json
 import sys
 from pathlib import Path
 
@@ -96,6 +97,19 @@ def index(repo: Path, langs: str, since: str | None) -> None:
     graph = CodeGraph(repo=repo, langs=lang_list)
     stats = graph.build(since=since)
     log.info("index_done", **stats)
+
+
+@cli.command()
+@click.option(
+    "--repo", required=True, type=click.Path(exists=True, file_okay=False, path_type=Path)
+)
+def status(repo: Path) -> None:
+    """Print canonical structural capabilities and last-observed index completeness."""
+    graph = CodeGraph(repo=repo.resolve(), read_only=True)
+    try:
+        click.echo(json.dumps(graph.status(), sort_keys=True, separators=(",", ":")))
+    finally:
+        graph.close()
 
 
 @cli.command()

@@ -262,6 +262,66 @@ are not an OS sandbox. For untrusted code or models, the operator must supply
 isolation such as a DevContainer or microVM and appropriate filesystem/network
 restrictions. See [`SETUP.md §8`](SETUP.md#8-production-hardening-checklist).
 
+### `status` — operator capabilities and completeness
+
+```bash
+atlas-aci status --repo /path/to/repo
+```
+
+This CLI-only command prints deterministic, sorted `atlas-status.v1` JSON. It
+opens one read-only generation lease and reads one atomic attempt snapshot. It
+does not construct a memex, read current source files, create directories, rebuild,
+or write an index. Missing or incompatible indexes are reported with a null
+`generation_id` and `INDEX_UNAVAILABLE`; reporting that state successfully exits 0.
+The command is not exposed as an MCP tool.
+
+`runtime` describes the currently installed structural producer. `indexed` reports
+the capabilities, language selection, producer fingerprint, and `coverage_id`
+persisted by the indexed generation. Registered languages disabled by `--langs`
+are unsupported for that generation even when currently available at runtime.
+Recognized Rust, Go, Java, and TSX extensions have no extraction query. Definitions
+and relations reflect actual persistence: for example, SCSS `@include` produces a
+`call` reference; HTML IDs, YAML keys, and Markdown headings provide symbols only.
+`partial` means bounded Tree-sitter syntax/lookup support; `unsupported` means no
+enabled provider supplies that operation. Every shipped producer reports compiler
+semantic binding as unsupported. Structural confidence labels do not establish
+compiler semantics or completeness percentages.
+
+Successful index builds persist a separate coverage snapshot without changing
+canonical generation inputs or portable export facts. Legacy indexes lacking the
+snapshot and source-free imports have unknown source coverage and indexed
+capabilities; an empty imported file table never establishes completeness. Applied
+language/skip configuration is preserved in coverage metadata. Excluded paths
+are not counted as verified, and unknown totals/excluded counts remain null.
+
+Parser/query/extraction exceptions, read errors, and recovered syntax-error trees
+abort publication.
+A failed refresh retains the previous immutable generation and records an atomic
+`.atlas/index-attempt.v1.json` observation under the writer lock. A matching failed
+attempt marks retained facts for failed files stale, preserving
+`fact_source_sha256` separately from `failed_source_sha256`. Fail-fast counts cover
+only the observed prefix; remaining files are `not_processed`, not freshly
+verified. Retained facts are verified unchanged only when consumed hashes and
+producer/configuration provenance agree; incompatible provenance leaves freshness
+unknown. Successfully parsed changes discarded by an aborted build remain
+observed but unpublished. `attempt.observation` includes failed new files even when they have no
+retained facts. A failed first build is `unbound_no_generation`; a failure over an
+older generation without a publication token is `uncorrelated_missing_token`,
+with unknown stale correlation. Corrupt diagnostics report unavailable diagnostics
+and unknown current completeness rather than a healthy refresh. Failure to write
+diagnostics emits a warning while preserving the original indexing error and
+published generation.
+
+An internal per-publication token correlates failures without entering canonical
+IDs or status JSON. Re-publishing identical facts invalidates old failure overlays
+even when `generation_id` is reused. `coverage_id`, semantic `attempt_id`, and
+`status_id` distinguish changed coverage or diagnostics without timestamps,
+durations, or random identifiers. Repeated unchanged status requests serialize
+identically. A concurrent status request reports its pinned generation and applies
+only an exactly matching attempt; a newer mismatched observation cannot overlay
+older facts. This is a bounded generation/diagnostic snapshot, not an atomic
+snapshot of the source tree or a promise of the latest completed publication.
+
 ### `export` / `import` — CLI-only, by design
 
 v2.0.0 adds a deterministic, portable JSONL export/import of the code
@@ -642,7 +702,7 @@ atlas-aci/
 │   ├── .dockerignore
 │   ├── README.md                      ← package-scoped quick start
 │   ├── src/atlas_aci/
-│   │   ├── __main__.py                ← Click CLI: serve | index | export | import | tools
+│   │   ├── __main__.py                ← Click CLI: serve | index | export | import | status | tools
 │   │   ├── server.py                  ← MCP stdio wiring + dispatcher
 │   │   ├── enforcement.py             ← read-only guard, bounds, rate limit, telemetry
 │   │   ├── config.py                  ← Config dataclass + skip patterns + path_is_within
