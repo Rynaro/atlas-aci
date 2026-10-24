@@ -1,0 +1,61 @@
+{
+  "format": "aci-raw-log-packaging.v1",
+  "gzip_mtime": 0,
+  "entries": [
+    {
+      "logical_path": ".spectra/evidence/aci-s06/anchors-red.log",
+      "path": ".spectra/evidence/aci-s06/anchors-red.log.gz",
+      "uncompressed_size": 3908,
+      "uncompressed_sha256": "ce185a4eb457deb68e19d8444b5ef5af4472d02f12c4ed883d094c2e8c661760",
+      "compressed_size": 1130,
+      "compressed_sha256": "c27a017abbe719fe5645cf87be2b1fc11001555f2d444b894371180c89f866a6",
+      "roundtrip": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s06/docker-build-final.log",
+      "path": ".spectra/evidence/aci-s06/docker-build-final.log.gz",
+      "uncompressed_size": 52980,
+      "uncompressed_sha256": "35d453d62d6c65d8e7a50a725863dba617efe2e1878791de9a3f05160abb118d",
+      "compressed_size": 20721,
+      "compressed_sha256": "409ff984d7c37902d670596b9d2e663fa905281c4320d2034a32d2a7427a08a0",
+      "roundtrip": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s06/docker-build.log",
+      "path": ".spectra/evidence/aci-s06/docker-build.log.gz",
+      "uncompressed_size": 72344,
+      "uncompressed_sha256": "6e903b7d3d6b08860a50ad51197e2f7a6fecfeea187325f75f3b01105666a9d7",
+      "compressed_size": 24759,
+      "compressed_sha256": "24ee077d204583736b4e20ccda0cdb62545abd7227d7a4b068e7605086773f23",
+      "roundtrip": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s06/docker-focused-first.log",
+      "path": ".spectra/evidence/aci-s06/docker-focused-first.log.gz",
+      "uncompressed_size": 20557,
+      "uncompressed_sha256": "9ff26436a4a3de4b94552f01358333f36de09bb6e9b7fbe1694b9d606adc78df",
+      "compressed_size": 2451,
+      "compressed_sha256": "131b092df82ba62edaab14b3b23fe805a9527e0a648c64dd0597994c40e0d9a7",
+      "roundtrip": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s06/parser-cache-api.log",
+      "path": ".spectra/evidence/aci-s06/parser-cache-api.log.gz",
+      "uncompressed_size": 9066,
+      "uncompressed_sha256": "c6875f15e30ad9e2ff91930e200d25bad6afcc381bf9ac05825ed257544bb599",
+      "compressed_size": 2584,
+      "compressed_sha256": "706d3a4a9ce013d4ad256435c418976a82a45c79441aeac58e76c1fd9e781633",
+      "roundtrip": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s06/parser-runtime-inspection.log",
+      "path": ".spectra/evidence/aci-s06/parser-runtime-inspection.log.gz",
+      "uncompressed_size": 1986,
+      "uncompressed_sha256": "d0c827f6d4fc91b61cb7c84191efba2948d199c64c555243b562b4c94b084679",
+      "compressed_size": 599,
+      "compressed_sha256": "966c14a24a0b8c84b0e3ec5ce74f8810bc1ec2170162bfbffd8a90d3bbc4ca2b",
+      "roundtrip": true
+    }
+  ],
+  "unpack": "gzip -dc <path.log.gz>"
+}

@@ -262,6 +262,52 @@ are not an OS sandbox. For untrusted code or models, the operator must supply
 isolation such as a DevContainer or microVM and appropriate filesystem/network
 restrictions. See [`SETUP.md §8`](SETUP.md#8-production-hardening-checklist).
 
+### External graph storage for a read-only source checkout
+
+`index`, `serve`, `status`, `export`, and `import` accept an optional explicit
+`--graph-root PATH`. Omission keeps `<repo>/.atlas` exactly as before. There is
+no graph-root environment-variable precedence: CLI, Config, or CodeGraph values
+are explicit; `None` means the local default. `--memex-root` remains independent.
+
+```bash
+atlas-aci index --repo /path/to/source --graph-root /path/to/graphs
+atlas-aci serve --repo /path/to/source --graph-root /path/to/graphs --memex-root /path/to/memex
+atlas-aci status --repo /path/to/source --graph-root /path/to/graphs
+```
+
+The graph root must be outside the source checkout. All graph databases, writer
+locks, publication stages and attempt diagnostics live under
+`<graph-root>/repos/<SHA-256 of the resolved source path>`. Separate repositories
+and Git worktrees have separate namespaces; symlink aliases of the same resolved
+source share one. Configured root symlinks resolve consistently; derived namespace redirections
+are rejected, including links to another repository inside the same root. Storage is operator-owned; this is not a hostile
+concurrent symlink sandbox. Atlas never relocates or deletes a different root's
+index, and an explicit root never falls back to `<repo>/.atlas`.
+
+Index and serve must use the **same canonical source/mount path**. Host
+`/home/project` and container `/repo` deliberately have different identities.
+Moving a checkout changes its namespace. Portable exports can be imported into
+the chosen destination/root; graph-root location does not enter canonical facts
+or generation identity.
+
+For Docker, prepare `/path/to/graphs` and `/path/to/memex` so UID10001 can write
+them, then keep the source read-only in both commands:
+
+```bash
+docker run --rm --read-only --network none -v "$PWD":/repo:ro \
+  -v /path/to/graphs:/graphs -v /path/to/memex:/memex \
+  atlas-aci index --repo /repo --graph-root /graphs
+docker run --rm -i --read-only --network none -v "$PWD":/repo:ro \
+  -v /path/to/graphs:/graphs:ro -v /path/to/memex:/memex \
+  atlas-aci serve --repo /repo --graph-root /graphs --memex-root /memex
+```
+
+The image prefetches only the already shipped parser languages at build time;
+the immutable parser cache is readable by UID10001. Do not mask `/tmp/.cache`
+with an empty runtime mount. Runtime indexing needs writable graph storage, not
+writable source or a parser download. Status/export/serve open graph state
+read-only and create no graph directory when the selected index is missing.
+
 ### `status` — operator capabilities and completeness
 
 ```bash

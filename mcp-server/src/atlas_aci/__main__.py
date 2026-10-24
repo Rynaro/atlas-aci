@@ -29,6 +29,13 @@ _GITHUB_FILE_WARN_BYTES = 50 * 1024 * 1024
 _GITHUB_FILE_HARD_LIMIT_BYTES = 100 * 1024 * 1024
 
 
+def _open_graph(repo: Path, graph_root: Path | None, **options) -> CodeGraph:
+    try:
+        return CodeGraph(repo=repo, graph_root=graph_root, **options)
+    except (ValueError, OSError) as exc:
+        raise click.ClickException(str(exc)) from exc
+
+
 @click.group()
 @click.option(
     "--log-level", default="info", type=click.Choice(["debug", "info", "warning", "error"])
@@ -53,11 +60,19 @@ def cli(ctx: click.Context, log_level: str) -> None:
 
 @cli.command()
 @click.option(
+    "--graph-root",
+    default=None,
+    type=click.Path(file_okay=False, path_type=Path),
+    help="External graph storage root (default: <repo>/.atlas; independent of memex)",
+)
+@click.option(
     "--repo", required=True, type=click.Path(exists=True, file_okay=False, path_type=Path)
 )
 @click.option("--memex-root", default=None, type=click.Path(path_type=Path))
 @click.option("--max-bytes-per-call", default=8 * 1024, type=int)
-def serve(repo: Path, memex_root: Path | None, max_bytes_per_call: int) -> None:
+def serve(
+    repo: Path, memex_root: Path | None, max_bytes_per_call: int, graph_root: Path | None = None
+) -> None:
     """Start the MCP server over stdio."""
     from atlas_aci.server import run_stdio
 
@@ -65,11 +80,21 @@ def serve(repo: Path, memex_root: Path | None, max_bytes_per_call: int) -> None:
         repo=repo.resolve(),
         memex_root=(memex_root or repo / ".atlas" / "memex").resolve(),
         max_bytes_per_call=max_bytes_per_call,
+        graph_root=graph_root,
     )
-    asyncio.run(run_stdio(config))
+    try:
+        asyncio.run(run_stdio(config))
+    except (ValueError, OSError) as exc:
+        raise click.ClickException(str(exc)) from exc
 
 
 @cli.command()
+@click.option(
+    "--graph-root",
+    default=None,
+    type=click.Path(file_okay=False, path_type=Path),
+    help="External graph storage root (default: <repo>/.atlas; independent of memex)",
+)
 @click.option(
     "--repo", required=True, type=click.Path(exists=True, file_okay=False, path_type=Path)
 )
@@ -87,25 +112,31 @@ def serve(repo: Path, memex_root: Path | None, max_bytes_per_call: int) -> None:
         "(pass any marker, e.g. HEAD)"
     ),
 )
-def index(repo: Path, langs: str, since: str | None) -> None:
+def index(repo: Path, langs: str, since: str | None, graph_root: Path | None = None) -> None:
     """Build or update the code-graph index for a repository."""
     log = structlog.get_logger()
     repo = repo.resolve()
     lang_list = [s.strip() for s in langs.split(",") if s.strip()]
 
     log.info("index_start", repo=str(repo), langs=lang_list, since=since)
-    graph = CodeGraph(repo=repo, langs=lang_list)
+    graph = _open_graph(repo, graph_root, langs=lang_list)
     stats = graph.build(since=since)
     log.info("index_done", **stats)
 
 
 @cli.command()
 @click.option(
+    "--graph-root",
+    default=None,
+    type=click.Path(file_okay=False, path_type=Path),
+    help="External graph storage root (default: <repo>/.atlas; independent of memex)",
+)
+@click.option(
     "--repo", required=True, type=click.Path(exists=True, file_okay=False, path_type=Path)
 )
-def status(repo: Path) -> None:
+def status(repo: Path, graph_root: Path | None = None) -> None:
     """Print canonical structural capabilities and last-observed index completeness."""
-    graph = CodeGraph(repo=repo.resolve(), read_only=True)
+    graph = _open_graph(repo.resolve(), graph_root, read_only=True)
     try:
         click.echo(json.dumps(graph.status(), sort_keys=True, separators=(",", ":")))
     finally:
@@ -114,10 +145,16 @@ def status(repo: Path) -> None:
 
 @cli.command()
 @click.option(
+    "--graph-root",
+    default=None,
+    type=click.Path(file_okay=False, path_type=Path),
+    help="External graph storage root (default: <repo>/.atlas; independent of memex)",
+)
+@click.option(
     "--repo", required=True, type=click.Path(exists=True, file_okay=False, path_type=Path)
 )
 @click.argument("out_path", type=click.Path(path_type=Path))
-def export(repo: Path, out_path: Path) -> None:
+def export(repo: Path, out_path: Path, graph_root: Path | None = None) -> None:
     """Export the code-graph index as canonical, deterministic JSONL (A5).
 
     The output is a portable, committable artifact (D6): `atlas-aci import
@@ -129,7 +166,7 @@ def export(repo: Path, out_path: Path) -> None:
     reasoning), so the enforcement layer's in-repo path restriction
     (`assert_path_in_repo`) does not apply here.
 
-    Reads the current-epoch DB read-only; never writes to `.atlas`.
+    Reads the selected current-epoch graph read-only; only OUT_PATH is written.
 
     Warns (never fails — the export itself always succeeds; a size
     warning is advisory, not a reason to withhold a graph the user asked
@@ -144,11 +181,11 @@ def export(repo: Path, out_path: Path) -> None:
     repo = repo.resolve()
     out_path = out_path.resolve()
 
-    graph = CodeGraph(repo=repo, read_only=True)
+    graph = _open_graph(repo, graph_root, read_only=True)
     if not graph.epoch_ok():
         raise click.ClickException(
-            f"no current-epoch index found under {repo}/.atlas -- run "
-            f"`atlas-aci index --repo {repo}` first."
+            f"no current-epoch index found under {graph.atlas_dir} -- run "
+            f"`atlas-aci index --repo {repo}` with the same graph-root selection first."
         )
 
     log.info("export_start", repo=str(repo), out_path=str(out_path))
@@ -187,10 +224,16 @@ def export(repo: Path, out_path: Path) -> None:
 
 @cli.command(name="import")
 @click.option(
+    "--graph-root",
+    default=None,
+    type=click.Path(file_okay=False, path_type=Path),
+    help="External graph storage root (default: <repo>/.atlas; independent of memex)",
+)
+@click.option(
     "--repo", required=True, type=click.Path(exists=True, file_okay=False, path_type=Path)
 )
 @click.argument("in_path", type=click.Path(exists=True, dir_okay=False, path_type=Path))
-def import_(repo: Path, in_path: Path) -> None:
+def import_(repo: Path, in_path: Path, graph_root: Path | None = None) -> None:
     """Import a canonical JSONL export, reproducing a current-epoch DB (A5).
 
     The cold-start workflow this exists for: commit a JSONL export
@@ -198,7 +241,8 @@ def import_(repo: Path, in_path: Path) -> None:
     `atlas-aci import <in_path> --repo <repo>` on a fresh checkout instead
     of a full `atlas-aci index` — skips re-parsing every source file.
 
-    `import` WRITES to `<repo>/.atlas` (index-path only, DIR-2) and is
+    `import` WRITES to the selected graph directory (default `<repo>/.atlas`,
+    index-path only, DIR-2) and is
     NEVER exposed as an MCP tool — see README.md's "Why read-only" section
     for the threat-model reasoning: the agent is the untrusted party,
     `serve` is read-only by construction, and `import` replaces the
@@ -211,7 +255,7 @@ def import_(repo: Path, in_path: Path) -> None:
     in_path = in_path.resolve()
 
     log.info("import_start", repo=str(repo), in_path=str(in_path))
-    graph = CodeGraph(repo=repo)
+    graph = _open_graph(repo, graph_root)
     try:
         stats = graph.import_jsonl(in_path)
     except ValueError as e:

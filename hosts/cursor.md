@@ -111,3 +111,35 @@ This is opinion, not data — calibrate against your own workflow:
 | Cursor | Good | MCP works, but rule-based agent activation is less precise than first-class agents. |
 | Local LangGraph | Good | Most flexible, most setup. Worth it if you're heavily customizing the harness. |
 | Aider | OK | Single-agent design, no native subagents — Operator pattern is hard to express. |
+
+## Optional external graph root with read-only source
+
+The local default remains `<repo>/.atlas`. For external storage, index and serve
+with the same explicit root and canonical source path; memex stays separate:
+
+```bash
+atlas-aci index --repo /home/you/code/your-repo --graph-root /home/you/.cache/atlas-graphs
+atlas-aci serve --repo /home/you/code/your-repo --graph-root /home/you/.cache/atlas-graphs --memex-root /home/you/.atlas/memex/your-repo
+```
+
+Add those same `--graph-root` arguments to this host's MCP server configuration.
+Each resolved source path (including each Git worktree) has a distinct namespace;
+symlink aliases share identity. No environment variable chooses a graph root,
+and an explicit missing root never falls back to a local index. Keep it outside
+the source checkout; existing indexes are not moved automatically.
+
+For container configurations, prepare graph/memex directories writable by UID10001
+and use `/repo` in **both** invocations (a host path is a different identity):
+
+```bash
+docker run --rm --read-only --network none -v /home/you/code/your-repo:/repo:ro \
+  -v /path/to/graphs:/graphs -v /path/to/memex:/memex \
+  atlas-aci index --repo /repo --graph-root /graphs
+docker run --rm -i --read-only --network none -v /home/you/code/your-repo:/repo:ro \
+  -v /path/to/graphs:/graphs:ro -v /path/to/memex:/memex \
+  atlas-aci serve --repo /repo --graph-root /graphs --memex-root /memex
+```
+
+The image includes its shipped parser assets; do not mask `/tmp/.cache` with an
+empty mount. The source stays kernel-enforced read-only during indexing and MCP
+queries; graph writes and failed-attempt diagnostics stay in the selected root.

@@ -109,7 +109,11 @@ class Config:
 
     skip_patterns: tuple[str, ...] = field(default_factory=lambda: DEFAULT_SKIP_PATTERNS)
 
+    # Explicit graph storage override; independent of the writable memex.
+    graph_root: Path | None = None
+
     def __post_init__(self) -> None:
+        self.graph_root = self.graph_root.resolve() if self.graph_root is not None else None
         self.repo = self.repo.resolve()
         self.memex_root = self.memex_root.resolve()
         # Best-effort only (AC-H-16 finding): `serve`'s default --memex-root

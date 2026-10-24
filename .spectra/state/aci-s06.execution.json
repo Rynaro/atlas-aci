@@ -1,0 +1,100 @@
+{
+  "slice_id": "ACI-S06",
+  "issue_url": "https://github.com/Rynaro/atlas-aci/issues/12",
+  "criteria_sha256": "32a587ee6d402a14cf324de7ab19a8e48204956f0696c74adfb1a4cdcb5772cc",
+  "base_commit": "7b11b275b300c100ab7b123a3ca4bb60977f5166",
+  "output_commit": null,
+  "declared_paths": [
+    "mcp-server/src/atlas_aci/__main__.py",
+    "mcp-server/src/atlas_aci/config.py",
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/src/atlas_aci/server.py",
+    "mcp-server/tests/slices/test_s06_*.py",
+    "README.md",
+    "hosts/*",
+    ".github/workflows/ci.yml",
+    "mcp-server/Dockerfile"
+  ],
+  "output_digests": {},
+  "status": "IN_PROGRESS",
+  "acceptance_results": [
+    {
+      "ac_id": "AC-S06-001",
+      "command": "ATLAS_ACI_S06_DOCKER_IMAGE=atlas-aci-s06 /private/tmp/atlas-aci-aci-s06/mcp-server/.venv/bin/python -m pytest tests/slices/test_s06_contract.py::test_readonly_source_index -q",
+      "working_directory": "mcp-server",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s06/test_readonly_source_index.log",
+        ".spectra/evidence/aci-s06/docker-integration.json"
+      ]
+    },
+    {
+      "ac_id": "AC-S06-002",
+      "command": "ATLAS_ACI_S06_DOCKER_IMAGE=atlas-aci-s06 /private/tmp/atlas-aci-aci-s06/mcp-server/.venv/bin/python -m pytest tests/slices/test_s06_contract.py::test_source_unchanged -q",
+      "working_directory": "mcp-server",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s06/test_source_unchanged.log",
+        ".spectra/evidence/aci-s06/docker-integration.json"
+      ]
+    },
+    {
+      "ac_id": "AC-S06-003",
+      "command": "ATLAS_ACI_S06_DOCKER_IMAGE=atlas-aci-s06 /private/tmp/atlas-aci-aci-s06/mcp-server/.venv/bin/python -m pytest tests/slices/test_s06_contract.py::test_serve_external_root -q",
+      "working_directory": "mcp-server",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s06/test_serve_external_root.log",
+        ".spectra/evidence/aci-s06/docker-integration.json"
+      ]
+    },
+    {
+      "ac_id": "AC-S06-004",
+      "command": "ATLAS_ACI_S06_DOCKER_IMAGE=atlas-aci-s06 /private/tmp/atlas-aci-aci-s06/mcp-server/.venv/bin/python -m pytest tests/slices/test_s06_contract.py::test_default_compatibility -q",
+      "working_directory": "mcp-server",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s06/test_default_compatibility.log"
+      ]
+    },
+    {
+      "ac_id": "AC-S06-005",
+      "command": "ATLAS_ACI_S06_DOCKER_IMAGE=atlas-aci-s06 /private/tmp/atlas-aci-aci-s06/mcp-server/.venv/bin/python -m pytest tests/slices/test_s06_contract.py::test_root_identity_isolation -q",
+      "working_directory": "mcp-server",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s06/test_root_identity_isolation.log"
+      ]
+    },
+    {
+      "ac_id": "AC-S06-006",
+      "command": "ATLAS_ACI_S06_DOCKER_IMAGE=atlas-aci-s06 /private/tmp/atlas-aci-aci-s06/mcp-server/.venv/bin/python -m pytest tests/slices/test_s06_contract.py::test_external_replay -q",
+      "working_directory": "mcp-server",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s06/test_external_replay.log"
+      ]
+    },
+    {
+      "ac_id": "AC-S06-RUN-02",
+      "command": "python3 .spectra/evidence/aci-s06/verify_resume.py",
+      "working_directory": ".",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s06/interrupted-execution.json",
+        ".spectra/evidence/aci-s06/resume-identity.json"
+      ]
+    }
+  ],
+  "scope_amendments": [
+    ".spectra/evidence/aci-s06/scope-amendment-02.json"
+  ],
+  "verification_evidence": [
+    ".spectra/evidence/aci-s06/frozen-checks.json",
+    ".spectra/evidence/aci-s06/docker-integration.json",
+    ".spectra/evidence/aci-s06/probe-selftest.result.json",
+    ".spectra/evidence/aci-s06/vivi-pass2-result.json",
+    ".spectra/evidence/aci-s06/independent-review.json",
+    ".spectra/evidence/aci-s06/fingerprint-after.json"
+  ]
+}

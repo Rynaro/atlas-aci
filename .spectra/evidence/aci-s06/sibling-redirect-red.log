@@ -1,0 +1,58 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+_______________ test_namespace_cannot_redirect_to_sibling[False] _______________
+
+tmp_path = PosixPath('/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-95/test_namespace_cannot_redirect0')
+opened_before_redirect = False
+
+    @pytest.mark.parametrize("opened_before_redirect", [False, True])
+    def test_namespace_cannot_redirect_to_sibling(tmp_path: Path, opened_before_redirect: bool):
+        root = tmp_path / "graphs"
+        first, second = tmp_path / "first", tmp_path / "second"
+        first.mkdir()
+        second.mkdir()
+        (first / "sample.py").write_text("def first_only():\n    pass\n")
+        (second / "sample.py").write_text("def second_only():\n    pass\n")
+        sibling = CodeGraph(second, graph_root=root)
+        sibling.build()
+        writer = CodeGraph(first, graph_root=root) if opened_before_redirect else None
+        redirected = root / "repos" / hashlib.sha256(str(first.resolve()).encode()).hexdigest()
+        if redirected.exists():
+            redirected.rmdir()
+        redirected.symlink_to(sibling.atlas_dir, target_is_directory=True)
+        before = snapshot(sibling.atlas_dir)
+>       with pytest.raises(ValueError, match="namespace"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+mcp-server/tests/slices/test_s06_contract.py:538: Failed
+_______________ test_namespace_cannot_redirect_to_sibling[True] ________________
+
+tmp_path = PosixPath('/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-95/test_namespace_cannot_redirect1')
+opened_before_redirect = True
+
+    @pytest.mark.parametrize("opened_before_redirect", [False, True])
+    def test_namespace_cannot_redirect_to_sibling(tmp_path: Path, opened_before_redirect: bool):
+        root = tmp_path / "graphs"
+        first, second = tmp_path / "first", tmp_path / "second"
+        first.mkdir()
+        second.mkdir()
+        (first / "sample.py").write_text("def first_only():\n    pass\n")
+        (second / "sample.py").write_text("def second_only():\n    pass\n")
+        sibling = CodeGraph(second, graph_root=root)
+        sibling.build()
+        writer = CodeGraph(first, graph_root=root) if opened_before_redirect else None
+        redirected = root / "repos" / hashlib.sha256(str(first.resolve()).encode()).hexdigest()
+        if redirected.exists():
+            redirected.rmdir()
+        redirected.symlink_to(sibling.atlas_dir, target_is_directory=True)
+        before = snapshot(sibling.atlas_dir)
+>       with pytest.raises(ValueError, match="namespace"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+mcp-server/tests/slices/test_s06_contract.py:538: Failed
+=========================== short test summary info ============================
+FAILED mcp-server/tests/slices/test_s06_contract.py::test_namespace_cannot_redirect_to_sibling[False]
+FAILED mcp-server/tests/slices/test_s06_contract.py::test_namespace_cannot_redirect_to_sibling[True]
+2 failed in 0.25s

@@ -798,6 +798,7 @@ class CodeGraph:
         langs: list[str] | None = None,
         read_only: bool = False,
         query_limit: int | None = None,
+        graph_root: Path | None = None,
     ):
         self.repo = repo.resolve()
         self.langs = set(langs) if langs else set(DEFAULT_LANGS)
@@ -805,7 +806,27 @@ class CodeGraph:
         self.query_limit = (
             query_limit if query_limit is not None else DEFAULT_MAX_BOUND_FIELD_ELEMENTS + 1
         )
-        self.atlas_dir = self.repo / ".atlas"
+        self.graph_root = graph_root.resolve() if graph_root is not None else None
+        if self.graph_root is None:
+            self.atlas_dir = self.repo / ".atlas"
+        else:
+            if path_is_within(self.repo, self.graph_root):
+                raise ValueError(
+                    f"External graph root must be outside source checkout: {self.graph_root}"
+                )
+            for component in (self.graph_root, *self.graph_root.parents):
+                if component.exists() and not component.is_dir():
+                    raise ValueError(f"Graph root has a non-directory component: {component}")
+            identity = hashlib.sha256(str(self.repo).encode("utf-8")).hexdigest()
+            selected = (self.graph_root / "repos" / identity).resolve()
+            if not path_is_within(self.graph_root, selected) or path_is_within(self.repo, selected):
+                raise ValueError(
+                    f"Graph namespace escapes the configured external storage: {selected}"
+                )
+            if selected.exists() and not selected.is_dir():
+                raise ValueError(f"Graph namespace is not a directory: {selected}")
+            self.atlas_dir = selected
+        self._validate_graph_namespace()
         self.db_path = self.atlas_dir / f"graph.{SCHEMA_EPOCH}.db"
         if not read_only:
             self.atlas_dir.mkdir(parents=True, exist_ok=True)
@@ -813,11 +834,22 @@ class CodeGraph:
         self._closed = False
         self._lease_generation_id: str | None = None
 
+    def _validate_graph_namespace(self) -> None:
+        """Reject static namespace redirection; configured root/source aliases are canonicalized."""
+        if self.graph_root is not None:
+            identity = hashlib.sha256(str(self.repo).encode("utf-8")).hexdigest()
+            expected = self.graph_root / "repos" / identity
+            if expected.resolve() != expected or self.atlas_dir != expected:
+                raise ValueError(
+                    f"Graph namespace must not redirect from its canonical path: {expected}"
+                )
+
     @property
     def db(self) -> sqlite3.Connection:
         if self._closed:
             raise RuntimeError("This graph reader is closed")
         if self._db is None:
+            self._validate_graph_namespace()
             if self.read_only:
                 # mode=ro: SQLite never attempts a write, journal, or lock
                 # file for this connection — safe on a read-only mount.
@@ -954,7 +986,11 @@ class CodeGraph:
         if self._closed:
             raise RuntimeError("This graph is closed")
         reader = CodeGraph(
-            self.repo, langs=sorted(self.langs), read_only=True, query_limit=self.query_limit
+            self.repo,
+            langs=sorted(self.langs),
+            read_only=True,
+            query_limit=self.query_limit,
+            graph_root=self.graph_root,
         )
         try:
             try:
@@ -964,7 +1000,8 @@ class CodeGraph:
             if data is None:
                 raise ToolError(
                     "INDEX_UNAVAILABLE",
-                    "No complete compatible graph generation. Run: atlas-aci index --repo <repo>, "
+                    f"No complete compatible graph generation under {self.atlas_dir}. "
+                    "Run: atlas-aci index --repo <repo>, "
                     "or reimport a valid graph.",
                     "different_tool",
                 )
@@ -1524,6 +1561,7 @@ class CodeGraph:
     def _writer_lock(self):
         if self.read_only or self._closed:
             raise RuntimeError("Index publication requires an open writable CodeGraph")
+        self._validate_graph_namespace()
         self.atlas_dir.mkdir(parents=True, exist_ok=True)
         with (self.atlas_dir / ".index.lock").open("a+") as lock_file:
             fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX)

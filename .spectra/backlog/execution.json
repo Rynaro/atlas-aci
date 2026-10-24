@@ -1,0 +1,530 @@
+{
+  "schema": "atlas-aci/backlog-execution.v1",
+  "repository": "Rynaro/atlas-aci",
+  "updated_at": "2026-10-24T01:14:08.497633+00:00",
+  "status": "IN_PROGRESS",
+  "authorization": {
+    "source": "Standing user instruction relayed by root: continue all open issues until cleared; validated merges and main sync automatically authorized",
+    "actions": [
+      "plan",
+      "implement",
+      "verify",
+      "create/update PR",
+      "merge after required validation and green CI",
+      "sync main",
+      "continue next eligible issue"
+    ],
+    "exclusions": [
+      "paid model/evaluation spend without configured operator budget",
+      "credential or deployment changes",
+      "release publication",
+      "destructive/unrelated repository mutations"
+    ],
+    "publication_owner": "root orchestrator; executor never self-merges"
+  },
+  "base_commit": "7b11b275b300c100ab7b123a3ca4bb60977f5166",
+  "queue_frozen": [
+    12,
+    29,
+    31,
+    32,
+    11,
+    30,
+    33,
+    34,
+    35,
+    38,
+    39,
+    36,
+    37,
+    40,
+    41,
+    42,
+    43,
+    44,
+    58,
+    52,
+    53,
+    50,
+    45,
+    46,
+    47,
+    48,
+    49,
+    51,
+    54,
+    55,
+    56,
+    57,
+    59,
+    60,
+    61,
+    62,
+    63
+  ],
+  "current_issue": 12,
+  "next_issue": 29,
+  "completed_issue_count": 5,
+  "remaining_issue_count": 37,
+  "queue_basis": "Agreed serial priority and declared dependency DAG from authoritative root inventory; reverify each live issue contract at pickup",
+  "selection_policy": "All initially open issues selected, including optional branches; S23 release-gate contract is not silently changed",
+  "dependency_constraints": [
+    {
+      "issue": 11,
+      "requires": [
+        27,
+        29,
+        32
+      ]
+    },
+    {
+      "issue": 51,
+      "requires": [
+        49
+      ]
+    },
+    {
+      "issue": 61,
+      "requires": [
+        49,
+        51
+      ]
+    }
+  ],
+  "items": [
+    {
+      "issue": 24,
+      "slice_id": "ACI-S01",
+      "status": "MERGED",
+      "plan_path": ".spectra/plans/aci-s01.md",
+      "receipt_path": ".spectra/state/aci-s01.execution.json",
+      "pull_request": 65,
+      "merge_commit": "f81231ef3fd4bbc89fd444f213be521d6063e99e",
+      "merge_evidence": "Parent GitHub merge result plus locally verified main first-parent commit and COMPLETE receipt",
+      "blockers": []
+    },
+    {
+      "issue": 28,
+      "slice_id": "ACI-S05",
+      "status": "MERGED",
+      "plan_path": ".spectra/plans/aci-s05.md",
+      "receipt_path": ".spectra/state/aci-s05.execution.json",
+      "pull_request": 66,
+      "merge_commit": "feec071f0f1cfbb967fe1849065f23f4e6713120",
+      "merge_evidence": "Parent GitHub merge result plus locally verified main first-parent commit and COMPLETE receipt",
+      "blockers": []
+    },
+    {
+      "issue": 25,
+      "slice_id": "ACI-S02",
+      "status": "MERGED",
+      "plan_path": ".spectra/plans/aci-s02.md",
+      "receipt_path": ".spectra/state/aci-s02.execution.json",
+      "pull_request": 67,
+      "merge_commit": "f9e72ed8e3769cec8b7731ec9feb4e945bb8ccb3",
+      "merge_evidence": "Parent GitHub merge result plus locally verified main first-parent commit and COMPLETE receipt",
+      "blockers": []
+    },
+    {
+      "issue": 26,
+      "slice_id": "ACI-S03",
+      "status": "MERGED",
+      "plan_path": ".spectra/plans/aci-s03.md",
+      "receipt_path": ".spectra/state/aci-s03.execution.json",
+      "pull_request": 68,
+      "merge_commit": "7793d62d0ad00cd29ba0be5de53491f15ac28802",
+      "merge_evidence": "Parent GitHub merge result plus locally verified main first-parent commit and COMPLETE receipt",
+      "blockers": []
+    },
+    {
+      "issue": 27,
+      "slice_id": "ACI-S04",
+      "status": "MERGED",
+      "plan_path": ".spectra/plans/aci-s04.md",
+      "receipt_path": ".spectra/state/aci-s04.execution.json",
+      "pull_request": 69,
+      "merge_commit": "7b11b275b300c100ab7b123a3ca4bb60977f5166",
+      "merge_evidence": "Parent GitHub merge result plus locally verified main first-parent commit and COMPLETE receipt",
+      "blockers": []
+    },
+    {
+      "issue": 12,
+      "slice_id": "ACI-S06",
+      "status": "IN_PROGRESS",
+      "plan_path": ".spectra/plans/aci-s06.md",
+      "receipt_path": ".spectra/state/aci-s06.execution.json",
+      "pull_request": null,
+      "merge_commit": null,
+      "blockers": []
+    },
+    {
+      "issue": 29,
+      "slice_id": null,
+      "status": "QUEUED",
+      "plan_path": null,
+      "receipt_path": null,
+      "pull_request": null,
+      "merge_commit": null,
+      "blockers": []
+    },
+    {
+      "issue": 31,
+      "slice_id": null,
+      "status": "QUEUED",
+      "plan_path": null,
+      "receipt_path": null,
+      "pull_request": null,
+      "merge_commit": null,
+      "blockers": []
+    },
+    {
+      "issue": 32,
+      "slice_id": null,
+      "status": "QUEUED",
+      "plan_path": null,
+      "receipt_path": null,
+      "pull_request": null,
+      "merge_commit": null,
+      "blockers": []
+    },
+    {
+      "issue": 11,
+      "slice_id": null,
+      "status": "QUEUED",
+      "plan_path": null,
+      "receipt_path": null,
+      "pull_request": null,
+      "merge_commit": null,
+      "blockers": []
+    },
+    {
+      "issue": 30,
+      "slice_id": null,
+      "status": "QUEUED",
+      "plan_path": null,
+      "receipt_path": null,
+      "pull_request": null,
+      "merge_commit": null,
+      "blockers": []
+    },
+    {
+      "issue": 33,
+      "slice_id": null,
+      "status": "QUEUED",
+      "plan_path": null,
+      "receipt_path": null,
+      "pull_request": null,
+      "merge_commit": null,
+      "blockers": []
+    },
+    {
+      "issue": 34,
+      "slice_id": null,
+      "status": "QUEUED",
+      "plan_path": null,
+      "receipt_path": null,
+      "pull_request": null,
+      "merge_commit": null,
+      "blockers": []
+    },
+    {
+      "issue": 35,
+      "slice_id": null,
+      "status": "QUEUED",
+      "plan_path": null,
+      "receipt_path": null,
+      "pull_request": null,
+      "merge_commit": null,
+      "blockers": []
+    },
+    {
+      "issue": 38,
+      "slice_id": null,
+      "status": "QUEUED",
+      "plan_path": null,
+      "receipt_path": null,
+      "pull_request": null,
+      "merge_commit": null,
+      "blockers": []
+    },
+    {
+      "issue": 39,
+      "slice_id": null,
+      "status": "QUEUED",
+      "plan_path": null,
+      "receipt_path": null,
+      "pull_request": null,
+      "merge_commit": null,
+      "blockers": []
+    },
+    {
+      "issue": 36,
+      "slice_id": null,
+      "status": "QUEUED",
+      "plan_path": null,
+      "receipt_path": null,
+      "pull_request": null,
+      "merge_commit": null,
+      "blockers": []
+    },
+    {
+      "issue": 37,
+      "slice_id": null,
+      "status": "QUEUED",
+      "plan_path": null,
+      "receipt_path": null,
+      "pull_request": null,
+      "merge_commit": null,
+      "blockers": []
+    },
+    {
+      "issue": 40,
+      "slice_id": null,
+      "status": "QUEUED",
+      "plan_path": null,
+      "receipt_path": null,
+      "pull_request": null,
+      "merge_commit": null,
+      "blockers": []
+    },
+    {
+      "issue": 41,
+      "slice_id": null,
+      "status": "QUEUED",
+      "plan_path": null,
+      "receipt_path": null,
+      "pull_request": null,
+      "merge_commit": null,
+      "blockers": []
+    },
+    {
+      "issue": 42,
+      "slice_id": null,
+      "status": "QUEUED",
+      "plan_path": null,
+      "receipt_path": null,
+      "pull_request": null,
+      "merge_commit": null,
+      "blockers": []
+    },
+    {
+      "issue": 43,
+      "slice_id": null,
+      "status": "QUEUED",
+      "plan_path": null,
+      "receipt_path": null,
+      "pull_request": null,
+      "merge_commit": null,
+      "blockers": []
+    },
+    {
+      "issue": 44,
+      "slice_id": null,
+      "status": "QUEUED",
+      "plan_path": null,
+      "receipt_path": null,
+      "pull_request": null,
+      "merge_commit": null,
+      "blockers": []
+    },
+    {
+      "issue": 58,
+      "slice_id": null,
+      "status": "QUEUED",
+      "plan_path": null,
+      "receipt_path": null,
+      "pull_request": null,
+      "merge_commit": null,
+      "blockers": []
+    },
+    {
+      "issue": 52,
+      "slice_id": null,
+      "status": "QUEUED",
+      "plan_path": null,
+      "receipt_path": null,
+      "pull_request": null,
+      "merge_commit": null,
+      "blockers": []
+    },
+    {
+      "issue": 53,
+      "slice_id": null,
+      "status": "QUEUED",
+      "plan_path": null,
+      "receipt_path": null,
+      "pull_request": null,
+      "merge_commit": null,
+      "blockers": []
+    },
+    {
+      "issue": 50,
+      "slice_id": null,
+      "status": "QUEUED",
+      "plan_path": null,
+      "receipt_path": null,
+      "pull_request": null,
+      "merge_commit": null,
+      "blockers": []
+    },
+    {
+      "issue": 45,
+      "slice_id": null,
+      "status": "QUEUED",
+      "plan_path": null,
+      "receipt_path": null,
+      "pull_request": null,
+      "merge_commit": null,
+      "blockers": []
+    },
+    {
+      "issue": 46,
+      "slice_id": null,
+      "status": "QUEUED",
+      "plan_path": null,
+      "receipt_path": null,
+      "pull_request": null,
+      "merge_commit": null,
+      "blockers": []
+    },
+    {
+      "issue": 47,
+      "slice_id": null,
+      "status": "QUEUED",
+      "plan_path": null,
+      "receipt_path": null,
+      "pull_request": null,
+      "merge_commit": null,
+      "blockers": []
+    },
+    {
+      "issue": 48,
+      "slice_id": null,
+      "status": "QUEUED",
+      "plan_path": null,
+      "receipt_path": null,
+      "pull_request": null,
+      "merge_commit": null,
+      "blockers": []
+    },
+    {
+      "issue": 49,
+      "slice_id": null,
+      "status": "QUEUED",
+      "plan_path": null,
+      "receipt_path": null,
+      "pull_request": null,
+      "merge_commit": null,
+      "blockers": []
+    },
+    {
+      "issue": 51,
+      "slice_id": null,
+      "status": "QUEUED",
+      "plan_path": null,
+      "receipt_path": null,
+      "pull_request": null,
+      "merge_commit": null,
+      "blockers": []
+    },
+    {
+      "issue": 54,
+      "slice_id": null,
+      "status": "QUEUED",
+      "plan_path": null,
+      "receipt_path": null,
+      "pull_request": null,
+      "merge_commit": null,
+      "blockers": []
+    },
+    {
+      "issue": 55,
+      "slice_id": null,
+      "status": "QUEUED",
+      "plan_path": null,
+      "receipt_path": null,
+      "pull_request": null,
+      "merge_commit": null,
+      "blockers": []
+    },
+    {
+      "issue": 56,
+      "slice_id": null,
+      "status": "QUEUED",
+      "plan_path": null,
+      "receipt_path": null,
+      "pull_request": null,
+      "merge_commit": null,
+      "blockers": []
+    },
+    {
+      "issue": 57,
+      "slice_id": null,
+      "status": "QUEUED",
+      "plan_path": null,
+      "receipt_path": null,
+      "pull_request": null,
+      "merge_commit": null,
+      "blockers": []
+    },
+    {
+      "issue": 59,
+      "slice_id": null,
+      "status": "QUEUED",
+      "plan_path": null,
+      "receipt_path": null,
+      "pull_request": null,
+      "merge_commit": null,
+      "blockers": []
+    },
+    {
+      "issue": 60,
+      "slice_id": null,
+      "status": "QUEUED",
+      "plan_path": null,
+      "receipt_path": null,
+      "pull_request": null,
+      "merge_commit": null,
+      "blockers": []
+    },
+    {
+      "issue": 61,
+      "slice_id": null,
+      "status": "QUEUED",
+      "plan_path": null,
+      "receipt_path": null,
+      "pull_request": null,
+      "merge_commit": null,
+      "blockers": []
+    },
+    {
+      "issue": 62,
+      "slice_id": null,
+      "status": "QUEUED",
+      "plan_path": null,
+      "receipt_path": null,
+      "pull_request": null,
+      "merge_commit": null,
+      "blockers": []
+    },
+    {
+      "issue": 63,
+      "slice_id": null,
+      "status": "QUEUED",
+      "plan_path": null,
+      "receipt_path": null,
+      "pull_request": null,
+      "merge_commit": null,
+      "blockers": []
+    }
+  ],
+  "blocked_capabilities": [],
+  "reentry_protocol": [
+    "Read this ledger and actual main/GitHub state before scheduling",
+    "Verify stable issue marker and criteria digest; fill unverified future slice/paths only from live contract",
+    "Preserve prior receipts; use one authoritative receipt per slice",
+    "At each merge record actual PR/merge SHA and verified closure; carry latest bookkeeping into next slice",
+    "For genuine blockers record missing capability and evidence, then select independent eligible work if safe",
+    "Final bookkeeping must reconcile actual closures, receipts, merges and queue before COMPLETE"
+  ]
+}
