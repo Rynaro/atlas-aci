@@ -1,0 +1,54 @@
+{
+  "verifier": {
+    "command": [
+      "mcp-server/.venv/bin/python",
+      "scripts/verify-probe-verdict.py",
+      ".spectra/changes/aci-s11/probe/aci-s11-probe-lpa-vs-louvain.json"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.6036379580036737,
+    "log": ".spectra/evidence/aci-s11/selector-final/verifier.log"
+  },
+  "guard": {
+    "command": [
+      "env",
+      "-u",
+      "PYTHONPATH",
+      "/bin/bash",
+      "scripts/test-verify-probe-verdict.sh"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 6.965233124996303,
+    "log": ".spectra/evidence/aci-s11/selector-final/guard.log"
+  },
+  "resolve-json": {
+    "command": [
+      "/bin/bash",
+      "scripts/resolve-probe-artifact.sh",
+      "aci-s11-probe-lpa-vs-louvain.json"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.004884124995442107,
+    "log": ".spectra/evidence/aci-s11/selector-final/resolve-json.log"
+  },
+  "resolve-md": {
+    "command": [
+      "/bin/bash",
+      "scripts/resolve-probe-artifact.sh",
+      "aci-s11-probe-lpa-vs-louvain.md"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.004540583991911262,
+    "log": ".spectra/evidence/aci-s11/selector-final/resolve-md.log"
+  },
+  "bash-syntax": {
+    "command": [
+      "/bin/bash",
+      "-n",
+      "scripts/test-verify-probe-verdict.sh"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.002425459009828046,
+    "log": ".spectra/evidence/aci-s11/selector-final/bash-syntax.log"
+  }
+}

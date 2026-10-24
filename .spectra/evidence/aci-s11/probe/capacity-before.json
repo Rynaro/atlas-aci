@@ -1,0 +1,6 @@
+{
+  "epoch": 1792880533.02988,
+  "available_bytes": 10765000704,
+  "df": "Filesystem   1024-blocks      Used Available Capacity iused     ifree %iused  Mounted on\n/dev/disk3s5   239362496 201124232  10512696    96% 2381085 105126960    2%   /System/Volumes/Data\n",
+  "cleanup_performed": false
+}

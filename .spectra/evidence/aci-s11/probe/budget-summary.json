@@ -1,0 +1,15 @@
+{
+  "jobs": 22,
+  "all_exit_codes_zero": true,
+  "prior_probe_seconds": 0.0,
+  "cumulative_serial_job_charge_seconds": 480.98692737703095,
+  "max_job_elapsed_seconds": 207.18685495801037,
+  "max_peak_rss_bytes": 1964720128,
+  "per_job_cap_seconds": 600,
+  "cumulative_cap_seconds": 2700,
+  "note": "SUM OF SERIAL JOB elapsed_seconds, not total wall runtime; runner elapsed_total retains orchestration overhead.",
+  "additional_catalog_preservation_seconds": 0.08166433400765527,
+  "cumulative_with_preservation_seconds": 481.0685917110386,
+  "additional_closed_scratch_verification_cleanup_seconds": 1.5147731250035577,
+  "cumulative_with_preservation_and_cleanup_seconds": 482.58336483604216
+}

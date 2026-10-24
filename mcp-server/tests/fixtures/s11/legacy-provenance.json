@@ -1,0 +1,30 @@
+{
+  "base_commit": "138a6f3cd510e0ecb3be0832221236adfe441ebc",
+  "artifact_path": "mcp-server/tests/fixtures/s11/legacy-evidence.jsonl",
+  "artifact_sha256": "75253c5c6d4d8c88b626a12ab9373f3f865c9d4eb6f4d16134c0ec61a6fa86e7",
+  "artifact_bytes": 61589,
+  "header": {
+    "content_hash": "60067e691a343b519bfa43e75b9b107048e3d1b2afac19aa69b628e567beced1",
+    "format": "atlas-evidence.v2",
+    "record_count": 103,
+    "schema_epoch": 7,
+    "type": "header"
+  },
+  "source": "/private/tmp/aci-s11-baseline-r6hnxcte/source",
+  "baseline_import_destination": "/private/tmp/aci-s11-baseline-r6hnxcte/imported",
+  "baseline_captured_before_product_edits": true,
+  "query_count": 12,
+  "native_source_snapshot": "RealG1 then parser-recovered syntax failure G2 retaining historical facts; frozen artifact imported source-free for legacy parity.",
+  "versions": {
+    "mcp": "1.27.0",
+    "pydantic": "2.13.0",
+    "jsonschema": "4.26.0",
+    "tree-sitter": "0.25.2",
+    "tree-sitter-language-pack": "1.6.0"
+  },
+  "baseline_product_hashes": {
+    "mcp-server/src/atlas_aci/codegraph.py": "30d0c8d718ed0115bc7b88051bd1ca7ba358665fabfe35b9a57029de2ebb0183",
+    "mcp-server/src/atlas_aci/server.py": "f9a1f820f685205569ba6b1f5026ed982b7123bcb91cc33237805fcc60f43970",
+    "mcp-server/src/atlas_aci/tools/graph_query.py": "5891b23d701b5cf56c08da0d416a8d0de562779a487c69464eaf501055b42c2c"
+  }
+}

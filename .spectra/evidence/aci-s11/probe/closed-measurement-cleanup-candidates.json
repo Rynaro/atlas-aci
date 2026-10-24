@@ -1,0 +1,23 @@
+[
+  {
+    "path": "/tmp/aci-s11-probe-inputs/solidus/.atlas",
+    "resolved_path": "/private/tmp/aci-s11-probe-inputs/solidus/.atlas",
+    "allocated_kib": 861712,
+    "disposition": "CANDIDATE_ONLY_NOT_REMOVED",
+    "source_parent_git_preserved": "/tmp/aci-s11-probe-inputs/solidus/.git"
+  },
+  {
+    "path": "/tmp/aci-s11-probe-inputs/spree/.atlas",
+    "resolved_path": "/private/tmp/aci-s11-probe-inputs/spree/.atlas",
+    "allocated_kib": 1373804,
+    "disposition": "CANDIDATE_ONLY_NOT_REMOVED",
+    "source_parent_git_preserved": "/tmp/aci-s11-probe-inputs/spree/.git"
+  },
+  {
+    "path": "/tmp/aci-s11-spree-export.jsonl",
+    "bytes": 651845336,
+    "sha256": "fdd923467e5a8a0e572f66f48efe269f775d5334dadfd7a060db23708c6a88d6",
+    "disposition": "CANDIDATE_ONLY_NOT_REMOVED",
+    "durable_hash_evidence": ".spectra/evidence/aci-s11/probe/spree-export-size.json"
+  }
+]

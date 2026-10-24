@@ -1,0 +1,437 @@
+[
+  {
+    "arguments": {
+      "query": "definitions_of:Target"
+    },
+    "decoded": {
+      "definitions": [
+        {
+          "id": 4,
+          "name": "Target",
+          "kind": "class",
+          "path": "app/target.rb",
+          "line_start": 1,
+          "line_end": 3,
+          "lang": "ruby",
+          "entity_id": "1efc62dc83d505f92b418e281d759e752e91975bbee332b1bed529b29e122cdd",
+          "occurrence_id": "4b4d3ca732cfa560049aaa0300fca51d74556a71c4cd0951783d3166681eb4e3"
+        }
+      ],
+      "references": [],
+      "generation_id": "cecd646c8c1c800cbbe2b4b6b7cc5cee44ad20ea7a8f5c8b46d68083ef0c1877",
+      "snapshot_id": null,
+      "source_available": false
+    }
+  },
+  {
+    "arguments": {
+      "query": "callers_of:bar"
+    },
+    "decoded": {
+      "edges": [
+        {
+          "relation": "call",
+          "confidence": "EXTRACTED",
+          "source": {
+            "path": "app/hub.rb",
+            "line": 5,
+            "name": "call",
+            "kind": "method"
+          },
+          "target": {
+            "path": "app/target.rb",
+            "line": 2,
+            "name": "bar"
+          },
+          "candidates": null
+        },
+        {
+          "relation": "call",
+          "confidence": "INFERRED",
+          "source": {
+            "path": "app/hub.rb",
+            "line": 6,
+            "name": "call",
+            "kind": "method"
+          },
+          "target": {
+            "path": "app/hub.rb",
+            "line": 2,
+            "name": "bar"
+          },
+          "candidates": null
+        }
+      ],
+      "unresolved_refs": 0,
+      "generation_id": "cecd646c8c1c800cbbe2b4b6b7cc5cee44ad20ea7a8f5c8b46d68083ef0c1877",
+      "snapshot_id": null,
+      "source_available": false
+    }
+  },
+  {
+    "arguments": {
+      "query": "subclasses_of:Base"
+    },
+    "decoded": {
+      "edges": [
+        {
+          "relation": "superclass",
+          "confidence": "EXTRACTED",
+          "source": {
+            "path": "app/base.rb",
+            "line": 2,
+            "name": "Child",
+            "kind": "class"
+          },
+          "target": {
+            "path": "app/base.rb",
+            "line": 1,
+            "name": "Base"
+          },
+          "candidates": null
+        }
+      ],
+      "unresolved_refs": 0,
+      "generation_id": "cecd646c8c1c800cbbe2b4b6b7cc5cee44ad20ea7a8f5c8b46d68083ef0c1877",
+      "snapshot_id": null,
+      "source_available": false
+    }
+  },
+  {
+    "arguments": {
+      "query": "god_nodes:"
+    },
+    "decoded": {
+      "god_nodes": [
+        {
+          "path": "app/hub.rb",
+          "line": 3,
+          "name": "call",
+          "kind": "method",
+          "in_degree": 0,
+          "out_degree": 2,
+          "degree": 2
+        },
+        {
+          "path": "app/base.rb",
+          "line": 1,
+          "name": "Base",
+          "kind": "class",
+          "in_degree": 1,
+          "out_degree": 0,
+          "degree": 1
+        },
+        {
+          "path": "app/base.rb",
+          "line": 2,
+          "name": "Child",
+          "kind": "class",
+          "in_degree": 0,
+          "out_degree": 1,
+          "degree": 1
+        },
+        {
+          "path": "app/hub.rb",
+          "line": 2,
+          "name": "bar",
+          "kind": "method",
+          "in_degree": 1,
+          "out_degree": 0,
+          "degree": 1
+        },
+        {
+          "path": "app/target.rb",
+          "line": 2,
+          "name": "bar",
+          "kind": "method",
+          "in_degree": 1,
+          "out_degree": 0,
+          "degree": 1
+        }
+      ],
+      "analysis_basis": "confident_edges",
+      "ambiguous_edges_excluded": 1,
+      "resolved_edge_count": 3,
+      "generation_id": "cecd646c8c1c800cbbe2b4b6b7cc5cee44ad20ea7a8f5c8b46d68083ef0c1877",
+      "snapshot_id": null,
+      "source_available": false
+    }
+  },
+  {
+    "arguments": {
+      "query": "communities:"
+    },
+    "decoded": {
+      "communities": [
+        {
+          "path": "app/base.rb",
+          "line": 1,
+          "name": "Base",
+          "kind": "class",
+          "community_id": 0
+        },
+        {
+          "path": "app/base.rb",
+          "line": 2,
+          "name": "Child",
+          "kind": "class",
+          "community_id": 0
+        },
+        {
+          "path": "app/hub.rb",
+          "line": 2,
+          "name": "bar",
+          "kind": "method",
+          "community_id": 1
+        },
+        {
+          "path": "app/hub.rb",
+          "line": 3,
+          "name": "call",
+          "kind": "method",
+          "community_id": 1
+        },
+        {
+          "path": "app/target.rb",
+          "line": 2,
+          "name": "bar",
+          "kind": "method",
+          "community_id": 1
+        }
+      ],
+      "community_count": 2,
+      "analysis_basis": "confident_edges",
+      "ambiguous_edges_excluded": 1,
+      "resolved_edge_count": 3,
+      "generation_id": "cecd646c8c1c800cbbe2b4b6b7cc5cee44ad20ea7a8f5c8b46d68083ef0c1877",
+      "snapshot_id": null,
+      "source_available": false
+    }
+  },
+  {
+    "arguments": {
+      "query": "rationale:"
+    },
+    "decoded": {
+      "rationale": [
+        {
+          "path": "app/hub.rb",
+          "line": 4,
+          "text": "# NOTE: keep the explicit target",
+          "label": null,
+          "target": {
+            "path": "app/hub.rb",
+            "line": 3,
+            "name": "call"
+          },
+          "lang": "ruby"
+        }
+      ],
+      "rationale_count": 1,
+      "historical_rationale": [
+        {
+          "label": null,
+          "lang": "python",
+          "line": 4,
+          "path": "history.py",
+          "target_line": 3,
+          "target_name": "history_caller",
+          "target_path": "history.py",
+          "text": "# NOTE: retain original evidence",
+          "freshness": {
+            "state": "stale",
+            "retained_for_failed_path": "history.py",
+            "fact_source_sha256": "d34a9b77dd44a5f9d86b33a6147be1ff2a75bbc7427d506eaf9370930c97890a",
+            "observed_source_sha256": "e05a700c6db5c9f8431cdfe4911ce9b480a751ff71963706735bef952034c70f",
+            "producer_ids": [
+              "0785d8f1f0384ed0c62af1dda72bb7c659b27040a0cba32958bd4a004ebfcbb3"
+            ],
+            "evidence_ids": [
+              "f266139583ebbeaac4abe3142b7c62ee1e26f956b3b7937183c784ab61f4c6b0"
+            ],
+            "occurrence_id": "c6ca04e88b4c53dd58d7a19281e92fca7e8a6d47bbb2bd4377aab2e2c497b9df"
+          }
+        }
+      ],
+      "generation_id": "cecd646c8c1c800cbbe2b4b6b7cc5cee44ad20ea7a8f5c8b46d68083ef0c1877",
+      "snapshot_id": null,
+      "source_available": false
+    }
+  },
+  {
+    "arguments": {
+      "query": "definitions_of:NoMatch"
+    },
+    "decoded": {
+      "definitions": [],
+      "references": [],
+      "generation_id": "cecd646c8c1c800cbbe2b4b6b7cc5cee44ad20ea7a8f5c8b46d68083ef0c1877",
+      "snapshot_id": null,
+      "source_available": false
+    }
+  },
+  {
+    "arguments": {
+      "query": "callers_of:dup_name"
+    },
+    "decoded": {
+      "edges": [
+        {
+          "relation": "call",
+          "confidence": "AMBIGUOUS",
+          "source": {
+            "path": "app/caller.rb",
+            "line": 3,
+            "name": "call_duplicate",
+            "kind": "method"
+          },
+          "target": null,
+          "candidates": [
+            {
+              "path": "app/a.rb",
+              "line": 2,
+              "name": "dup_name"
+            },
+            {
+              "path": "app/b.rb",
+              "line": 2,
+              "name": "dup_name"
+            }
+          ]
+        }
+      ],
+      "unresolved_refs": 0,
+      "generation_id": "cecd646c8c1c800cbbe2b4b6b7cc5cee44ad20ea7a8f5c8b46d68083ef0c1877",
+      "snapshot_id": null,
+      "source_available": false
+    }
+  },
+  {
+    "arguments": {
+      "query": "definitions_of:history_target"
+    },
+    "decoded": {
+      "definitions": [],
+      "references": [],
+      "historical_definitions": [
+        {
+          "kind": "function",
+          "lang": "python",
+          "line_end": 2,
+          "line_start": 1,
+          "name": "history_target",
+          "path": "history.py",
+          "freshness": {
+            "state": "stale",
+            "retained_for_failed_path": "history.py",
+            "fact_source_sha256": "d34a9b77dd44a5f9d86b33a6147be1ff2a75bbc7427d506eaf9370930c97890a",
+            "observed_source_sha256": "e05a700c6db5c9f8431cdfe4911ce9b480a751ff71963706735bef952034c70f",
+            "producer_ids": [
+              "0785d8f1f0384ed0c62af1dda72bb7c659b27040a0cba32958bd4a004ebfcbb3"
+            ],
+            "evidence_ids": [
+              "a5fe7b35bbc3b9db86cd0509994c80b480ed0bcc438d961a5adb601c105573e0"
+            ],
+            "occurrence_id": "4627922d36c3be52fb77a39bd9792d6e3a7474702c0a44e2b27ca20d2ba55c01"
+          }
+        }
+      ],
+      "historical_references": [
+        {
+          "callee_name": "history_target",
+          "col": 1,
+          "lang": "python",
+          "line": 5,
+          "path": "history.py",
+          "qualified": 0,
+          "qualifier_name": "history_target",
+          "relation": "call",
+          "unresolved_reason": null,
+          "freshness": {
+            "state": "stale",
+            "retained_for_failed_path": "history.py",
+            "fact_source_sha256": "d34a9b77dd44a5f9d86b33a6147be1ff2a75bbc7427d506eaf9370930c97890a",
+            "observed_source_sha256": "e05a700c6db5c9f8431cdfe4911ce9b480a751ff71963706735bef952034c70f",
+            "producer_ids": [
+              "0785d8f1f0384ed0c62af1dda72bb7c659b27040a0cba32958bd4a004ebfcbb3"
+            ],
+            "evidence_ids": [
+              "661d39bee57a7dadcaac40a56569012518e0acb699b0ca24eeaaee05b8ce0fb7"
+            ],
+            "occurrence_id": "dda03be0267d4174bcc2f69edfc4d030a0f6ae0846ebb36a00ff6b4ddaac81ed"
+          }
+        }
+      ],
+      "generation_id": "cecd646c8c1c800cbbe2b4b6b7cc5cee44ad20ea7a8f5c8b46d68083ef0c1877",
+      "snapshot_id": null,
+      "source_available": false
+    }
+  },
+  {
+    "arguments": {
+      "query": "callers_of:history_target"
+    },
+    "decoded": {
+      "edges": [],
+      "historical_edges": [
+        {
+          "relation": "call",
+          "confidence": "INFERRED",
+          "source": {
+            "path": "history.py",
+            "line": 5,
+            "name": "history_caller",
+            "kind": "function"
+          },
+          "target": {
+            "path": "history.py",
+            "line": 1,
+            "name": "history_target"
+          },
+          "candidates": null,
+          "freshness": {
+            "state": "stale",
+            "retained_for_failed_path": "history.py",
+            "fact_source_sha256": "d34a9b77dd44a5f9d86b33a6147be1ff2a75bbc7427d506eaf9370930c97890a",
+            "observed_source_sha256": "e05a700c6db5c9f8431cdfe4911ce9b480a751ff71963706735bef952034c70f",
+            "producer_ids": [
+              "0785d8f1f0384ed0c62af1dda72bb7c659b27040a0cba32958bd4a004ebfcbb3"
+            ],
+            "evidence_ids": [
+              "661d39bee57a7dadcaac40a56569012518e0acb699b0ca24eeaaee05b8ce0fb7"
+            ],
+            "occurrence_id": "dda03be0267d4174bcc2f69edfc4d030a0f6ae0846ebb36a00ff6b4ddaac81ed"
+          }
+        }
+      ],
+      "unresolved_refs": 0,
+      "generation_id": "cecd646c8c1c800cbbe2b4b6b7cc5cee44ad20ea7a8f5c8b46d68083ef0c1877",
+      "snapshot_id": null,
+      "source_available": false
+    }
+  },
+  {
+    "arguments": {
+      "query": "not-a-query"
+    },
+    "decoded": {
+      "error": "INVALID_QUERY",
+      "message": "Expected 'verb:argument' form.",
+      "generation_id": "cecd646c8c1c800cbbe2b4b6b7cc5cee44ad20ea7a8f5c8b46d68083ef0c1877",
+      "snapshot_id": null,
+      "source_available": false
+    }
+  },
+  {
+    "arguments": {
+      "query": "unknown_operation:x"
+    },
+    "decoded": {
+      "error": "UNKNOWN_VERB",
+      "message": "Unknown verb 'unknown_operation'.",
+      "generation_id": "cecd646c8c1c800cbbe2b4b6b7cc5cee44ad20ea7a8f5c8b46d68083ef0c1877",
+      "snapshot_id": null,
+      "source_available": false
+    }
+  }
+]

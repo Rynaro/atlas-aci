@@ -1,0 +1,17 @@
+{
+  "command": [
+    "docker",
+    "build",
+    "-t",
+    "atlas-aci-s11",
+    "-f",
+    "mcp-server/Dockerfile",
+    "mcp-server"
+  ],
+  "cwd": ".",
+  "exit_code": 0,
+  "elapsed_seconds": 11.467171167,
+  "source_checkpoint": ".spectra/evidence/aci-s11/source-v1-corrected-checkpoint.json",
+  "dockerfile_sha256": "8abfc6635110f158f2ce60d473dabbcf447f38e62b71fbdc38e178b17654f529",
+  "image_id": "sha256:429552add8262a0bc1337a8b11c84675cd60475493fcfc5f52efb4de23d6b902"
+}

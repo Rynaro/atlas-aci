@@ -1,0 +1,20 @@
+[
+  {
+    "original_logical_path": "/tmp/aci-s11-pass2-final/feedback.json",
+    "preserved_path": ".spectra/evidence/aci-s11/vivi-pass2-final-feedback.json",
+    "bytes": 292,
+    "sha256": "2c63081dee9273a7ff43f8d7549b2fe8195b15578482349510834ee8f0d5ef4e"
+  },
+  {
+    "original_logical_path": "/tmp/aci-s11-pass2-final/full-log.txt",
+    "preserved_path": ".spectra/evidence/aci-s11/vivi-pass2-final.log",
+    "bytes": 99,
+    "sha256": "2626011b910d0b218825c500db72f538f40e42430f5967ddab7898ee35f16cc4"
+  },
+  {
+    "original_logical_path": "/tmp/aci-s11-pass2-final/loop.json.envelope.json",
+    "preserved_path": ".spectra/evidence/aci-s11/vivi-pass2-final-envelope.json",
+    "bytes": 398,
+    "sha256": "5f7afcb5101e44e1f26dfe01d39a9b9e5a75d609778e6cf96fca5f0cf5ce25b8"
+  }
+]

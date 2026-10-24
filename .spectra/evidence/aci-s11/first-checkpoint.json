@@ -1,0 +1,17 @@
+{
+  "stage": "PRE_PRODUCT_FIRST_CHECKPOINT_COMPLETE",
+  "gate": "PASS",
+  "product_files_unchanged": 106,
+  "portable_artifact": "mcp-server/tests/fixtures/s11/legacy-evidence.jsonl",
+  "portable_sha256": "75253c5c6d4d8c88b626a12ab9373f3f865c9d4eb6f4d16134c0ec61a6fa86e7",
+  "portable_bytes": 61589,
+  "legacy_cases": 12,
+  "sdk_native_sessions": 5,
+  "actual_future_negotiated": "2025-11-25",
+  "requested_future_context": "2099-01-01",
+  "legacy_tool_error_flags_red_actual": true,
+  "direct_sdk_server_output_validation_bypass_actual": true,
+  "fixture_command_exit_code": 0,
+  "native_sdk_checkpoint_exit_code": 0,
+  "bounded_adapter_implementation_not_yet_started": true
+}

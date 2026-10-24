@@ -1,0 +1,12 @@
+{
+  "gate": "PASS",
+  "criteria_sha256": "6ac4f0b0574b1c9d150d35d580f33b521f89a4c9e13e9044cf9e7eff4c294599",
+  "spec_sha256": "947cc423ef524af2d7aadee1d0c9563889623c609e6ec9edc85d918abc38a496",
+  "started_epoch": 1792877693.6038861,
+  "interpreter": "/private/tmp/atlas-aci-aci-s11/mcp-server/.venv/bin/python",
+  "source_import": "/tmp/atlas-aci-aci-s11/mcp-server/src/atlas_aci/codegraph.py",
+  "sdk": "1.27.0",
+  "pydantic": "2.13.0",
+  "jsonschema": "4.26.0",
+  "product_edits_started": false
+}

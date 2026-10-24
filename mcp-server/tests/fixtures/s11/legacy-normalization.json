@@ -1,0 +1,7 @@
+{
+  "allowed_paths": [
+    "$.generation_id"
+  ],
+  "reason": "The same frozen artifact imported under a different destination/importer legitimately changes only generation anchoring; snapshot_id remainsnull/source_availablefalse. No evidence IDs/links/rowIDs/confidence/reasons/order/counts/errors may be normalized.",
+  "require_actual_difference_provenance": true
+}

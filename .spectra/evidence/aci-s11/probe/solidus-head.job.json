@@ -1,0 +1,16 @@
+{
+  "name": "solidus-head",
+  "command": [
+    "git",
+    "rev-parse",
+    "HEAD"
+  ],
+  "cwd": "/tmp/aci-s11-probe-inputs/solidus",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 0.011817583988886327,
+  "elapsed_total": 0.44006066699512303,
+  "peak_rss_bytes": 4358144,
+  "stdout": ".spectra/evidence/aci-s11/probe/solidus-head.stdout.log",
+  "stderr": ".spectra/evidence/aci-s11/probe/solidus-head.stderr.log"
+}

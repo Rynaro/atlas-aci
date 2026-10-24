@@ -1,0 +1,22 @@
+{
+  "command": [
+    "mcp-server/.venv/bin/python",
+    "scripts/verify-probe-verdict.py",
+    ".spectra/changes/aci-s11/probe/aci-s11-probe-lpa-vs-louvain.json"
+  ],
+  "cwd": ".",
+  "environment_overrides": {
+    "PATH_prefix": "/tmp/aci-s01-tools/bin",
+    "UV_CACHE_DIR": "/tmp/aci-s01-uv-cache",
+    "UV_OFFLINE": "1",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "exit_code": 0,
+  "stdout": ".spectra/evidence/aci-s11/probe/verifier-result.log",
+  "stdout_bytes": 800,
+  "stdout_sha256": "76b222feca2a6bd663d61bee80c7d7ea1bd177689fde4c2d1a5a6dbde3006256",
+  "stderr": ".spectra/evidence/aci-s11/probe/verifier.stderr.log",
+  "computed_verdict": "PASS",
+  "recorded_verdict": "PASS",
+  "disposition": "Original observed verifier stdout relocated losslessly from misnamed .json; no measurement or verifier rerun."
+}

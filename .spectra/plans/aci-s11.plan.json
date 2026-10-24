@@ -1,0 +1,54 @@
+{
+  "plan": "aci-s11",
+  "slice_id": "ACI-S11",
+  "spec": ".spectra/plans/aci-s11.md",
+  "criteria": ".spectra/plans/aci-s11.criteria.md",
+  "state": ".spectra/plans/aci-s11.state.json",
+  "scope": [
+    "mcp-server/src/atlas_aci/server.py",
+    "mcp-server/src/atlas_aci/tools/graph_query.py",
+    "mcp-server/src/atlas_aci/protocol/*",
+    "mcp-server/tests/slices/test_s11_*.py",
+    "atlas/docs/*",
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/tests/test_server.py",
+    "mcp-server/tests/fixtures/s11/*",
+    ".spectra/plans/aci-s11.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/changes/aci-s11/*",
+    ".spectra/evidence/aci-s11/*",
+    ".spectra/state/aci-s11.execution.json",
+    ".spectra/backlog/execution.json",
+    ".spectra/backlog/order.md"
+  ],
+  "output_digest_exclusions": [
+    ".spectra/state/aci-s11.execution.json",
+    ".spectra/evidence/aci-s11/final-reentry-before.json",
+    ".spectra/evidence/aci-s11/final-reentry-after.json",
+    ".spectra/evidence/aci-s11/final-reentry-summary.json",
+    ".spectra/evidence/aci-s11/final-resume-identity.json",
+    ".spectra/evidence/aci-s11/output-check-tests.log"
+  ],
+  "stories": [
+    {
+      "name": "Versioned graph status and compatible truthful results",
+      "timebox_engineering_days": 3,
+      "executor": "Vivi",
+      "first_checkpoint": "Capture real baseline portable legacy fixtures and locked SDK subprocess behavior before broad edits; no prior native adapter success is claimed."
+    }
+  ],
+  "confidence": {
+    "rubric": "confidence",
+    "total": 86.25,
+    "dims": {
+      "pattern_match": 85,
+      "requirement_clarity": 90,
+      "decomposition_stability": 85,
+      "constraint_compliance": 85
+    },
+    "verdict": "AUTO_PROCEED",
+    "at": "2026-10-24T21:33:13Z",
+    "label": "bounded-validated-sdk-and-published-status"
+  },
+  "status": "READY"
+}

@@ -1,0 +1,77 @@
+[
+  {
+    "scope": "pre-edit baseline",
+    "reviewer": "/root/s15_preflight",
+    "verdict": "APPROVE",
+    "evidence": [
+      ".spectra/evidence/aci-s11/first-checkpoint.json",
+      "mcp-server/tests/fixtures/s11/legacy-provenance.json"
+    ],
+    "observed": "106 base hashes; exact103records/61589bytes and12 decoded parity results with only proven top generation_id normalization."
+  },
+  {
+    "scope": "protocol correction",
+    "reviewer": "/root/s15_preflight",
+    "verdict": "APPROVE",
+    "evidence": [
+      ".spectra/evidence/aci-s11/protocol-review-red.log",
+      ".spectra/evidence/aci-s11/protocol-review-green.log"
+    ],
+    "observed": "17 actual tests; both isError mismatch directions fail closed, shared-list bounds totals correct without input mutation."
+  },
+  {
+    "scope": "whole corrected source",
+    "reviewer": "/root/s15_preflight",
+    "verdict": "APPROVE",
+    "source_checkpoint": ".spectra/evidence/aci-s11/source-v1-corrected-checkpoint.json",
+    "evidence": [
+      ".spectra/evidence/aci-s11/original-v1-red.log",
+      ".spectra/evidence/aci-s11/original-v1-corrected-all.log"
+    ],
+    "observed": "Independent10 real controls1.35s and4 lifetime/bounds controls0.29s; genuine original v1 generation preserved; old CodeGraph AST identical after removing two new methods."
+  },
+  {
+    "scope": "mount-root-only test correction and protected pass2",
+    "reviewer": "/root/s15_preflight",
+    "verdict": "APPROVE",
+    "evidence": [
+      ".spectra/evidence/aci-s11/docker-diagnostic/docker-status.json",
+      ".spectra/changes/aci-s11/docker-mount-root-disposition.json",
+      ".spectra/evidence/aci-s11/vivi-pass2-final-result.json"
+    ],
+    "observed": "Exact two synthetic /repo root owner fields only; all15 paths and other fields strict; raw observations retained;42 tests both runs0/tamper0."
+  },
+  {
+    "scope": "final unaffected gates and docs",
+    "reviewer": "/root/s15_preflight",
+    "verdict": "APPROVE",
+    "evidence": [
+      ".spectra/evidence/aci-s11/full-suite.job.json",
+      ".spectra/evidence/aci-s11/static-final/checks.json",
+      ".spectra/evidence/aci-s11/docker-final/s11/docker-status.json"
+    ],
+    "observed": "623 full true0/no skips;11 checks0 and27/5/6 guard markers;13 image/runtime hashes, same-image S06/S08/S15/S11 native controls; response-budget minima/cap and replay-limit qualification independently checked."
+  },
+  {
+    "scope": "fresh final-producer measurement and preservation",
+    "reviewer": "/root/s15_preflight",
+    "verdict": "APPROVE",
+    "evidence": [
+      ".spectra/evidence/aci-s11/probe/verifier-result.json",
+      ".spectra/evidence/aci-s11/probe/source-catalog-raw-manifest.json",
+      ".spectra/evidence/aci-s11/probe/budget-summary.json"
+    ],
+    "observed": "Independent raw graphs/all20partitions,4877hashes,13runtime+7producer hashes,actual source-only bytes/closedFDs,failedSQL0/nohistory,fullSpree rawstream/header/body hash and4catalogstreams verified. Numeric PASS, no size/latency waiver."
+  },
+  {
+    "scope": "exact selectors/cost label/authorized cleanup",
+    "reviewer": "/root/s15_preflight",
+    "verdict": "APPROVE",
+    "evidence": [
+      ".spectra/evidence/aci-s11/selector-final/exact-selector-proof.json",
+      ".spectra/evidence/aci-s11/selector-final/checks.json",
+      ".spectra/evidence/aci-s11/probe/closed-measurement-cleanup.json"
+    ],
+    "observed": "Three workflow and one self-test replacements reverse to exact base;all5checks0/27 actual controls;cache shown once with separate source store;exact3 authorized paths absent,sourceparents.git and4preservedcatalogs retained."
+  }
+]

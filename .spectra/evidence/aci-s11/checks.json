@@ -1,0 +1,129 @@
+{
+  "ruff": {
+    "command": [
+      ".venv/bin/ruff",
+      "check",
+      "src/",
+      "tests/"
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0,
+    "elapsed_seconds": 0.014626458010752685,
+    "log": ".spectra/evidence/aci-s11/ruff.log"
+  },
+  "format": {
+    "command": [
+      ".venv/bin/ruff",
+      "format",
+      "--check",
+      "src/",
+      "tests/"
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0,
+    "elapsed_seconds": 0.008550500002456829,
+    "log": ".spectra/evidence/aci-s11/format.log"
+  },
+  "mypy": {
+    "command": [
+      ".venv/bin/mypy",
+      "src/"
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0,
+    "elapsed_seconds": 1.5257864160084864,
+    "log": ".spectra/evidence/aci-s11/mypy.log"
+  },
+  "scripts-ruff": {
+    "command": [
+      ".venv/bin/ruff",
+      "check",
+      "../scripts/",
+      "--exclude",
+      "fingerprint-fixture"
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0,
+    "elapsed_seconds": 0.010347374991397373,
+    "log": ".spectra/evidence/aci-s11/scripts-ruff.log"
+  },
+  "scripts-format": {
+    "command": [
+      ".venv/bin/ruff",
+      "format",
+      "--check",
+      "../scripts/",
+      "--exclude",
+      "fingerprint-fixture"
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0,
+    "elapsed_seconds": 0.011034999988623895,
+    "log": ".spectra/evidence/aci-s11/scripts-format.log"
+  },
+  "scripts-mypy": {
+    "command": [
+      ".venv/bin/mypy",
+      "../scripts/"
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0,
+    "elapsed_seconds": 0.10125433299981523,
+    "log": ".spectra/evidence/aci-s11/scripts-mypy.log"
+  },
+  "lock": {
+    "command": [
+      "/tmp/aci-s01-tools/bin/uv",
+      "lock",
+      "--check"
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0,
+    "elapsed_seconds": 0.1301075410010526,
+    "log": ".spectra/evidence/aci-s11/lock.log"
+  },
+  "probe": {
+    "command": [
+      "mcp-server/.venv/bin/python",
+      "scripts/verify-probe-verdict.py",
+      ".spectra/changes/aci-s08/lease-footprint/probe/aci-s08-refined-probe-lpa-vs-louvain.json"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "elapsed_seconds": 0.23498745801043697,
+    "log": ".spectra/evidence/aci-s11/probe.log"
+  },
+  "guard": {
+    "command": [
+      "env",
+      "-u",
+      "PYTHONPATH",
+      "/bin/bash",
+      "scripts/test-verify-probe-verdict.sh"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "elapsed_seconds": 6.808603083001799,
+    "log": ".spectra/evidence/aci-s11/guard.log"
+  },
+  "size-guard": {
+    "command": [
+      "/bin/bash",
+      "scripts/test-verify-export-size.sh"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "elapsed_seconds": 0.1841500000009546,
+    "log": ".spectra/evidence/aci-s11/size-guard.log"
+  },
+  "classify": {
+    "command": [
+      "/bin/bash",
+      "scripts/test-harden-gate-classify.sh"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "elapsed_seconds": 0.7083047500054818,
+    "log": ".spectra/evidence/aci-s11/classify.log"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "slice_id": "ACI-S11",
+  "criteria_sha256": "6ac4f0b0574b1c9d150d35d580f33b521f89a4c9e13e9044cf9e7eff4c294599",
+  "criteria_changed": false,
+  "before_implementation": true,
+  "recorded_epoch": 1792879675.859144,
+  "additional_paths": [
+    ".github/workflows/harden-gate.yml",
+    "scripts/test-verify-probe-verdict.sh"
+  ],
+  "authorization": "Root exact scope decision: three existing workflow references and one existing self-test basename only, after genuine final-producer same-pin default-profile PASS and independent ATLAS audit.",
+  "rationale": "Whole-file producer binding changes; fresh CPU evidence strengthens verification without changing the frozen behavioral bar or prior artifacts.",
+  "artifact": ".spectra/changes/aci-s11/probe/aci-s11-probe-lpa-vs-louvain.json",
+  "constraints": [
+    "No verifier/resolver/classifier/ci.yml changes",
+    "All27 semantic controls remain",
+    "600 seconds/job,2700 seconds cumulative including failures",
+    "No historical artifact or input/profile/threshold changes"
+  ],
+  "selector_edit_status": "HELD_UNTIL_FRESH_INDEPENDENT_PASS"
+}

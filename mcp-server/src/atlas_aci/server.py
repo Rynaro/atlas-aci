@@ -9,17 +9,36 @@ serialized back to the agent.
 from __future__ import annotations
 
 import json
+from contextlib import ExitStack
+from copy import deepcopy
 from typing import Any
 
 import structlog
+from jsonschema import Draft202012Validator  # type: ignore[import-untyped]
+from mcp import types
 from mcp.server import Server
 from mcp.server.stdio import stdio_server
-from mcp.types import TextContent, Tool
+from mcp.types import CallToolResult, Tool
 
 from atlas_aci.codegraph import PRODUCED_KINDS, CodeGraph, parse_query_verb
 from atlas_aci.config import Config
 from atlas_aci.enforcement import Enforcement, ToolError
 from atlas_aci.memex import Memex
+from atlas_aci.protocol.graph import (
+    GRAPH_INPUT_SCHEMA,
+    GRAPH_OUTPUT_SCHEMA,
+    RESERVED,
+    bound_status,
+    envelope,
+    no_evidence_data,
+    request_mode,
+)
+from atlas_aci.protocol.results import (
+    STRUCTURED_VERSIONS,
+    bounded_result,
+    failure_payload,
+    negotiated_version,
+)
 from atlas_aci.tools.graph_query import graph_query
 from atlas_aci.tools.list_dir import list_dir
 from atlas_aci.tools.search_symbol import search_symbol
@@ -30,7 +49,9 @@ from atlas_aci.tools.view_file import view_file
 log = structlog.get_logger()
 
 
-def build_tool_manifest(config: Config) -> list[dict[str, Any]]:
+def build_tool_manifest(
+    config: Config, protocol_version: str = types.LATEST_PROTOCOL_VERSION
+) -> list[dict[str, Any]]:
     """The tool descriptors served via tools/list. Bounds embedded in descriptions."""
     return [
         {
@@ -122,11 +143,12 @@ def build_tool_manifest(config: Config) -> list[dict[str, Any]]:
                 "Ruby/Python/JS/TS only). Bounded and flagged like "
                 "every other tool. Run `atlas-aci index` first."
             ),
-            "inputSchema": {
-                "type": "object",
-                "required": ["query"],
-                "properties": {"query": {"type": "string"}},
-            },
+            "inputSchema": deepcopy(GRAPH_INPUT_SCHEMA),
+            **(
+                {"outputSchema": deepcopy(GRAPH_OUTPUT_SCHEMA)}
+                if protocol_version in STRUCTURED_VERSIONS
+                else {}
+            ),
         },
         {
             "name": "test_dry_run",
@@ -298,6 +320,8 @@ def apply_central_bounds(
     if not isinstance(result, dict):
         return result
 
+    if name == "graph_query" and any(key in arguments for key in RESERVED) and "data" in result:
+        result = bound_status(result, enforcement.config.max_bound_field_elements)
     fields = bounded_fields_for(name, arguments)
     truncated_fields: set[str] = set()
     for field in fields:
@@ -393,19 +417,38 @@ async def dispatch_tool_call(
     `run_stdio`) so it is directly unit-testable without booting a stdio
     server — every `test_server.py` test calls this.
     """
+    mode = request_mode(arguments) if name == "graph_query" else None
     enforcement.assert_read_only(name)
     enforcement.assert_rate_limit()
 
     if name in {"search_symbol", "graph_query"}:
-        with code_graph.reader_lease() as reader:
+        with ExitStack() as stack:
+            try:
+                reader = stack.enter_context(code_graph.reader_lease())
+            except ToolError:
+                if mode != "structured" or not code_graph.index_is_absent():
+                    raise
+                if arguments.get("expected_generation_id") is not None:
+                    raise ToolError(
+                        "SNAPSHOT_MISMATCH", "Requested generation does not match."
+                    ) from None
+                result = envelope(no_evidence_data())
+                return apply_central_bounds(name, arguments, result, enforcement)
+            if (
+                mode == "structured"
+                and arguments.get("expected_generation_id", reader.generation_id)
+                != reader.generation_id
+            ):
+                raise ToolError("SNAPSHOT_MISMATCH", "Requested generation does not match.")
             result = (
                 await search_symbol(arguments, config, enforcement, reader)
                 if name == "search_symbol"
                 else await graph_query(arguments, config, enforcement, reader)
             )
-            result["generation_id"] = reader.generation_id
-            result["snapshot_id"] = reader.snapshot_id
-            result["source_available"] = reader.snapshot_id is not None
+            if mode != "structured":
+                result["generation_id"] = reader.generation_id
+                result["snapshot_id"] = reader.snapshot_id
+                result["source_available"] = reader.snapshot_id is not None
             return apply_central_bounds(name, arguments, result, enforcement)
 
     if name == "view_file":
@@ -471,41 +514,87 @@ def build_server_state(config: Config) -> tuple[Enforcement, Memex, CodeGraph]:
     return enforcement, memex, code_graph
 
 
+async def call_tool_result(
+    name: str,
+    arguments: dict[str, Any],
+    config: Config,
+    enforcement: Enforcement,
+    memex: Memex,
+    code_graph: CodeGraph,
+    *,
+    protocol_version: str = types.LATEST_PROTOCOL_VERSION,
+) -> CallToolResult:
+    """Own both SDK validation bypasses and the complete emitted result budget."""
+    mode = (
+        (
+            "structured"
+            if isinstance(arguments, dict) and any(key in arguments for key in RESERVED)
+            else "legacy"
+        )
+        if name == "graph_query"
+        else None
+    )
+    structured = name == "graph_query" and protocol_version in STRUCTURED_VERSIONS
+    try:
+        descriptors = {tool["name"]: tool for tool in build_tool_manifest(config, protocol_version)}
+        if name not in descriptors:
+            raise ToolError("FORBIDDEN", "The requested tool is not available in this server.")
+        if name == "graph_query":
+            mode = request_mode(arguments)
+        if not Draft202012Validator(descriptors[name]["inputSchema"]).is_valid(arguments):
+            raise ToolError("INVALID_INPUT", "Tool arguments do not match the published schema.")
+        payload = await dispatch_tool_call(name, arguments, config, enforcement, memex, code_graph)
+        error = (
+            name == "graph_query"
+            and mode == "legacy"
+            and isinstance(payload, dict)
+            and payload.get("error") in {"INVALID_QUERY", "UNKNOWN_VERB"}
+        )
+    except ToolError as exc:
+        payload = failure_payload(exc.code, exc.message, exc.retry_hint, mode=mode or "legacy")
+        error = True
+    except Exception:
+        log.exception("tool_unhandled_error", tool=name)
+        payload = failure_payload(
+            "INTERNAL", "Tool execution failed unexpectedly.", "none", mode=mode or "legacy"
+        )
+        error = True
+    return bounded_result(
+        payload, error=error, mode=mode, structured=structured, budget=config.max_response_bytes
+    )
+
+
 async def run_stdio(config: Config) -> None:
     """Start the MCP server over stdio. Used by all major hosts."""
     server = Server("atlas-aci")
     enforcement, memex, code_graph = build_server_state(config)
 
+    def session_version() -> str:
+        params = server.request_context.session.client_params
+        if params is None:
+            raise RuntimeError("MCP session is not initialized.")
+        requested = params.protocolVersion
+        return (
+            negotiated_version(requested)
+            if isinstance(requested, str)
+            else types.LATEST_PROTOCOL_VERSION
+        )
+
     @server.list_tools()
     async def _list_tools() -> list[Tool]:
-        manifest = build_tool_manifest(config)
-        return [Tool(**t) for t in manifest]
+        return [Tool(**tool) for tool in build_tool_manifest(config, session_version())]
 
-    @server.call_tool()
-    async def _call_tool(name: str, arguments: dict[str, Any]) -> list[TextContent]:
-        try:
-            result = await dispatch_tool_call(
-                name, arguments, config, enforcement, memex, code_graph
-            )
-            return [TextContent(type="text", text=json.dumps(result, indent=2))]
-
-        except ToolError as e:
-            return [TextContent(type="text", text=json.dumps(e.to_dict(), indent=2))]
-        except Exception as e:
-            log.exception("tool_unhandled_error", tool=name, error=str(e))
-            return [
-                TextContent(
-                    type="text",
-                    text=json.dumps(
-                        {
-                            "error": "INTERNAL",
-                            "message": str(e),
-                            "retry_hint": "none",
-                        },
-                        indent=2,
-                    ),
-                )
-            ]
+    @server.call_tool(validate_input=False)
+    async def _call_tool(name: str, arguments: dict[str, Any]) -> CallToolResult:
+        return await call_tool_result(
+            name,
+            arguments,
+            config,
+            enforcement,
+            memex,
+            code_graph,
+            protocol_version=session_version(),
+        )
 
     log.info("server_starting", repo=str(config.repo), memex=str(config.memex_root))
 
