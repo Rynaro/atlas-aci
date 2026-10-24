@@ -1,0 +1,45 @@
+{
+  "plan": "aci-s09",
+  "slice_id": "ACI-S09",
+  "issue": "https://github.com/Rynaro/atlas-aci/issues/31",
+  "spec": ".spectra/plans/aci-s09.md",
+  "criteria": ".spectra/plans/aci-s09.criteria.md",
+  "state": ".spectra/plans/aci-s09.state.json",
+  "scope": [
+    "mcp-server/src/atlas_aci/indexing/__init__.py",
+    "mcp-server/src/atlas_aci/indexing/extraction_cache.py",
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/tests/slices/test_s09_*.py",
+    "mcp-server/src/atlas_aci/storage/evidence.py",
+    "README.md",
+    ".spectra/plans/aci-s09.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/evidence/aci-s09/*",
+    ".spectra/state/aci-s09.execution.json",
+    ".spectra/changes/aci-s09/*",
+    ".spectra/backlog/execution.json",
+    ".spectra/backlog/order.md"
+  ],
+  "stories": [
+    {
+      "name": "Validated local extraction replay",
+      "timebox_engineering_days": 3,
+      "executor": "Vivi",
+      "output_contract": "Actual six product ACs, full regression/equivalence and two receipt gates; root owns publication."
+    }
+  ],
+  "confidence": {
+    "rubric": "confidence",
+    "total": 87.5,
+    "dims": {
+      "pattern_match": 85,
+      "requirement_clarity": 90,
+      "decomposition_stability": 85,
+      "constraint_compliance": 90
+    },
+    "verdict": "AUTO_PROCEED",
+    "at": "2026-10-24T15:26:55Z",
+    "label": "bounded-local-extraction-cache"
+  },
+  "status": "READY"
+}

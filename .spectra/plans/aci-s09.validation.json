@@ -1,0 +1,35 @@
+{
+  "at": "2026-10-24T15:27:17.304055+00:00",
+  "phase": "DONE",
+  "confidence": 87.5,
+  "verdict": "AUTO_PROCEED",
+  "checks": [
+    {
+      "file": "aci-s09.envelope.json",
+      "schema": "ecl-envelope.v2.json",
+      "validator": "Draft202012Validator",
+      "format_checks": true,
+      "valid": true
+    },
+    {
+      "file": "aci-s09.state.json",
+      "schema": "plan-state.v1.json",
+      "validator": "Draft7Validator",
+      "format_checks": true,
+      "valid": true
+    }
+  ],
+  "product_files_unchanged": 76,
+  "ledger_counts_verified": {
+    "merged": 7,
+    "remaining": 35
+  },
+  "spec_sha256": "cf2bbfa7bc4636f2f59df50d77221b66b53f63b22b46e1cc05298722f950a878",
+  "criteria_sha256": "de38446751926cb40e918c324155eb1020503a678c2ca2aec366547561819c05",
+  "envelope_sha256": "2dadde56a60520e22b1d89f63f950050acab5f440c3b7df01389b94e454d52e2",
+  "state_sha256": "fff1a0102a9c7f442fb4e0e23c14a919edf00ec72c2aa00f0b2eacfa96151f9d",
+  "message_id": "0521c745-3e79-4975-b32c-d2db8deead24",
+  "thread_id": "b670282c-f55b-48e7-a3ce-d0e9cccbd155",
+  "scope_amendment": ".spectra/changes/aci-s09/scope-amendment.json",
+  "note": "No product changes. Root mechanical ECL verification/correlated trace before execution. Independent review original timestamp15:25:13Z preserved; state recording15:26:55Z."
+}

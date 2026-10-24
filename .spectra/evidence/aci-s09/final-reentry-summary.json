@@ -1,0 +1,16 @@
+{
+  "output_commit": "410224bccf50ae175ceaa6f1093a9f1073359cb5",
+  "declared_tracked_files": 183,
+  "before": "PRODUCTS_VERIFIED",
+  "after": "ALREADY_SATISFIED",
+  "before_after_manifests_equal": true,
+  "git_diff_exit_code": 0,
+  "clean_checkout": true,
+  "product_reentry_exit_code": 0,
+  "complete_reentry_exit_code": 0,
+  "resume_exit_code": 0,
+  "output_test_exit_code": 0,
+  "output_test_count": 45,
+  "helper_sha256": "e70a9d6c955072d82744b790e09293deac6b876fe3d1c9d7387a3f9fc80845ae",
+  "exclusions_authority": ".spectra/changes/aci-s09/bookkeeping-amendment.json"
+}

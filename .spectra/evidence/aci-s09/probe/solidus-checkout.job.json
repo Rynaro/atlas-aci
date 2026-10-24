@@ -1,0 +1,19 @@
+{
+  "name": "solidus-checkout",
+  "command": [
+    "git",
+    "-c",
+    "core.hooksPath=/dev/null",
+    "checkout",
+    "--detach",
+    "4026945d614e81383c007ed1ab1278a0195ce5d9"
+  ],
+  "cwd": "/tmp/aci-s09-fresh-probe-inputs/solidus",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 0.2617162500100676,
+  "elapsed_total": 0.43476833299791906,
+  "peak_rss_bytes": 18268160,
+  "stdout": ".spectra/evidence/aci-s09/probe/solidus-checkout.stdout.log",
+  "stderr": ".spectra/evidence/aci-s09/probe/solidus-checkout.stderr.log"
+}

@@ -1,0 +1,32 @@
+{
+  "command": [
+    "/private/tmp/atlas-aci-aci-s09/mcp-server/.venv/bin/python",
+    "/private/tmp/atlas-aci-aci-s09/scripts/probe-assemble-graph-bundle.py",
+    "--out",
+    "/private/tmp/atlas-aci-aci-s09/.spectra/changes/aci-s09/probe/probe-graphs.json.gz",
+    "--repo",
+    "solidus:/tmp/aci-s09-fresh-solidus-graph.json:/private/tmp/atlas-aci-aci-s09/.spectra/evidence/aci-s09/probe/solidus-modularity.stdout.log",
+    "--repo",
+    "spree:/tmp/aci-s09-fresh-spree-graph.json:/private/tmp/atlas-aci-aci-s09/.spectra/evidence/aci-s09/probe/spree-modularity.stdout.log"
+  ],
+  "exit_code": 0,
+  "indexer_fingerprint": "0605f4ae8f83e953d3dd95cd2bb0b55bf37e8d0fa3c0c31a176314ec7b94383f",
+  "verdict": "PASS",
+  "sources": {
+    "mcp-server/src/atlas_aci/codegraph.py": "f2addac5907279121ec798875b17ca80af23e34b09e6e611bc4cc6972bb84a96",
+    "mcp-server/src/atlas_aci/storage/evidence.py": "eb5185dfbf9e6e8e651705f487a928e1e19826351860091556c3aaa03591315a",
+    "mcp-server/src/atlas_aci/providers/python_imports.py": "de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014",
+    "mcp-server/src/atlas_aci/indexing/extraction_cache.py": "08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2"
+  },
+  "cache_sizes": {
+    "solidus": {
+      "entries": 2519,
+      "bytes": 333306797
+    },
+    "spree": {
+      "entries": 2358,
+      "bytes": 530609730
+    }
+  },
+  "bundle_sha256": "c5bfe09753acccb2652e1ea730079e3269ed47b2ed58ee6d3ea642fc08ff1ffe"
+}

@@ -1,0 +1,52 @@
+{
+  "ruff": {
+    "command": [
+      "mcp-server/.venv/bin/ruff",
+      "check",
+      "mcp-server"
+    ],
+    "cwd": ".",
+    "exit_code": 0
+  },
+  "format": {
+    "command": [
+      "mcp-server/.venv/bin/ruff",
+      "format",
+      "--check",
+      "mcp-server"
+    ],
+    "cwd": ".",
+    "exit_code": 0
+  },
+  "mypy": {
+    "command": [
+      "mcp-server/.venv/bin/mypy",
+      "mcp-server/src"
+    ],
+    "cwd": ".",
+    "exit_code": 0
+  },
+  "scripts-ruff": {
+    "command": [
+      "mcp-server/.venv/bin/ruff",
+      "check",
+      "scripts",
+      "--exclude",
+      "fingerprint-fixture"
+    ],
+    "cwd": ".",
+    "exit_code": 0
+  },
+  "scripts-format": {
+    "command": [
+      "mcp-server/.venv/bin/ruff",
+      "format",
+      "--check",
+      "scripts",
+      "--exclude",
+      "fingerprint-fixture"
+    ],
+    "cwd": ".",
+    "exit_code": 1
+  }
+}

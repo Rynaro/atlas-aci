@@ -1,0 +1,156 @@
+{
+  "schema": "ramza/plan-state.v1",
+  "plan": "aci-s09",
+  "created_at": "2026-10-24T15:19:27Z",
+  "tier": "full",
+  "phase": "DONE",
+  "phases_done": [
+    "RS",
+    "S",
+    "P",
+    "E",
+    "C",
+    "T",
+    "A",
+    "DONE"
+  ],
+  "rightsize": {
+    "score": 5,
+    "computed_tier": "full",
+    "inputs": {
+      "files_est": 8,
+      "new_dep": false,
+      "public_api": true,
+      "migration": false,
+      "security": true,
+      "novel": true,
+      "stakes": "med"
+    }
+  },
+  "refine_cycles": 0,
+  "skips": [],
+  "gates": [
+    {
+      "rubric": "complexity",
+      "total": 8,
+      "dims": {
+        "scope": 2,
+        "ambiguity": 2,
+        "dependencies": 2,
+        "risk": 2
+      },
+      "verdict": "extended",
+      "at": "2026-10-24T15:21:08Z",
+      "label": "persistent-extraction-cache"
+    },
+    {
+      "rubric": "explore",
+      "total": 87.5,
+      "dims": {
+        "alignment": 10,
+        "correctness": 9,
+        "maintainability": 9,
+        "performance": 8,
+        "simplicity": 8,
+        "risk": 8,
+        "innovation": 6
+      },
+      "verdict": "elite",
+      "at": "2026-10-24T15:21:08Z",
+      "label": "atomic-per-file-json-packet"
+    },
+    {
+      "rubric": "explore",
+      "total": 82,
+      "dims": {
+        "alignment": 9,
+        "correctness": 9,
+        "maintainability": 8,
+        "performance": 9,
+        "simplicity": 6,
+        "risk": 7,
+        "innovation": 6
+      },
+      "verdict": "solid",
+      "at": "2026-10-24T15:21:08Z",
+      "label": "dedicated-sqlite-cache-store"
+    },
+    {
+      "rubric": "explore",
+      "total": 74,
+      "dims": {
+        "alignment": 8,
+        "correctness": 7,
+        "maintainability": 7,
+        "performance": 8,
+        "simplicity": 8,
+        "risk": 6,
+        "innovation": 7
+      },
+      "verdict": "solid",
+      "at": "2026-10-24T15:21:08Z",
+      "label": "reuse-staged-generation-extraction-tables"
+    },
+    {
+      "rubric": "refine",
+      "cycle": 1,
+      "total": 4.4,
+      "min": 4,
+      "dims": {
+        "clarity": 5,
+        "completeness": 4,
+        "actionability": 4,
+        "efficiency": 4,
+        "testability": 5
+      },
+      "verdict": "pass",
+      "at": "2026-10-24T15:26:55Z",
+      "label": "independent-atlas-review-recorded"
+    },
+    {
+      "rubric": "confidence",
+      "total": 87.5,
+      "dims": {
+        "pattern_match": 85,
+        "requirement_clarity": 90,
+        "decomposition_stability": 85,
+        "constraint_compliance": 90
+      },
+      "verdict": "AUTO_PROCEED",
+      "at": "2026-10-24T15:26:55Z",
+      "label": "bounded-local-extraction-cache"
+    }
+  ],
+  "amendments": [],
+  "declared_scope": [
+    "mcp-server/src/atlas_aci/indexing/__init__.py",
+    "mcp-server/src/atlas_aci/indexing/extraction_cache.py",
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/tests/slices/test_s09_*.py",
+    "mcp-server/src/atlas_aci/storage/evidence.py",
+    "README.md",
+    ".spectra/plans/aci-s09.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/evidence/aci-s09/*",
+    ".spectra/state/aci-s09.execution.json",
+    ".spectra/changes/aci-s09/*",
+    ".spectra/backlog/execution.json",
+    ".spectra/backlog/order.md"
+  ],
+  "criteria_sha256": "de38446751926cb40e918c324155eb1020503a678c2ca2aec366547561819c05",
+  "critic": {
+    "author": "ramza-backlog-order-s09",
+    "checker": "atlas-s09-plan-checker",
+    "at": "2026-10-24T15:26:55Z"
+  },
+  "scope_declared_at": "2026-10-24T15:26:55Z",
+  "criteria_frozen_at": "2026-10-24T15:26:55Z",
+  "drift_reports": [
+    {
+      "at": "2026-10-24T15:26:55Z",
+      "range": "worktree-vs-HEAD",
+      "files_changed": 14,
+      "uncovered": []
+    }
+  ]
+}
