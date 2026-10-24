@@ -1696,6 +1696,205 @@ class CodeGraph:
         except (ValueError, KeyError, TypeError, AssertionError):
             return None
 
+    def index_is_absent(self) -> bool:
+        """Diagnose actual absence only; permissions/broken links are not absence."""
+        self._validate_graph_namespace()
+        for path in (self.db_path, self.atlas_dir / "graph.6.db"):
+            try:
+                path.lstat()
+            except FileNotFoundError:
+                continue
+            return False
+        return True
+
+    def published_status(self) -> dict[str, Any]:
+        """Project published evidence from this already validated immutable lease.
+
+        No source reads, latest-attempt sidecar, current runtime declarations,
+        nested reader acquisition or repeated global graph validation belongs here.
+        """
+        if self._closed or not self._validated_lease:
+            raise RuntimeError("Published status requires an acquired graph reader")
+        inputs = json.loads(
+            self.db.execute("SELECT value FROM manifest WHERE key='generation_inputs'").fetchone()[
+                0
+            ]
+        )
+        published = self._observation_records(self.db, validate=False)
+        coverage = self._read_coverage(self, inputs) if inputs["kind"] == "build" else None
+        histories = {r["id"]: r for r in published if r["type"] == "history"}
+        observations = {r["path"]: r for r in published if r["type"] == "observation"}
+        fact_paths = {
+            row[0]
+            for row in self.db.execute(
+                "SELECT path FROM symbols UNION SELECT path FROM refs "
+                "UNION SELECT path FROM rationale"
+            )
+        }
+        historical_pairs: set[tuple[str, str]] = set()
+        for history in histories.values():
+            historical_pairs.update(
+                (row["path"], row["source_sha256"])
+                for row in history["records"]
+                if row["type"] == "occurrence" and row["provenance_state"] == "source"
+            )
+        files = []
+        for path, item in sorted(observations.items()):
+            history = histories.get(item["historical_id"])
+            hashes = (
+                sorted(
+                    {
+                        row["source_sha256"]
+                        for row in history["records"]
+                        if row["type"] == "occurrence"
+                        and row["path"] == path
+                        and row["provenance_state"] == "source"
+                    }
+                )
+                if history
+                else ([item["observed_source_sha256"]] if item["state"] == "indexed" else [])
+            )
+            retained = bool(
+                history
+                and any(
+                    row["type"] == "projection"
+                    and row["row"].get("source_path" if row["table"] == "edges" else "path") == path
+                    for row in history["records"]
+                )
+            )
+            files.append(
+                {
+                    "path": path,
+                    "language": item["language"],
+                    "state": item["state"],
+                    "observation_id": item["id"],
+                    "history_id": item["historical_id"],
+                    "observed_source_sha256": item["observed_source_sha256"],
+                    "fact_source_sha256s": hashes,
+                    "retained_facts": retained or path in fact_paths,
+                    "stale": retained if history else (False if coverage else None),
+                    "reason": item["reason"],
+                    "location": item["location"],
+                }
+            )
+        if not published:
+            # Explicitly unknown old provenance; a file hash is not a fresh read.
+            legacy_hashes = (
+                inputs.get("source_hashes", inputs.get("legacy", {}).get("source_hashes")) or {}
+            )
+            files = [
+                {
+                    "path": path,
+                    "language": None,
+                    "state": "unknown",
+                    "observation_id": None,
+                    "history_id": None,
+                    "observed_source_sha256": None,
+                    "fact_source_sha256s": [sha],
+                    "retained_facts": path in fact_paths,
+                    "stale": None,
+                    "reason": "published_observations_unavailable",
+                    "location": None,
+                }
+                for path, sha in sorted(legacy_hashes.items())
+            ]
+        capabilities = None
+        if coverage:
+            stored = coverage["capabilities"]
+            capabilities = {
+                "representation": "bounded_projection",
+                "stored_format": stored["format"],
+                "languages": stored["languages"],
+                "producers": stored["producers"],
+                # v1 never recorded global limitations; null preserves that
+                # absence without substituting current runtime declarations.
+                "limitations": (
+                    [
+                        {"name": key, "reason": value}
+                        for key, value in sorted(stored["limitations"].items())
+                    ]
+                    if "limitations" in stored
+                    else None
+                ),
+            }
+        references = []
+        if self._source_lease is not None:
+            for row in self._source_lease.manifest["current"]:
+                item = observations.get(row["path"])
+                state = item["state"] if item else "unknown"
+                references.append(
+                    {
+                        "path": row["path"],
+                        "source_sha256": row["sha256"],
+                        "provenance": "observed_source",
+                        "extraction_state": state,
+                        "stale": False if state == "indexed" else None,
+                        "available": self._source_lease.bindings[(row["path"], row["sha256"])],
+                    }
+                )
+            for path, sha in sorted(historical_pairs):
+                references.append(
+                    {
+                        "path": path,
+                        "source_sha256": sha,
+                        "provenance": "historical_indexed",
+                        "extraction_state": "retained",
+                        "stale": True,
+                        "available": self._source_lease.bindings[(path, sha)],
+                    }
+                )
+            references.sort(key=lambda row: (row["path"], row["provenance"], row["source_sha256"]))
+        state = (
+            "partial"
+            if coverage and any(r["state"] == "failed" for r in observations.values())
+            else "complete"
+            if coverage
+            else "unknown"
+        )
+        return {
+            "coverage_basis": "published_generation",
+            "live_source_verification": "not_performed",
+            "latest_attempt_included": False,
+            "runtime_capabilities_included": False,
+            "indexed": {
+                "representation": "bounded_projection",
+                "configuration": inputs.get("configuration"),
+                "producer": inputs.get("producer", inputs.get("importer", inputs.get("converter"))),
+                "capabilities": capabilities,
+            },
+            "completeness": {
+                "state": state,
+                "reason": "published_extraction_partial"
+                if state == "partial"
+                else "published_coverage_complete"
+                if coverage
+                else "published_coverage_unknown",
+                "enumeration": "complete" if coverage else "unknown",
+                "counts": {
+                    key: coverage["counts"].get(key, 0)
+                    for key in ("indexed", "failed", "disabled", "unsupported")
+                }
+                if coverage
+                else None,
+                "total_count": len(coverage["files"]) if coverage else None,
+                "stale_count": sum(row["stale"] is True for row in files) if published else None,
+                "files": files,
+            },
+            "source": {
+                "state": "available" if self.snapshot_id is not None else "unavailable",
+                "reason": None if self.snapshot_id is not None else "source_capture_unavailable",
+                "total_count": len(references),
+                "references": references,
+            },
+            "facts": {
+                "definitions": self.db.execute("SELECT COUNT(*) FROM symbols").fetchone()[0],
+                "references": self.db.execute("SELECT COUNT(*) FROM refs").fetchone()[0],
+                "edges": self.db.execute("SELECT COUNT(*) FROM edges").fetchone()[0],
+                "rationale": self.db.execute("SELECT COUNT(*) FROM rationale").fetchone()[0],
+                "historical_bundles": len(histories),
+            },
+        }
+
     def status(self) -> dict[str, Any]:
         """Canonical operator snapshot: one read-only lease and one sidecar read."""
         from atlas_aci.enforcement import ToolError

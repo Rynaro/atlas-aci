@@ -1,0 +1,13 @@
+{
+  "slice_id": "ACI-S11",
+  "criteria_sha256": "6ac4f0b0574b1c9d150d35d580f33b521f89a4c9e13e9044cf9e7eff4c294599",
+  "reason": "RUN01 tracks implementation bytes; exact self-referential receipt/post-output exclusions preserve clean checkout and all stable implementation evidence hashing.",
+  "output_digest_exclusions": [
+    ".spectra/state/aci-s11.execution.json",
+    ".spectra/evidence/aci-s11/final-reentry-before.json",
+    ".spectra/evidence/aci-s11/final-reentry-after.json",
+    ".spectra/evidence/aci-s11/final-reentry-summary.json",
+    ".spectra/evidence/aci-s11/final-resume-identity.json",
+    ".spectra/evidence/aci-s11/output-check-tests.log"
+  ]
+}

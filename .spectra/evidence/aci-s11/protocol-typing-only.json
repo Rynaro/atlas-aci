@@ -1,0 +1,6 @@
+{
+  "before_sha256": "431804fa37fa60007ad45b2215a1a3e1778ae04dec68312731b15291739e6834",
+  "after_sha256": "5442b4e79d2a2d38457c22777f37d0ac388fa93e6d332ee6d5d133699e35ad0a",
+  "ast_equal": true,
+  "reason": "Existing locked jsonschema has no shipped stubs; narrow import-untyped ignore only, no dependency or runtime validation changes."
+}

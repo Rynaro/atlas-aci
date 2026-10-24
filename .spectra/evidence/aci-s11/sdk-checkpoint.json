@@ -1,0 +1,707 @@
+{
+  "sdk_versions": [
+    {
+      "requested": "2024-11-05",
+      "actual_negotiated": "2024-11-05",
+      "session_requested_observed": "2024-11-05",
+      "tools": [
+        {
+          "name": "direct",
+          "inputSchema": {
+            "type": "object",
+            "required": [
+              "value"
+            ],
+            "properties": {
+              "value": {
+                "type": "string"
+              }
+            }
+          },
+          "outputSchema": {
+            "type": "object",
+            "required": [
+              "ok"
+            ],
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "normal",
+          "inputSchema": {
+            "type": "object",
+            "required": [
+              "value"
+            ],
+            "properties": {
+              "value": {
+                "type": "string"
+              }
+            }
+          },
+          "outputSchema": {
+            "type": "object",
+            "required": [
+              "ok"
+            ],
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      ],
+      "direct_invalid_output_accepted": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"wrong\": true, \"requested_version\": \"2024-11-05\", \"calls\": 1}"
+          }
+        ],
+        "structuredContent": {
+          "wrong": true,
+          "requested_version": "2024-11-05",
+          "calls": 1
+        },
+        "isError": false
+      },
+      "input_invalid_bypasses_application": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Input validation error: 'value' is a required property"
+          }
+        ],
+        "isError": true
+      },
+      "normal_invalid_output_rejected": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Output validation error: 'ok' is a required property"
+          }
+        ],
+        "isError": true
+      }
+    },
+    {
+      "requested": "2025-03-26",
+      "actual_negotiated": "2025-03-26",
+      "session_requested_observed": "2025-03-26",
+      "tools": [
+        {
+          "name": "direct",
+          "inputSchema": {
+            "type": "object",
+            "required": [
+              "value"
+            ],
+            "properties": {
+              "value": {
+                "type": "string"
+              }
+            }
+          },
+          "outputSchema": {
+            "type": "object",
+            "required": [
+              "ok"
+            ],
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "normal",
+          "inputSchema": {
+            "type": "object",
+            "required": [
+              "value"
+            ],
+            "properties": {
+              "value": {
+                "type": "string"
+              }
+            }
+          },
+          "outputSchema": {
+            "type": "object",
+            "required": [
+              "ok"
+            ],
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      ],
+      "direct_invalid_output_accepted": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"wrong\": true, \"requested_version\": \"2025-03-26\", \"calls\": 1}"
+          }
+        ],
+        "structuredContent": {
+          "wrong": true,
+          "requested_version": "2025-03-26",
+          "calls": 1
+        },
+        "isError": false
+      },
+      "input_invalid_bypasses_application": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Input validation error: 'value' is a required property"
+          }
+        ],
+        "isError": true
+      },
+      "normal_invalid_output_rejected": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Output validation error: 'ok' is a required property"
+          }
+        ],
+        "isError": true
+      }
+    },
+    {
+      "requested": "2025-06-18",
+      "actual_negotiated": "2025-06-18",
+      "session_requested_observed": "2025-06-18",
+      "tools": [
+        {
+          "name": "direct",
+          "inputSchema": {
+            "type": "object",
+            "required": [
+              "value"
+            ],
+            "properties": {
+              "value": {
+                "type": "string"
+              }
+            }
+          },
+          "outputSchema": {
+            "type": "object",
+            "required": [
+              "ok"
+            ],
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "normal",
+          "inputSchema": {
+            "type": "object",
+            "required": [
+              "value"
+            ],
+            "properties": {
+              "value": {
+                "type": "string"
+              }
+            }
+          },
+          "outputSchema": {
+            "type": "object",
+            "required": [
+              "ok"
+            ],
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      ],
+      "direct_invalid_output_accepted": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"wrong\": true, \"requested_version\": \"2025-06-18\", \"calls\": 1}"
+          }
+        ],
+        "structuredContent": {
+          "wrong": true,
+          "requested_version": "2025-06-18",
+          "calls": 1
+        },
+        "isError": false
+      },
+      "input_invalid_bypasses_application": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Input validation error: 'value' is a required property"
+          }
+        ],
+        "isError": true
+      },
+      "normal_invalid_output_rejected": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Output validation error: 'ok' is a required property"
+          }
+        ],
+        "isError": true
+      }
+    },
+    {
+      "requested": "2025-11-25",
+      "actual_negotiated": "2025-11-25",
+      "session_requested_observed": "2025-11-25",
+      "tools": [
+        {
+          "name": "direct",
+          "inputSchema": {
+            "type": "object",
+            "required": [
+              "value"
+            ],
+            "properties": {
+              "value": {
+                "type": "string"
+              }
+            }
+          },
+          "outputSchema": {
+            "type": "object",
+            "required": [
+              "ok"
+            ],
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "normal",
+          "inputSchema": {
+            "type": "object",
+            "required": [
+              "value"
+            ],
+            "properties": {
+              "value": {
+                "type": "string"
+              }
+            }
+          },
+          "outputSchema": {
+            "type": "object",
+            "required": [
+              "ok"
+            ],
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      ],
+      "direct_invalid_output_accepted": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"wrong\": true, \"requested_version\": \"2025-11-25\", \"calls\": 1}"
+          }
+        ],
+        "structuredContent": {
+          "wrong": true,
+          "requested_version": "2025-11-25",
+          "calls": 1
+        },
+        "isError": false
+      },
+      "input_invalid_bypasses_application": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Input validation error: 'value' is a required property"
+          }
+        ],
+        "isError": true
+      },
+      "normal_invalid_output_rejected": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Output validation error: 'ok' is a required property"
+          }
+        ],
+        "isError": true
+      }
+    },
+    {
+      "requested": "2099-01-01",
+      "actual_negotiated": "2025-11-25",
+      "session_requested_observed": "2099-01-01",
+      "tools": [
+        {
+          "name": "direct",
+          "inputSchema": {
+            "type": "object",
+            "required": [
+              "value"
+            ],
+            "properties": {
+              "value": {
+                "type": "string"
+              }
+            }
+          },
+          "outputSchema": {
+            "type": "object",
+            "required": [
+              "ok"
+            ],
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "normal",
+          "inputSchema": {
+            "type": "object",
+            "required": [
+              "value"
+            ],
+            "properties": {
+              "value": {
+                "type": "string"
+              }
+            }
+          },
+          "outputSchema": {
+            "type": "object",
+            "required": [
+              "ok"
+            ],
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      ],
+      "direct_invalid_output_accepted": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"wrong\": true, \"requested_version\": \"2099-01-01\", \"calls\": 1}"
+          }
+        ],
+        "structuredContent": {
+          "wrong": true,
+          "requested_version": "2099-01-01",
+          "calls": 1
+        },
+        "isError": false
+      },
+      "input_invalid_bypasses_application": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Input validation error: 'value' is a required property"
+          }
+        ],
+        "isError": true
+      },
+      "normal_invalid_output_rejected": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Output validation error: 'ok' is a required property"
+          }
+        ],
+        "isError": true
+      }
+    }
+  ],
+  "production_initialize": {
+    "protocolVersion": "2025-11-25",
+    "capabilities": {
+      "experimental": {},
+      "tools": {
+        "listChanged": false
+      }
+    },
+    "serverInfo": {
+      "name": "atlas-aci",
+      "version": "1.27.0"
+    }
+  },
+  "production_tools": [
+    {
+      "name": "view_file",
+      "description": "Read a window of lines from a file in the repository. MAX 100 lines per call. Use next_cursor to page. Binary files are rejected; UTF-8 text only.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "path",
+          "start_line",
+          "end_line"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Repo-relative file path"
+          },
+          "start_line": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "end_line": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "snapshot_id": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "source_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_dir",
+      "description": "List a directory. MAX 200 entries per call. Skip-list applied (node_modules, vendor, tmp, .git, etc.).",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "path"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "glob": {
+            "type": "string",
+            "description": "Optional fnmatch pattern"
+          }
+        }
+      }
+    },
+    {
+      "name": "search_text",
+      "description": "Ripgrep-backed regex search. MAX 50 matches. If overflow=true, narrow the scope or use search_symbol instead. Smart-case by default.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "pattern",
+          "scope"
+        ],
+        "properties": {
+          "pattern": {
+            "type": "string"
+          },
+          "scope": {
+            "type": "string",
+            "description": "Repo-relative path or glob (e.g. app/**/*.rb)"
+          },
+          "regex": {
+            "type": "boolean",
+            "default": true
+          },
+          "limit": {
+            "type": "integer",
+            "maximum": 50,
+            "default": 50
+          }
+        }
+      }
+    },
+    {
+      "name": "search_symbol",
+      "description": "Index-backed symbol lookup. Returns definitions and references, bounded and flagged like every other tool (README \u00a7Mechanical bounds). Run `atlas-aci index` first to build the graph.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "any",
+              "class",
+              "enum",
+              "function",
+              "heading",
+              "id",
+              "key",
+              "method",
+              "mixin",
+              "module",
+              "placeholder",
+              "selector",
+              "struct",
+              "trait",
+              "variable"
+            ],
+            "default": "any"
+          }
+        }
+      }
+    },
+    {
+      "name": "graph_query",
+      "description": "Query the code graph. DSL: 'callers_of:Symbol', 'definitions_of:Name', 'subclasses_of:Class', 'god_nodes:' (degree-centrality ranking over the confident subgraph), 'communities:' (deterministic label-propagation communities over the confident subgraph), 'rationale:' (recognized NOTE:/HACK:/WHY:/etc. comments and ADR/RFC references, Ruby/Python/JS/TS only). Bounded and flagged like every other tool. Run `atlas-aci index` first.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "test_dry_run",
+      "description": "Repository test execution is disabled. Requires operator opt-in ATLAS_ACI_ENABLE_TEST_EXECUTION=1. Run one test file, optionally filtered by case name, with a 30s timeout and 8192 bytes per stdout/stderr stream. No OS sandbox; isolation is the operator's responsibility.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "path"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "case": {
+            "type": "string"
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": false
+      },
+      "_meta": {
+        "atlas-aci/test_execution_enabled": false
+      }
+    },
+    {
+      "name": "memex_read",
+      "description": "Byte-exact retrieval of a previously captured excerpt via its memex://excerpt/<sha256> ref. Refs are minted by `Memex.write()`; no ATLAS tool currently emits one \u2014 the caller supplies a ref it obtained out-of-band.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "ref"
+        ],
+        "properties": {
+          "ref": {
+            "type": "string",
+            "pattern": "^memex://excerpt/[a-f0-9]+$"
+          }
+        }
+      }
+    }
+  ],
+  "production_results": [
+    {
+      "arguments": {
+        "query": "not-a-query"
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"error\": \"INVALID_QUERY\",\n  \"message\": \"Expected 'verb:argument' form.\",\n  \"generation_id\": \"cecd646c8c1c800cbbe2b4b6b7cc5cee44ad20ea7a8f5c8b46d68083ef0c1877\",\n  \"snapshot_id\": null,\n  \"source_available\": false\n}"
+          }
+        ],
+        "isError": false
+      }
+    },
+    {
+      "arguments": {
+        "query": "unknown_operation:x"
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"error\": \"UNKNOWN_VERB\",\n  \"message\": \"Unknown verb 'unknown_operation'.\",\n  \"generation_id\": \"cecd646c8c1c800cbbe2b4b6b7cc5cee44ad20ea7a8f5c8b46d68083ef0c1877\",\n  \"snapshot_id\": null,\n  \"source_available\": false\n}"
+          }
+        ],
+        "isError": false
+      }
+    },
+    {
+      "arguments": {
+        "query": "definitions_of:NoMatch"
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"definitions\": [],\n  \"references\": [],\n  \"generation_id\": \"cecd646c8c1c800cbbe2b4b6b7cc5cee44ad20ea7a8f5c8b46d68083ef0c1877\",\n  \"snapshot_id\": null,\n  \"source_available\": false\n}"
+          }
+        ],
+        "isError": false
+      }
+    },
+    {
+      "arguments": {
+        "schema_version": "atlas.graph.v1",
+        "op": "status"
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Input validation error: 'query' is a required property"
+          }
+        ],
+        "isError": true
+      }
+    }
+  ],
+  "genuine_red": "Legacy INVALID_QUERY/UNKNOWN_VERB payloads incorrectly have isErrorFalse; structured status is not supported. Direct SDK CallToolResult bypasses outputSchema; input validation occurs before handler."
+}

@@ -8,6 +8,7 @@ from typing import Any
 from atlas_aci.codegraph import SCHEMA_EPOCH, CodeGraph
 from atlas_aci.config import Config
 from atlas_aci.enforcement import Enforcement, ToolError
+from atlas_aci.protocol.graph import envelope, request_mode
 
 
 async def graph_query(
@@ -17,7 +18,7 @@ async def graph_query(
     code_graph: CodeGraph,
 ) -> dict[str, Any]:
     start_t = time.monotonic()
-    query = args["query"]
+    mode = request_mode(args)
 
     # H3: see search_symbol.py — ask the CodeGraph instance for the
     # epoch-namespaced path rather than hardcoding ".atlas/graph.db".
@@ -29,7 +30,17 @@ async def graph_query(
             "different_tool",
         )
 
-    result = code_graph.query(query)
+    if mode == "structured":
+        data = code_graph.published_status()
+        state = data["completeness"]["state"]
+        result = envelope(
+            data,
+            generation_id=code_graph.generation_id,
+            snapshot_id=code_graph.snapshot_id,
+            evidence_status="available" if state == "complete" else state,
+        )
+    else:
+        result = code_graph.query(args["query"])
 
     enforcement.record(
         tool="graph_query",

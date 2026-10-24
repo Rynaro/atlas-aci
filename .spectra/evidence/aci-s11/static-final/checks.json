@@ -1,0 +1,129 @@
+{
+  "ruff": {
+    "command": [
+      ".venv/bin/ruff",
+      "check",
+      "src/",
+      "tests/"
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0,
+    "elapsed_seconds": 0.011759542001527734,
+    "log": ".spectra/evidence/aci-s11/static-final/ruff.log"
+  },
+  "format": {
+    "command": [
+      ".venv/bin/ruff",
+      "format",
+      "--check",
+      "src/",
+      "tests/"
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0,
+    "elapsed_seconds": 0.008323957998072729,
+    "log": ".spectra/evidence/aci-s11/static-final/format.log"
+  },
+  "mypy": {
+    "command": [
+      ".venv/bin/mypy",
+      "src/"
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0,
+    "elapsed_seconds": 0.1953641250001965,
+    "log": ".spectra/evidence/aci-s11/static-final/mypy.log"
+  },
+  "scripts-ruff": {
+    "command": [
+      ".venv/bin/ruff",
+      "check",
+      "../scripts/",
+      "--exclude",
+      "fingerprint-fixture"
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0,
+    "elapsed_seconds": 0.009125791999395005,
+    "log": ".spectra/evidence/aci-s11/static-final/scripts-ruff.log"
+  },
+  "scripts-format": {
+    "command": [
+      ".venv/bin/ruff",
+      "format",
+      "--check",
+      "../scripts/",
+      "--exclude",
+      "fingerprint-fixture"
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0,
+    "elapsed_seconds": 0.00971237498742994,
+    "log": ".spectra/evidence/aci-s11/static-final/scripts-format.log"
+  },
+  "scripts-mypy": {
+    "command": [
+      ".venv/bin/mypy",
+      "../scripts/"
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0,
+    "elapsed_seconds": 0.0559597079991363,
+    "log": ".spectra/evidence/aci-s11/static-final/scripts-mypy.log"
+  },
+  "lock": {
+    "command": [
+      "/tmp/aci-s01-tools/bin/uv",
+      "lock",
+      "--check"
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0,
+    "elapsed_seconds": 0.008748624997679144,
+    "log": ".spectra/evidence/aci-s11/static-final/lock.log"
+  },
+  "probe": {
+    "command": [
+      "mcp-server/.venv/bin/python",
+      "scripts/verify-probe-verdict.py",
+      ".spectra/changes/aci-s08/lease-footprint/probe/aci-s08-refined-probe-lpa-vs-louvain.json"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "elapsed_seconds": 0.2050781660072971,
+    "log": ".spectra/evidence/aci-s11/static-final/probe.log"
+  },
+  "guard": {
+    "command": [
+      "env",
+      "-u",
+      "PYTHONPATH",
+      "/bin/bash",
+      "scripts/test-verify-probe-verdict.sh"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "elapsed_seconds": 6.140753041996504,
+    "log": ".spectra/evidence/aci-s11/static-final/guard.log"
+  },
+  "size-guard": {
+    "command": [
+      "/bin/bash",
+      "scripts/test-verify-export-size.sh"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "elapsed_seconds": 0.18479487500735559,
+    "log": ".spectra/evidence/aci-s11/static-final/size-guard.log"
+  },
+  "classify": {
+    "command": [
+      "/bin/bash",
+      "scripts/test-harden-gate-classify.sh"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "elapsed_seconds": 0.5202335000067251,
+    "log": ".spectra/evidence/aci-s11/static-final/classify.log"
+  }
+}

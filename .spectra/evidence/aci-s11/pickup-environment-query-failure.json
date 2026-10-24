@@ -1,0 +1,6 @@
+{
+  "exit_code": 1,
+  "interpreter": "system python3.9",
+  "reason": "Receipt+interrupted snapshot initialized successfully, then optional SDK version query failed because system interpreter lacksmcp; no product edit and no receipt reset.",
+  "correction": "Use actual frozen worktree .venv interpreter; original initialized receipt identity/start preserved."
+}

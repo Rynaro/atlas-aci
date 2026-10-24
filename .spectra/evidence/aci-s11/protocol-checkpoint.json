@@ -1,0 +1,12 @@
+{
+  "scope": "stable schema/discriminator/actual SDK serialized budget helper only; server integration not yet switched",
+  "files": {
+    "mcp-server/src/atlas_aci/protocol/graph.py": "6707b0f2e8f4e958c2c3bb2cd84e6bd2fea00d5e10fab263e50d15dacdc9b45f",
+    "mcp-server/src/atlas_aci/protocol/results.py": "bf2d01e2002606b9d27bd1bd51ec55eddd39405d08bbefb836dec749a9da0998"
+  },
+  "actual_tests": "14 passed in0.18s",
+  "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/tmp/atlas-aci-aci-s11/mcp-server/src mcp-server/.venv/bin/python -m pytest -p no:cacheprovider mcp-server/tests/slices/test_s11_protocol.py -q",
+  "exit_code": 0,
+  "published_status_first_real_parser_control": "complete/1manifest-authorized source ref; Draft202012 status data validation0",
+  "fixed_error_cap_bytes": 785
+}

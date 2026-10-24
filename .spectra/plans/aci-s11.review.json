@@ -1,0 +1,42 @@
+{
+  "checker": "atlas-s11-plan-checker",
+  "author": "ramza-backlog-order-s11",
+  "verdict": "APPROVE",
+  "reviewed_spec_sha256": "947cc423ef524af2d7aadee1d0c9563889623c609e6ec9edc85d918abc38a496",
+  "reviewed_state_sha256": "bfa5bbf18fc8bf3e2fe676d4f4768f748aef060225a331813fdcfee94043fb8a",
+  "base_commit": "138a6f3cd510e0ecb3be0832221236adfe441ebc",
+  "criteria_sha256": "6ac4f0b0574b1c9d150d35d580f33b521f89a4c9e13e9044cf9e7eff4c294599",
+  "original_review_at": "2026-10-24T21:32:15Z",
+  "recorded_at": "2026-10-24T21:33:39.115836+00:00",
+  "original_score": {
+    "rubric": "refine",
+    "cycle": 1,
+    "total": 4.4,
+    "min": 4,
+    "dims": {
+      "clarity": 4,
+      "completeness": 5,
+      "actionability": 4,
+      "efficiency": 4,
+      "testability": 5
+    },
+    "verdict": "pass",
+    "at": "2026-10-24T21:32:15Z"
+  },
+  "mechanical_checks": {
+    "structural_full": 0,
+    "ears": 0,
+    "criteria_count": 8,
+    "live_marker_digest": true,
+    "base": true,
+    "product_diff_empty": true
+  },
+  "execution_prescriptions": [
+    "Preserve raw baseline/new portable-oracle outputs and exact normalization allowlist; never normalize IDs, links, confidence, ordering or protocol-semantic regressions.",
+    "Published status uses one owned lease and excludes mutable CLI diagnostics. Mark bounded capability/source lists as projections or prefixes, not complete hash-bound stored records.",
+    "Explicitly validate input and mode-specific output despite both SDK bypasses; real native failures, valid empty/unknown taxonomy, no malformed structured fallthrough to legacy union.",
+    "Budget the complete serialized CallToolResult with escaped text/flags and fixed error cap. Session client_params retains REQUESTED version; derive actual negotiated version including unsupported initialization returning latest2025-11-25, and test it through stdio.",
+    "Preserve original execution identity, exact six metadata exclusions, three-day scope and required full/static/native/portable verification; diagnose behavioral fingerprint changes honestly, never resign history."
+  ],
+  "limitations": "Plan approval only; native adapter/output/budget/status implementation remains unverified."
+}

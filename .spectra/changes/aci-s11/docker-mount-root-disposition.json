@@ -1,0 +1,11 @@
+{
+  "slice_id": "ACI-S11",
+  "criteria_changed": false,
+  "recorded_before_edit_epoch": 1792880309.5745332,
+  "additional_paths": [],
+  "authorized_path": "mcp-server/tests/slices/test_s11_docker.py",
+  "authorization": "Root bounded TEST ONLY disposition following independent ATLAS exact inventory audit",
+  "evidence": ".spectra/evidence/aci-s11/docker-diagnostic/docker-status.json",
+  "allowed_delta": "Exclude ONLY synthetic /repo mount root uid/gid from equality; retain both raw owner observations and all other root metadata, strict all descendant and entire /graphs metadata/hash equality. No runtime/mode changes.",
+  "prior_failure": ".spectra/evidence/aci-s11/pass2-first-result.json"
+}

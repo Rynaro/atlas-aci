@@ -1,0 +1,14 @@
+{
+  "initial_sources": {
+    "app/target.rb": "class Target\n def self.bar; end\nend\n",
+    "app/hub.rb": "class Hub\n def bar; end\n def call\n  # NOTE: keep the explicit target\n  Target.bar\n  bar()\n end\nend\n",
+    "app/a.rb": "class Hub\n def dup_name; end\nend\n",
+    "app/b.rb": "class Hub\n def dup_name; end\nend\n",
+    "app/caller.rb": "class Hub\n def call_duplicate\n  dup_name()\n end\nend\n",
+    "app/base.rb": "class Base; end\nclass Child < Base; end\n",
+    "history.py": "def history_target():\n return 1\ndef history_caller():\n # NOTE: retain original evidence\n history_target()\n"
+  },
+  "published_overlay_on_disk": {
+    "history.py": "def broken(:\n pass\n"
+  }
+}

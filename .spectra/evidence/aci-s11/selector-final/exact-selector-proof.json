@@ -1,0 +1,16 @@
+[
+  {
+    "path": ".github/workflows/harden-gate.yml",
+    "exact_replacements": 3,
+    "base_sha256": "d40b7e12b12c91fa148acc363634f82b8460459b2469c3465b6da02ec9f47ef3",
+    "current_sha256": "52530266e13bb48540885b78ce50c09ec417845661b153027f78b0e1812950bd",
+    "reverse_equals_base": true
+  },
+  {
+    "path": "scripts/test-verify-probe-verdict.sh",
+    "exact_replacements": 1,
+    "base_sha256": "e921838274bc337538a9db0b7cd7573db94e76165b4e114677a4b073928392f8",
+    "current_sha256": "307d214ccd9899a84bdc437bb08105be041c1a93d5d5656902f12f35e56d3d5d",
+    "reverse_equals_base": true
+  }
+]

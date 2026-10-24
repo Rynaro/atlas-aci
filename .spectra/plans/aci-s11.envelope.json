@@ -1,0 +1,50 @@
+{
+  "envelope_version": "2.0",
+  "message_id": "97c4eb05-aa2e-4684-9db9-ce30ecf18623",
+  "thread_id": "238ffac8-85ce-4269-a7e2-35501684650c",
+  "parent_id": null,
+  "from": {
+    "eidolon": "ramza",
+    "version": "1.1.0"
+  },
+  "to": {
+    "eidolon": "vivi",
+    "version": "n/a"
+  },
+  "performative": "PROPOSE",
+  "edge_origin": "roster",
+  "objective": "Implement ACI-S11 versioned structured graph status with pinned published evidence, explicit SDK validation and truthful bounded results while preserving legacy DSL compatibility.",
+  "artifact": {
+    "kind": "spec",
+    "schema_version": "1.0",
+    "path": "aci-s11.md",
+    "sha256": "947cc423ef524af2d7aadee1d0c9563889623c609e6ec9edc85d918abc38a496",
+    "size_bytes": 21365
+  },
+  "integrity": {
+    "method": "sha256",
+    "value": "947cc423ef524af2d7aadee1d0c9563889623c609e6ec9edc85d918abc38a496"
+  },
+  "trace": {
+    "ts": "2026-10-24T21:33:39.115836+00:00",
+    "host": "codex",
+    "model": "gpt-6-astra",
+    "tier": "standard"
+  },
+  "ise": {
+    "assertion_grade": "validated",
+    "provenance": {
+      "methodology_version": "ramza-1.1.0"
+    },
+    "receiver_authorization": {
+      "auto_route": true,
+      "auto_merge": false,
+      "auto_deploy": false
+    }
+  },
+  "confidence": 0.8625,
+  "x_ramza_acceptance_criteria": {
+    "path": "aci-s11.criteria.md",
+    "sha256": "6ac4f0b0574b1c9d150d35d580f33b521f89a4c9e13e9044cf9e7eff4c294599"
+  }
+}

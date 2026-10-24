@@ -1,0 +1,174 @@
+{
+  "slice_id": "ACI-S11",
+  "issue_url": "https://github.com/Rynaro/atlas-aci/issues/33",
+  "criteria_sha256": "6ac4f0b0574b1c9d150d35d580f33b521f89a4c9e13e9044cf9e7eff4c294599",
+  "base_commit": "138a6f3cd510e0ecb3be0832221236adfe441ebc",
+  "output_commit": null,
+  "declared_paths": [
+    "mcp-server/src/atlas_aci/server.py",
+    "mcp-server/src/atlas_aci/tools/graph_query.py",
+    "mcp-server/src/atlas_aci/protocol/*",
+    "mcp-server/tests/slices/test_s11_*.py",
+    "atlas/docs/*",
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/tests/test_server.py",
+    "mcp-server/tests/fixtures/s11/*",
+    ".spectra/plans/aci-s11.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/changes/aci-s11/*",
+    ".spectra/evidence/aci-s11/*",
+    ".spectra/state/aci-s11.execution.json",
+    ".spectra/backlog/execution.json",
+    ".spectra/backlog/order.md",
+    ".github/workflows/harden-gate.yml",
+    "scripts/test-verify-probe-verdict.sh"
+  ],
+  "output_digest_exclusions": [
+    ".spectra/state/aci-s11.execution.json",
+    ".spectra/evidence/aci-s11/final-reentry-before.json",
+    ".spectra/evidence/aci-s11/final-reentry-after.json",
+    ".spectra/evidence/aci-s11/final-reentry-summary.json",
+    ".spectra/evidence/aci-s11/final-resume-identity.json",
+    ".spectra/evidence/aci-s11/output-check-tests.log"
+  ],
+  "output_digests": {},
+  "status": "IN_PROGRESS",
+  "acceptance_results": [
+    {
+      "ac_id": "AC-S11-001",
+      "exit_code": 0,
+      "command": [
+        "mcp-server/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "mcp-server/tests/slices/test_s11_protocol.py",
+        "mcp-server/tests/slices/test_s11_contract.py",
+        "mcp-server/tests/slices/test_s11_stdio.py"
+      ],
+      "cwd": ".",
+      "evidence": ".spectra/evidence/aci-s11/original-v1-corrected-all.log",
+      "source_checkpoint": ".spectra/evidence/aci-s11/source-v1-corrected-checkpoint.json"
+    },
+    {
+      "ac_id": "AC-S11-002",
+      "exit_code": 0,
+      "command": [
+        "mcp-server/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "mcp-server/tests/slices/test_s11_protocol.py",
+        "mcp-server/tests/slices/test_s11_contract.py",
+        "mcp-server/tests/slices/test_s11_stdio.py"
+      ],
+      "cwd": ".",
+      "evidence": ".spectra/evidence/aci-s11/original-v1-corrected-all.log",
+      "source_checkpoint": ".spectra/evidence/aci-s11/source-v1-corrected-checkpoint.json"
+    },
+    {
+      "ac_id": "AC-S11-003",
+      "exit_code": 0,
+      "command": [
+        "mcp-server/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "mcp-server/tests/slices/test_s11_protocol.py",
+        "mcp-server/tests/slices/test_s11_contract.py",
+        "mcp-server/tests/slices/test_s11_stdio.py"
+      ],
+      "cwd": ".",
+      "evidence": ".spectra/evidence/aci-s11/original-v1-corrected-all.log",
+      "source_checkpoint": ".spectra/evidence/aci-s11/source-v1-corrected-checkpoint.json"
+    },
+    {
+      "ac_id": "AC-S11-004",
+      "exit_code": 0,
+      "command": [
+        "mcp-server/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "mcp-server/tests/slices/test_s11_protocol.py",
+        "mcp-server/tests/slices/test_s11_contract.py",
+        "mcp-server/tests/slices/test_s11_stdio.py"
+      ],
+      "cwd": ".",
+      "evidence": ".spectra/evidence/aci-s11/original-v1-corrected-all.log",
+      "source_checkpoint": ".spectra/evidence/aci-s11/source-v1-corrected-checkpoint.json"
+    },
+    {
+      "ac_id": "AC-S11-005",
+      "exit_code": 0,
+      "command": [
+        "mcp-server/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "mcp-server/tests/slices/test_s11_protocol.py",
+        "mcp-server/tests/slices/test_s11_contract.py",
+        "mcp-server/tests/slices/test_s11_stdio.py"
+      ],
+      "cwd": ".",
+      "evidence": ".spectra/evidence/aci-s11/original-v1-corrected-all.log",
+      "source_checkpoint": ".spectra/evidence/aci-s11/source-v1-corrected-checkpoint.json"
+    },
+    {
+      "ac_id": "AC-S11-006",
+      "exit_code": 0,
+      "command": [
+        "mcp-server/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "mcp-server/tests/slices/test_s11_protocol.py",
+        "mcp-server/tests/slices/test_s11_contract.py",
+        "mcp-server/tests/slices/test_s11_stdio.py"
+      ],
+      "cwd": ".",
+      "evidence": ".spectra/evidence/aci-s11/original-v1-corrected-all.log",
+      "source_checkpoint": ".spectra/evidence/aci-s11/source-v1-corrected-checkpoint.json"
+    },
+    {
+      "ac_id": "AC-S11-RUN-01",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S11-RUN-02",
+      "exit_code": null
+    }
+  ],
+  "scope_amendments": [
+    ".spectra/changes/aci-s11/scope-amendment.json",
+    ".spectra/changes/aci-s11/probe-scope-amendment.json"
+  ],
+  "started_epoch": 1792877693.6038861,
+  "engineering_budget_seconds": 86400,
+  "frozen_spec_sha256": "947cc423ef524af2d7aadee1d0c9563889623c609e6ec9edc85d918abc38a496",
+  "verification_in_progress": {
+    "source_audit": "ATLAS whole corrected source APPROVE68213/5ae/047f/4b63/9b9",
+    "full_suite": ".spectra/evidence/aci-s11/full-suite.job.json",
+    "protected_pass2": ".spectra/evidence/aci-s11/vivi-pass2-final-result.json",
+    "static": ".spectra/evidence/aci-s11/static-final/checks.json",
+    "remaining": [
+      "Independent final gate/test review",
+      "Fresh final-producer proof and selector checks",
+      "Output commit and exact clean detached reentry/resume gates"
+    ],
+    "memory_persistence": "Not retried: earlier terminal automatic-review rejection, per standing authorization."
+  },
+  "elapsed_wall_upper_bound_seconds": 2740.948541879654
+}

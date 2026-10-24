@@ -1,0 +1,63 @@
+{
+  "slice_id": "ACI-S11",
+  "issue": 33,
+  "worktree": "/private/tmp/atlas-aci-aci-s11",
+  "branch": "aci-s11",
+  "base_commit": "138a6f3cd510e0ecb3be0832221236adfe441ebc",
+  "spec": ".spectra/plans/aci-s11.md",
+  "envelope": ".spectra/plans/aci-s11.envelope.json",
+  "criteria_sha256": "6ac4f0b0574b1c9d150d35d580f33b521f89a4c9e13e9044cf9e7eff4c294599",
+  "actual_confidence": {
+    "rubric": "confidence",
+    "total": 86.25,
+    "dims": {
+      "pattern_match": 85,
+      "requirement_clarity": 90,
+      "decomposition_stability": 85,
+      "constraint_compliance": 85
+    },
+    "verdict": "AUTO_PROCEED",
+    "at": "2026-10-24T21:33:13Z",
+    "label": "bounded-validated-sdk-and-published-status"
+  },
+  "confidence_basis": {
+    "pattern_match": "Existing seven-tool dispatch, central bounds and validated graph/source lease are reused; public locked SDK adapter APIs verified, no protocol replacement.",
+    "requirement_clarity": "Eight exact criteria with explicit published-status replay domain, no-index/error taxonomy and combined result budget.",
+    "decomposition_stability": "Independent source/plan review covers SDK bypasses, pinned status, source references, portable legacy oracle and exact scope amendments.",
+    "constraint_compliance": "Three-day status-first scope, existing dependencies and native first checkpoint; integrated adapter/budget behavior remains execution risk, not a completed product claim."
+  },
+  "checker_evidence": ".spectra/plans/aci-s11.review.json",
+  "execution_prescriptions": [
+    "Preserve raw baseline/new portable-oracle outputs and exact normalization allowlist; never normalize IDs, links, confidence, ordering or protocol-semantic regressions.",
+    "Published status uses one owned lease and excludes mutable CLI diagnostics. Mark bounded capability/source lists as projections or prefixes, not complete hash-bound stored records.",
+    "Explicitly validate input and mode-specific output despite both SDK bypasses; real native failures, valid empty/unknown taxonomy, no malformed structured fallthrough to legacy union.",
+    "Budget the complete serialized CallToolResult with escaped text/flags and fixed error cap. Session client_params retains REQUESTED version; derive actual negotiated version including unsupported initialization returning latest2025-11-25, and test it through stdio.",
+    "Preserve original execution identity, exact six metadata exclusions, three-day scope and required full/static/native/portable verification; diagnose behavioral fingerprint changes honestly, never resign history."
+  ],
+  "scope_amendments": [
+    ".spectra/changes/aci-s11/scope-amendment.json",
+    ".spectra/changes/aci-s11/bookkeeping-amendment.json"
+  ],
+  "output_digest_exclusions": [
+    ".spectra/state/aci-s11.execution.json",
+    ".spectra/evidence/aci-s11/final-reentry-before.json",
+    ".spectra/evidence/aci-s11/final-reentry-after.json",
+    ".spectra/evidence/aci-s11/final-reentry-summary.json",
+    ".spectra/evidence/aci-s11/final-resume-identity.json",
+    ".spectra/evidence/aci-s11/output-check-tests.log"
+  ],
+  "authoritative_receipt": ".spectra/state/aci-s11.execution.json",
+  "first_checkpoint": "Capture real baseline portable legacy fixtures and locked SDK subprocess behavior before broad edits; no prior native adapter success is claimed.",
+  "helpers_root": "/Users/henrique/workspace/oss/agents/atlas-aci/.eidolons/ramza/bin",
+  "schemas_root": "/Users/henrique/workspace/oss/agents/atlas-aci/.eidolons/ramza/schemas",
+  "uv": "/tmp/aci-s01-tools/bin/uv",
+  "uv_cache": "/tmp/aci-s01-uv-cache",
+  "root_gate": "Root mechanical verify-envelope --block and correlated verify_pass for exact message/thread/spec before one Vivi writer.",
+  "publication": "Root owns green-CI merge/sync under standing authorization; coder does not merge or deploy.",
+  "backlog": {
+    "merged": 11,
+    "remaining": 31,
+    "current_issue": 33,
+    "next_issue": 34
+  }
+}

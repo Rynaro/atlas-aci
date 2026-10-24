@@ -1,0 +1,41 @@
+{
+  "runtime_changes": false,
+  "source_checkpoint": ".spectra/evidence/aci-s11/source-v1-corrected-checkpoint.json",
+  "failures": [
+    {
+      "evidence": ".spectra/evidence/aci-s11/docker-s11-first.log",
+      "exit_code": 1,
+      "cause": "Positive test view_file request omitted required start_line/end_line; own adapter correctly rejected INVALID_INPUT."
+    },
+    {
+      "evidence": ".spectra/evidence/aci-s11/docker-s11-corrected.log",
+      "exit_code": 1,
+      "cause": "Edit-marker assertion failed before writing test; separate formatter returned0. Subsequent test remained unchanged and correctly failed. Not treated as a correction/pass."
+    },
+    {
+      "evidence": ".spectra/evidence/aci-s11/pass2-first-result.json",
+      "exit_code": 3,
+      "cause": "Protected first run failed strict inventory comparison;41passed1failed, no pass\u00b2 acceptance."
+    },
+    {
+      "evidence": ".spectra/evidence/aci-s11/docker-diagnostic/docker-status.json",
+      "exit_code": 1,
+      "cause": "Only /repo mount-root uid/gid0/0\u219210001/10001; all other root metadata/all descendants/graphs identical. Complete evidence retained; awaiting root/checker disposition."
+    }
+  ],
+  "actual_prior_passes": {
+    "docker-s11-range-fixed.log": {
+      "exit_code": 0,
+      "tests": 1
+    },
+    "full-suite.job.json": {
+      "exit_code": 0,
+      "tests": 623
+    }
+  },
+  "not_claimed": [
+    "Current protected pass\u00b2 success",
+    "Fresh corpus PASS",
+    "Any product permission or mode relaxation"
+  ]
+}

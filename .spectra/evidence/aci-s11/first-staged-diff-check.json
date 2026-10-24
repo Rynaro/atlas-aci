@@ -1,0 +1,11 @@
+{
+  "command": [
+    "git",
+    "diff",
+    "--cached",
+    "--check"
+  ],
+  "exit_code": 2,
+  "observed_failure": "Generated raw repair-failed-report.md contained two trailing-whitespace lines copied verbatim from actual pytest output.",
+  "resolution": "Preserved exact bytes as deterministic gzip and appended raw manifest; no sanitation or product edits."
+}

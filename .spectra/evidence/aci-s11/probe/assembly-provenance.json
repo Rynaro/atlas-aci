@@ -1,0 +1,71 @@
+{
+  "command": [
+    "/private/tmp/atlas-aci-aci-s11/mcp-server/.venv/bin/python",
+    "/private/tmp/atlas-aci-aci-s11/scripts/probe-assemble-graph-bundle.py",
+    "--out",
+    "/private/tmp/atlas-aci-aci-s11/.spectra/changes/aci-s11/probe/probe-graphs.json.gz",
+    "--repo",
+    "solidus:/tmp/aci-s11-solidus-graph.json:/private/tmp/atlas-aci-aci-s11/.spectra/evidence/aci-s11/probe/solidus-modularity.stdout.log",
+    "--repo",
+    "spree:/tmp/aci-s11-spree-graph.json:/private/tmp/atlas-aci-aci-s11/.spectra/evidence/aci-s11/probe/spree-modularity.stdout.log"
+  ],
+  "exit_code": 0,
+  "indexer_fingerprint": "0605f4ae8f83e953d3dd95cd2bb0b55bf37e8d0fa3c0c31a176314ec7b94383f",
+  "verdict": "PASS",
+  "sources": {
+    "mcp-server/src/atlas_aci/codegraph.py": "68213b2d090e3874d26de3d39abcd261a50c68ef38b4014e19f92997866dc2ae",
+    "mcp-server/src/atlas_aci/storage/evidence.py": "65d1ce7d43df6d652c640229407ab0211d5bb1f4c766f1e694e2979d516a3525",
+    "mcp-server/src/atlas_aci/providers/python_imports.py": "de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014",
+    "mcp-server/src/atlas_aci/indexing/extraction_cache.py": "08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2",
+    "mcp-server/src/atlas_aci/resolvers/dependencies.py": "0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6",
+    "mcp-server/src/atlas_aci/extractors/rust.py": "28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a",
+    "mcp-server/src/atlas_aci/storage/snapshots.py": "67d3d7c3313b64315fa4bb2388cacdf30aae79b701ff0fc6c1b5c741f75ca616",
+    "mcp-server/src/atlas_aci/server.py": "047f13b2972ebd20947db249c895f3e39a66db8f03a22089e9ce7c6a13b02b85",
+    "mcp-server/src/atlas_aci/tools/view_file.py": "31871a9d7594091a52790feac3a5746039cc8c939c7c3f7116e99a9f1f5e48e3",
+    "mcp-server/src/atlas_aci/tools/graph_query.py": "9b9aa5c5a87655e84c26e5988bc519923ce5b18e0bbc4716a19d64631dff1494",
+    "mcp-server/src/atlas_aci/protocol/__init__.py": "c2c58dae1889144d01a1c3ef229a60047b9e1df757c5a6ef9f79f17dd07dcae4",
+    "mcp-server/src/atlas_aci/protocol/graph.py": "5ae1804d6b864c8f54b61af9335210c94fde13db9452684a2426b1185af0c47f",
+    "mcp-server/src/atlas_aci/protocol/results.py": "4b63e98a842692c33dea28f7023ff4fdb6c09a55a2441666a42bb11da746d904"
+  },
+  "cache_sizes": {
+    "solidus": {
+      "entries": 2519,
+      "bytes": 334683424,
+      "source_snapshot_store": {
+        "packs": {
+          "files": 1,
+          "bytes": 6317973
+        },
+        "manifests": {
+          "files": 1,
+          "bytes": 1202949
+        },
+        "catalog": {
+          "files": 1,
+          "bytes": 68
+        }
+      }
+    },
+    "spree": {
+      "entries": 2358,
+      "bytes": 531906606,
+      "source_snapshot_store": {
+        "packs": {
+          "files": 1,
+          "bytes": 8566123
+        },
+        "manifests": {
+          "files": 1,
+          "bytes": 1137584
+        },
+        "catalog": {
+          "files": 1,
+          "bytes": 68
+        }
+      }
+    }
+  },
+  "prior_failed_probe_seconds_charged": 0.0,
+  "cumulative_probe_seconds_charged": 480.98692737703095,
+  "bundle_sha256": "c5bfe09753acccb2652e1ea730079e3269ed47b2ed58ee6d3ea642fc08ff1ffe"
+}

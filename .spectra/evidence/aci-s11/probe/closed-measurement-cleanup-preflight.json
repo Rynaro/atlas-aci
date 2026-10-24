@@ -1,0 +1,31 @@
+{
+  "authorized_exact_paths": [
+    {
+      "path": "/tmp/aci-s11-probe-inputs/solidus/.atlas",
+      "resolved_path": "/private/tmp/aci-s11-probe-inputs/solidus/.atlas",
+      "allocated_kib": 861712,
+      "generation_id": "bafed76f867acfcb802a6c2912d11a35a58c50895beb112427da6d16e5500ac9",
+      "snapshot_id": "8f1370c93f95ed08090cdfd92da5613a3b523e02ec3ad0c69797c1c68b21c0a3",
+      "pack_sha256": "6fe75a80550254f2408f69b4217d9be6bf55e87dbd118ddff951381e8d48a996",
+      "pack_bytes": 6317973,
+      "source_parent_git": "/tmp/aci-s11-probe-inputs/solidus/.git"
+    },
+    {
+      "path": "/tmp/aci-s11-probe-inputs/spree/.atlas",
+      "resolved_path": "/private/tmp/aci-s11-probe-inputs/spree/.atlas",
+      "allocated_kib": 1373804,
+      "generation_id": "66e3ee3655ddfc7bc937ebbfb15f5dc78a68effbaf1649b0dfd76cc713bd466a",
+      "snapshot_id": "2cb7b453934e8da8531708973ff82e471a01b5e7b68e470895c73e8e9ac8b9f3",
+      "pack_sha256": "dc57d61df9c32a8963fb3c92ea923d2261143e83e9053b8e2909a97daf0e7630",
+      "pack_bytes": 8566123,
+      "source_parent_git": "/tmp/aci-s11-probe-inputs/spree/.git"
+    },
+    {
+      "path": "/tmp/aci-s11-spree-export.jsonl",
+      "bytes": 651845336,
+      "sha256": "fdd923467e5a8a0e572f66f48efe269f775d5334dadfd7a060db23708c6a88d6"
+    }
+  ],
+  "available_bytes": 7577600000,
+  "independent_raw_and_preservation_audit": "ATLAS PASS before removal"
+}
