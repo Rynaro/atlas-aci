@@ -1,0 +1,12 @@
+{
+  "parent_slice": "ACI-S07",
+  "supporting_plan": ".spectra/plans/aci-s07-parser-prerequisite.md",
+  "at": "2026-10-24T14:12:08.501004+00:00",
+  "criteria_changed": false,
+  "additional_paths": [
+    "mcp-server/tests/test_server.py"
+  ],
+  "restriction": "Only _anchor_list_item aliases for registered historical_definitions/historical_references/historical_edges/historical_rationale to existing equivalent item shapes; universal registry-driven cap test/assertions unchanged.",
+  "reason": "Actual remaining-compatibility-first failure: registry extension reaches unhandled historical fixture field; preserve mechanically generated over-cap cases.",
+  "authorization": "Explicit root approval before this helper edit."
+}

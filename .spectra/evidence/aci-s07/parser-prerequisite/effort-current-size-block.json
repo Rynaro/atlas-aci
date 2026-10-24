@@ -1,0 +1,14 @@
+{
+  "active_seconds_conservatively_charged": 4224.587533950806,
+  "supporting_cap_seconds": 28800,
+  "remaining_seconds": 24575.412466049194,
+  "human_wait_charged": false,
+  "probe_seconds_spent": 719.9872848320083,
+  "probe_cap_seconds": 2700,
+  "export_bytes": 651844965,
+  "frozen_100MiB": 104857600,
+  "export_size_readiness": "CURRENT_SIZE_OBSERVATION_NOT_A_NEW_S07_GATE",
+  "source_held": "9af60175b29b30ad47b10c6eb3d592bb19a3e6c09a840375e18415c52da872c0",
+  "initial_orchestrator_interpretation": "FAILED_PENDING_ROOT_REMEDIATION_DISPOSITION",
+  "resolution": "Root disposition after RAMZA lineage audit: S07 plan explicitly requires honest current size, while archived P3 one-time100MiB criterion remains unchanged; no threshold waiver or producer optimization."
+}

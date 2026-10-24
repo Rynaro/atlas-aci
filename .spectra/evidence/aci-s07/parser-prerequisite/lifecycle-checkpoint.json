@@ -1,0 +1,21 @@
+{
+  "module_sha256s": {
+    "mcp-server/src/atlas_aci/codegraph.py": "c033fae89a595f29fd0b73eb3aa3667b543872378a16c4e541da13908e1f629e",
+    "mcp-server/src/atlas_aci/storage/evidence.py": "dd2d15bac29de7fb21771606ad436a544e4b55d41266b53e383906c312d0c5c7"
+  },
+  "functions": {
+    "_read_coverage": "7a402f9388f3140c4b2dfa220b30d34f1e019faf8d1dcb2c38231fee464e06f5",
+    "status": "08aefde7653bb43e4da727f684177bcdc166894861711d3f21b7d2a0ec5f418a",
+    "_run_build": "f46d56ac4f8f9d2fc4380bac1e05ab0b4a0f05a11825dc3e03a14bad8bb31dda",
+    "_historical_projection": "d284f579ccec0fd72c1c682a36f77faca63b6fbee73dc22612c78b022450c2a2",
+    "_retained_closure": "2996e993199aacf1f2ef54d141241a91e255973bf4fb4b24b77d88c6c1e9d32a",
+    "_observation_records": "e39678a6efb76ccab3e81809acf21e731b566d8ebf114ed5b3883e00f5450884",
+    "export_jsonl": "859d420db9ecf120152fbfb44c2ad399a2ee57887642e2df87286acddf1b30a6",
+    "import_jsonl": "2f2310347e060f34ebc3895e1829a6084b6fcb0e7e0be86a212456a27c83e825"
+  },
+  "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/mcp-server/src mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s07_parser_prerequisite.py -q",
+  "exit_code": 0,
+  "result": "10 passed in 0.61s",
+  "source_lint_exit_code": 0,
+  "source_type_exit_code": 0
+}

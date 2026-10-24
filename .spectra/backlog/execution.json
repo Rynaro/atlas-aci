@@ -162,7 +162,7 @@
     {
       "issue": 29,
       "slice_id": "ACI-S07",
-      "status": "PLANNING",
+      "status": "IN_PROGRESS",
       "plan_path": ".spectra/plans/aci-s07.md",
       "receipt_path": ".spectra/state/aci-s07.execution.json",
       "pull_request": null,
@@ -529,5 +529,8 @@
     "For genuine blockers record missing capability and evidence, then select independent eligible work if safe",
     "Final bookkeeping must reconcile actual closures, receipts, merges and queue before COMPLETE"
   ],
-  "queue_note": "queue_frozen preserves original order; remaining queue filters MERGED entries. Root live inventory after PR70: exactly36 open, no new issues."
+  "queue_note": "queue_frozen preserves original order; remaining queue filters MERGED entries. Root live inventory after PR70: exactly36 open, no new issues.",
+  "handoff_notes": [
+    "S23 future release-gate context: S07 current default-profile Spree v2 JSONL measured651,844,965bytes, export peakRSS1,983,594,496bytes; see .spectra/evidence/aci-s07/parser-prerequisite/fresh-probe-attempt3/export-size-attribution.json. Historical P3 Ruby-only measurement/84.63%/100MiB evidence remains unchanged and is not a current-format saving or like-for-like comparison. No release thresholds amended."
+  ]
 }

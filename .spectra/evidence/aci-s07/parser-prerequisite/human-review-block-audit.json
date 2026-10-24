@@ -15,6 +15,10 @@
   "goal_status": "active",
   "independent_eligible_work": false,
   "objective_complete": false,
-  "next_action": "Preserve authorized work without behavior changes, then mark goal blocked if required human review remains pending. Do not mark complete or paused.",
-  "pending_goal_status_transition": "blocked after preserving current incomplete work in a local checkpoint, unless actual review arrives first"
+  "next_action": "Continue approved implementation. No repeated human review of this same scoped correction is required.",
+  "pending_goal_status_transition": "blocked after preserving current incomplete work in a local checkpoint, unless actual review arrives first",
+  "blocking_condition_resolved": true,
+  "resolved_by": "Explicit user approval of scoped correction",
+  "approval_artifact": ".spectra/evidence/aci-s07/parser-prerequisite/human-review-approval.json",
+  "goal_automation_status": "blocked according to get_goal; resume is controlled by user"
 }

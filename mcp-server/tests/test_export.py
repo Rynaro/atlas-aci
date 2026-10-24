@@ -42,7 +42,7 @@ def _forge_export(real_export_path: Path, forged_path: Path, mutate_body) -> Non
     header = json.loads(lines[0])
     body = [json.loads(line) for line in lines[1:]]
     before = json.dumps(body, sort_keys=True)
-    if header.get("format") == evidence.FORMAT:
+    if header.get("format") in {evidence.FORMAT, evidence.OBSERVATION_FORMAT}:
         views = []
         pairs = []
         names = {"symbols": "symbol", "edges": "edge", "rationale": "rationale"}
@@ -129,8 +129,16 @@ def test_canonical_jsonl_shape(tmp_path: Path) -> None:
     assert isinstance(header["content_hash"], str) and len(header["content_hash"]) == 64
 
     body_types = {json.loads(line)["type"] for line in lines[1:]}
-    assert header["format"] == "atlas-evidence.v1"
-    assert body_types == {"entity", "occurrence", "producer", "evidence", "assertion", "projection"}
+    assert header["format"] == "atlas-evidence.v2"
+    assert body_types == {
+        "entity",
+        "occurrence",
+        "producer",
+        "evidence",
+        "assertion",
+        "projection",
+        "observation",
+    }
 
 
 def test_no_float_fields_pass_silently(tmp_path: Path) -> None:

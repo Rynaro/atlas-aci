@@ -1,0 +1,16 @@
+{
+  "parent_slice": "ACI-S07",
+  "supporting_plan": ".spectra/plans/aci-s07-parser-prerequisite.md",
+  "at": "2026-10-24T14:04:44.223044+00:00",
+  "criteria_changed": false,
+  "reason": "ATLAS actual c033fae8 production dispatcher cap2 exposed cap+1 historical lists without central truncation metadata; four real red cases preserved.",
+  "additional_paths": [
+    "mcp-server/src/atlas_aci/server.py",
+    "mcp-server/tests/test_server.py"
+  ],
+  "restriction": "Server registry entries only: historical top-level fields and nested historical_edges candidates for callers/subclasses; test_server matching registry expectations only. Preserve all central bound algorithms.",
+  "evidence": [
+    ".spectra/evidence/aci-s07/parser-prerequisite/history-bounds-red.log"
+  ],
+  "authorization": "Explicit root approval for existing response-bound contract preservation."
+}

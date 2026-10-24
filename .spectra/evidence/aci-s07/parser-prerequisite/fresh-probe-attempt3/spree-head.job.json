@@ -1,0 +1,16 @@
+{
+  "name": "spree-head",
+  "command": [
+    "git",
+    "rev-parse",
+    "HEAD"
+  ],
+  "cwd": "/tmp/aci-s07-approved3-probe-inputs/spree",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 0.011880833000759594,
+  "elapsed_total": 112.08462824999879,
+  "peak_rss_bytes": 4358144,
+  "stdout": ".spectra/evidence/aci-s07/parser-prerequisite/fresh-probe-attempt3/spree-head.stdout.log",
+  "stderr": ".spectra/evidence/aci-s07/parser-prerequisite/fresh-probe-attempt3/spree-head.stderr.log"
+}

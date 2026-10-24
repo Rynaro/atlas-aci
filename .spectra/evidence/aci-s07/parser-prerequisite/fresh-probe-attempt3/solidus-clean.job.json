@@ -1,0 +1,17 @@
+{
+  "name": "solidus-clean",
+  "command": [
+    "git",
+    "status",
+    "--porcelain",
+    "--untracked-files=no"
+  ],
+  "cwd": "/tmp/aci-s07-approved3-probe-inputs/solidus",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 0.08663687499938533,
+  "elapsed_total": 0.5295395410066703,
+  "peak_rss_bytes": 7536640,
+  "stdout": ".spectra/evidence/aci-s07/parser-prerequisite/fresh-probe-attempt3/solidus-clean.stdout.log",
+  "stderr": ".spectra/evidence/aci-s07/parser-prerequisite/fresh-probe-attempt3/solidus-clean.stderr.log"
+}

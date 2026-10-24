@@ -15,7 +15,29 @@
     "mcp-server/tests/test_export.py",
     "mcp-server/tests/test_cli_export_import.py",
     ".github/workflows/harden-gate.yml",
-    "scripts/test-verify-probe-verdict.sh"
+    "scripts/test-verify-probe-verdict.sh",
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/src/atlas_aci/storage/evidence.py",
+    "mcp-server/tests/slices/test_s07_parser_prerequisite.py",
+    "mcp-server/tests/fixtures/s07/parser_prerequisite/*",
+    "mcp-server/tests/slices/test_s04_contract.py",
+    "mcp-server/tests/slices/test_s07_records.py",
+    "mcp-server/tests/slices/test_s07_contract.py",
+    "mcp-server/tests/test_export.py",
+    "mcp-server/tests/test_schema_epoch.py",
+    "README.md",
+    ".spectra/plans/aci-s07-parser-prerequisite.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/evidence/aci-s07/parser-prerequisite/*",
+    ".spectra/changes/aci-s07-parser-prerequisite/*",
+    "mcp-server/src/atlas_aci/server.py",
+    "mcp-server/tests/test_server.py",
+    "mcp-server/tests/test_server.py",
+    "mcp-server/tests/slices/test_s06_contract.py",
+    "scripts/test-verify-probe-verdict.sh",
+    ".spectra/changes/aci-s07-probe/aci-s07-probe-lpa-vs-louvain.md",
+    ".spectra/changes/aci-s07-probe/aci-s07-probe-lpa-vs-louvain.json",
+    ".spectra/changes/aci-s07-probe/probe-graphs.json.gz"
   ],
   "output_digests": {},
   "status": "IN_PROGRESS",
@@ -27,9 +49,10 @@
       "working_directory": ".",
       "exit_code": 0,
       "evidence": [
-        ".spectra/evidence/aci-s07/final-lifecycle-rationale-cleanup.log"
+        ".spectra/evidence/aci-s07/parser-prerequisite/vivi-module-pass2-full.log.gz",
+        ".spectra/evidence/aci-s07/parser-prerequisite/vivi-module-pass2-result.json"
       ],
-      "observation": "55 actual tests passed; uncommitted stable product checkpointa7696a05, output-commit verification still pending."
+      "observation": "Final9af source, protected pass\u00b2:88tests/run, both exits0, tamper0; exact output-commit run pending."
     },
     {
       "ac_id": "AC-S07-002",
@@ -38,9 +61,10 @@
       "working_directory": ".",
       "exit_code": 0,
       "evidence": [
-        ".spectra/evidence/aci-s07/final-lifecycle-rationale-cleanup.log"
+        ".spectra/evidence/aci-s07/parser-prerequisite/vivi-module-pass2-full.log.gz",
+        ".spectra/evidence/aci-s07/parser-prerequisite/vivi-module-pass2-result.json"
       ],
-      "observation": "55 actual tests passed; uncommitted stable product checkpointa7696a05, output-commit verification still pending."
+      "observation": "Final9af source, protected pass\u00b2:88tests/run, both exits0, tamper0; exact output-commit run pending."
     },
     {
       "ac_id": "AC-S07-003",
@@ -49,9 +73,10 @@
       "working_directory": ".",
       "exit_code": 0,
       "evidence": [
-        ".spectra/evidence/aci-s07/final-lifecycle-rationale-cleanup.log"
+        ".spectra/evidence/aci-s07/parser-prerequisite/vivi-module-pass2-full.log.gz",
+        ".spectra/evidence/aci-s07/parser-prerequisite/vivi-module-pass2-result.json"
       ],
-      "observation": "55 actual tests passed; uncommitted stable product checkpointa7696a05, output-commit verification still pending."
+      "observation": "Final9af source, protected pass\u00b2:88tests/run, both exits0, tamper0; exact output-commit run pending."
     },
     {
       "ac_id": "AC-S07-004",
@@ -60,9 +85,10 @@
       "working_directory": ".",
       "exit_code": 0,
       "evidence": [
-        ".spectra/evidence/aci-s07/final-lifecycle-rationale-cleanup.log"
+        ".spectra/evidence/aci-s07/parser-prerequisite/vivi-module-pass2-full.log.gz",
+        ".spectra/evidence/aci-s07/parser-prerequisite/vivi-module-pass2-result.json"
       ],
-      "observation": "55 actual tests passed; uncommitted stable product checkpointa7696a05, output-commit verification still pending."
+      "observation": "Final9af source, protected pass\u00b2:88tests/run, both exits0, tamper0; exact output-commit run pending."
     },
     {
       "ac_id": "AC-S07-005",
@@ -71,9 +97,10 @@
       "working_directory": ".",
       "exit_code": 0,
       "evidence": [
-        ".spectra/evidence/aci-s07/final-lifecycle-rationale-cleanup.log"
+        ".spectra/evidence/aci-s07/parser-prerequisite/vivi-module-pass2-full.log.gz",
+        ".spectra/evidence/aci-s07/parser-prerequisite/vivi-module-pass2-result.json"
       ],
-      "observation": "55 actual tests passed; uncommitted stable product checkpointa7696a05, output-commit verification still pending."
+      "observation": "Final9af source, protected pass\u00b2:88tests/run, both exits0, tamper0; exact output-commit run pending."
     },
     {
       "ac_id": "AC-S07-006",
@@ -82,9 +109,10 @@
       "working_directory": ".",
       "exit_code": 0,
       "evidence": [
-        ".spectra/evidence/aci-s07/final-lifecycle-rationale-cleanup.log"
+        ".spectra/evidence/aci-s07/parser-prerequisite/vivi-module-pass2-full.log.gz",
+        ".spectra/evidence/aci-s07/parser-prerequisite/vivi-module-pass2-result.json"
       ],
-      "observation": "55 actual tests passed; uncommitted stable product checkpointa7696a05, output-commit verification still pending."
+      "observation": "Final9af source, protected pass\u00b2:88tests/run, both exits0, tamper0; exact output-commit run pending."
     },
     {
       "ac_id": "AC-S07-RUN-02",
@@ -95,37 +123,181 @@
         ".spectra/evidence/aci-s07/interrupted-execution.json",
         ".spectra/evidence/aci-s07/resume-identity.json"
       ]
+    },
+    {
+      "ac_id": "AC-S07-PARSER-001",
+      "command": "mcp-server/.venv/bin/python scripts/verify-probe-verdict.py .spectra/changes/aci-s07-probe/aci-s07-probe-lpa-vs-louvain.json",
+      "working_directory": ".",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s07/parser-prerequisite/vivi-module-pass2-result.json",
+        ".spectra/evidence/aci-s07/parser-prerequisite/fresh-probe-attempt3/verifier.log.gz",
+        ".spectra/evidence/aci-s07/parser-prerequisite/fresh-probe-attempt3/assembly-provenance.json"
+      ],
+      "observation": "Final protected tests and actual unchanged same-pin/default probe PASS; supporting plan criteria are additional to original six."
+    },
+    {
+      "ac_id": "AC-S07-PARSER-002",
+      "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/mcp-server/src mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s07_*.py -q",
+      "working_directory": ".",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s07/parser-prerequisite/vivi-module-pass2-result.json",
+        ".spectra/evidence/aci-s07/parser-prerequisite/fresh-probe-attempt3/verifier.log.gz",
+        ".spectra/evidence/aci-s07/parser-prerequisite/fresh-probe-attempt3/assembly-provenance.json"
+      ],
+      "observation": "Final protected tests and actual unchanged same-pin/default probe PASS; supporting plan criteria are additional to original six."
+    },
+    {
+      "ac_id": "AC-S07-PARSER-003",
+      "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/mcp-server/src mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s07_*.py -q",
+      "working_directory": ".",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s07/parser-prerequisite/vivi-module-pass2-result.json",
+        ".spectra/evidence/aci-s07/parser-prerequisite/fresh-probe-attempt3/verifier.log.gz",
+        ".spectra/evidence/aci-s07/parser-prerequisite/fresh-probe-attempt3/assembly-provenance.json"
+      ],
+      "observation": "Final protected tests and actual unchanged same-pin/default probe PASS; supporting plan criteria are additional to original six."
+    },
+    {
+      "ac_id": "AC-S07-PARSER-004",
+      "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/mcp-server/src mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s07_*.py -q",
+      "working_directory": ".",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s07/parser-prerequisite/vivi-module-pass2-result.json",
+        ".spectra/evidence/aci-s07/parser-prerequisite/fresh-probe-attempt3/verifier.log.gz",
+        ".spectra/evidence/aci-s07/parser-prerequisite/fresh-probe-attempt3/assembly-provenance.json"
+      ],
+      "observation": "Final protected tests and actual unchanged same-pin/default probe PASS; supporting plan criteria are additional to original six."
+    },
+    {
+      "ac_id": "AC-S07-PARSER-005",
+      "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/mcp-server/src mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s07_*.py -q",
+      "working_directory": ".",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s07/parser-prerequisite/vivi-module-pass2-result.json",
+        ".spectra/evidence/aci-s07/parser-prerequisite/fresh-probe-attempt3/verifier.log.gz",
+        ".spectra/evidence/aci-s07/parser-prerequisite/fresh-probe-attempt3/assembly-provenance.json"
+      ],
+      "observation": "Final protected tests and actual unchanged same-pin/default probe PASS; supporting plan criteria are additional to original six."
+    },
+    {
+      "ac_id": "AC-S07-PARSER-006",
+      "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/mcp-server/src mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s07_*.py -q",
+      "working_directory": ".",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s07/parser-prerequisite/vivi-module-pass2-result.json",
+        ".spectra/evidence/aci-s07/parser-prerequisite/fresh-probe-attempt3/verifier.log.gz",
+        ".spectra/evidence/aci-s07/parser-prerequisite/fresh-probe-attempt3/assembly-provenance.json"
+      ],
+      "observation": "Final protected tests and actual unchanged same-pin/default probe PASS; supporting plan criteria are additional to original six."
+    },
+    {
+      "ac_id": "AC-S07-PARSER-007",
+      "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/mcp-server/src mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s07_*.py -q",
+      "working_directory": ".",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s07/parser-prerequisite/vivi-module-pass2-result.json",
+        ".spectra/evidence/aci-s07/parser-prerequisite/fresh-probe-attempt3/verifier.log.gz",
+        ".spectra/evidence/aci-s07/parser-prerequisite/fresh-probe-attempt3/assembly-provenance.json"
+      ],
+      "observation": "Final protected tests and actual unchanged same-pin/default probe PASS; supporting plan criteria are additional to original six."
+    },
+    {
+      "ac_id": "AC-S07-PARSER-008",
+      "command": "mcp-server/.venv/bin/python scripts/verify-probe-verdict.py .spectra/changes/aci-s07-probe/aci-s07-probe-lpa-vs-louvain.json",
+      "working_directory": ".",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s07/parser-prerequisite/vivi-module-pass2-result.json",
+        ".spectra/evidence/aci-s07/parser-prerequisite/fresh-probe-attempt3/verifier.log.gz",
+        ".spectra/evidence/aci-s07/parser-prerequisite/fresh-probe-attempt3/assembly-provenance.json"
+      ],
+      "observation": "Final protected tests and actual unchanged same-pin/default probe PASS; supporting plan criteria are additional to original six."
     }
   ],
-  "scope_amendments": [],
+  "scope_amendments": [
+    ".spectra/changes/aci-s07-parser-prerequisite/scope-amendment.json",
+    ".spectra/changes/aci-s07-parser-prerequisite/path-amendment-02.json",
+    ".spectra/changes/aci-s07-parser-prerequisite/path-amendment-03.json",
+    ".spectra/changes/aci-s07-parser-prerequisite/path-amendment-04.json",
+    ".spectra/changes/aci-s07-parser-prerequisite/path-amendment-05.json",
+    ".spectra/changes/aci-s07-parser-prerequisite/probe-output-scope.json"
+  ],
   "checks": {
     "full_suite": {
       "exit_code": 0,
-      "result": "375 passed, no skips",
+      "result": "408 passed, zero skips, Docker enabled",
       "evidence": [
-        ".spectra/evidence/aci-s07/full-suite-corrected.log",
-        ".spectra/evidence/aci-s07/full-suite-corrected.exit"
+        ".spectra/evidence/aci-s07/parser-prerequisite/full-suite-module-final.log.gz",
+        ".spectra/evidence/aci-s07/parser-prerequisite/full-suite-module-final.exit"
       ]
     },
     "docker": {
       "exit_code": 0,
-      "result": "18 passed, no skips; detailed UID10001, EROFS and MCP wire proof",
       "evidence": [
-        ".spectra/evidence/aci-s07/docker-evidence-focused.log",
-        ".spectra/evidence/aci-s07/docker-integration.json"
+        ".spectra/evidence/aci-s07/parser-prerequisite/docker-module-final/docker-integration.json"
       ]
     },
-    "static": ".spectra/evidence/aci-s07/static-checks.json",
-    "pass2": ".spectra/evidence/aci-s07/vivi-pass2-result.json",
+    "static": ".spectra/evidence/aci-s07/parser-prerequisite/static-module-final.json",
+    "pass2": ".spectra/evidence/aci-s07/parser-prerequisite/vivi-module-pass2-result.json",
     "fresh_probe": {
-      "exit_code": 1,
-      "status": "BLOCKED_PENDING_PLAN_DECISION",
-      "reason": "Default full-tree exact pinned Solidus build rejects real recovered SCSS syntax error; no fresh graph/PASS produced. Scratch SCSS candidate repairs first error but complete eligible scans still contain errors. No subset or production changes authorized.",
+      "exit_code": 0,
+      "status": "PASS",
       "evidence": [
-        ".spectra/evidence/aci-s07/probe/solidus-export.job.json",
-        ".spectra/evidence/aci-s07/probe/solidus-export.stderr.log",
-        ".spectra/evidence/aci-s07/grammar-qualification/scan-summary.json"
+        ".spectra/evidence/aci-s07/parser-prerequisite/fresh-probe-attempt3/verifier.log.gz",
+        ".spectra/changes/aci-s07-probe/aci-s07-probe-lpa-vs-louvain.json"
+      ]
+    },
+    "guard": {
+      "exit_code": 0,
+      "passed": 27,
+      "failed": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s07/parser-prerequisite/probe-selftest-final.log.gz",
+        ".spectra/evidence/aci-s07/parser-prerequisite/probe-selftest-final.exit"
       ]
     }
-  }
+  },
+  "supporting_plan": {
+    "path": ".spectra/plans/aci-s07-parser-prerequisite.md",
+    "criteria_sha256": "b4c2ff493ecbe88a2841a907514c60cae76c23756842282418bd9a90301a51ae",
+    "confidence": 82.5,
+    "confidence_verdict": "VALIDATE",
+    "human_review_evidence": ".spectra/evidence/aci-s07/parser-prerequisite/human-review-approval.json",
+    "status": "IN_PROGRESS"
+  },
+  "limitations": [
+    "Current Spree JSONL651844965bytes; size-export peakRSS1983594496bytes; historical P3 profile/measurement unchanged, no new S07 ceiling.",
+    "Failed syntax files remain observation-only and expose partial coverage; no compiler semantics or new grammar."
+  ],
+  "independent_reviews": [
+    {
+      "reviewer": "ATLAS (approval relayed by root)",
+      "scope": "Pure canonical record core; independent7tests passed, early checkpoint only"
+    },
+    {
+      "reviewer": "ATLAS /root/s15_preflight",
+      "scope": "Conservative imports, strict exchange completeness, legacy proof/path controls, lifecycle and current/history source-coherence, response bounds, source owner fixes and9af final producer/static/full Docker evidence; actual read-only scoped approvals relayed by root"
+    },
+    {
+      "reviewer": "ATLAS /root/s15_preflight",
+      "scope": "Final fresh probe: unchanged verifier0/bothPASS; all4877 path/hash observations/all20partitions, exact pins/clean source, no failed-file active facts; size-lineage audit confirms no new S07 ceiling",
+      "evidence": [
+        ".spectra/evidence/aci-s07/parser-prerequisite/fresh-probe-attempt3/assembly-provenance.json"
+      ]
+    },
+    {
+      "reviewer": "ATLAS /root/s15_preflight",
+      "scope": "Final guard fixtures and exact3 CI selectors; independent27PASS/true0/5.532s with Qdivergence above tolerance and exactLPA replay",
+      "evidence": [
+        ".spectra/evidence/aci-s07/parser-prerequisite/final-guard-and-review.json"
+      ]
+    }
+  ]
 }

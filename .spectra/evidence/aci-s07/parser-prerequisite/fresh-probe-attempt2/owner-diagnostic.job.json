@@ -1,0 +1,11 @@
+{
+  "command": [
+    "/usr/bin/time",
+    "-l",
+    "mcp-server/.venv/bin/python",
+    ".spectra/evidence/aci-s07/parser-prerequisite/fresh-probe-attempt2/diagnose-all-owners.py"
+  ],
+  "exit_code": 1,
+  "elapsed_seconds": 99.34119099999953,
+  "purpose": "bounded diagnostic, not a measurement/PASS"
+}

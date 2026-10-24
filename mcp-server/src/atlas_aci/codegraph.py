@@ -154,7 +154,11 @@ LANG_BY_EXT: dict[str, str] = {
 QUERIES: dict[str, str] = {
     "ruby": """
         (class name: (constant) @name) @def.class
+        (class name: (scope_resolution) @name
+            (#match? @name "^[A-Z][A-Za-z0-9_]*(::[A-Z][A-Za-z0-9_]*)+$")) @def.class
         (module name: (constant) @name) @def.module
+        (module name: (scope_resolution) @name
+            (#match? @name "^[A-Z][A-Za-z0-9_]*(::[A-Z][A-Za-z0-9_]*)+$")) @def.module
         (method name: (identifier) @name) @def.method
         (method name: (setter) @name) @def.method
         (method name: (operator) @name) @def.method
@@ -1197,7 +1201,7 @@ class CodeGraph:
     def _observation_counts(files: list[dict[str, Any]]) -> dict[str, int]:
         return {
             state: sum(f["state"] == state for f in files)
-            for state in ("indexed", "unsupported", "disabled")
+            for state in ("indexed", "unsupported", "disabled", "failed")
         }
 
     def _publication_base(self) -> tuple[str | None, str | None]:
@@ -1467,7 +1471,7 @@ class CodeGraph:
             ):
                 raise ValueError("Invalid status metadata")
             if not (
-                data["format"] == "atlas-coverage.v1"
+                data["format"] in {"atlas-coverage.v1", "atlas-coverage.v2"}
                 and data["generation_id"] == reader.generation_id
             ):
                 raise ValueError("Invalid status metadata")
@@ -1478,12 +1482,23 @@ class CodeGraph:
                 and data["producer"] == inputs["producer"]
             ):
                 raise ValueError("Invalid status metadata")
-            if not (self._valid_observed_files(data["files"], failed=False)):
+            if not (
+                self._valid_observed_files(
+                    data["files"], failed=data["format"] == "atlas-coverage.v2"
+                )
+            ):
                 raise ValueError("Invalid status metadata")
-            if not (data["counts"] == self._observation_counts(data["files"])):
+            expected_counts = self._observation_counts(data["files"])
+            if data["format"] == "atlas-coverage.v1":
+                expected_counts.pop("failed")
+            if not (data["counts"] == expected_counts):
                 raise ValueError("Invalid status metadata")
             if not (
-                {f["path"]: f["source_sha256"] for f in data["files"] if f["state"] == "indexed"}
+                {
+                    f["path"]: f["source_sha256"]
+                    for f in data["files"]
+                    if f["state"] == "indexed" or data["format"] == "atlas-coverage.v2"
+                }
                 == inputs["source_hashes"]
             ):
                 raise ValueError("Invalid status metadata")
@@ -1504,6 +1519,7 @@ class CodeGraph:
         inputs: dict[str, Any] = {}
         coverage = None
         fact_paths: set[str] = set()
+        published = []
         try:
             with self.reader_lease() as reader:
                 generation = reader.generation_id
@@ -1519,6 +1535,7 @@ class CodeGraph:
                     "SELECT value FROM manifest WHERE key='diagnostic_publication_token'"
                 ).fetchone()
                 token = row[0] if row and re.fullmatch(r"[0-9a-f]{64}", row[0]) else None
+                published = reader._observation_records(reader.db)
                 if inputs["kind"] == "build" and token is not None:
                     coverage = self._read_coverage(reader, inputs)
                 attempt, problem = self._read_attempt()
@@ -1561,6 +1578,63 @@ class CodeGraph:
             }
             for path, source_hash in sorted(fact_hashes.items())
         ]
+        if published:
+            by_id = {r["id"]: r for r in published if r["type"] == "history"}
+            files = []
+            for item in (r for r in published if r["type"] == "observation"):
+                history = by_id.get(item["historical_id"])
+                hashes = (
+                    sorted(
+                        {
+                            r["source_sha256"]
+                            for r in history["records"]
+                            if r["type"] == "evidence"
+                            and r["source_sha256"] is not None
+                            and any(
+                                o["type"] == "occurrence"
+                                and o["path"] == item["path"]
+                                and o["id"] == r["occurrence_id"]
+                                for o in history["records"]
+                            )
+                        }
+                    )
+                    if history
+                    else ([item["observed_source_sha256"]] if item["state"] == "indexed" else [])
+                )
+                retained_semantics = history is not None and any(
+                    r["type"] == "projection"
+                    and r["row"].get("source_path" if r["table"] == "edges" else "path")
+                    == item["path"]
+                    for r in history["records"]
+                )
+                files.append(
+                    {
+                        "path": item["path"],
+                        "fact_source_sha256": hashes[0] if len(hashes) == 1 else None,
+                        "fact_source_sha256s": hashes,
+                        "observed_source_sha256": item["observed_source_sha256"],
+                        "failed_source_sha256": item["observed_source_sha256"]
+                        if item["state"] == "failed"
+                        else None,
+                        "retained_facts": retained_semantics or item["path"] in fact_paths,
+                        "stale": bool(retained_semantics)
+                        if history
+                        else (False if coverage else None),
+                        "refresh_verification": "observed_failed"
+                        if item["state"] == "failed"
+                        else "verified_unchanged"
+                        if coverage
+                        else "artifact_only",
+                        "extraction_state": item["state"],
+                        "reason": item["reason"],
+                        "location": item["location"],
+                    }
+                )
+            files.sort(key=lambda item: item["path"])
+            if coverage and any(
+                r["type"] == "observation" and r["state"] == "failed" for r in published
+            ):
+                state, reason = "partial", "observed_complete_extraction_partial"
         observed = {f["path"]: f for f in attempt["observation"]["files"]} if attempt else {}
         if applicability == "matching":
             state, reason = "failed", "refresh_failed_observed_prefix"
@@ -1616,7 +1690,10 @@ class CodeGraph:
                     else (coverage["counts"] if coverage and applicability == "mismatch" else None)
                 ),
                 "excluded_count": None,
-                "total_count": None,
+                "total_count": len(files)
+                if coverage and coverage["format"] == "atlas-coverage.v2"
+                else None,
+                "stale_count": sum(item["stale"] is True for item in files),
                 "enumeration": "observed_prefix"
                 if applicability == "matching"
                 else ("complete" if coverage else "unknown"),
@@ -1773,6 +1850,7 @@ class CodeGraph:
             inherited = False
             self._proof_predecessor_records = []
             self._proof_predecessor_history = {}
+            self._proof_predecessor_observations = {}
             if self.db_path.exists():
                 previous = sqlite3.connect(self.db_path.as_uri() + "?mode=ro", uri=True)
                 previous.row_factory = sqlite3.Row
@@ -1781,6 +1859,11 @@ class CodeGraph:
                         self._proof_predecessor_records = list(
                             ev.records(previous)
                         ) + self._projection_records(previous)
+                        self._proof_predecessor_observations = {
+                            r["path"]: r
+                            for r in self._observation_records(previous)
+                            if r["type"] == "observation"
+                        }
                         self._proof_predecessor_history = {
                             r["path"]: r
                             for r in self._observation_records(previous)
@@ -1806,6 +1889,9 @@ class CodeGraph:
                 ) as legacy:
                     legacy.row_factory = sqlite3.Row
                     self._convert_legacy_into(conn, legacy)
+                self._proof_predecessor_records = list(ev.records(conn)) + self._projection_records(
+                    conn
+                )
                 inherited = False
             stats = self._run_build(conn, get_parser, since=since if inherited else None)
             if self._generation_data(conn) is None:
@@ -1829,7 +1915,13 @@ class CodeGraph:
         self._capture_producer = ev.producer(base_inputs["producer"])
         previous_generation = self._generation_data(conn) if since is not None else None
         previous_inputs = previous_generation[0] if previous_generation is not None else {}
-        previous_base = {k: v for k, v in previous_inputs.items() if k != "source_hashes"}
+        previous_base = {
+            k: v
+            for k, v in previous_inputs.items()
+            if k not in {"source_hashes", "observation_digest"}
+        }
+        if previous_base.get("format") == "atlas-generation.v3":
+            previous_base["format"] = base_inputs["format"]
         incremental = since is not None and previous_base == base_inputs
         previous_hashes = previous_inputs.get("source_hashes", {}) if incremental else {}
         source_hashes: dict[str, str] = {}
@@ -1877,18 +1969,8 @@ class CodeGraph:
                     "location": None,
                 }
                 self._build_observation["files"].append(observation)
-            if lang is not None and lang not in QUERIES:
-                observation.update(state="unsupported", reason="no_extraction_query")
-                # Recognized extension, no query support (D5-Q2) — report,
-                # don't silently no-op.
-                unsupported_skipped[lang] = unsupported_skipped.get(lang, 0) + 1
+            if lang is None:
                 continue
-
-            if not lang or lang not in self.langs or lang not in QUERIES:
-                if lang is not None:
-                    observation.update(state="disabled", reason="language_disabled")
-                continue
-
             try:
                 stat = path.stat()
                 mtime_ns, size = stat.st_mtime_ns, stat.st_size
@@ -1900,13 +1982,37 @@ class CodeGraph:
             source_hash = hashlib.sha256(source).hexdigest()
             source_hashes[rel] = source_hash
             observation["source_sha256"] = source_hash
+            if lang not in QUERIES:
+                observation.update(state="unsupported", reason="no_extraction_query")
+                unsupported_skipped[lang] = unsupported_skipped.get(lang, 0) + 1
+                observed_records.append(
+                    ev.observation(
+                        rel, lang, source_hash, "unsupported", "no_extraction_query", None, None
+                    )
+                )
+                continue
+            if lang not in self.langs:
+                observation.update(state="disabled", reason="language_disabled")
+                observed_records.append(
+                    ev.observation(
+                        rel, lang, source_hash, "disabled", "language_disabled", None, None
+                    )
+                )
+                continue
             if incremental:
                 seen_paths.add(rel)
-                if rel in stored_files and previous_hashes.get(rel) == source_hash:
+                if (
+                    rel in stored_files
+                    and previous_hashes.get(rel) == source_hash
+                    and self._proof_predecessor_observations.get(rel, {}).get("state") == "indexed"
+                ):
                     conn.execute(
                         "UPDATE files SET mtime_ns=?, size=? WHERE path=?", (mtime_ns, size, rel)
                     )
                     files_skipped += 1
+                    observed_records.append(
+                        ev.observation(rel, lang, source_hash, "indexed", None, None, None)
+                    )
                     continue
             try:
                 parser = get_parser(cast("SupportedLanguage", lang))
@@ -2152,7 +2258,7 @@ class CodeGraph:
             },
         )
         coverage = {
-            "format": "atlas-coverage.v1",
+            "format": "atlas-coverage.v2",
             "generation_id": generation_id,
             "configuration": base_inputs["configuration"],
             "producer": base_inputs["producer"],
@@ -2313,7 +2419,29 @@ class CodeGraph:
         self._canonical_imports = []
         consumed_hash = hashlib.sha256(source).hexdigest()
 
+        def unsupported_source_owner(node):
+            if lang != "ruby":
+                return False
+            for ancestor in self._ancestors(node.parent):
+                name = ancestor.child_by_field_name("name")
+                if (
+                    ancestor.type in {"class", "module"}
+                    and name is not None
+                    and name.type == "scope_resolution"
+                    and ancestor.id not in entities
+                ):
+                    return True
+            return False
+
+        def reference_context(node):
+            context = self._binding_context(lang, source, node, rel_path)
+            if unsupported_source_owner(node):
+                context["unsupported_source_owner"] = True
+            return context
+
         def owner(node):
+            if unsupported_source_owner(node):
+                return file_entity["id"]
             parent = node.parent
             while parent is not None:
                 if parent.id in entities:
@@ -2397,9 +2525,7 @@ class CodeGraph:
                             occurrence_id=occurrence_id,
                             evidence_id=proof_id,
                             qualified=True,
-                            binding=json.dumps(
-                                self._binding_context(lang, source, node, rel_path), sort_keys=True
-                            ),
+                            binding=json.dumps(reference_context(node), sort_keys=True),
                         )
                     )
             elif assign_cap is not None:
@@ -2457,7 +2583,7 @@ class CodeGraph:
                             qualifier_name=qualifier_name,
                             binding=json.dumps(
                                 {
-                                    **self._binding_context(lang, source, node, rel_path),
+                                    **reference_context(node),
                                     "receiver": self._node_text(source, caps["receiver"][0]).strip()
                                     if caps.get("receiver")
                                     else None,
@@ -3162,7 +3288,9 @@ class CodeGraph:
             qualified = False
             reason = None
             lang = ref["lang"]
-            if lang not in {"python", "ruby", "javascript", "typescript"}:
+            if context.get("unsupported_source_owner"):
+                candidates, reason = [], "unsupported_source_owner"
+            elif lang not in {"python", "ruby", "javascript", "typescript"}:
                 candidates = symbols.get((lang, ref["callee_name"]), [])
             elif context.get("unsupported"):
                 candidates, reason = [], "unsupported_scope"
@@ -3285,7 +3413,19 @@ class CodeGraph:
                 )
             source_name, source_kind = context.get("source_name"), context.get("source_kind")
             if lang not in {"python", "ruby", "javascript", "typescript"}:
-                source_name, source_kind = self._enclosing_symbol(conn, ref["path"], ref["line"])
+                if ref["source_entity_id"]:
+                    # The actual captured AST owner is authoritative. Same-line
+                    # sibling declarations are not enclosing scopes.
+                    source_entity = ev.get(conn, "entity", ref["source_entity_id"])
+                    source_name, source_kind = (
+                        (None, None)
+                        if source_entity["kind"] == "file"
+                        else (source_entity["name"], source_entity["kind"])
+                    )
+                else:
+                    source_name, source_kind = self._enclosing_symbol(
+                        conn, ref["path"], ref["line"]
+                    )
             assertion_id = None
             if ref["source_entity_id"] and ref["evidence_id"]:
                 assertion = ev.assertion(
@@ -3372,6 +3512,57 @@ class CodeGraph:
 
     # ---- Queries ----
 
+    def _historical_projection(self, table, predicate):
+        """History is separately presented; never enters active query/analysis SQL."""
+        metadata = self._observation_records(self.db)
+        observations = {r["path"]: r for r in metadata if r["type"] == "observation"}
+        result = {}
+        for history in (r for r in metadata if r["type"] == "history"):
+            records = {r["id"]: r for r in history["records"]}
+            for projection in history["records"]:
+                if (
+                    projection["type"] != "projection"
+                    or projection["table"] != table
+                    or not predicate(projection["row"])
+                ):
+                    continue
+                row, links = projection["row"], projection["links"]
+                assertion = records.get(links.get("assertion_id"))
+                occurrence_id = links.get("occurrence_id")
+                if assertion:
+                    proof = records[assertion["evidence_id"]]
+                    occurrence_id = proof["occurrence_id"]
+                proofs = [
+                    r
+                    for r in records.values()
+                    if r["type"] == "evidence" and r["occurrence_id"] == occurrence_id
+                ]
+                occurrence = records.get(occurrence_id)
+                path = occurrence["path"] if occurrence else row.get("path", history["path"])
+                observed = observations.get(path)
+                freshness = {
+                    "state": "stale",
+                    "retained_for_failed_path": history["path"],
+                    "fact_source_sha256": occurrence["source_sha256"] if occurrence else None,
+                    "observed_source_sha256": observed["observed_source_sha256"]
+                    if observed
+                    else None,
+                    "producer_ids": sorted({r["producer_id"] for r in proofs}),
+                    "evidence_ids": sorted(r["id"] for r in proofs),
+                    "occurrence_id": occurrence_id,
+                }
+                shaped = (
+                    self._edge_row_to_dict(row)
+                    if table == "edges"
+                    else {k: v for k, v in row.items() if k != "binding"}
+                )
+                result[(projection["id"], history["path"])] = dict(shaped, freshness=freshness)
+        return [result[key] for key in sorted(result)[: self.query_limit]]
+
+    def _historical_payload(self, table, predicate, field):
+        rows = self._historical_projection(table, predicate)
+        return {field: rows} if rows else {}
+
     def search_symbol(self, name: str, kind: str | None = None) -> dict[str, Any]:
         # LIMIT self.query_limit (cap+1, never the bare cap — see the class
         # docstring / F-1) on BOTH queries: this bounds the SQL work itself
@@ -3396,7 +3587,18 @@ class CodeGraph:
 
         for row in [*defs, *refs]:
             row.pop("binding", None)
-        return {"definitions": defs, "references": refs}
+        return {
+            "definitions": defs,
+            "references": refs,
+            **self._historical_payload(
+                "symbols",
+                lambda row: row["name"] == name and (kind in {None, "any"} or row["kind"] == kind),
+                "historical_definitions",
+            ),
+            **self._historical_payload(
+                "refs", lambda row: row["callee_name"] == name, "historical_references"
+            ),
+        }
 
     def callers_of(self, symbol: str) -> list[dict[str, Any]]:
         """A1: queries the materialized `edges` table (relation IN
@@ -3839,7 +4041,11 @@ class CodeGraph:
             }
             for r in rows
         ]
-        return {"rationale": items, "rationale_count": len(items)}
+        return {
+            "rationale": items,
+            "rationale_count": len(items),
+            **self._historical_payload("rationale", lambda _row: True, "historical_rationale"),
+        }
 
     # ---- A5 — Deterministic export / idempotent import (D6) ----
     #
@@ -4288,6 +4494,10 @@ class CodeGraph:
                 for proof in proofs:
                     if proof["occurrence_id"] == identifier:
                         include(proof["id"])
+            if item["type"] == "evidence":
+                for assertion in records:
+                    if assertion["type"] == "assertion" and assertion["evidence_id"] == identifier:
+                        include(assertion["id"])
 
         for item in records:
             if item.get("path") == path:
@@ -4770,6 +4980,11 @@ class CodeGraph:
             projections = self._projection_records(conn)
 
             metadata = self._observation_records(conn)
+            generation_format = json.loads(
+                conn.execute("SELECT value FROM manifest WHERE key='generation_inputs'").fetchone()[
+                    0
+                ]
+            )["format"]
             self._validate_history(metadata)
 
             def all_records():
@@ -4786,7 +5001,9 @@ class CodeGraph:
                 count += 1
             header = {
                 "type": "header",
-                "format": ev.OBSERVATION_FORMAT if metadata else ev.FORMAT,
+                "format": ev.OBSERVATION_FORMAT
+                if generation_format == "atlas-generation.v3"
+                else ev.FORMAT,
                 "schema_epoch": 7,
                 "content_hash": digest.hexdigest(),
                 "record_count": count,
@@ -4908,6 +5125,30 @@ class CodeGraph:
                                 if "path" in key and value is not None:
                                     self._validate_relative_repo_path(value, in_path, key)
                     ev.validate_record(item)
+                    if item["type"] in {"history", "observation"}:
+                        self._validate_relative_repo_path(
+                            item["path"], in_path, item["type"] + ".path"
+                        )
+                    if item["type"] == "history":
+                        for retained in item["records"]:
+                            if retained["type"] in {"entity", "occurrence"}:
+                                self._validate_relative_repo_path(
+                                    retained["path"], in_path, "historical path"
+                                )
+                            elif retained["type"] == "projection":
+                                for key, value in retained["row"].items():
+                                    if "path" in key and value is not None:
+                                        self._validate_relative_repo_path(
+                                            value, in_path, "historical " + key
+                                        )
+                                if (
+                                    retained["table"] == "edges"
+                                    and retained["row"]["candidates"] is not None
+                                ):
+                                    for candidate in json.loads(retained["row"]["candidates"]):
+                                        self._validate_relative_repo_path(
+                                            candidate["path"], in_path, "historical candidate.path"
+                                        )
                     ev.require(
                         line == (ev.canonical(item) + "\n").encode(), "noncanonical record encoding"
                     )
@@ -4959,7 +5200,8 @@ class CodeGraph:
                         "observation exchange version",
                     )
                     conn.execute(
-                        "INSERT OR REPLACE INTO manifest(key,value) VALUES ('source_observations',?)",
+                        "INSERT OR REPLACE INTO manifest(key,value) "
+                        "VALUES ('source_observations',?)",
                         (ev.canonical(metadata),),
                     )
                     self._observation_records(conn, validate_active=False)
@@ -5007,10 +5249,12 @@ class CodeGraph:
                     self._store_generation(
                         conn,
                         {
-                            "format": "atlas-generation.v3" if metadata else "atlas-generation.v2",
+                            "format": "atlas-generation.v3"
+                            if header["format"] == ev.OBSERVATION_FORMAT
+                            else "atlas-generation.v2",
                             **(
                                 {"observation_digest": self._status_hash(metadata)}
-                                if metadata
+                                if header["format"] == ev.OBSERVATION_FORMAT
                                 else {}
                             ),
                             "kind": "import",
@@ -5362,6 +5606,11 @@ class CodeGraph:
             # `unresolved_ref_count`.
             return {
                 "edges": self.callers_of(method),
+                **self._historical_payload(
+                    "edges",
+                    lambda row: row["callee_name"] == method and row["relation"] in _CALL_RELATIONS,
+                    "historical_edges",
+                ),
                 "unresolved_refs": self.unresolved_ref_count(method, _CALL_RELATIONS),
             }
 
@@ -5373,6 +5622,13 @@ class CodeGraph:
             # empty-stub-with-warning.
             return {
                 "edges": self.subclasses_of(arg),
+                **self._historical_payload(
+                    "edges",
+                    lambda row: (
+                        row["callee_name"] == arg and row["relation"] in _HERITAGE_RELATIONS
+                    ),
+                    "historical_edges",
+                ),
                 "unresolved_refs": self.unresolved_ref_count(arg, _HERITAGE_RELATIONS),
             }
 

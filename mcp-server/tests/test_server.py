@@ -93,15 +93,25 @@ _LIST_BEARING_TOOLS = {
     "view_file": ("lines",),
     "list_dir": ("entries",),
     "search_text": ("matches",),
-    "search_symbol": ("definitions", "references"),
+    "search_symbol": (
+        "definitions",
+        "references",
+        "historical_definitions",
+        "historical_references",
+    ),
 }
 _LIST_BEARING_VERBS = {
-    "callers_of": ("edges",),
-    "definitions_of": ("definitions", "references"),
-    "subclasses_of": ("edges",),
+    "callers_of": ("edges", "historical_edges"),
+    "definitions_of": (
+        "definitions",
+        "references",
+        "historical_definitions",
+        "historical_references",
+    ),
+    "subclasses_of": ("edges", "historical_edges"),
     "god_nodes": ("god_nodes",),
     "communities": ("communities",),
-    "rationale": ("rationale",),
+    "rationale": ("rationale", "historical_rationale"),
 }
 
 
@@ -197,8 +207,14 @@ def test_undispatched_known_verb_raises_rather_than_impersonating_a_stub(
 def test_nested_bounded_field_registry_covers_every_verb_with_a_sub_list() -> None:
     from atlas_aci.server import GRAPH_QUERY_VERB_NESTED_BOUNDED_FIELDS
 
-    assert GRAPH_QUERY_VERB_NESTED_BOUNDED_FIELDS["callers_of"] == {"edges": "candidates"}
-    assert GRAPH_QUERY_VERB_NESTED_BOUNDED_FIELDS["subclasses_of"] == {"edges": "candidates"}
+    assert GRAPH_QUERY_VERB_NESTED_BOUNDED_FIELDS["callers_of"] == {
+        "edges": "candidates",
+        "historical_edges": "candidates",
+    }
+    assert GRAPH_QUERY_VERB_NESTED_BOUNDED_FIELDS["subclasses_of"] == {
+        "edges": "candidates",
+        "historical_edges": "candidates",
+    }
 
 
 def test_candidates_subfield_is_capped_and_flagged_when_over_cap(enforcement: Enforcement) -> None:
@@ -1023,6 +1039,12 @@ _ANCHOR_VERB_SCENARIOS: list[tuple[str, dict[str, list[dict[str, str]]], str]] =
 
 
 def _anchor_list_item(field: str, i: int) -> Any:
+    field = {
+        "historical_definitions": "definitions",
+        "historical_references": "references",
+        "historical_edges": "edges",
+        "historical_rationale": "rationale",
+    }.get(field, field)
     if field in ("definitions", "references", "entries"):
         return {"name": f"x{i}"}
     if field == "matches":

@@ -1,0 +1,15 @@
+{
+  "at": "2026-10-24T14:31:15.892018+00:00",
+  "authorization": "Root explicitly authorized literal constant-chain Ruby class query omission fix in existing codegraph.py; preserve target lookup rules; unknown absolute/dynamic ownership stays unresolved.",
+  "diagnostic": "Full same-pin/default Solidus raw owner-counterexample.json: scoped class Calculator::DefaultTax absent from captured definitions, header relation wrongly attached enclosing Spree module.",
+  "faithful_correction": "Add separate static non-absolute constant-chain class capture, using unchanged structural identity/binding conventions. Do not change qualified target lookup. Uncaptured absolute/dynamic Ruby class owner cannot be replaced by enclosing module.",
+  "independent_generic_correction": "SCSS/Bash projected caller names/kinds use linked canonical AST owner; file-owned callers stay null.",
+  "reds": [
+    "owner-projection-red.log",
+    "generic-owner-controls-red.log",
+    "unsupported-owner-red.log",
+    "ruby-owner-negative-red.log"
+  ],
+  "strict_validator_changed": false,
+  "queries_grammar_or_profile_scope": "Only existing Ruby class-name query omission; no new grammar/default-language/profile/pin/bar changes."
+}

@@ -1,0 +1,16 @@
+{
+  "at": "2026-10-24T14:43:23.694116+00:00",
+  "scope": "Existing codegraph.py and S07 tests only; static qualified module capture analogous to approved class capture.",
+  "authorization": "Explicit root approval following ATLAS tiny proof and actual all-mismatch diagnostic.",
+  "actual_mismatch_count": 8,
+  "provenance": "fresh-probe-attempt2/owner-counterexamples-all.json",
+  "positive": "Non-absolute literal CONSTANT::CONSTANT module source uses unchanged canonical entity/binding conventions.",
+  "negative": "Dynamic and absolute-prefix module owners remain explicit unsupported_source_owner, never enclosing-module ownership.",
+  "unchanged": [
+    "target resolution",
+    "strict canonical/projection validator",
+    "pins/default eligibility",
+    "probe bar/seeds"
+  ],
+  "diagnostic_and_probe_seconds_charged_before_retry": 393.126844915998
+}

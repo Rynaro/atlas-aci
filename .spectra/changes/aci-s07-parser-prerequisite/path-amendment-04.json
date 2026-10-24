@@ -1,0 +1,16 @@
+{
+  "parent_slice": "ACI-S07",
+  "supporting_plan": ".spectra/plans/aci-s07-parser-prerequisite.md",
+  "at": "2026-10-24T14:18:37.465415+00:00",
+  "criteria_changed": false,
+  "additional_paths": [
+    "mcp-server/tests/slices/test_s06_contract.py"
+  ],
+  "restriction": "Only test_external_import_and_failed_attempt with necessary monkeypatch fixture/setup; replace implicit syntax-abort trigger with controlled fatal provider exception after real parsing. Every held-G1/external/sidecar/export/import/stage/no-.atlas assertion retained.",
+  "reason": "Actual final-source full Docker run1failed396passed: normal recovered syntax now publishes reviewed partial observation.",
+  "evidence": [
+    ".spectra/evidence/aci-s07/parser-prerequisite/full-suite-first.log",
+    ".spectra/evidence/aci-s07/parser-prerequisite/full-suite-first.exit"
+  ],
+  "authorization": "Explicit root approval before editing this S06 regression trigger."
+}

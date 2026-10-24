@@ -1,0 +1,71 @@
+{
+  "edge": {
+    "id": 1526,
+    "relation": "superclass",
+    "source_path": "core/app/models/spree/calculator/default_tax.rb",
+    "source_line": 6,
+    "source_col": 33,
+    "source_name": "Calculator::DefaultTax",
+    "source_kind": "class",
+    "callee_name": "Calculator",
+    "confidence": "EXTRACTED",
+    "target_path": "core/app/models/spree/calculator.rb",
+    "target_line": 4,
+    "target_name": "Calculator",
+    "candidates": null,
+    "lang": "ruby",
+    "assertion_id": "3d086bea746af45decf0f77770fd0eeb117fe2c8e15aa3bd932be5c667309ed0"
+  },
+  "source_entity": {
+    "id": "ad3ad7e36370773d5a074c1ba8e9879831cedddf553d0ae23aa893638d94a168",
+    "identity_basis": "parsed",
+    "kind": "module",
+    "language": "ruby",
+    "name": "Spree",
+    "ordinal": 0,
+    "owners": [],
+    "path": "core/app/models/spree/calculator/default_tax.rb",
+    "type": "entity"
+  },
+  "assertion": {
+    "candidate_ids": [],
+    "evidence_id": "a1f21f9e28f2cd34c75decd7e5f0803821d4dec5e77d3aeb98bcf12b9ee4bcd2",
+    "id": "3d086bea746af45decf0f77770fd0eeb117fe2c8e15aa3bd932be5c667309ed0",
+    "raw_target": "Calculator",
+    "relation": "superclass",
+    "resolution": "EXTRACTED",
+    "source_entity_id": "ad3ad7e36370773d5a074c1ba8e9879831cedddf553d0ae23aa893638d94a168",
+    "target_entity_id": "566a5b76979ff26ce0beec19ddf319f85cd7ef0679d80d084310a1884b427b8b",
+    "type": "assertion",
+    "unresolved_reason": null
+  },
+  "occurrence": {
+    "column": 33,
+    "end_byte": 126,
+    "end_column": 43,
+    "end_line": 6,
+    "entity_id": "ad3ad7e36370773d5a074c1ba8e9879831cedddf553d0ae23aa893638d94a168",
+    "id": "e73c6427340a1b154486646e44e18ed8d4f0f5521f0b75cba51da54b8f24df1f",
+    "kind": "reference",
+    "language": "ruby",
+    "line": 6,
+    "path": "core/app/models/spree/calculator/default_tax.rb",
+    "provenance_state": "source",
+    "role": "reference:superclass",
+    "source_sha256": "e4b0677b52f36b8eee351192380f1546ee3aab218ff3684bf5cab6cbeed82920",
+    "source_size": 1798,
+    "start_byte": 116,
+    "type": "occurrence"
+  },
+  "proof": {
+    "end_byte": 126,
+    "id": "a1f21f9e28f2cd34c75decd7e5f0803821d4dec5e77d3aeb98bcf12b9ee4bcd2",
+    "occurrence_id": "e73c6427340a1b154486646e44e18ed8d4f0f5521f0b75cba51da54b8f24df1f",
+    "producer_id": "f7ae37a8605beaaadcfe6ba4639c9e6c8559c6bf13f3aadb251dd074938327be",
+    "provenance_state": "source",
+    "source_sha256": "e4b0677b52f36b8eee351192380f1546ee3aab218ff3684bf5cab6cbeed82920",
+    "source_size": 1798,
+    "start_byte": 116,
+    "type": "evidence"
+  }
+}

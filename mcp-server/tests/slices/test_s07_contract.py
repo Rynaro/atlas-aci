@@ -362,17 +362,25 @@ def test_epoch6_jsonl_adapter_keeps_unknown_reference_coverage(tmp_path: Path):
     graph.close()
 
 
-def test_failed_refresh_never_publishes_intermediate_conversion(tmp_path: Path):
+def test_failed_refresh_never_publishes_intermediate_conversion(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
     repo, _root, writer, old_path = legacy(tmp_path)
     before = old_path.read_bytes()
     (repo / "legacy.py").write_text("def broken(:\n pass\n")
+    import tree_sitter_language_pack
+
+    def fatal_parser(_language):
+        raise LookupError("controlled provider failure after staged conversion")
+
+    monkeypatch.setattr(tree_sitter_language_pack, "get_parser", fatal_parser)
     with pytest.raises(RuntimeError):
         writer.build(since="HEAD")
     assert old_path.read_bytes() == before and not writer.db_path.exists()
     reader = CodeGraph(repo, read_only=True)
     assert reader.search_symbol("A")["definitions"]
     status = reader.status()
-    assert status["attempt"]["observation"]["files"][0]["reason"] == "parse_error"
+    assert status["attempt"]["observation"]["files"][0]["reason"] == "parser_exception"
     assert status["completeness"]["state"] != "complete"
     reader.close()
     writer.close()
@@ -563,7 +571,11 @@ def test_multiple_real_producers_preserve_parallel_assertions(
     destination.mkdir()
     imported = CodeGraph(destination)
     imported.import_jsonl(artifact)
-    expected = [r for r in records if r["type"] != "projection"]
+    expected = [
+        r
+        for r in records
+        if r["type"] in {"entity", "occurrence", "producer", "evidence", "assertion"}
+    ]
     assert canonical(imported) == expected
     assertions = [r for r in expected if r["type"] == "assertion" and r["relation"] == "call"]
     assert len(assertions) == 6 and len({r["evidence_id"] for r in assertions}) == 6

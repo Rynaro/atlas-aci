@@ -1,28 +1,29 @@
-# S07 execution evidence (in progress)
+# S07 execution evidence
 
-The authoritative receipt is `.spectra/state/aci-s07.execution.json`. No output
-commit or COMPLETE claim exists yet. Product checkpoint `a7696a05…` passed the
-375-test suite with the rebuilt Docker image and zero skips. The detailed
-`docker-integration.json` retains UID10001, EROFS, offline/read-only mounts,
-unchanged source/graph snapshots and real MCP responses. `vivi-pass2-result.json`
-records protected pass² (55 tests/run, tamper count0).
+The authoritative receipt is `.spectra/state/aci-s07.execution.json`. The final
+producer `9af60175…` passed 408 tests with Docker enabled and zero skips;
+`parser-prerequisite/docker-module-final/docker-integration.json` records the
+actual UID10001, EROFS sentinel, offline/read-only mounts and MCP responses.
+Protected pass² passed 88 tests per run with no tamper rejections. The final
+probe self-test executed all27 controls, returning0 with27passed/0failed.
 
-Fresh current-producer probe readiness is still blocked. The genuine pinned
-Solidus full-tree export failed on a recovered SCSS parse error; no replacement
-PASS measurement has been invented. The authorized scratch-only candidate grammar
-qualification repairs that first file but leaves22/24 errored eligible files in
-Solidus/Spree respectively. See `grammar-qualification/scan-summary.json` and its
-source/command provenance. No production grammar, dependency, query or default
-language change was made for that experiment.
+Fresh same-pin/default-language measurements are in `parser-prerequisite/fresh-probe-attempt3/`;
+the unchanged verifier returns PASS for both repositories. All4877 original
+path/hash observations are accounted for: Solidus2459indexed/60failed,
+Spree2332indexed/26failed. Failed files contribute no current extracted facts.
+Earlier failed exports, qualification attempts and red regressions remain intact.
+The approved policy correction and explicit human review are linked by the receipt.
 
-Historical red runs are retained, including the actual14-failure predecessor
-run, the5-failure/1-pass projection omission run, cache/rationale counterexamples,
-and failed probe/qualification harness invocations. A command returning0 for a
-completed diagnostic scan does not mean the scanned repository parsed cleanly.
+The current Spree portable export measures651,844,965bytes with peakRSS
+1,983,594,496bytes. This is a material storage/memory cost, not a new S07 size
+threshold: the archived P3 measurement used a different profile and is unchanged.
+No historical compression ratio is claimed for this output.
 
-Large/whitespace raw logs are losslessly compressed with gzip mtime0. Their
-logical names, original byte lengths/SHA256 and compressed SHA256 are in
-`raw-log-manifest.json`. Read a logical `.log` through `gzip -dc <name>.log.gz`
-when the plain file is absent. Qualification per-file JSON/failures use the same
-protocol in `grammar-qualification/scan-manifest.json`; decompress before using
-an existing consumer that expects its original logical JSON path.
+Raw machine logs are losslessly gzip-compressed with mtime0. `raw-log-manifest.json`
+maps logical paths to compressed paths, lengths and raw/packed SHA256 hashes.
+For an existing helper expecting plain outputs, restore each missing logical
+file with `gzip -dc <compressed_path> > <logical_path>` in a disposable checkout.
+Fresh graph and observation manifests additionally record their original hashes;
+restore those similarly before rerunning the recorded assembly helper. No raw
+facts were sanitized. Source exports of hundreds of megabytes stay outside Git;
+the exact byte/hash/type attribution and commands are retained.

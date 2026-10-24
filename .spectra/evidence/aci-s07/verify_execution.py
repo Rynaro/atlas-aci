@@ -22,10 +22,14 @@ def main():
     assert receipt['status'] in {'IN_PROGRESS', 'COMPLETE', 'ALREADY_SATISFIED'}
     completed = {r['ac_id'] for r in receipt['acceptance_results'] if r['exit_code'] == 0}
     assert {f'AC-S07-{i:03d}' for i in range(1, 7)} <= completed
+    assert {f'AC-S07-PARSER-{i:03d}' for i in range(1, 9)} <= completed
+    supporting = root / '.spectra/plans/aci-s07-parser-prerequisite.criteria.md'
+    assert hashlib.sha256(supporting.read_bytes()).hexdigest() == receipt['supporting_plan']['criteria_sha256']
     expected_scope = list(state['declared_scope'])
     for name in receipt.get('scope_amendments', []):
         amendment = json.loads((root / name).read_text())
-        assert amendment['slice_id'] == receipt['slice_id'] and not amendment['criteria_changed']
+        assert amendment.get('slice_id', amendment.get('parent_slice')) == receipt['slice_id']
+        assert amendment.get('criteria_changed', False) is False
         expected_scope.extend(amendment['additional_paths'])
     assert receipt['declared_paths'] == expected_scope
     paths = receipt['declared_paths']

@@ -1,4 +1,4 @@
-# Evidence graph exchange v1 (schema epoch7)
+# Evidence graph exchange v2 (schema epoch7)
 
 `CodeGraph.evidence_records()` returns canonical entity, occurrence, producer,
 evidence and directed assertion records in type/ID order. IDs use SHA-256 over
@@ -38,3 +38,19 @@ Python import binding is limited to unaliased package-local relative imports wit
 real indexed package markers and one module/root declaration. Aliases, stars,
 external/dynamic imports, ambiguous modules and shadowed bindings stay unresolved.
 Every producer remains structural; compiler semantic binding is unsupported.
+
+The current `atlas-evidence.v2` envelope adds closed observation and history
+records. `observation_records()` reads them through a pinned lease. Observations
+bind current indexed evidence to exact consumed hashes; failed observations
+cannot supply active facts. History contains only the failed file's predecessor
+facts and the necessary original target/provenance closure. Nested facts retain
+their v1 identity domain and original locations, even after a target moves or is
+deleted. Observation/history IDs use the v2 domain. These records never enter
+the active symbol/reference/edge tables used for binding or confident analysis.
+
+A source-free v2 import preserves declared staleness and rejects missing or
+contradictory observations, dangling history and inconsistent projections before
+publication. It does not authenticate absent source bytes. Explicit v1 and epoch6
+adapters retain unknown observation coverage. Atomic partial publication uses
+unchanged parsers and quarantines the entire recovered-error file; it introduces
+no native grammar, source transformation or alternate probe profile.

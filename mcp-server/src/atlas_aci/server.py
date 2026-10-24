@@ -187,16 +187,26 @@ TOOL_BOUNDED_FIELDS: dict[str, tuple[str, ...]] = {
     "view_file": ("lines",),
     "list_dir": ("entries",),
     "search_text": ("matches",),
-    "search_symbol": ("definitions", "references"),
+    "search_symbol": (
+        "definitions",
+        "references",
+        "historical_definitions",
+        "historical_references",
+    ),
 }
 
 GRAPH_QUERY_VERB_BOUNDED_FIELDS: dict[str, tuple[str, ...]] = {
-    "callers_of": ("edges",),
-    "definitions_of": ("definitions", "references"),
-    "subclasses_of": ("edges",),
+    "callers_of": ("edges", "historical_edges"),
+    "definitions_of": (
+        "definitions",
+        "references",
+        "historical_definitions",
+        "historical_references",
+    ),
+    "subclasses_of": ("edges", "historical_edges"),
     "god_nodes": ("god_nodes",),
     "communities": ("communities",),
-    "rationale": ("rationale",),
+    "rationale": ("rationale", "historical_rationale"),
 }
 
 
@@ -229,8 +239,8 @@ def bounded_fields_for(name: str, arguments: dict[str, Any]) -> tuple[str, ...]:
 # them) — unlike the top-level registry, not every bounded field needs an
 # entry here, only ones whose own elements carry their own list.
 GRAPH_QUERY_VERB_NESTED_BOUNDED_FIELDS: dict[str, dict[str, str]] = {
-    "callers_of": {"edges": "candidates"},
-    "subclasses_of": {"edges": "candidates"},
+    "callers_of": {"edges": "candidates", "historical_edges": "candidates"},
+    "subclasses_of": {"edges": "candidates", "historical_edges": "candidates"},
 }
 
 

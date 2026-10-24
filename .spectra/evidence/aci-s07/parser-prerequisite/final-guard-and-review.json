@@ -1,0 +1,29 @@
+{
+  "shell_syntax": {
+    "command": "/bin/bash -n scripts/test-verify-probe-verdict.sh",
+    "exit_code": 0
+  },
+  "classify": {
+    "command": "/bin/bash scripts/test-harden-gate-classify.sh",
+    "exit_code": 0,
+    "stdout": "PASS: clean hardening diff (augmented=false, a3_touched=false)\nPASS: augmentation marker path (test_confidence.py) (augmented=true, a3_touched=false)\nPASS: A3-exclusive path (test_communities.py) (augmented=true, a3_touched=true)\nPASS: whole-line comment mentioning markers (Python #) (augmented=false, a3_touched=false)\nPASS: inline SQL trailing-comment marker mention (augmented=false, a3_touched=false)\nPASS: real code marker (EXTRACTED, no comment) (augmented=true, a3_touched=false)\n\n6 passed, 0 failed\n"
+  },
+  "export_size_guard": {
+    "command": "/bin/bash scripts/test-verify-export-size.sh",
+    "exit_code": 0,
+    "stdout": "PASS: real recorded export-size sidecar (genuine PASS) (exit=0)\nPASS: forged: export_bytes one byte over ceiling, recorded_verdict left at PASS (exit=1)\nPASS: forged: recorded CUT over a genuinely passing export_bytes (exit=1)\nPASS: forged: pinned_sha does not match the frozen AC-REL-2 SHA (exit=1)\nPASS: forged: ceiling_bytes does not match the frozen AC-REL-2 ceiling (exit=1)\n\n5 passed, 0 failed\n"
+  },
+  "independent_guard_review": {
+    "reviewer": "ATLAS /root/s15_preflight",
+    "verdict": "APPROVE",
+    "independent_exit_code": 0,
+    "duration_seconds": 5.532,
+    "passed": 27,
+    "failed": 0,
+    "q_difference": 0.0005474687012285706,
+    "tolerance": 1e-09,
+    "exact_lpa_labels_replayed": true,
+    "ci_selector_changes": 3,
+    "immutable_verifier_resolver_history": true
+  }
+}

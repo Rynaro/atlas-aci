@@ -1,0 +1,47 @@
+[
+  {
+    "fixture": "solidus-0-yaml.txt",
+    "repo": "solidus",
+    "pin": "4026945d614e81383c007ed1ab1278a0195ce5d9",
+    "original_path": "core/lib/spree/testing_support/dummy_app/database.yml",
+    "language": "yaml",
+    "source_sha256": "94266756895dc9a7173c938df7d10062e35729985790b5b91a6dec79c0993c4b",
+    "bytes": 1236
+  },
+  {
+    "fixture": "solidus-1-scss.txt",
+    "repo": "solidus",
+    "pin": "4026945d614e81383c007ed1ab1278a0195ce5d9",
+    "original_path": "backend/app/assets/stylesheets/spree/backend/_bootstrap_custom.scss",
+    "language": "scss",
+    "source_sha256": "6276e3b665b3c5175e75068be548bee3fa041ffb7e28c9df7eb6110c578f5dcc",
+    "bytes": 2623
+  },
+  {
+    "fixture": "solidus-2-scss.txt",
+    "repo": "solidus",
+    "pin": "4026945d614e81383c007ed1ab1278a0195ce5d9",
+    "original_path": "backend/app/assets/stylesheets/spree/backend/components/_pills.scss",
+    "language": "scss",
+    "source_sha256": "a650487ea8ebc728c194afe1194d176ff2792a3b0a9bb46bb3fd8a6625b7b1e1",
+    "bytes": 1772
+  },
+  {
+    "fixture": "spree-0-ruby.txt",
+    "repo": "spree",
+    "pin": "6699cde44303ea85ef6e56c5e87c44a738ab73fc",
+    "original_path": "spree/core/lib/generators/spree/dummy/templates/rails/application.rb",
+    "language": "ruby",
+    "source_sha256": "ec3fb63956d7b16745fb1b66640d30612c4add6862fe107cc6cd8c5e8a3ae349",
+    "bytes": 157
+  },
+  {
+    "fixture": "spree-1-yaml.txt",
+    "repo": "spree",
+    "pin": "6699cde44303ea85ef6e56c5e87c44a738ab73fc",
+    "original_path": "spree/api/config/i18n-tasks.yml",
+    "language": "yaml",
+    "source_sha256": "ed42c39edfe329459109fe6ad97ade2b2d759675734671acfd831f176484a7af",
+    "bytes": 1163
+  }
+]
