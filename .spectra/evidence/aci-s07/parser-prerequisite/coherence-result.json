@@ -1,0 +1,31 @@
+{
+  "stage": "FIRST_PROOF_CORRECTION_STOP",
+  "at": "2026-10-24T03:38:02.348736+00:00",
+  "cumulative_elapsed_seconds": 490.8947389125824,
+  "original_cap_ends_utc": "2026-10-24T04:29:51.453998+00:00",
+  "clock_reset": false,
+  "source_sha256s": {
+    "mcp-server/src/atlas_aci/codegraph.py": "d8c1dd31282404e74bf03c579d7a597f1a0ce55a10644e39999fe56bf5086644",
+    "mcp-server/src/atlas_aci/storage/evidence.py": "dd2d15bac29de7fb21771606ad436a544e4b55d41266b53e383906c312d0c5c7",
+    "mcp-server/tests/slices/test_s07_parser_prerequisite.py": "c1293d163c0b3e4cd81995831d70ff0868c41507019317bf31f3524f99d0a269"
+  },
+  "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/mcp-server/src mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s07_parser_prerequisite.py -q",
+  "exit_code": 0,
+  "result": "7 passed in 0.40s",
+  "evidence": [
+    ".spectra/evidence/aci-s07/parser-prerequisite/coherence-red.log",
+    ".spectra/evidence/aci-s07/parser-prerequisite/coherence-red.exit",
+    ".spectra/evidence/aci-s07/parser-prerequisite/coherence-corrected.log",
+    ".spectra/evidence/aci-s07/parser-prerequisite/coherence-corrected.exit"
+  ],
+  "red": {
+    "exit_code": 1,
+    "result": "3 failed, all semantic mutations accepted before fix"
+  },
+  "original_receipt_unchanged": true,
+  "original_criteria_unchanged": true,
+  "broader_execution_authorized": false,
+  "independent_approval_claimed": false,
+  "all_writes_stopped": true,
+  "remaining_gaps": "The broader gaps in proof-result.json remain unverified; this correction establishes only the scoped current/history consistency proof."
+}

@@ -449,7 +449,7 @@ def test_invalid_roots(tmp_path: Path, root_kind: str):
     assert not (repo / ".atlas").exists()
 
 
-def test_external_import_and_failed_attempt(tmp_path: Path):
+def test_external_import_and_failed_attempt(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     repo = tmp_path / "repo"
     repo.mkdir()
     source = repo / "sample.py"
@@ -466,6 +466,24 @@ def test_external_import_and_failed_attempt(tmp_path: Path):
         assert lease.search_symbol("s06_unique_target")["definitions"]
     valid = graph.db_path.read_bytes()
     source.write_text("def broken(:\n    pass\n")
+    # Syntax recovery alone now publishes partial observations; preserve this
+    # test's fatal external-publication obligation after an actual parser run.
+    import tree_sitter_language_pack as pack
+
+    original = pack.get_parser
+
+    def fatal_provider(language):
+        parser = original(language)
+
+        class FailingParser:
+            def parse(self, buffer):
+                tree = parser.parse(buffer)
+                assert tree.root_node.has_error
+                raise LookupError("controlled provider exception after real parse")
+
+        return FailingParser()
+
+    monkeypatch.setattr(pack, "get_parser", fatal_provider)
     with pytest.raises(RuntimeError):
         graph.build()
     assert graph.db_path.read_bytes() == valid

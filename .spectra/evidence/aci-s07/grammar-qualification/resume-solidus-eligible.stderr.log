@@ -1,0 +1,25 @@
+Traceback (most recent call last):
+  File "/private/tmp/atlas-aci-aci-s07/.spectra/evidence/aci-s07/grammar-qualification/qualify.py", line 71, in <module>
+    item={'path':str(path.relative_to(repo)),'language':lang,'source_sha256':hashlib.sha256(source).hexdigest(),'bytes':len(source),'has_error':tree.root_node.has_error}
+                     ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/henrique/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/pathlib.py", line 682, in relative_to
+    raise ValueError(f"{str(self)!r} is not in the subpath of {str(other)!r}")
+ValueError: '/private/tmp/aci-s07-probe-inputs/solidus/.github/actions/check_page_content/action.yml' is not in the subpath of '/tmp/aci-s07-probe-inputs/solidus'
+        0.27 real         0.15 user         0.04 sys
+            36651008  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+                2618  page reclaims
+                  12  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 379  voluntary context switches
+                  16  involuntary context switches
+          3694475340  instructions retired
+           884767113  cycles elapsed
+            24396256  peak memory footprint

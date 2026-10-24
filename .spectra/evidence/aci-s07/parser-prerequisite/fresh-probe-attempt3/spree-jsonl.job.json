@@ -1,0 +1,23 @@
+{
+  "name": "spree-jsonl",
+  "command": [
+    "/tmp/aci-s01-tools/bin/uv",
+    "run",
+    "--frozen",
+    "python",
+    "-m",
+    "atlas_aci",
+    "export",
+    "--repo",
+    "/tmp/aci-s07-approved3-probe-inputs/spree",
+    "/tmp/aci-s07-approved3-spree-export.jsonl"
+  ],
+  "cwd": "/private/tmp/atlas-aci-aci-s07/mcp-server",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 66.08563187500113,
+  "elapsed_total": 326.86043991601036,
+  "peak_rss_bytes": 1983594496,
+  "stdout": ".spectra/evidence/aci-s07/parser-prerequisite/fresh-probe-attempt3/spree-jsonl.stdout.log",
+  "stderr": ".spectra/evidence/aci-s07/parser-prerequisite/fresh-probe-attempt3/spree-jsonl.stderr.log"
+}

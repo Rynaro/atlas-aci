@@ -1,0 +1,23 @@
+Traceback (most recent call last):
+  File "/private/tmp/atlas-aci-aci-s07/.spectra/evidence/aci-s07/grammar-qualification/qualify.py", line 58, in <module>
+    assert results['facts']['definitions']==[('rounded','mixin')]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+        0.42 real         0.05 user         0.01 sys
+            34488320  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+                2401  page reclaims
+                  92  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 147  voluntary context switches
+                  47  involuntary context switches
+           578561196  instructions retired
+           240083749  cycles elapsed
+            21971424  peak memory footprint

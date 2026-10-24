@@ -1,0 +1,13 @@
+{
+  "scope": "Approved scoped correction; first proof already charged, review wait excluded.",
+  "engineering_budget_seconds": 28800,
+  "prior_active_seconds": 490.8947389125824,
+  "resumed_at": "2026-10-24T13:54:58.542035+00:00",
+  "resumed_epoch": 1792850098.54208,
+  "reserved_original_days": 4,
+  "supporting_allocation_days": 1,
+  "confidence": 82.5,
+  "verdict": "VALIDATE",
+  "human_review_performed": true,
+  "source_sha256": "d8c1dd31282404e74bf03c579d7a597f1a0ce55a10644e39999fe56bf5086644"
+}

@@ -1,0 +1,10 @@
+{
+  "parent_slice": "ACI-S07",
+  "criteria_changed": false,
+  "reason": "Bind the already-approved fresh probe output artifacts into execution digests; no new product scope or policy.",
+  "additional_paths": [
+    ".spectra/changes/aci-s07-probe/aci-s07-probe-lpa-vs-louvain.md",
+    ".spectra/changes/aci-s07-probe/aci-s07-probe-lpa-vs-louvain.json",
+    ".spectra/changes/aci-s07-probe/probe-graphs.json.gz"
+  ]
+}

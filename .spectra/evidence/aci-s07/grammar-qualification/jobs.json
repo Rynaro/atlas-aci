@@ -1,0 +1,169 @@
+[
+  {
+    "name": "resume2-grammar-head",
+    "command": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "/tmp/aci-s07-scss-qualification/grammar",
+    "exit_code": 0,
+    "elapsed_seconds": 0.011791125005402137
+  },
+  {
+    "name": "resume2-grammar-clean",
+    "command": [
+      "git",
+      "status",
+      "--porcelain",
+      "--untracked-files=no"
+    ],
+    "cwd": "/tmp/aci-s07-scss-qualification/grammar",
+    "exit_code": 0,
+    "elapsed_seconds": 0.01146845800394658
+  },
+  {
+    "name": "resume2-solidus-head",
+    "command": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "/tmp/aci-s07-probe-inputs/solidus",
+    "exit_code": 0,
+    "elapsed_seconds": 0.011732540995581076
+  },
+  {
+    "name": "resume2-solidus-clean",
+    "command": [
+      "git",
+      "status",
+      "--porcelain",
+      "--untracked-files=no"
+    ],
+    "cwd": "/tmp/aci-s07-probe-inputs/solidus",
+    "exit_code": 0,
+    "elapsed_seconds": 0.023680583995883353
+  },
+  {
+    "name": "resume2-solidus-eligible",
+    "command": [
+      "/private/tmp/atlas-aci-aci-s07/mcp-server/.venv/bin/python",
+      "/private/tmp/atlas-aci-aci-s07/.spectra/evidence/aci-s07/grammar-qualification/qualify.py",
+      "solidus"
+    ],
+    "cwd": "/private/tmp/atlas-aci-aci-s07",
+    "exit_code": 0,
+    "elapsed_seconds": 1.0997811669949442
+  },
+  {
+    "name": "resume2-solidus-clean-after",
+    "command": [
+      "git",
+      "status",
+      "--porcelain",
+      "--untracked-files=no"
+    ],
+    "cwd": "/tmp/aci-s07-probe-inputs/solidus",
+    "exit_code": 0,
+    "elapsed_seconds": 0.02347304099384928
+  },
+  {
+    "name": "resume2-spree-clone",
+    "command": [
+      "git",
+      "clone",
+      "--no-checkout",
+      "--no-local",
+      "/tmp/aci-s02-probe-inputs/spree",
+      "/tmp/aci-s07-probe-inputs/spree"
+    ],
+    "cwd": "/private/tmp/atlas-aci-aci-s07",
+    "exit_code": 0,
+    "elapsed_seconds": 0.9526958749993355
+  },
+  {
+    "name": "resume2-spree-hooks",
+    "command": [
+      "git",
+      "config",
+      "core.hooksPath",
+      "/dev/null"
+    ],
+    "cwd": "/tmp/aci-s07-probe-inputs/spree",
+    "exit_code": 0,
+    "elapsed_seconds": 0.011531541997101158
+  },
+  {
+    "name": "resume2-spree-sparse",
+    "command": [
+      "git",
+      "config",
+      "core.sparseCheckout",
+      "true"
+    ],
+    "cwd": "/tmp/aci-s07-probe-inputs/spree",
+    "exit_code": 0,
+    "elapsed_seconds": 0.010720833000959828
+  },
+  {
+    "name": "resume2-spree-checkout",
+    "command": [
+      "git",
+      "-c",
+      "core.hooksPath=/dev/null",
+      "checkout",
+      "--detach",
+      "6699cde44303ea85ef6e56c5e87c44a738ab73fc"
+    ],
+    "cwd": "/tmp/aci-s07-probe-inputs/spree",
+    "exit_code": 0,
+    "elapsed_seconds": 0.26171591699676355
+  },
+  {
+    "name": "resume2-spree-head",
+    "command": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "/tmp/aci-s07-probe-inputs/spree",
+    "exit_code": 0,
+    "elapsed_seconds": 0.011099750001449138
+  },
+  {
+    "name": "resume2-spree-clean",
+    "command": [
+      "git",
+      "status",
+      "--porcelain",
+      "--untracked-files=no"
+    ],
+    "cwd": "/tmp/aci-s07-probe-inputs/spree",
+    "exit_code": 0,
+    "elapsed_seconds": 0.07879091599897947
+  },
+  {
+    "name": "resume2-spree-eligible",
+    "command": [
+      "/private/tmp/atlas-aci-aci-s07/mcp-server/.venv/bin/python",
+      "/private/tmp/atlas-aci-aci-s07/.spectra/evidence/aci-s07/grammar-qualification/qualify.py",
+      "spree"
+    ],
+    "cwd": "/private/tmp/atlas-aci-aci-s07",
+    "exit_code": 0,
+    "elapsed_seconds": 0.8299504580063513
+  },
+  {
+    "name": "resume2-spree-clean-after",
+    "command": [
+      "git",
+      "status",
+      "--porcelain",
+      "--untracked-files=no"
+    ],
+    "cwd": "/tmp/aci-s07-probe-inputs/spree",
+    "exit_code": 0,
+    "elapsed_seconds": 0.08222479200048838
+  }
+]

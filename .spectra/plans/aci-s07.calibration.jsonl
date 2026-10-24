@@ -1,0 +1,6 @@
+{"rubric":"complexity","total":9,"dims":{"scope":3,"ambiguity":2,"dependencies":2,"risk":2},"verdict":"extended","at":"2026-10-24T01:47:59Z","label":"directed-evidence-compatibility"}
+{"rubric":"explore","total":84.5,"dims":{"alignment":10,"correctness":9,"maintainability":8,"performance":8,"simplicity":7,"risk":8,"innovation":5},"verdict":"solid","at":"2026-10-24T01:47:59Z","label":"canonical-records-compatible-projections"}
+{"rubric":"explore","total":72.5,"dims":{"alignment":6,"correctness":6,"maintainability":9,"performance":10,"simplicity":10,"risk":6,"innovation":2},"verdict":"solid","at":"2026-10-24T01:47:59Z","label":"stable-ids-on-old-edge-table-only"}
+{"rubric":"explore","total":70.5,"dims":{"alignment":9,"correctness":8,"maintainability":7,"performance":7,"simplicity":3,"risk":4,"innovation":8},"verdict":"solid","at":"2026-10-24T01:47:59Z","label":"replace-all-query-storage-with-new-graph"}
+{"rubric":"refine","cycle":1,"total":4.4,"min":4,"dims":{"clarity":5,"completeness":4,"actionability":4,"efficiency":4,"testability":5},"verdict":"pass","at":"2026-10-24T01:53:54Z","label":"independent-atlas-review-record"}
+{"rubric":"confidence","total":87.5,"dims":{"pattern_match":85,"requirement_clarity":90,"decomposition_stability":85,"constraint_compliance":90},"verdict":"AUTO_PROCEED","at":"2026-10-24T01:53:54Z","label":"evidence-graph-readiness"}

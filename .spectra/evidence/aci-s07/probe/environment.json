@@ -1,0 +1,24 @@
+{
+  "python": "3.12.13 (main, Jun 11 2026, 03:55:21) [Clang 22.1.3 ]",
+  "source_sha256": "efce0f8c3635cadd099a99c282b05716dba0d49408f0e9bea3f6d68572728e1b",
+  "module_sha256s": {
+    "mcp-server/src/atlas_aci/storage/evidence.py": "ef5964560b314902770310306792b5e39030e7745e042c247242618bc469638d",
+    "mcp-server/src/atlas_aci/providers/python_imports.py": "de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014"
+  },
+  "base_commit": "ad9ab7a6122f653b0e9e7052e6173c6257b4a3b8",
+  "uv": "/tmp/aci-s01-tools/bin/uv",
+  "cache": "/tmp/aci-s01-uv-cache",
+  "pins": {
+    "solidus": [
+      "https://github.com/solidusio/solidus.git",
+      "4026945d614e81383c007ed1ab1278a0195ce5d9"
+    ],
+    "spree": [
+      "https://github.com/spree/spree.git",
+      "6699cde44303ea85ef6e56c5e87c44a738ab73fc"
+    ]
+  },
+  "networkx": "3.6.1",
+  "seconds_per_job": 600,
+  "seconds_total": 2700
+}

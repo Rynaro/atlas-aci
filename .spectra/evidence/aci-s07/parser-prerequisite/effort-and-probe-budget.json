@@ -1,0 +1,12 @@
+{
+  "active_engineering_seconds_conservatively_charged": 2790.14266705513,
+  "supporting_cap_seconds": 28800,
+  "remaining_seconds": 26009.85733294487,
+  "human_review_wait_charged": false,
+  "failed_fresh_probe_elapsed_seconds": 96.79690662499343,
+  "diagnostic_elapsed_seconds": 96.40514866600279,
+  "probe_budget_seconds_charged_before_retry": 193.2020552909962,
+  "probe_total_cap_seconds": 2700,
+  "probe_remaining_seconds_before_retry": 2506.797944709004,
+  "policy": "Do not overwrite or reset measured failure history; next serial retry must carry this prior probe/diagnostic charge."
+}

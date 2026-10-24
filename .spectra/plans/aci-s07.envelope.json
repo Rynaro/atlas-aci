@@ -1,0 +1,50 @@
+{
+  "envelope_version": "2.0",
+  "message_id": "56b581ca-f8d3-41ba-ab8f-7bd32cffb3b5",
+  "thread_id": "7892070f-8654-4438-a6f9-476dad1e94a8",
+  "parent_id": null,
+  "from": {
+    "eidolon": "ramza",
+    "version": "1.1.0"
+  },
+  "to": {
+    "eidolon": "vivi",
+    "version": "n/a"
+  },
+  "performative": "PROPOSE",
+  "edge_origin": "roster",
+  "objective": "Implement ACI-S07 lossless directed evidence graph, stable entity identities, staged legacy compatibility and fresh producer evidence.",
+  "artifact": {
+    "kind": "spec",
+    "schema_version": "1.0",
+    "path": "aci-s07.md",
+    "sha256": "0c76884360f9a7578fcc1660ce8e3fa2f72caca06af13f5006eaa6d0f68ee6ff",
+    "size_bytes": 27306
+  },
+  "integrity": {
+    "method": "sha256",
+    "value": "0c76884360f9a7578fcc1660ce8e3fa2f72caca06af13f5006eaa6d0f68ee6ff"
+  },
+  "trace": {
+    "ts": "2026-10-24T01:54:21.303480+00:00",
+    "host": "codex",
+    "model": "gpt-6-astra",
+    "tier": "standard"
+  },
+  "ise": {
+    "assertion_grade": "validated",
+    "provenance": {
+      "methodology_version": "ramza-1.1.0"
+    },
+    "receiver_authorization": {
+      "auto_route": true,
+      "auto_merge": false,
+      "auto_deploy": false
+    }
+  },
+  "confidence": 0.875,
+  "x_ramza_acceptance_criteria": {
+    "path": "aci-s07.criteria.md",
+    "sha256": "a5a08415f0dcf276a270cea3cbd1daf29e0b84332c791f7ff394fec0c6b92036"
+  }
+}

@@ -1,0 +1,1 @@
+{"observed_exit":1,"stage":"initial clone/time wrapper","diagnostic":"sysctl kern.clockrate Operation not permitted","action":"Keep clone stdout/stderr/job and initial-run logs unchanged; verify same disposable clone pinned HEAD and clean source before any indexing. Escalate authorized resource measurement."}

@@ -1,0 +1,7 @@
+{
+  "archive": "mcp-server/tests/fixtures/s07/legacy.py.txt",
+  "original_logical_source": "legacy.py",
+  "before_sha256": "e07d630e30d784c206a28e7670b5dc353f1af2adf238a707633b24cc83ea0f22",
+  "after_sha256": "e07d630e30d784c206a28e7670b5dc353f1af2adf238a707633b24cc83ea0f22",
+  "reason": "Location-only archive extension; unresolved reference remains verbatim, not executable lint input."
+}

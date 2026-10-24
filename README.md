@@ -333,15 +333,30 @@ enabled provider supplies that operation. Every shipped producer reports compile
 semantic binding as unsupported. Structural confidence labels do not establish
 compiler semantics or completeness percentages.
 
-Successful index builds persist a separate coverage snapshot without changing
-canonical generation inputs or portable export facts. Legacy indexes lacking the
-snapshot and source-free imports have unknown source coverage and indexed
-capabilities; an empty imported file table never establishes completeness. Applied
-language/skip configuration is preserved in coverage metadata. Excluded paths
-are not counted as verified, and unknown totals/excluded counts remain null.
+Index builds publish `atlas-generation.v3` inputs with a deterministic observation
+digest and an `atlas-coverage.v2` snapshot. Every recognized source file records
+its exact observed hash and indexed, failed, unsupported, or disabled outcome.
+Complete enumeration is separate from complete extraction: recovered syntax-error
+trees are quarantined as whole files and publish a **partial** generation. No
+clean-looking subtree in such a file supplies new facts. A parser diagnostic can
+reflect unsupported dialect syntax; it does not prove that the source is invalid.
+CLI success means that the complete atomic observation was published; build output
+reports `extraction_state` and `files_failed`, and status reports partial coverage.
+Excluded paths are not verified, and excluded counts remain unknown.
 
-Parser/query/extraction exceptions, read errors, and recovered syntax-error trees
-abort publication.
+When a previously indexed file fails extraction, its exact historical facts and
+necessary target evidence are retained separately, with original source hashes,
+byte spans and producer IDs. `historical_definitions`, `historical_references`,
+`historical_edges` and `historical_rationale` expose them with explicit stale
+freshness. They never supply current bindings or confident/community/god-node
+analysis. Fresh callers cannot bind stale targets. Retrying failed bytes parses
+them again; recovery replaces history. Disabled/deleted sources leave the active
+index. Portable v2 export/import retains these observations and historical
+associations. Imported source verification stays unavailable even when declared
+staleness is known; v1/epoch6 artifacts without observations remain unknown.
+
+Fatal parser/query/extraction exceptions, read errors, and persistence/publication
+failures still abort staging and preserve the previous completed generation.
 A failed refresh retains the previous immutable generation and records an atomic
 `.atlas/index-attempt.v1.json` observation under the writer lock. A matching failed
 attempt marks retained facts for failed files stale, preserving

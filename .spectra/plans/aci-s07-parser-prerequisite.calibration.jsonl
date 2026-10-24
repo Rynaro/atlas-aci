@@ -1,0 +1,4 @@
+{"rubric":"complexity","total":9,"dims":{"scope":2,"ambiguity":3,"dependencies":2,"risk":2},"verdict":"extended","at":"2026-10-24T03:10:12Z","label":"scratch-feasibility"}
+{"rubric":"explore","total":85.5,"dims":{"alignment":10,"correctness":9,"maintainability":8,"performance":8,"simplicity":7,"risk":8,"innovation":7},"verdict":"elite","at":"2026-10-24T03:10:13Z","label":"bounded-grammar-variants-proof"}
+{"rubric":"explore","total":61.5,"dims":{"alignment":8,"correctness":7,"maintainability":5,"performance":6,"simplicity":3,"risk":4,"innovation":8},"verdict":"weak","at":"2026-10-24T03:10:13Z","label":"general-lossless-parser-composition-engine"}
+{"rubric":"explore","total":78.5,"dims":{"alignment":5,"correctness":10,"maintainability":8,"performance":9,"simplicity":10,"risk":10,"innovation":1},"verdict":"solid","at":"2026-10-24T03:10:13Z","label":"stop-with-existing-blocker-only"}

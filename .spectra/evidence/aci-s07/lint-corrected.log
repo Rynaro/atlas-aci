@@ -1,0 +1,20 @@
+E501 Line too long (103 > 100)
+    --> mcp-server/src/atlas_aci/codegraph.py:4052:101
+     |
+4050 |             ev.put(conn, assertion, path)
+4051 |             conn.execute(
+4052 |                 "UPDATE rationale SET occurrence_id=?,evidence_id=?,assertion_id=?,target_entity_id=? "
+     |                                                                                                     ^^^
+4053 |                 "WHERE id=?",
+4054 |                 (occurrence, proof, assertion["id"], target, row["id"]),
+     |
+
+F821 Undefined name `missing`
+ --> mcp-server/tests/fixtures/s07/legacy.py:8:5
+  |
+7 | def unresolved():
+8 |     missing()
+  |     ^^^^^^^
+  |
+
+Found 2 errors.

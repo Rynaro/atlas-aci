@@ -1,0 +1,19 @@
+{
+  "kind": "human-review-disposition",
+  "recorded_at": "2026-10-24T13:53:47.738440+00:00",
+  "source": "Explicit user message in this conversation",
+  "verbatim_user_response": "Approce the scoped correction",
+  "decision": "APPROVED_SCOPED_CORRECTION",
+  "supporting_plan_sha256": "ebbf02086f2059e90ab903b675c24bddadb627ba91892dfca16a24f1967a6fb9",
+  "supporting_criteria_sha256": "b4c2ff493ecbe88a2841a907514c60cae76c23756842282418bd9a90301a51ae",
+  "reviewed_proof_source_sha256": "d8c1dd31282404e74bf03c579d7a597f1a0ce55a10644e39999fe56bf5086644",
+  "confidence": 82.5,
+  "confidence_verdict": "VALIDATE",
+  "human_review_performed": true,
+  "broader_execution_authorized": true,
+  "scope": "Implement the independently reviewed supporting correction within its exact path and effort scope; retain all original acceptance, independent reviews, full validation and merge gates.",
+  "not_product_completion": true,
+  "first_proof_elapsed_seconds": 490.8947389125824,
+  "review_wait_is_not_engineering_effort": true,
+  "original_goal_scope_unchanged": true
+}

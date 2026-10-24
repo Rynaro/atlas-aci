@@ -1,0 +1,5 @@
+{"content_hash":"5e955213944c124e766791f9262fad1443528e7ff50ad1317fd19f1a58ed2a74","record_count":4,"schema_epoch":6,"type":"header"}
+{"callee_name":"B","candidates":null,"confidence":"INFERRED","lang":"python","relation":"call","source_col":4,"source_kind":"function","source_line":2,"source_name":"A","source_path":"legacy.py","target_line":4,"target_name":"B","target_path":"legacy.py","type":"edge"}
+{"kind":"function","lang":"python","line_end":2,"line_start":1,"name":"A","path":"legacy.py","type":"symbol"}
+{"kind":"function","lang":"python","line_end":5,"line_start":4,"name":"B","path":"legacy.py","type":"symbol"}
+{"kind":"function","lang":"python","line_end":8,"line_start":7,"name":"unresolved","path":"legacy.py","type":"symbol"}

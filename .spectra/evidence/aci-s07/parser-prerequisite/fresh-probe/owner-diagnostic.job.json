@@ -1,0 +1,11 @@
+{
+  "command": [
+    "/usr/bin/time",
+    "-l",
+    "mcp-server/.venv/bin/python",
+    ".spectra/evidence/aci-s07/parser-prerequisite/fresh-probe/diagnose-owner.py"
+  ],
+  "exit_code": 1,
+  "elapsed_seconds": 96.40514866600279,
+  "purpose": "diagnostic failure reproduction, not probe measurement"
+}

@@ -1,0 +1,13 @@
+{
+  "output_commit": "62cc5740cc76dd47521a3a0b222a05ada61a80e7",
+  "declared_tracked_files": 332,
+  "before": "PRODUCTS_VERIFIED",
+  "after": "ALREADY_SATISFIED",
+  "manifests_equal": true,
+  "clean_checkout": true,
+  "git_diff_exit_code": 0,
+  "products_exit_code": 0,
+  "complete_reentry_exit_code": 0,
+  "resume_exit_code": 0,
+  "helper_sha256": "aee6db7498c65de031c5fa7a98e7fb8a81f33e4e894b72b7cbf4327c2b54deef"
+}

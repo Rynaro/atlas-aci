@@ -1,0 +1,62 @@
+{
+  "final": "passed",
+  "attempts_run": 1,
+  "max_attempts": 1,
+  "k": 2,
+  "protect": "mcp-server/tests/slices/test_s07_*.py",
+  "tier": "none",
+  "base": "ad9ab7a6122f653b0e9e7052e6173c6257b4a3b8",
+  "candidate_diff": "/tmp/aci-s07-sandbox-pass2/candidate.diff",
+  "feedback": "/tmp/aci-s07-sandbox-pass2/feedback.json",
+  "vigil_handoff": "",
+  "out_dir": "/tmp/aci-s07-sandbox-pass2",
+  "merged": false,
+  "attempts": [
+    {
+      "attempt": 1,
+      "passed": true,
+      "exit_code": 0,
+      "duration_s": 1,
+      "phase": "tests",
+      "flaky": false,
+      "passk_runs": [
+        {
+          "run": 1,
+          "passed": true,
+          "exit_code": 0
+        },
+        {
+          "run": 2,
+          "passed": true,
+          "exit_code": 0
+        }
+      ]
+    }
+  ],
+  "passk": {
+    "k": 2,
+    "runs": [
+      {
+        "attempt": 1,
+        "passk_runs": [
+          {
+            "run": 1,
+            "passed": true,
+            "exit_code": 0
+          },
+          {
+            "run": 2,
+            "passed": true,
+            "exit_code": 0
+          }
+        ]
+      }
+    ]
+  },
+  "fanout": 1,
+  "selected_candidate": 0,
+  "red_gate": "",
+  "judge": "",
+  "tamper_rejections": 0,
+  "cascade_tier_used": ""
+}

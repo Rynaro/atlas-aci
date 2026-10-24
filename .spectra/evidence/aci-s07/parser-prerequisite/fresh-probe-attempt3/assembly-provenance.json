@@ -1,0 +1,17 @@
+{
+  "command": [
+    "/private/tmp/atlas-aci-aci-s07/mcp-server/.venv/bin/python",
+    "/private/tmp/atlas-aci-aci-s07/scripts/probe-assemble-graph-bundle.py",
+    "--out",
+    "/private/tmp/atlas-aci-aci-s07/.spectra/changes/aci-s07-probe/probe-graphs.json.gz",
+    "--repo",
+    "solidus:/tmp/aci-s07-approved3-solidus-graph.json:/private/tmp/atlas-aci-aci-s07/.spectra/evidence/aci-s07/parser-prerequisite/fresh-probe-attempt3/solidus-modularity.stdout.log",
+    "--repo",
+    "spree:/tmp/aci-s07-approved3-spree-graph.json:/private/tmp/atlas-aci-aci-s07/.spectra/evidence/aci-s07/parser-prerequisite/fresh-probe-attempt3/spree-modularity.stdout.log"
+  ],
+  "exit_code": 0,
+  "indexer_fingerprint": "0605f4ae8f83e953d3dd95cd2bb0b55bf37e8d0fa3c0c31a176314ec7b94383f",
+  "recorded_verdict": "PASS",
+  "bundle_sha256": "c5bfe09753acccb2652e1ea730079e3269ed47b2ed58ee6d3ea642fc08ff1ffe",
+  "source_sha256": "9af60175b29b30ad47b10c6eb3d592bb19a3e6c09a840375e18415c52da872c0"
+}

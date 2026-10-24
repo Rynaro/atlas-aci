@@ -1,0 +1,19 @@
+{
+  "edges": [],
+  "canonical_api_present": false,
+  "actual_import_nodes": [
+    [
+      "import_from_statement",
+      "dotted_name",
+      {
+        "level": 1,
+        "module": [
+          "b"
+        ],
+        "name": "B",
+        "local_name": "B",
+        "reason": null
+      }
+    ]
+  ]
+}

@@ -4,13 +4,42 @@ from __future__ import annotations
 
 import hashlib
 import json
+from contextlib import contextmanager
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 from click.testing import CliRunner
 
 from atlas_aci.__main__ import cli
 from atlas_aci.codegraph import CodeGraph
+
+
+@contextmanager
+def fatal_recovered_parser():
+    """Inject a fatal parser-provider exception after a real recovered parse.
+
+    Recovered syntax alone now publishes partial observations. These existing
+    fatal/sidecar controls must still exercise an actual aborted replacement.
+    """
+    import tree_sitter_language_pack as pack
+
+    original = pack.get_parser
+
+    def get_parser(language):
+        parser = original(language)
+
+        class ThrowingParser:
+            def parse(self, source):
+                tree = parser.parse(source)
+                if tree.root_node.has_error:
+                    raise LookupError("controlled fatal parser-provider failure")
+                return tree
+
+        return ThrowingParser()
+
+    with patch.object(pack, "get_parser", get_parser):
+        yield
 
 
 def digest(data: bytes) -> str:
@@ -50,7 +79,12 @@ def test_unsupported_extension(tmp_path: Path):
         "state": "unsupported",
         "reason": "language_disabled",
     }
-    assert payload["completeness"]["counts"] == {"indexed": 1, "unsupported": 1, "disabled": 1}
+    assert payload["completeness"]["counts"] == {
+        "indexed": 1,
+        "unsupported": 1,
+        "disabled": 1,
+        "failed": 0,
+    }
     graph.close()
 
 
@@ -92,17 +126,19 @@ def test_parse_failure_visible(tmp_path: Path, lang: str, extension: str, malfor
     source.write_text(malformed)
     assert get_parser(lang).parse(source.read_bytes()).root_node.has_error
     graph = CodeGraph(repo)
-    with pytest.raises(RuntimeError):
-        graph.build()
+    stats = graph.build()
+    assert stats["extraction_state"] == "partial" and stats["files_failed"] == 1
     payload = status(repo)
-    assert payload["generation_id"] is None
-    assert payload["completeness"]["state"] == "unavailable"
-    assert payload["attempt"]["applicability"] == "unbound_no_generation"
-    failed = payload["attempt"]["observation"]["files"][-1]
+    assert payload["generation_id"] is not None
+    assert payload["completeness"]["state"] == "partial"
+    assert payload["completeness"]["enumeration"] == "complete"
+    assert payload["attempt"]["applicability"] == "none"
+    failed = payload["completeness"]["files"][-1]
     assert failed["path"] == source.name
     assert failed["reason"] == "parse_error"
-    assert failed["source_sha256"] == digest(source.read_bytes())
+    assert failed["failed_source_sha256"] == digest(source.read_bytes())
     assert failed["location"]["line"] >= 1
+    assert graph.search_symbol("broken")["definitions"] == []
     graph.close()
 
 
@@ -115,20 +151,24 @@ def test_retained_stale_fact(tmp_path: Path):
     generation = graph.generation_id
     before = graph.db_path.read_bytes()
     source.write_text("def broken(:\n    pass\n")
+    # Preserve the fatal/ABA obligation with a real provider exception;
+    # ordinary recovered trees below publish a separate partial generation.
+    with fatal_recovered_parser(), pytest.raises(RuntimeError):
+        graph.build()
+    saved_attempt = (repo / ".atlas/index-attempt.v1.json").read_bytes()
+    assert graph.db_path.read_bytes() == before and graph.generation_id == generation
     for _ in range(2):
-        with pytest.raises(RuntimeError):
-            graph.build(since="HEAD")
-    assert graph.db_path.read_bytes() == before
-    assert graph.generation_id == generation
-    assert graph.search_symbol("old")["definitions"]
+        graph.build(since="HEAD")
+    assert graph.db_path.read_bytes() != before and graph.generation_id != generation
+    assert not graph.search_symbol("old")["definitions"]
+    assert graph.search_symbol("old")["historical_definitions"]
     failed_status = status(repo)
-    assert failed_status["completeness"]["state"] == "failed"
+    assert failed_status["completeness"]["state"] == "partial"
     files = {x["path"]: x for x in failed_status["completeness"]["files"]}
     assert files["a.py"]["stale"] is True
     assert files["a.py"]["fact_source_sha256"] == digest(old)
     assert files["a.py"]["failed_source_sha256"] == digest(source.read_bytes())
-    assert files["z.py"]["refresh_verification"] == "not_processed"
-    saved_attempt = (repo / ".atlas/index-attempt.v1.json").read_bytes()
+    assert files["z.py"]["refresh_verification"] == "verified_unchanged"
     source.write_bytes(old)
     graph.build(since="HEAD")
     assert graph.generation_id == generation
@@ -153,13 +193,12 @@ def test_status_replay(tmp_path: Path):
     ).fetchone()[0]
     assert token not in first.stdout
     source.write_text("def broken(:\n    pass\n")
-    with pytest.raises(RuntimeError):
-        graph.build()
+    graph.build()
     failed = status(repo)
-    assert failed["generation_id"] == parsed["generation_id"]
+    assert failed["generation_id"] != parsed["generation_id"]
     assert failed["status_id"] != parsed["status_id"]
-    with pytest.raises(RuntimeError):
-        graph.build()
+    assert failed["completeness"]["state"] == "partial"
+    graph.build()
     assert status(repo) == failed
     graph.close()
 
@@ -180,7 +219,7 @@ def test_read_only_missing_and_legacy(tmp_path: Path):
     assert legacy["completeness"]["state"] == "unknown"
     assert legacy["completeness"]["counts"] is None
     source.write_text("def broken(:\n    pass\n")
-    with pytest.raises(RuntimeError):
+    with fatal_recovered_parser(), pytest.raises(RuntimeError):
         graph.build()
     failed = status(repo)
     assert failed["attempt"]["applicability"] == "uncorrelated_missing_token"
@@ -224,7 +263,7 @@ def test_source_free_import_unknown(tmp_path: Path):
 def test_bad_attempt_never_claims_fresh(tmp_path: Path, mutation: str):
     repo, source, graph = build_repo(tmp_path)
     source.write_text("def broken(:\n    pass\n")
-    with pytest.raises(RuntimeError):
+    with fatal_recovered_parser(), pytest.raises(RuntimeError):
         graph.build()
     path = repo / ".atlas/index-attempt.v1.json"
     data = json.loads(path.read_text())
@@ -280,7 +319,7 @@ def test_failure_paths(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, failure:
             raise OSError("no space")
 
         monkeypatch.setattr(graph, "_write_attempt", cannot_write)
-    with pytest.raises((RuntimeError, PermissionError)) as error:
+    with fatal_recovered_parser(), pytest.raises((RuntimeError, PermissionError)) as error:
         graph.build(since="HEAD")
     assert "no space" not in str(error.value)
     assert graph.db_path.read_bytes() == old
@@ -322,7 +361,7 @@ def test_status_atomic_lease_race(tmp_path: Path, monkeypatch: pytest.MonkeyPatc
         source.write_text("def replacement():\n    pass\n")
         graph.build()
         source.write_text("def broken(:\n    pass\n")
-        with pytest.raises(RuntimeError):
+        with fatal_recovered_parser(), pytest.raises(RuntimeError):
             graph.build()
         published.set()
         payload = result.result(5)
@@ -350,7 +389,7 @@ def test_diagnostic_token_excluded_but_coverage_consumed(tmp_path: Path):
     (repo / "observed.rs").write_text("fn main() {}\n")
     graph.build()
     changed = status(repo)
-    assert changed["generation_id"] == first_status["generation_id"]
+    assert changed["generation_id"] != first_status["generation_id"]
     assert changed["indexed"]["coverage_id"] != first_status["indexed"]["coverage_id"]
     assert runner.index_identity(graph.db_path) != first
     graph.close()
@@ -362,7 +401,7 @@ def test_unprocessed_and_empty_files_are_not_verified_facts(tmp_path: Path):
     (repo / "z.py").write_text("def later():\n    pass\n")
     graph.build()
     source.write_text("def broken(:\n    pass\n")
-    with pytest.raises(RuntimeError):
+    with fatal_recovered_parser(), pytest.raises(RuntimeError):
         graph.build()
     files = {f["path"]: f for f in status(repo)["completeness"]["files"]}
     assert files["a.py"]["stale"] is False  # no retained facts for the empty file
@@ -418,7 +457,7 @@ def test_aborted_changed_prefix_not_claimed_published(tmp_path: Path):
     original = source.read_bytes()
     source.write_text("def replacement():\n    pass\n")
     (repo / "z.py").write_text("def broken(:\n    pass\n")
-    with pytest.raises(RuntimeError):
+    with fatal_recovered_parser(), pytest.raises(RuntimeError):
         graph.build()
     files = {f["path"]: f for f in status(repo)["completeness"]["files"]}
     assert files["a.py"]["stale"] is True

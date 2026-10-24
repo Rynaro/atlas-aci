@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/private/tmp/atlas-aci-aci-s07/.spectra/evidence/aci-s07/probe/run_probe.py", line 66, in <module>
+    job(name+'-clone',['git','clone','--no-checkout','--no-local',str(cache),str(repo)],INPUTS)
+  File "/private/tmp/atlas-aci-aci-s07/.spectra/evidence/aci-s07/probe/run_probe.py", line 54, in job
+    raise RuntimeError('Probe job failed: '+name)
+RuntimeError: Probe job failed: solidus-clone

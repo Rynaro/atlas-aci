@@ -30,6 +30,8 @@ import structlog
 
 from atlas_aci.config import DEFAULT_MAX_BOUND_FIELD_ELEMENTS, path_is_within
 from atlas_aci.label_propagation import label_propagation
+from atlas_aci.providers import python_imports
+from atlas_aci.storage import evidence as ev
 
 if TYPE_CHECKING:
     from tree_sitter_language_pack import SupportedLanguage
@@ -152,7 +154,11 @@ LANG_BY_EXT: dict[str, str] = {
 QUERIES: dict[str, str] = {
     "ruby": """
         (class name: (constant) @name) @def.class
+        (class name: (scope_resolution) @name
+            (#match? @name "^[A-Z][A-Za-z0-9_]*(::[A-Z][A-Za-z0-9_]*)+$")) @def.class
         (module name: (constant) @name) @def.module
+        (module name: (scope_resolution) @name
+            (#match? @name "^[A-Z][A-Za-z0-9_]*(::[A-Z][A-Za-z0-9_]*)+$")) @def.module
         (method name: (identifier) @name) @def.method
         (method name: (setter) @name) @def.method
         (method name: (operator) @name) @def.method
@@ -315,7 +321,7 @@ assert set(LANG_BY_EXT.values()) <= set(QUERIES) | UNSUPPORTED_LANGS, (
 #
 # Recompute via:
 #   python -c "from atlas_aci.codegraph import SCHEMA, ddl_hash; print(ddl_hash(SCHEMA))"
-SCHEMA_EPOCH = 6
+SCHEMA_EPOCH = 7
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS symbols (
@@ -481,6 +487,31 @@ CREATE INDEX IF NOT EXISTS idx_assignment_targets_path_name ON assignment_target
 """
 
 
+LEGACY_SCHEMA = SCHEMA
+LEGACY_DDL_HASH = "52f933ea7a2a38074fb436d473b2caedb1e8b439584483077896e0e92ea622c3"
+SCHEMA += (
+    """
+CREATE TABLE IF NOT EXISTS import_bindings (
+    path TEXT NOT NULL, local_name TEXT NOT NULL, scope TEXT NOT NULL,
+    byte_start INTEGER NOT NULL, description TEXT NOT NULL, lang TEXT NOT NULL,
+    source_entity_id TEXT, occurrence_id TEXT, evidence_id TEXT, assertion_id TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_import_binding_scope ON import_bindings(path, scope, local_name);
+"""
+    + ev.DDL
+)
+for _table, _columns in ev.LINK_COLUMNS.items():
+    if _table == "import_bindings":
+        continue
+    _pattern = r"(CREATE TABLE IF NOT EXISTS " + _table + r" \(.*?)(\n\);)"
+    SCHEMA = re.sub(
+        _pattern,
+        r"\g<1>,\n" + ",\n".join("    " + column + " TEXT" for column in _columns) + r"\g<2>",
+        SCHEMA,
+        flags=re.S,
+    )
+
+
 def ddl_hash(ddl: str) -> str:
     """SHA-256 hex digest of a schema DDL string (AC-H-12)."""
     return hashlib.sha256(ddl.encode("utf-8")).hexdigest()
@@ -488,7 +519,11 @@ def ddl_hash(ddl: str) -> str:
 
 # Hand-maintained — see the SCHEMA_EPOCH docstring above. Do NOT replace this
 # with `ddl_hash(SCHEMA)`; that would make the pairing test a tautology.
-EXPECTED_DDL_HASH = "52f933ea7a2a38074fb436d473b2caedb1e8b439584483077896e0e92ea622c3"
+EXPECTED_DDL_HASH = "23aee629ec89a6bd420ed3719e2e42de9d0a456b52e1b29aa3760bc05a0eb26a"
+SQLITE_SCHEMA_HASHES = {
+    6: "2a40eed9dbb5f1f4d913a857895b1dfc8ac7daa3edf4e9e033d02084b7de1475",
+    7: "9536086b279a9dc5121c3a853f8a1d5c151393db1e6a4f0104f3b8a72b6c3a79",
+}
 
 
 def parse_query_verb(dsl: str) -> str:
@@ -618,6 +653,8 @@ class Symbol:
     line_end: int
     lang: str
     binding: str = "{}"
+    entity_id: str | None = None
+    occurrence_id: str | None = None
 
 
 @dataclass
@@ -656,6 +693,9 @@ class Reference:
     qualified: bool = False
     qualifier_name: str | None = None
     binding: str = "{}"
+    source_entity_id: str | None = None
+    occurrence_id: str | None = None
+    evidence_id: str | None = None
 
 
 @dataclass
@@ -673,6 +713,9 @@ class RationaleComment:
     text: str
     label: str | None
     lang: str
+    occurrence_id: str | None = None
+    evidence_id: str | None = None
+    target_entity_id: str | None = None
 
 
 # A4/D5 — the rationale-comment marker vocabulary, ported from graphify's
@@ -844,16 +887,23 @@ class CodeGraph:
                     f"Graph namespace must not redirect from its canonical path: {expected}"
                 )
 
+    def _read_db_path(self) -> Path:
+        if self.db_path.exists():
+            return self.db_path
+        legacy = self.atlas_dir / "graph.6.db"
+        return legacy if legacy.exists() else self.db_path
+
     @property
     def db(self) -> sqlite3.Connection:
         if self._closed:
             raise RuntimeError("This graph reader is closed")
         if self._db is None:
             self._validate_graph_namespace()
-            if self.read_only:
+            selected = self._read_db_path()
+            if self.read_only or selected != self.db_path:
                 # mode=ro: SQLite never attempts a write, journal, or lock
                 # file for this connection — safe on a read-only mount.
-                self._db = sqlite3.connect(self.db_path.as_uri() + "?mode=ro", uri=True)
+                self._db = sqlite3.connect(selected.as_uri() + "?mode=ro", uri=True)
             else:
                 self._db = sqlite3.connect(self.db_path)
                 self._db.executescript(SCHEMA)
@@ -874,93 +924,141 @@ class CodeGraph:
     def _canonical_generation(inputs: dict[str, Any]) -> str:
         return json.dumps(inputs, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
 
+    @staticmethod
+    def _schema_signature(conn: sqlite3.Connection) -> str:
+        rows = [
+            (row[0], row[1], " ".join(row[2].split()))
+            for row in conn.execute(
+                "SELECT type,name,sql FROM sqlite_master WHERE sql IS NOT NULL "
+                "AND name NOT LIKE 'sqlite_%' ORDER BY type,name"
+            )
+        ]
+        return hashlib.sha256(ev.canonical(rows).encode()).hexdigest()
+
     def _generation_data(self, conn: sqlite3.Connection) -> tuple[dict[str, Any], str] | None:
-        """Validate the manifest on this connection, never another pathname."""
+        """Validate this opened schema/generation, including known epoch6 only."""
         try:
-            values = dict(conn.execute("SELECT key, value FROM manifest"))
+            values = dict(conn.execute("SELECT key,value FROM manifest"))
+            epoch = values.get("epoch")
+            if epoch not in {"6", "7"}:
+                return None
+            legacy = epoch == "6"
+            filename = Path(conn.execute("PRAGMA database_list").fetchone()[2]).name
+            if legacy and filename != "graph.6.db":
+                return None
             inputs = json.loads(values["generation_inputs"])
             identifier = values["generation_id"]
+            expected_schema = {
+                "epoch": 6 if legacy else 7,
+                "ddl_hash": LEGACY_DDL_HASH if legacy else EXPECTED_DDL_HASH,
+            }
             if (
-                values.get("epoch") != str(SCHEMA_EPOCH)
-                or not isinstance(inputs, dict)
-                or inputs.get("format") != "atlas-generation.v1"
-                or inputs.get("kind") not in {"build", "import"}
+                not isinstance(inputs, dict)
+                or inputs.get("format")
+                not in (
+                    {"atlas-generation.v1"}
+                    if legacy
+                    else {"atlas-generation.v2", "atlas-generation.v3"}
+                )
+                or inputs.get("kind")
+                not in ({"build", "import"} if legacy else {"build", "import", "legacy_conversion"})
                 or inputs.get("repository") != str(self.repo)
-                or inputs.get("schema") != {"epoch": SCHEMA_EPOCH, "ddl_hash": EXPECTED_DDL_HASH}
-                or not re.fullmatch(r"[0-9a-f]{64}", identifier)
-                or hashlib.sha256(self._canonical_generation(inputs).encode()).hexdigest()
-                != identifier
+                or inputs.get("schema") != expected_schema
+                or type(inputs["schema"]["epoch"]) is not int
+                or not ev.hash_value(identifier)
+                or hashlib.sha256(ev.canonical(inputs).encode()).hexdigest() != identifier
+                or self._schema_signature(conn) != SQLITE_SCHEMA_HASHES[int(epoch)]
             ):
                 return None
 
-            def valid_hash(value):
-                return isinstance(value, str) and re.fullmatch(r"[0-9a-f]{64}", value) is not None
-
             def valid_producer(value):
-                return (
-                    isinstance(value, dict)
-                    and set(value) == {"codegraph_sha256", "queries_sha256", "packages"}
-                    and valid_hash(value["codegraph_sha256"])
-                    and valid_hash(value["queries_sha256"])
-                    and isinstance(value["packages"], dict)
-                    and set(value["packages"]) == {"tree-sitter", "tree-sitter-language-pack"}
-                    and all(isinstance(v, str) and bool(v) for v in value["packages"].values())
+                record = ev.producer(value, legacy=legacy)
+                ev.validate_record(record)
+                return legacy == ("modules" not in value)
+
+            def valid_hashes(hashes):
+                return isinstance(hashes, dict) and all(
+                    ev.relative_path(path) and ev.hash_value(value)
+                    for path, value in hashes.items()
                 )
 
             common = {"format", "kind", "repository", "schema"}
-            if type(inputs["schema"]["epoch"]) is not int:
-                return None
+            if inputs["format"] == "atlas-generation.v3":
+                common.add("observation_digest")
+                observations = self._observation_records(conn, require_current=True)
+                if inputs.get("observation_digest") != self._status_hash(observations):
+                    return None
             if inputs["kind"] == "build":
                 if set(inputs) != common | {"source_hashes", "configuration", "producer"}:
                     return None
-                hashes = inputs["source_hashes"]
-                configuration = inputs["configuration"]
+                config = inputs["configuration"]
                 if (
                     not valid_producer(inputs["producer"])
-                    or not isinstance(configuration, dict)
-                    or set(configuration) != {"languages", "skip_patterns"}
+                    or not valid_hashes(inputs["source_hashes"])
+                    or not isinstance(config, dict)
+                    or set(config) != {"languages", "skip_patterns"}
+                    or any(
+                        not isinstance(v, list) or any(not isinstance(x, str) or not x for x in v)
+                        for v in config.values()
+                    )
+                    or config["languages"] != sorted(set(config["languages"]))
+                    or set(inputs["source_hashes"])
+                    != (
+                        {r["path"] for r in observations if r["type"] == "observation"}
+                        if inputs["format"] == "atlas-generation.v3"
+                        else {row[0] for row in conn.execute("SELECT path FROM files")}
+                    )
                 ):
                     return None
-                if any(
-                    not isinstance(v, list)
-                    or any(not isinstance(item, str) or not item for item in v)
-                    for v in configuration.values()
-                ):
-                    return None
-                if configuration["languages"] != sorted(set(configuration["languages"])):
-                    return None
-                if not isinstance(hashes, dict) or any(
-                    not isinstance(path, str)
-                    or not path
-                    or Path(path).is_absolute()
-                    or ".." in Path(path).parts
-                    or not valid_hash(value)
-                    for path, value in hashes.items()
-                ):
-                    return None
-                if set(hashes) != {row[0] for row in conn.execute("SELECT path FROM files")}:
-                    return None
-            else:
-                if set(inputs) != common | {"importer", "artifact", "source_provenance"}:
+            elif inputs["kind"] == "import":
+                if set(inputs) != common | {
+                    "importer",
+                    "artifact",
+                    "source_provenance",
+                } or not valid_producer(inputs["importer"]):
                     return None
                 artifact = inputs["artifact"]
                 if (
-                    not valid_producer(inputs["importer"])
-                    or inputs["source_provenance"] != "unavailable"
+                    inputs["source_provenance"] != "unavailable"
                     or not isinstance(artifact, dict)
                     or set(artifact) != {"sha256", "content_hash", "record_count"}
+                    or not ev.hash_value(artifact["sha256"])
+                    or not ev.hash_value(artifact["content_hash"])
+                    or not ev.integer(artifact["record_count"])
                 ):
                     return None
+                if legacy and artifact["record_count"] != sum(
+                    conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
+                    for table in ("symbols", "edges", "rationale")
+                ):
+                    return None
+                if not legacy and artifact["record_count"] != sum(
+                    conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
+                    for table in (*ev.TABLES.values(), *ev.COLUMNS)
+                ) + len(self._observation_records(conn)):
+                    return None
+            else:
+                if set(inputs) != common | {"converter", "legacy"} or not valid_producer(
+                    inputs["converter"]
+                ):
+                    return None
+                origin = inputs["legacy"]
                 if (
-                    not valid_hash(artifact["sha256"])
-                    or not valid_hash(artifact["content_hash"])
-                    or type(artifact["record_count"]) is not int
-                    or artifact["record_count"] < 0
-                ):
-                    return None
-                if artifact["record_count"] != sum(
-                    conn.execute(f"SELECT COUNT(*) FROM {name}").fetchone()[0]
-                    for name in ("symbols", "edges", "rationale")
+                    not isinstance(origin, dict)
+                    or set(origin) != {"kind", "identity", "source_hashes", "unavailable"}
+                    or origin["kind"] not in {"database", "jsonl"}
+                    or not ev.hash_value(origin["identity"])
+                    or (
+                        origin["source_hashes"] is not None
+                        and not valid_hashes(origin["source_hashes"])
+                    )
+                    or origin["unavailable"]
+                    != ["exact_spans", "structural_owners", "source_completeness"]
+                    + (
+                        ["unresolved_references"]
+                        if origin["kind"] == "jsonl" or origin["source_hashes"] is None
+                        else []
+                    )
                 ):
                     return None
             return inputs, identifier
@@ -1034,6 +1132,10 @@ class CodeGraph:
             "queries_sha256": hashlib.sha256(
                 self._canonical_generation(QUERIES).encode()
             ).hexdigest(),
+            "modules": {
+                name: hashlib.sha256((Path(__file__).parent / name).read_bytes()).hexdigest()
+                for name in ("storage/evidence.py", "providers/python_imports.py")
+            },
             "packages": {
                 name: importlib.metadata.version(name)
                 for name in ("tree-sitter", "tree-sitter-language-pack")
@@ -1057,6 +1159,8 @@ class CodeGraph:
                 # _resolve_edges turns a call to a class into construct.
                 if "class" in definitions:
                     relations.add("construct")
+            if lang == "python":
+                relations.add("import")
             if "@comment.rationale" in query:
                 relations.add("rationale_for")
             reason = "bounded_structural_queries" if query else "no_extraction_query"
@@ -1076,7 +1180,12 @@ class CodeGraph:
                 }
             )
         return {
-            "format": "atlas-capabilities.v1",
+            "format": "atlas-capabilities.v2",
+            "limitations": {
+                "python_imports": "package_local_unaliased_relative_only",
+                "control_flow": "unsupported",
+                "semantic_binding": "unsupported",
+            },
             "producer": self._producer_inputs(),
             "producers": [
                 {
@@ -1092,7 +1201,7 @@ class CodeGraph:
     def _observation_counts(files: list[dict[str, Any]]) -> dict[str, int]:
         return {
             state: sum(f["state"] == state for f in files)
-            for state in ("indexed", "unsupported", "disabled")
+            for state in ("indexed", "unsupported", "disabled", "failed")
         }
 
     def _publication_base(self) -> tuple[str | None, str | None]:
@@ -1132,23 +1241,11 @@ class CodeGraph:
 
     @staticmethod
     def _valid_status_provenance(producer: Any, configuration: Any) -> bool:
-        if not isinstance(producer, dict) or set(producer) != {
-            "codegraph_sha256",
-            "queries_sha256",
-            "packages",
-        }:
+        if not isinstance(producer, dict):
             return False
-        if any(
-            not isinstance(producer[k], str) or re.fullmatch(r"[0-9a-f]{64}", producer[k]) is None
-            for k in ("codegraph_sha256", "queries_sha256")
-        ):
-            return False
-        packages = producer["packages"]
-        if (
-            not isinstance(packages, dict)
-            or set(packages) != {"tree-sitter", "tree-sitter-language-pack"}
-            or any(not isinstance(v, str) or not v for v in packages.values())
-        ):
+        try:
+            ev.validate_record(ev.producer(producer, legacy="modules" not in producer))
+        except ValueError:
             return False
         if not isinstance(configuration, dict) or set(configuration) != {
             "languages",
@@ -1168,10 +1265,19 @@ class CodeGraph:
     ) -> bool:
         if (
             not isinstance(caps, dict)
-            or set(caps) != {"format", "producer", "producers", "languages"}
-            or caps["format"] != "atlas-capabilities.v1"
+            or caps.get("format") not in {"atlas-capabilities.v1", "atlas-capabilities.v2"}
+            or set(caps)
+            != {"format", "producer", "producers", "languages"}
+            | ({"limitations"} if caps.get("format") == "atlas-capabilities.v2" else set())
+            or (caps.get("format") == "atlas-capabilities.v2") != ("modules" in producer)
             or caps["producer"] != producer
         ):
+            return False
+        if caps["format"] == "atlas-capabilities.v2" and caps["limitations"] != {
+            "python_imports": "package_local_unaliased_relative_only",
+            "control_flow": "unsupported",
+            "semantic_binding": "unsupported",
+        }:
             return False
         unsupported = {"state": "unsupported", "reason": "no_compiler_provider"}
         if caps["producers"] != [
@@ -1365,7 +1471,7 @@ class CodeGraph:
             ):
                 raise ValueError("Invalid status metadata")
             if not (
-                data["format"] == "atlas-coverage.v1"
+                data["format"] in {"atlas-coverage.v1", "atlas-coverage.v2"}
                 and data["generation_id"] == reader.generation_id
             ):
                 raise ValueError("Invalid status metadata")
@@ -1376,12 +1482,23 @@ class CodeGraph:
                 and data["producer"] == inputs["producer"]
             ):
                 raise ValueError("Invalid status metadata")
-            if not (self._valid_observed_files(data["files"], failed=False)):
+            if not (
+                self._valid_observed_files(
+                    data["files"], failed=data["format"] == "atlas-coverage.v2"
+                )
+            ):
                 raise ValueError("Invalid status metadata")
-            if not (data["counts"] == self._observation_counts(data["files"])):
+            expected_counts = self._observation_counts(data["files"])
+            if data["format"] == "atlas-coverage.v1":
+                expected_counts.pop("failed")
+            if not (data["counts"] == expected_counts):
                 raise ValueError("Invalid status metadata")
             if not (
-                {f["path"]: f["source_sha256"] for f in data["files"] if f["state"] == "indexed"}
+                {
+                    f["path"]: f["source_sha256"]
+                    for f in data["files"]
+                    if f["state"] == "indexed" or data["format"] == "atlas-coverage.v2"
+                }
                 == inputs["source_hashes"]
             ):
                 raise ValueError("Invalid status metadata")
@@ -1402,6 +1519,7 @@ class CodeGraph:
         inputs: dict[str, Any] = {}
         coverage = None
         fact_paths: set[str] = set()
+        published = []
         try:
             with self.reader_lease() as reader:
                 generation = reader.generation_id
@@ -1417,6 +1535,7 @@ class CodeGraph:
                     "SELECT value FROM manifest WHERE key='diagnostic_publication_token'"
                 ).fetchone()
                 token = row[0] if row and re.fullmatch(r"[0-9a-f]{64}", row[0]) else None
+                published = reader._observation_records(reader.db)
                 if inputs["kind"] == "build" and token is not None:
                     coverage = self._read_coverage(reader, inputs)
                 attempt, problem = self._read_attempt()
@@ -1444,7 +1563,9 @@ class CodeGraph:
             if coverage
             else ("source_coverage_unknown" if generation else "INDEX_UNAVAILABLE")
         )
-        fact_hashes = inputs.get("source_hashes", {})
+        fact_hashes = (
+            inputs.get("source_hashes", inputs.get("legacy", {}).get("source_hashes")) or {}
+        )
         files = [
             {
                 "path": path,
@@ -1457,6 +1578,63 @@ class CodeGraph:
             }
             for path, source_hash in sorted(fact_hashes.items())
         ]
+        if published:
+            by_id = {r["id"]: r for r in published if r["type"] == "history"}
+            files = []
+            for item in (r for r in published if r["type"] == "observation"):
+                history = by_id.get(item["historical_id"])
+                hashes = (
+                    sorted(
+                        {
+                            r["source_sha256"]
+                            for r in history["records"]
+                            if r["type"] == "evidence"
+                            and r["source_sha256"] is not None
+                            and any(
+                                o["type"] == "occurrence"
+                                and o["path"] == item["path"]
+                                and o["id"] == r["occurrence_id"]
+                                for o in history["records"]
+                            )
+                        }
+                    )
+                    if history
+                    else ([item["observed_source_sha256"]] if item["state"] == "indexed" else [])
+                )
+                retained_semantics = history is not None and any(
+                    r["type"] == "projection"
+                    and r["row"].get("source_path" if r["table"] == "edges" else "path")
+                    == item["path"]
+                    for r in history["records"]
+                )
+                files.append(
+                    {
+                        "path": item["path"],
+                        "fact_source_sha256": hashes[0] if len(hashes) == 1 else None,
+                        "fact_source_sha256s": hashes,
+                        "observed_source_sha256": item["observed_source_sha256"],
+                        "failed_source_sha256": item["observed_source_sha256"]
+                        if item["state"] == "failed"
+                        else None,
+                        "retained_facts": retained_semantics or item["path"] in fact_paths,
+                        "stale": bool(retained_semantics)
+                        if history
+                        else (False if coverage else None),
+                        "refresh_verification": "observed_failed"
+                        if item["state"] == "failed"
+                        else "verified_unchanged"
+                        if coverage
+                        else "artifact_only",
+                        "extraction_state": item["state"],
+                        "reason": item["reason"],
+                        "location": item["location"],
+                    }
+                )
+            files.sort(key=lambda item: item["path"])
+            if coverage and any(
+                r["type"] == "observation" and r["state"] == "failed" for r in published
+            ):
+                state, reason = "partial", "observed_complete_extraction_partial"
         observed = {f["path"]: f for f in attempt["observation"]["files"]} if attempt else {}
         if applicability == "matching":
             state, reason = "failed", "refresh_failed_observed_prefix"
@@ -1512,7 +1690,10 @@ class CodeGraph:
                     else (coverage["counts"] if coverage and applicability == "mismatch" else None)
                 ),
                 "excluded_count": None,
-                "total_count": None,
+                "total_count": len(files)
+                if coverage and coverage["format"] == "atlas-coverage.v2"
+                else None,
+                "stale_count": sum(item["stale"] is True for item in files),
                 "enumeration": "observed_prefix"
                 if applicability == "matching"
                 else ("complete" if coverage else "unknown"),
@@ -1533,7 +1714,7 @@ class CodeGraph:
         from atlas_aci.config import DEFAULT_SKIP_PATTERNS
 
         return {
-            "format": "atlas-generation.v1",
+            "format": "atlas-generation.v2",
             "kind": "build",
             "repository": str(self.repo),
             "schema": {"epoch": SCHEMA_EPOCH, "ddl_hash": EXPECTED_DDL_HASH},
@@ -1554,6 +1735,27 @@ class CodeGraph:
                 ("generation_inputs", raw),
                 ("generation_id", identifier),
             ],
+        )
+        unknown = (
+            inputs["kind"] == "legacy_conversion"
+            and "unresolved_references" in inputs["legacy"]["unavailable"]
+        )
+        if inputs["kind"] == "import":
+            unknown = any(
+                json.loads(row[0])["identity_basis"] == "legacy_unavailable"
+                for row in conn.execute("SELECT payload FROM producers")
+            )
+            unknown = (
+                unknown
+                or conn.execute(
+                    "SELECT 1 FROM occurrences WHERE payload "
+                    'LIKE \'%"role":"legacy_edge:%\' LIMIT 1'
+                ).fetchone()
+                is not None
+            )
+        conn.execute(
+            "INSERT OR REPLACE INTO manifest(key,value) VALUES ('reference_coverage',?)",
+            ("unknown" if unknown else "complete",),
         )
         return identifier
 
@@ -1633,7 +1835,7 @@ class CodeGraph:
             return []
         removed = []
         for f in sorted(self.atlas_dir.glob("graph.*.db")):
-            if f.name != self.db_path.name:
+            if f.name not in {self.db_path.name, "graph.6.db"}:
                 f.unlink()
                 removed.append(f.name)
         return removed
@@ -1646,6 +1848,29 @@ class CodeGraph:
             conn = sqlite3.connect(tmp_path)
             conn.row_factory = sqlite3.Row
             inherited = False
+            self._proof_predecessor_records = []
+            self._proof_predecessor_history = {}
+            self._proof_predecessor_observations = {}
+            if self.db_path.exists():
+                previous = sqlite3.connect(self.db_path.as_uri() + "?mode=ro", uri=True)
+                previous.row_factory = sqlite3.Row
+                try:
+                    if self._generation_data(previous) is not None:
+                        self._proof_predecessor_records = list(
+                            ev.records(previous)
+                        ) + self._projection_records(previous)
+                        self._proof_predecessor_observations = {
+                            r["path"]: r
+                            for r in self._observation_records(previous)
+                            if r["type"] == "observation"
+                        }
+                        self._proof_predecessor_history = {
+                            r["path"]: r
+                            for r in self._observation_records(previous)
+                            if r["type"] == "history"
+                        }
+                finally:
+                    previous.close()
             if since is not None:
                 try:
                     previous = sqlite3.connect(self.db_path.as_uri() + "?mode=ro", uri=True)
@@ -1658,6 +1883,16 @@ class CodeGraph:
                 except sqlite3.Error:
                     pass  # missing/legacy metadata means rebuild, never invented provenance
             conn.executescript(SCHEMA)
+            if not self.db_path.exists() and (self.atlas_dir / "graph.6.db").exists():
+                with sqlite3.connect(
+                    (self.atlas_dir / "graph.6.db").as_uri() + "?mode=ro", uri=True
+                ) as legacy:
+                    legacy.row_factory = sqlite3.Row
+                    self._convert_legacy_into(conn, legacy)
+                self._proof_predecessor_records = list(ev.records(conn)) + self._projection_records(
+                    conn
+                )
+                inherited = False
             stats = self._run_build(conn, get_parser, since=since if inherited else None)
             if self._generation_data(conn) is None:
                 raise RuntimeError("Staging did not produce a complete generation")
@@ -1677,20 +1912,32 @@ class CodeGraph:
     ) -> dict[str, Any]:
         """Index into staging; reuse only exact-buffer hashes and compatible facts."""
         base_inputs = self._build_inputs()
+        self._capture_producer = ev.producer(base_inputs["producer"])
         previous_generation = self._generation_data(conn) if since is not None else None
         previous_inputs = previous_generation[0] if previous_generation is not None else {}
-        previous_base = {k: v for k, v in previous_inputs.items() if k != "source_hashes"}
+        previous_base = {
+            k: v
+            for k, v in previous_inputs.items()
+            if k not in {"source_hashes", "observation_digest"}
+        }
+        if previous_base.get("format") == "atlas-generation.v3":
+            previous_base["format"] = base_inputs["format"]
         incremental = since is not None and previous_base == base_inputs
         previous_hashes = previous_inputs.get("source_hashes", {}) if incremental else {}
         source_hashes: dict[str, str] = {}
+        observed_records = []
+        failed_histories = []
 
         if not incremental:
+            for table in (*ev.TABLES.values(), "import_bindings"):
+                conn.execute(f"DELETE FROM {table}")
             conn.execute("DELETE FROM symbols")
             conn.execute("DELETE FROM refs")
             conn.execute("DELETE FROM assignment_targets")
             conn.execute("DELETE FROM rationale")
             conn.execute("DELETE FROM files")
 
+        ev.put(conn, self._capture_producer)
         stored_files: dict[str, tuple[int, int]] = {}
         if incremental:
             stored_files = {
@@ -1722,18 +1969,8 @@ class CodeGraph:
                     "location": None,
                 }
                 self._build_observation["files"].append(observation)
-            if lang is not None and lang not in QUERIES:
-                observation.update(state="unsupported", reason="no_extraction_query")
-                # Recognized extension, no query support (D5-Q2) — report,
-                # don't silently no-op.
-                unsupported_skipped[lang] = unsupported_skipped.get(lang, 0) + 1
+            if lang is None:
                 continue
-
-            if not lang or lang not in self.langs or lang not in QUERIES:
-                if lang is not None:
-                    observation.update(state="disabled", reason="language_disabled")
-                continue
-
             try:
                 stat = path.stat()
                 mtime_ns, size = stat.st_mtime_ns, stat.st_size
@@ -1745,13 +1982,37 @@ class CodeGraph:
             source_hash = hashlib.sha256(source).hexdigest()
             source_hashes[rel] = source_hash
             observation["source_sha256"] = source_hash
+            if lang not in QUERIES:
+                observation.update(state="unsupported", reason="no_extraction_query")
+                unsupported_skipped[lang] = unsupported_skipped.get(lang, 0) + 1
+                observed_records.append(
+                    ev.observation(
+                        rel, lang, source_hash, "unsupported", "no_extraction_query", None, None
+                    )
+                )
+                continue
+            if lang not in self.langs:
+                observation.update(state="disabled", reason="language_disabled")
+                observed_records.append(
+                    ev.observation(
+                        rel, lang, source_hash, "disabled", "language_disabled", None, None
+                    )
+                )
+                continue
             if incremental:
                 seen_paths.add(rel)
-                if rel in stored_files and previous_hashes.get(rel) == source_hash:
+                if (
+                    rel in stored_files
+                    and previous_hashes.get(rel) == source_hash
+                    and self._proof_predecessor_observations.get(rel, {}).get("state") == "indexed"
+                ):
                     conn.execute(
                         "UPDATE files SET mtime_ns=?, size=? WHERE path=?", (mtime_ns, size, rel)
                     )
                     files_skipped += 1
+                    observed_records.append(
+                        ev.observation(rel, lang, source_hash, "indexed", None, None, None)
+                    )
                     continue
             try:
                 parser = get_parser(cast("SupportedLanguage", lang))
@@ -1779,8 +2040,35 @@ class CodeGraph:
                         "end_column": error_node.end_point[1],
                     },
                 )
-                self._build_observation["failure_reason"] = "parse_error"
-                raise RuntimeError(f"Cannot index eligible source {rel}: parse_error")
+                history = self._proof_predecessor_history.get(rel) or self._retained_closure(
+                    rel, lang, self._proof_predecessor_records
+                )
+                if history:
+                    failed_histories.append(history)
+                observed_records.append(
+                    ev.observation(
+                        rel,
+                        lang,
+                        source_hash,
+                        "failed",
+                        "parse_error",
+                        observation["location"],
+                        history,
+                    )
+                )
+                # Failed files do not enter any active lookup/candidate table.
+                if incremental:
+                    for table in (
+                        "symbols",
+                        "refs",
+                        "assignment_targets",
+                        "rationale",
+                        "import_bindings",
+                        "files",
+                    ):
+                        conn.execute(f"DELETE FROM {table} WHERE path=?", (rel,))
+                    ev.remove_path(conn, rel)
+                continue
 
             if incremental:
                 # New or changed file — drop stale rows before re-extracting so
@@ -1790,6 +2078,8 @@ class CodeGraph:
                 conn.execute("DELETE FROM assignment_targets WHERE path = ?", (rel,))
                 conn.execute("DELETE FROM rationale WHERE path = ?", (rel,))
 
+            ev.remove_path(conn, rel)
+            conn.execute("DELETE FROM import_bindings WHERE path=?", (rel,))
             try:
                 symbols, refs, assignment_targets, rationale_comments = self._extract(
                     tree, source, rel, lang
@@ -1798,23 +2088,56 @@ class CodeGraph:
                 observation.update(state="failed", reason="extraction_error")
                 self._build_observation["failure_reason"] = "extraction_error"
                 raise
+            for record in self._canonical_file_records:
+                ev.put(conn, record, rel if record["type"] != "producer" else None)
+            for binding in self._canonical_imports:
+                columns = list(binding)
+                conn.execute(
+                    "INSERT INTO import_bindings("
+                    + ",".join(columns)
+                    + ") VALUES ("
+                    + ",".join("?" for _ in columns)
+                    + ")",
+                    tuple(binding.values()),
+                )
             for target_name, scope, binding_kind, byte_start in assignment_targets:
                 conn.execute(
-                    "INSERT INTO assignment_targets(path, name, scope, binding_kind, byte_start) "
-                    "VALUES (?, ?, ?, ?, ?)",
-                    (rel, target_name, scope, binding_kind, byte_start),
+                    "INSERT INTO assignment_targets(path, name, scope, binding_kind, "
+                    "byte_start, entity_id, occurrence_id, evidence_id) "
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                    (
+                        rel,
+                        target_name,
+                        scope,
+                        binding_kind,
+                        byte_start,
+                        self._canonical_file_entity,
+                        *self._canonical_bindings[(target_name, scope, binding_kind, byte_start)],
+                    ),
                 )
             for s in symbols:
                 conn.execute(
-                    "INSERT INTO symbols(name, kind, path, line_start, line_end, lang, binding) "
-                    "VALUES (?, ?, ?, ?, ?, ?, ?)",
-                    (s.name, s.kind, s.path, s.line_start, s.line_end, s.lang, s.binding),
+                    "INSERT INTO symbols(name, kind, path, line_start, line_end, "
+                    "lang, binding, entity_id, occurrence_id) "
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    (
+                        s.name,
+                        s.kind,
+                        s.path,
+                        s.line_start,
+                        s.line_end,
+                        s.lang,
+                        s.binding,
+                        s.entity_id,
+                        s.occurrence_id,
+                    ),
                 )
                 symbols_added += 1
             for r in refs:
                 conn.execute(
                     "INSERT INTO refs(callee_name, relation, qualified, qualifier_name, "
-                    "path, line, col, lang, binding) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    "path, line, col, lang, binding, source_entity_id, occurrence_id, "
+                    "evidence_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     (
                         r.callee_name,
                         r.relation,
@@ -1825,6 +2148,9 @@ class CodeGraph:
                         r.col,
                         r.lang,
                         r.binding,
+                        r.source_entity_id,
+                        r.occurrence_id,
+                        r.evidence_id,
                     ),
                 )
                 refs_added += 1
@@ -1837,10 +2163,18 @@ class CodeGraph:
                 # finding its owner). None when no symbol contains the
                 # comment's line (e.g. a module-level/top-of-file comment)
                 # — a real "no enclosing definition" fact, not an error.
-                target = self._resolve_rationale_target(rc, symbols)
+                owner_symbol = next(
+                    (symbol for symbol in symbols if symbol.entity_id == rc.target_entity_id), None
+                )
+                target = (
+                    (owner_symbol.path, owner_symbol.line_start, owner_symbol.name)
+                    if owner_symbol
+                    else None
+                )
                 conn.execute(
                     "INSERT INTO rationale(path, line, text, label, target_path, "
-                    "target_line, target_name, lang) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                    "target_line, target_name, lang, occurrence_id, evidence_id, "
+                    "target_entity_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     (
                         rc.path,
                         rc.line,
@@ -1850,6 +2184,9 @@ class CodeGraph:
                         target[1] if target else None,
                         target[2] if target else None,
                         rc.lang,
+                        rc.occurrence_id,
+                        rc.evidence_id,
+                        rc.target_entity_id,
                     ),
                 )
                 rationale_added += 1
@@ -1860,9 +2197,14 @@ class CodeGraph:
                 (rel, mtime_ns, size, lang, datetime.now(UTC).isoformat()),
             )
             files_indexed += 1
+            observed_records.append(
+                ev.observation(rel, lang, source_hash, "indexed", None, None, None)
+            )
 
         if incremental:
             for rel in set(stored_files) - seen_paths:
+                ev.remove_path(conn, rel)
+                conn.execute("DELETE FROM import_bindings WHERE path=?", (rel,))
                 conn.execute("DELETE FROM symbols WHERE path = ?", (rel,))
                 conn.execute("DELETE FROM refs WHERE path = ?", (rel,))
                 conn.execute("DELETE FROM assignment_targets WHERE path = ?", (rel,))
@@ -1885,13 +2227,38 @@ class CodeGraph:
         # what lets `--since` stay correct even though a changed file in
         # isolation cannot know its own candidate count (that requires the
         # *global* symbol table — G-B/D4).
+        all_observed = sorted(
+            [*observed_records, *failed_histories], key=lambda r: (r["type"], r["id"])
+        )
+        conn.execute(
+            "INSERT OR REPLACE INTO manifest(key,value) VALUES ('source_observations',?)",
+            (ev.canonical(all_observed),),
+        )
+        self._observation_records(conn)
+        self._validate_history(all_observed)
+        self._stale_target_names = {
+            (r["row"]["lang"], r["row"]["name"])
+            for h in failed_histories
+            for r in h["records"]
+            if r["type"] == "projection"
+            and r["table"] == "symbols"
+            and r["row"]["path"] == h["path"]
+        }
         edges_added = self._resolve_edges(conn)
+        self._resolve_rationale_assertions(conn)
+        self._validate_evidence_projections(conn)
 
         generation_id = self._store_generation(
-            conn, {**base_inputs, "source_hashes": source_hashes}
+            conn,
+            {
+                **base_inputs,
+                "format": "atlas-generation.v3",
+                "source_hashes": source_hashes,
+                "observation_digest": self._status_hash(all_observed),
+            },
         )
         coverage = {
-            "format": "atlas-coverage.v1",
+            "format": "atlas-coverage.v2",
             "generation_id": generation_id,
             "configuration": base_inputs["configuration"],
             "producer": base_inputs["producer"],
@@ -1916,8 +2283,42 @@ class CodeGraph:
             "files_skipped": files_skipped,
             "files_removed": files_removed,
             "unsupported_skipped": unsupported_skipped,
+            "extraction_state": "partial"
+            if failed_histories
+            or any(r["type"] == "observation" and r["state"] == "failed" for r in all_observed)
+            else "complete",
+            "files_failed": sum(
+                r["type"] == "observation" and r["state"] == "failed" for r in all_observed
+            ),
             "schema_epoch": SCHEMA_EPOCH,
         }
+
+    def _resolve_rationale_assertions(self, conn: sqlite3.Connection) -> None:
+        for row in conn.execute("SELECT * FROM rationale"):
+            occurrence = ev.get(conn, "occurrence", row["occurrence_id"])
+            target = row["target_entity_id"]
+            assertion = ev.assertion(
+                occurrence["entity_id"],
+                target,
+                "rationale_for",
+                row["evidence_id"],
+                "EXTRACTED" if target else "UNRESOLVED",
+                row["text"],
+                reason=None if target else "no_enclosing_definition",
+            )
+            ev.put(conn, assertion, row["path"])
+            conn.execute(
+                "UPDATE rationale SET assertion_id=? WHERE id=?", (assertion["id"], row["id"])
+            )
+
+    def evidence_records(self) -> list[dict[str, Any]]:
+        """Read canonical records deterministically through one pinned RO lease."""
+        with self.reader_lease() as reader:
+            if dict(reader.db.execute("SELECT key,value FROM manifest")).get("epoch") == "6":
+                raise ValueError(
+                    "Epoch6 canonical evidence is unavailable; use writer-only migrate_legacy()"
+                )
+            return list(ev.records(reader.db))
 
     @staticmethod
     def _resolve_rationale_target(
@@ -2000,7 +2401,63 @@ class CodeGraph:
         ts_lang = get_language(cast("SupportedLanguage", lang))
         query = Query(ts_lang, QUERIES[lang])
         matches = QueryCursor(query).matches(tree.root_node)
+        declarations = {}
+        for _, captures in matches:
+            tag = next((key for key in captures if key.startswith("def.")), None)
+            if tag and captures.get("name"):
+                node = captures[tag][0]
+                declarations[node.id] = (
+                    node,
+                    tag.split(".", 1)[1],
+                    self._node_text(source, captures["name"][0]).strip(),
+                )
+        entities = ev.structural_entities(tree, declarations, rel_path, lang)
+        file_entity = ev.file_entity(rel_path, lang)
+        producer = getattr(self, "_capture_producer", None) or ev.producer(self._producer_inputs())
+        self._canonical_file_records = [file_entity, producer, *entities.values()]
+        self._canonical_file_entity = file_entity["id"]
+        self._canonical_imports = []
+        consumed_hash = hashlib.sha256(source).hexdigest()
 
+        def unsupported_source_owner(node):
+            if lang != "ruby":
+                return False
+            for ancestor in self._ancestors(node.parent):
+                name = ancestor.child_by_field_name("name")
+                if (
+                    ancestor.type in {"class", "module"}
+                    and name is not None
+                    and name.type == "scope_resolution"
+                    and ancestor.id not in entities
+                ):
+                    return True
+            return False
+
+        def reference_context(node):
+            context = self._binding_context(lang, source, node, rel_path)
+            if unsupported_source_owner(node):
+                context["unsupported_source_owner"] = True
+            return context
+
+        def owner(node):
+            if unsupported_source_owner(node):
+                return file_entity["id"]
+            parent = node.parent
+            while parent is not None:
+                if parent.id in entities:
+                    return entities[parent.id]["id"]
+                parent = parent.parent
+            return file_entity["id"]
+
+        def observe(node, kind, role, entity_id):
+            occurrence = ev.occurrence(
+                node, rel_path, lang, source, entity_id, kind, role, consumed_hash
+            )
+            proof = ev.provenance(occurrence, producer["id"])
+            self._canonical_file_records.extend((occurrence, proof))
+            return occurrence["id"], proof["id"]
+
+        observe(tree.root_node, "definition", "file", file_entity["id"])
         symbols: list[Symbol] = []
         refs: list[Reference] = []
         rationale_comments: list[RationaleComment] = []
@@ -2019,6 +2476,9 @@ class CodeGraph:
                 if not name:
                     continue
                 def_node = caps[def_cap][0]
+                occurrence_id, _ = observe(
+                    def_node, "definition", "definition:" + def_cap, entities[def_node.id]["id"]
+                )
                 symbols.append(
                     Symbol(
                         name=name,
@@ -2028,6 +2488,8 @@ class CodeGraph:
                         line_end=def_node.end_point[0] + 1,
                         lang=lang,
                         binding=self._symbol_binding(lang, source, def_node, rel_path),
+                        entity_id=entities[def_node.id]["id"],
+                        occurrence_id=occurrence_id,
                     )
                 )
             elif heritage_cap is not None:
@@ -2048,6 +2510,9 @@ class CodeGraph:
                     name = self._node_text(source, node).strip()
                     if not name:
                         continue
+                    occurrence_id, proof_id = observe(
+                        node, "reference", "reference:" + relation, owner(node)
+                    )
                     refs.append(
                         Reference(
                             callee_name=name,
@@ -2056,10 +2521,11 @@ class CodeGraph:
                             lang=lang,
                             col=node.start_point[1],
                             relation=relation,
+                            source_entity_id=owner(node),
+                            occurrence_id=occurrence_id,
+                            evidence_id=proof_id,
                             qualified=True,
-                            binding=json.dumps(
-                                self._binding_context(lang, source, node, rel_path), sort_keys=True
-                            ),
+                            binding=json.dumps(reference_context(node), sort_keys=True),
                         )
                     )
             elif assign_cap is not None:
@@ -2075,6 +2541,10 @@ class CodeGraph:
                     if matched is None:
                         continue
                     line_offset, text, label = matched
+                    occurrence_id, proof_id = observe(
+                        node, "rationale", "rationale", file_entity["id"]
+                    )
+                    target_entity = owner(node)
                     rationale_comments.append(
                         RationaleComment(
                             path=rel_path,
@@ -2082,6 +2552,11 @@ class CodeGraph:
                             text=text,
                             label=label,
                             lang=lang,
+                            occurrence_id=occurrence_id,
+                            evidence_id=proof_id,
+                            target_entity_id=target_entity
+                            if target_entity != file_entity["id"]
+                            else None,
                         )
                     )
             elif "callee" in caps:
@@ -2090,6 +2565,9 @@ class CodeGraph:
                     name = self._node_text(source, node).strip()
                     if not name:
                         continue
+                    occurrence_id, proof_id = observe(
+                        node, "reference", "reference:call", owner(node)
+                    )
                     refs.append(
                         Reference(
                             callee_name=name,
@@ -2098,11 +2576,14 @@ class CodeGraph:
                             lang=lang,
                             col=node.start_point[1],
                             relation="call",
+                            source_entity_id=owner(node),
+                            occurrence_id=occurrence_id,
+                            evidence_id=proof_id,
                             qualified=qualified,
                             qualifier_name=qualifier_name,
                             binding=json.dumps(
                                 {
-                                    **self._binding_context(lang, source, node, rel_path),
+                                    **reference_context(node),
                                     "receiver": self._node_text(source, caps["receiver"][0]).strip()
                                     if caps.get("receiver")
                                     else None,
@@ -2112,12 +2593,37 @@ class CodeGraph:
                         )
                     )
 
-        return (
-            symbols,
-            refs,
-            self._binding_blockers(tree.root_node, source, lang, rel_path),
-            rationale_comments,
+        if lang == "python":
+            for import_node, target_node, description in python_imports.extract(tree, source):
+                context = self._binding_context(lang, source, import_node, rel_path)
+                occurrence_id, proof_id = observe(
+                    target_node, "reference", "import:" + description["name"], owner(import_node)
+                )
+                self._canonical_imports.append(
+                    {
+                        "path": rel_path,
+                        "local_name": description["local_name"],
+                        "scope": context["scope"],
+                        "byte_start": import_node.start_byte,
+                        "description": json.dumps(description, sort_keys=True),
+                        "lang": lang,
+                        "source_entity_id": owner(import_node),
+                        "occurrence_id": occurrence_id,
+                        "evidence_id": proof_id,
+                        "assertion_id": None,
+                    }
+                )
+        self._canonical_bindings: dict[tuple[str, str, str, int], tuple[str, str]] = {}
+
+        def binding_capture(fact, node):
+            self._canonical_bindings[fact] = observe(
+                node, "reference", "binding:" + fact[2] + ":" + fact[0], file_entity["id"]
+            )
+
+        blockers = self._binding_blockers(
+            tree.root_node, source, lang, rel_path, capture=binding_capture
         )
+        return symbols, refs, blockers, rationale_comments
 
     @staticmethod
     def _scope_key(node, rel_path: str, lang: str) -> str:
@@ -2354,6 +2860,8 @@ class CodeGraph:
     @staticmethod
     def _symbol_binding(lang: str, source: bytes, node, rel_path: str) -> str:
         result = CodeGraph._binding_context(lang, source, node, rel_path, declaration=True)
+        if lang == "python":
+            result["import_export_safe"] = python_imports.unconditional(node)
         # The declaration's method category is its own, not its enclosing method.
         own = CodeGraph._binding_context(lang, source, node, rel_path)
         result["category"] = own["category"]
@@ -2404,12 +2912,19 @@ class CodeGraph:
 
     @staticmethod
     def _binding_blockers(
-        root, source: bytes, lang: str, rel_path: str
+        root, source: bytes, lang: str, rel_path: str, capture=None
     ) -> list[tuple[str, str, str, int]]:
         """Small structural blocker set, never a type or import resolver."""
         if lang not in {"python", "ruby", "javascript", "typescript"}:
             return []
         result = []
+
+        def append(name, scope, kind, node):
+            fact = (name, scope, kind, node.start_byte)
+            result.append(fact)
+            if capture is not None:
+                capture(fact, node)
+
         stack = [root]
         while stack:
             node = stack.pop()
@@ -2509,7 +3024,7 @@ class CodeGraph:
                                 if scopes
                                 else f"{lang}:{rel_path}:root"
                             )
-                            result.append(("*", scope, "unsupported", node.start_byte))
+                            append("*", scope, "unsupported", node)
                 else:
                     clause = next(
                         (c for c in node.named_children if c.type == "import_clause"), None
@@ -2544,9 +3059,7 @@ class CodeGraph:
                     "constant",
                     "shorthand_property_identifier_pattern",
                 }:
-                    result.append(
-                        (CodeGraph._node_text(source, target), scope, kind, target.start_byte)
-                    )
+                    append(CodeGraph._node_text(source, target), scope, kind, target)
                 elif target.type in {
                     "default_parameter",
                     "typed_parameter",
@@ -2592,7 +3105,7 @@ class CodeGraph:
                 }:
                     # Unknown binding patterns invalidate this scope instead of
                     # silently borrowing a convenient outer declaration.
-                    result.append(("*", scope, "unsupported", target.start_byte))
+                    append("*", scope, "unsupported", target)
         return sorted(set(result))
 
     @staticmethod
@@ -2658,6 +3171,7 @@ class CodeGraph:
         name fallback is permitted for the scoped programming languages.
         """
         conn.execute("DELETE FROM edges")
+        conn.execute("DELETE FROM assertions")
         conn.execute("UPDATE refs SET unresolved_reason = NULL")
         symbols: dict[tuple[str, str], list[dict[str, Any]]] = {}
         for row in conn.execute("SELECT * FROM symbols ORDER BY path, line_start, name, id"):
@@ -2672,12 +3186,52 @@ class CodeGraph:
                 row["binding_kind"]
             )
 
+        import_bindings: dict[tuple[str, str, str], list[dict[str, Any]]] = {}
+        for row in conn.execute(
+            "SELECT * FROM import_bindings ORDER BY path, scope, local_name, byte_start"
+        ):
+            item = dict(row)
+            import_bindings.setdefault(
+                (item["path"], item["scope"], item["local_name"]), []
+            ).append(item)
+        indexed_python = {
+            row[0] for row in conn.execute("SELECT path FROM files WHERE lang='python'")
+        }
+        all_symbols = [item for group in symbols.values() for item in group]
+
+        def import_target(binding):
+            description = json.loads(binding["description"])
+            hits = blockers.get((binding["path"], binding["scope"], binding["local_name"]), [])
+            if any(kind != "import" for kind in hits):
+                return [], "shadowed_noncallable"
+            if (
+                len(
+                    import_bindings.get(
+                        (binding["path"], binding["scope"], binding["local_name"]), []
+                    )
+                )
+                != 1
+            ):
+                return [], "relative_import_ambiguous_binding"
+            return python_imports.resolve(
+                binding["path"], description, indexed_python, all_symbols, blockers
+            )
+
         def visible(ref, context, name):
             for scope in context.get("scopes", ["root"]):
                 hits = blockers.get((ref["path"], scope, name), [])
                 if blockers.get((ref["path"], scope, "*")):
                     return [], "unsupported_scope"
                 if hits:
+                    if hits == ["import"]:
+                        known = import_bindings.get((ref["path"], scope, name), [])
+                        if (
+                            len(known) == 1
+                            and json.loads(known[0]["description"])["reason"] is None
+                        ):
+                            if known[0]["byte_start"] >= context.get("byte", -1):
+                                return [], "relative_import_before_binding"
+                            return import_target(known[0])
                     return (
                         [],
                         "unknown_import_alias"
@@ -2734,7 +3288,9 @@ class CodeGraph:
             qualified = False
             reason = None
             lang = ref["lang"]
-            if lang not in {"python", "ruby", "javascript", "typescript"}:
+            if context.get("unsupported_source_owner"):
+                candidates, reason = [], "unsupported_source_owner"
+            elif lang not in {"python", "ruby", "javascript", "typescript"}:
                 candidates = symbols.get((lang, ref["callee_name"]), [])
             elif context.get("unsupported"):
                 candidates, reason = [], "unsupported_scope"
@@ -2810,10 +3366,29 @@ class CodeGraph:
             )
             candidates = [c for c in candidates if c["kind"] in kinds]
             if not candidates:
+                unresolved = reason or "no_visible_target"
+                if (lang, ref["callee_name"]) in getattr(
+                    self, "_stale_target_names", set()
+                ) and unresolved in {
+                    "no_visible_target",
+                    "relative_import_missing_target",
+                    "relative_import_missing_module",
+                }:
+                    unresolved = "stale_target"
                 conn.execute(
-                    "UPDATE refs SET unresolved_reason = ? WHERE id = ?",
-                    (reason or "no_visible_target", ref["id"]),
+                    "UPDATE refs SET unresolved_reason = ? WHERE id = ?", (unresolved, ref["id"])
                 )
+                if ref["source_entity_id"] and ref["evidence_id"]:
+                    assertion = ev.assertion(
+                        ref["source_entity_id"],
+                        None,
+                        relation,
+                        ref["evidence_id"],
+                        "UNRESOLVED",
+                        ref["callee_name"],
+                        reason=unresolved,
+                    )
+                    ev.put(conn, assertion, ref["path"])
                 continue
             effective_relation = relation
             if relation == "call" and all(c["kind"] in _CLASS_KINDS for c in candidates):
@@ -2838,11 +3413,39 @@ class CodeGraph:
                 )
             source_name, source_kind = context.get("source_name"), context.get("source_kind")
             if lang not in {"python", "ruby", "javascript", "typescript"}:
-                source_name, source_kind = self._enclosing_symbol(conn, ref["path"], ref["line"])
+                if ref["source_entity_id"]:
+                    # The actual captured AST owner is authoritative. Same-line
+                    # sibling declarations are not enclosing scopes.
+                    source_entity = ev.get(conn, "entity", ref["source_entity_id"])
+                    source_name, source_kind = (
+                        (None, None)
+                        if source_entity["kind"] == "file"
+                        else (source_entity["name"], source_entity["kind"])
+                    )
+                else:
+                    source_name, source_kind = self._enclosing_symbol(
+                        conn, ref["path"], ref["line"]
+                    )
+            assertion_id = None
+            if ref["source_entity_id"] and ref["evidence_id"]:
+                assertion = ev.assertion(
+                    ref["source_entity_id"],
+                    candidates[0]["entity_id"] if len(candidates) == 1 else None,
+                    effective_relation,
+                    ref["evidence_id"],
+                    confidence,
+                    ref["callee_name"],
+                    candidates=[candidate["entity_id"] for candidate in candidates]
+                    if len(candidates) > 1
+                    else [],
+                    reason="ambiguous_target" if len(candidates) > 1 else None,
+                )
+                ev.put(conn, assertion, ref["path"])
+                assertion_id = assertion["id"]
             conn.execute(
                 "INSERT INTO edges(relation, source_path, source_line, source_col, source_name, "
                 "source_kind, callee_name, confidence, target_path, target_line, target_name, "
-                "candidates, lang) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                "candidates, lang, assertion_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 (
                     effective_relation,
                     ref["path"],
@@ -2857,9 +3460,29 @@ class CodeGraph:
                     target_name,
                     candidates_json,
                     lang,
+                    assertion_id,
                 ),
             )
             edges_added += 1
+        for group in import_bindings.values():
+            for binding in group:
+                found, reason = import_target(binding)
+                description = json.loads(binding["description"])
+                target = found[0]["entity_id"] if found else None
+                assertion = ev.assertion(
+                    binding["source_entity_id"],
+                    target,
+                    "import",
+                    binding["evidence_id"],
+                    "INFERRED" if found else "UNRESOLVED",
+                    description["name"],
+                    reason=None if found else reason,
+                )
+                ev.put(conn, assertion, binding["path"])
+                conn.execute(
+                    "UPDATE import_bindings SET assertion_id=? WHERE occurrence_id=?",
+                    (assertion["id"], binding["occurrence_id"]),
+                )
         return edges_added
 
     @staticmethod
@@ -2889,6 +3512,57 @@ class CodeGraph:
 
     # ---- Queries ----
 
+    def _historical_projection(self, table, predicate):
+        """History is separately presented; never enters active query/analysis SQL."""
+        metadata = self._observation_records(self.db)
+        observations = {r["path"]: r for r in metadata if r["type"] == "observation"}
+        result = {}
+        for history in (r for r in metadata if r["type"] == "history"):
+            records = {r["id"]: r for r in history["records"]}
+            for projection in history["records"]:
+                if (
+                    projection["type"] != "projection"
+                    or projection["table"] != table
+                    or not predicate(projection["row"])
+                ):
+                    continue
+                row, links = projection["row"], projection["links"]
+                assertion = records.get(links.get("assertion_id"))
+                occurrence_id = links.get("occurrence_id")
+                if assertion:
+                    proof = records[assertion["evidence_id"]]
+                    occurrence_id = proof["occurrence_id"]
+                proofs = [
+                    r
+                    for r in records.values()
+                    if r["type"] == "evidence" and r["occurrence_id"] == occurrence_id
+                ]
+                occurrence = records.get(occurrence_id)
+                path = occurrence["path"] if occurrence else row.get("path", history["path"])
+                observed = observations.get(path)
+                freshness = {
+                    "state": "stale",
+                    "retained_for_failed_path": history["path"],
+                    "fact_source_sha256": occurrence["source_sha256"] if occurrence else None,
+                    "observed_source_sha256": observed["observed_source_sha256"]
+                    if observed
+                    else None,
+                    "producer_ids": sorted({r["producer_id"] for r in proofs}),
+                    "evidence_ids": sorted(r["id"] for r in proofs),
+                    "occurrence_id": occurrence_id,
+                }
+                shaped = (
+                    self._edge_row_to_dict(row)
+                    if table == "edges"
+                    else {k: v for k, v in row.items() if k != "binding"}
+                )
+                result[(projection["id"], history["path"])] = dict(shaped, freshness=freshness)
+        return [result[key] for key in sorted(result)[: self.query_limit]]
+
+    def _historical_payload(self, table, predicate, field):
+        rows = self._historical_projection(table, predicate)
+        return {field: rows} if rows else {}
+
     def search_symbol(self, name: str, kind: str | None = None) -> dict[str, Any]:
         # LIMIT self.query_limit (cap+1, never the bare cap — see the class
         # docstring / F-1) on BOTH queries: this bounds the SQL work itself
@@ -2913,7 +3587,18 @@ class CodeGraph:
 
         for row in [*defs, *refs]:
             row.pop("binding", None)
-        return {"definitions": defs, "references": refs}
+        return {
+            "definitions": defs,
+            "references": refs,
+            **self._historical_payload(
+                "symbols",
+                lambda row: row["name"] == name and (kind in {None, "any"} or row["kind"] == kind),
+                "historical_definitions",
+            ),
+            **self._historical_payload(
+                "refs", lambda row: row["callee_name"] == name, "historical_references"
+            ),
+        }
 
     def callers_of(self, symbol: str) -> list[dict[str, Any]]:
         """A1: queries the materialized `edges` table (relation IN
@@ -3252,12 +3937,24 @@ class CodeGraph:
         ).fetchall()
         return [self._edge_row_to_dict(r) for r in rows]
 
-    def unresolved_ref_count(self, callee_name: str, relations: tuple[str, ...]) -> int:
+    def unresolved_ref_count(self, callee_name: str, relations: tuple[str, ...]) -> int | None:
         """Count unresolved source occurrences, including mixed per-name bindings.
 
         Constructor relabeling must not count a successfully bound raw call as
         unresolved. Imported exports contain edges but no raw refs.
         """
+        metadata = dict(
+            self.db.execute(
+                "SELECT key,value FROM manifest WHERE key IN "
+                "('reference_coverage','generation_inputs')"
+            )
+        )
+        if metadata.get("reference_coverage") == "unknown":
+            return None
+        if "generation_inputs" in metadata:
+            inputs = json.loads(metadata["generation_inputs"])
+            if inputs.get("format") == "atlas-generation.v1" and inputs.get("kind") == "import":
+                return None
         placeholders = ",".join("?" for _ in relations)
         return self.db.execute(
             f"SELECT COUNT(*) FROM refs r WHERE callee_name = ? AND relation IN ({placeholders}) "
@@ -3344,7 +4041,11 @@ class CodeGraph:
             }
             for r in rows
         ]
-        return {"rationale": items, "rationale_count": len(items)}
+        return {
+            "rationale": items,
+            "rationale_count": len(items),
+            **self._historical_payload("rationale", lambda _row: True, "historical_rationale"),
+        }
 
     # ---- A5 — Deterministic export / idempotent import (D6) ----
     #
@@ -3393,7 +4094,1206 @@ class CodeGraph:
                 )
         return json.dumps(record, sort_keys=True, separators=(",", ":"), ensure_ascii=True)
 
+    @staticmethod
+    def _epoch6_projection(item: dict[str, Any]):
+        table = {"symbol": "symbols", "edge": "edges", "rationale": "rationale"}[item["type"]]
+        row = {key: value for key, value in item.items() if key != "type"}
+        if table == "symbols":
+            row["binding"] = "{}"
+        if table == "edges" and row["candidates"] is not None:
+            row["candidates"] = ev.canonical(row["candidates"])
+        return table, row
+
+    def _insert_epoch6_artifact(self, conn: sqlite3.Connection, records) -> None:
+        for item in records:
+            table, row = self._epoch6_projection(item)
+            columns = list(row)
+            conn.execute(
+                "INSERT INTO "
+                + table
+                + "("
+                + ",".join(columns)
+                + ") VALUES ("
+                + ",".join("?" for _ in columns)
+                + ")",
+                tuple(row.values()),
+            )
+
+    def _legacy_canonicalize(
+        self, conn: sqlite3.Connection, source_hashes, original_producer
+    ) -> None:
+        """Attach only stored semantic fields; never read source or invent spans."""
+        for table in ev.TABLES.values():
+            conn.execute(f"DELETE FROM {table}")
+        producer = ev.producer(original_producer, legacy=True)
+        ev.put(conn, producer)
+        source_hashes = source_hashes or {}
+        file_entities = {}
+        symbols = [
+            dict(row)
+            for row in conn.execute(
+                "SELECT * FROM symbols ORDER BY path,lang,kind,name,line_start,line_end,binding"
+            )
+        ]
+        by_location: dict[tuple[Any, ...], list[str]] = {}
+        by_name: dict[tuple[Any, ...], list[str]] = {}
+        ordinals: dict[tuple[Any, ...], int] = {}
+
+        def file(path, lang):
+            key = (path, lang)
+            if key not in file_entities:
+                entity = ev.file_entity(path, lang, legacy=True)
+                ev.put(conn, entity, path)
+                file_entities[key] = entity["id"]
+            return file_entities[key]
+
+        def observe(path, lang, entity, role, line=None, column=None, end_line=None):
+            occurrence = ev.record(
+                "occurrence",
+                entity_id=entity,
+                kind="legacy",
+                path=path,
+                language=lang,
+                source_sha256=source_hashes.get(path),
+                source_size=None,
+                start_byte=None,
+                end_byte=None,
+                line=line,
+                column=column,
+                end_line=end_line,
+                end_column=None,
+                role=role,
+                provenance_state="legacy_unavailable",
+            )
+            proof = ev.provenance(occurrence, producer["id"])
+            ev.put(conn, occurrence, path)
+            ev.put(conn, proof, path)
+            return occurrence["id"], proof["id"]
+
+        for row in conn.execute("SELECT path,lang FROM files ORDER BY path"):
+            file(row["path"], row["lang"])
+        for row in symbols:
+            key: tuple[Any, ...] = (row["path"], row["lang"], row["kind"], row["name"])
+            ordinal = ordinals.get(key, 0)
+            ordinals[key] = ordinal + 1
+            entity = ev.record(
+                "entity",
+                path=row["path"],
+                language=row["lang"],
+                kind=row["kind"],
+                name=row["name"],
+                owners=[],
+                ordinal=ordinal,
+                identity_basis="legacy_projection",
+            )
+            ev.put(conn, entity, row["path"])
+            file(row["path"], row["lang"])
+            occurrence, _ = observe(
+                row["path"],
+                row["lang"],
+                entity["id"],
+                "legacy_definition",
+                row["line_start"],
+                None,
+                row["line_end"],
+            )
+            conn.execute(
+                "UPDATE symbols SET entity_id=?,occurrence_id=? WHERE id=?",
+                (entity["id"], occurrence, row["id"]),
+            )
+            by_location.setdefault(
+                (row["path"], row["line_start"], row["name"], row["lang"]), []
+            ).append(entity["id"])
+            by_name.setdefault((row["path"], row["name"], row["kind"], row["lang"]), []).append(
+                entity["id"]
+            )
+
+        def owner(path, lang, name, kind):
+            known = by_name.get((path, name, kind, lang), [])
+            return known[0] if len(known) == 1 else file(path, lang)
+
+        def targets(path, line, name, lang):
+            return by_location.get((path, line, name, lang), [])
+
+        reference_by_site: dict[tuple[Any, ...], list[tuple[Any, ...]]] = {}
+        references = [
+            dict(row)
+            for row in conn.execute(
+                "SELECT * FROM refs ORDER BY path,line,col,callee_name,relation"
+            )
+        ]
+        for row in references:
+            context = json.loads(row["binding"])
+            source = owner(
+                row["path"], row["lang"], context.get("source_name"), context.get("source_kind")
+            )
+            occurrence, proof = observe(
+                row["path"],
+                row["lang"],
+                source,
+                "legacy_reference:" + row["relation"],
+                row["line"],
+                row["col"],
+            )
+            conn.execute(
+                "UPDATE refs SET source_entity_id=?,occurrence_id=?,evidence_id=? WHERE id=?",
+                (source, occurrence, proof, row["id"]),
+            )
+            key = (row["path"], row["line"], row["col"], row["callee_name"], row["lang"])
+            reference_by_site.setdefault(key, []).append((row, source, occurrence, proof))
+        represented = set()
+        for row in conn.execute(
+            "SELECT * FROM edges ORDER BY source_path,source_line,source_col,callee_name,relation"
+        ):
+            path, lang = row["source_path"], row["lang"]
+            key = (path, row["source_line"], row["source_col"], row["callee_name"], lang)
+            candidates = reference_by_site.get(key, [])
+            if len(candidates) == 1:
+                ref, source, occurrence, proof = candidates[0]
+                represented.add(ref["id"])
+            else:
+                source = owner(path, lang, row["source_name"], row["source_kind"])
+                occurrence, proof = observe(
+                    path,
+                    lang,
+                    source,
+                    "legacy_edge:" + row["relation"],
+                    row["source_line"],
+                    row["source_col"],
+                )
+            candidate_ids = []
+            target = None
+            resolution = row["confidence"]
+            reason = None
+            if resolution == "AMBIGUOUS":
+                for candidate in json.loads(row["candidates"]):
+                    found = targets(candidate["path"], candidate["line"], candidate["name"], lang)
+                    ev.require(bool(found), "legacy candidate absent from definitions")
+                    candidate_ids.extend(found)
+                reason = "ambiguous_target"
+            else:
+                found = targets(row["target_path"], row["target_line"], row["target_name"], lang)
+                ev.require(bool(found), "legacy target absent from definitions")
+                if len(found) == 1:
+                    target = found[0]
+                else:
+                    resolution = "LEGACY_UNAVAILABLE"
+                    reason = "legacy_unavailable"
+            assertion = ev.assertion(
+                source,
+                target,
+                row["relation"],
+                proof,
+                resolution,
+                row["callee_name"],
+                candidate_ids,
+                reason,
+            )
+            ev.put(conn, assertion, path)
+            conn.execute("UPDATE edges SET assertion_id=? WHERE id=?", (assertion["id"], row["id"]))
+        for group in reference_by_site.values():
+            for row, source, _occurrence, proof in group:
+                if row["id"] in represented:
+                    continue
+                assertion = ev.assertion(
+                    source,
+                    None,
+                    row["relation"],
+                    proof,
+                    "UNRESOLVED",
+                    row["callee_name"],
+                    reason=row["unresolved_reason"] or "legacy_unavailable",
+                )
+                ev.put(conn, assertion, row["path"])
+                if row["unresolved_reason"] is None:
+                    conn.execute(
+                        "UPDATE refs SET unresolved_reason='legacy_unavailable' WHERE id=?",
+                        (row["id"],),
+                    )
+        for row in conn.execute(
+            "SELECT rowid AS internal_id,* FROM assignment_targets "
+            "ORDER BY path,scope,name,byte_start"
+        ):
+            lang = next((language for path, language in file_entities if path == row["path"]), None)
+            ev.require(lang is not None, "legacy binding without file language")
+            entity = file(row["path"], lang)
+            occurrence, proof = observe(
+                row["path"],
+                lang,
+                entity,
+                "legacy_binding:" + row["binding_kind"] + ":" + row["name"],
+            )
+            conn.execute(
+                "UPDATE assignment_targets SET entity_id=?,occurrence_id=?,evidence_id=? "
+                "WHERE rowid=?",
+                (entity, occurrence, proof, row["internal_id"]),
+            )
+        for row in conn.execute("SELECT * FROM rationale ORDER BY path,line,text"):
+            path, lang = row["path"], row["lang"]
+            source = file(path, lang)
+            occurrence, proof = observe(path, lang, source, "legacy_rationale", row["line"])
+            known = (
+                targets(row["target_path"], row["target_line"], row["target_name"], lang)
+                if row["target_path"]
+                else []
+            )
+            target = known[0] if len(known) == 1 else None
+            resolution = "INFERRED" if target else "LEGACY_UNAVAILABLE" if known else "UNRESOLVED"
+            assertion = ev.assertion(
+                source,
+                target,
+                "rationale_for",
+                proof,
+                resolution,
+                row["text"],
+                reason=None if target else "legacy_unavailable",
+            )
+            ev.put(conn, assertion, path)
+            conn.execute(
+                "UPDATE rationale SET occurrence_id=?,evidence_id=?,"
+                "assertion_id=?,target_entity_id=? "
+                "WHERE id=?",
+                (occurrence, proof, assertion["id"], target, row["id"]),
+            )
+        for (path, lang), entity in file_entities.items():
+            observe(path, lang, entity, "legacy_file")
+        self._validate_evidence_projections(conn)
+
+    def _store_legacy_generation(self, conn, kind, identity, source_hashes):
+        unavailable = ["exact_spans", "structural_owners", "source_completeness"]
+        if kind == "jsonl" or source_hashes is None:
+            unavailable.append("unresolved_references")
+        return self._store_generation(
+            conn,
+            {
+                "format": "atlas-generation.v2",
+                "kind": "legacy_conversion",
+                "repository": str(self.repo),
+                "schema": {"epoch": 7, "ddl_hash": EXPECTED_DDL_HASH},
+                "converter": self._producer_inputs(),
+                "legacy": {
+                    "kind": kind,
+                    "identity": identity,
+                    "source_hashes": source_hashes,
+                    "unavailable": unavailable,
+                },
+            },
+        )
+
+    def _convert_legacy_into(self, conn: sqlite3.Connection, legacy: sqlite3.Connection) -> None:
+        metadata = self._generation_data(legacy)
+        ev.require(
+            metadata is not None and metadata[0]["format"] == "atlas-generation.v1",
+            "invalid legacy generation",
+        )
+        if metadata is None:
+            raise ValueError("Invalid evidence: invalid legacy generation")
+        inputs, identity = metadata
+        for table, columns in ev.COLUMNS.items():
+            if table == "import_bindings":
+                continue
+            for row in legacy.execute("SELECT " + ",".join(columns) + " FROM " + table):
+                conn.execute(
+                    "INSERT INTO "
+                    + table
+                    + "("
+                    + ",".join(columns)
+                    + ") VALUES ("
+                    + ",".join("?" for _ in columns)
+                    + ")",
+                    tuple(row),
+                )
+        for row in legacy.execute("SELECT path,mtime_ns,size,lang,indexed_at FROM files"):
+            conn.execute(
+                "INSERT INTO files(path,mtime_ns,size,lang,indexed_at) VALUES (?,?,?,?,?)",
+                tuple(row),
+            )
+        hashes = inputs.get("source_hashes")
+        self._legacy_canonicalize(conn, hashes, inputs.get("producer"))
+        self._store_legacy_generation(conn, "database", identity, hashes)
+
+    def migrate_legacy(self) -> dict[str, Any]:
+        """Writer-only source-free conversion; keep epoch6 and publish once."""
+        with self._writer_lock():
+            path = self.atlas_dir / "graph.6.db"
+            if self.db_path.exists():
+                # Validate the actual current path, independently of a cached
+                # epoch6 handle that must remain pinned for existing readers.
+                current = sqlite3.connect(self.db_path.as_uri() + "?mode=ro", uri=True)
+                try:
+                    current.row_factory = sqlite3.Row
+                    metadata = self._generation_data(current)
+                    ev.require(
+                        metadata is not None and metadata[0]["schema"]["epoch"] == 7,
+                        "existing current generation unavailable",
+                    )
+                finally:
+                    current.close()
+                return {"schema_epoch": 7, "already_current": True}
+            tmp = self._stage_path()
+            conn = legacy = None
+            try:
+                legacy = sqlite3.connect(path.as_uri() + "?mode=ro", uri=True)
+                legacy.row_factory = sqlite3.Row
+                conn = sqlite3.connect(tmp)
+                conn.row_factory = sqlite3.Row
+                conn.executescript(SCHEMA)
+                self._convert_legacy_into(conn, legacy)
+                self._validate_evidence_projections(conn)
+                self._new_publication_token(conn)
+                conn.commit()
+                ev.require(self._generation_data(conn) is not None, "converted generation metadata")
+                conn.close()
+                conn = None
+                legacy.close()
+                legacy = None
+                self._close_db()
+                os.replace(tmp, self.db_path)
+                return {"schema_epoch": 7, "already_current": False}
+            finally:
+                if conn is not None:
+                    conn.close()
+                if legacy is not None:
+                    legacy.close()
+                tmp.unlink(missing_ok=True)
+                Path(str(tmp) + "-journal").unlink(missing_ok=True)
+
+    def _retained_closure(self, path: str, language: str, records):
+        """Only failed-source facts plus their exact predecessor support closure."""
+        by_id = {r["id"]: r for r in records}
+        symbols = [r for r in records if r["type"] == "projection" and r["table"] == "symbols"]
+        proofs = [r for r in records if r["type"] == "evidence"]
+        selected = set()
+
+        def include(identifier):
+            if identifier in selected:
+                return
+            item = by_id[identifier]
+            selected.add(identifier)
+
+            def links(value):
+                if isinstance(value, dict):
+                    for key, child in value.items():
+                        if key.endswith("_id") and child is not None:
+                            include(child)
+                        elif key == "candidate_ids":
+                            for candidate in child:
+                                include(candidate)
+                        elif key != "id":
+                            links(child)
+                elif isinstance(value, list):
+                    for child in value:
+                        links(child)
+
+            links(item)
+            if item["type"] == "entity":
+                for symbol in symbols:
+                    if symbol["links"]["entity_id"] == identifier:
+                        include(symbol["id"])
+            if item["type"] == "occurrence":
+                for proof in proofs:
+                    if proof["occurrence_id"] == identifier:
+                        include(proof["id"])
+            if item["type"] == "evidence":
+                for assertion in records:
+                    if assertion["type"] == "assertion" and assertion["evidence_id"] == identifier:
+                        include(assertion["id"])
+
+        for item in records:
+            if item.get("path") == path:
+                include(item["id"])
+            elif item["type"] == "projection":
+                row = item["row"]
+                if row.get("source_path" if item["table"] == "edges" else "path") == path:
+                    include(item["id"])
+        if not selected:
+            return None
+        return ev.record(
+            "history",
+            path=path,
+            language=language,
+            records=sorted((by_id[key] for key in selected), key=lambda r: (r["type"], r["id"])),
+        )
+
+    @staticmethod
+    def _insert_evidence_records(conn, records):
+        for item in records:
+            if item["type"] == "projection":
+                data = {**item["row"], **item["links"]}
+                columns = list(data)
+                conn.execute(
+                    "INSERT INTO "
+                    + item["table"]
+                    + "("
+                    + ",".join(columns)
+                    + ") VALUES ("
+                    + ",".join("?" for _ in columns)
+                    + ")",
+                    tuple(data.values()),
+                )
+            else:
+                ev.put(conn, item, item.get("path"))
+
+    def _observation_records(
+        self, conn, validate=True, validate_active=True, require_current=False
+    ):
+        row = conn.execute("SELECT value FROM manifest WHERE key='source_observations'").fetchone()
+        records = json.loads(row[0]) if row else []
+        if validate:
+            ev.require(isinstance(records, list), "observation records")
+            ev.require(
+                records == sorted(records, key=lambda r: (r["type"], r["id"])),
+                "observation record order",
+            )
+            histories = {r["id"]: r for r in records if r["type"] == "history"}
+            observations = [r for r in records if r["type"] == "observation"]
+            ev.require(
+                len(observations) == len({r["path"] for r in observations}),
+                "conflicting source observations",
+            )
+            used = set()
+            for record in records:
+                ev.validate_record(record)
+            for item in observations:
+                history = histories.get(item["historical_id"])
+                ev.require(
+                    item["historical_id"] is None or history is not None, "missing retained history"
+                )
+                if history:
+                    used.add(history["id"])
+                    ev.require(
+                        (history["path"], history["language"]) == (item["path"], item["language"]),
+                        "history observation location",
+                    )
+                expected = ev.observation(
+                    item["path"],
+                    item["language"],
+                    item["observed_source_sha256"],
+                    item["state"],
+                    item["reason"],
+                    item["location"],
+                    history,
+                )
+                ev.require(expected == item, "contradictory retained provenance")
+            ev.require(used == set(histories), "unassociated retained history")
+            if validate_active and (records or require_current):
+                # Historical bundles carry their own original hashes/locations.
+                # Only active records may substantiate a current observation.
+                by_path = {item["path"]: item for item in observations}
+                indexed_paths = set()
+                active = list(ev.records(conn))
+                for occurrence in (r for r in active if r["type"] == "occurrence"):
+                    observation = by_path.get(occurrence["path"])
+                    if occurrence["provenance_state"] == "source":
+                        ev.require(observation is not None, "missing active source observation")
+                    if observation is None:
+                        continue  # Explicitly unknown legacy support is not freshness.
+                    ev.require(
+                        observation["state"] == "indexed", "failed observation has active facts"
+                    )
+                    ev.require(
+                        occurrence["provenance_state"] == "source"
+                        and occurrence["language"] == observation["language"]
+                        and occurrence["source_sha256"] == observation["observed_source_sha256"],
+                        "active occurrence contradicts observed source",
+                    )
+                    if occurrence["role"] == "file":
+                        indexed_paths.add(occurrence["path"])
+                for proof in (r for r in active if r["type"] == "evidence"):
+                    occurrence = ev.get(conn, "occurrence", proof["occurrence_id"])
+                    observation = by_path.get(occurrence["path"])
+                    if proof["provenance_state"] == "source":
+                        ev.require(observation is not None, "missing active evidence observation")
+                        ev.require(
+                            observation["state"] == "indexed"
+                            and proof["source_sha256"] == observation["observed_source_sha256"],
+                            "active evidence contradicts observed source",
+                        )
+                ev.require(
+                    indexed_paths
+                    == {item["path"] for item in observations if item["state"] == "indexed"},
+                    "indexed observation lacks active consumed-source evidence",
+                )
+        return records
+
+    def _validate_history(self, records):
+        for history in (r for r in records if r["type"] == "history"):
+            # Disposable validation database; never publish or mutate the leased
+            # source database, and never resolve a historical assertion again.
+            conn = sqlite3.connect(":memory:")
+            conn.row_factory = sqlite3.Row
+            try:
+                conn.executescript(SCHEMA)
+                self._insert_evidence_records(conn, history["records"])
+                self._validate_evidence_projections(conn)
+            finally:
+                conn.close()
+
+    def observation_records(self):
+        """Pinned recorded observations, including explicitly stale support."""
+        with self.reader_lease() as reader:
+            return reader._observation_records(reader.db)
+
+    def _projection_records(self, conn: sqlite3.Connection) -> list[dict[str, Any]]:
+        result = {}
+        for table, columns in ev.COLUMNS.items():
+            links = ev.LINK_COLUMNS[table]
+            for row in conn.execute("SELECT " + ",".join((*columns, *links)) + " FROM " + table):
+                data = dict(row)
+                item = ev.record(
+                    "projection",
+                    table=table,
+                    row={key: data[key] for key in columns},
+                    links={key: data[key] for key in links},
+                )
+                ev.validate_record(item)
+                result[item["id"]] = item
+        return [result[key] for key in sorted(result)]
+
+    def _validate_evidence_projections(self, conn: sqlite3.Connection) -> None:
+        ev.validate_database(conn)
+        definitions = {row["entity_id"]: dict(row) for row in conn.execute("SELECT * FROM symbols")}
+        by_evidence: dict[str, list[dict[str, Any]]] = {}
+        for row in conn.execute("SELECT payload FROM assertions"):
+            item = json.loads(row[0])
+            by_evidence.setdefault(item["evidence_id"], []).append(item)
+
+        def occurrence_links(item, proof=True):
+            row, links = item["row"], item["links"]
+            occurrence = ev.get(conn, "occurrence", links["occurrence_id"])
+            ev.require(
+                occurrence["path"] == row["path"] and occurrence["language"] == row["lang"],
+                "projection occurrence location",
+            )
+            if proof:
+                evidence = ev.get(conn, "evidence", links["evidence_id"])
+                ev.require(
+                    evidence["occurrence_id"] == occurrence["id"], "projection evidence link"
+                )
+            return occurrence
+
+        def target_matches(target, row, prefix):
+            definition = definitions.get(target)
+            ev.require(definition is not None, "projected target definition")
+            ev.require(
+                (definition["path"], definition["line_start"], definition["name"])
+                == (row[prefix + "path"], row[prefix + "line"], row[prefix + "name"]),
+                "projection target contradicts assertion",
+            )
+
+        for item in self._projection_records(conn):
+            row, links, table = item["row"], item["links"], item["table"]
+            if table == "symbols":
+                entity = ev.get(conn, "entity", links["entity_id"])
+                occurrence = occurrence_links(item, False)
+                ev.require(
+                    (entity["path"], entity["language"], entity["kind"], entity["name"])
+                    == (row["path"], row["lang"], row["kind"], row["name"]),
+                    "definition entity contradiction",
+                )
+                ev.require(
+                    occurrence["entity_id"] == entity["id"]
+                    and occurrence["line"] == row["line_start"]
+                    and occurrence["end_line"] == row["line_end"],
+                    "definition occurrence contradiction",
+                )
+            elif table == "refs":
+                occurrence = occurrence_links(item)
+                ev.require(
+                    occurrence["entity_id"] == links["source_entity_id"]
+                    and occurrence["line"] == row["line"]
+                    and occurrence["column"] == row["col"],
+                    "reference occurrence contradiction",
+                )
+                assertions = [
+                    assertion
+                    for assertion in by_evidence.get(links["evidence_id"], [])
+                    if assertion["relation"] == row["relation"]
+                    or (row["relation"] == "call" and assertion["relation"] == "construct")
+                ]
+                ev.require(bool(assertions), "unrepresented raw reference")
+                for assertion in assertions:
+                    ev.require(
+                        assertion["source_entity_id"] == links["source_entity_id"]
+                        and assertion["raw_target"] == row["callee_name"],
+                        "reference assertion contradiction",
+                    )
+                    ev.require(
+                        assertion["relation"] == row["relation"]
+                        or (row["relation"] == "call" and assertion["relation"] == "construct"),
+                        "reference relation contradiction",
+                    )
+                    if assertion["resolution"] == "UNRESOLVED":
+                        ev.require(
+                            assertion["unresolved_reason"] == row["unresolved_reason"],
+                            "unresolved reason contradiction",
+                        )
+            elif table == "edges":
+                assertion = ev.get(conn, "assertion", links["assertion_id"])
+                proof = ev.get(conn, "evidence", assertion["evidence_id"])
+                occurrence = ev.get(conn, "occurrence", proof["occurrence_id"])
+                source = ev.get(conn, "entity", assertion["source_entity_id"])
+                ev.require(
+                    (source["path"], source["language"]) == (row["source_path"], row["lang"]),
+                    "edge source contradiction",
+                )
+                ev.require(
+                    occurrence["line"] == row["source_line"]
+                    and occurrence["column"] == row["source_col"],
+                    "edge evidence location",
+                )
+                if source["kind"] != "file":
+                    ev.require(
+                        (source["name"], source["kind"])
+                        == (row["source_name"], row["source_kind"]),
+                        "edge owner contradiction",
+                    )
+                ev.require(
+                    assertion["relation"] == row["relation"]
+                    and assertion["raw_target"] == row["callee_name"],
+                    "edge relation/spelling contradiction",
+                )
+                if assertion["resolution"] == "LEGACY_UNAVAILABLE":
+                    known = [
+                        definition
+                        for definition in definitions.values()
+                        if (
+                            definition["path"],
+                            definition["line_start"],
+                            definition["name"],
+                            definition["lang"],
+                        )
+                        == (row["target_path"], row["target_line"], row["target_name"], row["lang"])
+                    ]
+                    ev.require(
+                        proof["provenance_state"] == "legacy_unavailable"
+                        and occurrence["kind"] == "legacy"
+                        and occurrence["role"].startswith(("legacy_reference:", "legacy_edge:"))
+                        and source["identity_basis"] == "legacy_projection"
+                        and len(known) > 1
+                        and row["confidence"] in {"EXTRACTED", "INFERRED"},
+                        "legacy projection discriminant",
+                    )
+                else:
+                    ev.require(
+                        assertion["resolution"] == row["confidence"],
+                        "edge confidence contradiction",
+                    )
+                    if assertion["target_entity_id"] is not None:
+                        target_matches(assertion["target_entity_id"], row, "target_")
+                    else:
+                        candidates = json.loads(row["candidates"])
+                        actual = sorted(
+                            (
+                                definitions[key]["path"],
+                                definitions[key]["line_start"],
+                                definitions[key]["name"],
+                            )
+                            for key in assertion["candidate_ids"]
+                        )
+                        ev.require(
+                            actual
+                            == sorted(
+                                (value["path"], value["line"], value["name"])
+                                for value in candidates
+                            ),
+                            "ambiguous candidates contradiction",
+                        )
+            elif table == "rationale":
+                occurrence = occurrence_links(item)
+                assertion = ev.get(conn, "assertion", links["assertion_id"])
+                proof = ev.get(conn, "evidence", links["evidence_id"])
+                ev.require(
+                    assertion["relation"] == "rationale_for"
+                    and assertion["evidence_id"] == links["evidence_id"]
+                    and assertion["raw_target"] == row["text"],
+                    "rationale assertion contradiction",
+                )
+                ev.require(
+                    assertion["source_entity_id"] == occurrence["entity_id"]
+                    and assertion["target_entity_id"] == links["target_entity_id"],
+                    "rationale endpoint contradiction",
+                )
+                if assertion["target_entity_id"]:
+                    target_matches(assertion["target_entity_id"], row, "target_")
+                else:
+                    known = [
+                        definition
+                        for definition in definitions.values()
+                        if (
+                            definition["path"],
+                            definition["line_start"],
+                            definition["name"],
+                            definition["lang"],
+                        )
+                        == (row["target_path"], row["target_line"], row["target_name"], row["lang"])
+                    ]
+                    ev.require(
+                        all(
+                            row[key] is None
+                            for key in ("target_path", "target_line", "target_name")
+                        )
+                        or (
+                            proof["provenance_state"] == "legacy_unavailable"
+                            and occurrence["kind"] == "legacy"
+                            and occurrence["role"] == "legacy_rationale"
+                            and assertion["resolution"] == "LEGACY_UNAVAILABLE"
+                            and len(known) > 1
+                        ),
+                        "unknown rationale target",
+                    )
+            elif table == "assignment_targets":
+                entity = ev.get(conn, "entity", links["entity_id"])
+                ev.require(
+                    entity["kind"] == "file" and entity["path"] == row["path"],
+                    "binding file entity contradiction",
+                )
+                occurrence = ev.get(conn, "occurrence", links["occurrence_id"])
+                proof = ev.get(conn, "evidence", links["evidence_id"])
+                ev.require(
+                    occurrence["entity_id"] == entity["id"]
+                    and proof["occurrence_id"] == occurrence["id"],
+                    "binding evidence contradiction",
+                )
+                ev.require(
+                    occurrence["role"]
+                    in {
+                        "binding:" + row["binding_kind"] + ":" + row["name"],
+                        "legacy_binding:" + row["binding_kind"] + ":" + row["name"],
+                    },
+                    "binding role contradiction",
+                )
+                if occurrence["provenance_state"] == "source":
+                    ev.require(
+                        occurrence["start_byte"] == row["byte_start"],
+                        "binding byte location contradiction",
+                    )
+            else:
+                occurrence = occurrence_links(item)
+                description = json.loads(row["description"])
+                ev.require(
+                    set(description) == {"level", "module", "name", "local_name", "reason"},
+                    "import description fields",
+                )
+                ev.require(
+                    ev.integer(description["level"])
+                    and isinstance(description["module"], list)
+                    and all(
+                        isinstance(part, str) and part.isidentifier()
+                        for part in description["module"]
+                    ),
+                    "import module description",
+                )
+                ev.require(
+                    description["local_name"] == row["local_name"]
+                    and isinstance(description["name"], str)
+                    and bool(description["name"]),
+                    "import binding name",
+                )
+                ev.require(
+                    description["reason"] is None or isinstance(description["reason"], str),
+                    "import reason",
+                )
+                if occurrence["provenance_state"] == "source":
+                    ev.require(
+                        row["byte_start"] <= occurrence["start_byte"]
+                        and occurrence["role"] == "import:" + description["name"],
+                        "import occurrence role/order",
+                    )
+                assertion = ev.get(conn, "assertion", links["assertion_id"])
+                ev.require(
+                    occurrence["entity_id"] == links["source_entity_id"]
+                    and assertion["source_entity_id"] == links["source_entity_id"]
+                    and assertion["evidence_id"] == links["evidence_id"]
+                    and assertion["relation"] == "import"
+                    and assertion["raw_target"] == description["name"],
+                    "import projection contradiction",
+                )
+
+        projections = self._projection_records(conn)
+        coverage: dict[str, set[str]] = {table: set() for table in ev.COLUMNS}
+        asserted: dict[str, set[str]] = {
+            table: set() for table in ("edges", "rationale", "import_bindings")
+        }
+        defined_entities = set()
+        for projection in projections:
+            table, links = projection["table"], projection["links"]
+            if "occurrence_id" in links:
+                coverage[table].add(links["occurrence_id"])
+            if "assertion_id" in links:
+                asserted[table].add(links["assertion_id"])
+            if table == "symbols":
+                defined_entities.add(links["entity_id"])
+        for record in ev.records(conn):
+            if record["type"] == "entity" and record["kind"] != "file":
+                ev.require(record["id"] in defined_entities, "missing declaration projection")
+            if record["type"] == "occurrence":
+                role = record["role"]
+                if role in {"file", "legacy_file"}:
+                    continue
+                if role.startswith(("definition:", "legacy_definition")):
+                    table = "symbols"
+                elif role.startswith(("binding:", "legacy_binding:")):
+                    table = "assignment_targets"
+                elif role.startswith(("import:", "legacy_import:")):
+                    table = "import_bindings"
+                elif role.startswith(("reference:", "legacy_reference:")):
+                    table = "refs"
+                elif role in {"rationale", "legacy_rationale"}:
+                    table = "rationale"
+                elif role.startswith("legacy_edge:"):
+                    continue  # old JSONL did not carry raw reference projections
+                else:
+                    raise ValueError("Invalid evidence: unsupported occurrence role")
+                ev.require(
+                    record["id"] in coverage[table], "missing occurrence projection: " + table
+                )
+            if record["type"] == "assertion":
+                if record["relation"] == "import":
+                    table = "import_bindings"
+                elif record["relation"] == "rationale_for":
+                    table = "rationale"
+                elif record["resolution"] != "UNRESOLVED":
+                    table = "edges"
+                else:
+                    proof = ev.get(conn, "evidence", record["evidence_id"])
+                    ev.require(
+                        proof["occurrence_id"] in coverage["refs"],
+                        "missing unresolved reference projection",
+                    )
+                    continue
+                ev.require(
+                    record["id"] in asserted[table], "missing assertion projection: " + table
+                )
+
     def export_jsonl(self, out_path: Path) -> dict[str, Any]:
+        """Export complete canonical evidence and coherent compatibility projections.
+
+        On conflict or corruption, regenerate from source; no semantic merge or
+        graph-union merge driver is registered or used.
+        """
+        with self.reader_lease() as reader:
+            conn = reader.db
+            if dict(conn.execute("SELECT key,value FROM manifest")).get("epoch") == "6":
+                return reader._export_epoch6_jsonl(out_path)
+            self._validate_evidence_projections(conn)
+            projections = self._projection_records(conn)
+
+            metadata = self._observation_records(conn)
+            generation_format = json.loads(
+                conn.execute("SELECT value FROM manifest WHERE key='generation_inputs'").fetchone()[
+                    0
+                ]
+            )["format"]
+            self._validate_history(metadata)
+
+            def all_records():
+                yield from sorted(
+                    [*ev.records(conn), *projections, *metadata], key=lambda r: (r["type"], r["id"])
+                )
+
+            digest = hashlib.sha256()
+            count = size = 0
+            for item in all_records():
+                data = (ev.canonical(item) + "\n").encode()
+                digest.update(data)
+                size += len(data)
+                count += 1
+            header = {
+                "type": "header",
+                "format": ev.OBSERVATION_FORMAT
+                if generation_format == "atlas-generation.v3"
+                else ev.FORMAT,
+                "schema_epoch": 7,
+                "content_hash": digest.hexdigest(),
+                "record_count": count,
+            }
+            head = (ev.canonical(header) + "\n").encode()
+            out_path.parent.mkdir(parents=True, exist_ok=True)
+            with out_path.open("wb") as stream:
+                stream.write(head)
+                for item in all_records():
+                    stream.write((ev.canonical(item) + "\n").encode())
+            counts = {
+                table: conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
+                for table in ("symbols", "refs", "edges", "rationale")
+            }
+            return {
+                "records_written": count,
+                "content_hash": digest.hexdigest(),
+                "schema_epoch": 7,
+                "bytes_written": size + len(head),
+                **counts,
+            }
+
+    def _read_exchange(self, in_path: Path):
+        artifact = in_path.read_bytes()
+        try:
+            lines = artifact.splitlines(keepends=True)
+            ev.require(
+                bool(lines) and all(line.endswith(b"\n") for line in lines), "truncated export"
+            )
+            try:
+                header = json.loads(lines[0])
+            except (json.JSONDecodeError, UnicodeError) as exc:
+                raise ValueError(
+                    f"{in_path}: header record is not valid JSON; regenerate from source"
+                ) from exc
+            ev.require(
+                isinstance(header, dict) and header.get("type") == "header",
+                "first record is not a header",
+            )
+            legacy = header.get("schema_epoch") == 6 and "format" not in header
+            expected = {"type", "schema_epoch", "content_hash", "record_count"} | (
+                set() if legacy else {"format"}
+            )
+            ev.require(
+                set(header) == expected
+                and type(header["schema_epoch"]) is int
+                and (
+                    legacy
+                    or (
+                        header["schema_epoch"] == 7
+                        and header["format"] in {ev.FORMAT, ev.OBSERVATION_FORMAT}
+                    )
+                ),
+                "unsupported export format/schema_epoch",
+            )
+            ev.require(
+                ev.integer(header["record_count"]) and ev.hash_value(header["content_hash"]),
+                "header values",
+            )
+            if not legacy:
+                ev.require(
+                    lines[0] == (ev.canonical(header) + "\n").encode(),
+                    "noncanonical header encoding",
+                )
+            body = b"".join(lines[1:])
+            ev.require(
+                hashlib.sha256(body).hexdigest() == header["content_hash"], "content_hash mismatch"
+            )
+            try:
+                records = [json.loads(line) for line in lines[1:]]
+            except (json.JSONDecodeError, UnicodeError) as exc:
+                raise ValueError(
+                    f"{in_path}: body record is not valid JSON; regenerate from source"
+                ) from exc
+            ev.require(len(records) == header["record_count"], "record_count mismatch")
+            previous = None
+            for item, line in zip(records, lines[1:], strict=True):
+                ev.require(isinstance(item, dict), "record must be an object")
+                if legacy:
+                    self._validate_import_record(item, in_path)
+                    table = {"symbol": "symbols", "edge": "edges", "rationale": "rationale"}.get(
+                        item.get("type")
+                    )
+                    if table is None:
+                        raise ValueError("Invalid evidence: legacy record type")
+                    expected_fields = set(ev.COLUMNS[table]) - (
+                        {"binding"} if table == "symbols" else set()
+                    )
+                    ev.require(set(item) == expected_fields | {"type"}, "legacy closed fields")
+                    table, row = self._epoch6_projection(item)
+                    links = {
+                        key: None if key == "target_entity_id" else "0" * 64
+                        for key in ev.LINK_COLUMNS[table]
+                    }
+                    ev.validate_record(ev.record("projection", table=table, row=row, links=links))
+                else:
+                    # Reuse the established path/required-field diagnostics on
+                    # current projections before canonical-ID/link validation.
+                    if item.get("type") in {"entity", "occurrence"}:
+                        self._validate_relative_repo_path(
+                            item.get("path"), in_path, item["type"] + ".path"
+                        )
+                    elif item.get("type") == "projection" and isinstance(item.get("row"), dict):
+                        table = item.get("table")
+                        legacy_type = (
+                            {"symbols": "symbol", "edges": "edge", "rationale": "rationale"}.get(
+                                table
+                            )
+                            if isinstance(table, str)
+                            else None
+                        )
+                        if legacy_type:
+                            view = {"type": legacy_type, **item["row"]}
+                            if legacy_type == "edge" and isinstance(view.get("candidates"), str):
+                                view["candidates"] = json.loads(view["candidates"])
+                            self._validate_import_record(view, in_path)
+                        else:
+                            for key, value in item["row"].items():
+                                if "path" in key and value is not None:
+                                    self._validate_relative_repo_path(value, in_path, key)
+                    ev.validate_record(item)
+                    if item["type"] in {"history", "observation"}:
+                        self._validate_relative_repo_path(
+                            item["path"], in_path, item["type"] + ".path"
+                        )
+                    if item["type"] == "history":
+                        for retained in item["records"]:
+                            if retained["type"] in {"entity", "occurrence"}:
+                                self._validate_relative_repo_path(
+                                    retained["path"], in_path, "historical path"
+                                )
+                            elif retained["type"] == "projection":
+                                for key, value in retained["row"].items():
+                                    if "path" in key and value is not None:
+                                        self._validate_relative_repo_path(
+                                            value, in_path, "historical " + key
+                                        )
+                                if (
+                                    retained["table"] == "edges"
+                                    and retained["row"]["candidates"] is not None
+                                ):
+                                    for candidate in json.loads(retained["row"]["candidates"]):
+                                        self._validate_relative_repo_path(
+                                            candidate["path"], in_path, "historical candidate.path"
+                                        )
+                    ev.require(
+                        line == (ev.canonical(item) + "\n").encode(), "noncanonical record encoding"
+                    )
+                    key = (item["type"], item["id"])
+                    ev.require(
+                        previous is None or previous < key, "duplicate/noncanonical record order"
+                    )
+                    previous = key
+                # Filesystem containment supplements portable path validation.
+                if not legacy and item["type"] in {"entity", "occurrence"}:
+                    ev.require(path_is_within(self.repo, Path(item["path"])), "path containment")
+                if not legacy and item["type"] == "projection":
+                    for key, value in item["row"].items():
+                        if "path" in key and value is not None:
+                            ev.require(
+                                path_is_within(self.repo, Path(value)),
+                                "projection path containment",
+                            )
+            return artifact, header, records, legacy
+        except (KeyError, TypeError, json.JSONDecodeError, UnicodeError) as exc:
+            raise ValueError(f"{in_path}: malformed evidence export") from exc
+
+    def import_jsonl(self, in_path: Path) -> dict[str, Any]:
+        """Validate the full exchange and atomically publish original provenance.
+
+        Reject corrupted/contradictory artifacts; regenerate them from source.
+        This command never performs a semantic graph merge.
+        """
+        if self.read_only:
+            raise RuntimeError("Import requires a writable graph")
+        artifact, header, records, legacy = self._read_exchange(in_path)
+        with self._writer_lock():
+            tmp = self._stage_path()
+            conn = None
+            try:
+                conn = sqlite3.connect(tmp)
+                conn.row_factory = sqlite3.Row
+                conn.executescript(SCHEMA)
+                if legacy:
+                    self._insert_epoch6_artifact(conn, records)
+                    self._legacy_canonicalize(conn, None, None)
+                    self._store_legacy_generation(
+                        conn, "jsonl", hashlib.sha256(artifact).hexdigest(), None
+                    )
+                else:
+                    metadata = [r for r in records if r["type"] in {"history", "observation"}]
+                    ev.require(
+                        not metadata or header["format"] == ev.OBSERVATION_FORMAT,
+                        "observation exchange version",
+                    )
+                    conn.execute(
+                        "INSERT OR REPLACE INTO manifest(key,value) "
+                        "VALUES ('source_observations',?)",
+                        (ev.canonical(metadata),),
+                    )
+                    self._observation_records(conn, validate_active=False)
+                    self._validate_history(metadata)
+                    for item in records:
+                        if item["type"] in {"history", "observation"}:
+                            continue
+                        if item["type"] == "projection":
+                            table = item["table"]
+                            data = {**item["row"], **item["links"]}
+                            columns = list(data)
+                            conn.execute(
+                                "INSERT INTO "
+                                + table
+                                + "("
+                                + ",".join(columns)
+                                + ") VALUES ("
+                                + ",".join("?" for _ in columns)
+                                + ")",
+                                tuple(data.values()),
+                            )
+                        else:
+                            path = item.get("path")
+                            # Assertions sort before occurrences; their path index
+                            # is assigned once links have all been validated.
+                            ev.put(conn, item, path)
+                    for kind in ("evidence", "assertion"):
+                        for stored in conn.execute(f"SELECT id,payload FROM {ev.TABLES[kind]}"):
+                            record = json.loads(stored["payload"])
+                            proof = (
+                                record
+                                if kind == "evidence"
+                                else ev.get(conn, "evidence", record["evidence_id"])
+                            )
+                            path = ev.get(conn, "occurrence", proof["occurrence_id"])["path"]
+                            conn.execute(
+                                f"UPDATE {ev.TABLES[kind]} SET path=? WHERE id=?",
+                                (path, stored["id"]),
+                            )
+                    self._observation_records(
+                        conn, require_current=header["format"] == ev.OBSERVATION_FORMAT
+                    )
+                    self._validate_evidence_projections(conn)
+                    # Canonical metadata provenance is separate from imported evidence.
+                    self._store_generation(
+                        conn,
+                        {
+                            "format": "atlas-generation.v3"
+                            if header["format"] == ev.OBSERVATION_FORMAT
+                            else "atlas-generation.v2",
+                            **(
+                                {"observation_digest": self._status_hash(metadata)}
+                                if header["format"] == ev.OBSERVATION_FORMAT
+                                else {}
+                            ),
+                            "kind": "import",
+                            "repository": str(self.repo),
+                            "schema": {"epoch": 7, "ddl_hash": EXPECTED_DDL_HASH},
+                            "importer": self._producer_inputs(),
+                            "artifact": {
+                                "sha256": hashlib.sha256(artifact).hexdigest(),
+                                "content_hash": header["content_hash"],
+                                "record_count": len(records),
+                            },
+                            "source_provenance": "unavailable",
+                        },
+                    )
+                self._validate_evidence_projections(conn)
+                self._new_publication_token(conn)
+                conn.commit()
+                ev.require(self._generation_data(conn) is not None, "import generation metadata")
+                counts = {
+                    table: conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
+                    for table in ("symbols", "edges", "rationale")
+                }
+                conn.close()
+                conn = None
+                self._close_db()
+                os.replace(tmp, self.db_path)
+                return {
+                    "records_imported": len(records),
+                    "schema_epoch": 7,
+                    "content_hash": header["content_hash"],
+                    **counts,
+                }
+            finally:
+                if conn is not None:
+                    conn.close()
+                tmp.unlink(missing_ok=True)
+                Path(str(tmp) + "-journal").unlink(missing_ok=True)
+
+    def _export_epoch6_jsonl(self, out_path: Path) -> dict[str, Any]:
         """Canonical, byte-deterministic JSONL export (A5/D6).
 
         One JSON object per line: a header record first
@@ -3537,7 +5437,7 @@ class CodeGraph:
         content_hash = hashlib.sha256(body_text.encode("utf-8")).hexdigest()
         header = {
             "type": "header",
-            "schema_epoch": SCHEMA_EPOCH,
+            "schema_epoch": 6,
             "content_hash": content_hash,
             "record_count": len(records),
         }
@@ -3553,7 +5453,7 @@ class CodeGraph:
             "rationale": len(rationale_rows),
             "symbols": len(symbol_rows),
             "content_hash": content_hash,
-            "schema_epoch": SCHEMA_EPOCH,
+            "schema_epoch": 6,
             "bytes_written": len(full_text.encode("utf-8")),
         }
 
@@ -3679,244 +5579,6 @@ class CodeGraph:
                     candidate["path"], in_path, f"candidates[{i}].path"
                 )
 
-    def import_jsonl(self, in_path: Path) -> dict[str, Any]:
-        """Idempotent import of a canonical export (AC-A5-4): rebuilds
-        `symbols`/`edges`/`rationale` from scratch into a FRESH temp DB file,
-        then atomically replaces `self.db_path` (mirrors `_build_full_atomic`
-        — F17's crash-safety property applies here too: a crash mid-import
-        leaves any previous DB untouched). Always a full rebuild-from-import,
-        never an incremental patch, so repeat imports of the same file are
-        trivially idempotent by construction — there is no accumulated state
-        for a second import to duplicate or diverge from.
-
-        Integrity check (AC-A5-4/AC-A5-6): the header's `content_hash` is
-        recomputed from the body actually read and compared before a single
-        row is inserted; a mismatch raises loudly, naming "regenerate from
-        source" as the recovery path (AC-A5-5) rather than attempting any
-        kind of partial or best-effort import. `schema_epoch` must match
-        this build's `SCHEMA_EPOCH` exactly — no cross-epoch migration is
-        attempted (D1: a schema change is always a fresh epoch, never an
-        in-place migration, and that applies to imported data too).
-
-        Checker MAJOR-1/MINOR-2/MINOR-3 (the nineteenth defect and its two
-        siblings, all found in the SAME pass): `content_hash` proves byte
-        integrity; it proves nothing about path semantics (an absolute or
-        `../`-escaping path used to import verbatim), record shape (a
-        missing required field used to raise a raw `KeyError`), or the
-        header's own `record_count` (never compared to the actual body
-        length). All three are validated in a dedicated pass over every
-        parsed record BEFORE any row is inserted or any temp DB file is
-        even opened.
-        """
-        if self.read_only:
-            raise RuntimeError(
-                "CodeGraph.import_jsonl() is index-path only (DIR-2); a "
-                "read_only CodeGraph (as `serve` constructs) never writes to .atlas."
-            )
-
-        artifact_bytes = in_path.read_bytes()
-        text = artifact_bytes.decode("utf-8")
-        lines = text.split("\n")
-        if lines and lines[-1] == "":
-            lines.pop()
-        if not lines:
-            raise ValueError(f"{in_path}: empty export file, no header record")
-
-        # Every `json.loads` below is wrapped: a truncated/corrupted line
-        # (a crash mid-write, a partial `scp`/`git checkout`) is exactly the
-        # scenario this method exists to reject loudly -- a raw
-        # `json.JSONDecodeError` traceback is not a diagnosable, actionable
-        # error message, and this is index-path-only, write-adjacent code
-        # where "the file is bad" must read as clearly as every other
-        # integrity failure this method already raises.
-        try:
-            header = json.loads(lines[0])
-        except json.JSONDecodeError as e:
-            raise ValueError(
-                f"{in_path}: header record is not valid JSON ({e}) -- the export is truncated "
-                "or corrupted. Regenerate it from source (`atlas-aci index` + a fresh export) "
-                "-- there is no semantic merge for this format (AC-A5-5)."
-            ) from e
-        if header.get("type") != "header":
-            raise ValueError(
-                f"{in_path}: first record is not a header (type={header.get('type')!r})"
-            )
-
-        body_text = "".join(line + "\n" for line in lines[1:])
-        recomputed_hash = hashlib.sha256(body_text.encode("utf-8")).hexdigest()
-        if recomputed_hash != header.get("content_hash"):
-            raise ValueError(
-                f"{in_path}: content_hash mismatch -- recorded "
-                f"{header.get('content_hash')!r}, recomputed {recomputed_hash!r}. The export "
-                "is truncated or corrupted (or was hand-edited/merged). Regenerate it from "
-                "source (`atlas-aci index` + a fresh export) -- there is no semantic merge "
-                "for this format (AC-A5-5)."
-            )
-        if header.get("schema_epoch") != SCHEMA_EPOCH:
-            raise ValueError(
-                f"{in_path}: schema_epoch {header.get('schema_epoch')!r} does not match this "
-                f"build's SCHEMA_EPOCH {SCHEMA_EPOCH} -- re-export from a matching atlas-aci "
-                "version; cross-epoch import is never attempted (D1)."
-            )
-
-        # The content_hash check above already gates against a corrupted BODY
-        # line in the overwhelmingly common case (any tampering changes the
-        # recomputed hash) -- this second try/except exists for the
-        # remaining, harder-to-reach edge: a body line whose corruption
-        # happens to co-occur with a header whose OWN content_hash was
-        # separately (mis)computed to still match. Same principle either
-        # way: never let a raw JSONDecodeError traceback stand in for a
-        # diagnosable message.
-        try:
-            records = [json.loads(line) for line in lines[1:]]
-        except json.JSONDecodeError as e:
-            raise ValueError(
-                f"{in_path}: a body record is not valid JSON ({e}) -- the export is truncated "
-                "or corrupted. Regenerate it from source (`atlas-aci index` + a fresh export) "
-                "-- there is no semantic merge for this format (AC-A5-5)."
-            ) from e
-
-        # Checker MINOR-3: `record_count` was a decorative header field --
-        # never compared to the actual body length, so a header claiming
-        # 999 against a genuinely two-record body (with an otherwise-valid
-        # content_hash) imported silently. Recomputed and asserted here
-        # (never deleted): after eighteen prior defects about a number
-        # nobody recomputed, the fix is to recompute it, not to remove the
-        # only field whose entire job was to be checked.
-        if header.get("record_count") != len(records):
-            raise ValueError(
-                f"{in_path}: header record_count {header.get('record_count')!r} does not match "
-                f"the actual number of body records ({len(records)}) -- the export is "
-                "truncated or corrupted. Regenerate it from source (`atlas-aci index` + a "
-                "fresh export) -- there is no semantic merge for this format (AC-A5-5)."
-            )
-
-        # Checker MAJOR-1/MINOR-2 (the nineteenth defect and its sibling):
-        # every record is validated -- required fields present, every
-        # path-shaped field repository-relative and repository-contained --
-        # BEFORE a single row is inserted or even the temp DB file is
-        # opened. `content_hash` above proves byte integrity; it proves
-        # NOTHING about path semantics or record shape.
-        for rec in records:
-            self._validate_import_record(rec, in_path)
-
-        with self._writer_lock():
-            tmp_path = self._stage_path()
-            conn = None
-            symbols_added = edges_added = rationale_added = 0
-            try:
-                conn = sqlite3.connect(tmp_path)
-                conn.executescript(SCHEMA)
-                conn.row_factory = sqlite3.Row
-                for rec in records:
-                    rtype = rec.get("type")
-                    if rtype == "symbol":
-                        conn.execute(
-                            "INSERT INTO symbols(name, kind, path, line_start, line_end, lang) "
-                            "VALUES (?, ?, ?, ?, ?, ?)",
-                            (
-                                rec["name"],
-                                rec["kind"],
-                                rec["path"],
-                                rec["line_start"],
-                                rec["line_end"],
-                                rec["lang"],
-                            ),
-                        )
-                        symbols_added += 1
-                    elif rtype == "edge":
-                        candidates_json = (
-                            json.dumps(rec["candidates"])
-                            if rec.get("candidates") is not None
-                            else None
-                        )
-                        conn.execute(
-                            "INSERT INTO edges(relation, source_path, source_line, source_col, "
-                            "source_name, source_kind, callee_name, confidence, target_path, "
-                            "target_line, target_name, candidates, lang) "
-                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                            (
-                                rec["relation"],
-                                rec["source_path"],
-                                rec["source_line"],
-                                rec["source_col"],
-                                rec["source_name"],
-                                rec["source_kind"],
-                                rec["callee_name"],
-                                rec["confidence"],
-                                rec["target_path"],
-                                rec["target_line"],
-                                rec["target_name"],
-                                candidates_json,
-                                rec["lang"],
-                            ),
-                        )
-                        edges_added += 1
-                    elif rtype == "rationale":
-                        conn.execute(
-                            "INSERT INTO rationale(path, line, text, label, target_path, "
-                            "target_line, target_name, lang) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                            (
-                                rec["path"],
-                                rec["line"],
-                                rec["text"],
-                                rec["label"],
-                                rec["target_path"],
-                                rec["target_line"],
-                                rec["target_name"],
-                                rec["lang"],
-                            ),
-                        )
-                        rationale_added += 1
-                    else:
-                        raise ValueError(f"{in_path}: unknown record type {rtype!r}")
-
-                conn.execute(
-                    "INSERT OR REPLACE INTO manifest(key, value) VALUES ('epoch', ?)",
-                    (str(SCHEMA_EPOCH),),
-                )
-                self._store_generation(
-                    conn,
-                    {
-                        "format": "atlas-generation.v1",
-                        "kind": "import",
-                        "repository": str(self.repo),
-                        "schema": {"epoch": SCHEMA_EPOCH, "ddl_hash": EXPECTED_DDL_HASH},
-                        "importer": self._producer_inputs(),
-                        "artifact": {
-                            "sha256": hashlib.sha256(artifact_bytes).hexdigest(),
-                            "content_hash": recomputed_hash,
-                            "record_count": len(records),
-                        },
-                        "source_provenance": "unavailable",
-                    },
-                )
-                self._new_publication_token(conn)
-                conn.commit()
-                conn.close()
-                conn = None
-                self._close_db()
-                os.replace(tmp_path, self.db_path)
-            finally:
-                if conn is not None:
-                    conn.close()
-                for path in (tmp_path, Path(str(tmp_path) + "-journal")):
-                    path.unlink(missing_ok=True)
-
-            if not self.epoch_ok():
-                raise ValueError(
-                    f"{in_path}: import completed but the resulting DB failed the epoch "
-                    "integrity check -- this should be unreachable; treat it as a bug, not a "
-                    "data problem."
-                )
-
-            return {
-                "symbols": symbols_added,
-                "edges": edges_added,
-                "rationale": rationale_added,
-                "schema_epoch": SCHEMA_EPOCH,
-            }
-
     def query(self, dsl: str) -> dict[str, Any]:
         """Tiny DSL.
 
@@ -3944,6 +5606,11 @@ class CodeGraph:
             # `unresolved_ref_count`.
             return {
                 "edges": self.callers_of(method),
+                **self._historical_payload(
+                    "edges",
+                    lambda row: row["callee_name"] == method and row["relation"] in _CALL_RELATIONS,
+                    "historical_edges",
+                ),
                 "unresolved_refs": self.unresolved_ref_count(method, _CALL_RELATIONS),
             }
 
@@ -3955,6 +5622,13 @@ class CodeGraph:
             # empty-stub-with-warning.
             return {
                 "edges": self.subclasses_of(arg),
+                **self._historical_payload(
+                    "edges",
+                    lambda row: (
+                        row["callee_name"] == arg and row["relation"] in _HERITAGE_RELATIONS
+                    ),
+                    "historical_edges",
+                ),
                 "unresolved_refs": self.unresolved_ref_count(arg, _HERITAGE_RELATIONS),
             }
 

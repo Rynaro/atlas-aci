@@ -1,0 +1,22 @@
+{
+  "kind": "supporting-replan",
+  "phase": "R",
+  "refine_cycle": 1,
+  "source": "ATLAS live S03/S04 criterion-origin audit relayed by root",
+  "reason": "Universal recovered-tree abort was an S04 design decision, not explicit issue/probe criterion. Reassess original criteria before multi-grammar expansion.",
+  "original_s07_criteria_unchanged": true,
+  "old_supporting_draft_sha256": "99f4113de1dc5f241fc9f3551354942bbd544a86352d62b9409fda90d24ad5a0",
+  "supporting_criteria_were_unfrozen": true,
+  "rightsize_reassessment": {
+    "files_est": 12,
+    "new_dep": false,
+    "public_api": true,
+    "migration": true,
+    "security": false,
+    "novel": true,
+    "stakes": "med",
+    "computed_points_by_published_table": 6,
+    "tier_unchanged": "full",
+    "note": "Original actual rightsize state retained; this is scope reassessment, not a reinitialization or substitute gate."
+  }
+}

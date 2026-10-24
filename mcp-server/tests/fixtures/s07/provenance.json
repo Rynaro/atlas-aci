@@ -1,0 +1,8 @@
+{
+  "producer_base": "ad9ab7a6122f653b0e9e7052e6173c6257b4a3b8",
+  "source_sha256": "e07d630e30d784c206a28e7670b5dc353f1af2adf238a707633b24cc83ea0f22",
+  "database_sha256": "d394e056f73bb57ffba0a387bca16a9e5ea426642534fea40586b8135ef6c0ad",
+  "export_sha256": "0cf715ec18efbe29cf85c23985a2065f4a0ec7ebcaba1388a7c0ad7df45995ac",
+  "fixture_repo": "/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/tmpko7axlv6",
+  "adaptation": "Tests may reanchor only generation_inputs.repository and recalculate generation_id from canonical legacy JSON; no source hash/fact rewrite."
+}

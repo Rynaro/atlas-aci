@@ -1,0 +1,17 @@
+{
+  "name": "solidus-hooks",
+  "command": [
+    "git",
+    "config",
+    "core.hooksPath",
+    "/dev/null"
+  ],
+  "cwd": "/tmp/aci-s07-approved-probe-inputs/solidus",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 0.011929917003726587,
+  "elapsed_total": 0.16376662500260863,
+  "peak_rss_bytes": 4374528,
+  "stdout": ".spectra/evidence/aci-s07/parser-prerequisite/fresh-probe/solidus-hooks.stdout.log",
+  "stderr": ".spectra/evidence/aci-s07/parser-prerequisite/fresh-probe/solidus-hooks.stderr.log"
+}

@@ -1,0 +1,71 @@
+{
+  "ruff": {
+    "command": [
+      ".venv/bin/ruff",
+      "check",
+      "src/",
+      "tests/"
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0
+  },
+  "format": {
+    "command": [
+      ".venv/bin/ruff",
+      "format",
+      "--check",
+      "src/",
+      "tests/"
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0
+  },
+  "types": {
+    "command": [
+      ".venv/bin/mypy",
+      "src/"
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0
+  },
+  "scripts-ruff": {
+    "command": [
+      ".venv/bin/ruff",
+      "check",
+      "../scripts/",
+      "--exclude",
+      "fingerprint-fixture"
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0
+  },
+  "scripts-format": {
+    "command": [
+      ".venv/bin/ruff",
+      "format",
+      "--check",
+      "../scripts/",
+      "--exclude",
+      "fingerprint-fixture"
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0
+  },
+  "scripts-types": {
+    "command": [
+      ".venv/bin/mypy",
+      "../scripts/"
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0
+  },
+  "lock": {
+    "command": [
+      "/tmp/aci-s01-tools/bin/uv",
+      "lock",
+      "--check"
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0
+  }
+}

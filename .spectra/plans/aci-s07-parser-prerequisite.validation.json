@@ -1,0 +1,33 @@
+{
+  "at": "2026-10-24T03:26:33.433099+00:00",
+  "checks": [
+    {
+      "file": "aci-s07-parser-prerequisite.envelope.json",
+      "schema": "ecl-envelope.v2.json",
+      "validator": "Draft202012Validator",
+      "format_checker": true,
+      "valid": true
+    },
+    {
+      "file": "aci-s07-parser-prerequisite.state.json",
+      "schema": "plan-state.v1.json",
+      "validator": "Draft7Validator",
+      "format_checker": true,
+      "valid": true
+    },
+    {
+      "products_unchanged": 152,
+      "original_artifacts_unchanged": 5
+    }
+  ],
+  "spec_sha256": "ebbf02086f2059e90ab903b675c24bddadb627ba91892dfca16a24f1967a6fb9",
+  "criteria_sha256": "b4c2ff493ecbe88a2841a907514c60cae76c23756842282418bd9a90301a51ae",
+  "envelope_sha256": "7ac9badf1e37736de1f4965e785662737e480a91fbca46f8786f2995705607ad",
+  "state_sha256": "2420b0f93b8312420ef836528078a5a2b6149da0d628d3b9a7b9418900c52f98",
+  "message_id": "35aed0cb-9669-4054-bfb6-1fca458bee0d",
+  "thread_id": "7892070f-8654-4438-a6f9-476dad1e94a8",
+  "phase": "DONE",
+  "confidence": 82.5,
+  "confidence_verdict": "VALIDATE",
+  "note": "Planning complete; execution requires root mechanical verification and explicit validation disposition. Drift allows exact inherited dirty paths only; complete product hashes independently unchanged."
+}

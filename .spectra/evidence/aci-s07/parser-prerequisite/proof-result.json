@@ -1,0 +1,39 @@
+{
+  "stage": "FIRST_PROOF_STOP",
+  "at": "2026-10-24T03:34:23.542963+00:00",
+  "elapsed_seconds": 272.08896684646606,
+  "maximum_seconds": 3600,
+  "source_sha256s": {
+    "mcp-server/src/atlas_aci/codegraph.py": "19f655c49de179bec16af5afbbf8834e20cc4e95bf0ec4a91e4b47da2568fbd4",
+    "mcp-server/src/atlas_aci/storage/evidence.py": "dd2d15bac29de7fb21771606ad436a544e4b55d41266b53e383906c312d0c5c7",
+    "mcp-server/tests/slices/test_s07_parser_prerequisite.py": "2ca90b412833bad847c62f8e24059151b991c02acca309757a10771a58dfddc6"
+  },
+  "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/mcp-server/src mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s07_parser_prerequisite.py -q",
+  "working_directory": ".",
+  "exit_code": 0,
+  "result": "3 passed in 0.26s",
+  "evidence": [
+    ".spectra/evidence/aci-s07/parser-prerequisite/proof-second.log"
+  ],
+  "first_run": {
+    "exit_code": 1,
+    "result": "3 failed on real blanket syntax abort"
+  },
+  "intermediate_run": {
+    "exit_code": 1,
+    "result": "1 failed,2 passed; assertion used nodes rather than existing god_nodes output key; corrected key without changing analysis-empty property"
+  },
+  "original_receipt_unchanged": true,
+  "original_criteria_unchanged": true,
+  "broader_execution_authorized": false,
+  "product_and_test_writes_stopped": true,
+  "remaining_unverified": [
+    "Complete observation enumeration for disabled/unsupported paths",
+    "atlas-coverage.v2/status/README and user-visible historical query presentation",
+    "Full/incremental equivalence and source/import producer cache policy",
+    "Deleted-target, retained-history recovery, long-lived reader and fatal-publication controls",
+    "All strict portable contradiction/containment cases and v1/epoch6 observation unknown adapters",
+    "Independent ATLAS proof verification and further root disposition",
+    "Full lint/type/compatibility/Docker/pass2 and unchanged-pin fresh probe for the revised behavior"
+  ]
+}

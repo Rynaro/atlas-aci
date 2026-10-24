@@ -1,0 +1,23 @@
+{
+  "slice_id": "ACI-S07",
+  "issue_url": "https://github.com/Rynaro/atlas-aci/issues/29",
+  "criteria_sha256": "a5a08415f0dcf276a270cea3cbd1daf29e0b84332c791f7ff394fec0c6b92036",
+  "base_commit": "ad9ab7a6122f653b0e9e7052e6173c6257b4a3b8",
+  "output_commit": null,
+  "declared_paths": [
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/src/atlas_aci/storage/*",
+    "mcp-server/src/atlas_aci/providers/*",
+    "mcp-server/tests/slices/test_s07_*.py",
+    "atlas/docs/*",
+    "mcp-server/tests/fixtures/s07/*",
+    "mcp-server/tests/test_schema_epoch.py",
+    "mcp-server/tests/test_export.py",
+    "mcp-server/tests/test_cli_export_import.py",
+    ".github/workflows/harden-gate.yml",
+    "scripts/test-verify-probe-verdict.sh"
+  ],
+  "output_digests": {},
+  "status": "IN_PROGRESS",
+  "acceptance_results": []
+}

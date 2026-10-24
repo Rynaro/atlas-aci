@@ -1,0 +1,23 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+__________ test_modern_evidence_cannot_be_downgraded_to_legacy_escape __________
+
+tmp_path = PosixPath('/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-133/test_modern_evidence_cannot_be0')
+
+    def test_modern_evidence_cannot_be_downgraded_to_legacy_escape(tmp_path: Path):
+        _repo,graph=build(tmp_path);artifact=tmp_path/'real.jsonl';graph.export_jsonl(artifact);before=canonical(graph);generation=graph.generation_id
+        def downgrade(records):
+            assertion=next(r for r in records if r['type']=='assertion' and r['relation']=='call')
+            proof=next(r for r in records if r['type']=='evidence' and r['id']==assertion['evidence_id'])
+            occurrence=next(r for r in records if r['type']=='occurrence' and r['id']==proof['occurrence_id'])
+            assertion.update(resolution='LEGACY_UNAVAILABLE',target_entity_id=None,unresolved_reason='legacy_unavailable')
+            for item in (proof,occurrence):item.update(provenance_state='legacy_unavailable',source_sha256=None,source_size=None,start_byte=None,end_byte=None)
+        rewrite_artifact(artifact,downgrade)
+>       with pytest.raises(ValueError):graph.import_jsonl(artifact)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+mcp-server/tests/slices/test_s07_contract.py:395: Failed
+=========================== short test summary info ============================
+FAILED mcp-server/tests/slices/test_s07_contract.py::test_modern_evidence_cannot_be_downgraded_to_legacy_escape
+1 failed in 0.10s

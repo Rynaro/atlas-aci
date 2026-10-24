@@ -1,0 +1,92 @@
+{
+  "kind": "append-only-post-proof-validation-assessment",
+  "at": "2026-10-24T03:40:26.799187+00:00",
+  "parent_slice": "ACI-S07",
+  "assessor": "ramza-backlog-order-s07-parser-prerequisite",
+  "human_review_performed": false,
+  "historical_confidence": {
+    "total": 82.5,
+    "verdict": "VALIDATE",
+    "immutable_state": ".spectra/plans/aci-s07-parser-prerequisite.state.json"
+  },
+  "command": [
+    "/Users/henrique/workspace/oss/agents/atlas-aci/.eidolons/ramza/bin/ramza-score",
+    "--rubric",
+    "confidence",
+    "--in",
+    ".spectra/evidence/aci-s07/parser-prerequisite/post-proof-validation.dimensions.json",
+    "--log",
+    ".spectra/evidence/aci-s07/parser-prerequisite/post-proof-validation.calibration.jsonl",
+    "--label",
+    "post-proof-independent-checkpoint-assessment"
+  ],
+  "command_exit_code": 0,
+  "actual_result": {
+    "rubric": "confidence",
+    "total": 82.5,
+    "dims": {
+      "pattern_match": 75,
+      "requirement_clarity": 90,
+      "decomposition_stability": 75,
+      "constraint_compliance": 90
+    },
+    "verdict": "VALIDATE",
+    "at": "2026-10-24T03:40:26Z",
+    "label": "post-proof-independent-checkpoint-assessment"
+  },
+  "source_sha256s": {
+    "mcp-server/src/atlas_aci/codegraph.py": "d8c1dd31282404e74bf03c579d7a597f1a0ce55a10644e39999fe56bf5086644",
+    "mcp-server/src/atlas_aci/storage/evidence.py": "dd2d15bac29de7fb21771606ad436a544e4b55d41266b53e383906c312d0c5c7",
+    "mcp-server/tests/slices/test_s07_parser_prerequisite.py": "c1293d163c0b3e4cd81995831d70ff0868c41507019317bf31f3524f99d0a269"
+  },
+  "evidence": [
+    ".spectra/evidence/aci-s07/parser-prerequisite/proof-result.json",
+    ".spectra/evidence/aci-s07/parser-prerequisite/coherence-result.json",
+    ".spectra/evidence/aci-s07/parser-prerequisite/proof-artifact.json"
+  ],
+  "independent_verification": {
+    "checker": "ATLAS",
+    "disposition": "APPROVE corrected bounded first proof",
+    "provenance": "Root relayed independently rerun seven tests, exact hashes, and three separately reproduced coherent mutations; no independent timestamp supplied or invented.",
+    "scope": "First-proof feasibility only; broader product verification not claimed."
+  },
+  "resolved_assumptions": [
+    "Real-parser predecessor closure can preserve old A-to-B assertion and old B occurrence/hash while current B moves; fresh caller cannot resolve stale A.",
+    "Scoped historical/current separation excludes stale relationships from confident/community/god-node projections.",
+    "Source-free v2 portable roundtrip is deterministic; three coherent contradictory mutations are rejected with G1 bytes/generation intact and no staging debris.",
+    "Explicit v1 adapter keeps observation verification unavailable.",
+    "Proof plus correction completed in 490.8947389125824 seconds without resetting the original 60-minute cap."
+  ],
+  "still_unverified": [
+    "Complete all-file enumeration and atlas-coverage.v2/status/README truthfulness, including actual historical query presentation.",
+    "Full/incremental equivalence, source/import/producer cache policy, repeated failed-file retries and retained-history recovery.",
+    "Deleted historical targets, long-lived leases and fatal-publication/read/parser/extraction failure controls across completed partial observations.",
+    "All portable containment/contradiction cases and epoch6 observation-unknown compatibility.",
+    "Full lint/type/compatibility/Docker/pass2 and unchanged-pin fresh modularity probe with partial coverage disclosed."
+  ],
+  "dimension_rationale": {
+    "pattern_match": "75 unchanged: a bounded exemplar proves feasibility, but retained-history lifecycle and legacy/import interactions are not yet demonstrated as a reusable completed pattern.",
+    "requirement_clarity": "90 unchanged: audited issue criteria and shipped-behavior amendment are explicit; passing the proof does not change requirements.",
+    "decomposition_stability": "75 unchanged: the initial coherence hole needed a real correction, and several coupled observation/coverage/query/incremental/portable seams remain unverified. Seven focused tests do not establish broad decomposition stability.",
+    "constraint_compliance": "90 unchanged: focused proof stayed within cap, preserved artifacts and source bytes; complete corpus/default-profile and final probe constraints remain unmeasured."
+  },
+  "recommendation": {
+    "confidence": "Retain VALIDATE; no numerical uplift justified from this bounded proof alone.",
+    "canonical_rule_path": ".eidolons/ramza/docs/methodology/scoring.md:31",
+    "canonical_rule": "\u226585 AUTO_PROCEED \u00b7 70\u201384 VALIDATE (human reviews) \u00b7 50\u201369 COLLABORATE (halt, ask) \u00b7 <50 ESCALATE (exit 1, gap report).",
+    "obligation": "Canonical VALIDATE human review remains applicable before broader execution; independent ATLAS proof approval is not human review.",
+    "authorization": "Root must explicitly resolve the validation obligation under applicable higher-priority standing user instructions or obtain review; this assessment grants no broader execution, adoption or merge authority.",
+    "next_review_evidence": "Concrete reviewed plan, corrected proof and precise remaining tests can support that disposition; do not imply probe PASS or completed S07."
+  },
+  "protected_artifacts_unchanged": {
+    ".spectra/plans/aci-s07-parser-prerequisite.md": "ebbf02086f2059e90ab903b675c24bddadb627ba91892dfca16a24f1967a6fb9",
+    ".spectra/plans/aci-s07-parser-prerequisite.criteria.md": "b4c2ff493ecbe88a2841a907514c60cae76c23756842282418bd9a90301a51ae",
+    ".spectra/plans/aci-s07-parser-prerequisite.state.json": "2420b0f93b8312420ef836528078a5a2b6149da0d628d3b9a7b9418900c52f98",
+    ".spectra/plans/aci-s07-parser-prerequisite.envelope.json": "7ac9badf1e37736de1f4965e785662737e480a91fbca46f8786f2995705607ad",
+    ".spectra/plans/aci-s07.md": "0c76884360f9a7578fcc1660ce8e3fa2f72caca06af13f5006eaa6d0f68ee6ff",
+    ".spectra/plans/aci-s07.criteria.md": "a5a08415f0dcf276a270cea3cbd1daf29e0b84332c791f7ff394fec0c6b92036",
+    ".spectra/plans/aci-s07.state.json": "93bf39b0e428429b1bcca31cab6831fb13fcda6be8eaec6effb7097bb178718d",
+    ".spectra/plans/aci-s07.envelope.json": "a5dde675790d4e8778d06f9ae8a9d8d0d93fa62919378684e0b5471fec363d06",
+    ".spectra/state/aci-s07.execution.json": "3bf36613a3f0f1f29d687b59cbda129d4b34d537ac0b56567efc0dab59dda00c"
+  }
+}

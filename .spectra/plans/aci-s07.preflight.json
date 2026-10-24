@@ -1,0 +1,35 @@
+{
+  "slice_id": "ACI-S07",
+  "base_commit": "ad9ab7a6122f653b0e9e7052e6173c6257b4a3b8",
+  "criteria_sha256": "a5a08415f0dcf276a270cea3cbd1daf29e0b84332c791f7ff394fec0c6b92036",
+  "predecessors": [
+    "ACI-S02",
+    "ACI-S03",
+    "ACI-S04"
+  ],
+  "predecessor_evidence": "Actual base interfaces inspected and COMPLETE receipts verified; S06 compatibility also retained",
+  "existing_state": false,
+  "source_evidence": "ATLAS full scout plus targeted schema/generation/export/import/extraction/probe inspection",
+  "routing": {
+    "selected": "RAMZA",
+    "tier": "standard",
+    "chain": [
+      "ATLAS scout",
+      "RAMZA plan",
+      "Vivi implementation",
+      "ATLAS independent verification"
+    ],
+    "confidence": 0.97,
+    "refusal_rerouting": null
+  },
+  "scope_amendments": [
+    "mcp-server/tests/fixtures/s07/*",
+    "mcp-server/tests/test_schema_epoch.py",
+    "mcp-server/tests/test_export.py",
+    "mcp-server/tests/test_cli_export_import.py",
+    ".github/workflows/harden-gate.yml",
+    "scripts/test-verify-probe-verdict.sh"
+  ],
+  "backlog": "S06 merged PR70;6 merged36remaining;current29next31",
+  "prior_slice_artifacts": "immutable"
+}

@@ -55,7 +55,7 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 # below -- the moment aci-v2-harden-and-augment was archived for real
 # (a SKIP is exit 0; CI would have stayed green while testing nothing).
 # See scripts/resolve-probe-artifact.sh for the search/ambiguity rules.
-REAL_JSON_REL="$(cd "$REPO_ROOT" && "$RESOLVE" aci-s02-probe-lpa-vs-louvain.json 2>/dev/null)" || REAL_JSON_REL=""
+REAL_JSON_REL="$(cd "$REPO_ROOT" && "$RESOLVE" aci-s07-probe-lpa-vs-louvain.json 2>/dev/null)" || REAL_JSON_REL=""
 
 if [ -z "$REAL_JSON_REL" ] || [ ! -f "$REPO_ROOT/$REAL_JSON_REL" ]; then
     echo "SKIP: no probe-lpa-vs-louvain.json found under $REPO_ROOT/.spectra/changes/ (A3 not yet built in this tree)."
@@ -286,31 +286,64 @@ _assert_exit "forged: graph bundle tampered with, sha256 no longer matches" \
 # honest values. Only the Q-recomputation-vs-recorded check (a DIFFERENT
 # guard than sha256 or the count checks) can catch this.
 dir="$(_scenario_dir scenario-12)"
-python3 - "$dir/probe-graphs.json.gz" "$REAL_JSON" "$dir/probe-lpa-vs-louvain.json" << 'PYEOF'
+python3 - "$dir/probe-graphs.json.gz" "$REAL_JSON" "$dir/probe-lpa-vs-louvain.json" "$VERIFY" "$REPO_ROOT" << 'PYEOF'
 import gzip
 import hashlib
 import json
 import sys
+import importlib.util
+from itertools import combinations
+from pathlib import Path
 
-bundle_path, sidecar_path, out_sidecar_path = sys.argv[1:4]
+bundle_path, sidecar_path, out_sidecar_path, verifier_path, repo_root = sys.argv[1:6]
 
 bundle = json.loads(gzip.decompress(open(bundle_path, "rb").read()).decode("utf-8"))
-edges = bundle["solidus"]["edges"]
-existing = {tuple(e) for e in edges}
-removed = tuple(edges[0])
-# Find a previously-absent pair to rewire to, preserving edge_count exactly.
-n = len(bundle["solidus"]["nodes"])
-new_edge = None
-for u in range(n):
-    for v in range(u + 1, n):
-        if (u, v) not in existing and (u, v) != removed:
-            new_edge = (u, v)
-            break
-    if new_edge:
+graph = bundle["solidus"]
+edges = [tuple(edge) for edge in graph["edges"]]
+existing = set(edges)
+n = len(graph["nodes"])
+spec = importlib.util.spec_from_file_location("probe_guard", verifier_path)
+verifier = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(verifier)
+labels = graph["lpa_labels"]
+partitions = [labels, *graph["louvain_partitions"]]
+original_qs = [verifier._modularity(n, edges, partition) for partition in partitions]
+groups = {}
+for node, label in enumerate(labels):
+    groups.setdefault(label, []).append(node)
+# A rewiring can preserve every Q. Search deterministically for an actual
+# numerical counterexample while retaining the exact shipped LPA partition,
+# so the Q guard (not a count or LPA-replay guard) must reject the forgery.
+changed_edges = None
+max_q_difference = 0.0
+for removed in edges:
+    if labels[removed[0]] != labels[removed[1]]:
+        continue
+    members = groups[labels[removed[0]]]
+    if all(len({partition[node] for node in members}) == 1 for partition in partitions):
+        continue
+    for added in combinations(members, 2):
+        if added in existing:
+            continue
+        candidate = sorted((existing - {removed}) | {added})
+        differences = [abs(verifier._modularity(n, candidate, partition) - q)
+                       for partition, q in zip(partitions, original_qs)]
+        if max(differences) <= verifier.Q_TOLERANCE:
+            continue
+        try:
+            verifier._check_lpa_partition_matches_rerun("solidus", n, candidate, labels, Path(repo_root))
+        except verifier.ProvenanceError:
+            continue
+        changed_edges = candidate
+        max_q_difference = max(differences)
         break
-edges.remove(list(removed))
-edges.append(list(new_edge))
-edges.sort()
+    if changed_edges is not None:
+        break
+assert changed_edges is not None, "no Q-diverging rewire with unchanged LPA replay found"
+assert len(changed_edges) == len(edges)
+assert max_q_difference > verifier.Q_TOLERANCE
+print(f"PRECONDITION: genuine Q divergence {max_q_difference} > {verifier.Q_TOLERANCE}; exact LPA labels/count unchanged")
+graph["edges"] = [list(edge) for edge in changed_edges]
 tampered = gzip.compress(json.dumps(bundle, separators=(",", ":")).encode("utf-8"), mtime=0)
 open(bundle_path, "wb").write(tampered)
 new_sha256 = hashlib.sha256(tampered).hexdigest()
@@ -482,7 +515,9 @@ for fn in confident_edges _resolve_source_node _resolve_edges; do
     case "$fn" in
         confident_edges) short_circuit="return []" ;;
         _resolve_source_node) short_circuit="return None, None" ;;
-        _resolve_edges) short_circuit="return 0" ;;
+        # Keep canonical refs/assertions coherent while eliminating real
+        # applicability. return0 would now be rejected before fingerprinting.
+        _resolve_edges) short_circuit="_CALL_CANDIDATE_KINDS = frozenset(); _HERITAGE_CANDIDATE_KINDS = frozenset()" ;;
     esac
     cp "$_CODEGRAPH_COPY" "$_CODEGRAPH_COPY.bak"
     python3 - "$_CODEGRAPH_COPY" "$fn" "$short_circuit" << 'PYEOF'

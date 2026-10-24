@@ -1,0 +1,44 @@
+{
+  "artifact_bytes": 651844965,
+  "header": {
+    "content_hash": "2970dec7332fe5b359db361844342d4bffc9af80a8d98aff42af0705659b91a5",
+    "format": "atlas-evidence.v2",
+    "record_count": 959661,
+    "schema_epoch": 7,
+    "type": "header"
+  },
+  "record_count": 959661,
+  "counts_by_type": {
+    "assertion": 193204,
+    "entity": 19742,
+    "evidence": 245729,
+    "observation": 2358,
+    "occurrence": 245729,
+    "producer": 1,
+    "projection:assignment_targets": 32783,
+    "projection:refs": 193171,
+    "projection:symbols": 17410,
+    "projection:edges": 9501,
+    "projection:rationale": 33
+  },
+  "bytes_by_type": {
+    "assertion": 79660805,
+    "entity": 6798321,
+    "evidence": 103350994,
+    "observation": 1082573,
+    "occurrence": 128010849,
+    "producer": 574,
+    "projection:assignment_targets": 19725160,
+    "projection:refs": 287953618,
+    "projection:symbols": 19665876,
+    "projection:edges": 5571830,
+    "projection:rationale": 24197
+  },
+  "decoded_binding_bytes_by_projection": {
+    "refs": 159512767,
+    "symbols": 11066116
+  },
+  "diagnostic_seconds": 2.2162641670001904,
+  "source_unchanged": true,
+  "purpose": "Read-only size attribution; no transport/format optimization or alternative size claim"
+}

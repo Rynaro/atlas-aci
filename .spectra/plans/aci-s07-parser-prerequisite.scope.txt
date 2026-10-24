@@ -1,0 +1,14 @@
+mcp-server/src/atlas_aci/codegraph.py
+mcp-server/src/atlas_aci/storage/evidence.py
+mcp-server/tests/slices/test_s07_parser_prerequisite.py
+mcp-server/tests/fixtures/s07/parser_prerequisite/*
+mcp-server/tests/slices/test_s04_contract.py
+mcp-server/tests/slices/test_s07_records.py
+mcp-server/tests/slices/test_s07_contract.py
+mcp-server/tests/test_export.py
+mcp-server/tests/test_schema_epoch.py
+README.md
+.spectra/plans/aci-s07-parser-prerequisite.*
+.spectra/plans/ramza-calibration.jsonl
+.spectra/evidence/aci-s07/parser-prerequisite/*
+.spectra/changes/aci-s07-parser-prerequisite/*

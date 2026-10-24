@@ -1,0 +1,29 @@
+{
+  "eidolon": "ramza",
+  "recipient": "vivi",
+  "parent_slice": "ACI-S07",
+  "supporting_spec": ".spectra/plans/aci-s07-parser-prerequisite.md",
+  "envelope": ".spectra/plans/aci-s07-parser-prerequisite.envelope.json",
+  "criteria_sha256": "b4c2ff493ecbe88a2841a907514c60cae76c23756842282418bd9a90301a51ae",
+  "confidence": {
+    "value": 82.5,
+    "verdict": "VALIDATE",
+    "rule": ".eidolons/ramza/docs/methodology/scoring.md:31",
+    "text": "70\u201384 VALIDATE (human reviews)",
+    "disposition": "Orchestrator must explicitly resolve validation obligation under standing user authorization before execution; no silent automatic proceed."
+  },
+  "checkpoint": {
+    "maximum_minutes": 60,
+    "required": [
+      "historical target occurrence/evidence closure",
+      "fresh/stale resolution and analysis isolation",
+      "strict source-free export/import staleness"
+    ],
+    "stop": "Stop before broader execution; independent ATLAS verifies proof. Stop if general temporal graph machinery required."
+  },
+  "effort_cap": "Smaller of one engineering day and remaining original five-day S07 allocation; record actual allocation before starting.",
+  "scope_amendment": ".spectra/changes/aci-s07-parser-prerequisite/scope-amendment.json",
+  "receipt": ".spectra/state/aci-s07.execution.json",
+  "root_gate": "Mechanical ECL verification and correlated verify_pass trace, plus explicit VALIDATE disposition; no production claim from planning.",
+  "validation_commands": "Original S07 verification and supporting spec Verification section; full tests, strict portable controls and unchanged fresh probe remain required."
+}

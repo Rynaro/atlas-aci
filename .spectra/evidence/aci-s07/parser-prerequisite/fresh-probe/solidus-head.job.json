@@ -1,0 +1,16 @@
+{
+  "name": "solidus-head",
+  "command": [
+    "git",
+    "rev-parse",
+    "HEAD"
+  ],
+  "cwd": "/tmp/aci-s07-approved-probe-inputs/solidus",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 0.011958917006268166,
+  "elapsed_total": 0.4584873330022674,
+  "peak_rss_bytes": 4325376,
+  "stdout": ".spectra/evidence/aci-s07/parser-prerequisite/fresh-probe/solidus-head.stdout.log",
+  "stderr": ".spectra/evidence/aci-s07/parser-prerequisite/fresh-probe/solidus-head.stderr.log"
+}

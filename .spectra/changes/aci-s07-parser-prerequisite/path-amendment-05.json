@@ -1,0 +1,16 @@
+{
+  "parent_slice": "ACI-S07",
+  "supporting_plan": ".spectra/plans/aci-s07-parser-prerequisite.md",
+  "at": "2026-10-24T15:06:00.577855+00:00",
+  "criteria_changed": false,
+  "additional_paths": [
+    "scripts/test-verify-probe-verdict.sh"
+  ],
+  "restriction": "Only scenario12 nonvacuous Q-diverging rewire precondition and coherent _resolve_edges candidate-kind mutation in disposable copy; preserve27 controls/Bash3.2/failure assertions. No verifier/bar/sidecar/historical edits.",
+  "reason": "Actual new-bundle selftest18PASS1FAIL then abort: firstabsentpair preservedQs; return0resolver violated newly strict canonical coherence.",
+  "authorization": "Root exactpath authorization after ATLAS independent read-only confirmation of both fixture failures.",
+  "evidence": [
+    ".spectra/evidence/aci-s07/parser-prerequisite/probe-selftest-first.log",
+    ".spectra/evidence/aci-s07/parser-prerequisite/probe-selftest-first.exit"
+  ]
+}

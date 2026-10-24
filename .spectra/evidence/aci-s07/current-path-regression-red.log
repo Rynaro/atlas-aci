@@ -1,0 +1,27 @@
+...F                                                                     [100%]
+=================================== FAILURES ===================================
+__ test_current_format_portable_absolute_paths_rejected[C:/Windows/System32] ___
+
+tmp_path = PosixPath('/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-136/test_current_format_portable_a3')
+bad_path = 'C:/Windows/System32'
+
+    @pytest.mark.parametrize('bad_path',['/etc/passwd','../../escape',r'C:\Windows\System32','C:/Windows/System32'])
+    def test_current_format_portable_absolute_paths_rejected(tmp_path: Path,bad_path: str):
+        _repo,graph=build(tmp_path);artifact=tmp_path/'real.jsonl';graph.export_jsonl(artifact);before=canonical(graph)
+        def rewrite(records):
+            for record in records:
+                if record['type'] in {'entity','occurrence'}:
+                    record['path']=bad_path
+                    if record['type']=='entity' and record['kind']=='file':record['name']=bad_path
+                if record['type']=='projection':
+                    for key in record['row']:
+                        if 'path' in key and record['row'][key] is not None:record['row'][key]=bad_path
+        rewrite_artifact(artifact,rewrite)
+>       with pytest.raises(ValueError):graph.import_jsonl(artifact)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+mcp-server/tests/slices/test_s07_contract.py:414: Failed
+=========================== short test summary info ============================
+FAILED mcp-server/tests/slices/test_s07_contract.py::test_current_format_portable_absolute_paths_rejected[C:/Windows/System32]
+1 failed, 3 passed in 0.13s

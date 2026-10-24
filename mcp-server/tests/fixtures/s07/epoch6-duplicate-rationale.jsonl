@@ -1,0 +1,4 @@
+{"content_hash":"130b4a29d0f6c6970148a2eee9a71d65ba49cf4762db16e95f20ccc20976e743","record_count":3,"schema_epoch":6,"type":"header"}
+{"label":null,"lang":"ruby","line":1,"path":"a.rb","target_line":1,"target_name":"A","target_path":"a.rb","text":"# NOTE: duplicate declaration","type":"rationale"}
+{"kind":"class","lang":"ruby","line_end":2,"line_start":1,"name":"A","path":"a.rb","type":"symbol"}
+{"kind":"class","lang":"ruby","line_end":2,"line_start":1,"name":"A","path":"a.rb","type":"symbol"}

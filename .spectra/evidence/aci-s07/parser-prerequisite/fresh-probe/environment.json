@@ -1,0 +1,23 @@
+{
+  "sources": {
+    "mcp-server/src/atlas_aci/codegraph.py": "59c2c347d5bfdcbe72a99998b0cbe641db6f2167a1eee51a17026805175e163f",
+    "mcp-server/src/atlas_aci/storage/evidence.py": "dd2d15bac29de7fb21771606ad436a544e4b55d41266b53e383906c312d0c5c7",
+    "mcp-server/src/atlas_aci/providers/python_imports.py": "de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014"
+  },
+  "pins": {
+    "solidus": [
+      "https://github.com/solidusio/solidus.git",
+      "4026945d614e81383c007ed1ab1278a0195ce5d9"
+    ],
+    "spree": [
+      "https://github.com/spree/spree.git",
+      "6699cde44303ea85ef6e56c5e87c44a738ab73fc"
+    ]
+  },
+  "default_profile": true,
+  "source_transformations": false,
+  "networkx": "3.6.1",
+  "per_job_seconds": 600,
+  "total_seconds": 2700,
+  "base_commit": "ad9ab7a6122f653b0e9e7052e6173c6257b4a3b8"
+}

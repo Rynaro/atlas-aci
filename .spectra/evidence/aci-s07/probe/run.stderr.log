@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/private/tmp/atlas-aci-aci-s07/.spectra/evidence/aci-s07/probe/run_probe.py", line 78, in <module>
+    job(name+'-export',[UV,'run','--frozen','python','../scripts/probe-export-confident-graph.py',str(repo),str(graph)],ROOT/'mcp-server')
+  File "/private/tmp/atlas-aci-aci-s07/.spectra/evidence/aci-s07/probe/run_probe.py", line 54, in job
+    raise RuntimeError('Probe job failed: '+name)
+RuntimeError: Probe job failed: solidus-export

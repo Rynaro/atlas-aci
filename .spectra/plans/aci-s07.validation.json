@@ -1,0 +1,12 @@
+{
+  "validated_at": "2026-10-24T01:54:21.303480+00:00",
+  "schemas": [
+    "ecl-envelope.v2.json",
+    "plan-state.v1.json"
+  ],
+  "validator": "jsonschema.Draft202012Validator with FormatChecker",
+  "envelope_relative_paths_verified": true,
+  "spec_sha256": "0c76884360f9a7578fcc1660ce8e3fa2f72caca06af13f5006eaa6d0f68ee6ff",
+  "criteria_sha256": "a5a08415f0dcf276a270cea3cbd1daf29e0b84332c791f7ff394fec0c6b92036",
+  "exit_code": 0
+}

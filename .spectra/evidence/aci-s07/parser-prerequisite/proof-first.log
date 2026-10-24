@@ -1,0 +1,38 @@
+F..                                                                      [100%]
+=================================== FAILURES ===================================
+________ test_first_proof_historical_target_closure_and_fresh_isolation ________
+
+tmp_path = PosixPath('/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-155/test_first_proof_historical_ta0')
+
+    def test_first_proof_historical_target_closure_and_fresh_isolation(tmp_path: Path):
+        repo,graph=make(tmp_path)
+        original=graph.evidence_records();old_b=(repo/'pkg/b.py').read_bytes()
+        old_call=next(r for r in original if r['type']=='assertion' and r['relation']=='call')
+        (repo/'pkg/a.py').write_text('def A(:\n B()\n')
+        (repo/'pkg/b.py').write_bytes(b'\n\n'+old_b)
+        (repo/'pkg/c.py').write_text('from .a import A\ndef C():\n A()\n')
+        stats=graph.build()
+        assert stats['extraction_state']=='partial' and stats['files_failed']==1
+        observations=graph.observation_records()
+        failed=next(r for r in observations if r['type']=='observation' and r['path']=='pkg/a.py')
+        assert failed['state']=='failed' and failed['reason']=='parse_error'
+        assert failed['observed_source_sha256']==hashlib.sha256((repo/'pkg/a.py').read_bytes()).hexdigest()
+        history=next(r for r in observations if r['type']=='history' and r['id']==failed['historical_id'])
+        assert old_call in history['records']
+        old_target=next(r for r in history['records'] if r['type']=='projection' and r['table']=='symbols' and r['row']['name']=='B')
+        old_occurrence=next(r for r in history['records'] if r['type']=='occurrence' and r['id']==old_target['links']['occurrence_id'])
+        assert old_occurrence['line']==1 and old_occurrence['source_sha256']==hashlib.sha256(old_b).hexdigest()
+        assert any(r['type']=='evidence' and r['occurrence_id']==old_occurrence['id'] for r in history['records'])
+        assert graph.search_symbol('B')['definitions'][0]['line_start']==3
+        assert not graph.query('callers_of:A')['edges']
+        assert graph.search_symbol('A')['references'][0]['unresolved_reason']=='stale_target'
+        assert not graph.confident_edges()
+        assert graph.communities()['communities']==[]
+>       assert graph.god_nodes()['nodes']==[]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'nodes'
+
+mcp-server/tests/slices/test_s07_parser_prerequisite.py:45: KeyError
+=========================== short test summary info ============================
+FAILED mcp-server/tests/slices/test_s07_parser_prerequisite.py::test_first_proof_historical_target_closure_and_fresh_isolation
+1 failed, 2 passed in 0.19s
