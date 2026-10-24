@@ -1,0 +1,37 @@
+{
+  "output_commit": "c376ef53f5f4486854b7f68a04ab177d11e80dfd",
+  "checkout": "/private/tmp/aci-s11-output-check",
+  "output_test_command": [
+    "/private/tmp/aci-s11-output-check/mcp-server/.venv/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "mcp-server/tests/slices/test_s11_protocol.py",
+    "mcp-server/tests/slices/test_s11_contract.py",
+    "mcp-server/tests/slices/test_s11_stdio.py",
+    "mcp-server/tests/slices/test_s11_docker.py"
+  ],
+  "output_test_exit_code": 0,
+  "output_test_elapsed_seconds": 8.956480125,
+  "actual_source_import_exit_code": 0,
+  "digests_before_equal_after_equal_receipt": true,
+  "verified_digest_count": 256,
+  "clean_checkout": true,
+  "git_diff_exit_code": 0,
+  "helper_command": [
+    "/private/tmp/aci-s11-output-check/mcp-server/.venv/bin/python",
+    "/private/tmp/aci-s11-output-check/.spectra/evidence/aci-s11/verify_execution.py",
+    "--root",
+    "/private/tmp/aci-s11-output-check",
+    "--receipt",
+    "/private/tmp/atlas-aci-aci-s11/.spectra/state/aci-s11.execution.json"
+  ],
+  "helper_exit_code": 0,
+  "helper_status": "PRODUCTS_VERIFIED",
+  "helper_sha256": "760844f39133884a8818a9f3d430d7483613e6dab5c08d7c0140d2d16f1b1abb",
+  "complete_helper_exit_code": 0,
+  "complete_helper_status": "ALREADY_SATISFIED",
+  "complete_helper_stdout_sha256": "50663d4767edfbd6b79af5f051cef0f5330f6c2c2f608fe3328b9918858cc6d7"
+}
