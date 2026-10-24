@@ -1,0 +1,13 @@
+{
+  "grammar_commit": "577506f3e0e7e88a5024698e94a2d32de5478dc8",
+  "source_hashes": {
+    "src/parser.c": "f6466f05006dd969cfc54699566f3f3d25880198c579427d6dd9a955f486a9b1",
+    "src/scanner.c": "70d82a53dc799deab4cfc0c7ef7c1d48b16ce1a5cfeea2e560a0e061f6ea61d6",
+    "src/tree_sitter/parser.h": "180b893c8734778fd32f372dfbc27bd6ad1cd2221f26150b31256ff6716320d2",
+    "LICENSE": "0eea8dc45e89deeb03c7799bbbc7b4688f365fb274562f4540ecfebdea82e727",
+    "NOTICE": "99bfa31233695219bd3a9f1f78352bfc8f9ba98e03d2a3a79221c82fc335f375"
+  },
+  "product_sha256": "a7696a05a6880bd378e1fa94498ffd579504d9feabb1a1c9935a1c8d1a71a0b9",
+  "job_seconds": 600,
+  "total_seconds": 1200
+}

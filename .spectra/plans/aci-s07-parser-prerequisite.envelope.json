@@ -1,0 +1,50 @@
+{
+  "envelope_version": "2.0",
+  "message_id": "35aed0cb-9669-4054-bfb6-1fca458bee0d",
+  "thread_id": "7892070f-8654-4438-a6f9-476dad1e94a8",
+  "parent_id": "56b581ca-f8d3-41ba-ab8f-7bd32cffb3b5",
+  "from": {
+    "eidolon": "ramza",
+    "version": "1.1.0"
+  },
+  "to": {
+    "eidolon": "vivi",
+    "version": "n/a"
+  },
+  "performative": "PROPOSE",
+  "edge_origin": "roster",
+  "objective": "Supporting ACI-S07 correction: complete atomic source observation with explicit partial extraction, retained stale evidence isolation and strict portable provenance; VALIDATE confidence and first-proof stop apply.",
+  "artifact": {
+    "kind": "spec",
+    "schema_version": "1.0",
+    "path": "aci-s07-parser-prerequisite.md",
+    "sha256": "ebbf02086f2059e90ab903b675c24bddadb627ba91892dfca16a24f1967a6fb9",
+    "size_bytes": 22085
+  },
+  "integrity": {
+    "method": "sha256",
+    "value": "ebbf02086f2059e90ab903b675c24bddadb627ba91892dfca16a24f1967a6fb9"
+  },
+  "trace": {
+    "ts": "2026-10-24T03:26:22.363092+00:00",
+    "host": "codex",
+    "model": "gpt-6-astra",
+    "tier": "standard"
+  },
+  "ise": {
+    "assertion_grade": "validated",
+    "provenance": {
+      "methodology_version": "ramza-1.1.0"
+    },
+    "receiver_authorization": {
+      "auto_route": true,
+      "auto_merge": false,
+      "auto_deploy": false
+    }
+  },
+  "confidence": 0.825,
+  "x_ramza_acceptance_criteria": {
+    "path": "aci-s07-parser-prerequisite.criteria.md",
+    "sha256": "b4c2ff493ecbe88a2841a907514c60cae76c23756842282418bd9a90301a51ae"
+  }
+}

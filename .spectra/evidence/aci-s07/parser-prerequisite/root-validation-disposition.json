@@ -1,0 +1,28 @@
+{
+  "kind": "orchestrator-validation-disposition",
+  "at": "2026-10-24T03:28:38.990898+00:00",
+  "parent_slice": "ACI-S07",
+  "supporting_message_id": "35aed0cb-9669-4054-bfb6-1fca458bee0d",
+  "confidence": 82.5,
+  "verdict": "VALIDATE",
+  "human_review_performed": false,
+  "rule": ".eidolons/ramza/docs/methodology/scoring.md:31",
+  "authorization_source": "Standing user instruction to implement and validate the whole backlog; this disposition authorizes only reversible local validation needed to make the proposal concrete.",
+  "authorized_stage": "First proof only: historical target/evidence closure, fresh/stale isolation, strict source-free export/import.",
+  "maximum_minutes": 60,
+  "broader_execution_authorized": false,
+  "production_adoption_or_merge_authorized_by_this_disposition": false,
+  "stop": "Stop at the first proof or 60 minutes, whichever comes first; preserve evidence and request independent ATLAS verification. Do not continue broader changes on this disposition.",
+  "unresolved": [
+    "historical closure and portable consistency feasibility",
+    "confidence validation obligation before broader execution"
+  ],
+  "next_decision": "Use actual proof and independent verification for an explicit further disposition; preserve the real confidence assessment and never claim human review occurred.",
+  "allocation": {
+    "original_days": 5,
+    "reserved_for_inherited_work_and_uncertainty_days": 4,
+    "maximum_supporting_days": 1,
+    "first_proof_minutes": 60,
+    "basis": "Conservative allocation partition, not a claim about measured engineering effort already spent. No extension of the original five-day cap."
+  }
+}

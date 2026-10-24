@@ -1,0 +1,131 @@
+{
+  "slice_id": "ACI-S07",
+  "issue_url": "https://github.com/Rynaro/atlas-aci/issues/29",
+  "criteria_sha256": "a5a08415f0dcf276a270cea3cbd1daf29e0b84332c791f7ff394fec0c6b92036",
+  "base_commit": "ad9ab7a6122f653b0e9e7052e6173c6257b4a3b8",
+  "output_commit": null,
+  "declared_paths": [
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/src/atlas_aci/storage/*",
+    "mcp-server/src/atlas_aci/providers/*",
+    "mcp-server/tests/slices/test_s07_*.py",
+    "atlas/docs/*",
+    "mcp-server/tests/fixtures/s07/*",
+    "mcp-server/tests/test_schema_epoch.py",
+    "mcp-server/tests/test_export.py",
+    "mcp-server/tests/test_cli_export_import.py",
+    ".github/workflows/harden-gate.yml",
+    "scripts/test-verify-probe-verdict.sh"
+  ],
+  "output_digests": {},
+  "status": "IN_PROGRESS",
+  "acceptance_results": [
+    {
+      "ac_id": "AC-S07-001",
+      "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/mcp-server/src mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s07_*.py -q",
+      "test_id": "mcp-server/tests/slices/test_s07_contract.py::test_parallel_relations",
+      "working_directory": ".",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s07/final-lifecycle-rationale-cleanup.log"
+      ],
+      "observation": "55 actual tests passed; uncommitted stable product checkpointa7696a05, output-commit verification still pending."
+    },
+    {
+      "ac_id": "AC-S07-002",
+      "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/mcp-server/src mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s07_*.py -q",
+      "test_id": "mcp-server/tests/slices/test_s07_contract.py::test_direction_preserved",
+      "working_directory": ".",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s07/final-lifecycle-rationale-cleanup.log"
+      ],
+      "observation": "55 actual tests passed; uncommitted stable product checkpointa7696a05, output-commit verification still pending."
+    },
+    {
+      "ac_id": "AC-S07-003",
+      "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/mcp-server/src mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s07_*.py -q",
+      "test_id": "mcp-server/tests/slices/test_s07_contract.py::test_line_move_identity",
+      "working_directory": ".",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s07/final-lifecycle-rationale-cleanup.log"
+      ],
+      "observation": "55 actual tests passed; uncommitted stable product checkpointa7696a05, output-commit verification still pending."
+    },
+    {
+      "ac_id": "AC-S07-004",
+      "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/mcp-server/src mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s07_*.py -q",
+      "test_id": "mcp-server/tests/slices/test_s07_contract.py::test_source_evidence",
+      "working_directory": ".",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s07/final-lifecycle-rationale-cleanup.log"
+      ],
+      "observation": "55 actual tests passed; uncommitted stable product checkpointa7696a05, output-commit verification still pending."
+    },
+    {
+      "ac_id": "AC-S07-005",
+      "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/mcp-server/src mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s07_*.py -q",
+      "test_id": "mcp-server/tests/slices/test_s07_contract.py::test_migration_interruption",
+      "working_directory": ".",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s07/final-lifecycle-rationale-cleanup.log"
+      ],
+      "observation": "55 actual tests passed; uncommitted stable product checkpointa7696a05, output-commit verification still pending."
+    },
+    {
+      "ac_id": "AC-S07-006",
+      "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/mcp-server/src mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s07_*.py -q",
+      "test_id": "mcp-server/tests/slices/test_s07_contract.py::test_assertion_replay",
+      "working_directory": ".",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s07/final-lifecycle-rationale-cleanup.log"
+      ],
+      "observation": "55 actual tests passed; uncommitted stable product checkpointa7696a05, output-commit verification still pending."
+    },
+    {
+      "ac_id": "AC-S07-RUN-02",
+      "command": "mcp-server/.venv/bin/python .spectra/evidence/aci-s07/verify_resume.py",
+      "working_directory": ".",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s07/interrupted-execution.json",
+        ".spectra/evidence/aci-s07/resume-identity.json"
+      ]
+    }
+  ],
+  "scope_amendments": [],
+  "checks": {
+    "full_suite": {
+      "exit_code": 0,
+      "result": "375 passed, no skips",
+      "evidence": [
+        ".spectra/evidence/aci-s07/full-suite-corrected.log",
+        ".spectra/evidence/aci-s07/full-suite-corrected.exit"
+      ]
+    },
+    "docker": {
+      "exit_code": 0,
+      "result": "18 passed, no skips; detailed UID10001, EROFS and MCP wire proof",
+      "evidence": [
+        ".spectra/evidence/aci-s07/docker-evidence-focused.log",
+        ".spectra/evidence/aci-s07/docker-integration.json"
+      ]
+    },
+    "static": ".spectra/evidence/aci-s07/static-checks.json",
+    "pass2": ".spectra/evidence/aci-s07/vivi-pass2-result.json",
+    "fresh_probe": {
+      "exit_code": 1,
+      "status": "BLOCKED_PENDING_PLAN_DECISION",
+      "reason": "Default full-tree exact pinned Solidus build rejects real recovered SCSS syntax error; no fresh graph/PASS produced. Scratch SCSS candidate repairs first error but complete eligible scans still contain errors. No subset or production changes authorized.",
+      "evidence": [
+        ".spectra/evidence/aci-s07/probe/solidus-export.job.json",
+        ".spectra/evidence/aci-s07/probe/solidus-export.stderr.log",
+        ".spectra/evidence/aci-s07/grammar-qualification/scan-summary.json"
+      ]
+    }
+  }
+}

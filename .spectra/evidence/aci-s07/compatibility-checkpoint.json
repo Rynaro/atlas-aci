@@ -1,0 +1,12 @@
+{
+  "files": {
+    "mcp-server/src/atlas_aci/codegraph.py": "272803ebf590fcff53a9d6e6c16fafe45b229642f251b92674ae51dcb380e692",
+    "mcp-server/src/atlas_aci/storage/evidence.py": "62e9901b104d2a0dc5cfac14c4fac23ea07cd57e7d7b4155937f30db080a21dc",
+    "mcp-server/tests/test_export.py": "4c71430d81afd0ba624941c2da7b4c20ff0c318325b8df992879f2d2c63dae84",
+    "mcp-server/tests/slices/test_s07_contract.py": "789156245190605437082500e9232615d29d4a41b338dba37b9c08bad9f3c365"
+  },
+  "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/mcp-server/src mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s07_contract.py mcp-server/tests/slices/test_s02_contract.py mcp-server/tests/slices/test_s03_contract.py mcp-server/tests/slices/test_s04_contract.py mcp-server/tests/test_schema_epoch.py mcp-server/tests/test_export.py mcp-server/tests/test_cli_export_import.py -q",
+  "exit_code": 0,
+  "result": "149 passed in 7.22s",
+  "log": ".spectra/evidence/aci-s07/predecessors-corrected.log"
+}

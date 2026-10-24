@@ -1,0 +1,8 @@
+def A():
+    B()
+
+def B():
+    pass
+
+def unresolved():
+    missing()

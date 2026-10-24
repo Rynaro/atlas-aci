@@ -1,0 +1,18 @@
+{
+  "name": "solidus-remote",
+  "command": [
+    "git",
+    "remote",
+    "set-url",
+    "origin",
+    "https://github.com/solidusio/solidus.git"
+  ],
+  "cwd": "/tmp/aci-s07-probe-inputs/solidus",
+  "exit_code": 0,
+  "timed_out": false,
+  "duration_seconds": 0.011696541994751897,
+  "peak_memory_bytes": 4489216,
+  "stdout": ".spectra/evidence/aci-s07/probe/solidus-remote.stdout.log",
+  "stderr": ".spectra/evidence/aci-s07/probe/solidus-remote.stderr.log",
+  "source_sha256": "efce0f8c3635cadd099a99c282b05716dba0d49408f0e9bea3f6d68572728e1b"
+}

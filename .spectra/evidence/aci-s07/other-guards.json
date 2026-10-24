@@ -1,0 +1,16 @@
+{
+  "classify": {
+    "command": [
+      "/bin/bash",
+      "scripts/test-harden-gate-classify.sh"
+    ],
+    "exit_code": 0
+  },
+  "export-size": {
+    "command": [
+      "/bin/bash",
+      "scripts/test-verify-export-size.sh"
+    ],
+    "exit_code": 0
+  }
+}

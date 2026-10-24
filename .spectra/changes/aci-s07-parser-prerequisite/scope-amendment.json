@@ -1,0 +1,48 @@
+{
+  "kind": "supporting-scope-amendment",
+  "parent_slice": "ACI-S07",
+  "original_plan": ".spectra/plans/aci-s07.md",
+  "original_criteria_sha256": "a5a08415f0dcf276a270cea3cbd1daf29e0b84332c791f7ff394fec0c6b92036",
+  "supporting_plan": ".spectra/plans/aci-s07-parser-prerequisite.md",
+  "supporting_spec_sha256": "ebbf02086f2059e90ab903b675c24bddadb627ba91892dfca16a24f1967a6fb9",
+  "supporting_criteria": ".spectra/plans/aci-s07-parser-prerequisite.criteria.md",
+  "supporting_criteria_sha256": "b4c2ff493ecbe88a2841a907514c60cae76c23756842282418bd9a90301a51ae",
+  "review": ".spectra/plans/aci-s07-parser-prerequisite.review.json",
+  "reason": "Independent requirement-origin audit established blanket recovered-tree abort as S04 design choice; reviewed correction explicitly preserves original S03/S04/S07 obligations and fresh same-pin probe.",
+  "original_artifacts_immutable_during_planning": true,
+  "execution_receipt": ".spectra/state/aci-s07.execution.json",
+  "additional_paths": [
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/src/atlas_aci/storage/evidence.py",
+    "mcp-server/tests/slices/test_s07_parser_prerequisite.py",
+    "mcp-server/tests/fixtures/s07/parser_prerequisite/*",
+    "mcp-server/tests/slices/test_s04_contract.py",
+    "mcp-server/tests/slices/test_s07_records.py",
+    "mcp-server/tests/slices/test_s07_contract.py",
+    "mcp-server/tests/test_export.py",
+    "mcp-server/tests/test_schema_epoch.py",
+    "README.md",
+    ".spectra/plans/aci-s07-parser-prerequisite.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/evidence/aci-s07/parser-prerequisite/*",
+    ".spectra/changes/aci-s07-parser-prerequisite/*"
+  ],
+  "confidence": {
+    "value": 82.5,
+    "verdict": "VALIDATE",
+    "rule": ".eidolons/ramza/docs/methodology/scoring.md:31",
+    "text": "70\u201384 VALIDATE (human reviews)",
+    "disposition": "Orchestrator must explicitly resolve validation obligation under standing user authorization before execution; no silent automatic proceed."
+  },
+  "first_checkpoint": {
+    "maximum_minutes": 60,
+    "required": [
+      "historical target occurrence/evidence closure",
+      "fresh/stale resolution and analysis isolation",
+      "strict source-free export/import staleness"
+    ],
+    "stop": "Stop before broader execution; independent ATLAS verifies proof. Stop if general temporal graph machinery required."
+  },
+  "effort_cap": "Smaller of one engineering day and remaining original five-day S07 allocation; record actual allocation before starting.",
+  "no_new_receipt": true
+}

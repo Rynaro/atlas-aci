@@ -1,0 +1,20 @@
+{
+  "at": "2026-10-24T03:47:10.400489+00:00",
+  "condition": "Required human review of the scoped recovered-syntax/partial-coverage correction remains unanswered.",
+  "consecutive_goal_turns_with_this_explicit_input_blocker": 3,
+  "basis": [
+    "First request turn: actual post-proof confidence82.5 VALIDATE; review requested; at least60seconds given for response.",
+    "Second turn: no human response; current assessment/source unchanged; GitHub live inventory36open with all issue bodies unchanged; all remaining slices transitively depend onACI-S07; all team jobs terminal.",
+    "Third consecutive turn: no human response; same36liveissues and unchanged bodies; confidence82.5/sourcehash unchanged; all team jobs terminal and no independent eligible slice."
+  ],
+  "source_sha256": "d8c1dd31282404e74bf03c579d7a597f1a0ce55a10644e39999fe56bf5086644",
+  "confidence": 82.5,
+  "methodology_rule": ".eidolons/ramza/docs/methodology/scoring.md:31",
+  "rule_text": "70\u201384 VALIDATE (human reviews)",
+  "human_review_performed": false,
+  "goal_status": "active",
+  "independent_eligible_work": false,
+  "objective_complete": false,
+  "next_action": "Preserve authorized work without behavior changes, then mark goal blocked if required human review remains pending. Do not mark complete or paused.",
+  "pending_goal_status_transition": "blocked after preserving current incomplete work in a local checkpoint, unless actual review arrives first"
+}

@@ -1,0 +1,10 @@
+{
+  "logical_path": "partial.jsonl",
+  "actual_pytest_artifact": "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-current/test_first_proof_historical_ta0/partial.jsonl",
+  "compressed_path": ".spectra/evidence/aci-s07/parser-prerequisite/proof-partial.jsonl.gz",
+  "uncompressed_bytes": 29225,
+  "uncompressed_sha256": "9cb4559821e690f9386bfc072a969448a8bc7e61f2c994a354747a22f077fa8d",
+  "compressed_bytes": 5136,
+  "compressed_sha256": "79239431960fb45731242d059766d451a0eb980e56d4bd252997dcfac794e69b",
+  "gzip_mtime": 0
+}

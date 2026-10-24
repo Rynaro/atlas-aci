@@ -1,0 +1,154 @@
+{
+  "schema": "ramza/plan-state.v1",
+  "plan": "aci-s07",
+  "created_at": "2026-10-24T01:47:59Z",
+  "tier": "full",
+  "phase": "DONE",
+  "phases_done": [
+    "RS",
+    "S",
+    "P",
+    "E",
+    "C",
+    "T",
+    "A",
+    "DONE"
+  ],
+  "rightsize": {
+    "score": 6,
+    "computed_tier": "full",
+    "inputs": {
+      "files_est": 12,
+      "new_dep": false,
+      "public_api": true,
+      "migration": true,
+      "security": true,
+      "novel": false,
+      "stakes": "med"
+    }
+  },
+  "refine_cycles": 0,
+  "skips": [],
+  "gates": [
+    {
+      "rubric": "complexity",
+      "total": 9,
+      "dims": {
+        "scope": 3,
+        "ambiguity": 2,
+        "dependencies": 2,
+        "risk": 2
+      },
+      "verdict": "extended",
+      "at": "2026-10-24T01:47:59Z",
+      "label": "directed-evidence-compatibility"
+    },
+    {
+      "rubric": "explore",
+      "total": 84.5,
+      "dims": {
+        "alignment": 10,
+        "correctness": 9,
+        "maintainability": 8,
+        "performance": 8,
+        "simplicity": 7,
+        "risk": 8,
+        "innovation": 5
+      },
+      "verdict": "solid",
+      "at": "2026-10-24T01:47:59Z",
+      "label": "canonical-records-compatible-projections"
+    },
+    {
+      "rubric": "explore",
+      "total": 72.5,
+      "dims": {
+        "alignment": 6,
+        "correctness": 6,
+        "maintainability": 9,
+        "performance": 10,
+        "simplicity": 10,
+        "risk": 6,
+        "innovation": 2
+      },
+      "verdict": "solid",
+      "at": "2026-10-24T01:47:59Z",
+      "label": "stable-ids-on-old-edge-table-only"
+    },
+    {
+      "rubric": "explore",
+      "total": 70.5,
+      "dims": {
+        "alignment": 9,
+        "correctness": 8,
+        "maintainability": 7,
+        "performance": 7,
+        "simplicity": 3,
+        "risk": 4,
+        "innovation": 8
+      },
+      "verdict": "solid",
+      "at": "2026-10-24T01:47:59Z",
+      "label": "replace-all-query-storage-with-new-graph"
+    },
+    {
+      "rubric": "refine",
+      "cycle": 1,
+      "total": 4.4,
+      "min": 4,
+      "dims": {
+        "clarity": 5,
+        "completeness": 4,
+        "actionability": 4,
+        "efficiency": 4,
+        "testability": 5
+      },
+      "verdict": "pass",
+      "at": "2026-10-24T01:53:54Z",
+      "label": "independent-atlas-review-record"
+    },
+    {
+      "rubric": "confidence",
+      "total": 87.5,
+      "dims": {
+        "pattern_match": 85,
+        "requirement_clarity": 90,
+        "decomposition_stability": 85,
+        "constraint_compliance": 90
+      },
+      "verdict": "AUTO_PROCEED",
+      "at": "2026-10-24T01:53:54Z",
+      "label": "evidence-graph-readiness"
+    }
+  ],
+  "amendments": [],
+  "declared_scope": [
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/src/atlas_aci/storage/*",
+    "mcp-server/src/atlas_aci/providers/*",
+    "mcp-server/tests/slices/test_s07_*.py",
+    "atlas/docs/*",
+    "mcp-server/tests/fixtures/s07/*",
+    "mcp-server/tests/test_schema_epoch.py",
+    "mcp-server/tests/test_export.py",
+    "mcp-server/tests/test_cli_export_import.py",
+    ".github/workflows/harden-gate.yml",
+    "scripts/test-verify-probe-verdict.sh"
+  ],
+  "criteria_sha256": "a5a08415f0dcf276a270cea3cbd1daf29e0b84332c791f7ff394fec0c6b92036",
+  "critic": {
+    "author": "ramza-backlog-order-s07",
+    "checker": "atlas-s07-plan-checker",
+    "at": "2026-10-24T01:53:54Z"
+  },
+  "scope_declared_at": "2026-10-24T01:53:54Z",
+  "criteria_frozen_at": "2026-10-24T01:53:54Z",
+  "drift_reports": [
+    {
+      "at": "2026-10-24T01:54:21Z",
+      "range": "worktree-vs-HEAD",
+      "files_changed": 10,
+      "uncovered": []
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+{"repo": "spree", "languages": ["ruby", "python", "typescript", "javascript", "scss", "html", "yaml", "markdown", "bash"], "counts": {"yaml": 9, "markdown": 5, "javascript": 126, "scss": 37, "ruby": 2181}, "eligible_file_count": 2358, "failed_file_count": 24}

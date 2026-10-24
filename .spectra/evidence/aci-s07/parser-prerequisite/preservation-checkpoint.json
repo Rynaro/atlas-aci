@@ -1,0 +1,33 @@
+{
+  "kind": "local-incomplete-preservation-checkpoint",
+  "at": "2026-10-24T03:49:19.938645+00:00",
+  "purpose": "Durable local WIP only while required human review remains pending; no broader implementation authorization.",
+  "status": "INCOMPLETE_PENDING_HUMAN_REVIEW",
+  "source_and_protected_sha256s": {
+    "mcp-server/src/atlas_aci/codegraph.py": "d8c1dd31282404e74bf03c579d7a597f1a0ce55a10644e39999fe56bf5086644",
+    "mcp-server/src/atlas_aci/storage/evidence.py": "dd2d15bac29de7fb21771606ad436a544e4b55d41266b53e383906c312d0c5c7",
+    ".spectra/state/aci-s07.execution.json": "3bf36613a3f0f1f29d687b59cbda129d4b34d537ac0b56567efc0dab59dda00c",
+    ".spectra/plans/aci-s07.criteria.md": "a5a08415f0dcf276a270cea3cbd1daf29e0b84332c791f7ff394fec0c6b92036"
+  },
+  "receipt_status": "IN_PROGRESS",
+  "receipt_output_commit": null,
+  "human_review_performed": false,
+  "human_review_unanswered_consecutive_turns": 3,
+  "staged_diff_check": {
+    "command": "git diff --cached --check",
+    "exit_code": 0,
+    "output_bytes": 0
+  },
+  "evidence_reference_recoverability": {
+    "json_receipt_paths_checked": 72,
+    "unrecoverable": 0,
+    "packaged_log_streams": 14,
+    "qualification_json_streams": 4,
+    "roundtrip_and_sha256_verified": true
+  },
+  "native_scratch_cache_or_venv_staged": false,
+  "behavior_changes_in_preservation_step": false,
+  "tests_rerun_in_preservation_step": false,
+  "push_pr_merge_performed": false,
+  "note": "Commit SHA is reported by the executor after commit; receipt remains unchanged and no COMPLETE/output_commit claim is made."
+}

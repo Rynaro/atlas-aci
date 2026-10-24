@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/private/tmp/atlas-aci-aci-s07/.spectra/evidence/aci-s07/grammar-qualification/resume.py", line 42, in <module>
+    job(name+'-eligible',[python,script,name])
+  File "/private/tmp/atlas-aci-aci-s07/.spectra/evidence/aci-s07/grammar-qualification/resume.py", line 22, in job
+    if code:raise RuntimeError('qualification failed '+name)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: qualification failed resume-solidus-eligible

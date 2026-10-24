@@ -1,0 +1,12 @@
+{
+  "library_path": "/tmp/aci-s07-scss-qualification/scss.dylib",
+  "library_sha256": "b89d0dd118f1c525e13d00087715bdaedb0386904d27051f1501335028785fb5",
+  "library_bytes": 284408,
+  "tree_sitter": "0.25.2",
+  "tree_sitter_language_pack": "1.6.0",
+  "abi_version_observed": 15,
+  "native_installation": false,
+  "production_source_changed": false,
+  "qualification_verdict": "INSUFFICIENT_FOR_FULL_DEFAULT_PROBE",
+  "diagnostic_scan_exit_code": 0
+}

@@ -16,12 +16,11 @@ from __future__ import annotations
 import hashlib
 import json
 import re
-import sqlite3
 from pathlib import Path
 
 import pytest
 
-from atlas_aci.codegraph import SCHEMA, SCHEMA_EPOCH, CodeGraph
+from atlas_aci.codegraph import SCHEMA_EPOCH, CodeGraph
 
 
 def _write(repo: Path, rel: str, content: str) -> None:
@@ -31,22 +30,49 @@ def _write(repo: Path, rel: str, content: str) -> None:
 
 
 def _forge_export(real_export_path: Path, forged_path: Path, mutate_body) -> None:
-    """Reads a REAL export, applies `mutate_body` to the parsed body
-    records in place, then re-signs the header's `content_hash` AND
-    `record_count` to match the mutated body -- isolating whatever
-    OTHER guard `mutate_body`'s change is meant to trip (never the
-    content_hash/record_count checks themselves, which are covered by
-    their own dedicated tests above)."""
+    """Mutate actual legacy-shaped projection views, then rehash current IDs.
+
+    Every caller must change a real field. Current projection IDs/header/order
+    stay valid so a path/shape guard, rather than an unrelated checksum, rejects.
+    The old epoch6 reader remains covered by its original body shape.
+    """
+    from atlas_aci.storage import evidence
+
     lines = real_export_path.read_text().splitlines()
     header = json.loads(lines[0])
     body = [json.loads(line) for line in lines[1:]]
-    mutate_body(body)
-    body_lines = [json.dumps(r, sort_keys=True, separators=(",", ":")) for r in body]
-    body_text = "".join(line + "\n" for line in body_lines)
-    header["content_hash"] = hashlib.sha256(body_text.encode("utf-8")).hexdigest()
+    before = json.dumps(body, sort_keys=True)
+    if header.get("format") == evidence.FORMAT:
+        views = []
+        pairs = []
+        names = {"symbols": "symbol", "edges": "edge", "rationale": "rationale"}
+        for record in body:
+            if record["type"] == "projection" and record["table"] in names:
+                view = {"type": names[record["table"]], **record["row"]}
+                if view["type"] == "edge" and view["candidates"] is not None:
+                    view["candidates"] = json.loads(view["candidates"])
+                views.append(view)
+                pairs.append((record, view))
+        views_before = [evidence.canonical(view) for view in views]
+        mutate_body(views)
+        mutation_count = sum(
+            old != evidence.canonical(view) for old, view in zip(views_before, views, strict=True)
+        )
+        assert mutation_count > 0, "forgery did not mutate a real projected field"
+        for record, view in pairs:
+            row = {key: value for key, value in view.items() if key != "type"}
+            if record["table"] == "edges" and row["candidates"] is not None:
+                row["candidates"] = evidence.canonical(row["candidates"])
+            record["row"] = row
+            record["id"] = evidence.identifier(record)
+        body.sort(key=lambda record: (record["type"], record["id"]))
+    else:
+        mutate_body(body)
+    assert json.dumps(body, sort_keys=True) != before, "forgery did not mutate a real record"
+    body_text = "".join(evidence.canonical(record) + "\n" for record in body)
+    header["content_hash"] = hashlib.sha256(body_text.encode()).hexdigest()
     header["record_count"] = len(body)
-    header_line = json.dumps(header, sort_keys=True, separators=(",", ":"))
-    forged_path.write_text(header_line + "\n" + body_text)
+    forged_path.write_text(evidence.canonical(header) + "\n" + body_text)
 
 
 def _build(tmp_path: Path, name: str, files: dict[str, str]) -> CodeGraph:
@@ -89,8 +115,8 @@ def test_canonical_jsonl_shape(tmp_path: Path) -> None:
 
     for line in lines:
         # No insignificant whitespace: compact separators only.
-        assert ": " not in line
-        assert ", " not in line
+        # Binding JSON is opaque string data; whitespace inside that string
+        # is significant, while outer JSON separators remain canonical.
         record = json.loads(line)
         # Sorted keys: re-serializing with sort_keys must reproduce the
         # exact same line — proves the file was already canonical, not
@@ -103,9 +129,8 @@ def test_canonical_jsonl_shape(tmp_path: Path) -> None:
     assert isinstance(header["content_hash"], str) and len(header["content_hash"]) == 64
 
     body_types = {json.loads(line)["type"] for line in lines[1:]}
-    assert body_types <= {"edge", "rationale", "symbol"}
-    assert "symbol" in body_types
-    assert "edge" in body_types
+    assert header["format"] == "atlas-evidence.v1"
+    assert body_types == {"entity", "occurrence", "producer", "evidence", "assertion", "projection"}
 
 
 def test_no_float_fields_pass_silently(tmp_path: Path) -> None:
@@ -373,62 +398,67 @@ def test_header_record_epoch_and_content_hash(tmp_path: Path) -> None:
 
 
 def test_record_level_canonical_order_independent_of_rowid(tmp_path: Path) -> None:
-    """Builds a raw DB by hand -- bypassing `_run_build`/`_resolve_edges`
-    entirely -- and inserts symbols/edges/rationale rows in a DELIBERATELY
-    SHUFFLED order (not the order the exporter's canonical ORDER BY would
-    produce). The export must still come out in the fixed canonical order:
-    the exporter's SQL never references `id`/rowid, so insertion order
-    cannot leak through."""
-    repo = tmp_path / "repo"
-    repo.mkdir()
-    db_path = repo / ".atlas" / f"graph.{SCHEMA_EPOCH}.db"
-    db_path.parent.mkdir(parents=True)
-    conn = sqlite3.connect(db_path)
-    conn.executescript(SCHEMA)
+    """Reorder real parser projections and canonical storage, preserving links."""
+    files = {
+        "z.rb": "class Zeta\n def call\n  helper()\n end\n def helper\n end\nend\n",
+        "m.rb": "class Mu\nend\n",
+        "a.rb": (
+            "class Alpha\n def call\n  # NOTE: actual rationale\n"
+            "  helper()\n end\n def helper\n end\nend\n"
+        ),
+    }
+    graph = _build(tmp_path, "repo", files)
+    first = tmp_path / "first.jsonl"
+    graph.export_jsonl(first)
+    before_query = graph.query("callers_of:helper")
+    before_entities = graph.evidence_records()
+    from atlas_aci.storage import evidence
 
-    # Insert three symbols in reverse-of-canonical order.
-    for name, kind, path, line_start, line_end in [
-        ("Zeta", "class", "z.rb", 10, 20),
-        ("Mu", "class", "m.rb", 5, 15),
-        ("Alpha", "class", "a.rb", 1, 9),
-    ]:
-        conn.execute(
-            "INSERT INTO symbols(name, kind, path, line_start, line_end, lang) "
-            "VALUES (?, ?, ?, ?, ?, 'ruby')",
-            (name, kind, path, line_start, line_end),
+    connection = graph.db
+    for table in (*evidence.COLUMNS, *evidence.TABLES.values()):
+        columns = [row[1] for row in connection.execute(f"PRAGMA table_info({table})")]
+        # Canonical string IDs are semantic; integer projection IDs are not.
+        selected = [name for name in columns if name != "id" or table in evidence.TABLES.values()]
+        rows = list(
+            connection.execute(
+                "SELECT " + ",".join(selected) + " FROM " + table + " ORDER BY rowid DESC"
+            )
         )
-
-    # Insert two edges in reverse-of-canonical order.
-    for source_path, source_line, callee_name in [("z.rb", 12, "helper"), ("a.rb", 3, "helper")]:
-        conn.execute(
-            "INSERT INTO edges(relation, source_path, source_line, source_col, source_name, "
-            "source_kind, callee_name, confidence, target_path, target_line, target_name, "
-            "candidates, lang) VALUES ('call', ?, ?, 0, NULL, NULL, ?, 'INFERRED', 'h.rb', 1, "
-            "'helper', NULL, 'ruby')",
-            (source_path, source_line, callee_name),
-        )
-
-    conn.execute("INSERT INTO manifest(key, value) VALUES ('epoch', ?)", (str(SCHEMA_EPOCH),))
-    conn.commit()
-    conn.close()
-
-    graph = CodeGraph(repo=repo)
-    out_path = tmp_path / "export.jsonl"
-    graph.export_jsonl(out_path)
-
-    lines = out_path.read_text().splitlines()
-    body = [json.loads(line) for line in lines[1:]]
-    symbol_paths = [r["path"] for r in body if r["type"] == "symbol"]
-    edge_paths = [r["source_path"] for r in body if r["type"] == "edge"]
-
-    # Canonical order is path-ascending, independent of insertion order.
-    assert symbol_paths == sorted(symbol_paths) == ["a.rb", "m.rb", "z.rb"]
-    assert edge_paths == sorted(edge_paths) == ["a.rb", "z.rb"]
-
-    # Type grouping is fixed: every "edge" record precedes every "symbol"
-    # record, matching EXPORT_RECORD_TYPES's declared order.
-    types_seen = [r["type"] for r in body]
-    assert types_seen.index("edge") < types_seen.index("symbol")
+        connection.execute("DELETE FROM " + table)
+        for row in rows:
+            connection.execute(
+                "INSERT INTO "
+                + table
+                + "("
+                + ",".join(selected)
+                + ") VALUES ("
+                + ",".join("?" for _ in selected)
+                + ")",
+                tuple(row),
+            )
+    connection.commit()
+    second = tmp_path / "second.jsonl"
+    graph.export_jsonl(second)
+    assert first.read_bytes() == second.read_bytes()
+    assert graph.query("callers_of:helper") == before_query
+    assert graph.evidence_records() == before_entities
+    records = [json.loads(line) for line in second.read_text().splitlines()[1:]]
+    keys = [(record["type"], record["id"]) for record in records]
+    assert keys == sorted(keys)
+    classes = [
+        record["row"]["path"]
+        for record in records
+        if record["type"] == "projection"
+        and record["table"] == "symbols"
+        and record["row"]["kind"] == "class"
+    ]
+    callers = [
+        record["row"]["source_path"]
+        for record in records
+        if record["type"] == "projection" and record["table"] == "edges"
+    ]
+    assert sorted(classes) == ["a.rb", "m.rb", "z.rb"]
+    assert sorted(callers) == ["a.rb", "z.rb"]
 
 
 # ---- Export size on this repo (informational, feeds AC-REL-2's pattern) ----

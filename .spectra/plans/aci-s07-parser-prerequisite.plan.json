@@ -1,0 +1,35 @@
+{
+  "plan": "aci-s07-parser-prerequisite",
+  "parent_slice": "ACI-S07",
+  "spec": ".spectra/plans/aci-s07-parser-prerequisite.md",
+  "criteria": ".spectra/plans/aci-s07-parser-prerequisite.criteria.md",
+  "state": ".spectra/plans/aci-s07-parser-prerequisite.state.json",
+  "scope": [
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/src/atlas_aci/storage/evidence.py",
+    "mcp-server/tests/slices/test_s07_parser_prerequisite.py",
+    "mcp-server/tests/fixtures/s07/parser_prerequisite/*",
+    "mcp-server/tests/slices/test_s04_contract.py",
+    "mcp-server/tests/slices/test_s07_records.py",
+    "mcp-server/tests/slices/test_s07_contract.py",
+    "mcp-server/tests/test_export.py",
+    "mcp-server/tests/test_schema_epoch.py",
+    "README.md",
+    ".spectra/plans/aci-s07-parser-prerequisite.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/evidence/aci-s07/parser-prerequisite/*",
+    ".spectra/changes/aci-s07-parser-prerequisite/*"
+  ],
+  "execution_identity": "aci-s07",
+  "status": "VALIDATION_REQUIRED",
+  "checkpoint": {
+    "maximum_minutes": 60,
+    "required": [
+      "historical target occurrence/evidence closure",
+      "fresh/stale resolution and analysis isolation",
+      "strict source-free export/import staleness"
+    ],
+    "stop": "Stop before broader execution; independent ATLAS verifies proof. Stop if general temporal graph machinery required."
+  },
+  "outcome": "No implementation or fresh probe result claimed."
+}

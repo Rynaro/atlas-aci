@@ -1,0 +1,5 @@
+{"name": "grammar-head", "command": ["git", "rev-parse", "HEAD"], "cwd": "/tmp/aci-s07-scss-qualification/grammar", "exit_code": 0, "elapsed_seconds": 0.011934708003536798}
+{"name": "grammar-clean", "command": ["git", "status", "--porcelain", "--untracked-files=no"], "cwd": "/tmp/aci-s07-scss-qualification/grammar", "exit_code": 0, "elapsed_seconds": 0.023529124999186024}
+{"name": "compiler-version", "command": ["cc", "--version"], "cwd": "/private/tmp/atlas-aci-aci-s07", "exit_code": 0, "elapsed_seconds": 0.13812399999733316}
+{"name": "compile", "command": ["cc", "-std=c11", "-fPIC", "-dynamiclib", "-Isrc", "src/parser.c", "src/scanner.c", "-o", "/tmp/aci-s07-scss-qualification/scss.dylib"], "cwd": "/tmp/aci-s07-scss-qualification/grammar", "exit_code": 0, "elapsed_seconds": 0.375493749997986}
+{"name": "controls", "command": ["/private/tmp/atlas-aci-aci-s07/mcp-server/.venv/bin/python", "/private/tmp/atlas-aci-aci-s07/.spectra/evidence/aci-s07/grammar-qualification/qualify.py", "controls"], "cwd": "/private/tmp/atlas-aci-aci-s07", "exit_code": 1, "elapsed_seconds": 0.4461387920018751}

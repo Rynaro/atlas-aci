@@ -1,0 +1,17 @@
+{
+  "name": "solidus-status",
+  "command": [
+    "git",
+    "status",
+    "--porcelain",
+    "--untracked-files=no"
+  ],
+  "cwd": "/tmp/aci-s07-probe-inputs/solidus",
+  "exit_code": 0,
+  "timed_out": false,
+  "duration_seconds": 0.07914529199479148,
+  "peak_memory_bytes": 7520256,
+  "stdout": ".spectra/evidence/aci-s07/probe/solidus-status.stdout.log",
+  "stderr": ".spectra/evidence/aci-s07/probe/solidus-status.stderr.log",
+  "source_sha256": "efce0f8c3635cadd099a99c282b05716dba0d49408f0e9bea3f6d68572728e1b"
+}

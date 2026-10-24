@@ -1,0 +1,12 @@
+{
+  "_read_db_path": "e1bf36debf289738a5981ce30707f2b9ecb036adfede1da83a88debcbfb0d9da",
+  "_generation_data": "ddc07399e0d1769f3aed1a705624578d2a19333d0b58b8ec3349d63fe654acd2",
+  "_build_atomic": "95eadc856b8a80ff7d729090c739a8c0c31367c78755c86e9c773921abb1b69b",
+  "_legacy_canonicalize": "8daa53d391cba2ea9e3c64f3d96ce3676d3fe36e27c2b797b9c7d339bb083c05",
+  "_convert_legacy_into": "55609e98fd6eeec44a97fea3109212ce4e4bce4c4f93c872d7467d9c2bf4c49d",
+  "migrate_legacy": "46c12ae562bc86707d9e78a0da0642b8f60f7808bc1e062bdba3ac3e597533eb",
+  "_validate_evidence_projections": "5907bc0eeed4fb5ff1634a7bb7b4ab866282381cdee4094c957747067f173e93",
+  "_read_exchange": "bae765886ccbffd3f2f4cfd9c2ced6df0f3cf0a0512e1c83c7733b6bad9a6403",
+  "import_jsonl": "80a0769be0cf4d3e497f51ea0adb92d01f7c4508f2a7583b7dcd720b2e312bfd",
+  "codegraph_sha256": "8bc3765b6822f7400e8ba6562c8881a65ccf9c0d79cead9351939f67f868f094"
+}

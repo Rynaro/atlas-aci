@@ -1,0 +1,128 @@
+[
+  {
+    "logical_path": ".spectra/evidence/aci-s07/docker-build-corrected.log",
+    "compressed_path": ".spectra/evidence/aci-s07/docker-build-corrected.log.gz",
+    "uncompressed_bytes": 52918,
+    "uncompressed_sha256": "7c3ab06bf33e1e6e2dcc11c3636315329038cfe3c3c6a9b91586ac5b72ae63e2",
+    "compressed_bytes": 20686,
+    "compressed_sha256": "ba62ae41d9a6b0b29ce83c369fa913850bc7f154133d41c8ed00474d6f5e5752",
+    "gzip_mtime": 0
+  },
+  {
+    "logical_path": ".spectra/evidence/aci-s07/docker-build.log",
+    "compressed_path": ".spectra/evidence/aci-s07/docker-build.log.gz",
+    "uncompressed_bytes": 52977,
+    "uncompressed_sha256": "fb27c3ac0d2eb19705b91f700b872e992d808871fe10d72cce07396d91dc538c",
+    "compressed_bytes": 20770,
+    "compressed_sha256": "ace551bc032e75d7d294c15a5dd23548350d33e1c682ba737b152fd3851a2dad",
+    "gzip_mtime": 0
+  },
+  {
+    "logical_path": ".spectra/evidence/aci-s07/final-lifecycle-rationale-red.log",
+    "compressed_path": ".spectra/evidence/aci-s07/final-lifecycle-rationale-red.log.gz",
+    "uncompressed_bytes": 12251,
+    "uncompressed_sha256": "1ee88d8e82e45ba3125ce9db9ae2b0bfd4fdbb9b21c80ba147776434da71d82b",
+    "compressed_bytes": 2519,
+    "compressed_sha256": "9707f792940fe11552f1c245945f63dfa64b031fae48e08a3ff724478b6370ac",
+    "gzip_mtime": 0
+  },
+  {
+    "logical_path": ".spectra/evidence/aci-s07/first-integration.log",
+    "compressed_path": ".spectra/evidence/aci-s07/first-integration.log.gz",
+    "uncompressed_bytes": 1891,
+    "uncompressed_sha256": "d94f0146e7e8e7e0b6ab005b676bbe51f8d4808b72f6505b2582117b1b7f8d4e",
+    "compressed_bytes": 804,
+    "compressed_sha256": "053aab8dff302c847778edf0ae87614ce1987f02f03e92bc086778c3d5f2dff2",
+    "gzip_mtime": 0
+  },
+  {
+    "logical_path": ".spectra/evidence/aci-s07/first-persistence.log",
+    "compressed_path": ".spectra/evidence/aci-s07/first-persistence.log.gz",
+    "uncompressed_bytes": 2468,
+    "uncompressed_sha256": "063b120f3ecfcfb34a727d620fb5f1cdce91f6a3005ae37da27187da060e4b89",
+    "compressed_bytes": 813,
+    "compressed_sha256": "4e1033e95684defbd495097db2d4e9f6f84610cec07d4a21fdbc97944764c3b5",
+    "gzip_mtime": 0
+  },
+  {
+    "logical_path": ".spectra/evidence/aci-s07/import-review-red.log",
+    "compressed_path": ".spectra/evidence/aci-s07/import-review-red.log.gz",
+    "uncompressed_bytes": 5918,
+    "uncompressed_sha256": "75c6be8c53184a5a7d6d910e46dbb340751494b437a929f0961e31d2b55a35af",
+    "compressed_bytes": 793,
+    "compressed_sha256": "21730820a70b28ce1f9a0430357eaf972886073454d9dd70fb3789b832670b94",
+    "gzip_mtime": 0
+  },
+  {
+    "logical_path": ".spectra/evidence/aci-s07/lint-first.log",
+    "compressed_path": ".spectra/evidence/aci-s07/lint-first.log.gz",
+    "uncompressed_bytes": 145732,
+    "uncompressed_sha256": "464c52df30ac938623192756661bc305019c484729b174921ac74dadebf07927",
+    "compressed_bytes": 20549,
+    "compressed_sha256": "942790da6d55bb43723e9314223fd4fac2460bcb4499c812b5d8744727ca48cf",
+    "gzip_mtime": 0
+  },
+  {
+    "logical_path": ".spectra/evidence/aci-s07/lint-postformat.log",
+    "compressed_path": ".spectra/evidence/aci-s07/lint-postformat.log.gz",
+    "uncompressed_bytes": 8344,
+    "uncompressed_sha256": "a5591ce5abb75f5043a41a7693292be44d212becc818d18f81ecce618d8af597",
+    "compressed_bytes": 2557,
+    "compressed_sha256": "1792c05ef1fa17a73907a82b4d875591d28f8d54b50f0eeafe31b39558a62c64",
+    "gzip_mtime": 0
+  },
+  {
+    "logical_path": ".spectra/evidence/aci-s07/predecessors-first.log",
+    "compressed_path": ".spectra/evidence/aci-s07/predecessors-first.log.gz",
+    "uncompressed_bytes": 42983,
+    "uncompressed_sha256": "a27f8be084856e47348d7b72f42f394bb72233cbfa7b02ea7e2af15a32b64444",
+    "compressed_bytes": 7898,
+    "compressed_sha256": "5333714cefa631069cbbc118971b9ee0546c140cd6aedb918cf4ff00920d2fe6",
+    "gzip_mtime": 0
+  },
+  {
+    "logical_path": ".spectra/evidence/aci-s07/product-anchors-red.log",
+    "compressed_path": ".spectra/evidence/aci-s07/product-anchors-red.log.gz",
+    "uncompressed_bytes": 7889,
+    "uncompressed_sha256": "9a5f097153ddadc271f6f8b66bc23f28f0e2397bbf1a24ad40539726536b7584",
+    "compressed_bytes": 1250,
+    "compressed_sha256": "7850fc6b44be15b7adf060e9d04f507a2f7b7f57c8f7b2aa8063c941828df5e4",
+    "gzip_mtime": 0
+  },
+  {
+    "logical_path": ".spectra/evidence/aci-s07/projection-fixed.log",
+    "compressed_path": ".spectra/evidence/aci-s07/projection-fixed.log.gz",
+    "uncompressed_bytes": 47870,
+    "uncompressed_sha256": "6cc4094bd74f5e6649f2aa1f3a7c2d7efef212993e5368786133c70ac0e96686",
+    "compressed_bytes": 2288,
+    "compressed_sha256": "71288fc8e35e13489b6d79feea34db0a8cf2aa5141efe82a3e9f215720ecc4fc",
+    "gzip_mtime": 0
+  },
+  {
+    "logical_path": ".spectra/evidence/aci-s07/projection-omission-red.log",
+    "compressed_path": ".spectra/evidence/aci-s07/projection-omission-red.log.gz",
+    "uncompressed_bytes": 6752,
+    "uncompressed_sha256": "27a86e01e595a88bf318af5b63f2bef6b3aeaaf4f301438987aaa0cd7d44ea96",
+    "compressed_bytes": 851,
+    "compressed_sha256": "5d2e01550e2d43a00f349e7a1055043d764e623e41ef7a46927c633dabd072ea",
+    "gzip_mtime": 0
+  },
+  {
+    "logical_path": ".spectra/evidence/aci-s07/parser-prerequisite/coherence-red.log",
+    "compressed_path": ".spectra/evidence/aci-s07/parser-prerequisite/coherence-red.log.gz",
+    "uncompressed_bytes": 6950,
+    "uncompressed_sha256": "ee501d23d32d09bd47d24d4487e073fd346a6147c6b406673f3ce3ece5a42e3f",
+    "compressed_bytes": 1094,
+    "compressed_sha256": "6045d39cfa14ebcc67d8abeb72152183d5a88a991ef107690b1e69f2a5513779",
+    "gzip_mtime": 0
+  },
+  {
+    "logical_path": ".spectra/evidence/aci-s07/parser-prerequisite/proof-red.log",
+    "compressed_path": ".spectra/evidence/aci-s07/parser-prerequisite/proof-red.log.gz",
+    "uncompressed_bytes": 20871,
+    "uncompressed_sha256": "44cd9a4d6c5a9524c4e9ee1ab7f16dbe12a0551115b7c7d7213213447bf54bc5",
+    "compressed_bytes": 2614,
+    "compressed_sha256": "811c6c258873417cbd235d6491c4d37a542fb9a253673c9265fee0761b440190",
+    "gzip_mtime": 0
+  }
+]

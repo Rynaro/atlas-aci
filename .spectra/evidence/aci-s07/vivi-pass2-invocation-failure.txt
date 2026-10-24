@@ -1,0 +1,1 @@
+/Users/henrique/.eidolons/nexus/cli/src/sandbox.sh: line 293: PYTHONDONTWRITEBYTECODE=1: command not found

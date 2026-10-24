@@ -1,0 +1,19 @@
+HEAD is now at 4026945 Merge pull request #6434 from solidusio/github-actions/24465387304-2-1776270092
+        0.32 real         0.03 user         0.21 sys
+            18104320  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+                1163  page reclaims
+                 529  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  20  voluntary context switches
+                 511  involuntary context switches
+          4121480228  instructions retired
+          1065890975  cycles elapsed
+             6406504  peak memory footprint

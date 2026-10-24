@@ -1,0 +1,1 @@
+{"repo": "solidus", "languages": ["ruby", "python", "typescript", "javascript", "scss", "html", "yaml", "markdown", "bash"], "counts": {"yaml": 151, "markdown": 23, "javascript": 233, "scss": 168, "ruby": 1943, "bash": 1}, "eligible_file_count": 2519, "failed_file_count": 22}

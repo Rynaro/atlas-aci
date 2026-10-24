@@ -1,0 +1,34 @@
+{
+  "solidus": {
+    "eligible_files": 2519,
+    "errors": 22,
+    "errors_by_language": {
+      "scss": 20,
+      "yaml": 2
+    },
+    "counts": {
+      "yaml": 151,
+      "markdown": 23,
+      "javascript": 233,
+      "scss": 168,
+      "ruby": 1943,
+      "bash": 1
+    }
+  },
+  "spree": {
+    "eligible_files": 2358,
+    "errors": 24,
+    "errors_by_language": {
+      "scss": 19,
+      "yaml": 3,
+      "ruby": 2
+    },
+    "counts": {
+      "yaml": 9,
+      "markdown": 5,
+      "javascript": 126,
+      "scss": 37,
+      "ruby": 2181
+    }
+  }
+}

@@ -1,7 +1,7 @@
 {
   "schema": "atlas-aci/backlog-execution.v1",
   "repository": "Rynaro/atlas-aci",
-  "updated_at": "2026-10-24T01:14:08.497633+00:00",
+  "updated_at": "2026-10-24T01:47:59.195853+00:00",
   "status": "IN_PROGRESS",
   "authorization": {
     "source": "Standing user instruction relayed by root: continue all open issues until cleared; validated merges and main sync automatically authorized",
@@ -22,7 +22,7 @@
     ],
     "publication_owner": "root orchestrator; executor never self-merges"
   },
-  "base_commit": "7b11b275b300c100ab7b123a3ca4bb60977f5166",
+  "base_commit": "ad9ab7a6122f653b0e9e7052e6173c6257b4a3b8",
   "queue_frozen": [
     12,
     29,
@@ -62,10 +62,10 @@
     62,
     63
   ],
-  "current_issue": 12,
-  "next_issue": 29,
-  "completed_issue_count": 5,
-  "remaining_issue_count": 37,
+  "current_issue": 29,
+  "next_issue": 31,
+  "completed_issue_count": 6,
+  "remaining_issue_count": 36,
   "queue_basis": "Agreed serial priority and declared dependency DAG from authoritative root inventory; reverify each live issue contract at pickup",
   "selection_policy": "All initially open issues selected, including optional branches; S23 release-gate contract is not silently changed",
   "dependency_constraints": [
@@ -150,19 +150,21 @@
     {
       "issue": 12,
       "slice_id": "ACI-S06",
-      "status": "IN_PROGRESS",
+      "status": "MERGED",
       "plan_path": ".spectra/plans/aci-s06.md",
       "receipt_path": ".spectra/state/aci-s06.execution.json",
-      "pull_request": null,
-      "merge_commit": null,
-      "blockers": []
+      "pull_request": 70,
+      "merge_commit": "ad9ab7a6122f653b0e9e7052e6173c6257b4a3b8",
+      "blockers": [],
+      "closed_at": "2026-10-24T01:45:12Z",
+      "merge_evidence": "Root verified GitHub merge/closure; local first-parent merge70 and COMPLETE S06 receipt verified"
     },
     {
       "issue": 29,
-      "slice_id": null,
-      "status": "QUEUED",
-      "plan_path": null,
-      "receipt_path": null,
+      "slice_id": "ACI-S07",
+      "status": "PLANNING",
+      "plan_path": ".spectra/plans/aci-s07.md",
+      "receipt_path": ".spectra/state/aci-s07.execution.json",
       "pull_request": null,
       "merge_commit": null,
       "blockers": []
@@ -526,5 +528,6 @@
     "At each merge record actual PR/merge SHA and verified closure; carry latest bookkeeping into next slice",
     "For genuine blockers record missing capability and evidence, then select independent eligible work if safe",
     "Final bookkeeping must reconcile actual closures, receipts, merges and queue before COMPLETE"
-  ]
+  ],
+  "queue_note": "queue_frozen preserves original order; remaining queue filters MERGED entries. Root live inventory after PR70: exactly36 open, no new issues."
 }

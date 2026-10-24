@@ -1,0 +1,38 @@
+[
+  {
+    "logical_path": ".spectra/evidence/aci-s07/grammar-qualification/solidus-all-eligible.json",
+    "compressed_path": ".spectra/evidence/aci-s07/grammar-qualification/solidus-all-eligible.json.gz",
+    "uncompressed_bytes": 711649,
+    "uncompressed_sha256": "b41c6258c5edd294d58ca745d5e5edbc6f3441fae83d8adc646060a691505bcf",
+    "compressed_bytes": 138717,
+    "compressed_sha256": "f693adf1a69f39dd6d51ce9f56ebe266c2cec386444f3806463823b745283a27",
+    "gzip_mtime": 0
+  },
+  {
+    "logical_path": ".spectra/evidence/aci-s07/grammar-qualification/solidus-failures.json",
+    "compressed_path": ".spectra/evidence/aci-s07/grammar-qualification/solidus-failures.json.gz",
+    "uncompressed_bytes": 68653,
+    "uncompressed_sha256": "2c8f0b2f1ba98c6e20e4a49875904797d38080e19827ac2eb13ff93f628a614b",
+    "compressed_bytes": 5334,
+    "compressed_sha256": "b205f89bcf23c9e2823df30911a2b743d11d5b8feea22f2eca6c0c0daad84f31",
+    "gzip_mtime": 0
+  },
+  {
+    "logical_path": ".spectra/evidence/aci-s07/grammar-qualification/spree-all-eligible.json",
+    "compressed_path": ".spectra/evidence/aci-s07/grammar-qualification/spree-all-eligible.json.gz",
+    "uncompressed_bytes": 837676,
+    "uncompressed_sha256": "bc4bf487181758e85e61057a64bee7d2c75d7b6548a5d3eb2e08c2b7b7793a69",
+    "compressed_bytes": 140924,
+    "compressed_sha256": "4f660577101dfa864549a7292a23dbd9835f189c7ab7953c25ae8c162846d3ee",
+    "gzip_mtime": 0
+  },
+  {
+    "logical_path": ".spectra/evidence/aci-s07/grammar-qualification/spree-failures.json",
+    "compressed_path": ".spectra/evidence/aci-s07/grammar-qualification/spree-failures.json.gz",
+    "uncompressed_bytes": 216762,
+    "uncompressed_sha256": "7dfabb78b78b622c7c16abaf7c6794cfd8855e54aa9e094d9d539b623b2c7a12",
+    "compressed_bytes": 12987,
+    "compressed_sha256": "9a5bf0bf481cb96690d8a612d807c456c8dc183f3388923bca832df9a1ff8f12",
+    "gzip_mtime": 0
+  }
+]

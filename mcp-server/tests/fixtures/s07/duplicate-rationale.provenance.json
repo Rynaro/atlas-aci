@@ -1,0 +1,13 @@
+{
+  "source": {
+    "archived_path": "mcp-server/tests/fixtures/s07/duplicate-rationale.rb.txt",
+    "original_logical_path": "a.rb",
+    "sha256": "137ef3303bdd328eeefeb80089bf0a9dd395099cfc44f55716fad46ce0141d51"
+  },
+  "artifact": {
+    "path": "mcp-server/tests/fixtures/s07/epoch6-duplicate-rationale.jsonl",
+    "sha256": "86b045734c5cecafca5cafa7cef464e024ac28ee1db1fa642b12498560d14d1e"
+  },
+  "producer_base": "ad9ab7a6122f653b0e9e7052e6173c6257b4a3b8",
+  "procedure": "Original epoch6 CodeGraph.build/export_jsonl, PYTHONPATH=/Users/henrique/workspace/oss/agents/atlas-aci/mcp-server/src; fresh temporary source repository only; source-free epoch7 adapter import."
+}

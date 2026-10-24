@@ -1,0 +1,15 @@
+{
+  "stage": "validation-proof-only",
+  "started_at": "2026-10-24T03:29:51.453998+00:00",
+  "started_epoch": 1792812591.454049,
+  "hard_seconds": 3600,
+  "baseline": {
+    "mcp-server/src/atlas_aci/codegraph.py": "a7696a05a6880bd378e1fa94498ffd579504d9feabb1a1c9935a1c8d1a71a0b9",
+    "mcp-server/src/atlas_aci/storage/evidence.py": "ef5964560b314902770310306792b5e39030e7745e042c247242618bc469638d",
+    "mcp-server/src/atlas_aci/providers/python_imports.py": "de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014",
+    ".spectra/state/aci-s07.execution.json": "3bf36613a3f0f1f29d687b59cbda129d4b34d537ac0b56567efc0dab59dda00c",
+    ".spectra/plans/aci-s07.criteria.md": "a5a08415f0dcf276a270cea3cbd1daf29e0b84332c791f7ff394fec0c6b92036"
+  },
+  "original_receipt_status": "IN_PROGRESS",
+  "broader_execution_authorized": false
+}

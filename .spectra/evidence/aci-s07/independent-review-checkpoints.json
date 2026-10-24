@@ -1,0 +1,55 @@
+{
+  "provenance": "Parent relayed genuine independent ATLAS observations in this execution; no fabricated rubric scores. These are scoped checkpoints, not final probe/gate approval.",
+  "reviews": [
+    {
+      "reviewer": "ATLAS",
+      "scope": "pure canonical core",
+      "verdict": "APPROVE",
+      "source_checkpoint": "73b10631",
+      "observed_tests": "7 passed",
+      "exit_code": 0
+    },
+    {
+      "reviewer": "ATLAS",
+      "scope": "bounded Python import resolution after real blocker/control counterexamples",
+      "verdict": "APPROVE",
+      "provider_sha256": "10a4875bdc5c6abf1233a7398eadb76f6cce847089cd8633cdf2e9598fbbdc5f",
+      "observed_tests": "12 passed",
+      "exit_code": 0
+    },
+    {
+      "reviewer": "ATLAS",
+      "scope": "reverse projection completeness after six real omission controls",
+      "verdict": "APPROVE",
+      "validator_checkpoint": "fe586c0d",
+      "storage_checkpoint": "3262a00d",
+      "observed_tests": "18 passed, 2 migration tests deselected",
+      "exit_code": 0
+    },
+    {
+      "reviewer": "ATLAS",
+      "scope": "modern proof downgrade, portable paths and genuine legacy unknown conversion",
+      "verdict": "APPROVE",
+      "storage_checkpoint": "62e9901b",
+      "validator_checkpoint": "8c32e6a8",
+      "observed_tests": "11 selected passed",
+      "exit_code": 0
+    },
+    {
+      "reviewer": "ATLAS",
+      "scope": "compatibility negative mutators, parser rowid replay, canonical shape, diagnostics and no-driver guidance",
+      "verdict": "APPROVE",
+      "observed_tests": "20 selected passed",
+      "exit_code": 0,
+      "note": "Reviewed during formatting; final whole-product hash audit remains separate."
+    },
+    {
+      "reviewer": "ATLAS",
+      "scope": "cached epoch6 versus actual malformed/current epoch7 validation; held-reader/barrier/duplicate-rationale replay",
+      "verdict": "APPROVE",
+      "source_sha256": "a7696a05a6880bd378e1fa94498ffd579504d9feabb1a1c9935a1c8d1a71a0b9",
+      "observed_tests": "3 selected passed plus independent cached-handle counterexample rejected",
+      "exit_code": 0
+    }
+  ]
+}

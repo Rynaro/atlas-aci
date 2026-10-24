@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/private/tmp/atlas-aci-aci-s07/.spectra/evidence/aci-s07/grammar-qualification/run.py", line 30, in <module>
+    job('controls',[python,script,'controls'])
+  File "/private/tmp/atlas-aci-aci-s07/.spectra/evidence/aci-s07/grammar-qualification/run.py", line 21, in job
+    if code:raise RuntimeError('qualification failed '+name)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: qualification failed controls
