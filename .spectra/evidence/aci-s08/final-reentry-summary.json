@@ -1,26 +1,26 @@
 {
-  "output_commit": "7217e9f1df0565dd055a86238fffc1c8491490e2",
-  "detached_checkout": "/private/tmp/atlas-aci-s08-output-check",
+  "output_commit": "d0157238c7124e84c043280e473e24091bd120ad",
+  "detached_checkout": "/private/tmp/atlas-aci-s08-ci-output-check",
   "command": [
     "/private/tmp/atlas-aci-aci-s08/mcp-server/.venv/bin/python",
-    "/private/tmp/atlas-aci-s08-output-check/.spectra/evidence/aci-s08/verify_execution.py",
+    "/private/tmp/atlas-aci-s08-ci-output-check/.spectra/evidence/aci-s08/verify_execution.py",
     "--root",
-    "/private/tmp/atlas-aci-s08-output-check",
+    "/private/tmp/atlas-aci-s08-ci-output-check",
     "--receipt",
     "/private/tmp/atlas-aci-aci-s08/.spectra/state/aci-s08.execution.json"
   ],
   "exit_code": 0,
   "status": "ALREADY_SATISFIED",
-  "digest_count": 527,
+  "digest_count": 547,
   "before_after_digest_equal": true,
   "clean_detached_status": "",
   "git_diff_command": [
     "git",
     "-C",
-    "/private/tmp/atlas-aci-s08-output-check",
+    "/private/tmp/atlas-aci-s08-ci-output-check",
     "diff",
     "--exit-code",
-    "7217e9f1df0565dd055a86238fffc1c8491490e2",
+    "d0157238c7124e84c043280e473e24091bd120ad",
     "--",
     "mcp-server/src/atlas_aci/codegraph.py",
     "mcp-server/src/atlas_aci/storage/snapshots.py",
@@ -73,10 +73,10 @@
   "source_import_command": [
     "/private/tmp/atlas-aci-aci-s08/mcp-server/.venv/bin/python",
     "-c",
-    "import atlas_aci.codegraph;from pathlib import Path;p=Path(atlas_aci.codegraph.__file__).resolve();assert str(p).startswith('/private/tmp/atlas-aci-s08-output-check');print(\"ACTUAL_OUTPUT_SOURCE=\"+str(p))"
+    "import atlas_aci.codegraph;from pathlib import Path;p=Path(atlas_aci.codegraph.__file__).resolve();assert str(p).startswith('/private/tmp/atlas-aci-s08-ci-output-check');print(\"ACTUAL_OUTPUT_SOURCE=\"+str(p))"
   ],
   "source_import_exit_code": 0,
-  "output_test_elapsed_seconds": 5.166668624995509,
+  "output_test_elapsed_seconds": 5.049117209011456,
   "helper_sha256": "4720a14754b7ea473a35cd304d0ca196d3b04841de58cdd95b040b41e3d4a92b",
   "authoritative_receipt": ".spectra/state/aci-s08.execution.json",
   "receipt_status": "COMPLETE"
