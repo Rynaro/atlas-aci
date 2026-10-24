@@ -1,0 +1,28 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+______________ test_staging_initialization_failure_cleans_import _______________
+
+tmp_path = PosixPath('/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-44/test_staging_initialization_fa0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10ad2ae10>
+
+    def test_staging_initialization_failure_cleans_import(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        import atlas_aci.codegraph as module
+        repo, writer, *_ = setup(tmp_path)
+        artifact = tmp_path / 'portable.jsonl'
+        writer.export_jsonl(artifact)
+        previous = writer.generation_id
+        with monkeypatch.context() as patch:
+            patch.setattr(module, 'SCHEMA', 'THIS IS INVALID SQL')
+            with pytest.raises(sqlite3.OperationalError):
+                writer.import_jsonl(artifact)
+>       assert not list(writer.atlas_dir.glob('.graph.*.tmp.*'))
+E       AssertionError: assert not [PosixPath('/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-44/test_staging_initialization_fa0/repo/.atlas/.graph.6.db.tmp.3n21y_yx')]
+E        +  where [PosixPath('/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-44/test_staging_initialization_fa0/repo/.atlas/.graph.6.db.tmp.3n21y_yx')] = list(<generator object Path.glob at 0x10ad217a0>)
+E        +    where <generator object Path.glob at 0x10ad217a0> = glob('.graph.*.tmp.*')
+E        +      where glob = PosixPath('/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-44/test_staging_initialization_fa0/repo/.atlas').glob
+E        +        where PosixPath('/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-44/test_staging_initialization_fa0/repo/.atlas') = <atlas_aci.codegraph.CodeGraph object at 0x10acf12e0>.atlas_dir
+
+mcp-server/tests/slices/test_s03_contract.py:393: AssertionError
+=========================== short test summary info ============================
+FAILED mcp-server/tests/slices/test_s03_contract.py::test_staging_initialization_failure_cleans_import
+1 failed in 0.27s

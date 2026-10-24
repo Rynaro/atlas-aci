@@ -1,0 +1,1 @@
+{"command": "uv run --frozen ruff format --check src/ tests/ ../scripts/ --exclude fingerprint-fixture", "exit_code": 0}

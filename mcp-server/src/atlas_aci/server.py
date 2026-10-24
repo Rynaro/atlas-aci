@@ -384,8 +384,18 @@ async def dispatch_tool_call(
     enforcement.assert_read_only(name)
     enforcement.assert_rate_limit()
 
+    if name in {"search_symbol", "graph_query"}:
+        with code_graph.reader_lease() as reader:
+            result = (
+                await search_symbol(arguments, config, enforcement, reader)
+                if name == "search_symbol"
+                else await graph_query(arguments, config, enforcement, reader)
+            )
+            result["generation_id"] = reader.generation_id
+            return apply_central_bounds(name, arguments, result, enforcement)
+
     if name == "view_file":
-        result: dict[str, Any] = await view_file(arguments, config, enforcement)
+        result = await view_file(arguments, config, enforcement)
     elif name == "list_dir":
         result = await list_dir(arguments, config, enforcement)
     elif name == "search_text":
@@ -478,9 +488,12 @@ async def run_stdio(config: Config) -> None:
 
     log.info("server_starting", repo=str(config.repo), memex=str(config.memex_root))
 
-    async with stdio_server() as (read_stream, write_stream):
-        await server.run(
-            read_stream,
-            write_stream,
-            server.create_initialization_options(),
-        )
+    try:
+        async with stdio_server() as (read_stream, write_stream):
+            await server.run(
+                read_stream,
+                write_stream,
+                server.create_initialization_options(),
+            )
+    finally:
+        code_graph.close()

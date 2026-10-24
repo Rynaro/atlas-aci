@@ -1,0 +1,6 @@
+{"rubric":"complexity","total":9,"dims":{"scope":2,"ambiguity":2,"dependencies":2,"risk":3},"verdict":"extended","at":"2026-10-23T23:36:43Z","label":"observed-reader-publication-scope"}
+{"rubric":"explore","total":84,"dims":{"alignment":10,"correctness":9,"maintainability":8,"performance":7,"simplicity":8,"risk":8,"innovation":5},"verdict":"solid","at":"2026-10-23T23:36:43Z","label":"request-lease-staged-publication"}
+{"rubric":"explore","total":59.5,"dims":{"alignment":5,"correctness":3,"maintainability":8,"performance":10,"simplicity":10,"risk":3,"innovation":2},"verdict":"weak","at":"2026-10-23T23:36:51Z","label":"cached-handle-stat-refresh"}
+{"rubric":"explore","total":70,"dims":{"alignment":8,"correctness":8,"maintainability":6,"performance":9,"simplicity":4,"risk":4,"innovation":7},"verdict":"solid","at":"2026-10-23T23:36:51Z","label":"wal-transactions-on-live-db"}
+{"rubric":"refine","cycle":1,"total":4.6,"min":4,"dims":{"clarity":5,"completeness":5,"actionability":4,"efficiency":4,"testability":5},"verdict":"pass","at":"2026-10-23T23:41:28Z","label":"independent-atlas-review"}
+{"rubric":"confidence","total":91.25,"dims":{"pattern_match":90,"requirement_clarity":95,"decomposition_stability":90,"constraint_compliance":90},"verdict":"AUTO_PROCEED","at":"2026-10-23T23:41:28Z","label":"checked-generation-lifecycle"}

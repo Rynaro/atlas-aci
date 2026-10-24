@@ -13,10 +13,13 @@ from __future__ import annotations
 
 import fcntl
 import hashlib
+import importlib.metadata
 import json
 import os
 import re
 import sqlite3
+import tempfile
+from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
@@ -806,61 +809,260 @@ class CodeGraph:
         if not read_only:
             self.atlas_dir.mkdir(parents=True, exist_ok=True)
         self._db: sqlite3.Connection | None = None
+        self._closed = False
+        self._lease_generation_id: str | None = None
 
     @property
     def db(self) -> sqlite3.Connection:
+        if self._closed:
+            raise RuntimeError("This graph reader is closed")
         if self._db is None:
             if self.read_only:
                 # mode=ro: SQLite never attempts a write, journal, or lock
                 # file for this connection — safe on a read-only mount.
-                self._db = sqlite3.connect(f"file:{self.db_path}?mode=ro", uri=True)
+                self._db = sqlite3.connect(self.db_path.as_uri() + "?mode=ro", uri=True)
             else:
                 self._db = sqlite3.connect(self.db_path)
                 self._db.executescript(SCHEMA)
             self._db.row_factory = sqlite3.Row
         return self._db
 
-    def epoch_ok(self) -> bool:
-        """True iff the current-epoch DB file exists AND its in-DB manifest
-        epoch row agrees with SCHEMA_EPOCH (the F1 belt-and-suspenders
-        cross-check). Always opens its own short-lived ``mode=ro`` connection
-        — never creates, writes, or reuses `self.db` — so it is safe to call
-        from the read-only `serve` path (DIR-2/AC-H-16) as well as from
-        `build()` to decide whether an incremental pass is safe.
-        """
-        if not self.db_path.exists():
-            return False
+    def _close_db(self) -> None:
+        if self._db is not None:
+            self._db.close()
+            self._db = None
+
+    def close(self) -> None:
+        """Idempotently release owned handles; a released lease cannot reopen."""
+        self._close_db()
+        self._closed = True
+
+    @staticmethod
+    def _canonical_generation(inputs: dict[str, Any]) -> str:
+        return json.dumps(inputs, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+
+    def _generation_data(self, conn: sqlite3.Connection) -> tuple[dict[str, Any], str] | None:
+        """Validate the manifest on this connection, never another pathname."""
         try:
-            conn = sqlite3.connect(f"file:{self.db_path}?mode=ro", uri=True)
+            values = dict(conn.execute("SELECT key, value FROM manifest"))
+            inputs = json.loads(values["generation_inputs"])
+            identifier = values["generation_id"]
+            if (
+                values.get("epoch") != str(SCHEMA_EPOCH)
+                or not isinstance(inputs, dict)
+                or inputs.get("format") != "atlas-generation.v1"
+                or inputs.get("kind") not in {"build", "import"}
+                or inputs.get("repository") != str(self.repo)
+                or inputs.get("schema") != {"epoch": SCHEMA_EPOCH, "ddl_hash": EXPECTED_DDL_HASH}
+                or not re.fullmatch(r"[0-9a-f]{64}", identifier)
+                or hashlib.sha256(self._canonical_generation(inputs).encode()).hexdigest()
+                != identifier
+            ):
+                return None
+
+            def valid_hash(value):
+                return isinstance(value, str) and re.fullmatch(r"[0-9a-f]{64}", value) is not None
+
+            def valid_producer(value):
+                return (
+                    isinstance(value, dict)
+                    and set(value) == {"codegraph_sha256", "queries_sha256", "packages"}
+                    and valid_hash(value["codegraph_sha256"])
+                    and valid_hash(value["queries_sha256"])
+                    and isinstance(value["packages"], dict)
+                    and set(value["packages"]) == {"tree-sitter", "tree-sitter-language-pack"}
+                    and all(isinstance(v, str) and bool(v) for v in value["packages"].values())
+                )
+
+            common = {"format", "kind", "repository", "schema"}
+            if type(inputs["schema"]["epoch"]) is not int:
+                return None
+            if inputs["kind"] == "build":
+                if set(inputs) != common | {"source_hashes", "configuration", "producer"}:
+                    return None
+                hashes = inputs["source_hashes"]
+                configuration = inputs["configuration"]
+                if (
+                    not valid_producer(inputs["producer"])
+                    or not isinstance(configuration, dict)
+                    or set(configuration) != {"languages", "skip_patterns"}
+                ):
+                    return None
+                if any(
+                    not isinstance(v, list)
+                    or any(not isinstance(item, str) or not item for item in v)
+                    for v in configuration.values()
+                ):
+                    return None
+                if configuration["languages"] != sorted(set(configuration["languages"])):
+                    return None
+                if not isinstance(hashes, dict) or any(
+                    not isinstance(path, str)
+                    or not path
+                    or Path(path).is_absolute()
+                    or ".." in Path(path).parts
+                    or not valid_hash(value)
+                    for path, value in hashes.items()
+                ):
+                    return None
+                if set(hashes) != {row[0] for row in conn.execute("SELECT path FROM files")}:
+                    return None
+            else:
+                if set(inputs) != common | {"importer", "artifact", "source_provenance"}:
+                    return None
+                artifact = inputs["artifact"]
+                if (
+                    not valid_producer(inputs["importer"])
+                    or inputs["source_provenance"] != "unavailable"
+                    or not isinstance(artifact, dict)
+                    or set(artifact) != {"sha256", "content_hash", "record_count"}
+                ):
+                    return None
+                if (
+                    not valid_hash(artifact["sha256"])
+                    or not valid_hash(artifact["content_hash"])
+                    or type(artifact["record_count"]) is not int
+                    or artifact["record_count"] < 0
+                ):
+                    return None
+                if artifact["record_count"] != sum(
+                    conn.execute(f"SELECT COUNT(*) FROM {name}").fetchone()[0]
+                    for name in ("symbols", "edges", "rationale")
+                ):
+                    return None
+            return inputs, identifier
+        except (sqlite3.Error, KeyError, ValueError, TypeError):
+            return None
+
+    @property
+    def generation_id(self) -> str:
+        if self._closed:
+            raise RuntimeError("This graph reader is closed")
+        if self._lease_generation_id is not None:
+            return self._lease_generation_id
+        data = self._generation_data(self.db)
+        if data is None:
+            raise RuntimeError("No complete generation metadata; reindex or reimport")
+        return data[1]
+
+    @contextmanager
+    def reader_lease(self):
+        """One independently opened RO connection for an entire graph request."""
+        from atlas_aci.enforcement import ToolError
+
+        if self._closed:
+            raise RuntimeError("This graph is closed")
+        reader = CodeGraph(
+            self.repo, langs=sorted(self.langs), read_only=True, query_limit=self.query_limit
+        )
+        try:
             try:
-                row = conn.execute("SELECT value FROM manifest WHERE key = 'epoch'").fetchone()
-            finally:
-                conn.close()
-        except sqlite3.Error:
+                data = reader._generation_data(reader.db)
+            except sqlite3.Error:
+                data = None
+            if data is None:
+                raise ToolError(
+                    "INDEX_UNAVAILABLE",
+                    "No complete compatible graph generation. Run: atlas-aci index --repo <repo>, "
+                    "or reimport a valid graph.",
+                    "different_tool",
+                )
+            reader._lease_generation_id = data[1]
+            yield reader
+        finally:
+            reader.close()
+
+    def epoch_ok(self) -> bool:
+        """Validate the pinned handle when present; otherwise inspect RO once."""
+        if self._closed:
             return False
-        return row is not None and row[0] == str(SCHEMA_EPOCH)
+        if self._db is not None:
+            return self._generation_data(self._db) is not None
+        try:
+            with self.reader_lease():
+                return True
+        except (sqlite3.Error, RuntimeError):
+            return False
+        except Exception as exc:
+            from atlas_aci.enforcement import ToolError
+
+            if isinstance(exc, ToolError):
+                return False
+            raise
+
+    def _producer_inputs(self) -> dict[str, Any]:
+        return {
+            "codegraph_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+            "queries_sha256": hashlib.sha256(
+                self._canonical_generation(QUERIES).encode()
+            ).hexdigest(),
+            "packages": {
+                name: importlib.metadata.version(name)
+                for name in ("tree-sitter", "tree-sitter-language-pack")
+            },
+        }
+
+    def _build_inputs(self) -> dict[str, Any]:
+        from atlas_aci.config import DEFAULT_SKIP_PATTERNS
+
+        return {
+            "format": "atlas-generation.v1",
+            "kind": "build",
+            "repository": str(self.repo),
+            "schema": {"epoch": SCHEMA_EPOCH, "ddl_hash": EXPECTED_DDL_HASH},
+            "configuration": {
+                "languages": sorted(self.langs),
+                "skip_patterns": list(DEFAULT_SKIP_PATTERNS),
+            },
+            "producer": self._producer_inputs(),
+        }
+
+    def _store_generation(self, conn: sqlite3.Connection, inputs: dict[str, Any]) -> str:
+        raw = self._canonical_generation(inputs)
+        identifier = hashlib.sha256(raw.encode()).hexdigest()
+        conn.executemany(
+            "INSERT OR REPLACE INTO manifest(key,value) VALUES (?,?)",
+            [
+                ("epoch", str(SCHEMA_EPOCH)),
+                ("generation_inputs", raw),
+                ("generation_id", identifier),
+            ],
+        )
+        return identifier
+
+    @contextmanager
+    def _writer_lock(self):
+        if self.read_only or self._closed:
+            raise RuntimeError("Index publication requires an open writable CodeGraph")
+        self.atlas_dir.mkdir(parents=True, exist_ok=True)
+        with (self.atlas_dir / ".index.lock").open("a+") as lock_file:
+            fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX)
+            try:
+                yield
+            finally:
+                fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
+
+    def _stage_path(self) -> Path:
+        fd, name = tempfile.mkstemp(prefix=f".graph.{SCHEMA_EPOCH}.db.tmp.", dir=self.atlas_dir)
+        os.close(fd)
+        return Path(name)
 
     # ---- Build / re-index (index-path only; never called by `serve`) ----
 
     def build(self, since: str | None = None) -> dict[str, Any]:
         """Index the repo. Returns stats.
 
-        ``since`` is truthy → incremental mode: a per-file ``(mtime_ns, size)``
-        manifest (the ``files`` table) is consulted so files unchanged since the
-        last pass are skipped entirely (their existing symbols/refs carry
-        forward untouched), changed/new files are re-extracted after purging
-        their stale rows, and files that vanished from disk have their rows
-        removed. ``since=None`` performs a full rebuild: all ``symbols``,
-        ``refs``, and ``files`` rows are wiped and every file is re-indexed,
-        which also re-establishes a correct baseline manifest for a later
-        incremental pass.
+        A truthy ``since`` requests incremental reuse. Every eligible source
+        buffer is read and hashed once; facts are reused only when its exact
+        content hash and schema/configuration/producer compatibility match.
+        Changed, new, or removed files update the staged graph accordingly.
+        Missing or untrusted build provenance forces a full rebuild.
 
-        Per DIR-2, sweeping stale-epoch files and rebuilding on epoch
-        mismatch happen *only* here, never on the `serve` (read-only) path.
-        Per F17/AC-H-17, a full rebuild writes to a temporary file and
-        atomically replaces the target path; both modes run under a
-        single-writer file lock so two concurrent `index` invocations (e.g.
-        the documented backgrounded post-commit hook) cannot corrupt the DB.
+        Full and incremental builds both stage a complete database under the
+        shared publication lock, then atomically replace the published path.
+        Readers holding the previous generation keep its immutable inode.
+        Per DIR-2, stale-epoch sweeping and rebuilding are index-path only;
+        the read-only ``serve`` path never performs them.
         """
         if self.read_only:
             raise RuntimeError(
@@ -873,25 +1075,11 @@ class CodeGraph:
             log.error("tree_sitter_unavailable", error=str(e))
             raise
 
-        self.atlas_dir.mkdir(parents=True, exist_ok=True)
-        lock_path = self.atlas_dir / ".index.lock"
-        with open(lock_path, "a+") as lock_file:
-            fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX)
-            try:
-                swept = self._sweep_stale_epoch_files()
-                if swept:
-                    log.info("stale_epoch_files_swept", files=swept)
-
-                if since is not None and self.epoch_ok():
-                    return self._build_in_place(get_parser, since)
-                if since is not None:
-                    log.warning(
-                        "schema_epoch_mismatch_forces_full_rebuild",
-                        expected_epoch=SCHEMA_EPOCH,
-                    )
-                return self._build_full_atomic(get_parser)
-            finally:
-                fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
+        with self._writer_lock():
+            swept = self._sweep_stale_epoch_files()
+            if swept:
+                log.info("stale_epoch_files_swept", files=swept)
+            return self._build_atomic(get_parser, since)
 
     def _sweep_stale_epoch_files(self) -> list[str]:
         """Index-path only (DIR-2): remove ``.atlas/graph.*.db`` files whose
@@ -905,37 +1093,39 @@ class CodeGraph:
                 removed.append(f.name)
         return removed
 
-    def _build_in_place(self, get_parser: Any, since: str) -> dict[str, Any]:
-        """Incremental build: modifies the existing current-epoch DB file in
-        place (protected by the single-writer lock in `build()`)."""
-        self._db = None
-        conn = sqlite3.connect(self.db_path)
-        conn.executescript(SCHEMA)
-        conn.row_factory = sqlite3.Row
+    def _build_atomic(self, get_parser: Any, since: str | None) -> dict[str, Any]:
+        """All index modes mutate only staging, never an inode held by readers."""
+        tmp_path = self._stage_path()
+        conn = None
         try:
-            stats = self._run_build(conn, get_parser, since=since)
-        finally:
+            conn = sqlite3.connect(tmp_path)
+            conn.row_factory = sqlite3.Row
+            inherited = False
+            if since is not None:
+                try:
+                    previous = sqlite3.connect(self.db_path.as_uri() + "?mode=ro", uri=True)
+                    try:
+                        if self._generation_data(previous) is not None:
+                            previous.backup(conn)
+                            inherited = True
+                    finally:
+                        previous.close()
+                except sqlite3.Error:
+                    pass  # missing/legacy metadata means rebuild, never invented provenance
+            conn.executescript(SCHEMA)
+            stats = self._run_build(conn, get_parser, since=since if inherited else None)
+            if self._generation_data(conn) is None:
+                raise RuntimeError("Staging did not produce a complete generation")
             conn.close()
-        self._db = None  # next `.db` access reopens fresh against db_path
-        return stats
-
-    def _build_full_atomic(self, get_parser: Any) -> dict[str, Any]:
-        """Full rebuild: builds into a temp file, then atomically replaces
-        `self.db_path` (F17/AC-H-17). A crash mid-build leaves any previous
-        DB untouched."""
-        tmp_path = self.atlas_dir / f".graph.{SCHEMA_EPOCH}.db.tmp.{os.getpid()}"
-        if tmp_path.exists():
-            tmp_path.unlink()
-        conn = sqlite3.connect(tmp_path)
-        conn.executescript(SCHEMA)
-        conn.row_factory = sqlite3.Row
-        try:
-            stats = self._run_build(conn, get_parser, since=None)
+            conn = None
+            self._close_db()
+            os.replace(tmp_path, self.db_path)
+            return stats
         finally:
-            conn.close()
-        self._db = None  # drop any stale handle before the swap
-        os.replace(tmp_path, self.db_path)
-        return stats
+            if conn is not None:
+                conn.close()
+            for path in (tmp_path, Path(str(tmp_path) + "-journal")):
+                path.unlink(missing_ok=True)
 
     def _run_build(
         self, conn: sqlite3.Connection, get_parser: Any, since: str | None
@@ -943,7 +1133,13 @@ class CodeGraph:
         """The core indexing loop against an already-open connection. Shared
         by the in-place incremental path and the full-rebuild-into-temp-file
         path so the extraction logic itself never duplicates."""
-        incremental = since is not None
+        base_inputs = self._build_inputs()
+        previous_generation = self._generation_data(conn) if since is not None else None
+        previous_inputs = previous_generation[0] if previous_generation is not None else {}
+        previous_base = {k: v for k, v in previous_inputs.items() if k != "source_hashes"}
+        incremental = since is not None and previous_base == base_inputs
+        previous_hashes = previous_inputs.get("source_hashes", {}) if incremental else {}
+        source_hashes: dict[str, str] = {}
 
         if not incremental:
             conn.execute("DELETE FROM symbols")
@@ -985,19 +1181,22 @@ class CodeGraph:
             stat = path.stat()
             mtime_ns, size = stat.st_mtime_ns, stat.st_size
 
+            source = path.read_bytes()
+            source_hash = hashlib.sha256(source).hexdigest()
+            source_hashes[rel] = source_hash
             if incremental:
                 seen_paths.add(rel)
-                if stored_files.get(rel) == (mtime_ns, size):
+                if rel in stored_files and previous_hashes.get(rel) == source_hash:
+                    conn.execute(
+                        "UPDATE files SET mtime_ns=?, size=? WHERE path=?", (mtime_ns, size, rel)
+                    )
                     files_skipped += 1
                     continue
-
             try:
                 parser = get_parser(cast("SupportedLanguage", lang))
-                source = path.read_bytes()
                 tree = parser.parse(source)
             except Exception as exc:
-                log.warning("parse_failed", path=str(path), error=str(exc))
-                continue
+                raise RuntimeError(f"Cannot index eligible source {rel}") from exc
 
             if incremental:
                 # New or changed file — drop stale rows before re-extracting so
@@ -1099,10 +1298,7 @@ class CodeGraph:
         # *global* symbol table — G-B/D4).
         edges_added = self._resolve_edges(conn)
 
-        conn.execute(
-            "INSERT OR REPLACE INTO manifest(key, value) VALUES ('epoch', ?)",
-            (str(SCHEMA_EPOCH),),
-        )
+        self._store_generation(conn, {**base_inputs, "source_hashes": source_hashes})
         conn.commit()
         return {
             "files_indexed": files_indexed,
@@ -2911,7 +3107,8 @@ class CodeGraph:
                 "read_only CodeGraph (as `serve` constructs) never writes to .atlas."
             )
 
-        text = in_path.read_text(encoding="utf-8")
+        artifact_bytes = in_path.read_bytes()
+        text = artifact_bytes.decode("utf-8")
         lines = text.split("\n")
         if lines and lines[-1] == "":
             lines.pop()
@@ -2996,100 +3193,121 @@ class CodeGraph:
         for rec in records:
             self._validate_import_record(rec, in_path)
 
-        self.atlas_dir.mkdir(parents=True, exist_ok=True)
-        tmp_path = self.atlas_dir / f".graph.{SCHEMA_EPOCH}.db.import-tmp.{os.getpid()}"
-        if tmp_path.exists():
-            tmp_path.unlink()
-        conn = sqlite3.connect(tmp_path)
-        conn.executescript(SCHEMA)
-        conn.row_factory = sqlite3.Row
-        symbols_added = edges_added = rationale_added = 0
-        try:
-            for rec in records:
-                rtype = rec.get("type")
-                if rtype == "symbol":
-                    conn.execute(
-                        "INSERT INTO symbols(name, kind, path, line_start, line_end, lang) "
-                        "VALUES (?, ?, ?, ?, ?, ?)",
-                        (
-                            rec["name"],
-                            rec["kind"],
-                            rec["path"],
-                            rec["line_start"],
-                            rec["line_end"],
-                            rec["lang"],
-                        ),
-                    )
-                    symbols_added += 1
-                elif rtype == "edge":
-                    candidates_json = (
-                        json.dumps(rec["candidates"]) if rec.get("candidates") is not None else None
-                    )
-                    conn.execute(
-                        "INSERT INTO edges(relation, source_path, source_line, source_col, "
-                        "source_name, source_kind, callee_name, confidence, target_path, "
-                        "target_line, target_name, candidates, lang) "
-                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                        (
-                            rec["relation"],
-                            rec["source_path"],
-                            rec["source_line"],
-                            rec["source_col"],
-                            rec["source_name"],
-                            rec["source_kind"],
-                            rec["callee_name"],
-                            rec["confidence"],
-                            rec["target_path"],
-                            rec["target_line"],
-                            rec["target_name"],
-                            candidates_json,
-                            rec["lang"],
-                        ),
-                    )
-                    edges_added += 1
-                elif rtype == "rationale":
-                    conn.execute(
-                        "INSERT INTO rationale(path, line, text, label, target_path, "
-                        "target_line, target_name, lang) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                        (
-                            rec["path"],
-                            rec["line"],
-                            rec["text"],
-                            rec["label"],
-                            rec["target_path"],
-                            rec["target_line"],
-                            rec["target_name"],
-                            rec["lang"],
-                        ),
-                    )
-                    rationale_added += 1
-                else:
-                    raise ValueError(f"{in_path}: unknown record type {rtype!r}")
+        with self._writer_lock():
+            tmp_path = self._stage_path()
+            conn = None
+            symbols_added = edges_added = rationale_added = 0
+            try:
+                conn = sqlite3.connect(tmp_path)
+                conn.executescript(SCHEMA)
+                conn.row_factory = sqlite3.Row
+                for rec in records:
+                    rtype = rec.get("type")
+                    if rtype == "symbol":
+                        conn.execute(
+                            "INSERT INTO symbols(name, kind, path, line_start, line_end, lang) "
+                            "VALUES (?, ?, ?, ?, ?, ?)",
+                            (
+                                rec["name"],
+                                rec["kind"],
+                                rec["path"],
+                                rec["line_start"],
+                                rec["line_end"],
+                                rec["lang"],
+                            ),
+                        )
+                        symbols_added += 1
+                    elif rtype == "edge":
+                        candidates_json = (
+                            json.dumps(rec["candidates"])
+                            if rec.get("candidates") is not None
+                            else None
+                        )
+                        conn.execute(
+                            "INSERT INTO edges(relation, source_path, source_line, source_col, "
+                            "source_name, source_kind, callee_name, confidence, target_path, "
+                            "target_line, target_name, candidates, lang) "
+                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                            (
+                                rec["relation"],
+                                rec["source_path"],
+                                rec["source_line"],
+                                rec["source_col"],
+                                rec["source_name"],
+                                rec["source_kind"],
+                                rec["callee_name"],
+                                rec["confidence"],
+                                rec["target_path"],
+                                rec["target_line"],
+                                rec["target_name"],
+                                candidates_json,
+                                rec["lang"],
+                            ),
+                        )
+                        edges_added += 1
+                    elif rtype == "rationale":
+                        conn.execute(
+                            "INSERT INTO rationale(path, line, text, label, target_path, "
+                            "target_line, target_name, lang) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                            (
+                                rec["path"],
+                                rec["line"],
+                                rec["text"],
+                                rec["label"],
+                                rec["target_path"],
+                                rec["target_line"],
+                                rec["target_name"],
+                                rec["lang"],
+                            ),
+                        )
+                        rationale_added += 1
+                    else:
+                        raise ValueError(f"{in_path}: unknown record type {rtype!r}")
 
-            conn.execute(
-                "INSERT OR REPLACE INTO manifest(key, value) VALUES ('epoch', ?)",
-                (str(SCHEMA_EPOCH),),
-            )
-            conn.commit()
-        finally:
-            conn.close()
+                conn.execute(
+                    "INSERT OR REPLACE INTO manifest(key, value) VALUES ('epoch', ?)",
+                    (str(SCHEMA_EPOCH),),
+                )
+                self._store_generation(
+                    conn,
+                    {
+                        "format": "atlas-generation.v1",
+                        "kind": "import",
+                        "repository": str(self.repo),
+                        "schema": {"epoch": SCHEMA_EPOCH, "ddl_hash": EXPECTED_DDL_HASH},
+                        "importer": self._producer_inputs(),
+                        "artifact": {
+                            "sha256": hashlib.sha256(artifact_bytes).hexdigest(),
+                            "content_hash": recomputed_hash,
+                            "record_count": len(records),
+                        },
+                        "source_provenance": "unavailable",
+                    },
+                )
+                conn.commit()
+                conn.close()
+                conn = None
+                self._close_db()
+                os.replace(tmp_path, self.db_path)
+            finally:
+                if conn is not None:
+                    conn.close()
+                for path in (tmp_path, Path(str(tmp_path) + "-journal")):
+                    path.unlink(missing_ok=True)
 
-        self._db = None  # drop any stale handle before the swap (mirrors _build_full_atomic)
-        os.replace(tmp_path, self.db_path)
+            if not self.epoch_ok():
+                raise ValueError(
+                    f"{in_path}: import completed but the resulting DB failed the epoch "
+                    "integrity check -- this should be unreachable; treat it as a bug, not a "
+                    "data problem."
+                )
 
-        if not self.epoch_ok():
-            raise ValueError(
-                f"{in_path}: import completed but the resulting DB failed the epoch "
-                "integrity check -- this should be unreachable; treat it as a bug, not a "
-                "data problem."
-            )
-
-        return {
-            "symbols": symbols_added,
-            "edges": edges_added,
-            "rationale": rationale_added,
-            "schema_epoch": SCHEMA_EPOCH,
-        }
+            return {
+                "symbols": symbols_added,
+                "edges": edges_added,
+                "rationale": rationale_added,
+                "schema_epoch": SCHEMA_EPOCH,
+            }
 
     def query(self, dsl: str) -> dict[str, Any]:
         """Tiny DSL.

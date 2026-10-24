@@ -1,0 +1,7 @@
+{
+  "before_sha256": "16b580df7ff19ad30451b7d7ef53a4f449cc7738e571bde24bad3fb684571d01",
+  "after_sha256": "5b7e1b587d4438fc1c35f6c7d303eb4a8fc09195884657e3f7f50a61b6881c2d",
+  "executable_ast_equivalent_ignoring_docstrings": true,
+  "change": "build docstring reflects exact consumed-buffer hashing and staged incremental/full publication.",
+  "behavioral_fingerprint": "11adbda5b9d9a7fc9f81e2c24760e29ce672dfaa4693c6a518f8f7dffac86ca0"
+}

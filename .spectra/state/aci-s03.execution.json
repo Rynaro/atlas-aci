@@ -1,0 +1,116 @@
+{
+  "slice_id": "ACI-S03",
+  "issue_url": "https://github.com/Rynaro/atlas-aci/issues/26",
+  "criteria_sha256": "19aa50b06e7bd201094eed9132c7e4e391459a35f917bd89734a142e6888cbbc",
+  "base_commit": "f9e72ed8e3769cec8b7731ec9feb4e945bb8ccb3",
+  "output_commit": "6f7b5e8fd7f1b319fde1f642273461362e7b13e8",
+  "declared_paths": [
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/src/atlas_aci/server.py",
+    "mcp-server/tests/slices/test_s03_*.py",
+    "mcp-server/tests/test_schema_epoch.py",
+    "mcp-server/tests/test_codegraph.py",
+    "mcp-server/tests/test_export.py",
+    "mcp-server/tests/test_cli_export_import.py"
+  ],
+  "output_digests": {
+    "mcp-server/src/atlas_aci/codegraph.py": "5b7e1b587d4438fc1c35f6c7d303eb4a8fc09195884657e3f7f50a61b6881c2d",
+    "mcp-server/src/atlas_aci/server.py": "9efd8c752448d1edd4d080b18cf735c2e10f71d91b1e0aa5aa2e9f43cd8c6f24",
+    "mcp-server/tests/slices/test_s03_contract.py": "f9ebe5e982103a027464cffdab581806e35c151a5badc70b451e08fb4831a3bc",
+    "mcp-server/tests/test_cli_export_import.py": "dc5c21c09512f27a5f6b2b2216f1526a6ef3875c80329455f2bcdebd826db5f9",
+    "mcp-server/tests/test_codegraph.py": "f77d3ef810e56fa8f832f008d6ae99253d4ccac5c71f67b319a90f14c91b0979",
+    "mcp-server/tests/test_export.py": "d30bb6107093024d8df629edbc313c5a2ae3a6e48c0b684c11799da902c8ba1b",
+    "mcp-server/tests/test_schema_epoch.py": "4e270b3c950bdbfb49e18c076e6be0c0e9dd4da924b6ca6c56e37fc28c6504a0"
+  },
+  "status": "COMPLETE",
+  "acceptance_results": [
+    {
+      "ac_id": "AC-S03-001",
+      "command": "uv run --frozen pytest tests/slices/test_s03_contract.py::test_new_request_new_generation -q",
+      "working_directory": "mcp-server",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s03/test_new_request_new_generation.log"
+      ]
+    },
+    {
+      "ac_id": "AC-S03-002",
+      "command": "uv run --frozen pytest tests/slices/test_s03_contract.py::test_active_request_pinned -q",
+      "working_directory": "mcp-server",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s03/test_active_request_pinned.log"
+      ]
+    },
+    {
+      "ac_id": "AC-S03-003",
+      "command": "uv run --frozen pytest tests/slices/test_s03_contract.py::test_failed_publish -q",
+      "working_directory": "mcp-server",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s03/test_failed_publish.log"
+      ]
+    },
+    {
+      "ac_id": "AC-S03-004",
+      "command": "uv run --frozen pytest tests/slices/test_s03_contract.py::test_same_epoch_replacement -q",
+      "working_directory": "mcp-server",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s03/test_same_epoch_replacement.log"
+      ]
+    },
+    {
+      "ac_id": "AC-S03-005",
+      "command": "uv run --frozen pytest tests/slices/test_s03_contract.py::test_reader_release -q",
+      "working_directory": "mcp-server",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s03/test_reader_release.log"
+      ]
+    },
+    {
+      "ac_id": "AC-S03-006",
+      "command": "uv run --frozen pytest tests/slices/test_s03_contract.py::test_generation_replay -q",
+      "working_directory": "mcp-server",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s03/test_generation_replay.log"
+      ]
+    },
+    {
+      "ac_id": "AC-S03-RUN-02",
+      "command": "python3 .spectra/evidence/aci-s03/verify_resume.py",
+      "working_directory": ".",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s03/interrupted-execution.json",
+        ".spectra/evidence/aci-s03/resume-identity.json"
+      ]
+    },
+    {
+      "ac_id": "AC-S03-RUN-01",
+      "command": "python3 .spectra/evidence/aci-s03/verify_execution.py --root /tmp/atlas-aci-aci-s03-reentry --receipt /tmp/atlas-aci-aci-s03/.spectra/state/aci-s03.execution.json",
+      "working_directory": ".",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s03/reentry-before.json",
+        ".spectra/evidence/aci-s03/reentry-products.json",
+        ".spectra/evidence/aci-s03/reentry-complete.json",
+        ".spectra/evidence/aci-s03/reentry-after.json",
+        ".spectra/evidence/aci-s03/reentry-result.json"
+      ]
+    }
+  ],
+  "verification_evidence": [
+    ".spectra/evidence/aci-s03/final-checks.json",
+    ".spectra/evidence/aci-s03/full.log",
+    ".spectra/evidence/aci-s03/targeted.log",
+    ".spectra/evidence/aci-s03/probe-selftest.result.json",
+    ".spectra/evidence/aci-s03/vivi-pass2-result.json",
+    ".spectra/evidence/aci-s03/independent-review.json",
+    ".spectra/evidence/aci-s03/output-commit-focused.result.json",
+    ".spectra/evidence/aci-s03/docstring-equivalence.json",
+    ".spectra/evidence/aci-s03/raw-log-packaging.json"
+  ]
+}

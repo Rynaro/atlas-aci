@@ -1,0 +1,26 @@
+2026-10-23 20:44:19 [info     ] tool_call                      args={'name': 'old_name'} bytes_out=42 error=None ms=0 overflow=False tool=search_symbol
+2026-10-23 20:44:20 [info     ] tool_call                      args={'name': 'new_name'} bytes_out=0 error=None ms=0 overflow=False tool=search_symbol
+{"after": {"definitions": [], "references": []}, "before": {"definitions": [{"id": 1, "kind": "function", "lang": "python", "line_end": 2, "line_start": 1, "name": "old_name", "path": "example.py"}], "references": []}}
+F
+=================================== FAILURES ===================================
+_______________________ test_new_request_new_generation ________________________
+
+tmp_path = PosixPath('/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-39/test_new_request_new_generatio0')
+
+    async def test_new_request_new_generation(tmp_path: Path) -> None:
+        repo, writer, config, enforcement, memex, graph = setup(tmp_path)
+        old = await dispatch_tool_call('search_symbol', {'name':'old_name'}, config, enforcement, memex, graph)
+        assert old['definitions']
+        (repo / 'example.py').write_text('def new_name():\n    pass\n')
+        writer.build()
+        assert graph.epoch_ok()
+        new = await dispatch_tool_call('search_symbol', {'name':'new_name'}, config, enforcement, memex, graph)
+        print(json.dumps({'before':old, 'after':new},sort_keys=True))
+>       assert new['definitions'], 'a new production request must not read the cached prior inode'
+E       AssertionError: a new production request must not read the cached prior inode
+E       assert []
+
+mcp-server/tests/slices/test_s03_contract.py:32: AssertionError
+=========================== short test summary info ============================
+FAILED mcp-server/tests/slices/test_s03_contract.py::test_new_request_new_generation
+1 failed in 1.62s

@@ -1,0 +1,6 @@
+{
+  "command": "bash scripts/test-verify-probe-verdict.sh",
+  "exit_code": 0,
+  "pass_lines": 27,
+  "final_marker": true
+}
