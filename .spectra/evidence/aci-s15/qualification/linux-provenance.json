@@ -1,0 +1,31 @@
+{
+  "archive_and_container_member_match": true,
+  "download_exit": 0,
+  "member": "./libtree_sitter_rust.so",
+  "member_extract_exit": 0,
+  "member_sha256": "f6bc54faf7be5c341eb09d9ca58d82aa41e73d871d2c8a8f813f066cdb6c25e5",
+  "member_size": 1188008,
+  "official_archive": {
+    "sha256": "4d7de013e59b0ae74e839171b26888f2d39561c9d4d2fd1cce4e6023ecd8310e",
+    "size": 18441335,
+    "url": "https://github.com/kreuzberg-dev/tree-sitter-language-pack/releases/download/v1.6.0/parsers-linux-aarch64.tar.zst"
+  },
+  "platform": "linux-aarch64",
+  "production_docker_grammar": {
+    "abi": 15,
+    "package": "1.6.0",
+    "platform": "aarch64",
+    "rust_bytes": 1188008,
+    "rust_sha256": "f6bc54faf7be5c341eb09d9ca58d82aa41e73d871d2c8a8f813f066cdb6c25e5",
+    "sdk_sha256": "6a4afb637653349b9aba9da4c78bbc434215314cf4c2231562d70141f01e8da7",
+    "semantic_version": [
+      0,
+      24,
+      1
+    ],
+    "source_errno": 30,
+    "tree": "(source_file (mod_item name: (identifier) body: (declaration_list (function_item (visibility_modifier) name: (identifier) parameters: (parameters) body: (block)))) (struct_item name: (type_identifier)) (impl_item type: (type_identifier) body: (declaration_list (function_item name: (identifier) parameters: (parameters) body: (block)))) (trait_item name: (type_identifier) body: (declaration_list (function_signature_item name: (identifier) parameters: (parameters)))) (macro_definition name: (identifier) (macro_rule left: (token_tree_pattern) right: (token_tree))))",
+    "tree_sitter": "0.25.2",
+    "uid": 10001
+  }
+}

@@ -205,7 +205,7 @@ def test_explicit_v1_adapter_keeps_observation_verification_unknown(tmp_path: Pa
 
 def test_observation_coverage_history_recovery_and_cache(tmp_path: Path):
     repo, graph = make(tmp_path)
-    (repo / "unknown.rs").write_text("fn main() {}")
+    (repo / "unknown.go").write_text("package main\nfunc main() {}\n")
     original = (repo / "pkg/a.py").read_bytes()
     (repo / "pkg/a.py").write_text("def bad(:\n pass\n")
     graph.build()

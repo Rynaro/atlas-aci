@@ -1,0 +1,17 @@
+mcp-server/src/atlas_aci/codegraph.py
+mcp-server/src/atlas_aci/extractors/__init__.py
+mcp-server/src/atlas_aci/extractors/rust.py
+mcp-server/tests/slices/test_s15_*.py
+mcp-server/tests/fixtures/rust_workspace/*
+README.md
+mcp-server/src/atlas_aci/storage/evidence.py
+mcp-server/src/atlas_aci/resolvers/dependencies.py
+mcp-server/tests/test_codegraph.py
+mcp-server/tests/slices/test_s04_contract.py
+.spectra/plans/aci-s15.*
+.spectra/plans/ramza-calibration.jsonl
+.spectra/evidence/aci-s15/*
+.spectra/state/aci-s15.execution.json
+.spectra/changes/aci-s15/*
+.spectra/backlog/execution.json
+.spectra/backlog/order.md

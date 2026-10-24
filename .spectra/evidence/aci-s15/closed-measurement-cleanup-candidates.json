@@ -1,0 +1,41 @@
+{
+  "status": "CANDIDATES_ONLY_NOT_DELETED",
+  "scope": "Closed S15 generated SQL/cache and measured temporary full JSONL only; source parents/.git, failures, assets, fixtures and all durable evidence retained",
+  "directories": [
+    {
+      "path": "/tmp/aci-s15-probe-inputs/solidus/.atlas",
+      "allocated_kib": 853732,
+      "is_symlink": false,
+      "real_contained": true
+    },
+    {
+      "path": "/tmp/aci-s15-probe-inputs/spree/.atlas",
+      "allocated_kib": 436008,
+      "is_symlink": false,
+      "real_contained": true
+    },
+    {
+      "path": "/tmp/aci-s15-retry-probe-inputs/solidus/.atlas",
+      "allocated_kib": 853732,
+      "is_symlink": false,
+      "real_contained": true
+    },
+    {
+      "path": "/tmp/aci-s15-retry-probe-inputs/spree/.atlas",
+      "allocated_kib": 1364000,
+      "is_symlink": false,
+      "real_contained": true
+    }
+  ],
+  "full_export": {
+    "path": "/tmp/aci-s15-retry-spree-export.jsonl",
+    "bytes": 651845246,
+    "sha256": "fc07224ccad932343103b86cc58e5617c568e473fd1c57bf2d7bd6f49411a539"
+  },
+  "durable_records": [
+    ".spectra/evidence/aci-s15/packaging-manifest.json",
+    ".spectra/evidence/aci-s15/probe-attempt2/graph-raw-manifest.json",
+    ".spectra/evidence/aci-s15/probe-attempt2/assembly-provenance.json",
+    ".spectra/changes/aci-s15/probe/probe-graphs.json.gz"
+  ]
+}

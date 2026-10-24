@@ -1,0 +1,5 @@
+{
+  "elapsed_seconds": 1695.8872141838074,
+  "budget_seconds": 86400,
+  "note": "Conservative wall-clock charge since initial preflight includes qualification/build/check/probe waiting; no budget reset."
+}

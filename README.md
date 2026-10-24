@@ -362,6 +362,30 @@ This coarse policy does not avoid source discovery/hashing or promise a speedup
 for every incremental edit. It does not add resolver options or infer dependencies
 only from previously resolved edges.
 
+### Rust structural navigation
+
+Rust source is indexed by the locked Tree-sitter grammar, without running Cargo,
+`build.rs`, procedural macros, or a compiler. The producer records modules,
+structs, enums, traits, free functions, and direct impl/trait methods once per
+source occurrence. Impl owners use token-normalized literal headers: comments
+and whitespace outside literals do not change their identity; literal contents,
+generic bounds, and repeated impl blocks remain distinct. Occurrences retain the
+exact consumed source hash and byte spans.
+
+Calls retain their raw spelling and syntactic qualifier. All Rust calls remain
+unresolved with `rust_semantic_binding_unavailable`; matching a basename does not
+establish a function, associated-method, trait, or dispatch target. Capability
+snapshot `atlas-capabilities.v3` reports this boundary explicitly. Older v1/v2
+snapshots remain readable with their original Rust-unsupported declarations.
+
+Macro bodies, derive/procedural-macro expansion, and unmaterialized generated
+output are unavailable. Already materialized `.rs` files are ordinary input.
+Declarations under `cfg` are recorded as source syntax; conditions are not
+evaluated for a build configuration, so indexed declarations do not prove
+inclusion in a binary. The
+SDK may download its locked grammar asset on first use; the production Docker
+image prefetches it so read-only, offline indexing needs no runtime download.
+
 ### `status` — operator capabilities and completeness
 
 ```bash
@@ -379,7 +403,7 @@ The command is not exposed as an MCP tool.
 the capabilities, language selection, producer fingerprint, and `coverage_id`
 persisted by the indexed generation. Registered languages disabled by `--langs`
 are unsupported for that generation even when currently available at runtime.
-Recognized Rust, Go, Java, and TSX extensions have no extraction query. Definitions
+Recognized Go, Java, and TSX extensions have no extraction query. Definitions
 and relations reflect actual persistence: for example, SCSS `@include` produces a
 `call` reference; HTML IDs, YAML keys, and Markdown headings provide symbols only.
 `partial` means bounded Tree-sitter syntax/lookup support; `unsupported` means no

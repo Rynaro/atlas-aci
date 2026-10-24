@@ -29,6 +29,7 @@ from typing import TYPE_CHECKING, Any, cast
 import structlog
 
 from atlas_aci.config import DEFAULT_MAX_BOUND_FIELD_ELEMENTS, path_is_within
+from atlas_aci.extractors import rust
 from atlas_aci.indexing import extraction_cache as xc
 from atlas_aci.label_propagation import label_propagation
 from atlas_aci.providers import python_imports
@@ -154,6 +155,7 @@ LANG_BY_EXT: dict[str, str] = {
 # `setter`/`operator` node's own text (`"foo="`, `"+"`, `"[]="`) is captured
 # as `@name` — the correct, conventional Ruby name for these definitions.
 QUERIES: dict[str, str] = {
+    "rust": rust.QUERY,
     "ruby": """
         (class name: (constant) @name) @def.class
         (class name: (scope_resolution) @name
@@ -299,7 +301,7 @@ PRODUCED_KINDS: tuple[str, ...] = tuple(
 # indexing to nothing (D5-Q2). This is an *honesty* fix, not a coverage
 # commitment: promoting one of these to real support means writing a real
 # QUERIES entry, at which point it comes out of this set.
-UNSUPPORTED_LANGS: frozenset[str] = frozenset({"tsx", "go", "rust", "java"})
+UNSUPPORTED_LANGS: frozenset[str] = frozenset({"tsx", "go", "java"})
 
 assert set(LANG_BY_EXT.values()) <= set(QUERIES) | UNSUPPORTED_LANGS, (
     "LANG_BY_EXT declares a language with neither a QUERIES entry nor an "
@@ -599,6 +601,9 @@ _CLASS_KINDS: tuple[str, ...] = ("class", "module")
 # references one of these by name, this set — and the classification test
 # — must be revisited.
 _NON_CALLABLE_KINDS: tuple[str, ...] = (
+    "struct",
+    "enum",
+    "trait",
     "heading",
     "id",
     "key",
@@ -1146,6 +1151,7 @@ class CodeGraph:
                     "providers/python_imports.py",
                     "indexing/extraction_cache.py",
                     "resolvers/dependencies.py",
+                    "extractors/rust.py",
                 )
             },
             "packages": {
@@ -1163,7 +1169,11 @@ class CodeGraph:
         languages = []
         for lang in sorted(set(LANG_BY_EXT.values())):
             query = QUERIES.get(lang, "")
-            definitions = sorted(set(re.findall(r"@def\.(\w+)", query)))
+            definitions = (
+                list(rust.KINDS)
+                if lang == "rust"
+                else sorted(set(re.findall(r"@def\.(\w+)", query)))
+            )
             # _extract persists any @callee as call, including SCSS @ref.include.
             relations = set(re.findall(r"@heritage\.(\w+)", query))
             if "@callee" in query:
@@ -1192,11 +1202,12 @@ class CodeGraph:
                 }
             )
         return {
-            "format": "atlas-capabilities.v2",
+            "format": "atlas-capabilities.v3",
             "limitations": {
                 "python_imports": "package_local_unaliased_relative_only",
                 "control_flow": "unsupported",
                 "semantic_binding": "unsupported",
+                **rust.LIMITATIONS,
             },
             "producer": self._producer_inputs(),
             "producers": [
@@ -1277,18 +1288,29 @@ class CodeGraph:
     ) -> bool:
         if (
             not isinstance(caps, dict)
-            or caps.get("format") not in {"atlas-capabilities.v1", "atlas-capabilities.v2"}
+            or caps.get("format")
+            not in {"atlas-capabilities.v1", "atlas-capabilities.v2", "atlas-capabilities.v3"}
             or set(caps)
             != {"format", "producer", "producers", "languages"}
-            | ({"limitations"} if caps.get("format") == "atlas-capabilities.v2" else set())
-            or (caps.get("format") == "atlas-capabilities.v2") != ("modules" in producer)
+            | (
+                {"limitations"}
+                if caps.get("format") in {"atlas-capabilities.v2", "atlas-capabilities.v3"}
+                else set()
+            )
+            or (caps.get("format") in {"atlas-capabilities.v2", "atlas-capabilities.v3"})
+            != ("modules" in producer)
+            or (caps.get("format") == "atlas-capabilities.v3")
+            != ("extractors/rust.py" in producer.get("modules", {}))
             or caps["producer"] != producer
         ):
             return False
-        if caps["format"] == "atlas-capabilities.v2" and caps["limitations"] != {
+        if caps["format"] in {"atlas-capabilities.v2", "atlas-capabilities.v3"} and caps[
+            "limitations"
+        ] != {
             "python_imports": "package_local_unaliased_relative_only",
             "control_flow": "unsupported",
             "semantic_binding": "unsupported",
+            **(rust.LIMITATIONS if caps["format"] == "atlas-capabilities.v3" else {}),
         }:
             return False
         unsupported = {"state": "unsupported", "reason": "no_compiler_provider"}
@@ -1316,6 +1338,16 @@ class CodeGraph:
             if item["semantic_binding"] != unsupported or not isinstance(item["language"], str):
                 return False
             names.append(item["language"])
+            if (
+                caps["format"] == "atlas-capabilities.v3"
+                and item["language"] == "rust"
+                and (
+                    item["extensions"] != [".rs"]
+                    or item["definitions"] != list(rust.KINDS)
+                    or item["relations"] != ["call"]
+                )
+            ):
+                return False
             if (
                 not isinstance(item["extraction"], dict)
                 or set(item["extraction"]) != {"state", "reason"}
@@ -2537,10 +2569,18 @@ class CodeGraph:
                 node = captures[tag][0]
                 declarations[node.id] = (
                     node,
-                    tag.split(".", 1)[1],
+                    rust.definition_kind(node, tag.split(".", 1)[1])
+                    if lang == "rust"
+                    else tag.split(".", 1)[1],
                     self._node_text(source, captures["name"][0]).strip(),
                 )
-        entities = ev.structural_entities(tree, declarations, rel_path, lang)
+        entities = ev.structural_entities(
+            tree,
+            declarations,
+            rel_path,
+            lang,
+            scope_overrides=rust.scope_overrides(tree, source) if lang == "rust" else None,
+        )
         file_entity = ev.file_entity(rel_path, lang)
         producer = getattr(self, "_capture_producer", None) or ev.producer(self._producer_inputs())
         self._canonical_file_records = [file_entity, producer, *entities.values()]
@@ -2605,13 +2645,17 @@ class CodeGraph:
                 if not name:
                     continue
                 def_node = caps[def_cap][0]
+                definition_kind = declarations[def_node.id][1]
                 occurrence_id, _ = observe(
-                    def_node, "definition", "definition:" + def_cap, entities[def_node.id]["id"]
+                    def_node,
+                    "definition",
+                    "definition:def." + definition_kind,
+                    entities[def_node.id]["id"],
                 )
                 symbols.append(
                     Symbol(
                         name=name,
-                        kind=def_cap.split(".", 1)[1],
+                        kind=definition_kind,
                         path=rel_path,
                         line_start=def_node.start_point[0] + 1,
                         line_end=def_node.end_point[0] + 1,
@@ -2691,6 +2735,8 @@ class CodeGraph:
             elif "callee" in caps:
                 qualified, qualifier_name = self._call_qualification(lang, source, caps)
                 for node in caps["callee"]:
+                    if lang == "rust":
+                        qualified, qualifier_name = False, rust.qualifier(node, source)
                     name = self._node_text(source, node).strip()
                     if not name:
                         continue
@@ -3426,7 +3472,9 @@ class CodeGraph:
             qualified = False
             reason = None
             lang = ref["lang"]
-            if context.get("unsupported_source_owner"):
+            if lang == "rust":
+                candidates, reason = [], "rust_semantic_binding_unavailable"
+            elif context.get("unsupported_source_owner"):
                 candidates, reason = [], "unsupported_source_owner"
             elif lang not in {"python", "ruby", "javascript", "typescript"}:
                 candidates = symbols.get((lang, ref["callee_name"]), [])

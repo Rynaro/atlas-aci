@@ -272,6 +272,13 @@ def _validate_record(item: Any) -> None:
                             "indexing/extraction_cache.py",
                             "resolvers/dependencies.py",
                         },
+                        {
+                            "storage/evidence.py",
+                            "providers/python_imports.py",
+                            "indexing/extraction_cache.py",
+                            "resolvers/dependencies.py",
+                            "extractors/rust.py",
+                        },
                     ),
                     "module set",
                 )
@@ -640,7 +647,12 @@ SCOPES = frozenset(
 
 
 def structural_entities(
-    tree, declarations: dict[int, tuple[Any, str, str]], path: str, language: str
+    tree,
+    declarations: dict[int, tuple[Any, str, str]],
+    path: str,
+    language: str,
+    *,
+    scope_overrides: dict[int, tuple[str, str | None]] | None = None,
 ):
     """AST-order matching-sibling ordinals; comments/whitespace are irrelevant."""
     result = {}
@@ -649,10 +661,17 @@ def structural_entities(
     while pending:
         node, owners, parent = pending.pop()
         declaration = declarations.get(node.id)
-        relevant = declaration is not None or node.type in SCOPES
+        override = scope_overrides.get(node.id) if language == "rust" and scope_overrides else None
+        relevant = declaration is not None or override is not None or node.type in SCOPES
         children_owners, children_parent = owners, parent
         if relevant:
-            kind, name = (declaration[1], declaration[2]) if declaration else (node.type, None)
+            kind, name = (
+                (declaration[1], declaration[2])
+                if declaration
+                else override
+                if override is not None
+                else (node.type, None)
+            )
             key = (parent, kind, name)
             ordinal = counters.get(key, 0)
             counters[key] = ordinal + 1

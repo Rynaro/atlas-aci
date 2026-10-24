@@ -1,0 +1,30 @@
+{
+  "new_downloads": 1,
+  "elapsed_seconds": 3.7028376669913996,
+  "package": "1.6.0",
+  "tree_sitter": "0.25.2",
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "architecture": "arm64",
+  "cache": "/tmp/aci-s15-parser-cache",
+  "downloaded_languages": [
+    "rust"
+  ],
+  "has_rust": true,
+  "abi_version": 15,
+  "semantic_version": [
+    0,
+    24,
+    1
+  ],
+  "language_name": "rust",
+  "root_has_error": false,
+  "capture_match_count": 16,
+  "files": [
+    {
+      "path": "/tmp/aci-s15-parser-cache/libtree_sitter_rust.dylib",
+      "bytes": 1142360,
+      "sha256": "9a36b7aaab5db95c1e5663a26d7d124a6ec953d6a9555d2bf845327271baa4f6"
+    }
+  ],
+  "source_sha256": "6ed4f6525b5df59fb4b016656aa0cd1058ff7aafcada0e6fbfb1d6ab366d949e"
+}

@@ -1,0 +1,50 @@
+{
+  "envelope_version": "2.0",
+  "message_id": "f224f0ca-813a-4e87-8f12-c367eb0e9c8a",
+  "thread_id": "fac85266-9d99-4f7a-baa5-0d0f9ddcf325",
+  "parent_id": null,
+  "from": {
+    "eidolon": "ramza",
+    "version": "1.1.0"
+  },
+  "to": {
+    "eidolon": "vivi",
+    "version": "n/a"
+  },
+  "performative": "PROPOSE",
+  "edge_origin": "roster",
+  "objective": "Implement ACI-S15 measured Rust structural declarations, impl ownership and source call occurrences with explicit unresolved semantics, truthful capabilities and locked native/offline integration evidence.",
+  "artifact": {
+    "kind": "spec",
+    "schema_version": "1.0",
+    "path": "aci-s15.md",
+    "sha256": "a1e27b76bbabae0fdee5481cb75b0bb1ba2444310ef282916276569c7e8debe4",
+    "size_bytes": 24090
+  },
+  "integrity": {
+    "method": "sha256",
+    "value": "a1e27b76bbabae0fdee5481cb75b0bb1ba2444310ef282916276569c7e8debe4"
+  },
+  "trace": {
+    "ts": "2026-10-24T17:14:10.916275+00:00",
+    "host": "codex",
+    "model": "gpt-6-astra",
+    "tier": "standard"
+  },
+  "ise": {
+    "assertion_grade": "validated",
+    "provenance": {
+      "methodology_version": "ramza-1.1.0"
+    },
+    "receiver_authorization": {
+      "auto_route": true,
+      "auto_merge": false,
+      "auto_deploy": false
+    }
+  },
+  "confidence": 0.8625,
+  "x_ramza_acceptance_criteria": {
+    "path": "aci-s15.criteria.md",
+    "sha256": "312e461863ca649cff7689ff8d4b1d6538e8648f75c6d35777786df1dede0f9a"
+  }
+}

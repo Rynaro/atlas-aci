@@ -1,0 +1,18 @@
+{
+  "output_commit": "d1617e1b9639b2ff26eb7434e5fd57c77ebe6ef9",
+  "declared_tracked_files": 314,
+  "before": "PRODUCTS_VERIFIED",
+  "after": "ALREADY_SATISFIED",
+  "before_after_manifests_equal": true,
+  "clean_checkout": true,
+  "git_diff_exit_code": 0,
+  "product_reentry_exit_code": 0,
+  "complete_reentry_exit_code": 0,
+  "resume_exit_code": 0,
+  "output_test_exit_code": 0,
+  "output_test_count": 28,
+  "output_test_seconds": 2.53,
+  "helper_sha256": "d4274cc3a9acddb1596e825fbf4dcbe8c9deb76f92ca7ca164adafb4a3cbf9a6",
+  "exclusions_authority": ".spectra/changes/aci-s15/bookkeeping-amendment.json",
+  "actual_output_import": "/private/tmp/atlas-aci-s15-output-check/mcp-server/src/atlas_aci/codegraph.py"
+}

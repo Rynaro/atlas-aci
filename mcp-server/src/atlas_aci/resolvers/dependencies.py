@@ -17,7 +17,18 @@ FORMAT = "atlas-binding-dependencies.v1"
 PROFILE = "complete-language-buckets.v1"
 KEY = "binding_dependencies"
 LANGUAGES = frozenset(
-    {"python", "ruby", "javascript", "typescript", "bash", "scss", "html", "yaml", "markdown"}
+    {
+        "rust",
+        "python",
+        "ruby",
+        "javascript",
+        "typescript",
+        "bash",
+        "scss",
+        "html",
+        "yaml",
+        "markdown",
+    }
 )
 
 

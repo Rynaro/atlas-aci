@@ -65,14 +65,14 @@ def build_repo(tmp_path: Path, langs=None):
 def test_unsupported_extension(tmp_path: Path):
     repo = tmp_path / "repo"
     repo.mkdir()
-    (repo / "a.rs").write_text("fn main() {}")
+    (repo / "a.go").write_text("package main\nfunc main() {}")
     (repo / "a.py").write_text("def target():\n    pass\n")
     (repo / "a.js").write_text("function target() {}")
     graph = CodeGraph(repo, langs=["python"])
     graph.build()
     payload = status(repo)
     languages = {x["language"]: x for x in payload["runtime"]["languages"]}
-    assert languages["rust"]["extraction"]["state"] == "unsupported"
+    assert languages["go"]["extraction"]["state"] == "unsupported"
     indexed = {x["language"]: x for x in payload["indexed"]["capabilities"]["languages"]}
     assert languages["javascript"]["extraction"]["state"] == "partial"
     assert indexed["javascript"]["extraction"] == {

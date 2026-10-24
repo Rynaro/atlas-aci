@@ -1,0 +1,43 @@
+{
+  "authorization": "Root explicit three completed, merged task-owned regenerable temporary full exports only; no tracked evidence/source/cache removal",
+  "disk_before": {
+    "total": 245107195904,
+    "used": 244374011904,
+    "free": 733184000
+  },
+  "files": [
+    {
+      "path": "/tmp/aci-s07-approved3-spree-export.jsonl",
+      "bytes": 651844965,
+      "sha256": "394461aefaa48287f0d6701463bc0b427542d30a794940ca7f7c9d918999c199",
+      "verified_against": ".spectra/evidence/aci-s07/parser-prerequisite/fresh-probe-attempt3/spree-export-size.json",
+      "preserved_evidence_sha256": "18aa960a6e829ab85e5518a40b712dee0a1048158e677384cfa955e32e4045a2",
+      "verified_before_delete": true,
+      "deleted": true
+    },
+    {
+      "path": "/tmp/aci-s09-fresh-spree-export.jsonl",
+      "bytes": 651845063,
+      "sha256": "371fe45c1b1e05202fb16289eeeb982c27e567fd79a3bcd01d6e2198ba93bc6f",
+      "verified_against": ".spectra/evidence/aci-s09/probe/spree-export-size.json",
+      "preserved_evidence_sha256": "242b355d42bcd1d101ec3efce333d0dd48c8c4b9298d7e15c8b8510451a472d2",
+      "verified_before_delete": true,
+      "deleted": true
+    },
+    {
+      "path": "/tmp/aci-s10-grouped-spree-export.jsonl",
+      "bytes": 651845158,
+      "sha256": "b744437b187ecb43fad363ef9cf68ae553e9d7cce5f786a5810db3224d4cb759",
+      "verified_against": ".spectra/evidence/aci-s10/probe-attempt2/spree-export-size.json",
+      "preserved_evidence_sha256": "0f34422342df24e81ccc9c63326dcf0df397129a4a6fc3a3ec936ba954261bf6",
+      "verified_before_delete": true,
+      "deleted": true
+    }
+  ],
+  "disk_after": {
+    "total": 245107195904,
+    "used": 242412027904,
+    "free": 2695168000
+  },
+  "bytes_removed": 1955535186
+}

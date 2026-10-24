@@ -1,0 +1,41 @@
+{
+  "qualified": true,
+  "manifest_uri": "https://github.com/kreuzberg-dev/tree-sitter-language-pack/releases/download/v1.6.0/parsers.json",
+  "manifest_sha256": "99ffaec9e46e92689a5492252cdfa61d9f1b56454fbfdd06732d1926adabcd6f",
+  "platform_asset_uri": "https://github.com/kreuzberg-dev/tree-sitter-language-pack/releases/download/v1.6.0/parsers-macos-arm64.tar.zst",
+  "archive_bytes": 20810627,
+  "archive_sha256": "9f3ea219a47bb916a18455107b369c17a020939a66c2a91fe48bbaaa0a74cebd",
+  "archive_matches_published_manifest": true,
+  "archive_member": "./libtree_sitter_rust.dylib",
+  "sdk_task_cache_bytes_match_official_member": true,
+  "rust_library_bytes": 1142360,
+  "rust_library_sha256": "9a36b7aaab5db95c1e5663a26d7d124a6ec953d6a9555d2bf845327271baa4f6",
+  "grammar_semantic_version": [
+    0,
+    24,
+    1
+  ],
+  "abi_version": 15,
+  "package": "1.6.0",
+  "tree_sitter": "0.25.2",
+  "sdk_native_sha256": "055b59105793e277a2de93456a92d668480f8f67782aebd45393d9191baa897e",
+  "uv_lock_sha256": "bb1313d9b328a73ba37881fbd58af1779365304a2c80c7180b2b139bfe4137ec",
+  "normal_cache": "/Users/henrique/Library/Caches/tree-sitter-language-pack/v1.6.0/libs",
+  "normal_cache_new_downloads": 1,
+  "previous_cache_files_unchanged": true,
+  "normal_cache_rust_sha256": "9a36b7aaab5db95c1e5663a26d7d124a6ec953d6a9555d2bf845327271baa4f6",
+  "normal_cache_languages": [
+    "bash",
+    "html",
+    "javascript",
+    "markdown",
+    "python",
+    "ruby",
+    "rust",
+    "scss",
+    "typescript",
+    "yaml"
+  ],
+  "source_commit": null,
+  "source_commit_note": "Official versioned binary identity independently verified; source commit is not asserted by this manifest."
+}

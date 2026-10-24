@@ -1,0 +1,10 @@
+{
+  "prior_serial_job_sum_seconds": 256.1600768329954,
+  "cumulative_serial_job_sum_seconds": 649.7350719990063,
+  "first_runner_wall_seconds": 256.17071570901317,
+  "retry_runner_wall_seconds": 326.7410517919925,
+  "separate_size_subprocess_seconds": 66.84746279199317,
+  "sum_recorded_runner_and_size_wall_seconds": 649.7592302929988,
+  "below_2700_seconds": true,
+  "scope": "Recorded invocation wall totals, including runner orchestration overhead. Not a claim that capacity-restoration/review pauses between invocations are measured CPU job time. Original job timing records remain unchanged."
+}
