@@ -1,0 +1,7 @@
+{
+  "output_commit": "bce065b7590351fe57544853a6aad140a7523c7e",
+  "command": "/private/tmp/atlas-aci-aci-s04/mcp-server/.venv/bin/python -m pytest -p no:cacheprovider /tmp/atlas-aci-aci-s04-reentry/mcp-server/tests/slices/test_s04_contract.py -q",
+  "source_path": "/tmp/atlas-aci-aci-s04-reentry/mcp-server/src",
+  "exit_code": 0,
+  "all_28_passed": true
+}

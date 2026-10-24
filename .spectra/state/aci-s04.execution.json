@@ -3,7 +3,7 @@
   "issue_url": "https://github.com/Rynaro/atlas-aci/issues/27",
   "criteria_sha256": "947bf7c6701f496e5c88b979195582ad9fa19513a229f55f6e2848ddf7b4ba71",
   "base_commit": "7793d62d0ad00cd29ba0be5de53491f15ac28802",
-  "output_commit": null,
+  "output_commit": "bce065b7590351fe57544853a6aad140a7523c7e",
   "declared_paths": [
     "mcp-server/src/atlas_aci/codegraph.py",
     "mcp-server/src/atlas_aci/__main__.py",
@@ -11,8 +11,14 @@
     "README.md",
     "atlas/evals/stdio_runner.py"
   ],
-  "output_digests": {},
-  "status": "IN_PROGRESS",
+  "output_digests": {
+    "README.md": "0d7a93331151c44175ce4b1ea585fbd96c1602150e9ce12329179299f340db67",
+    "atlas/evals/stdio_runner.py": "47ba5bb044bc29ee6c1a9d2f93bea0f75fc3e993fdc38df31f1cc6e0c5559d65",
+    "mcp-server/src/atlas_aci/__main__.py": "a4d774cff3adc587217c66769bb046b00d12a9c5a7816b20e86f0639b666efe9",
+    "mcp-server/src/atlas_aci/codegraph.py": "02d7174b5b1126cd32b00e127f2e40b82b06f9ff6e75e76adaa6cae35b353f19",
+    "mcp-server/tests/slices/test_s04_contract.py": "aa00261f8afea5043494dd4aacd780bf46704bc4f16890ab83239f607423b808"
+  },
+  "status": "COMPLETE",
   "acceptance_results": [
     {
       "ac_id": "AC-S04-001",
@@ -68,6 +74,19 @@
         ".spectra/evidence/aci-s04/interrupted-execution.json",
         ".spectra/evidence/aci-s04/resume-identity.json"
       ]
+    },
+    {
+      "ac_id": "AC-S04-RUN-01",
+      "command": "python3 .spectra/evidence/aci-s04/verify_execution.py --root /tmp/atlas-aci-aci-s04-reentry --receipt /tmp/atlas-aci-aci-s04/.spectra/state/aci-s04.execution.json",
+      "working_directory": ".",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s04/reentry-before.json",
+        ".spectra/evidence/aci-s04/reentry-products.json",
+        ".spectra/evidence/aci-s04/reentry-complete.json",
+        ".spectra/evidence/aci-s04/reentry-after.json",
+        ".spectra/evidence/aci-s04/reentry-result.json"
+      ]
     }
   ],
   "scope_amendments": [
@@ -79,6 +98,7 @@
     ".spectra/evidence/aci-s04/probe-selftest.result.json",
     ".spectra/evidence/aci-s04/vivi-pass2-result.json",
     ".spectra/evidence/aci-s04/fingerprint-after.json",
-    ".spectra/evidence/aci-s04/independent-review.json"
+    ".spectra/evidence/aci-s04/independent-review.json",
+    ".spectra/evidence/aci-s04/output-commit-focused.result.json"
   ]
 }
