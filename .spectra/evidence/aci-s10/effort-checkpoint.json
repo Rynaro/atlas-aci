@@ -1,0 +1,10 @@
+{
+  "active_elapsed_seconds": 1005.6507019996643,
+  "budget_seconds": 144000,
+  "scope": "Original five-engineering-day allocation; no human review wait or budget reset.",
+  "sources": {
+    "mcp-server/src/atlas_aci/codegraph.py": "669289a204050dea520397497cf740a6b238628044e3d499b0cf90cf14592ef9",
+    "mcp-server/src/atlas_aci/resolvers/dependencies.py": "3002628babe9a94ec2a8d741cad6feb0c5945513b8916798cfa0d786b090784c",
+    "mcp-server/src/atlas_aci/storage/evidence.py": "f0d2aa9438e68eeccd073e57e55f709d39d3b45ce9a8d134a9cb3c28518e3281"
+  }
+}

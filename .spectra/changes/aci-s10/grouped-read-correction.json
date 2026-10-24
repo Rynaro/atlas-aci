@@ -1,0 +1,27 @@
+{
+  "slice_id": "ACI-S10",
+  "criteria_changed": false,
+  "additional_paths": [],
+  "authorization": "Root explicit narrow approval after actual Spree timeout; only existing dependencies.py/codegraph.py and S10 tests.",
+  "observed_failure": ".spectra/evidence/aci-s10/probe/spree-export.job.json",
+  "outcome": {
+    "exit_code": -15,
+    "timed_out": true,
+    "seconds": 600.0127683750034,
+    "prior_probe_seconds_charged": 1028.5689475840045
+  },
+  "cause": "Repeated per-file unindexed refs.path/edges.source_path scans in snapshots and per-unit resolver dispatch.",
+  "change": "Read raw refs/output rows once per pass and group by path, preserving exact canonical sorting/hashes/witness format and true per-unit binding dispatch.",
+  "unchanged": [
+    "DDL",
+    "epoch",
+    "bar",
+    "deadline",
+    "profile format",
+    "target selection semantics"
+  ],
+  "before_sources": {
+    "codegraph.py": "669289a204050dea520397497cf740a6b238628044e3d499b0cf90cf14592ef9",
+    "resolvers/dependencies.py": "3002628babe9a94ec2a8d741cad6feb0c5945513b8916798cfa0d786b090784c"
+  }
+}

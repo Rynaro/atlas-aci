@@ -1,0 +1,18 @@
+{
+  "name": "solidus-account",
+  "command": [
+    "/private/tmp/atlas-aci-aci-s10/mcp-server/.venv/bin/python",
+    "/private/tmp/atlas-aci-aci-s10/.spectra/evidence/aci-s10/probe/account.py",
+    "solidus",
+    "/tmp/aci-s10-fresh-probe-inputs/solidus",
+    "/private/tmp/atlas-aci-aci-s10/.spectra/evidence/aci-s10/probe"
+  ],
+  "cwd": "/private/tmp/atlas-aci-aci-s10",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 0.13894279100350104,
+  "elapsed_total": 426.69531070899393,
+  "peak_rss_bytes": 44089344,
+  "stdout": ".spectra/evidence/aci-s10/probe/solidus-account.stdout.log",
+  "stderr": ".spectra/evidence/aci-s10/probe/solidus-account.stderr.log"
+}

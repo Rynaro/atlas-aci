@@ -1,0 +1,52 @@
+{
+  "plan": "aci-s10",
+  "slice_id": "ACI-S10",
+  "spec": ".spectra/plans/aci-s10.md",
+  "criteria": ".spectra/plans/aci-s10.criteria.md",
+  "state": ".spectra/plans/aci-s10.state.json",
+  "scope": [
+    "mcp-server/src/atlas_aci/resolvers/__init__.py",
+    "mcp-server/src/atlas_aci/resolvers/dependencies.py",
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/tests/slices/test_s10_*.py",
+    "mcp-server/src/atlas_aci/storage/evidence.py",
+    "README.md",
+    ".spectra/plans/aci-s10.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/evidence/aci-s10/*",
+    ".spectra/state/aci-s10.execution.json",
+    ".spectra/changes/aci-s10/*",
+    ".spectra/backlog/execution.json",
+    ".spectra/backlog/order.md"
+  ],
+  "output_digest_exclusions": [
+    ".spectra/state/aci-s10.execution.json",
+    ".spectra/evidence/aci-s10/final-reentry-before.json",
+    ".spectra/evidence/aci-s10/final-reentry-after.json",
+    ".spectra/evidence/aci-s10/final-reentry-summary.json",
+    ".spectra/evidence/aci-s10/final-resume-identity.json",
+    ".spectra/evidence/aci-s10/output-check-tests.log"
+  ],
+  "stories": [
+    {
+      "name": "Affected binding units with full oracle",
+      "timebox_engineering_days": 5,
+      "executor": "Vivi",
+      "output_contract": "Six product ACs/eight total, actual reuse and fallback, canonical equality, verified receipt"
+    }
+  ],
+  "confidence": {
+    "rubric": "confidence",
+    "total": 87.5,
+    "dims": {
+      "pattern_match": 85,
+      "requirement_clarity": 90,
+      "decomposition_stability": 85,
+      "constraint_compliance": 90
+    },
+    "verdict": "AUTO_PROCEED",
+    "at": "2026-10-24T16:06:43Z",
+    "label": "conservative-binding-units-with-full-oracle"
+  },
+  "status": "READY"
+}

@@ -1,0 +1,192 @@
+{
+  "slice_id": "ACI-S10",
+  "issue_url": "https://github.com/Rynaro/atlas-aci/issues/32",
+  "criteria_sha256": "205a19c67aa13eb06b6e2c61b1fa39c12837d9443e5b4da9cfd576ed72501767",
+  "base_commit": "ea9afb9e2636f581e1c1cffd9b18e50ae9d891c3",
+  "output_commit": null,
+  "declared_paths": [
+    "mcp-server/src/atlas_aci/resolvers/__init__.py",
+    "mcp-server/src/atlas_aci/resolvers/dependencies.py",
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/tests/slices/test_s10_*.py",
+    "mcp-server/src/atlas_aci/storage/evidence.py",
+    "README.md",
+    ".spectra/plans/aci-s10.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/evidence/aci-s10/*",
+    ".spectra/state/aci-s10.execution.json",
+    ".spectra/changes/aci-s10/*",
+    ".spectra/backlog/execution.json",
+    ".spectra/backlog/order.md"
+  ],
+  "output_digest_exclusions": [
+    ".spectra/state/aci-s10.execution.json",
+    ".spectra/evidence/aci-s10/final-reentry-before.json",
+    ".spectra/evidence/aci-s10/final-reentry-after.json",
+    ".spectra/evidence/aci-s10/final-reentry-summary.json",
+    ".spectra/evidence/aci-s10/final-resume-identity.json",
+    ".spectra/evidence/aci-s10/output-check-tests.log"
+  ],
+  "output_digests": {},
+  "status": "IN_PROGRESS",
+  "acceptance_results": [
+    {
+      "ac_id": "AC-S10-001",
+      "exit_code": 0,
+      "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/mcp-server/src mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s10_*.py -q",
+      "working_directory": ".",
+      "test_id": "mcp-server/tests/slices/test_s10_contract.py::test_export_change_equivalence",
+      "evidence": [
+        ".spectra/evidence/aci-s10/read-work/batch-corrected-final.log.gz",
+        ".spectra/evidence/aci-s10/read-work/batch-corrected-final.exit",
+        ".spectra/evidence/aci-s10/vivi-pass2-result.json"
+      ],
+      "observation": "Final8a37/66d9/f0d2:35focusedtests pass2.62s, protected35/run0/0/tamper0. Exact output commit verification pending."
+    },
+    {
+      "ac_id": "AC-S10-002",
+      "exit_code": 0,
+      "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/mcp-server/src mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s10_*.py -q",
+      "working_directory": ".",
+      "test_id": "mcp-server/tests/slices/test_s10_contract.py::test_delete_equivalence",
+      "evidence": [
+        ".spectra/evidence/aci-s10/read-work/batch-corrected-final.log.gz",
+        ".spectra/evidence/aci-s10/read-work/batch-corrected-final.exit",
+        ".spectra/evidence/aci-s10/vivi-pass2-result.json"
+      ],
+      "observation": "Final8a37/66d9/f0d2:35focusedtests pass2.62s, protected35/run0/0/tamper0. Exact output commit verification pending."
+    },
+    {
+      "ac_id": "AC-S10-003",
+      "exit_code": 0,
+      "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/mcp-server/src mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s10_*.py -q",
+      "working_directory": ".",
+      "test_id": "mcp-server/tests/slices/test_s10_contract.py::test_rename_equivalence",
+      "evidence": [
+        ".spectra/evidence/aci-s10/read-work/batch-corrected-final.log.gz",
+        ".spectra/evidence/aci-s10/read-work/batch-corrected-final.exit",
+        ".spectra/evidence/aci-s10/vivi-pass2-result.json"
+      ],
+      "observation": "Final8a37/66d9/f0d2:35focusedtests pass2.62s, protected35/run0/0/tamper0. Exact output commit verification pending."
+    },
+    {
+      "ac_id": "AC-S10-004",
+      "exit_code": 0,
+      "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/mcp-server/src mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s10_*.py -q",
+      "working_directory": ".",
+      "test_id": "mcp-server/tests/slices/test_s10_contract.py::test_resolver_config_equivalence",
+      "evidence": [
+        ".spectra/evidence/aci-s10/read-work/batch-corrected-final.log.gz",
+        ".spectra/evidence/aci-s10/read-work/batch-corrected-final.exit",
+        ".spectra/evidence/aci-s10/vivi-pass2-result.json"
+      ],
+      "observation": "Final8a37/66d9/f0d2:35focusedtests pass2.62s, protected35/run0/0/tamper0. Exact output commit verification pending."
+    },
+    {
+      "ac_id": "AC-S10-005",
+      "exit_code": 0,
+      "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/mcp-server/src mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s10_*.py -q",
+      "working_directory": ".",
+      "test_id": "mcp-server/tests/slices/test_s10_contract.py::test_unknown_dependency_fallback",
+      "evidence": [
+        ".spectra/evidence/aci-s10/read-work/batch-corrected-final.log.gz",
+        ".spectra/evidence/aci-s10/read-work/batch-corrected-final.exit",
+        ".spectra/evidence/aci-s10/vivi-pass2-result.json"
+      ],
+      "observation": "Final8a37/66d9/f0d2:35focusedtests pass2.62s, protected35/run0/0/tamper0. Exact output commit verification pending."
+    },
+    {
+      "ac_id": "AC-S10-006",
+      "exit_code": 0,
+      "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/mcp-server/src mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s10_*.py -q",
+      "working_directory": ".",
+      "test_id": "mcp-server/tests/slices/test_s10_contract.py::test_incremental_replay",
+      "evidence": [
+        ".spectra/evidence/aci-s10/read-work/batch-corrected-final.log.gz",
+        ".spectra/evidence/aci-s10/read-work/batch-corrected-final.exit",
+        ".spectra/evidence/aci-s10/vivi-pass2-result.json"
+      ],
+      "observation": "Final8a37/66d9/f0d2:35focusedtests pass2.62s, protected35/run0/0/tamper0. Exact output commit verification pending."
+    },
+    {
+      "ac_id": "AC-S10-RUN-01",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S10-RUN-02",
+      "exit_code": null
+    }
+  ],
+  "scope_amendments": [
+    ".spectra/changes/aci-s10/bookkeeping-amendment.json",
+    ".spectra/changes/aci-s10/grouped-read-correction.json"
+  ],
+  "scope_origin_amendment": ".spectra/changes/aci-s10/scope-amendment.json",
+  "checks": {
+    "full_suite": {
+      "command": "ATLAS_ACI_S06_DOCKER_IMAGE=atlas-aci-s10-final ATLAS_ACI_S06_EVIDENCE_DIR=/tmp/atlas-aci-aci-s10/.spectra/evidence/aci-s10/docker-final PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/src .venv/bin/python -m pytest -p no:cacheprovider -q",
+      "working_directory": "mcp-server",
+      "exit_code": 0,
+      "passed": 488,
+      "skipped": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s10/full-suite.log.gz",
+        ".spectra/evidence/aci-s10/full-suite.exit"
+      ]
+    },
+    "static_and_guards": ".spectra/evidence/aci-s10/checks.json",
+    "docker": ".spectra/evidence/aci-s10/docker-final/docker-integration.json",
+    "image_source_hashes": ".spectra/evidence/aci-s10/docker-final/image-source.json",
+    "pass2": ".spectra/evidence/aci-s10/vivi-pass2-result.json",
+    "fresh_probe": {
+      "status": "PASS",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s10/probe-attempt2/verifier.log.gz",
+        ".spectra/evidence/aci-s10/probe-attempt2/verifier.exit",
+        ".spectra/evidence/aci-s10/probe-attempt2/assembly-provenance.json",
+        ".spectra/changes/aci-s10/probe/aci-s10-probe-lpa-vs-louvain.json"
+      ],
+      "prior_failed_seconds_charged": 1028.5689475840045,
+      "cumulative_seconds_charged": 1427.5534852520068
+    },
+    "superseded_gates": ".spectra/evidence/aci-s10/read-work/prior-gate-relocations.json"
+  },
+  "independent_reviews": [
+    {
+      "reviewer": "ATLAS /root/s15_preflight",
+      "scope": "Final source669289a2/dependencies3002628b/storagef0d2 scopedAPPROVE: rehashed missing output closure falls back before extraction, same-language real SQL/per-unit reuse, complete negative bucket inputs, matched predecessor history, fatal selected work/G1, all assertion families cleanup, RO/import metadata absence.",
+      "checkpoint": "Before grouped-read correction; superseded source/gates retained in before-grouping and relocation manifest"
+    },
+    {
+      "reviewer": "ATLAS /root/s15_preflight",
+      "scope": "Final source/unaffected gates APPROVE:487passed32.23s/zero skips, protected34/run0/0/tamper0, all11checks0 and actual27/5/6guardmarkers. RealDockerUID10001/EROFS/offline/readonly/MCP/snapshots and5installedsourcehashes verified; immutableS07verifier0/PASS and prior artifacts unchanged.",
+      "checkpoint": "Before grouped-read correction; superseded source/gates retained in before-grouping and relocation manifest"
+    },
+    {
+      "reviewer": "ATLAS /root/s15_preflight",
+      "scope": "Corrected source8a37/66d9/f0d2 APPROVE:8selectedtests, independent rich parsed package+partialhistory exact prior/current snapshot and witness equality. Grouped reads preserve complete buckets/raw order/output hashes, noDDL/epoch/profile/deadline change."
+    },
+    {
+      "reviewer": "ATLAS /root/s15_preflight",
+      "scope": "Refreshed unaffected gates APPROVE:488full0,35/run0/0/tamper0,11checks0/27+5+6markers; realDockerexact5installedsourcehashes/UID10001/EROFS/offline/readonly/MCP/snapshots;22prior-gate relocations bytehash exact."
+    },
+    {
+      "reviewer": "ATLAS /root/s15_preflight",
+      "scope": "Final corrected fresh probe APPROVE: unchangedverifier0/PASS, rawgraphs/all20partitions/bundle exact;4877path/hash inventories, pins/cleanSQL/nohistory/failedactivefacts0, max190.188s<600,cumulative1427.553485 includes1028.568948failedprior<2700; streamedcurrentSpreebytes/hash/resources checked."
+    }
+  ],
+  "preserved_failed_runs": [
+    "selective-red.log",
+    "six-first.log",
+    "closure-red.log",
+    "closure-corrected.log"
+  ],
+  "oracle_normalization": "Only integer SQLite row ID fields are removed in public-query comparison; complete portable bytes/current canonical records/history are compared exactly without removing hashes/spans/reasons/candidates.",
+  "limitations": [
+    "Coarse complete-language invalidation may rebind every unit of a language; no per-edit speed guarantee.",
+    "Original unbatched Spree export hit600s cap; retained timeout/gates and source snapshots are superseded by the approved grouped-read correction, not erased or relabeled PASS.",
+    "CurrentSpreeJSONL651845158bytes/67.266639s/peakRSS1983397888bytes; source syntax failures86/4877 remain explicit partial coverage with no active facts.",
+    "Measured cache disk:Solidus333779707bytes/2519entries;Spree531055280bytes/2358entries. HistoricalS07/P3metrics/thresholds unchanged."
+  ]
+}

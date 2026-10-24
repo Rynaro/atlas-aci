@@ -1,0 +1,10 @@
+{
+  "active_elapsed_seconds": 2846.7879960536957,
+  "budget_seconds": 144000,
+  "prior_probe_charge_seconds": 1028.5689475840045,
+  "cumulative_probe_charge_seconds": 1427.5534852520068,
+  "probe_total_cap_seconds": 2700,
+  "current_max_job_seconds": 190.18840304198966,
+  "probe_per_job_cap_seconds": 600,
+  "note": "Original five-engineering-day allocation; no budget reset or human review wait."
+}

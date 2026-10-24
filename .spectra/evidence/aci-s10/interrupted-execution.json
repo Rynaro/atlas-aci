@@ -1,0 +1,70 @@
+{
+  "slice_id": "ACI-S10",
+  "issue_url": "https://github.com/Rynaro/atlas-aci/issues/32",
+  "criteria_sha256": "205a19c67aa13eb06b6e2c61b1fa39c12837d9443e5b4da9cfd576ed72501767",
+  "base_commit": "ea9afb9e2636f581e1c1cffd9b18e50ae9d891c3",
+  "output_commit": null,
+  "declared_paths": [
+    "mcp-server/src/atlas_aci/resolvers/__init__.py",
+    "mcp-server/src/atlas_aci/resolvers/dependencies.py",
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/tests/slices/test_s10_*.py",
+    "mcp-server/src/atlas_aci/storage/evidence.py",
+    "README.md",
+    ".spectra/plans/aci-s10.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/evidence/aci-s10/*",
+    ".spectra/state/aci-s10.execution.json",
+    ".spectra/changes/aci-s10/*",
+    ".spectra/backlog/execution.json",
+    ".spectra/backlog/order.md"
+  ],
+  "output_digest_exclusions": [
+    ".spectra/state/aci-s10.execution.json",
+    ".spectra/evidence/aci-s10/final-reentry-before.json",
+    ".spectra/evidence/aci-s10/final-reentry-after.json",
+    ".spectra/evidence/aci-s10/final-reentry-summary.json",
+    ".spectra/evidence/aci-s10/final-resume-identity.json",
+    ".spectra/evidence/aci-s10/output-check-tests.log"
+  ],
+  "output_digests": {},
+  "status": "IN_PROGRESS",
+  "acceptance_results": [
+    {
+      "ac_id": "AC-S10-001",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S10-002",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S10-003",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S10-004",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S10-005",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S10-006",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S10-RUN-01",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S10-RUN-02",
+      "exit_code": null
+    }
+  ],
+  "scope_amendments": [
+    ".spectra/changes/aci-s10/bookkeeping-amendment.json"
+  ],
+  "scope_origin_amendment": ".spectra/changes/aci-s10/scope-amendment.json"
+}

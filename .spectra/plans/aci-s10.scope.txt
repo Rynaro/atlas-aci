@@ -1,0 +1,13 @@
+mcp-server/src/atlas_aci/resolvers/__init__.py
+mcp-server/src/atlas_aci/resolvers/dependencies.py
+mcp-server/src/atlas_aci/codegraph.py
+mcp-server/tests/slices/test_s10_*.py
+mcp-server/src/atlas_aci/storage/evidence.py
+README.md
+.spectra/plans/aci-s10.*
+.spectra/plans/ramza-calibration.jsonl
+.spectra/evidence/aci-s10/*
+.spectra/state/aci-s10.execution.json
+.spectra/changes/aci-s10/*
+.spectra/backlog/execution.json
+.spectra/backlog/order.md

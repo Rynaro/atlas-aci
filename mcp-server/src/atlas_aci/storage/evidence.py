@@ -266,6 +266,12 @@ def _validate_record(item: Any) -> None:
                             "providers/python_imports.py",
                             "indexing/extraction_cache.py",
                         },
+                        {
+                            "storage/evidence.py",
+                            "providers/python_imports.py",
+                            "indexing/extraction_cache.py",
+                            "resolvers/dependencies.py",
+                        },
                     ),
                     "module set",
                 )

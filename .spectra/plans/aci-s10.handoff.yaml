@@ -1,0 +1,61 @@
+{
+  "slice_id": "ACI-S10",
+  "worktree": "/private/tmp/atlas-aci-aci-s10",
+  "branch": "aci-s10",
+  "base_commit": "ea9afb9e2636f581e1c1cffd9b18e50ae9d891c3",
+  "spec": ".spectra/plans/aci-s10.md",
+  "envelope": ".spectra/plans/aci-s10.envelope.json",
+  "criteria_sha256": "205a19c67aa13eb06b6e2c61b1fa39c12837d9443e5b4da9cfd576ed72501767",
+  "actual_confidence": {
+    "rubric": "confidence",
+    "total": 87.5,
+    "dims": {
+      "pattern_match": 85,
+      "requirement_clarity": 90,
+      "decomposition_stability": 85,
+      "constraint_compliance": 90
+    },
+    "verdict": "AUTO_PROCEED",
+    "at": "2026-10-24T16:06:43Z",
+    "label": "conservative-binding-units-with-full-oracle"
+  },
+  "confidence_basis": {
+    "pattern_match": "Existing full resolver, staged transaction and S09 input validation provide known reusable patterns; dependency witness is intentionally coarse.",
+    "requirement_clarity": "Exact six product ACs plus explicit positive/negative buckets, full fallback and history comparison boundary.",
+    "decomposition_stability": "Source audit and independent review confirm per-source outputs/complete consumed inputs; same-language reuse is explicit.",
+    "constraint_compliance": "Five-day cap, exact scope, no new semantics/threshold/dependency; actual implementation remains to be verified."
+  },
+  "checker_evidence": ".spectra/plans/aci-s10.review.json",
+  "execution_prescriptions": [
+    "Include all actually read declaration display/context fields and local source proof links; excluded global occurrence IDs do not justify dropping local proof links.",
+    "Demonstrate missing/corrupt/incomplete output witness fallback with actual binding execution.",
+    "Require a nonempty unaffected SAME-language binding unit and real resolver execution counter, not diagnostics alone.",
+    "Preserve all canonical hashes/spans/reasons/candidates; match predecessor context when comparing stale history.",
+    "Selected cleanup must cover BOTH edge/import and rationale assertions; exact old/new producer sets and six metadata-only exclusions remain mandatory."
+  ],
+  "scope_amendments": [
+    ".spectra/changes/aci-s10/scope-amendment.json",
+    ".spectra/changes/aci-s10/bookkeeping-amendment.json"
+  ],
+  "output_digest_exclusions": [
+    ".spectra/state/aci-s10.execution.json",
+    ".spectra/evidence/aci-s10/final-reentry-before.json",
+    ".spectra/evidence/aci-s10/final-reentry-after.json",
+    ".spectra/evidence/aci-s10/final-reentry-summary.json",
+    ".spectra/evidence/aci-s10/final-resume-identity.json",
+    ".spectra/evidence/aci-s10/output-check-tests.log"
+  ],
+  "authoritative_receipt": ".spectra/state/aci-s10.execution.json",
+  "baseline": "Approved spec Verification section: baseline S09/S07 behavior and genuine missing selective-reuse/dependency red test; equivalence can already pass under baseline full-rebind.",
+  "verification": "Six issue tests + same-language real reuse, negative additions, fallback, history oracle, full/static/Docker/probe/receipt gates.",
+  "helpers_root": "/Users/henrique/workspace/oss/agents/atlas-aci/.eidolons/ramza/bin",
+  "schemas_root": "/Users/henrique/workspace/oss/agents/atlas-aci/.eidolons/ramza/schemas",
+  "root_gate": "Root verify-envelope --block plus correlated verify_pass trace before one Vivi executor.",
+  "publication": "Root only; standing user validation/merge/sync/continuation, no paid runs or release.",
+  "backlog": {
+    "merged": 8,
+    "remaining": 34,
+    "current_issue": 32,
+    "next_issue": 11
+  }
+}

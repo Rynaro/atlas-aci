@@ -1,0 +1,10 @@
+{
+  "started_epoch": 1792858075.12967,
+  "budget_seconds": 144000,
+  "criteria_sha256": "205a19c67aa13eb06b6e2c61b1fa39c12837d9443e5b4da9cfd576ed72501767",
+  "incoming_gate": "matching correlated mechanical block verify_pass",
+  "baseline_product_hashes": {
+    "mcp-server/src/atlas_aci/codegraph.py": "f2addac5907279121ec798875b17ca80af23e34b09e6e611bc4cc6972bb84a96",
+    "mcp-server/src/atlas_aci/storage/evidence.py": "eb5185dfbf9e6e8e651705f487a928e1e19826351860091556c3aaa03591315a"
+  }
+}

@@ -32,6 +32,7 @@ from atlas_aci.config import DEFAULT_MAX_BOUND_FIELD_ELEMENTS, path_is_within
 from atlas_aci.indexing import extraction_cache as xc
 from atlas_aci.label_propagation import label_propagation
 from atlas_aci.providers import python_imports
+from atlas_aci.resolvers import dependencies as dep
 from atlas_aci.storage import evidence as ev
 
 if TYPE_CHECKING:
@@ -1144,6 +1145,7 @@ class CodeGraph:
                     "storage/evidence.py",
                     "providers/python_imports.py",
                     "indexing/extraction_cache.py",
+                    "resolvers/dependencies.py",
                 )
             },
             "packages": {
@@ -1923,6 +1925,11 @@ class CodeGraph:
         """Index into staging; reuse only exact-buffer hashes and compatible facts."""
         base_inputs = self._build_inputs()
         self._capture_producer = ev.producer(base_inputs["producer"])
+        previous_witness = dep.read(conn)
+        try:
+            previous_dependencies = dep.snapshot(conn)
+        except (ValueError, TypeError, KeyError):
+            previous_dependencies = None
         previous_generation = self._generation_data(conn) if since is not None else None
         previous_inputs = previous_generation[0] if previous_generation is not None else {}
         previous_base = {
@@ -1933,6 +1940,17 @@ class CodeGraph:
         if previous_base.get("format") == "atlas-generation.v3":
             previous_base["format"] = base_inputs["format"]
         incremental = since is not None and previous_base == base_inputs
+        invalid_predecessor_outputs = False
+        if incremental:
+            try:
+                # Check complete old source/projection closure before extraction
+                # legitimately removes changed facts. A rewritten witness hash
+                # cannot make an incomplete predecessor reusable.
+                self._validate_evidence_projections(conn)
+                dep.validate_outputs(conn)
+            except ValueError:
+                invalid_predecessor_outputs = True
+                incremental = False
         previous_hashes = previous_inputs.get("source_hashes", {}) if incremental else {}
         source_hashes: dict[str, str] = {}
         observed_records = []
@@ -2312,9 +2330,46 @@ class CodeGraph:
             and r["table"] == "symbols"
             and r["row"]["path"] == h["path"]
         }
-        edges_added = self._resolve_edges(conn)
-        self._resolve_rationale_assertions(conn)
+        try:
+            current_dependencies = dep.snapshot(conn)
+        except (ValueError, TypeError, KeyError):
+            current_dependencies = None
+        if current_dependencies is None:
+            affected = {row[0] for row in conn.execute("SELECT path FROM files")}
+            removed = set(previous_dependencies or {}) - affected
+            reused, binding_mode, binding_reason = set(), "full", "unknown_dependency_inputs"
+        else:
+            affected, removed, reused, binding_mode, binding_reason = dep.plan(
+                previous_witness,
+                previous_dependencies,
+                current_dependencies,
+                base_inputs,
+                incremental,
+            )
+        if invalid_predecessor_outputs:
+            binding_reason = "invalid_predecessor_outputs"
+        selected = affected | removed if binding_mode == "affected" else None
+        edges_added = self._resolve_edges(conn, selected)
+        self._resolve_rationale_assertions(conn, selected)
         self._validate_evidence_projections(conn)
+        if current_dependencies is not None:
+            binding_witness = dep.witness(conn, base_inputs)
+            conn.execute(
+                "INSERT OR REPLACE INTO manifest(key,value) VALUES (?,?)",
+                (dep.KEY, ev.canonical(binding_witness)),
+            )
+        else:
+            conn.execute("DELETE FROM manifest WHERE key=?", (dep.KEY,))
+        binding_stats = {
+            "mode": binding_mode,
+            "reason": binding_reason,
+            "affected_units": len(affected),
+            "reused_units": len(reused),
+            "removed_units": len(removed),
+            "affected_paths": sorted(affected),
+            "reused_paths": sorted(reused),
+            "removed_paths": sorted(removed),
+        }
 
         generation_id = self._store_generation(
             conn,
@@ -2343,6 +2398,7 @@ class CodeGraph:
         self._new_publication_token(conn)
         conn.commit()
         return {
+            "binding_resolution": binding_stats,
             "extraction_cache": cache_stats,
             "files_indexed": files_indexed,
             "symbols": symbols_added,
@@ -2362,8 +2418,12 @@ class CodeGraph:
             "schema_epoch": SCHEMA_EPOCH,
         }
 
-    def _resolve_rationale_assertions(self, conn: sqlite3.Connection) -> None:
+    def _resolve_rationale_assertions(
+        self, conn: sqlite3.Connection, selected_paths: set[str] | None = None
+    ) -> None:
         for row in conn.execute("SELECT * FROM rationale"):
+            if selected_paths is not None and row["path"] not in selected_paths:
+                continue
             occurrence = ev.get(conn, "occurrence", row["occurrence_id"])
             target = row["target_entity_id"]
             assertion = ev.assertion(
@@ -3235,13 +3295,25 @@ class CodeGraph:
 
     # ---- Edge resolution (A1/D4/G-B) ----
 
-    def _resolve_edges(self, conn: sqlite3.Connection) -> int:
+    def _resolve_edges(
+        self, conn: sqlite3.Connection, selected_paths: set[str] | None = None
+    ) -> int:
         """Filter structural applicability before assigning confidence. No global
         name fallback is permitted for the scoped programming languages.
         """
-        conn.execute("DELETE FROM edges")
-        conn.execute("DELETE FROM assertions")
-        conn.execute("UPDATE refs SET unresolved_reason = NULL")
+        if selected_paths is None:
+            conn.execute("DELETE FROM edges")
+            conn.execute("DELETE FROM assertions")
+            conn.execute("UPDATE refs SET unresolved_reason = NULL")
+            conn.execute("UPDATE import_bindings SET assertion_id=NULL")
+            conn.execute("UPDATE rationale SET assertion_id=NULL")
+        else:
+            for path in sorted(selected_paths):
+                conn.execute("DELETE FROM edges WHERE source_path=?", (path,))
+                conn.execute("DELETE FROM assertions WHERE path=?", (path,))
+                conn.execute("UPDATE refs SET unresolved_reason=NULL WHERE path=?", (path,))
+                conn.execute("UPDATE import_bindings SET assertion_id=NULL WHERE path=?", (path,))
+                conn.execute("UPDATE rationale SET assertion_id=NULL WHERE path=?", (path,))
         symbols: dict[tuple[str, str], list[dict[str, Any]]] = {}
         for row in conn.execute("SELECT * FROM symbols ORDER BY path, line_start, name, id"):
             item = dict(row)
@@ -3347,10 +3419,7 @@ class CodeGraph:
                     return found, None
             return [], "no_visible_target"
 
-        edges_added = 0
-        for ref in conn.execute(
-            "SELECT * FROM refs ORDER BY path, line, col, callee_name"
-        ).fetchall():
+        def resolve_reference(ref):
             context = json.loads(ref["binding"])
             relation = ref["relation"]
             receiver = context.get("receiver")
@@ -3458,7 +3527,7 @@ class CodeGraph:
                         reason=unresolved,
                     )
                     ev.put(conn, assertion, ref["path"])
-                continue
+                return
             effective_relation = relation
             if relation == "call" and all(c["kind"] in _CLASS_KINDS for c in candidates):
                 effective_relation = "construct"
@@ -3532,27 +3601,59 @@ class CodeGraph:
                     assertion_id,
                 ),
             )
-            edges_added += 1
+
+        def resolve_import(binding):
+            found, reason = import_target(binding)
+            description = json.loads(binding["description"])
+            target = found[0]["entity_id"] if found else None
+            assertion = ev.assertion(
+                binding["source_entity_id"],
+                target,
+                "import",
+                binding["evidence_id"],
+                "INFERRED" if found else "UNRESOLVED",
+                description["name"],
+                reason=None if found else reason,
+            )
+            ev.put(conn, assertion, binding["path"])
+            conn.execute(
+                "UPDATE import_bindings SET assertion_id=? WHERE occurrence_id=?",
+                (assertion["id"], binding["occurrence_id"]),
+            )
+
+        references_by_path: dict[str, list[sqlite3.Row]] = {}
+        for ref in conn.execute("SELECT * FROM refs ORDER BY path,line,col,callee_name"):
+            references_by_path.setdefault(ref["path"], []).append(ref)
+        imports_by_path: dict[str, list[dict[str, Any]]] = {}
         for group in import_bindings.values():
             for binding in group:
-                found, reason = import_target(binding)
-                description = json.loads(binding["description"])
-                target = found[0]["entity_id"] if found else None
-                assertion = ev.assertion(
-                    binding["source_entity_id"],
-                    target,
-                    "import",
-                    binding["evidence_id"],
-                    "INFERRED" if found else "UNRESOLVED",
-                    description["name"],
-                    reason=None if found else reason,
-                )
-                ev.put(conn, assertion, binding["path"])
-                conn.execute(
-                    "UPDATE import_bindings SET assertion_id=? WHERE occurrence_id=?",
-                    (assertion["id"], binding["occurrence_id"]),
-                )
-        return edges_added
+                imports_by_path.setdefault(binding["path"], []).append(binding)
+        paths = {
+            row[0]
+            for row in conn.execute("SELECT path FROM files UNION SELECT path FROM rationale")
+        }
+        paths |= references_by_path.keys() | imports_by_path.keys()
+        if selected_paths is not None:
+            paths &= selected_paths
+        for path in sorted(paths):
+            self._resolve_binding_unit(
+                conn,
+                path,
+                resolve_reference,
+                resolve_import,
+                references_by_path.get(path, []),
+                imports_by_path.get(path, []),
+            )
+        return conn.execute("SELECT COUNT(*) FROM edges").fetchone()[0]
+
+    def _resolve_binding_unit(
+        self, conn, path, resolve_reference, resolve_import, references, imports
+    ):
+        """Execute real binding for one path from the once-read ordered inputs."""
+        for ref in references:
+            resolve_reference(ref)
+        for binding in imports:
+            resolve_import(binding)
 
     @staticmethod
     def _enclosing_symbol(
