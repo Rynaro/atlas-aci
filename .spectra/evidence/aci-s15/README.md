@@ -59,3 +59,10 @@ charge is649.735072s, including the preserved first failure.
 No new size/performance ceiling, improvement ratio or eviction policy is claimed.
 The first assembly helper lacked uv in PATH and failed before fingerprinting;
 its error/exit remains preserved. Correct PATH execution and verifier then pass.
+
+After independent final raw audit, root explicitly authorized removal of the four
+closed S15 generated .atlas directories and the temporary full export. Its exact
+size/SHA was streamed and checked again before deletion; contained nonsymlink
+roots and post-cleanup capacity are recorded in closed-measurement-cleanup.json.
+Source parents/.git, compact graphs, all20 partitions, original commands/timings,
+failed-attempt diagnostics, native assets and durable evidence remain intact.

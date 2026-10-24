@@ -1,0 +1,51 @@
+{
+  "authorization": "Root exact five closed S15 measurement scratch removals after independent final audit; no source/product change",
+  "candidate_inventory": ".spectra/evidence/aci-s15/closed-measurement-cleanup-candidates.json",
+  "disk_before": {
+    "total": 245107195904,
+    "used": 237283835904,
+    "free": 7823360000
+  },
+  "directories": [
+    {
+      "path": "/tmp/aci-s15-probe-inputs/solidus/.atlas",
+      "allocated_kib": 853732,
+      "real_contained": true,
+      "is_symlink": false,
+      "deleted": true
+    },
+    {
+      "path": "/tmp/aci-s15-probe-inputs/spree/.atlas",
+      "allocated_kib": 436008,
+      "real_contained": true,
+      "is_symlink": false,
+      "deleted": true
+    },
+    {
+      "path": "/tmp/aci-s15-retry-probe-inputs/solidus/.atlas",
+      "allocated_kib": 853732,
+      "real_contained": true,
+      "is_symlink": false,
+      "deleted": true
+    },
+    {
+      "path": "/tmp/aci-s15-retry-probe-inputs/spree/.atlas",
+      "allocated_kib": 1364000,
+      "real_contained": true,
+      "is_symlink": false,
+      "deleted": true
+    }
+  ],
+  "full_export": {
+    "path": "/tmp/aci-s15-retry-spree-export.jsonl",
+    "bytes": 651845246,
+    "sha256": "fc07224ccad932343103b86cc58e5617c568e473fd1c57bf2d7bd6f49411a539",
+    "verified_against": ".spectra/evidence/aci-s15/probe-attempt2/spree-export-size.json",
+    "deleted": true
+  },
+  "disk_after": {
+    "total": 245107195904,
+    "used": 232983035904,
+    "free": 12124160000
+  }
+}
