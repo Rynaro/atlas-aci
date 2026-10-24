@@ -1,0 +1,18 @@
+{
+  "slice_id": "ACI-S08",
+  "criteria_changed": false,
+  "authorization": "Root exact before/after CI inventory-only remediation after real Linux hostUID denial; recorded before edit",
+  "additional_paths": [],
+  "existing_path": ".github/workflows/ci.yml",
+  "allowed_steps": [
+    "Snapshot .atlas before serve",
+    "Confirm zero writes under .atlas (AC-H-16)"
+  ],
+  "allowed_delta": "Shared task-temp Python full inventory, same image/defaultUSER10001, ro/offline mounts, explicit scandir fatal errors, SHA+all path/type/mode/uid/gid/size/mtime_ns, complete-only JSON; strict shells; no modes/rootreader/skip/other logic changes",
+  "failed_ci": {
+    "run": 40131848502,
+    "job": 120985025373,
+    "head": "1fc05a823b921bcd29651030d748e9e6374c822e"
+  },
+  "at": "2026-10-24T21:04:12.067664+00:00"
+}

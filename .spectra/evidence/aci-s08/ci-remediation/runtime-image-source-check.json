@@ -1,0 +1,30 @@
+{
+  "command": [
+    "docker",
+    "run",
+    "--rm",
+    "--read-only",
+    "--network",
+    "none",
+    "--entrypoint",
+    "python",
+    "atlas-aci-s08-footprint",
+    "-c",
+    "import atlas_aci,hashlib,json,os;from pathlib import Path;names={'mcp-server/src/atlas_aci/codegraph.py': 'codegraph.py', 'mcp-server/src/atlas_aci/storage/evidence.py': 'storage/evidence.py', 'mcp-server/src/atlas_aci/providers/python_imports.py': 'providers/python_imports.py', 'mcp-server/src/atlas_aci/indexing/extraction_cache.py': 'indexing/extraction_cache.py', 'mcp-server/src/atlas_aci/resolvers/dependencies.py': 'resolvers/dependencies.py', 'mcp-server/src/atlas_aci/extractors/rust.py': 'extractors/rust.py', 'mcp-server/src/atlas_aci/storage/snapshots.py': 'storage/snapshots.py', 'mcp-server/src/atlas_aci/server.py': 'server.py', 'mcp-server/src/atlas_aci/tools/view_file.py': 'tools/view_file.py'};print(json.dumps({'uid':os.geteuid(),'sources':{p:hashlib.sha256((Path(atlas_aci.__file__).parent/name).read_bytes()).hexdigest() for p,name in names.items()}}))"
+  ],
+  "exit_code": 0,
+  "image_id": "sha256:da089d0b288e9a77ea14434dfffdc86ee1278916ac502cd35a56a19b64290858",
+  "default_uid": 10001,
+  "all_nine_runtime_sources_unchanged": true,
+  "sources": {
+    "mcp-server/src/atlas_aci/codegraph.py": "30d0c8d718ed0115bc7b88051bd1ca7ba358665fabfe35b9a57029de2ebb0183",
+    "mcp-server/src/atlas_aci/storage/evidence.py": "65d1ce7d43df6d652c640229407ab0211d5bb1f4c766f1e694e2979d516a3525",
+    "mcp-server/src/atlas_aci/providers/python_imports.py": "de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014",
+    "mcp-server/src/atlas_aci/indexing/extraction_cache.py": "08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2",
+    "mcp-server/src/atlas_aci/resolvers/dependencies.py": "0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6",
+    "mcp-server/src/atlas_aci/extractors/rust.py": "28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a",
+    "mcp-server/src/atlas_aci/storage/snapshots.py": "67d3d7c3313b64315fa4bb2388cacdf30aae79b701ff0fc6c1b5c741f75ca616",
+    "mcp-server/src/atlas_aci/server.py": "f9a1f820f685205569ba6b1f5026ed982b7123bcb91cc33237805fcc60f43970",
+    "mcp-server/src/atlas_aci/tools/view_file.py": "31871a9d7594091a52790feac3a5746039cc8c939c7c3f7116e99a9f1f5e48e3"
+  }
+}

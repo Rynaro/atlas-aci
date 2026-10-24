@@ -1,0 +1,50 @@
+{
+  "reason": "Actual extracted raw scripts have original terminal blank lines; preserve exact bytes losslessly instead of sanitizing staged whitespace. Initial staged diff-check2, then exact gzip packaging.",
+  "files": [
+    {
+      "logical_path": ".spectra/evidence/aci-s08/ci-remediation/step-1.sh",
+      "compressed_path": ".spectra/evidence/aci-s08/ci-remediation/step-1.sh.gz",
+      "uncompressed_bytes": 522,
+      "uncompressed_sha256": "c49911de9c461bc9e0a5449951f29f19c5e3dc98dc056a5955cac662560914f8",
+      "compressed_bytes": 306,
+      "compressed_sha256": "c70aec8592126ff40d818a6c791f3379d2578b544fa63ec065f4ac543bda3654",
+      "gzip_mtime": 0
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/ci-remediation/step-2.sh",
+      "compressed_path": ".spectra/evidence/aci-s08/ci-remediation/step-2.sh.gz",
+      "uncompressed_bytes": 1940,
+      "uncompressed_sha256": "40bccf4a112d4c81711b676f29c6093ee84363a9fce1c11cb5c68a4aebc42925",
+      "compressed_bytes": 919,
+      "compressed_sha256": "b2252aed1e4f55c9a7c0f97b786a0ec790f31c56358f91fc0de94ce009fd6447",
+      "gzip_mtime": 0
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/ci-remediation/step-3.sh",
+      "compressed_path": ".spectra/evidence/aci-s08/ci-remediation/step-3.sh.gz",
+      "uncompressed_bytes": 1260,
+      "uncompressed_sha256": "5e2f551f3dc0c5f8c6703499cba91c6efae097d7c220280f7c31d030b973a844",
+      "compressed_bytes": 537,
+      "compressed_sha256": "61367ef6f75b0c7b56721a60b1be1f04b2a19d1b46a527cca6469331b5afcef8",
+      "gzip_mtime": 0
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/ci-remediation/step-4.sh",
+      "compressed_path": ".spectra/evidence/aci-s08/ci-remediation/step-4.sh.gz",
+      "uncompressed_bytes": 583,
+      "uncompressed_sha256": "78b4dc0d74ad2c49ba9e608fbabebd1fb4dd74dcc4804c767a70830ce0fe6c0a",
+      "compressed_bytes": 290,
+      "compressed_sha256": "785f3436b0689c026f561c3ee9f481bb97778e64cced186c791d0434f0fefbce",
+      "gzip_mtime": 0
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/ci-remediation/step-5.sh",
+      "compressed_path": ".spectra/evidence/aci-s08/ci-remediation/step-5.sh.gz",
+      "uncompressed_bytes": 1650,
+      "uncompressed_sha256": "966a32e469e6b417e137bf96089d96250ed3cfb380a692baf98145acd84261f2",
+      "compressed_bytes": 763,
+      "compressed_sha256": "b3bc5281d47f4a4eb59cfb6f8547887cbc8fb06d1888820a8db2beaf92398ca1",
+      "gzip_mtime": 0
+    }
+  ]
+}

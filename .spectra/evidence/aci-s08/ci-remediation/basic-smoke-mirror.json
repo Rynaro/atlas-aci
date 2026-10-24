@@ -1,0 +1,338 @@
+{
+  "workflow_sha256": "8889a7e4ed17bd2908d7ac18ca130b82c4ee12668e0a0c78cf7e8923942c1417",
+  "replacements": {
+    "atlas-aci-ci-smoketest": "atlas-aci-s08-footprint",
+    "/tmp/smoke-repo": "/private/tmp/aci-s08-ci-smoke-atvztacx/repo",
+    "/tmp/atlas-inventory.py": "/private/tmp/aci-s08-ci-smoke-atvztacx/inventory.py",
+    "/tmp/atlas-before.json": "/private/tmp/aci-s08-ci-smoke-atvztacx/before.json",
+    "/tmp/atlas-after.json": "/private/tmp/aci-s08-ci-smoke-atvztacx/after.json",
+    "/tmp/mcp-in": "/private/tmp/aci-s08-ci-smoke-atvztacx/mcp-in",
+    "/tmp/serve-nomemex.log": "/private/tmp/aci-s08-ci-smoke-atvztacx/serve-nomemex.log",
+    "/tmp/serve.log": "/private/tmp/aci-s08-ci-smoke-atvztacx/serve.log",
+    "atlas-memex-ci": "aci-s08-ci-memex-e751d8de70e2",
+    "atlas-serve-smoketest-nomemex": "aci-s08-ci-nomemex-e751d8de70e2",
+    "atlas-serve-smoketest": "aci-s08-ci-explicit-e751d8de70e2"
+  },
+  "fixture_root": "/private/tmp/aci-s08-ci-smoke-atvztacx",
+  "runtime_sources": {
+    "mcp-server/src/atlas_aci/codegraph.py": "30d0c8d718ed0115bc7b88051bd1ca7ba358665fabfe35b9a57029de2ebb0183",
+    "mcp-server/src/atlas_aci/storage/evidence.py": "65d1ce7d43df6d652c640229407ab0211d5bb1f4c766f1e694e2979d516a3525",
+    "mcp-server/src/atlas_aci/providers/python_imports.py": "de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014",
+    "mcp-server/src/atlas_aci/indexing/extraction_cache.py": "08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2",
+    "mcp-server/src/atlas_aci/resolvers/dependencies.py": "0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6",
+    "mcp-server/src/atlas_aci/extractors/rust.py": "28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a",
+    "mcp-server/src/atlas_aci/storage/snapshots.py": "67d3d7c3313b64315fa4bb2388cacdf30aae79b701ff0fc6c1b5c741f75ca616",
+    "mcp-server/src/atlas_aci/server.py": "f9a1f820f685205569ba6b1f5026ed982b7123bcb91cc33237805fcc60f43970",
+    "mcp-server/src/atlas_aci/tools/view_file.py": "31871a9d7594091a52790feac3a5746039cc8c939c7c3f7116e99a9f1f5e48e3"
+  },
+  "steps": [
+    {
+      "name": "Build a tiny fixture repo and index it (writable mount)",
+      "command": [
+        "/bin/bash",
+        "/private/tmp/atlas-aci-aci-s08/.spectra/evidence/aci-s08/ci-remediation/step-1.sh"
+      ],
+      "script_sha256": "c49911de9c461bc9e0a5449951f29f19c5e3dc98dc056a5955cac662560914f8",
+      "exit_code": 0,
+      "elapsed_seconds": 0.3044268329977058,
+      "stdout": "",
+      "stderr": "2026-10-24T21:06:57.230186Z [info     ] index_start                    langs=['rust', 'ruby', 'python', 'typescript', 'javascript', 'scss', 'html', 'yaml', 'markdown', 'bash'] repo=/repo since=None\n2026-10-24T21:06:57.310935Z [info     ] index_done                     binding_resolution={'mode': 'full', 'reason': 'full_requested_or_incompatible_inputs', 'affected_units': 1, 'reused_units': 0, 'removed_units': 0, 'affected_paths': ['app/hello.rb'], 'reused_paths': [], 'removed_paths': []} edges=0 extraction_cache={'disk_hits': 0, 'misses': 1, 'miss_reasons': {'missing': 1}, 'write_failures': 0, 'predecessor_reused': 0, 'parser_invocations': 1} extraction_state=complete files_failed=0 files_indexed=1 files_removed=0 files_skipped=0 rationale=0 refs=0 schema_epoch=7 snapshot_id=ba09b70f5642278867543c14efdade761415df49d0d63ed91deab80055892700 symbols=2 unsupported_skipped={}\n"
+    },
+    {
+      "name": "Snapshot .atlas before serve",
+      "command": [
+        "/bin/bash",
+        "/private/tmp/atlas-aci-aci-s08/.spectra/evidence/aci-s08/ci-remediation/step-2.sh"
+      ],
+      "script_sha256": "40bccf4a112d4c81711b676f29c6093ee84363a9fce1c11cb5c68a4aebc42925",
+      "exit_code": 0,
+      "elapsed_seconds": 0.15004587499424815,
+      "stdout": "[{\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792876017311788503, \"path\": \".\", \"sha256\": null, \"size\": 192, \"type\": \"directory\", \"uid\": 10001}, {\"gid\": 10001, \"mode\": 33188, \"mtime_ns\": 1792876017232135354, \"path\": \".index.lock\", \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"size\": 0, \"type\": \"file\", \"uid\": 10001}, {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792876017302135913, \"path\": \"extraction-cache\", \"sha256\": null, \"size\": 96, \"type\": \"directory\", \"uid\": 10001}, {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792876017302240330, \"path\": \"extraction-cache/v1\", \"sha256\": null, \"size\": 96, \"type\": \"directory\", \"uid\": 10001}, {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792876017302792166, \"path\": \"extraction-cache/v1/3c\", \"sha256\": null, \"size\": 96, \"type\": \"directory\", \"uid\": 10001}, {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792876017302599457, \"path\": \"extraction-cache/v1/3c/3c5a1f2938b953b54b09ac82206413b6d1a29b33ad68b538e411f2f73e0559bf.json\", \"sha256\": \"5115164e7391a8ae8e2b29e63a02444500f8ec31f9c334882bf89509e7b8251e\", \"size\": 7505, \"type\": \"file\", \"uid\": 10001}, {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792876017309762951, \"path\": \"graph.7.db\", \"sha256\": \"6c216841289dfa824f30c472bfb4e4e83e602a8256c0aedca933389328efa2d6\", \"size\": 172032, \"type\": \"file\", \"uid\": 10001}, {\"gid\": 10001, \"mode\": 16832, \"mtime_ns\": 1792876017311304459, \"path\": \"source-snapshots\", \"sha256\": null, \"size\": 160, \"type\": \"directory\", \"uid\": 10001}, {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792876017311190125, \"path\": \"source-snapshots/catalog.json\", \"sha256\": \"c98fd2ae75ccec9a740da1591c0e677b6d24785a4864bb1c7ce3907d12be71b9\", \"size\": 68, \"type\": \"file\", \"uid\": 10001}, {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792876017306760144, \"path\": \"source-snapshots/manifest.ba09b70f5642278867543c14efdade761415df49d0d63ed91deab80055892700.json\", \"sha256\": \"ba09b70f5642278867543c14efdade761415df49d0d63ed91deab80055892700\", \"size\": 2277, \"type\": \"file\", \"uid\": 10001}, {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792876017305905223, \"path\": \"source-snapshots/pack.d7e62aea883b19df12d5cc612f5d54f027c5a71ac21ccb9382f93b1f0bbc5438.bin\", \"sha256\": \"d7e62aea883b19df12d5cc612f5d54f027c5a71ac21ccb9382f93b1f0bbc5438\", \"size\": 54, \"type\": \"file\", \"uid\": 10001}]\n",
+      "stderr": ""
+    },
+    {
+      "name": "serve under --read-only :ro must start and stay alive (AC-H-16)",
+      "command": [
+        "/bin/bash",
+        "/private/tmp/atlas-aci-aci-s08/.spectra/evidence/aci-s08/ci-remediation/step-3.sh"
+      ],
+      "script_sha256": "5e2f551f3dc0c5f8c6703499cba91c6efae097d7c220280f7c31d030b973a844",
+      "exit_code": 0,
+      "elapsed_seconds": 3.2274952919979114,
+      "stdout": "serve stayed alive under --read-only :ro (expected).\n2026-10-24T21:06:57.831584Z [info     ] server_starting                memex=/memex repo=/repo\n",
+      "stderr": ""
+    },
+    {
+      "name": "Confirm zero writes under .atlas (AC-H-16)",
+      "command": [
+        "/bin/bash",
+        "/private/tmp/atlas-aci-aci-s08/.spectra/evidence/aci-s08/ci-remediation/step-4.sh"
+      ],
+      "script_sha256": "78b4dc0d74ad2c49ba9e608fbabebd1fb4dd74dcc4804c767a70830ce0fe6c0a",
+      "exit_code": 0,
+      "elapsed_seconds": 0.14122904199757613,
+      "stdout": "Zero writes under .atlas confirmed.\n",
+      "stderr": ""
+    },
+    {
+      "name": "serve WITHOUT --memex-root override must still stay alive (regression guard)",
+      "command": [
+        "/bin/bash",
+        "/private/tmp/atlas-aci-aci-s08/.spectra/evidence/aci-s08/ci-remediation/step-5.sh"
+      ],
+      "script_sha256": "966a32e469e6b417e137bf96089d96250ed3cfb380a692baf98145acd84261f2",
+      "exit_code": 0,
+      "elapsed_seconds": 3.195823208996444,
+      "stdout": "serve stayed alive without --memex-root under --read-only :ro (expected).\n2026-10-24T21:07:01.190107Z [warning  ] memex_root_not_writable        error=\"[Errno 30] Read-only file system: '/repo/.atlas/memex'\" memex_root=/repo/.atlas/memex\n2026-10-24T21:07:01.190514Z [warning  ] memex_root_not_writable        error=\"[Errno 30] Read-only file system: '/repo/.atlas/memex'\" memex_root=/repo/.atlas/memex\n2026-10-24T21:07:01.190626Z [info     ] server_starting                memex=/repo/.atlas/memex repo=/repo\n",
+      "stderr": ""
+    }
+  ],
+  "image": "atlas-aci-s08-footprint",
+  "before_inventory": [
+    {
+      "gid": 10001,
+      "mode": 16877,
+      "mtime_ns": 1792876017311788503,
+      "path": ".",
+      "sha256": null,
+      "size": 192,
+      "type": "directory",
+      "uid": 10001
+    },
+    {
+      "gid": 10001,
+      "mode": 33188,
+      "mtime_ns": 1792876017232135354,
+      "path": ".index.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "type": "file",
+      "uid": 10001
+    },
+    {
+      "gid": 10001,
+      "mode": 16877,
+      "mtime_ns": 1792876017302135913,
+      "path": "extraction-cache",
+      "sha256": null,
+      "size": 96,
+      "type": "directory",
+      "uid": 10001
+    },
+    {
+      "gid": 10001,
+      "mode": 16877,
+      "mtime_ns": 1792876017302240330,
+      "path": "extraction-cache/v1",
+      "sha256": null,
+      "size": 96,
+      "type": "directory",
+      "uid": 10001
+    },
+    {
+      "gid": 10001,
+      "mode": 16877,
+      "mtime_ns": 1792876017302792166,
+      "path": "extraction-cache/v1/3c",
+      "sha256": null,
+      "size": 96,
+      "type": "directory",
+      "uid": 10001
+    },
+    {
+      "gid": 10001,
+      "mode": 33152,
+      "mtime_ns": 1792876017302599457,
+      "path": "extraction-cache/v1/3c/3c5a1f2938b953b54b09ac82206413b6d1a29b33ad68b538e411f2f73e0559bf.json",
+      "sha256": "5115164e7391a8ae8e2b29e63a02444500f8ec31f9c334882bf89509e7b8251e",
+      "size": 7505,
+      "type": "file",
+      "uid": 10001
+    },
+    {
+      "gid": 10001,
+      "mode": 33152,
+      "mtime_ns": 1792876017309762951,
+      "path": "graph.7.db",
+      "sha256": "6c216841289dfa824f30c472bfb4e4e83e602a8256c0aedca933389328efa2d6",
+      "size": 172032,
+      "type": "file",
+      "uid": 10001
+    },
+    {
+      "gid": 10001,
+      "mode": 16832,
+      "mtime_ns": 1792876017311304459,
+      "path": "source-snapshots",
+      "sha256": null,
+      "size": 160,
+      "type": "directory",
+      "uid": 10001
+    },
+    {
+      "gid": 10001,
+      "mode": 33152,
+      "mtime_ns": 1792876017311190125,
+      "path": "source-snapshots/catalog.json",
+      "sha256": "c98fd2ae75ccec9a740da1591c0e677b6d24785a4864bb1c7ce3907d12be71b9",
+      "size": 68,
+      "type": "file",
+      "uid": 10001
+    },
+    {
+      "gid": 10001,
+      "mode": 33152,
+      "mtime_ns": 1792876017306760144,
+      "path": "source-snapshots/manifest.ba09b70f5642278867543c14efdade761415df49d0d63ed91deab80055892700.json",
+      "sha256": "ba09b70f5642278867543c14efdade761415df49d0d63ed91deab80055892700",
+      "size": 2277,
+      "type": "file",
+      "uid": 10001
+    },
+    {
+      "gid": 10001,
+      "mode": 33152,
+      "mtime_ns": 1792876017305905223,
+      "path": "source-snapshots/pack.d7e62aea883b19df12d5cc612f5d54f027c5a71ac21ccb9382f93b1f0bbc5438.bin",
+      "sha256": "d7e62aea883b19df12d5cc612f5d54f027c5a71ac21ccb9382f93b1f0bbc5438",
+      "size": 54,
+      "type": "file",
+      "uid": 10001
+    }
+  ],
+  "after_inventory": [
+    {
+      "gid": 10001,
+      "mode": 16877,
+      "mtime_ns": 1792876017311788503,
+      "path": ".",
+      "sha256": null,
+      "size": 192,
+      "type": "directory",
+      "uid": 10001
+    },
+    {
+      "gid": 10001,
+      "mode": 33188,
+      "mtime_ns": 1792876017232135354,
+      "path": ".index.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "type": "file",
+      "uid": 10001
+    },
+    {
+      "gid": 10001,
+      "mode": 16877,
+      "mtime_ns": 1792876017302135913,
+      "path": "extraction-cache",
+      "sha256": null,
+      "size": 96,
+      "type": "directory",
+      "uid": 10001
+    },
+    {
+      "gid": 10001,
+      "mode": 16877,
+      "mtime_ns": 1792876017302240330,
+      "path": "extraction-cache/v1",
+      "sha256": null,
+      "size": 96,
+      "type": "directory",
+      "uid": 10001
+    },
+    {
+      "gid": 10001,
+      "mode": 16877,
+      "mtime_ns": 1792876017302792166,
+      "path": "extraction-cache/v1/3c",
+      "sha256": null,
+      "size": 96,
+      "type": "directory",
+      "uid": 10001
+    },
+    {
+      "gid": 10001,
+      "mode": 33152,
+      "mtime_ns": 1792876017302599457,
+      "path": "extraction-cache/v1/3c/3c5a1f2938b953b54b09ac82206413b6d1a29b33ad68b538e411f2f73e0559bf.json",
+      "sha256": "5115164e7391a8ae8e2b29e63a02444500f8ec31f9c334882bf89509e7b8251e",
+      "size": 7505,
+      "type": "file",
+      "uid": 10001
+    },
+    {
+      "gid": 10001,
+      "mode": 33152,
+      "mtime_ns": 1792876017309762951,
+      "path": "graph.7.db",
+      "sha256": "6c216841289dfa824f30c472bfb4e4e83e602a8256c0aedca933389328efa2d6",
+      "size": 172032,
+      "type": "file",
+      "uid": 10001
+    },
+    {
+      "gid": 10001,
+      "mode": 16832,
+      "mtime_ns": 1792876017311304459,
+      "path": "source-snapshots",
+      "sha256": null,
+      "size": 160,
+      "type": "directory",
+      "uid": 10001
+    },
+    {
+      "gid": 10001,
+      "mode": 33152,
+      "mtime_ns": 1792876017311190125,
+      "path": "source-snapshots/catalog.json",
+      "sha256": "c98fd2ae75ccec9a740da1591c0e677b6d24785a4864bb1c7ce3907d12be71b9",
+      "size": 68,
+      "type": "file",
+      "uid": 10001
+    },
+    {
+      "gid": 10001,
+      "mode": 33152,
+      "mtime_ns": 1792876017306760144,
+      "path": "source-snapshots/manifest.ba09b70f5642278867543c14efdade761415df49d0d63ed91deab80055892700.json",
+      "sha256": "ba09b70f5642278867543c14efdade761415df49d0d63ed91deab80055892700",
+      "size": 2277,
+      "type": "file",
+      "uid": 10001
+    },
+    {
+      "gid": 10001,
+      "mode": 33152,
+      "mtime_ns": 1792876017305905223,
+      "path": "source-snapshots/pack.d7e62aea883b19df12d5cc612f5d54f027c5a71ac21ccb9382f93b1f0bbc5438.bin",
+      "sha256": "d7e62aea883b19df12d5cc612f5d54f027c5a71ac21ccb9382f93b1f0bbc5438",
+      "size": 54,
+      "type": "file",
+      "uid": 10001
+    }
+  ],
+  "complete_inventory_equal": true,
+  "private_snapshot_modes_unchanged": true,
+  "passed": true,
+  "cleanup": [
+    {
+      "container": "aci-s08-ci-explicit-e751d8de70e2",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "container": "aci-s08-ci-nomemex-e751d8de70e2",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "volume": "aci-s08-ci-memex-e751d8de70e2",
+      "exit_code": 0,
+      "stdout": "aci-s08-ci-memex-e751d8de70e2\n",
+      "stderr": ""
+    }
+  ]
+}

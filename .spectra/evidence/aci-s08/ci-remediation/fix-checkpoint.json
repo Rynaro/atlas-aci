@@ -1,0 +1,15 @@
+{
+  "workflow_sha256": "8889a7e4ed17bd2908d7ac18ca130b82c4ee12668e0a0c78cf7e8923942c1417",
+  "shared_helper_sha256": "6e87b0fb1abcddd7e92ce05c44596b64db7cc56fa8abc3395d5a4a0ffa7733f4",
+  "basic_smoke_steps": 5,
+  "basic_smoke_all_actual_exits_zero": true,
+  "complete_inventory_entries": 11,
+  "native_mirror_passed": 19,
+  "native_mirror_exit_code": 0,
+  "native_required_skips": 0,
+  "runtime_nine_sources_unchanged": true,
+  "failed_ci_log_provenance": ".spectra/evidence/aci-s08/ci-remediation/failed-job-provenance.json",
+  "previous_complete_sha256": "47eb2248bbfa3def90f0c2913d9637d2b5423e8d1ff29803f185e3c49b860dfc",
+  "receipt_current_status": "IN_PROGRESS",
+  "producer_measurements_and_source_gates_retained": "No product source changed; previous581full/64x2/freshPASS remain source-bound valid."
+}
