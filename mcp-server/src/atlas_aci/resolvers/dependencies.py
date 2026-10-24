@@ -1,0 +1,262 @@
+"""Complete language buckets and per-file binding witnesses, with full fallback.
+
+These are owner-local coherence witnesses, not authenticity proofs. No resolved
+output participates in another unit's dependency inputs in this profile.
+"""
+
+from __future__ import annotations
+
+import hashlib
+import json
+import sqlite3
+from typing import Any
+
+from atlas_aci.storage import evidence as ev
+
+FORMAT = "atlas-binding-dependencies.v1"
+PROFILE = "complete-language-buckets.v1"
+KEY = "binding_dependencies"
+LANGUAGES = frozenset(
+    {"python", "ruby", "javascript", "typescript", "bash", "scss", "html", "yaml", "markdown"}
+)
+
+
+def digest(value: Any) -> str:
+    return hashlib.sha256(ev.canonical(value).encode()).hexdigest()
+
+
+def rows(conn, table, exclude=(), where="", parameters=()):
+    result = [
+        {k: v for k, v in dict(row).items() if k not in {"id", *exclude}}
+        for row in conn.execute("SELECT * FROM " + table + where, parameters)
+    ]
+    return sorted(result, key=ev.canonical)
+
+
+def outputs(conn: sqlite3.Connection, path: str) -> str:
+    return digest(
+        {
+            "edges": rows(conn, "edges", where=" WHERE source_path=?", parameters=(path,)),
+            "assertions": [
+                json.loads(row[0])
+                for row in conn.execute(
+                    "SELECT payload FROM assertions WHERE path=? ORDER BY id", (path,)
+                )
+            ],
+            "refs": rows(conn, "refs", where=" WHERE path=?", parameters=(path,)),
+            "imports": rows(conn, "import_bindings", where=" WHERE path=?", parameters=(path,)),
+            "rationale": rows(conn, "rationale", where=" WHERE path=?", parameters=(path,)),
+        }
+    )
+
+
+def normalized(records, exclude=()):
+    return sorted(
+        [
+            {key: value for key, value in row.items() if key not in {"id", *exclude}}
+            for row in records
+        ],
+        key=ev.canonical,
+    )
+
+
+def grouped(records, column="path"):
+    result = {}
+    for row in records:
+        result.setdefault(row[column], []).append(row)
+    return result
+
+
+def snapshot(conn: sqlite3.Connection) -> dict[str, dict[str, str]]:
+    units = {row["path"]: row["lang"] for row in conn.execute("SELECT path,lang FROM files")}
+    if any(not ev.relative_path(path) or lang not in LANGUAGES for path, lang in units.items()):
+        raise ValueError("unsupported_dependency_language")
+    # Each raw/output table is read once. Project and sort within each path
+    # exactly as the prior per-path SQL implementation did, retaining its hashes.
+    raw = {
+        table: [dict(row) for row in conn.execute("SELECT * FROM " + table)]
+        for table in ("refs", "import_bindings", "rationale", "edges")
+    }
+    per_path = {
+        table: grouped(records, "source_path" if table == "edges" else "path")
+        for table, records in raw.items()
+    }
+    assertions: dict[str, list[dict[str, Any]]] = {}
+    for row in conn.execute("SELECT path,payload FROM assertions ORDER BY id"):
+        assertions.setdefault(row["path"], []).append(json.loads(row["payload"]))
+    symbols = rows(conn, "symbols", ("occurrence_id",))
+    blockers = rows(conn, "assignment_targets", ("entity_id", "occurrence_id", "evidence_id"))
+    imports = normalized(
+        raw["import_bindings"], ("source_entity_id", "occurrence_id", "evidence_id", "assertion_id")
+    )
+    observation_row = conn.execute(
+        "SELECT value FROM manifest WHERE key='source_observations'"
+    ).fetchone()
+    observations = json.loads(observation_row[0]) if observation_row else []
+    stale = sorted(
+        {
+            (r["row"]["lang"], r["row"]["name"])
+            for h in observations
+            if h["type"] == "history"
+            for r in h["records"]
+            if r["type"] == "projection"
+            and r["table"] == "symbols"
+            and r["row"]["path"] == h["path"]
+        }
+    )
+    buckets = {}
+    for lang in set(units.values()):
+        buckets[lang] = digest(
+            {
+                "symbols": [r for r in symbols if r["lang"] == lang],
+                "blockers": [r for r in blockers if units.get(r["path"]) == lang],
+                "imports": [r for r in imports if r["lang"] == lang],
+                "python_paths": sorted(
+                    path for path, language in units.items() if language == "python"
+                )
+                if lang == "python"
+                else [],
+                "stale_names": [name for language, name in stale if language == lang],
+            }
+        )
+    result = {}
+    for path, lang in sorted(units.items()):
+        refs = per_path["refs"].get(path, [])
+        local_imports = per_path["import_bindings"].get(path, [])
+        rationale = per_path["rationale"].get(path, [])
+        result[path] = {
+            "language": lang,
+            "local": digest(
+                {
+                    "refs": normalized(refs, ("unresolved_reason",)),
+                    "imports": normalized(local_imports, ("assertion_id",)),
+                    "rationale": normalized(rationale, ("assertion_id",)),
+                }
+            ),
+            "bucket": buckets[lang],
+            "output": digest(
+                {
+                    "edges": normalized(per_path["edges"].get(path, [])),
+                    "assertions": assertions.get(path, []),
+                    "refs": normalized(refs),
+                    "imports": normalized(local_imports),
+                    "rationale": normalized(rationale),
+                }
+            ),
+        }
+    return result
+
+
+def profile(base: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "format": FORMAT,
+        "profile": PROFILE,
+        "schema": base["schema"],
+        "producer": base["producer"],
+        "configuration": base["configuration"],
+    }
+
+
+def witness(conn: sqlite3.Connection, base: dict[str, Any]) -> dict[str, Any]:
+    return {
+        **profile(base),
+        "units": [{"path": path, **unit} for path, unit in snapshot(conn).items()],
+    }
+
+
+def plan(previous: Any, before: dict | None, current: dict, base: dict, incremental: bool):
+    """Return selected/removed/reused paths; any untrusted predecessor is full."""
+    all_paths = set(current)
+    old_paths = set(before or {})
+
+    def full(reason):
+        return all_paths, old_paths - all_paths, set(), "full", reason
+
+    if not incremental:
+        return full("full_requested_or_incompatible_inputs")
+    if previous is None:
+        return full("missing_witness")
+    if before is None:
+        return full("unknown_dependency_inputs")
+    try:
+        if not isinstance(previous, dict) or set(previous) != {*profile(base), "units"}:
+            raise ValueError("closed witness header")
+        if ev.canonical({k: v for k, v in previous.items() if k != "units"}) != ev.canonical(
+            profile(base)
+        ):
+            return full("incompatible_witness_profile")
+        entries = previous["units"]
+        if not isinstance(entries, list):
+            raise ValueError("unit list")
+        seen = {}
+        for row in entries:
+            if not isinstance(row, dict) or set(row) != {
+                "path",
+                "language",
+                "local",
+                "bucket",
+                "output",
+            }:
+                raise ValueError("closed unit")
+            path = row["path"]
+            if (
+                not ev.relative_path(path)
+                or path in seen
+                or row["language"] not in LANGUAGES
+                or not all(ev.hash_value(row[k]) for k in ("local", "bucket", "output"))
+            ):
+                raise ValueError("typed unique unit")
+            seen[path] = {k: v for k, v in row.items() if k != "path"}
+        if list(seen) != sorted(seen) or seen != before:
+            raise ValueError("complete observed predecessor coverage")
+        reused = {
+            path
+            for path in all_paths & old_paths
+            if all(current[path][k] == before[path][k] for k in ("language", "local", "bucket"))
+        }
+        if any(current[path]["output"] != before[path]["output"] for path in reused):
+            return full("unavailable_prior_outputs")
+        return (
+            all_paths - reused,
+            old_paths - all_paths,
+            reused,
+            "affected",
+            "complete_dependency_match",
+        )
+    except (KeyError, TypeError, ValueError):
+        return full("invalid_witness")
+
+
+def read(conn):
+    row = conn.execute("SELECT value FROM manifest WHERE key=?", (KEY,)).fetchone()
+    if row is None:
+        return None
+    try:
+        return json.loads(row[0])
+    except (ValueError, TypeError):
+        return {}  # Invalid metadata is distinct from absence and still full-falls back.
+
+
+def validate_outputs(conn: sqlite3.Connection) -> None:
+    """Check the raw reference's reason against its actual canonical result.
+
+    The graph validator supplies all other projection/link completeness checks;
+    a resolved reference may not retain an unrelated diagnostic reason.
+    """
+    by_evidence: dict[str, list[dict[str, Any]]] = {}
+    for row in conn.execute("SELECT payload FROM assertions"):
+        item = json.loads(row[0])
+        by_evidence.setdefault(item["evidence_id"], []).append(item)
+    for ref in conn.execute("SELECT * FROM refs"):
+        matches = [
+            a
+            for a in by_evidence.get(ref["evidence_id"], [])
+            if a["source_entity_id"] == ref["source_entity_id"]
+            and a["raw_target"] == ref["callee_name"]
+        ]
+        if len(matches) != 1:
+            raise ValueError("Incomplete raw reference result")
+        assertion = matches[0]
+        reason = assertion["unresolved_reason"] if assertion["resolution"] == "UNRESOLVED" else None
+        if ref["unresolved_reason"] != reason:
+            raise ValueError("Reference diagnostic contradicts binding output")

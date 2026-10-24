@@ -1,0 +1,134 @@
+[
+  {
+    "logical_path": ".spectra/evidence/aci-s10/checks.json",
+    "archive_path": ".spectra/evidence/aci-s10/before-grouping/checks.json",
+    "bytes": 1773,
+    "sha256": "3bccc87505de7e00c68cc49c64546d69bd0677d57f46e87b5b158b1fadb5145c"
+  },
+  {
+    "logical_path": ".spectra/evidence/aci-s10/docker-build.log",
+    "archive_path": ".spectra/evidence/aci-s10/before-grouping/docker-build.log",
+    "bytes": 52998,
+    "sha256": "1b69ebfdf029404d15d9ab93e3094d0812de8a273329888eca4a0daf7e1fc5ae"
+  },
+  {
+    "logical_path": ".spectra/evidence/aci-s10/docker-build.exit",
+    "archive_path": ".spectra/evidence/aci-s10/before-grouping/docker-build.exit",
+    "bytes": 2,
+    "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  },
+  {
+    "logical_path": ".spectra/evidence/aci-s10/full-suite.log",
+    "archive_path": ".spectra/evidence/aci-s10/before-grouping/full-suite.log",
+    "bytes": 581,
+    "sha256": "044177f8b94d439b8b27f0b60c382364f604011bb1e8c70984c8e4c8918f75f3"
+  },
+  {
+    "logical_path": ".spectra/evidence/aci-s10/full-suite.exit",
+    "archive_path": ".spectra/evidence/aci-s10/before-grouping/full-suite.exit",
+    "bytes": 2,
+    "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  },
+  {
+    "logical_path": ".spectra/evidence/aci-s10/vivi-pass2.log",
+    "archive_path": ".spectra/evidence/aci-s10/before-grouping/vivi-pass2.log",
+    "bytes": 762,
+    "sha256": "ed10e7ec478dbc8ff6e2efcfebd8af22dea5aeb03175d87667182243b354c168"
+  },
+  {
+    "logical_path": ".spectra/evidence/aci-s10/vivi-pass2.exit",
+    "archive_path": ".spectra/evidence/aci-s10/before-grouping/vivi-pass2.exit",
+    "bytes": 2,
+    "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  },
+  {
+    "logical_path": ".spectra/evidence/aci-s10/vivi-pass2-result.json",
+    "archive_path": ".spectra/evidence/aci-s10/before-grouping/vivi-pass2-result.json",
+    "bytes": 762,
+    "sha256": "ed10e7ec478dbc8ff6e2efcfebd8af22dea5aeb03175d87667182243b354c168"
+  },
+  {
+    "logical_path": ".spectra/evidence/aci-s10/vivi-pass2-full.log",
+    "archive_path": ".spectra/evidence/aci-s10/before-grouping/vivi-pass2-full.log",
+    "bytes": 99,
+    "sha256": "4f9c21bb88b8ebccf5501b6de028160068731607b3b6a6a423f2c6dbb7ecc2c0"
+  },
+  {
+    "logical_path": ".spectra/evidence/aci-s10/ruff.log",
+    "archive_path": ".spectra/evidence/aci-s10/before-grouping/ruff.log",
+    "bytes": 19,
+    "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+  },
+  {
+    "logical_path": ".spectra/evidence/aci-s10/format.log",
+    "archive_path": ".spectra/evidence/aci-s10/before-grouping/format.log",
+    "bytes": 27,
+    "sha256": "3b2366898213ec462cc2627a223455c7687965818159c9592508d4dab7a0d600"
+  },
+  {
+    "logical_path": ".spectra/evidence/aci-s10/mypy.log",
+    "archive_path": ".spectra/evidence/aci-s10/before-grouping/mypy.log",
+    "bytes": 44,
+    "sha256": "7f43e759c997a0af903a210f4a10fd709457c5a5125336929ab037d3ed6702ce"
+  },
+  {
+    "logical_path": ".spectra/evidence/aci-s10/scripts-ruff.log",
+    "archive_path": ".spectra/evidence/aci-s10/before-grouping/scripts-ruff.log",
+    "bytes": 19,
+    "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+  },
+  {
+    "logical_path": ".spectra/evidence/aci-s10/scripts-format.log",
+    "archive_path": ".spectra/evidence/aci-s10/before-grouping/scripts-format.log",
+    "bytes": 26,
+    "sha256": "0321fffcb91606a42c0a19d8c1121d5c544379d663821fce616c71a7bb62f6b5"
+  },
+  {
+    "logical_path": ".spectra/evidence/aci-s10/scripts-mypy.log",
+    "archive_path": ".spectra/evidence/aci-s10/before-grouping/scripts-mypy.log",
+    "bytes": 44,
+    "sha256": "14fdf673bd175fe32ef42df34666481bb15e465313f7dbef32d0aea2ba76a26e"
+  },
+  {
+    "logical_path": ".spectra/evidence/aci-s10/lock.log",
+    "archive_path": ".spectra/evidence/aci-s10/before-grouping/lock.log",
+    "bytes": 28,
+    "sha256": "b0ba787a109f650b1e1b0b5c558eaaa8b65774df7bf1b0e6aa5b9fda912c066b"
+  },
+  {
+    "logical_path": ".spectra/evidence/aci-s10/probe.log",
+    "archive_path": ".spectra/evidence/aci-s10/before-grouping/probe.log",
+    "bytes": 800,
+    "sha256": "76b222feca2a6bd663d61bee80c7d7ea1bd177689fde4c2d1a5a6dbde3006256"
+  },
+  {
+    "logical_path": ".spectra/evidence/aci-s10/guard.log",
+    "archive_path": ".spectra/evidence/aci-s10/before-grouping/guard.log",
+    "bytes": 3643,
+    "sha256": "4789e86b068534270f7189f84d27fb35d3f84189787b2b8b2c4644462d769643"
+  },
+  {
+    "logical_path": ".spectra/evidence/aci-s10/size-guard.log",
+    "archive_path": ".spectra/evidence/aci-s10/before-grouping/size-guard.log",
+    "bytes": 400,
+    "sha256": "970e558394ae49cd67e8c08a9985b49b896e77c8fe865640efa5cd7c3cc1f06a"
+  },
+  {
+    "logical_path": ".spectra/evidence/aci-s10/classify.log",
+    "archive_path": ".spectra/evidence/aci-s10/before-grouping/classify.log",
+    "bytes": 508,
+    "sha256": "882efe40d183063030b93ad847b975d88dc63049810ee8e933680928364923ff"
+  },
+  {
+    "logical_path": ".spectra/evidence/aci-s10/docker-final/image-source.json",
+    "archive_path": ".spectra/evidence/aci-s10/before-grouping/docker-final/image-source.json",
+    "bytes": 499,
+    "sha256": "2714c9406496828066222d50a2ff73fc11cb636151290781b7d63b4e4ddda950"
+  },
+  {
+    "logical_path": ".spectra/evidence/aci-s10/docker-final/docker-integration.json",
+    "archive_path": ".spectra/evidence/aci-s10/before-grouping/docker-final/docker-integration.json",
+    "bytes": 19196,
+    "sha256": "79d0519f19cf9c97983c693c9b3bee2e3f5bf2b260c03e1ba887f78145d18fe8"
+  }
+]

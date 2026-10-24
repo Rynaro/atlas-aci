@@ -1,0 +1,12 @@
+{
+  "slice_id": "ACI-S10",
+  "criteria_changed": false,
+  "base_commit": "ea9afb9e2636f581e1c1cffd9b18e50ae9d891c3",
+  "additional_paths": [
+    "mcp-server/src/atlas_aci/storage/evidence.py",
+    "README.md"
+  ],
+  "reason": "Exact current resolver-module fingerprint allowlist alongside retained S07/S09/epoch6 shapes; operator documentation of coarse invalidation and full fallback.",
+  "review": ".spectra/plans/aci-s10.review.json",
+  "no_ddl_or_epoch_change": true
+}

@@ -1,0 +1,21 @@
+{
+  "name": "spree-modularity",
+  "command": [
+    "/tmp/aci-s01-tools/bin/uv",
+    "run",
+    "--no-project",
+    "--with",
+    "networkx==3.6.1",
+    "python",
+    "scripts/probe-modularity.py",
+    "/tmp/aci-s10-grouped-spree-graph.json"
+  ],
+  "cwd": "/private/tmp/atlas-aci-aci-s10",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 1.0128118749998976,
+  "elapsed_total": 331.73042791600164,
+  "peak_rss_bytes": 65601536,
+  "stdout": ".spectra/evidence/aci-s10/probe-attempt2/spree-modularity.stdout.log",
+  "stderr": ".spectra/evidence/aci-s10/probe-attempt2/spree-modularity.stderr.log"
+}

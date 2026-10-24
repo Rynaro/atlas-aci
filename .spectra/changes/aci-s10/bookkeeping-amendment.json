@@ -1,0 +1,16 @@
+{
+  "slice_id": "ACI-S10",
+  "criteria_changed": false,
+  "additional_paths": [],
+  "output_digest_exclusions": [
+    ".spectra/state/aci-s10.execution.json",
+    ".spectra/evidence/aci-s10/final-reentry-before.json",
+    ".spectra/evidence/aci-s10/final-reentry-after.json",
+    ".spectra/evidence/aci-s10/final-reentry-summary.json",
+    ".spectra/evidence/aci-s10/final-resume-identity.json",
+    ".spectra/evidence/aci-s10/output-check-tests.log"
+  ],
+  "reason": "Authoritative receipt and exact post-output evidence necessarily follow output commit; all product/tests/stable pre-output evidence remain hashed.",
+  "authorization": "Explicit in independently approved S10 plan before receipt initialization; root requested exact S09-style metadata-only exclusion upfront.",
+  "comparison": "Exclude these exact paths from output_digests and output-commit diff; require clean checkout for reentry. No wildcard exclusions."
+}

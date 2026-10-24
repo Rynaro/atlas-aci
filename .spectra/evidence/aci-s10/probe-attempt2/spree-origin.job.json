@@ -1,0 +1,18 @@
+{
+  "name": "spree-origin",
+  "command": [
+    "git",
+    "remote",
+    "set-url",
+    "origin",
+    "https://github.com/spree/spree.git"
+  ],
+  "cwd": "/tmp/aci-s10-grouped-probe-inputs/spree",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 0.011601958001847379,
+  "elapsed_total": 139.68799091600522,
+  "peak_rss_bytes": 4456448,
+  "stdout": ".spectra/evidence/aci-s10/probe-attempt2/spree-origin.stdout.log",
+  "stderr": ".spectra/evidence/aci-s10/probe-attempt2/spree-origin.stderr.log"
+}

@@ -334,6 +334,34 @@ fabricate a fully coherent replacement. No eviction policy or speed guarantee is
 provided. It does not reduce the previously measured 651,844,965-byte Spree export
 or its approximately 1.98 GB peak export RSS; those remain disclosed costs.
 
+### Conservative incremental binding
+
+Incremental builds persist owner-local `atlas-binding-dependencies.v1` witnesses
+inside the graph manifest. Each active source path, including empty indexed
+package markers, is a binding unit. Units depend on complete language-level
+buckets of declarations, lexical blockers, imports and stale names; Python also
+depends on the full indexed module/package path universe. These buckets include
+negative lookups, so a newly appearing target or ambiguity invalidates old results.
+Declaration or scope changes may rebind every unit of that language. A call-only
+edit with unchanged selection inputs can preserve another live binding unit in
+the same language. Full builds always rebind all units.
+
+Reuse requires exact current producer/configuration, complete predecessor input
+and output witnesses, and validated source/projection closure. Missing, malformed,
+unknown, incompatible or incoherent metadata invokes explicit full binding; corrupt
+predecessor facts are restored through full extraction/cache validation first.
+Affected source paths lose superseded edge, import and rationale assertions before
+rebinding against current global raw facts. Failed-file historical evidence remains
+separate, and fatal work still leaves the prior published generation intact.
+
+Build output reports `binding_resolution` mode/reason and affected, reused and
+removed unit counts/paths. The witness and counters do not enter canonical facts,
+generation/status identity or portable exports; readers never repair the witness.
+Imported indexes have no trusted local witness until a build establishes one.
+This coarse policy does not avoid source discovery/hashing or promise a speedup
+for every incremental edit. It does not add resolver options or infer dependencies
+only from previously resolved edges.
+
 ### `status` — operator capabilities and completeness
 
 ```bash

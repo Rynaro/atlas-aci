@@ -1,0 +1,50 @@
+{
+  "envelope_version": "2.0",
+  "message_id": "bf296561-19a2-4e37-96cd-cac428199cf3",
+  "thread_id": "7c0aa738-bfdd-400e-9ef5-5523d9895a91",
+  "parent_id": null,
+  "from": {
+    "eidolon": "ramza",
+    "version": "1.1.0"
+  },
+  "to": {
+    "eidolon": "vivi",
+    "version": "n/a"
+  },
+  "performative": "PROPOSE",
+  "edge_origin": "roster",
+  "objective": "Implement ACI-S10 complete coarse binding-dependency witnesses and selective source-path rebinding with explicit full fallback, same-language reuse and canonical full-build equivalence.",
+  "artifact": {
+    "kind": "spec",
+    "schema_version": "1.0",
+    "path": "aci-s10.md",
+    "sha256": "f645bee83b30a53a6e90d42c1470d88fe99d597ecf7be7253332c037b6bc5978",
+    "size_bytes": 22525
+  },
+  "integrity": {
+    "method": "sha256",
+    "value": "f645bee83b30a53a6e90d42c1470d88fe99d597ecf7be7253332c037b6bc5978"
+  },
+  "trace": {
+    "ts": "2026-10-24T16:06:43.635178+00:00",
+    "host": "codex",
+    "model": "gpt-6-astra",
+    "tier": "standard"
+  },
+  "ise": {
+    "assertion_grade": "validated",
+    "provenance": {
+      "methodology_version": "ramza-1.1.0"
+    },
+    "receiver_authorization": {
+      "auto_route": true,
+      "auto_merge": false,
+      "auto_deploy": false
+    }
+  },
+  "confidence": 0.875,
+  "x_ramza_acceptance_criteria": {
+    "path": "aci-s10.criteria.md",
+    "sha256": "205a19c67aa13eb06b6e2c61b1fa39c12837d9443e5b4da9cfd576ed72501767"
+  }
+}
