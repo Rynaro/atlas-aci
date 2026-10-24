@@ -1,0 +1,74 @@
+{
+  "slice_id": "ACI-S15",
+  "issue_url": "https://github.com/Rynaro/atlas-aci/issues/11",
+  "criteria_sha256": "312e461863ca649cff7689ff8d4b1d6538e8648f75c6d35777786df1dede0f9a",
+  "base_commit": "f055e56d2f862ff2dbee827c7b30dabc2a76b094",
+  "output_commit": null,
+  "declared_paths": [
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/src/atlas_aci/extractors/__init__.py",
+    "mcp-server/src/atlas_aci/extractors/rust.py",
+    "mcp-server/tests/slices/test_s15_*.py",
+    "mcp-server/tests/fixtures/rust_workspace/*",
+    "README.md",
+    "mcp-server/src/atlas_aci/storage/evidence.py",
+    "mcp-server/src/atlas_aci/resolvers/dependencies.py",
+    "mcp-server/tests/test_codegraph.py",
+    "mcp-server/tests/slices/test_s04_contract.py",
+    ".spectra/plans/aci-s15.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/evidence/aci-s15/*",
+    ".spectra/state/aci-s15.execution.json",
+    ".spectra/changes/aci-s15/*",
+    ".spectra/backlog/execution.json",
+    ".spectra/backlog/order.md"
+  ],
+  "output_digest_exclusions": [
+    ".spectra/state/aci-s15.execution.json",
+    ".spectra/evidence/aci-s15/final-reentry-before.json",
+    ".spectra/evidence/aci-s15/final-reentry-after.json",
+    ".spectra/evidence/aci-s15/final-reentry-summary.json",
+    ".spectra/evidence/aci-s15/final-resume-identity.json",
+    ".spectra/evidence/aci-s15/output-check-tests.log"
+  ],
+  "output_digests": {},
+  "status": "IN_PROGRESS",
+  "acceptance_results": [
+    {
+      "ac_id": "AC-S10-001",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S10-002",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S10-003",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S10-004",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S10-005",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S10-006",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S10-RUN-01",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S10-RUN-02",
+      "exit_code": null
+    }
+  ],
+  "scope_amendments": [
+    ".spectra/changes/aci-s15/bookkeeping-amendment.json"
+  ],
+  "scope_origin_amendment": ".spectra/changes/aci-s15/scope-amendment.json"
+}

@@ -1,0 +1,37 @@
+{
+  "at": "2026-10-24T17:14:23.246309+00:00",
+  "phase": "DONE",
+  "confidence": 86.25,
+  "verdict": "AUTO_PROCEED",
+  "checks": [
+    {
+      "file": "aci-s15.envelope.json",
+      "schema": "ecl-envelope.v2.json",
+      "validator": "Draft202012Validator",
+      "format_check": true,
+      "valid": true
+    },
+    {
+      "file": "aci-s15.state.json",
+      "schema": "plan-state.v1.json",
+      "validator": "Draft7Validator",
+      "format_check": true,
+      "valid": true
+    }
+  ],
+  "product_files_unchanged": 84,
+  "ledger_counts": {
+    "merged": 9,
+    "remaining": 33
+  },
+  "spec_sha256": "a1e27b76bbabae0fdee5481cb75b0bb1ba2444310ef282916276569c7e8debe4",
+  "criteria_sha256": "312e461863ca649cff7689ff8d4b1d6538e8648f75c6d35777786df1dede0f9a",
+  "envelope_sha256": "8819d435adbbeb6536f163f4de3885d51cbe5053c9b1b1984443843be099ca33",
+  "state_sha256": "4e154efcc83ead0ad0d314b0428fe32301beee0b2f14cd02f99be4022e39145b",
+  "message_id": "f224f0ca-813a-4e87-8f12-c367eb0e9c8a",
+  "thread_id": "fac85266-9d99-4f7a-baa5-0d0f9ddcf325",
+  "scope_amendment": ".spectra/changes/aci-s15/scope-amendment.json",
+  "bookkeeping_amendment": ".spectra/changes/aci-s15/bookkeeping-amendment.json",
+  "grammar_qualified": false,
+  "note": "Approved draft unchanged; original independent review17:12:47Z retained separately from state recording17:14:10Z. No product edits or grammar downloads. Root ECL verifier/correlated trace before execution; actual grammar qualification first."
+}

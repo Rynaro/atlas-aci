@@ -404,18 +404,19 @@ def test_lang_by_ext_consistent_with_queries() -> None:
     # And the acknowledgment set itself must be real: every unsupported lang
     # must actually be unreachable in QUERIES (else it's a stale entry).
     assert UNSUPPORTED_LANGS.isdisjoint(QUERIES)
-    # Pin the specific four dead extensions this fix targets so a future
+    # Pin the remaining query-less extensions so a future
     # edit that silently drops the acknowledgment (rather than adding a real
     # QUERIES entry) is caught.
     for ext, lang in (
         (".tsx", "tsx"),
         (".go", "go"),
-        (".rs", "rust"),
         (".java", "java"),
     ):
         assert LANG_BY_EXT[ext] == lang
         assert lang in UNSUPPORTED_LANGS
         assert lang not in QUERIES
+    assert LANG_BY_EXT[".rs"] == "rust"
+    assert "rust" in QUERIES and "rust" not in UNSUPPORTED_LANGS
 
 
 def test_unsupported_extension_skip_is_reported(tmp_path: Path) -> None:
@@ -429,10 +430,12 @@ def test_unsupported_extension_skip_is_reported(tmp_path: Path) -> None:
         },
     )
     stats = graph.build()  # rebuild so the returned stats reflect this tree
-    assert stats["unsupported_skipped"] == {"go": 1, "rust": 1, "java": 1}
+    assert stats["unsupported_skipped"] == {"go": 1, "java": 1}
     # And it must not have silently produced phantom symbols from files it
     # never actually parsed.
-    assert _names(graph.search_symbol("main")["definitions"]) == set()
+    definitions = graph.search_symbol("main")["definitions"]
+    assert _names(definitions) == {"main"}
+    assert all(row["lang"] == "rust" and row["path"] == "lib.rs" for row in definitions)
 
 
 # ---- A1 checker MINOR-1 (condition 2): call-candidate-kind completeness ----

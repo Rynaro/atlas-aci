@@ -1,0 +1,9 @@
+{
+  "slice_id": "ACI-S15",
+  "criteria_changed": false,
+  "additional_paths": [],
+  "authorization": "Original approved scope-amendment explicitly permits only obsolete Rust-unsupported expectations and preservation of other unsupported controls.",
+  "observed_failure": ".spectra/evidence/aci-s15/legacy-unsupported-red.log",
+  "red_result": "3 failed,55deselected; real Rust support now partial/indexed instead of unsupported.",
+  "retained_obligations": "Go/Java/TSX remain query-less unsupported; Rust becomes positive produced declarations/classification; S04 unsupported control uses Go and retains JavaScript-disabled generation checks."
+}

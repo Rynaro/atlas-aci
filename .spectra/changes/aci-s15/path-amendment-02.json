@@ -1,0 +1,14 @@
+{
+  "authorization": "Root explicit scoped correction after actual full run515pass1fail",
+  "path": "mcp-server/tests/slices/test_s07_parser_prerequisite.py",
+  "test": "test_observation_coverage_history_recovery_and_cache",
+  "change": "Only unsupported fixture unknown.rs Rust main -> unknown.go valid Go source",
+  "reason": "Rust is now positively supported; preserve genuine unsupported observation alongside actual failed Python history/recovery/cache controls. All assertions and original S07 criteria unchanged.",
+  "failure_evidence": ".spectra/evidence/aci-s15/full-suite.log",
+  "product_changes": false,
+  "slice_id": "ACI-S15",
+  "criteria_changed": false,
+  "additional_paths": [
+    "mcp-server/tests/slices/test_s07_parser_prerequisite.py"
+  ]
+}

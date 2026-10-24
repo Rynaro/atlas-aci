@@ -1,0 +1,9 @@
+{
+  "conservative_elapsed_seconds": 2656.8507812023163,
+  "budget_seconds": 86400,
+  "prior_probe_seconds_charged": 256.1600768329954,
+  "cumulative_probe_seconds_charged": 649.7350719990063,
+  "probe_per_job_cap_seconds": 600,
+  "probe_total_cap_seconds": 2700,
+  "note": "Wall time since preflight conservatively includes qualification, tests, capacity restoration, review waiting and both measurements; original three-engineering-day budget not reset."
+}

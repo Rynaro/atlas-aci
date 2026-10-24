@@ -1,0 +1,80 @@
+{
+  "authorization": "Root exact eight completed task-owned generated .atlas directories; ATLAS independently revalidated776 completed receipt digests and389 raw gzip streams; no active dependencies",
+  "disk_before": {
+    "total": 245107195904,
+    "used": 242412027904,
+    "free": 2695168000
+  },
+  "directories": [
+    {
+      "path": "/tmp/aci-s07-approved3-probe-inputs/solidus/.atlas",
+      "resolved_path": "/private/tmp/aci-s07-approved3-probe-inputs/solidus/.atlas",
+      "allocated_kib": 521676,
+      "real_contained_directory": true,
+      "root_is_symlink": false,
+      "deleted": true
+    },
+    {
+      "path": "/tmp/aci-s07-approved3-probe-inputs/spree/.atlas",
+      "resolved_path": "/private/tmp/aci-s07-approved3-probe-inputs/spree/.atlas",
+      "allocated_kib": 839440,
+      "real_contained_directory": true,
+      "root_is_symlink": false,
+      "deleted": true
+    },
+    {
+      "path": "/tmp/aci-s09-fresh-probe-inputs/solidus/.atlas",
+      "resolved_path": "/private/tmp/aci-s09-fresh-probe-inputs/solidus/.atlas",
+      "allocated_kib": 851968,
+      "real_contained_directory": true,
+      "root_is_symlink": false,
+      "deleted": true
+    },
+    {
+      "path": "/tmp/aci-s09-fresh-probe-inputs/spree/.atlas",
+      "resolved_path": "/private/tmp/aci-s09-fresh-probe-inputs/spree/.atlas",
+      "allocated_kib": 1362272,
+      "real_contained_directory": true,
+      "root_is_symlink": false,
+      "deleted": true
+    },
+    {
+      "path": "/tmp/aci-s10-fresh-probe-inputs/solidus/.atlas",
+      "resolved_path": "/private/tmp/aci-s10-fresh-probe-inputs/solidus/.atlas",
+      "allocated_kib": 853264,
+      "real_contained_directory": true,
+      "root_is_symlink": false,
+      "deleted": true
+    },
+    {
+      "path": "/tmp/aci-s10-fresh-probe-inputs/spree/.atlas",
+      "resolved_path": "/private/tmp/aci-s10-fresh-probe-inputs/spree/.atlas",
+      "allocated_kib": 1361980,
+      "real_contained_directory": true,
+      "root_is_symlink": false,
+      "deleted": true
+    },
+    {
+      "path": "/tmp/aci-s10-grouped-probe-inputs/solidus/.atlas",
+      "resolved_path": "/private/tmp/aci-s10-grouped-probe-inputs/solidus/.atlas",
+      "allocated_kib": 853212,
+      "real_contained_directory": true,
+      "root_is_symlink": false,
+      "deleted": true
+    },
+    {
+      "path": "/tmp/aci-s10-grouped-probe-inputs/spree/.atlas",
+      "resolved_path": "/private/tmp/aci-s10-grouped-probe-inputs/spree/.atlas",
+      "allocated_kib": 1363428,
+      "real_contained_directory": true,
+      "root_is_symlink": false,
+      "deleted": true
+    }
+  ],
+  "disk_after": {
+    "total": 245107195904,
+    "used": 234170875904,
+    "free": 10936320000
+  },
+  "allocated_kib_removed": 8007240
+}

@@ -1,0 +1,13 @@
+{
+  "status": "RUNNING",
+  "source_changes": false,
+  "prior_attempt": ".spectra/evidence/aci-s15/probe",
+  "prior_failure": "Spree SQLite disk-full (exit1, not timeout)",
+  "prior_seconds_charged": 256.1600768329954,
+  "new_inputs": "/tmp/aci-s15-retry-probe-inputs",
+  "prerequisite": "Wait for root-authorized capacity restoration and confirmed headroom",
+  "per_job_cap_seconds": 600,
+  "total_cap_seconds": 2700,
+  "capacity_evidence": ".spectra/evidence/aci-s15/capacity-cleanup-generated.json",
+  "free_bytes_before_retry": 10936320000
+}

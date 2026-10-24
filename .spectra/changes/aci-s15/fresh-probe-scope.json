@@ -1,0 +1,18 @@
+{
+  "scope": "Fresh same-pin/default producer evidence requested by executor handoff; all artifacts remain within declared S15 evidence/changes paths",
+  "inputs": "Unchanged original Solidus full tree and Spree sparse pins, zero Rust files, current default profile including Rust",
+  "limits": {
+    "per_job_seconds": 600,
+    "total_seconds": 2700,
+    "prior_charge": 0
+  },
+  "unchanged": [
+    "historical probe metrics",
+    "verifier",
+    "bar",
+    "seeds",
+    "scripts",
+    "CI selectors"
+  ],
+  "reason": "Bind fresh observed evidence to current Rust-enabled config/producer without re-signing old measurements."
+}

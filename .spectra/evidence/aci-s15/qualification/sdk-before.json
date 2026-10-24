@@ -1,0 +1,19 @@
+{
+  "version": "1.6.0",
+  "parser_version": "0.25.2",
+  "cache_dir": "/Users/henrique/Library/Caches/tree-sitter-language-pack/v1.6.0/libs",
+  "has_rust": false,
+  "module": "/private/tmp/atlas-aci-aci-s15/mcp-server/.venv/lib/python3.12/site-packages/tree_sitter_language_pack/__init__.py",
+  "configure_signature": "(*, cache_dir=None)",
+  "download_signature": "(names)",
+  "download_doc": "Download specific languages to the local cache.\n\nReturns the number of newly downloaded languages.",
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "architecture": "arm64",
+  "native_files": [
+    "/private/tmp/atlas-aci-aci-s15/mcp-server/.venv/lib/python3.12/site-packages/tree_sitter_language_pack/__init__.pyi",
+    "/private/tmp/atlas-aci-aci-s15/mcp-server/.venv/lib/python3.12/site-packages/tree_sitter_language_pack/__init__.py",
+    "/private/tmp/atlas-aci-aci-s15/mcp-server/.venv/lib/python3.12/site-packages/tree_sitter_language_pack/__pycache__",
+    "/private/tmp/atlas-aci-aci-s15/mcp-server/.venv/lib/python3.12/site-packages/tree_sitter_language_pack/_native.abi3.so",
+    "/private/tmp/atlas-aci-aci-s15/mcp-server/.venv/lib/python3.12/site-packages/tree_sitter_language_pack/py.typed"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "spree-sparse",
+  "command": [
+    "git",
+    "config",
+    "core.sparseCheckout",
+    "true"
+  ],
+  "cwd": "/tmp/aci-s15-retry-probe-inputs/spree",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 0.011661957993055694,
+  "elapsed_total": 136.8526471669902,
+  "peak_rss_bytes": 4341760,
+  "stdout": ".spectra/evidence/aci-s15/probe-attempt2/spree-sparse.stdout.log",
+  "stderr": ".spectra/evidence/aci-s15/probe-attempt2/spree-sparse.stderr.log"
+}

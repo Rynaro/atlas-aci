@@ -1,0 +1,26 @@
+{
+  "command": [
+    "git",
+    "diff",
+    "--exit-code",
+    "f055e56d2f862ff2dbee827c7b30dabc2a76b094",
+    "--",
+    "scripts",
+    ".github",
+    "mcp-server/uv.lock",
+    "mcp-server/Dockerfile",
+    ".spectra/evidence/aci-s07",
+    ".spectra/evidence/aci-s09",
+    ".spectra/evidence/aci-s10",
+    ".spectra/changes/aci-s07-probe",
+    ".spectra/changes/aci-s09",
+    ".spectra/changes/aci-s10",
+    ".spectra/state/aci-s07.execution.json",
+    ".spectra/state/aci-s09.execution.json",
+    ".spectra/state/aci-s10.execution.json"
+  ],
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "",
+  "meaning": "Prior evidence, schemas/probe scripts, Dockerfile, workflows and dependency lock remain byte-unchanged; only separately authorized S07 test fixture changed."
+}

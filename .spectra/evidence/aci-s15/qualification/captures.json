@@ -1,0 +1,322 @@
+[
+  {
+    "def.struct": [
+      {
+        "type": "struct_item",
+        "start_byte": 0,
+        "end_byte": 13,
+        "text": "struct Thing;",
+        "parent": "source_file"
+      }
+    ],
+    "name": [
+      {
+        "type": "type_identifier",
+        "start_byte": 7,
+        "end_byte": 12,
+        "text": "Thing",
+        "parent": "struct_item"
+      }
+    ]
+  },
+  {
+    "def.enum": [
+      {
+        "type": "enum_item",
+        "start_byte": 14,
+        "end_byte": 34,
+        "text": "enum Choice { A, B }",
+        "parent": "source_file"
+      }
+    ],
+    "name": [
+      {
+        "type": "type_identifier",
+        "start_byte": 19,
+        "end_byte": 25,
+        "text": "Choice",
+        "parent": "enum_item"
+      }
+    ]
+  },
+  {
+    "def.trait": [
+      {
+        "type": "trait_item",
+        "start_byte": 35,
+        "end_byte": 89,
+        "text": "trait Action { fn run(&self); fn defaulted(&self) {} }",
+        "parent": "source_file"
+      }
+    ],
+    "name": [
+      {
+        "type": "type_identifier",
+        "start_byte": 41,
+        "end_byte": 47,
+        "text": "Action",
+        "parent": "trait_item"
+      }
+    ]
+  },
+  {
+    "def.signature": [
+      {
+        "type": "function_signature_item",
+        "start_byte": 50,
+        "end_byte": 64,
+        "text": "fn run(&self);",
+        "parent": "declaration_list"
+      }
+    ],
+    "name": [
+      {
+        "type": "identifier",
+        "start_byte": 53,
+        "end_byte": 56,
+        "text": "run",
+        "parent": "function_signature_item"
+      }
+    ]
+  },
+  {
+    "def.function": [
+      {
+        "type": "function_item",
+        "start_byte": 65,
+        "end_byte": 87,
+        "text": "fn defaulted(&self) {}",
+        "parent": "declaration_list"
+      }
+    ],
+    "name": [
+      {
+        "type": "identifier",
+        "start_byte": 68,
+        "end_byte": 77,
+        "text": "defaulted",
+        "parent": "function_item"
+      }
+    ]
+  },
+  {
+    "def.function": [
+      {
+        "type": "function_item",
+        "start_byte": 103,
+        "end_byte": 129,
+        "text": "fn new() -> Self { Thing }",
+        "parent": "declaration_list"
+      }
+    ],
+    "name": [
+      {
+        "type": "identifier",
+        "start_byte": 106,
+        "end_byte": 109,
+        "text": "new",
+        "parent": "function_item"
+      }
+    ]
+  },
+  {
+    "def.function": [
+      {
+        "type": "function_item",
+        "start_byte": 130,
+        "end_byte": 172,
+        "text": "fn run(&self) { fn nested() {} nested(); }",
+        "parent": "declaration_list"
+      }
+    ],
+    "name": [
+      {
+        "type": "identifier",
+        "start_byte": 133,
+        "end_byte": 136,
+        "text": "run",
+        "parent": "function_item"
+      }
+    ]
+  },
+  {
+    "def.function": [
+      {
+        "type": "function_item",
+        "start_byte": 146,
+        "end_byte": 160,
+        "text": "fn nested() {}",
+        "parent": "block"
+      }
+    ],
+    "name": [
+      {
+        "type": "identifier",
+        "start_byte": 149,
+        "end_byte": 155,
+        "text": "nested",
+        "parent": "function_item"
+      }
+    ]
+  },
+  {
+    "call": [
+      {
+        "type": "call_expression",
+        "start_byte": 161,
+        "end_byte": 169,
+        "text": "nested()",
+        "parent": "expression_statement"
+      }
+    ],
+    "callee": [
+      {
+        "type": "identifier",
+        "start_byte": 161,
+        "end_byte": 167,
+        "text": "nested",
+        "parent": "call_expression"
+      }
+    ]
+  },
+  {
+    "def.function": [
+      {
+        "type": "function_item",
+        "start_byte": 199,
+        "end_byte": 259,
+        "text": "fn run(&self) { self.run(); Thing::new(); generic::<u8>(); }",
+        "parent": "declaration_list"
+      }
+    ],
+    "name": [
+      {
+        "type": "identifier",
+        "start_byte": 202,
+        "end_byte": 205,
+        "text": "run",
+        "parent": "function_item"
+      }
+    ]
+  },
+  {
+    "call": [
+      {
+        "type": "call_expression",
+        "start_byte": 215,
+        "end_byte": 225,
+        "text": "self.run()",
+        "parent": "expression_statement"
+      }
+    ],
+    "callee": [
+      {
+        "type": "field_expression",
+        "start_byte": 215,
+        "end_byte": 223,
+        "text": "self.run",
+        "parent": "call_expression"
+      }
+    ]
+  },
+  {
+    "call": [
+      {
+        "type": "call_expression",
+        "start_byte": 227,
+        "end_byte": 239,
+        "text": "Thing::new()",
+        "parent": "expression_statement"
+      }
+    ],
+    "callee": [
+      {
+        "type": "scoped_identifier",
+        "start_byte": 227,
+        "end_byte": 237,
+        "text": "Thing::new",
+        "parent": "call_expression"
+      }
+    ]
+  },
+  {
+    "call": [
+      {
+        "type": "call_expression",
+        "start_byte": 241,
+        "end_byte": 256,
+        "text": "generic::<u8>()",
+        "parent": "expression_statement"
+      }
+    ],
+    "callee": [
+      {
+        "type": "generic_function",
+        "start_byte": 241,
+        "end_byte": 254,
+        "text": "generic::<u8>",
+        "parent": "call_expression"
+      }
+    ]
+  },
+  {
+    "def.function": [
+      {
+        "type": "function_item",
+        "start_byte": 262,
+        "end_byte": 280,
+        "text": "fn generic<T>() {}",
+        "parent": "source_file"
+      }
+    ],
+    "name": [
+      {
+        "type": "identifier",
+        "start_byte": 265,
+        "end_byte": 272,
+        "text": "generic",
+        "parent": "function_item"
+      }
+    ]
+  },
+  {
+    "def.function": [
+      {
+        "type": "function_item",
+        "start_byte": 281,
+        "end_byte": 311,
+        "text": "fn free() { generic::<u8>(); }",
+        "parent": "source_file"
+      }
+    ],
+    "name": [
+      {
+        "type": "identifier",
+        "start_byte": 284,
+        "end_byte": 288,
+        "text": "free",
+        "parent": "function_item"
+      }
+    ]
+  },
+  {
+    "call": [
+      {
+        "type": "call_expression",
+        "start_byte": 293,
+        "end_byte": 308,
+        "text": "generic::<u8>()",
+        "parent": "expression_statement"
+      }
+    ],
+    "callee": [
+      {
+        "type": "generic_function",
+        "start_byte": 293,
+        "end_byte": 306,
+        "text": "generic::<u8>",
+        "parent": "call_expression"
+      }
+    ]
+  }
+]

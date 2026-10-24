@@ -1,0 +1,7 @@
+{
+  "path": "/tmp/aci-s15-probe-inputs/spree/.atlas/index-attempt.v1.json",
+  "durable_logical_path": ".spectra/evidence/aci-s15/probe/spree-failed-attempt.json",
+  "bytes": 472468,
+  "sha256": "0c29238053ae377bd419f106ab7d1e5a82ff75136829774c88daa97d04574b82",
+  "actual_disk_full_failure_sidecar": true
+}

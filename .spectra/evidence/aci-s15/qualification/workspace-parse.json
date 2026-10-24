@@ -1,0 +1,14 @@
+[
+  {
+    "path": "mcp-server/tests/fixtures/rust_workspace/beta/src/lib.rs",
+    "root_has_error": false
+  },
+  {
+    "path": "mcp-server/tests/fixtures/rust_workspace/alpha/src/lib.rs",
+    "root_has_error": false
+  },
+  {
+    "path": "mcp-server/tests/fixtures/rust_workspace/alpha/src/external.rs",
+    "root_has_error": false
+  }
+]

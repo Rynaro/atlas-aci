@@ -1,0 +1,255 @@
+{
+  "slice_id": "ACI-S15",
+  "issue_url": "https://github.com/Rynaro/atlas-aci/issues/11",
+  "criteria_sha256": "312e461863ca649cff7689ff8d4b1d6538e8648f75c6d35777786df1dede0f9a",
+  "base_commit": "f055e56d2f862ff2dbee827c7b30dabc2a76b094",
+  "output_commit": null,
+  "declared_paths": [
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/src/atlas_aci/extractors/__init__.py",
+    "mcp-server/src/atlas_aci/extractors/rust.py",
+    "mcp-server/tests/slices/test_s15_*.py",
+    "mcp-server/tests/fixtures/rust_workspace/*",
+    "README.md",
+    "mcp-server/src/atlas_aci/storage/evidence.py",
+    "mcp-server/src/atlas_aci/resolvers/dependencies.py",
+    "mcp-server/tests/test_codegraph.py",
+    "mcp-server/tests/slices/test_s04_contract.py",
+    ".spectra/plans/aci-s15.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/evidence/aci-s15/*",
+    ".spectra/state/aci-s15.execution.json",
+    ".spectra/changes/aci-s15/*",
+    ".spectra/backlog/execution.json",
+    ".spectra/backlog/order.md",
+    "mcp-server/tests/slices/test_s07_parser_prerequisite.py"
+  ],
+  "output_digest_exclusions": [
+    ".spectra/state/aci-s15.execution.json",
+    ".spectra/evidence/aci-s15/final-reentry-before.json",
+    ".spectra/evidence/aci-s15/final-reentry-after.json",
+    ".spectra/evidence/aci-s15/final-reentry-summary.json",
+    ".spectra/evidence/aci-s15/final-resume-identity.json",
+    ".spectra/evidence/aci-s15/output-check-tests.log"
+  ],
+  "output_digests": {},
+  "status": "IN_PROGRESS",
+  "acceptance_results": [
+    {
+      "ac_id": "AC-S15-001",
+      "exit_code": 0,
+      "command": [
+        "mcp-server/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:cacheprovider",
+        "mcp-server/tests",
+        "-q"
+      ],
+      "environment": {
+        "ATLAS_ACI_S15_DOCKER_IMAGE": "atlas-aci-s15-final",
+        "ATLAS_ACI_S06_DOCKER_IMAGE": "atlas-aci-s15-final",
+        "PYTHONPATH": "<worktree>/mcp-server/src",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "evidence": [
+        ".spectra/evidence/aci-s15/full-suite.log",
+        ".spectra/evidence/aci-s15/full-suite.exit",
+        ".spectra/evidence/aci-s15/vivi-pass2-result.json"
+      ],
+      "result": "516 passed, actual exit0; all six named product criteria and required Docker controls executed."
+    },
+    {
+      "ac_id": "AC-S15-002",
+      "exit_code": 0,
+      "command": [
+        "mcp-server/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:cacheprovider",
+        "mcp-server/tests",
+        "-q"
+      ],
+      "environment": {
+        "ATLAS_ACI_S15_DOCKER_IMAGE": "atlas-aci-s15-final",
+        "ATLAS_ACI_S06_DOCKER_IMAGE": "atlas-aci-s15-final",
+        "PYTHONPATH": "<worktree>/mcp-server/src",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "evidence": [
+        ".spectra/evidence/aci-s15/full-suite.log",
+        ".spectra/evidence/aci-s15/full-suite.exit",
+        ".spectra/evidence/aci-s15/vivi-pass2-result.json"
+      ],
+      "result": "516 passed, actual exit0; all six named product criteria and required Docker controls executed."
+    },
+    {
+      "ac_id": "AC-S15-003",
+      "exit_code": 0,
+      "command": [
+        "mcp-server/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:cacheprovider",
+        "mcp-server/tests",
+        "-q"
+      ],
+      "environment": {
+        "ATLAS_ACI_S15_DOCKER_IMAGE": "atlas-aci-s15-final",
+        "ATLAS_ACI_S06_DOCKER_IMAGE": "atlas-aci-s15-final",
+        "PYTHONPATH": "<worktree>/mcp-server/src",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "evidence": [
+        ".spectra/evidence/aci-s15/full-suite.log",
+        ".spectra/evidence/aci-s15/full-suite.exit",
+        ".spectra/evidence/aci-s15/vivi-pass2-result.json"
+      ],
+      "result": "516 passed, actual exit0; all six named product criteria and required Docker controls executed."
+    },
+    {
+      "ac_id": "AC-S15-004",
+      "exit_code": 0,
+      "command": [
+        "mcp-server/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:cacheprovider",
+        "mcp-server/tests",
+        "-q"
+      ],
+      "environment": {
+        "ATLAS_ACI_S15_DOCKER_IMAGE": "atlas-aci-s15-final",
+        "ATLAS_ACI_S06_DOCKER_IMAGE": "atlas-aci-s15-final",
+        "PYTHONPATH": "<worktree>/mcp-server/src",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "evidence": [
+        ".spectra/evidence/aci-s15/full-suite.log",
+        ".spectra/evidence/aci-s15/full-suite.exit",
+        ".spectra/evidence/aci-s15/vivi-pass2-result.json"
+      ],
+      "result": "516 passed, actual exit0; all six named product criteria and required Docker controls executed."
+    },
+    {
+      "ac_id": "AC-S15-005",
+      "exit_code": 0,
+      "command": [
+        "mcp-server/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:cacheprovider",
+        "mcp-server/tests",
+        "-q"
+      ],
+      "environment": {
+        "ATLAS_ACI_S15_DOCKER_IMAGE": "atlas-aci-s15-final",
+        "ATLAS_ACI_S06_DOCKER_IMAGE": "atlas-aci-s15-final",
+        "PYTHONPATH": "<worktree>/mcp-server/src",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "evidence": [
+        ".spectra/evidence/aci-s15/full-suite.log",
+        ".spectra/evidence/aci-s15/full-suite.exit",
+        ".spectra/evidence/aci-s15/vivi-pass2-result.json"
+      ],
+      "result": "516 passed, actual exit0; all six named product criteria and required Docker controls executed."
+    },
+    {
+      "ac_id": "AC-S15-006",
+      "exit_code": 0,
+      "command": [
+        "mcp-server/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:cacheprovider",
+        "mcp-server/tests",
+        "-q"
+      ],
+      "environment": {
+        "ATLAS_ACI_S15_DOCKER_IMAGE": "atlas-aci-s15-final",
+        "ATLAS_ACI_S06_DOCKER_IMAGE": "atlas-aci-s15-final",
+        "PYTHONPATH": "<worktree>/mcp-server/src",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "evidence": [
+        ".spectra/evidence/aci-s15/full-suite.log",
+        ".spectra/evidence/aci-s15/full-suite.exit",
+        ".spectra/evidence/aci-s15/vivi-pass2-result.json"
+      ],
+      "result": "516 passed, actual exit0; all six named product criteria and required Docker controls executed."
+    },
+    {
+      "ac_id": "AC-S15-RUN-01",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S15-RUN-02",
+      "exit_code": null
+    }
+  ],
+  "scope_amendments": [
+    ".spectra/changes/aci-s15/bookkeeping-amendment.json",
+    ".spectra/changes/aci-s15/path-amendment-02.json"
+  ],
+  "scope_origin_amendment": ".spectra/changes/aci-s15/scope-amendment.json",
+  "bookkeeping_corrections": [
+    "Initial placeholder acceptance IDs inadvertently used S10 prefix; corrected to frozen S15 IDs before any completion claim. Original interrupted snapshot is preserved; slice_id and criteria_sha256 never changed."
+  ],
+  "validation": {
+    "full_suite": {
+      "passed": 516,
+      "exit_code": 0,
+      "seconds": 36.37
+    },
+    "protected_pass2": {
+      "passed_per_run": 28,
+      "exit_codes": [
+        0,
+        0
+      ],
+      "tamper_rejections": 0
+    },
+    "static_and_guards": ".spectra/evidence/aci-s15/checks.json",
+    "fresh_probe": {
+      "status": "PASS_INDEPENDENTLY_APPROVED",
+      "attempt": ".spectra/evidence/aci-s15/probe",
+      "failed_job": "spree-export",
+      "exit_code": 1,
+      "reason": "SQLite database or disk is full; no timeout/source change",
+      "elapsed_seconds_charged": 256.1600768329954,
+      "capacity_cleanup": ".spectra/evidence/aci-s15/capacity-cleanup.json",
+      "readiness_claim": false,
+      "retry": {
+        "status": "RUNNING",
+        "evidence": ".spectra/evidence/aci-s15/probe-attempt2",
+        "source_changed": false,
+        "prior_seconds_charged": 256.1600768329954,
+        "per_job_seconds": 600,
+        "total_seconds": 2700,
+        "capacity_evidence": ".spectra/evidence/aci-s15/capacity-cleanup-generated.json"
+      },
+      "retry_evidence": ".spectra/evidence/aci-s15/probe-attempt2",
+      "verifier_exit_code": 0,
+      "computed_verdict": "PASS",
+      "cumulative_seconds_charged": 649.7350719990063
+    },
+    "independent_approvals": [
+      "ATLAS macOS official grammar qualification",
+      "ATLAS literal and member-position corrections",
+      "ATLAS v3 exact Rust capability validation",
+      "ATLAS final source/docs/Linux Docker/unaffected gates"
+    ]
+  },
+  "limitations": [
+    "Rust compiler semantics, crate/type/trait dispatch, macro expansion and unmaterialized generated outputs unavailable; cfg not evaluated.",
+    "Current Spree JSONL 651845246bytes, peakRSS 1972158464bytes; cache334235404B/531484506B. No new threshold/speed improvement claimed.",
+    "First Spree probe failed on disk-full; exact failure and approved verified scratch cleanup retained. Historical metrics and bars unchanged."
+  ]
+}

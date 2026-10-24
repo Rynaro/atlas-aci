@@ -1,0 +1,17 @@
+{
+  "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=<worktree>/mcp-server/src mcp-server/.venv/bin/python [assert actual atlas_aci.codegraph source path]",
+  "exit_code": 0,
+  "observed_module": "/private/tmp/atlas-aci-aci-s15/mcp-server/src/atlas_aci/codegraph.py",
+  "default_languages": [
+    "rust",
+    "ruby",
+    "python",
+    "typescript",
+    "javascript",
+    "scss",
+    "html",
+    "yaml",
+    "markdown",
+    "bash"
+  ]
+}

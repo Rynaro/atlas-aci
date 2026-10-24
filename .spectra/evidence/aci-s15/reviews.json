@@ -1,0 +1,33 @@
+{
+  "reviewer": "ATLAS /root/s15_preflight",
+  "self_review": false,
+  "scopes": [
+    {
+      "scope": "macOS locked grammar qualification",
+      "verdict": "APPROVE",
+      "observed": "Independent official manifest/archive/member hashes and exact parser capture types, parents, text and byte spans matched; no product approval inferred."
+    },
+    {
+      "scope": "literal header identity and nearest member classification",
+      "verdict": "APPROVE",
+      "rust_helper_sha256": "28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a",
+      "observed": "Independent original raw-string whitespace edit yields distinct owners/IDs; direct methods and associated-const/nested/foreign free functions correctly classified; nine integration cases passed."
+    },
+    {
+      "scope": "v3 Rust capability and historical v1/v2 provenance",
+      "verdict": "APPROVE",
+      "engine_sha256": "7a2bd05b2a411edeb100cba44622c8dca9c2391f1b45122750fb7e37995ef276",
+      "observed": "Independent actual DB forged .py extension snapshot becomes unknown; historical v1/v2 fixtures match actual source SQLite snapshots exactly; disabled/current distinction preserved. Reviewer first overstrict whole-index-null assertion corrected to established status contract; no product failure claimed for that reviewer assertion."
+    },
+    {
+      "scope": "final source/docs/Linux grammar/Docker/unaffected gates",
+      "verdict": "APPROVE",
+      "observed": "Independent Linux official archive/member/native ABI and all six image source hashes; offline read-only UID10001/EROFS Rust MCP, same generation and strict snapshots; full516/pass2 28x2/static11/guard27,size5,classify6 records verified. Narrow S07 Go fixture substitution retains all assertions; cfg documentation corrected before output. Immutable S07 verifier independently returned PASS/current0605 fingerprint. Fresh probe and completion receipt are separate scopes."
+    },
+    {
+      "scope": "final fresh same-pin default-profile producer probe",
+      "verdict": "APPROVE",
+      "observed": "Independent unchanged verifier0/PASS; all4877 exact path/hash inventories, profile10/Rust0, failed-path SQL exclusion/nohistory, raw graphs/all20 partitions match bundlec5bfe097, six source hashes,22retryjobs0/max188.045s; exact serial job charge649.735071999 and separate runner-wall overhead verified. First disk-full256.160076833 charge retained; actual export651845246B/RSS1972158464B. Raw evidence held until approval, lossless packaging then permitted."
+    }
+  ]
+}

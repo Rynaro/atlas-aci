@@ -1,0 +1,68 @@
+{
+  "slice_id": "ACI-S15",
+  "issue": 11,
+  "worktree": "/private/tmp/atlas-aci-aci-s15",
+  "branch": "aci-s15",
+  "base_commit": "f055e56d2f862ff2dbee827c7b30dabc2a76b094",
+  "spec": ".spectra/plans/aci-s15.md",
+  "envelope": ".spectra/plans/aci-s15.envelope.json",
+  "criteria_sha256": "312e461863ca649cff7689ff8d4b1d6538e8648f75c6d35777786df1dede0f9a",
+  "actual_confidence": {
+    "rubric": "confidence",
+    "total": 86.25,
+    "dims": {
+      "pattern_match": 85,
+      "requirement_clarity": 90,
+      "decomposition_stability": 85,
+      "constraint_compliance": 85
+    },
+    "verdict": "AUTO_PROCEED",
+    "at": "2026-10-24T17:14:10Z",
+    "label": "bounded-rust-structural-plan-with-provisioning-checkpoint"
+  },
+  "confidence_basis": {
+    "pattern_match": "Existing match-grouped extraction and canonical ownership APIs reused with bounded Rust helper; no semantic provider.",
+    "requirement_clarity": "Six exact product criteria, explicit all-call-unresolved policy and versioned capability limitations.",
+    "decomposition_stability": "Independent source/plan review accounts for owners/query/capability/cache/dependency seams and precise test amendments.",
+    "constraint_compliance": "Three-day scope and strict first native provisioning checkpoint; absent grammar remains an execution risk, hence85 not90. No asset or product success claimed."
+  },
+  "checker_evidence": ".spectra/plans/aci-s15.review.json",
+  "execution_prescriptions": [
+    "Golden exact declaration/ownership labels, nested free function classification and comment-in-impl-header entity stability; no names-only check.",
+    "All Rust call forms retain exact raw/source proof while candidate IDs/targets remain empty and confident graph excludes guessed calls.",
+    "Read historical v1/v2 capability and old producer unsupported/disabled state unchanged by current runtime queries.",
+    "Strict all-field packet/proof/span/owner equality and complete fifth module fingerprint; same-language Rust reuse/full fallback.",
+    "Actual locked native grammar provisioning remains first unverified execution checkpoint; offline Linux UID10001/source:ro proof required, no required skips or version/provider substitution."
+  ],
+  "grammar_checkpoint": {
+    "qualified": false,
+    "package": "tree-sitter-language-pack",
+    "version": "1.6.0",
+    "command": "uv run --frozen python -c \"from tree_sitter_language_pack import download; print(download(['rust']))\"",
+    "require": "Official versioned asset provenance/hashes, real native query/AST qualification then installed offline Docker proof; stop on missing capability."
+  },
+  "scope_amendments": [
+    ".spectra/changes/aci-s15/scope-amendment.json",
+    ".spectra/changes/aci-s15/bookkeeping-amendment.json"
+  ],
+  "output_digest_exclusions": [
+    ".spectra/state/aci-s15.execution.json",
+    ".spectra/evidence/aci-s15/final-reentry-before.json",
+    ".spectra/evidence/aci-s15/final-reentry-after.json",
+    ".spectra/evidence/aci-s15/final-reentry-summary.json",
+    ".spectra/evidence/aci-s15/final-resume-identity.json",
+    ".spectra/evidence/aci-s15/output-check-tests.log"
+  ],
+  "authoritative_receipt": ".spectra/state/aci-s15.execution.json",
+  "verification": "Approved spec Verification: real labeled Cargo workspace, no duplicate AST declarations, exact owners/proofs, no trait guesses, old capabilities, warm cache/S10 reuse, native/offline Docker, unchanged projected probe and full receipt gates.",
+  "helpers_root": "/Users/henrique/workspace/oss/agents/atlas-aci/.eidolons/ramza/bin",
+  "schemas_root": "/Users/henrique/workspace/oss/agents/atlas-aci/.eidolons/ramza/schemas",
+  "root_gate": "Root mechanical verify-envelope --block and correlated verify_pass trace before one Vivi writer.",
+  "publication": "Root owns green-CI merge/sync; no new S23 release criterion or paid/deployment action.",
+  "backlog": {
+    "merged": 9,
+    "remaining": 33,
+    "current_issue": 11,
+    "next_issue": 30
+  }
+}
