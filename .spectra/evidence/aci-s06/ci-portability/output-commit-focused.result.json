@@ -1,0 +1,8 @@
+{
+  "output_commit": "ae50c9e8bc647000ab3383d443dc4e6bf65253b1",
+  "exit_code": 0,
+  "all_18_passed": true,
+  "required_skips": 0,
+  "source_path": "/tmp/atlas-aci-aci-s06-reentry-ci-portability/mcp-server/src",
+  "product_and_permissions_unchanged": true
+}

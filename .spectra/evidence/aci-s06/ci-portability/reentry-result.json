@@ -1,0 +1,10 @@
+{
+  "output_commit": "ae50c9e8bc647000ab3383d443dc4e6bf65253b1",
+  "products_exit_code": 0,
+  "complete_exit_code": 0,
+  "resume_exit_code": 0,
+  "declared_tracked_files": 11,
+  "before_after_equal": true,
+  "other10_product_digests_unchanged": true,
+  "status": "ALREADY_SATISFIED"
+}
