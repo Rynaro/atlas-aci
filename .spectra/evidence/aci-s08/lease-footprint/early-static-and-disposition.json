@@ -1,0 +1,15 @@
+{
+  "epoch": 1792873002.877538,
+  "status": "source_held_for_independent_early_audit",
+  "product_hashes": {
+    "mcp-server/src/atlas_aci/codegraph.py": "30d0c8d718ed0115bc7b88051bd1ca7ba358665fabfe35b9a57029de2ebb0183",
+    "mcp-server/src/atlas_aci/storage/snapshots.py": "67d3d7c3313b64315fa4bb2388cacdf30aae79b701ff0fc6c1b5c741f75ca616"
+  },
+  "mypy_command": ".venv/bin/mypy src/atlas_aci",
+  "mypy_cwd": "mcp-server",
+  "mypy_exit_code": 0,
+  "mypy_result": "Success: no issues found in26 sourcefiles",
+  "legacy_oracle_command_exit": 0,
+  "legacy_oracle_log": ".spectra/evidence/aci-s08/lease-footprint/legacy-oracle.log",
+  "wrapper_failure_disposition": "Stopped actual measurement process group after SDK protocol parse error caused by evidence-wrapper structlog stdout; preserved stderr/stdout/job with29.90791729200282s charge; fixed wrapper to stderr as official CLI. No production change."
+}

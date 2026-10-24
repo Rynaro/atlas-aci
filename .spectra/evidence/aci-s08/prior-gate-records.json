@@ -1,0 +1,41 @@
+{
+  "reason": "Preserve prior successful native/static sourceD1 records before final guidance-literal source7565 rebuild; original full549pass5fail log remains in place.",
+  "files": [
+    {
+      "logical_path": ".spectra/evidence/aci-s08/docker-final/native-docker-stdio.json",
+      "archived_path": ".spectra/evidence/aci-s08/before-guidance/docker-final/native-docker-stdio.json",
+      "sha256": "5ffdd1667fd6dd3a8981946c2da13f527b46cca9db2474f8a02347ab72998b41",
+      "bytes": 43017
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/docker-final/s06/docker-integration.json",
+      "archived_path": ".spectra/evidence/aci-s08/before-guidance/docker-final/s06/docker-integration.json",
+      "sha256": "f78e23a80ea26bdb366007887760d5a338cc02b95a182340346caea7da63656a",
+      "bytes": 24615
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/docker-final/s15/docker-rust.json",
+      "archived_path": ".spectra/evidence/aci-s08/before-guidance/docker-final/s15/docker-rust.json",
+      "sha256": "6fc752abd155cf273f094a9ff2610daae692db5a1375a72abad73f0f78d2439b",
+      "bytes": 79261
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/image-source-hashes.json",
+      "archived_path": ".spectra/evidence/aci-s08/before-guidance/image-source-hashes.json",
+      "sha256": "2bb6fb551b5109ff2c9f3af0e676d3811b29559779625e3bdc9784ffdbe9fc29",
+      "bytes": 825
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/image-source-hashes.exit",
+      "archived_path": ".spectra/evidence/aci-s08/before-guidance/image-source-hashes.exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/checks.json",
+      "archived_path": ".spectra/evidence/aci-s08/before-guidance/checks.json",
+      "sha256": "48defc43aba6ebbe755a07ea3802fc35e180c496702c29b6e1434a129db4d060",
+      "bytes": 1818
+    }
+  ]
+}

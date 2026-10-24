@@ -1,0 +1,13 @@
+{
+  "slice_id": "ACI-S08",
+  "criteria_changed": false,
+  "authorization": "Root explicit RAMZA origin-audited remedy after measured own-src heuristic regression; no threshold raise/waiver",
+  "additional_paths": [
+    "mcp-server/tests/test_export.py",
+    "mcp-server/tests/fixtures/s08/self-source-fa75bec.json.gz",
+    "mcp-server/tests/fixtures/s08/self-source-fa75bec.provenance.json"
+  ],
+  "test_changes": "Only current-own-src policy+fixed entire-source regression guard. Preserve10MiB exactly on all25pre-S08mergedsrcfiles; current entire src unchanged defaults, exact byte/coverage accounting and lossless export/import roundtrip.",
+  "original_failure": ".spectra/evidence/aci-s08/export-size/raw-manifest.json",
+  "origin": "02a3e9e explicitly not an acceptance criterion; frozen Spree/100MiB/bar unchanged"
+}

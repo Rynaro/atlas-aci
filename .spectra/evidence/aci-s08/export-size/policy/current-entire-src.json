@@ -1,0 +1,259 @@
+{
+  "bytes_written": 10552029,
+  "default_languages": [
+    "bash",
+    "html",
+    "javascript",
+    "markdown",
+    "python",
+    "ruby",
+    "rust",
+    "scss",
+    "typescript",
+    "yaml"
+  ],
+  "eligible_count": 23,
+  "eligible_paths": [
+    "atlas_aci/__init__.py",
+    "atlas_aci/__main__.py",
+    "atlas_aci/codegraph.py",
+    "atlas_aci/config.py",
+    "atlas_aci/enforcement.py",
+    "atlas_aci/extractors/__init__.py",
+    "atlas_aci/extractors/rust.py",
+    "atlas_aci/indexing/__init__.py",
+    "atlas_aci/indexing/extraction_cache.py",
+    "atlas_aci/label_propagation.py",
+    "atlas_aci/memex.py",
+    "atlas_aci/providers/__init__.py",
+    "atlas_aci/providers/python_imports.py",
+    "atlas_aci/resolvers/__init__.py",
+    "atlas_aci/resolvers/dependencies.py",
+    "atlas_aci/server.py",
+    "atlas_aci/tools/__init__.py",
+    "atlas_aci/tools/graph_query.py",
+    "atlas_aci/tools/list_dir.py",
+    "atlas_aci/tools/search_symbol.py",
+    "atlas_aci/tools/search_text.py",
+    "atlas_aci/tools/test_dry_run.py",
+    "atlas_aci/tools/view_file.py"
+  ],
+  "export_path": "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-299/test_export_size_recorded_for_0/current-entire-src-export.jsonl",
+  "export_sha256": "cbb3250eaa5ab6a0cd03b04c1b42dfdad7fdfa4313249a070b1a2885b6bd62e9",
+  "fixed_regression_limit_bytes": null,
+  "label": "current-entire-src",
+  "roundtrip_exact": true,
+  "source_bytes": 936452,
+  "source_coverage_exact": true,
+  "source_file_count": 52,
+  "source_files": {
+    "atlas_aci/__init__.py": {
+      "bytes": 73,
+      "sha256": "5ebd01f90f20052f156ff322e0fc5dcad106ee70ae2dabeb4b180bf19c9cf5c7"
+    },
+    "atlas_aci/__main__.py": {
+      "bytes": 11071,
+      "sha256": "081f2a5a0c2a9bc1d2f6e605bf557d16cbafeb32def3ea661a711fb710ab0972"
+    },
+    "atlas_aci/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 254,
+      "sha256": "bdff78e580a69292a10f84594a891d69bd01be53406e09e72228f89ea443e43a"
+    },
+    "atlas_aci/__pycache__/__main__.cpython-312.pyc": {
+      "bytes": 13683,
+      "sha256": "73a8d7c54b17aed0a707390775731c4b3c5b144a9a0b3b4e21b9d1bb2ddab1a1"
+    },
+    "atlas_aci/__pycache__/codegraph.cpython-312.pyc": {
+      "bytes": 272286,
+      "sha256": "67ab6d16491555f7092526e46629dd7e060d715c31b138ac1de104a951eb5f6f"
+    },
+    "atlas_aci/__pycache__/config.cpython-312.pyc": {
+      "bytes": 5657,
+      "sha256": "4f8a8a41bf577727e2a23ccb1d34e35c57a3e31142167b24f35f7e33612dc037"
+    },
+    "atlas_aci/__pycache__/enforcement.cpython-312.pyc": {
+      "bytes": 9995,
+      "sha256": "a8aa8fa6fe8cdc743514aa1bfbefbaceb1f6e9125a3132dedc18e490bcea8d31"
+    },
+    "atlas_aci/__pycache__/label_propagation.cpython-312.pyc": {
+      "bytes": 4628,
+      "sha256": "1342bc04eb8aff17bed57a0159f32ea96f8aebc8f391062444a4ea0cd5f2cb37"
+    },
+    "atlas_aci/__pycache__/memex.cpython-312.pyc": {
+      "bytes": 4805,
+      "sha256": "56f4a8daea45da5b4f11a1d52b248263b740b713da339d44d609f011dff6c23b"
+    },
+    "atlas_aci/__pycache__/server.cpython-312.pyc": {
+      "bytes": 18964,
+      "sha256": "9b5ad1d1c94dbe6acdb4db9f9b15b08dd6c942a46ce323973f59afd58860a06e"
+    },
+    "atlas_aci/codegraph.py": {
+      "bytes": 285644,
+      "sha256": "7565e53d9f530055bda2486774397a22d946c6e5e15952cb010519493216d2fb"
+    },
+    "atlas_aci/config.py": {
+      "bytes": 6614,
+      "sha256": "c46d0f9a563dc9c1fca257417ee6e98d9cf4a3e88988aaca5f459692d3400195"
+    },
+    "atlas_aci/enforcement.py": {
+      "bytes": 7180,
+      "sha256": "000eeb5ef65a6d098354708405b5288ff9d6ce2718701ab0d318c60b6558fda9"
+    },
+    "atlas_aci/extractors/__init__.py": {
+      "bytes": 79,
+      "sha256": "94ee5ec863d8c3faecd3e184a93c2253554c4dead963aee87d9d690821e56d81"
+    },
+    "atlas_aci/extractors/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 262,
+      "sha256": "ecdd46a2b74a0ca5262f68b427288923b8ca81c01b7a11e4e175cc80960f17be"
+    },
+    "atlas_aci/extractors/__pycache__/rust.cpython-312.pyc": {
+      "bytes": 4378,
+      "sha256": "7a9c007e21e14d7213d24068f74ae6d0d0106e548ef7f1ebd31cfaa857574efa"
+    },
+    "atlas_aci/extractors/rust.py": {
+      "bytes": 3244,
+      "sha256": "28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a"
+    },
+    "atlas_aci/indexing/__init__.py": {
+      "bytes": 73,
+      "sha256": "e4b9d192790309018248199725d46db643744ee7be19e51355cab5f4cf93db1f"
+    },
+    "atlas_aci/indexing/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 254,
+      "sha256": "24c55e93623729d7fdd4636c8fbd4e5be58663eca75cb77d9e7466fb4554b2ec"
+    },
+    "atlas_aci/indexing/__pycache__/extraction_cache.cpython-312.pyc": {
+      "bytes": 26455,
+      "sha256": "56531249cb18599763cb9d176e48c1c2951f695bd0c1a67572c54591ada54fed"
+    },
+    "atlas_aci/indexing/extraction_cache.py": {
+      "bytes": 20119,
+      "sha256": "08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2"
+    },
+    "atlas_aci/label_propagation.py": {
+      "bytes": 5107,
+      "sha256": "c4bd26bc088c5b5ac49417275274655c4fc4476523182c4b51704e20a43000c0"
+    },
+    "atlas_aci/memex.py": {
+      "bytes": 3186,
+      "sha256": "2a350d68b494bc7e324a6bad63181f046891b3caa4ae5d53de0eb6d84c96f458"
+    },
+    "atlas_aci/providers/__init__.py": {
+      "bytes": 52,
+      "sha256": "a0b715438c340121a85cb26a07335277105c6ea705606d8c52d93f6511699d86"
+    },
+    "atlas_aci/providers/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 234,
+      "sha256": "6ab9754ac162c26e99491267e0aff28cb8adbd005e4bf9c4d515fbcb4bda475e"
+    },
+    "atlas_aci/providers/__pycache__/python_imports.cpython-312.pyc": {
+      "bytes": 6813,
+      "sha256": "671fe4fedf707a11b76c25ff89e63b21398a21732d4b771a3102f70295da149e"
+    },
+    "atlas_aci/providers/python_imports.py": {
+      "bytes": 4907,
+      "sha256": "de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014"
+    },
+    "atlas_aci/resolvers/__init__.py": {
+      "bytes": 84,
+      "sha256": "02216c2c82749b992db196e958a800ff70702078b699b9d50d057eb7daf34c65"
+    },
+    "atlas_aci/resolvers/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 266,
+      "sha256": "1f35d259e2753dad4a6412e4472dc9df86f74af62f073424c203177830018d1f"
+    },
+    "atlas_aci/resolvers/__pycache__/dependencies.cpython-312.pyc": {
+      "bytes": 14254,
+      "sha256": "0bfe95b7d667fda6413db775cf33cc25823432384cf972258ebd173722058f12"
+    },
+    "atlas_aci/resolvers/dependencies.py": {
+      "bytes": 9993,
+      "sha256": "0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6"
+    },
+    "atlas_aci/server.py": {
+      "bytes": 22592,
+      "sha256": "f9a1f820f685205569ba6b1f5026ed982b7123bcb91cc33237805fcc60f43970"
+    },
+    "atlas_aci/storage/__init__.py": {
+      "bytes": 40,
+      "sha256": "a5c86b099d459153c262be671561811557ad2f764d24f4ba7c56e243d50bf8b6"
+    },
+    "atlas_aci/storage/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 220,
+      "sha256": "c7de923082803fc71a719d0bb9a13e5576a6edf2e55eaf515964c5330b807774"
+    },
+    "atlas_aci/storage/__pycache__/evidence.cpython-312.pyc": {
+      "bytes": 36789,
+      "sha256": "9cca74eea893470969b1f036081bcf2d0fad2edc65182401eaec0ad54980c42e"
+    },
+    "atlas_aci/storage/__pycache__/snapshots.cpython-312.pyc": {
+      "bytes": 38219,
+      "sha256": "b9f131f9e6d56acab0f7a8a0515d58d738b66282d6bba225ceb19ef92bf09c1a"
+    },
+    "atlas_aci/storage/evidence.py": {
+      "bytes": 32412,
+      "sha256": "65d1ce7d43df6d652c640229407ab0211d5bb1f4c766f1e694e2979d516a3525"
+    },
+    "atlas_aci/storage/snapshots.py": {
+      "bytes": 23001,
+      "sha256": "bd77fa8ce6114f744a733fb2644f1b406cfee5b053b8d1e8655dae7040dfb479"
+    },
+    "atlas_aci/tools/__init__.py": {
+      "bytes": 46,
+      "sha256": "7d9f836e22bca0d286d8d4001d8312f03659bad57ae2d29822be82fd415b410e"
+    },
+    "atlas_aci/tools/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 224,
+      "sha256": "c5bb8ebcdb378131292a64468125cf6c3a7f95ed59feb4502ddd44a748ad03d2"
+    },
+    "atlas_aci/tools/__pycache__/graph_query.cpython-312.pyc": {
+      "bytes": 1551,
+      "sha256": "bd84c7a4888a9330bb6d0d9c064db190db90a04102b4bfd5fd66cb7e6d8444c5"
+    },
+    "atlas_aci/tools/__pycache__/list_dir.cpython-312.pyc": {
+      "bytes": 3441,
+      "sha256": "04a90eac1c95c79dc5d8bc56b94a6260e1d0432385d401f39ff37225fa49f245"
+    },
+    "atlas_aci/tools/__pycache__/search_symbol.cpython-312.pyc": {
+      "bytes": 2287,
+      "sha256": "375feeb501aea2d0343d752890e839e72da2e299d258645aa1367955a46fed33"
+    },
+    "atlas_aci/tools/__pycache__/search_text.cpython-312.pyc": {
+      "bytes": 5538,
+      "sha256": "9f7cb0267ab5432dc815ba7c69dd3985647c6ec215c6d4cb172fa8aeecf6912c"
+    },
+    "atlas_aci/tools/__pycache__/test_dry_run.cpython-312.pyc": {
+      "bytes": 4748,
+      "sha256": "8a824cd0589a6fafbc07936ee39577542e7bf0363acb99f9dd77e9b45afc7e77"
+    },
+    "atlas_aci/tools/__pycache__/view_file.cpython-312.pyc": {
+      "bytes": 5462,
+      "sha256": "9e78db44a48064858ca130378220ed054b13b3ebd4de1ce26b36a2fe34bf05db"
+    },
+    "atlas_aci/tools/graph_query.py": {
+      "bytes": 1101,
+      "sha256": "5891b23d701b5cf56c08da0d416a8d0de562779a487c69464eaf501055b42c2c"
+    },
+    "atlas_aci/tools/list_dir.py": {
+      "bytes": 2155,
+      "sha256": "52bb5f6a690bd04973b810c220e284beb3da3958df75ab8174eca0faea2e93e4"
+    },
+    "atlas_aci/tools/search_symbol.py": {
+      "bytes": 1574,
+      "sha256": "d5a8a01c608c4ed20518530ece34e1d36ead79fe8dc899b5c36c5f88cac952a0"
+    },
+    "atlas_aci/tools/search_text.py": {
+      "bytes": 3937,
+      "sha256": "9054de09b1d4c6840e4b75e3115e268611976507a07bf9c9685bcbde13b098f0"
+    },
+    "atlas_aci/tools/test_dry_run.py": {
+      "bytes": 4056,
+      "sha256": "21affeb347ce7aeaf4350b321b81bbcbd798c29078851633d2cb9d0fa83b4ca5"
+    },
+    "atlas_aci/tools/view_file.py": {
+      "bytes": 6445,
+      "sha256": "31871a9d7594091a52790feac3a5746039cc8c939c7c3f7116e99a9f1f5e48e3"
+    }
+  }
+}

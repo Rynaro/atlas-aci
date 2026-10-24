@@ -1,0 +1,16 @@
+{
+  "slice_id": "ACI-S08",
+  "criteria_changed": false,
+  "scope": "Fresh same-pin/default-profile10 CPU regression and source-pack costs required by root handoff after final producer/source changes; all files within declared S08 metadata prefixes",
+  "source_changes": false,
+  "per_job_seconds": 600,
+  "total_seconds": 2700,
+  "prior_charge_seconds": 0,
+  "preserve": [
+    "original Solidus/Spree pins and inventories",
+    "frozen bar/seeds/resolution",
+    "prior probe artifacts",
+    "verifier/scripts/CI/lock"
+  ],
+  "source_store": "Record actual immutable manifests/packs/cache byte counts and current full export resources; no new ceiling or optimization claim."
+}

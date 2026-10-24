@@ -1,0 +1,8 @@
+{
+  "started_epoch": 1792867357.40483,
+  "budget_seconds": 144000,
+  "gate": "Matching root correlated mechanical verify_pass",
+  "criteria_sha256": "216f05f349bf35630f299ba814be697b8150e3b0da0bd2fef0512a21b34d3dba",
+  "spec_sha256": "260694c5cb057a97e82d110fa47256eecdc4b2eb969eb5a789626f9c2009c0ac",
+  "note": "First receipt-init attempt used mcp-server cwd and failed before any file writes; corrected root cwd. Fresh frozen env provisioned, no product edits."
+}

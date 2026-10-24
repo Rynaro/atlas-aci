@@ -1,0 +1,35 @@
+{
+  ".github/workflows/harden-gate.yml": {
+    "exact_selector_replacements": 3,
+    "sha256": "d40b7e12b12c91fa148acc363634f82b8460459b2469c3465b6da02ec9f47ef3"
+  },
+  "scripts/test-verify-probe-verdict.sh": {
+    "exact_selector_replacements": 1,
+    "sha256": "e921838274bc337538a9db0b7cd7573db94e76165b4e114677a4b073928392f8"
+  },
+  "md": {
+    "command": [
+      "scripts/resolve-probe-artifact.sh",
+      "aci-s08-refined-probe-lpa-vs-louvain.md"
+    ],
+    "exit_code": 0,
+    "resolved": ".spectra/changes/aci-s08/lease-footprint/probe/aci-s08-refined-probe-lpa-vs-louvain.md"
+  },
+  "json": {
+    "command": [
+      "scripts/resolve-probe-artifact.sh",
+      "aci-s08-refined-probe-lpa-vs-louvain.json"
+    ],
+    "exit_code": 0,
+    "resolved": ".spectra/changes/aci-s08/lease-footprint/probe/aci-s08-refined-probe-lpa-vs-louvain.json"
+  },
+  "bash_syntax": {
+    "command": [
+      "/bin/bash",
+      "-n",
+      "scripts/test-verify-probe-verdict.sh"
+    ],
+    "exit_code": 0
+  },
+  "verifier_resolver_producers_lock_unchanged": true
+}

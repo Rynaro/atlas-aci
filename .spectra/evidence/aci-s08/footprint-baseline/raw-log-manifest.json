@@ -1,0 +1,985 @@
+{
+  "reason": "Lossless copies of completed baseline logs only; no planning/refinement-in-progress files touched. Original logical paths stay present during supporting review.",
+  "files": [
+    {
+      "logical_path": ".spectra/evidence/aci-s08/api-lifecycle-red.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/api-lifecycle-red.log.gz",
+      "uncompressed_sha256": "63926bea670b6c967012b522c64b1470503c76de39fbd49c45e25ad295562ba7",
+      "uncompressed_bytes": 5657,
+      "compressed_sha256": "317898079a20d361d522c1f4236c9848d2838487568d48627294cdb22b85efbb",
+      "compressed_bytes": 1768,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/baseline.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/baseline.log.gz",
+      "uncompressed_sha256": "8026021b961784426fa287236bcef3bb31a2671bb7697d53d259dab30dd63e9a",
+      "uncompressed_bytes": 341,
+      "compressed_sha256": "d831c4a2fe292a4e7c751c5d0b12e9a8bddb13c9d3275090b1e6caf4a8508427",
+      "compressed_bytes": 71,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/bounds-readonly-first.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/bounds-readonly-first.log.gz",
+      "uncompressed_sha256": "765d44c6ac8f9b9556a82ccbb523f0316aaa240903b713a5b7db89ccf266aaff",
+      "uncompressed_bytes": 2196,
+      "compressed_sha256": "cc34261bee4b5aacc36c8b961238d2369ef4b36932a84b10a645c3864afa26c4",
+      "compressed_bytes": 906,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/classify.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/classify.log.gz",
+      "uncompressed_sha256": "882efe40d183063030b93ad847b975d88dc63049810ee8e933680928364923ff",
+      "uncompressed_bytes": 508,
+      "compressed_sha256": "df16a4127c83de4ee0d163b956c4e1853f72534c12d392a06d181f6a10f18941",
+      "compressed_bytes": 247,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/compatibility-corrected.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/compatibility-corrected.log.gz",
+      "uncompressed_sha256": "10413ed2da69b07b249fe5cfb7a029609df43cf686d762b92e388c03a7a3bde6",
+      "uncompressed_bytes": 2958,
+      "compressed_sha256": "71bc8e3ba711809b6ffa581bcf51d1bf23a171cc4042c8d834c50f74efd5b754",
+      "compressed_bytes": 921,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/compatibility-first.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/compatibility-first.log.gz",
+      "uncompressed_sha256": "8a8751c137d5cc145a21ed2db9059e831fbc5ef241c45e8e8002f3c94aee9f46",
+      "uncompressed_bytes": 52268,
+      "compressed_sha256": "71e0111f98eafa22769d0104c332d89e9dc4d7a2b161f812851c623334cd4b27",
+      "compressed_bytes": 5293,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/contract-first.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/contract-first.log.gz",
+      "uncompressed_sha256": "e3a106e5a6891a4e61d8f141ff730dcd75a0b6b623da3252aa4083b4953f3281",
+      "uncompressed_bytes": 98,
+      "compressed_sha256": "3f468bfd4c77c23ea9a873664b2494c9610b074df5cea3adec94a5a06a19d5b4",
+      "compressed_bytes": 51,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/docker-build-checkpoint.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/docker-build-checkpoint.log.gz",
+      "uncompressed_sha256": "677e6a79875e4618b381fff921cf997761b6ffbc8155ad23f9c676ab631643c9",
+      "uncompressed_bytes": 53009,
+      "compressed_sha256": "38436de49a490b9157c47836f6144bc1e8f332fcf2a74b929c8df2bfe80e0f60",
+      "compressed_bytes": 20768,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/docker-build-current.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/docker-build-current.log.gz",
+      "uncompressed_sha256": "00fafb190534fc67158cdcdb4774d6b8179ef7dbec47427fc44648607ea6e187",
+      "uncompressed_bytes": 52998,
+      "compressed_sha256": "6fdfdfd344acaa5817f0fd2b092ea901e24d5651e7e769487ff6423a8b62147d",
+      "compressed_bytes": 20744,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/docker-build-final-guidance.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/docker-build-final-guidance.log.gz",
+      "uncompressed_sha256": "53b8bab7c3b1ab6b2d6cbcba7eb16ede4c15e0c25a5a76ffdee676885cc546de",
+      "uncompressed_bytes": 52997,
+      "compressed_sha256": "eea251b31d8c33e7943a84a4671a5bc75ab70463fd7ab0e5e8a47fbfb349e451",
+      "compressed_bytes": 20728,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/docker-build-final.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/docker-build-final.log.gz",
+      "uncompressed_sha256": "1d5b9df21612e992c9f3e306fcbb195aa73063be84e8b9a2f2e7fe03a4864629",
+      "uncompressed_bytes": 52998,
+      "compressed_sha256": "c6cd85bdbf0ca646e998824178f8970c2cfd02315eb3620db0c84d44bdf925eb",
+      "compressed_bytes": 20762,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/docker-stdio-first.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/docker-stdio-first.log.gz",
+      "uncompressed_sha256": "5edd3326d90dede338351cd3b8dd70434641ba1e61bf23b2e8791da4b220f8cf",
+      "uncompressed_bytes": 12005,
+      "compressed_sha256": "98b9051a8991f53fd633b2a6c11fd587723cca28db29e3f0d4251c3185856a5a",
+      "compressed_bytes": 3277,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/export-size/policy-first.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/export-size/policy-first.log.gz",
+      "uncompressed_sha256": "a44be3e0f01067dd074d051f36f154b20105a862f8f491238d3f7fa9683baf51",
+      "uncompressed_bytes": 99,
+      "compressed_sha256": "f2d506b860f1b4d5f51c7cb9b872603db4015a7cc7873b908a7ca3d245a49f02",
+      "compressed_bytes": 51,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/fifo-red.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/fifo-red.log.gz",
+      "uncompressed_sha256": "130cd6a87230c7727bc4df00eac129491d115afddd5cc09948d25254af83e0a7",
+      "uncompressed_bytes": 3776,
+      "compressed_sha256": "39a03dac6d9ee4324744e47bba1b6b4b66437bfb1665599b90bdbc073afe9d7f",
+      "compressed_bytes": 1268,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/format.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/format.log.gz",
+      "uncompressed_sha256": "c3c36fcff1e28b14cae0ee73be45b9f119bbadb20f7d5eb8ab829feeabf5769d",
+      "uncompressed_bytes": 27,
+      "compressed_sha256": "44c6acb1a0d35fa42d81ada8d6ec281a3cb73385a24ee97193002ce3625e36e1",
+      "compressed_bytes": 47,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/full-suite-final.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/full-suite-final.log.gz",
+      "uncompressed_sha256": "cdad0a4cb12e0c6d17bf771bd3391a747b3cbff7673fdbc2234c0ade71947459",
+      "uncompressed_bytes": 661,
+      "compressed_sha256": "70b58b8a3a0f00298c78081ef6adcc6d7806e7c1cdba300cd304f121e9fea0b9",
+      "compressed_bytes": 92,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/full-suite-first.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/full-suite-first.log.gz",
+      "uncompressed_sha256": "6bde8d85a91365f5dcedab1192a806f1f39cc6c5b698073750154558958ec84f",
+      "uncompressed_bytes": 11728,
+      "compressed_sha256": "d6d3c9489d16380782b4bb276f61503cca309df436e992668740633baac923c1",
+      "compressed_bytes": 3007,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/guard.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/guard.log.gz",
+      "uncompressed_sha256": "fbe3200e4dc20426665c33a23b5276ac7ae3e0edb7b031ee4c204e911f2d8b96",
+      "uncompressed_bytes": 3643,
+      "compressed_sha256": "7802a62714ab185a7c3796238d3caf26830f70afb3b6559e8d19b3ab9231e9a7",
+      "compressed_bytes": 1292,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/host-final-checkpoint.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/host-final-checkpoint.log.gz",
+      "uncompressed_sha256": "4298d31ac8526d1e424b023165d437821573758acf13da6100267b382f1bff1e",
+      "uncompressed_bytes": 99,
+      "compressed_sha256": "b94d2a2eebb5ea03ec1745c8b026403274621668064be1715aabdbee64c159d3",
+      "compressed_bytes": 52,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/index-guidance-fixed.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/index-guidance-fixed.log.gz",
+      "uncompressed_sha256": "36628d9288a7053a36fef344f7d77295a6fb21e8ab5726fbbb262ff5e21f2dc0",
+      "uncompressed_bytes": 98,
+      "compressed_sha256": "e2bda6554fb16019bf083f7751a43cbbc928a0194c140454089f01bda4b8d604",
+      "compressed_bytes": 51,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/interfaces-and-bounds-fixed.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/interfaces-and-bounds-fixed.log.gz",
+      "uncompressed_sha256": "1db152c3cabb730725b2b3bc34d5ed813f512065cd3d68319a9afe3e34b1b678",
+      "uncompressed_bytes": 2701,
+      "compressed_sha256": "856235a10b5382fd185cb7c65118d0d98a485e5999961cf58c0483330e9ad896",
+      "compressed_bytes": 1010,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/interfaces-corrected.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/interfaces-corrected.log.gz",
+      "uncompressed_sha256": "fdda08ef5dd63913744e3c3a5421364b0b5c2b85226223ddd85b7228972fe5d4",
+      "uncompressed_bytes": 99,
+      "compressed_sha256": "976e4b639b2e72b654e9051f5648d13560c9ea372c1fd9df52fe43458026f04d",
+      "compressed_bytes": 52,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/lifecycle-fixed.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/lifecycle-fixed.log.gz",
+      "uncompressed_sha256": "87087b53a4c5b4905918e0b26b6cabff250fb387bc91956e07fe936c1ea20637",
+      "uncompressed_bytes": 99,
+      "compressed_sha256": "179d47d449198f9812ce5194f614a5b020df8b16770ac5c616ace822c40fd29b",
+      "compressed_bytes": 52,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/live-binary-red.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/live-binary-red.log.gz",
+      "uncompressed_sha256": "02ab2aff86ac5da374515eceb0ac049aca80b9c753d538e4a4076e1eb57539ab",
+      "uncompressed_bytes": 3112,
+      "compressed_sha256": "9e48bbd2af2e5bb8126bc50686c196e701b06eb8a9464c2386ef6a7cfa4a8a21",
+      "compressed_bytes": 941,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/lock.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/lock.log.gz",
+      "uncompressed_sha256": "154b022c8e75fcf458cbe1e7deb4bb5f5f830d9d4c515b4aec792bc88ec01ebc",
+      "uncompressed_bytes": 29,
+      "compressed_sha256": "7fdbdd4b1631ae8d101774e8cabc736a54f1fdf0f263e44591651ed621ace3eb",
+      "compressed_bytes": 49,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/missing-index-red.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/missing-index-red.log.gz",
+      "uncompressed_sha256": "77c8789cc72b7bfb7a149801fc63f8471a7709430b1e31f1f47232dc8202566e",
+      "uncompressed_bytes": 3114,
+      "compressed_sha256": "4800be7968fb2e7fe593be40bd59181a7f0d696c5a800c44857d808476231249",
+      "compressed_bytes": 1096,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/mypy-current.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/mypy-current.log.gz",
+      "uncompressed_sha256": "5107f9446510710cfc458474a6bae8746bf7ed9a2bccb85b1de3b0a14e84c8ad",
+      "uncompressed_bytes": 44,
+      "compressed_sha256": "c7379abc970dd80f92592ca4eb86514d6c568fd4fd91eac5dc29bc096efa2317",
+      "compressed_bytes": 64,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/mypy-first.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/mypy-first.log.gz",
+      "uncompressed_sha256": "64be37e5f5c9c4a61159fe2853264bae78aa380e15cf2e14ed82e2ed35c7f1e9",
+      "uncompressed_bytes": 513,
+      "compressed_sha256": "b9c3bf5cf0757a939f0c95bdf1c7e1339011404b1c38c9df4c68c6e7fa307565",
+      "compressed_bytes": 281,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/mypy.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/mypy.log.gz",
+      "uncompressed_sha256": "5107f9446510710cfc458474a6bae8746bf7ed9a2bccb85b1de3b0a14e84c8ad",
+      "uncompressed_bytes": 44,
+      "compressed_sha256": "c7379abc970dd80f92592ca4eb86514d6c568fd4fd91eac5dc29bc096efa2317",
+      "compressed_bytes": 64,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/named-criteria-and-unknown-history.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/named-criteria-and-unknown-history.log.gz",
+      "uncompressed_sha256": "bc31853adddcfd7e3b826cc8e22c29e765f6642a421859dbd18f6658469180a2",
+      "uncompressed_bytes": 98,
+      "compressed_sha256": "0ddda42c2f75a5fc4203f1c809e009c58535e8bc1929f0747fd7718b24d90eac",
+      "compressed_bytes": 51,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/native-checkpoint.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/native-checkpoint.log.gz",
+      "uncompressed_sha256": "68d8d5039288dcafeb8b1a77772b695605b65e3d3efa6ef28a387e00b163bfc8",
+      "uncompressed_bytes": 2958,
+      "compressed_sha256": "d61826e8c57a46cc07afb310305944a4c2740f44ca021b8033fd7dbc5bd3aa2b",
+      "compressed_bytes": 1129,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/native-first.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/native-first.log.gz",
+      "uncompressed_sha256": "85955959333e273c6de2605cdf70f19073f9fc7ead3976acaf5316cd84567a50",
+      "uncompressed_bytes": 892,
+      "compressed_sha256": "4a4cdd230701bf46091bec15c7852f83a15fceb84cbf024e7ae04f81d0da264a",
+      "compressed_bytes": 408,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/null-selector-red.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/null-selector-red.log.gz",
+      "uncompressed_sha256": "eb2c5f387725ced27c9d526fc3dfd9f326244d412ce27337cfe4e0feadf989d8",
+      "uncompressed_bytes": 1310,
+      "compressed_sha256": "e5b5a895c932496e5d70d24a747f5f702930fcaa1b1868b1e17fd93bb43768cf",
+      "compressed_bytes": 581,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/assemble.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/assemble.log.gz",
+      "uncompressed_sha256": "21cd25c6ba8141eb94e24fc946a5333869553106c3eb88f93dd5936db8ff3c62",
+      "uncompressed_bytes": 1263,
+      "compressed_sha256": "683db97418e243943b869f970802b8b800a04a50eaa4401c957d01d9c6201c1d",
+      "compressed_bytes": 652,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/assembly.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/assembly.log.gz",
+      "uncompressed_sha256": "325849eee8a64cf60d6f676eafb1bea496a57ef206c4067789b73a800a3d5cca",
+      "uncompressed_bytes": 205,
+      "compressed_sha256": "417351c70542d52ab6704d950849fbb4e8909acd2aa310c01e4a1fbe83aa664a",
+      "compressed_bytes": 176,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/run.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/run.log.gz",
+      "uncompressed_sha256": "c3612f5f2ad4877ffb6b6438757317410693d527fcba55bd4fd9bab0a2e89522",
+      "uncompressed_bytes": 12204,
+      "compressed_sha256": "74f71a5eda9f2fcccfcd16032ea7423cbb7e4b5518517836bcc48ed69d1359a3",
+      "compressed_bytes": 2139,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/size-run.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/size-run.log.gz",
+      "uncompressed_sha256": "d53cdd4adc2155e438c691f7a330ffcd35a984ad4a4b4ae1e8910692c9aff057",
+      "uncompressed_bytes": 643,
+      "compressed_sha256": "e95c0f6f2f94c91afe8261b744523cb53ea0d81f6e6e2887b01798ffa72b9ab8",
+      "compressed_bytes": 374,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/solidus-account.stderr.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/solidus-account.stderr.log.gz",
+      "uncompressed_sha256": "f91c65f43d5f83182f9215400549a8680c03784263bdbb1ac9d554baaae25b67",
+      "uncompressed_bytes": 777,
+      "compressed_sha256": "f1af5e2d53627b70931320a774998203f1a4680be3ee6937adabac23bdf56921",
+      "compressed_bytes": 297,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/solidus-account.stdout.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/solidus-account.stdout.log.gz",
+      "uncompressed_sha256": "6fbce68db32606014a43003f4f2b6e2c9c7547584d0d9ea867a060b6d0354c65",
+      "uncompressed_bytes": 1819,
+      "compressed_sha256": "cc234daa257191dcde0cfdbabddab97a90f8c0bad444c77953f5675bc4db08fe",
+      "compressed_bytes": 881,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/solidus-checkout.stderr.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/solidus-checkout.stderr.log.gz",
+      "uncompressed_sha256": "25718dc5c4d3cf3e217fe1000c8a61c582d8f4779e44ae3d459cd1db1c68fc40",
+      "uncompressed_bytes": 880,
+      "compressed_sha256": "6ce61dd644dfe1f4521a4ebd280fb2a900e0b5d3504abe95d75a3e7d4d87526f",
+      "compressed_bytes": 364,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/solidus-checkout.stdout.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/solidus-checkout.stdout.log.gz",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uncompressed_bytes": 0,
+      "compressed_sha256": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+      "compressed_bytes": 20,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/solidus-clean-after.stderr.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/solidus-clean-after.stderr.log.gz",
+      "uncompressed_sha256": "6cded6d71d6180dc25b94fbadfe4e59b6f974f1c842b4bba5f5799157fdbc32e",
+      "uncompressed_bytes": 777,
+      "compressed_sha256": "08ec46cb13ed27947257bfa6eb99d07672efc7836193cf43c6d339013d3171bc",
+      "compressed_bytes": 288,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/solidus-clean-after.stdout.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/solidus-clean-after.stdout.log.gz",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uncompressed_bytes": 0,
+      "compressed_sha256": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+      "compressed_bytes": 20,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/solidus-clean.stderr.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/solidus-clean.stderr.log.gz",
+      "uncompressed_sha256": "d94884a57f6636b3e7dfaeaad7447592b78f0b0db1fc1073324dfadb423b69d0",
+      "uncompressed_bytes": 777,
+      "compressed_sha256": "18ca5df58193c538c7aaa8e9591db104694e8d353f263bc966de7fe9aa258e2a",
+      "compressed_bytes": 281,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/solidus-clean.stdout.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/solidus-clean.stdout.log.gz",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uncompressed_bytes": 0,
+      "compressed_sha256": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+      "compressed_bytes": 20,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/solidus-clone.stderr.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/solidus-clone.stderr.log.gz",
+      "uncompressed_sha256": "25a45dcabf41f2cc3f34bf0cd40364fb0eb5c098c8ba8ae437972fc82728f658",
+      "uncompressed_bytes": 829,
+      "compressed_sha256": "21b6ead2f94066d6a910f13c9ac442fb3709b690345c87df19f9ffff0cad4880",
+      "compressed_bytes": 328,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/solidus-clone.stdout.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/solidus-clone.stdout.log.gz",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uncompressed_bytes": 0,
+      "compressed_sha256": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+      "compressed_bytes": 20,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/solidus-export.stderr.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/solidus-export.stderr.log.gz",
+      "uncompressed_sha256": "428128ce813d2588d6f503c056b0875b6faf43e23c1907699b6f3f1332ade82e",
+      "uncompressed_bytes": 875,
+      "compressed_sha256": "f7aa297f19054e80169090547f1b5c26a95b0776df8dd8594b932f8a256207b5",
+      "compressed_bytes": 376,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/solidus-export.stdout.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/solidus-export.stdout.log.gz",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uncompressed_bytes": 0,
+      "compressed_sha256": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+      "compressed_bytes": 20,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/solidus-head.stderr.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/solidus-head.stderr.log.gz",
+      "uncompressed_sha256": "6fe1bff77ceec841133473c1555f23036ce8fc69e494d2dc80562c557871a7f4",
+      "uncompressed_bytes": 777,
+      "compressed_sha256": "329e6e65a420a6fc84d1d11ee4a170be05c0f3642d165ed3c097d29d78aaf884",
+      "compressed_bytes": 276,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/solidus-head.stdout.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/solidus-head.stdout.log.gz",
+      "uncompressed_sha256": "20807c73edc1b092a56dd9285e81db1bb0f1249018af6a68bfdc426dc8656293",
+      "uncompressed_bytes": 41,
+      "compressed_sha256": "414c7f55405cd658bb3bb1fd2331141d13d061a4668e493282a3dcecca3a583b",
+      "compressed_bytes": 59,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/solidus-hooks.stderr.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/solidus-hooks.stderr.log.gz",
+      "uncompressed_sha256": "eb40680660ce5ed0e2762e9d841559517f994d38a3d64c2da7fdb939e1bcb614",
+      "uncompressed_bytes": 777,
+      "compressed_sha256": "423fea46faa1a61eb9b152d0bbb3da78f8c8d5a50a5f651dd08cebada5c01025",
+      "compressed_bytes": 276,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/solidus-hooks.stdout.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/solidus-hooks.stdout.log.gz",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uncompressed_bytes": 0,
+      "compressed_sha256": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+      "compressed_bytes": 20,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/solidus-modularity.stderr.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/solidus-modularity.stderr.log.gz",
+      "uncompressed_sha256": "21d309217dd92095fdbb2ebda4395a85325a0cdad8659f8ed70271f25d47f00a",
+      "uncompressed_bytes": 777,
+      "compressed_sha256": "11642baa598dd04a592c7525f5b20f94fa9c83585fe79b102e4ed59140aab8fa",
+      "compressed_bytes": 291,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/solidus-modularity.stdout.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/solidus-modularity.stdout.log.gz",
+      "uncompressed_sha256": "003100c0d10cf143a3b030f1f52a44f4ca45f3f51c847025bc4360be1169eccb",
+      "uncompressed_bytes": 235787,
+      "compressed_sha256": "86cfcf38ef112e6e330b5edb1e9430d575c289663112d6f78c4168b5d0ac25c3",
+      "compressed_bytes": 9091,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/solidus-origin.stderr.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/solidus-origin.stderr.log.gz",
+      "uncompressed_sha256": "9bc001f0cdf5ec0d4fe7c32fd55612c0fa3876917f71d76f248b5bc57b1f5124",
+      "uncompressed_bytes": 777,
+      "compressed_sha256": "37b9a2b42959abc2a02b02ee2d6ee611d9c7e84064df1910631d25b10e06b623",
+      "compressed_bytes": 274,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/solidus-origin.stdout.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/solidus-origin.stdout.log.gz",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uncompressed_bytes": 0,
+      "compressed_sha256": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+      "compressed_bytes": 20,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/spree-account.stderr.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/spree-account.stderr.log.gz",
+      "uncompressed_sha256": "f5f542c21ffc8c2ca3947fef7e30f64a644164f46630b1255d86d380aff63341",
+      "uncompressed_bytes": 777,
+      "compressed_sha256": "d0eda8b09f9dc0150f4e26ba6033d2fc935be3d216c3a9fbecbd729ef6a60116",
+      "compressed_bytes": 299,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/spree-account.stdout.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/spree-account.stdout.log.gz",
+      "uncompressed_sha256": "f90848673aa06bb3d77f7d8739b323281674b6d874f2ae429d036902440fa2c3",
+      "uncompressed_bytes": 1801,
+      "compressed_sha256": "ebfe705563d6e92f4f30dae5e5efe2a9e968a9d0330bc9a8c72a57b46ed469c8",
+      "compressed_bytes": 882,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/spree-checkout.stderr.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/spree-checkout.stderr.log.gz",
+      "uncompressed_sha256": "bfccd3e633d8b689922084d7c140b4c3f8a2fee7ee20749658197be691f1846d",
+      "uncompressed_bytes": 820,
+      "compressed_sha256": "bd363f7c7fb26327e17e015a2b10de90985ff65985623064deb6409b117f85e0",
+      "compressed_bytes": 319,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/spree-checkout.stdout.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/spree-checkout.stdout.log.gz",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uncompressed_bytes": 0,
+      "compressed_sha256": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+      "compressed_bytes": 20,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/spree-clean-after.stderr.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/spree-clean-after.stderr.log.gz",
+      "uncompressed_sha256": "19a2acae81a93e1ae1becaa4c605a023bd92cf4768229f777a24b1225cfae7c6",
+      "uncompressed_bytes": 777,
+      "compressed_sha256": "b04233292aadf984b6f23f71c31e643c0821ef8abc3b1df3d97e8104afae4158",
+      "compressed_bytes": 287,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/spree-clean-after.stdout.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/spree-clean-after.stdout.log.gz",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uncompressed_bytes": 0,
+      "compressed_sha256": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+      "compressed_bytes": 20,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/spree-clean.stderr.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/spree-clean.stderr.log.gz",
+      "uncompressed_sha256": "00d6f1e40d76d3e18fdc67aecddc0715b76d599c3bed5c38d832efcfc63246c4",
+      "uncompressed_bytes": 777,
+      "compressed_sha256": "772b7340441f6fea8ec45923b43c2aa74061f0edf4f741c5adb12a5587efea47",
+      "compressed_bytes": 281,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/spree-clean.stdout.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/spree-clean.stdout.log.gz",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uncompressed_bytes": 0,
+      "compressed_sha256": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+      "compressed_bytes": 20,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/spree-clone.stderr.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/spree-clone.stderr.log.gz",
+      "uncompressed_sha256": "7e96d683172cf5de13b14c7520fcac4b8bff2f54910acac1c974bee84d4d69dc",
+      "uncompressed_bytes": 827,
+      "compressed_sha256": "95b98812e001e9c208f9f0bf838798cbe7e3206fa156f7b3c2b50ddd96d0fb5d",
+      "compressed_bytes": 326,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/spree-clone.stdout.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/spree-clone.stdout.log.gz",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uncompressed_bytes": 0,
+      "compressed_sha256": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+      "compressed_bytes": 20,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/spree-export.stderr.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/spree-export.stderr.log.gz",
+      "uncompressed_sha256": "fca1837e02fdc767106174731a23c9c7784b33ea9f4e7e808f6deb2cde9c941b",
+      "uncompressed_bytes": 873,
+      "compressed_sha256": "61c63e9119c0737c68d4e14942dca4d0f7301f646a36c0728a5bcacde2c12959",
+      "compressed_bytes": 379,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/spree-export.stdout.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/spree-export.stdout.log.gz",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uncompressed_bytes": 0,
+      "compressed_sha256": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+      "compressed_bytes": 20,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/spree-head.stderr.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/spree-head.stderr.log.gz",
+      "uncompressed_sha256": "b70330fe6fe014bee2c4e35dac215740ece9173aac6314073745963fbb36797f",
+      "uncompressed_bytes": 777,
+      "compressed_sha256": "6dfe213be182b86a4a9dbd740454c0d2ea5109d5791619fd01b8eb805d3a7ccf",
+      "compressed_bytes": 275,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/spree-head.stdout.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/spree-head.stdout.log.gz",
+      "uncompressed_sha256": "5fe91b532b414507f8a43a05ed515af6b236a309fe19cf50c7c933d5543e1016",
+      "uncompressed_bytes": 41,
+      "compressed_sha256": "e91b9271e0a809322dba2098bb1f769ed8711a447a4013a7a069c058e1ccaf26",
+      "compressed_bytes": 60,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/spree-hooks.stderr.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/spree-hooks.stderr.log.gz",
+      "uncompressed_sha256": "592223cda508adba1d29f2aa00c6a8d16e53e5757d10a23f748e7a11ea038887",
+      "uncompressed_bytes": 777,
+      "compressed_sha256": "e1f2e65ffa3b7d45059a0886e9a595d7902591320cc77e75e2d1bd1c197782bd",
+      "compressed_bytes": 276,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/spree-hooks.stdout.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/spree-hooks.stdout.log.gz",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uncompressed_bytes": 0,
+      "compressed_sha256": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+      "compressed_bytes": 20,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/spree-jsonl.stderr.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/spree-jsonl.stderr.log.gz",
+      "uncompressed_sha256": "10bac7b118d20389319038d35a66c4f57525e8e61bcdbfcf6402363e46ad2955",
+      "uncompressed_bytes": 1629,
+      "compressed_sha256": "0a3881273db7a7caa8a5a482ee70bb25634bd70b11ba68506d7f02a595a90331",
+      "compressed_bytes": 750,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/spree-jsonl.stdout.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/spree-jsonl.stdout.log.gz",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uncompressed_bytes": 0,
+      "compressed_sha256": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+      "compressed_bytes": 20,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/spree-modularity.stderr.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/spree-modularity.stderr.log.gz",
+      "uncompressed_sha256": "a295c1cd08e5fc40833a6f54daf5eb27f62332c2c8693df1182b303830fff486",
+      "uncompressed_bytes": 777,
+      "compressed_sha256": "9a25463a2d8fb194acb83a39936401f3b5142a01a52dfe3605a6a16604a8fa73",
+      "compressed_bytes": 290,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/spree-modularity.stdout.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/spree-modularity.stdout.log.gz",
+      "uncompressed_sha256": "1eb7a47691b2639e96633748ef149f5b45a037d33a7a86f8415eadc35472154f",
+      "uncompressed_bytes": 685880,
+      "compressed_sha256": "0b8dd3b8e2e6445c705ac7fbd9670a5cfbec67a06f7aff010fbea2f07a99db6d",
+      "compressed_bytes": 47121,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/spree-origin.stderr.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/spree-origin.stderr.log.gz",
+      "uncompressed_sha256": "64299d6e4e8f7a735211eb15e8268842cc6f0256f163dd3a897f293a7f904a10",
+      "uncompressed_bytes": 777,
+      "compressed_sha256": "494994d3309a9085173bcaa4210664724cf2d449a78066d97f67129bebcc477f",
+      "compressed_bytes": 274,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/spree-origin.stdout.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/spree-origin.stdout.log.gz",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uncompressed_bytes": 0,
+      "compressed_sha256": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+      "compressed_bytes": 20,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/spree-sparse.stderr.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/spree-sparse.stderr.log.gz",
+      "uncompressed_sha256": "014a2fc6cd6818151ea0069bddb4b1031e964baa039c7b39f56dadddac403a70",
+      "uncompressed_bytes": 777,
+      "compressed_sha256": "7d5afcc93ac6e35637975de57518306f9bc4cc2e94a8dae691f701008f577696",
+      "compressed_bytes": 276,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/spree-sparse.stdout.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/spree-sparse.stdout.log.gz",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uncompressed_bytes": 0,
+      "compressed_sha256": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+      "compressed_bytes": 20,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe/verifier.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe/verifier.log.gz",
+      "uncompressed_sha256": "76b222feca2a6bd663d61bee80c7d7ea1bd177689fde4c2d1a5a6dbde3006256",
+      "uncompressed_bytes": 800,
+      "compressed_sha256": "4a7313420407130817d42982f22880aacee6df55bdd53ed5b380862b8d2aa784",
+      "compressed_bytes": 422,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/probe.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/probe.log.gz",
+      "uncompressed_sha256": "76b222feca2a6bd663d61bee80c7d7ea1bd177689fde4c2d1a5a6dbde3006256",
+      "uncompressed_bytes": 800,
+      "compressed_sha256": "4a7313420407130817d42982f22880aacee6df55bdd53ed5b380862b8d2aa784",
+      "compressed_bytes": 422,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/read-seam-corrected.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/read-seam-corrected.log.gz",
+      "uncompressed_sha256": "976ea3fe6dfa65b827ec05fc16bf49cec94d3fda3b2d6ad4719708e74a38b32d",
+      "uncompressed_bytes": 98,
+      "compressed_sha256": "30f6edc6e3d09dd40945f1e6d6aaec3dc766e14482444a0cac850fd326923b69",
+      "compressed_bytes": 49,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/recovery-fixed.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/recovery-fixed.log.gz",
+      "uncompressed_sha256": "55ac3e98e4a8416101df0dbf5b38e350d3a0cd5266a477d4aa7b42dc91fd6d31",
+      "uncompressed_bytes": 99,
+      "compressed_sha256": "18afe2b54afe6cd1351377c831356561e9755e89db9ea31cf69da78b3d6dcc1a",
+      "compressed_bytes": 52,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/ruff.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/ruff.log.gz",
+      "uncompressed_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "uncompressed_bytes": 19,
+      "compressed_sha256": "7162964741fdb747d7ab27df2d1a1b64fa0636c4b7fe50ea8493de14cb62cbd4",
+      "compressed_bytes": 39,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/s04-read-corrected.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/s04-read-corrected.log.gz",
+      "uncompressed_sha256": "61ca266d920fafef052343603b50fecd4732b9b475dffd38709cbf8c33c80949",
+      "uncompressed_bytes": 98,
+      "compressed_sha256": "615f722e43ff02cad939fe15b9e4b6b7d691ebe60f5c700488af504f78474c62",
+      "compressed_bytes": 51,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/scripts-format.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/scripts-format.log.gz",
+      "uncompressed_sha256": "0321fffcb91606a42c0a19d8c1121d5c544379d663821fce616c71a7bb62f6b5",
+      "uncompressed_bytes": 26,
+      "compressed_sha256": "055b00fc151729395104983726f5da1b03dd3b0c5fb1ef248e8318c32311892d",
+      "compressed_bytes": 46,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/scripts-mypy.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/scripts-mypy.log.gz",
+      "uncompressed_sha256": "14fdf673bd175fe32ef42df34666481bb15e465313f7dbef32d0aea2ba76a26e",
+      "uncompressed_bytes": 44,
+      "compressed_sha256": "92e357f6e255b768fba0f5f6e0c1a5b2a23af02caa3f580c7cd25cd5576cd6cd",
+      "compressed_bytes": 64,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/scripts-ruff.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/scripts-ruff.log.gz",
+      "uncompressed_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "uncompressed_bytes": 19,
+      "compressed_sha256": "7162964741fdb747d7ab27df2d1a1b64fa0636c4b7fe50ea8493de14cb62cbd4",
+      "compressed_bytes": 39,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/size-guard.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/size-guard.log.gz",
+      "uncompressed_sha256": "970e558394ae49cd67e8c08a9985b49b896e77c8fe865640efa5cd7c3cc1f06a",
+      "uncompressed_bytes": 400,
+      "compressed_sha256": "0bfb637604fe424cdaca1e44786e4d0a28d2c115c05bbcbe7b4cda4c3f527f09",
+      "compressed_bytes": 225,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/source-allocation-red.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/source-allocation-red.log.gz",
+      "uncompressed_sha256": "6ebc4261726fa3c43f1fa7d04cd8534e38a06f4ec77448f66628637e6699dc16",
+      "uncompressed_bytes": 2384,
+      "compressed_sha256": "f5c261808decda011f87853c9855432e3cbb501b64a916dec0f828f1a77cb618",
+      "compressed_bytes": 758,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/source-mismatch-red.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/source-mismatch-red.log.gz",
+      "uncompressed_sha256": "2056c77374df1429175778ff9a35cc9b49aa2ee64d554406e4fbbb871fbb0b30",
+      "uncompressed_bytes": 1057,
+      "compressed_sha256": "88415c60441ede31ea7ff19f9329a9035f94f1d1c28dd6485a7375ba44c528da",
+      "compressed_bytes": 634,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/strict-corrected.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/strict-corrected.log.gz",
+      "uncompressed_sha256": "4f0ed2f94a5ddfc1987b7906b412d432fe61f7f3c4be425891d8dad8eacaf11c",
+      "uncompressed_bytes": 99,
+      "compressed_sha256": "c8445f03170db42b00ef93fe8e0e506d5cffeca2ba4f0fb7ad8fb10b130372eb",
+      "compressed_bytes": 52,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/strict-first.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/strict-first.log.gz",
+      "uncompressed_sha256": "386abb94dc5d11e69685c6972d82d4c7e433617eed092c4da9c959358d051056",
+      "uncompressed_bytes": 2407,
+      "compressed_sha256": "23e1e615b070cac135eafa3a056cfccfe095896d3ca9895c1d3389e215276b37",
+      "compressed_bytes": 802,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/test-lint-first.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/test-lint-first.log.gz",
+      "uncompressed_sha256": "6f409d345379e23c574851f7fc751a05bf3b317c2cdabc9a530c6e9a93297b89",
+      "uncompressed_bytes": 3040,
+      "compressed_sha256": "d9c94aefd87377a426430618421b0891a958d354adebdb955b23e42335bca774",
+      "compressed_bytes": 1086,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/vivi-pass2-full.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/vivi-pass2-full.log.gz",
+      "uncompressed_sha256": "6d9ef9f7a07461105084601b9166330cbff5a2f53ecfd93f52eaeb130180c2ec",
+      "uncompressed_bytes": 99,
+      "compressed_sha256": "1699a9a1dd2bb313d834c94471595149b2c1a5ee15ed5a0d7c8ff82ffcfd1a40",
+      "compressed_bytes": 52,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/vivi-pass2.log",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/raw-logs/vivi-pass2.log.gz",
+      "uncompressed_sha256": "dcfbefb5176a121576280597ac580c1b9c8d0d86db345eab78ed7875d5515d49",
+      "uncompressed_bytes": 762,
+      "compressed_sha256": "76d541adc8c9cff00743e1d39ff891aa0838ea9897b2842b9a2e8b73e9974038",
+      "compressed_bytes": 367,
+      "gzip_mtime": 0,
+      "plain_copy_retained_for_supporting_review": true
+    }
+  ]
+}

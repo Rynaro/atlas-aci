@@ -37,6 +37,7 @@ async def view_file(
     args: dict[str, Any],
     config: Config,
     enforcement: Enforcement,
+    source_reader=None,
 ) -> dict[str, Any]:
     start_t = time.monotonic()
     path_str = args["path"]
@@ -49,34 +50,51 @@ async def view_file(
         raise ToolError("FORBIDDEN", "end_line must be >= start_line.", "none")
 
     p = Path(path_str)
-    abs_p = p if p.is_absolute() else config.repo / p
-    enforcement.assert_path_in_repo(abs_p)
-
-    if not abs_p.exists():
-        raise ToolError("NOT_FOUND", f"File {path_str!r} does not exist.", "none")
-    if not abs_p.is_file():
-        raise ToolError("NOT_FOUND", f"Path {path_str!r} is not a file.", "different_tool")
-
-    if abs_p.suffix.lower() in BINARY_EXTENSIONS:
-        size = abs_p.stat().st_size
-        enforcement.record(
-            tool="view_file",
-            args=args,
-            bytes_out=0,
-            duration_ms=int((time.monotonic() - start_t) * 1000),
-            error="BINARY_CONTENT",
-        )
-        return {
-            "error": "BINARY_CONTENT",
-            "message": f"File appears binary; size={size} bytes.",
-            "retry_hint": "different_tool",
-        }
-
     actual_start, actual_end, _ = enforcement.cap_lines(start_line, end_line)
+    if source_reader is None:
+        if "source_sha256" in args or "snapshot_id" in args:
+            raise ToolError(
+                "SNAPSHOT_UNAVAILABLE", "Snapshot source reader is required.", "different_tool"
+            )
+        abs_p = p if p.is_absolute() else config.repo / p
+        enforcement.assert_path_in_repo(abs_p)
+        if not abs_p.exists():
+            raise ToolError("NOT_FOUND", f"File {path_str!r} does not exist.", "none")
+        if not abs_p.is_file():
+            raise ToolError("NOT_FOUND", f"Path {path_str!r} is not a file.", "different_tool")
+        if abs_p.suffix.lower() in BINARY_EXTENSIONS:
+            size = abs_p.stat().st_size
+            enforcement.record(
+                tool="view_file",
+                args=args,
+                bytes_out=0,
+                duration_ms=int((time.monotonic() - start_t) * 1000),
+                error="BINARY_CONTENT",
+            )
+            return {
+                "error": "BINARY_CONTENT",
+                "message": f"File appears binary; size={size} bytes.",
+                "retry_hint": "different_tool",
+                "source_mode": "live",
+            }
+        source = abs_p.read_bytes()
+        mode = {"source_mode": "live"}
+    else:
+        source = source_reader.read(path_str, args.get("source_sha256"))
+        import hashlib
 
+        mode = {
+            "source_mode": "snapshot",
+            "snapshot_id": source_reader.snapshot_id,
+            "source_sha256": hashlib.sha256(source).hexdigest(),
+        }
     try:
-        with abs_p.open("r", encoding="utf-8") as f:
-            all_lines = f.readlines()
+        if p.suffix.lower() in BINARY_EXTENSIONS:
+            raise UnicodeDecodeError("utf-8", b"", 0, 1, "opaque binary extension")
+        # Preserve text-open universal newline behavior and existing line windows.
+        import io
+
+        all_lines = io.StringIO(source.decode("utf-8"), newline=None).readlines()
     except UnicodeDecodeError:
         enforcement.record(
             tool="view_file",
@@ -87,8 +105,9 @@ async def view_file(
         )
         return {
             "error": "BINARY_CONTENT",
-            "message": "File contains non-UTF-8 bytes; treated as binary.",
+            "message": "File appears binary or is not UTF-8.",
             "retry_hint": "different_tool",
+            **mode,
         }
 
     if actual_start > len(all_lines):
@@ -142,6 +161,7 @@ async def view_file(
     more_file_remains = actual_end < total_lines
 
     result: dict[str, Any] = {
+        **mode,
         "path": str(p),
         "start_line": actual_start,
         "end_line": actual_start + len(selected) - 1,

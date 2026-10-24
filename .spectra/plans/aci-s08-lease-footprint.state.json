@@ -1,0 +1,150 @@
+{
+  "schema": "ramza/plan-state.v1",
+  "plan": "aci-s08-lease-footprint",
+  "created_at": "2026-10-24T19:47:54Z",
+  "tier": "full",
+  "phase": "DONE",
+  "phases_done": [
+    "RS",
+    "S",
+    "P",
+    "E",
+    "C",
+    "T",
+    "A",
+    "DONE"
+  ],
+  "rightsize": {
+    "score": 5,
+    "computed_tier": "full",
+    "inputs": {
+      "files_est": 8,
+      "new_dep": false,
+      "public_api": false,
+      "migration": true,
+      "security": true,
+      "novel": true,
+      "stakes": "med"
+    }
+  },
+  "refine_cycles": 0,
+  "skips": [],
+  "gates": [
+    {
+      "rubric": "complexity",
+      "total": 9,
+      "dims": {
+        "scope": 2,
+        "ambiguity": 2,
+        "dependencies": 2,
+        "risk": 3
+      },
+      "verdict": "extended",
+      "at": "2026-10-24T19:48:05Z",
+      "label": "compact-proof-lifecycle"
+    },
+    {
+      "rubric": "explore",
+      "total": 78.5,
+      "dims": {
+        "alignment": 8,
+        "correctness": 9,
+        "maintainability": 9,
+        "performance": 5,
+        "simplicity": 9,
+        "risk": 9,
+        "innovation": 3
+      },
+      "verdict": "solid",
+      "at": "2026-10-24T19:48:05Z",
+      "label": "retain-v1-stream-graph-only"
+    },
+    {
+      "rubric": "explore",
+      "total": 87,
+      "dims": {
+        "alignment": 10,
+        "correctness": 9,
+        "maintainability": 8,
+        "performance": 9,
+        "simplicity": 7,
+        "risk": 8,
+        "innovation": 7
+      },
+      "verdict": "elite",
+      "at": "2026-10-24T19:48:05Z",
+      "label": "compact-closed-proof-and-stream-own-graph"
+    },
+    {
+      "rubric": "explore",
+      "total": 66,
+      "dims": {
+        "alignment": 7,
+        "correctness": 8,
+        "maintainability": 5,
+        "performance": 9,
+        "simplicity": 3,
+        "risk": 4,
+        "innovation": 9
+      },
+      "verdict": "weak",
+      "at": "2026-10-24T19:48:06Z",
+      "label": "persistent-merkle-proof-query-system"
+    },
+    {
+      "rubric": "refine",
+      "cycle": 1,
+      "total": 4.4,
+      "min": 4,
+      "dims": {
+        "clarity": 4,
+        "completeness": 5,
+        "actionability": 4,
+        "efficiency": 4,
+        "testability": 5
+      },
+      "verdict": "pass",
+      "at": "2026-10-24T19:54:25Z",
+      "label": "atlas-s08-footprint-plan-checker-original-review-2026-10-24T19:53:37Z"
+    },
+    {
+      "rubric": "confidence",
+      "total": 88.75,
+      "dims": {
+        "pattern_match": 85,
+        "requirement_clarity": 95,
+        "decomposition_stability": 85,
+        "constraint_compliance": 90
+      },
+      "verdict": "AUTO_PROCEED",
+      "at": "2026-10-24T19:54:26Z",
+      "label": "compact-proof-plan-with-exact-old-algorithm-oracles"
+    }
+  ],
+  "amendments": [],
+  "declared_scope": [
+    "mcp-server/src/atlas_aci/storage/snapshots.py",
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/tests/slices/test_s08_*.py",
+    ".spectra/plans/aci-s08-lease-footprint.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/changes/aci-s08/lease-footprint/*",
+    ".spectra/evidence/aci-s08/lease-footprint/*"
+  ],
+  "criteria_sha256": "2cbc4c2fe6516ef01a3f45b9a9570c73fd84f952aac6f7429a6d1f650dab8d54",
+  "critic": {
+    "author": "ramza-backlog-order-s08-footprint",
+    "checker": "atlas-s08-footprint-plan-checker",
+    "at": "2026-10-24T19:54:26Z"
+  },
+  "scope_declared_at": "2026-10-24T19:55:10Z",
+  "criteria_frozen_at": "2026-10-24T19:55:10Z",
+  "drift_reports": [
+    {
+      "at": "2026-10-24T19:55:38Z",
+      "range": "worktree-vs-HEAD",
+      "files_changed": 373,
+      "uncovered": []
+    }
+  ]
+}

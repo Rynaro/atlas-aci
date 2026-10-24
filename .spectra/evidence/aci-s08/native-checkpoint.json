@@ -1,0 +1,50 @@
+{
+  "command": [
+    "docker",
+    "run",
+    "--rm",
+    "-i",
+    "--read-only",
+    "--network",
+    "none",
+    "-v",
+    "/private/tmp/aci-s08-native-oeaolp20/repo:/private/tmp/aci-s08-native-oeaolp20/repo:ro",
+    "-v",
+    "/tmp/aci-s08-native-oeaolp20/graphs:/graphs:ro",
+    "--entrypoint",
+    "python",
+    "atlas-aci-s08-checkpoint",
+    "-u",
+    "-c",
+    "import errno,json,os,sys\nfrom pathlib import Path\nfrom atlas_aci.codegraph import CodeGraph\nassert os.geteuid()==10001\ntry:Path(sys.argv[1]+'/negative-source-write').write_text('forbidden')\nexcept OSError as e:assert e.errno==errno.EROFS;error=e.errno\nelse:raise AssertionError('source writable')\ng=CodeGraph(Path(sys.argv[1]),graph_root=Path('/graphs'),read_only=True)\nwith g.reader_lease() as reader:\n print(json.dumps({'ready':True,'token':reader.snapshot_id,'definitions':reader.search_symbol('old_target')['definitions'],'source_errno':error,'uid':os.geteuid()}),flush=True)\n assert sys.stdin.readline().strip()=='READ'\n print(json.dumps({'bytes':reader.read_source('a.py').decode(),'definitions':reader.search_symbol('old_target')['definitions']}),flush=True)\ng.close()\n",
+    "/private/tmp/aci-s08-native-oeaolp20/repo"
+  ],
+  "source": "/private/tmp/aci-s08-native-oeaolp20/repo",
+  "graphs": "/tmp/aci-s08-native-oeaolp20/graphs",
+  "source_before": "b389c212c0c78ae9134be2bf1e7bbeb3b95b4296763f80041412f7dc4613c6bf",
+  "image": "atlas-aci-s08-checkpoint",
+  "first_stdout": "{\"ready\": true, \"token\": \"f61639be230a16e23d574666e40260b24ad4737d02bed1c80d2ee2fc3f797a6f\", \"definitions\": [{\"id\": 1, \"name\": \"old_target\", \"kind\": \"function\", \"path\": \"a.py\", \"line_start\": 1, \"line_end\": 2, \"lang\": \"python\", \"entity_id\": \"1e1dd953a3b997b160a2bfe99e478d17b82a6ec98bdc7a731c02a86c07d2dc44\", \"occurrence_id\": \"c8e06d53d69e3e5bd448eeb8a2e0489d9c08d31937564f33a880ea8d53237b16\"}], \"source_errno\": 30, \"uid\": 10001}\n",
+  "acquired": {
+    "ready": true,
+    "token": "f61639be230a16e23d574666e40260b24ad4737d02bed1c80d2ee2fc3f797a6f",
+    "definitions": [
+      {
+        "id": 1,
+        "name": "old_target",
+        "kind": "function",
+        "path": "a.py",
+        "line_start": 1,
+        "line_end": 2,
+        "lang": "python",
+        "entity_id": "1e1dd953a3b997b160a2bfe99e478d17b82a6ec98bdc7a731c02a86c07d2dc44",
+        "occurrence_id": "c8e06d53d69e3e5bd448eeb8a2e0489d9c08d31937564f33a880ea8d53237b16"
+      }
+    ],
+    "source_errno": 30,
+    "uid": 10001
+  },
+  "exit_code": 0,
+  "stdout": "{\"bytes\": \"def old_target():\\n return 1\\n\", \"definitions\": [{\"id\": 1, \"name\": \"old_target\", \"kind\": \"function\", \"path\": \"a.py\", \"line_start\": 1, \"line_end\": 2, \"lang\": \"python\", \"entity_id\": \"1e1dd953a3b997b160a2bfe99e478d17b82a6ec98bdc7a731c02a86c07d2dc44\", \"occurrence_id\": \"c8e06d53d69e3e5bd448eeb8a2e0489d9c08d31937564f33a880ea8d53237b16\"}]}\n",
+  "stderr": "",
+  "passed": true
+}

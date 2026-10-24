@@ -1,0 +1,11 @@
+{
+  "recorded_epoch": 1792873524.8426611,
+  "supporting_started_epoch": 1792872075.4624681,
+  "supporting_conservative_elapsed_seconds": 1449.3801929950714,
+  "supporting_cap_seconds": 28800,
+  "original_started_epoch": 1792867357.40483,
+  "original_conservative_elapsed_seconds": 6167.437831163406,
+  "original_cap_seconds": 144000,
+  "prior_cpu_serial_seconds": 719.1517775009852,
+  "policy": "Conservative wall including waits/IO in this continuous execution; no overnight wait/reset. Cumulative corpus job times accounted separately by actual job records."
+}

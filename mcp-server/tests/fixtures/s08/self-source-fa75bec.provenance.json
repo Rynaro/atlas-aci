@@ -1,0 +1,216 @@
+{
+  "commit": "fa75bec971502b72ce85f9e87ab7ec2876274ce9",
+  "git_tree": "cacda444767d4fec357fd21982a13561712f797c",
+  "git_source_prefix": "mcp-server/src/",
+  "file_count": 25,
+  "raw_source_bytes": 420608,
+  "path_hash_vector_sha256": "25b170628dd977f65b5e27e68356e2e734d8bb4289581006d1e8e35ad258f675",
+  "uncompressed_bytes": 564480,
+  "uncompressed_sha256": "8eeded2cf0671e43103383d8f284aaab0c75be4b716662c12a00be420853aeef",
+  "compressed_bytes": 160608,
+  "compressed_sha256": "dcf0e79f0bfed5b774911ebd9dc9c7d8026e36ee74272e3fc767ec4e37734426",
+  "gzip_mtime": 0,
+  "files": [
+    {
+      "path": "atlas_aci/__init__.py",
+      "git_path": "mcp-server/src/atlas_aci/__init__.py",
+      "mode": "100644",
+      "blob_sha1": "cbbc337e30f4f16d5794ea70f3d310f3f15e5dfc",
+      "sha256": "5ebd01f90f20052f156ff322e0fc5dcad106ee70ae2dabeb4b180bf19c9cf5c7",
+      "bytes": 73
+    },
+    {
+      "path": "atlas_aci/__main__.py",
+      "git_path": "mcp-server/src/atlas_aci/__main__.py",
+      "mode": "100644",
+      "blob_sha1": "0774d18f7f918f5d9c5479fa6c40ba5c758c5054",
+      "sha256": "081f2a5a0c2a9bc1d2f6e605bf557d16cbafeb32def3ea661a711fb710ab0972",
+      "bytes": 11071
+    },
+    {
+      "path": "atlas_aci/codegraph.py",
+      "git_path": "mcp-server/src/atlas_aci/codegraph.py",
+      "mode": "100644",
+      "blob_sha1": "2d96ffcca9a1036d8ddd587a3ebaf3fc24958989",
+      "sha256": "7a2bd05b2a411edeb100cba44622c8dca9c2391f1b45122750fb7e37995ef276",
+      "bytes": 276415
+    },
+    {
+      "path": "atlas_aci/config.py",
+      "git_path": "mcp-server/src/atlas_aci/config.py",
+      "mode": "100644",
+      "blob_sha1": "1a0946d03a6f7e5e945eee08fc9b1ee2cae39e5d",
+      "sha256": "c46d0f9a563dc9c1fca257417ee6e98d9cf4a3e88988aaca5f459692d3400195",
+      "bytes": 6614
+    },
+    {
+      "path": "atlas_aci/enforcement.py",
+      "git_path": "mcp-server/src/atlas_aci/enforcement.py",
+      "mode": "100644",
+      "blob_sha1": "a4ab072b317ac454ed88cbe06c03e4310fe180c4",
+      "sha256": "000eeb5ef65a6d098354708405b5288ff9d6ce2718701ab0d318c60b6558fda9",
+      "bytes": 7180
+    },
+    {
+      "path": "atlas_aci/extractors/__init__.py",
+      "git_path": "mcp-server/src/atlas_aci/extractors/__init__.py",
+      "mode": "100644",
+      "blob_sha1": "8201e0f4338a375856cf4b9c4513c4367fe8ac42",
+      "sha256": "94ee5ec863d8c3faecd3e184a93c2253554c4dead963aee87d9d690821e56d81",
+      "bytes": 79
+    },
+    {
+      "path": "atlas_aci/extractors/rust.py",
+      "git_path": "mcp-server/src/atlas_aci/extractors/rust.py",
+      "mode": "100644",
+      "blob_sha1": "0a73468ee3a2ca1fd1224533d2cc7117da5e8324",
+      "sha256": "28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a",
+      "bytes": 3244
+    },
+    {
+      "path": "atlas_aci/indexing/__init__.py",
+      "git_path": "mcp-server/src/atlas_aci/indexing/__init__.py",
+      "mode": "100644",
+      "blob_sha1": "5d012cf5a55ad40282b5fb7d1d976cc596e8a23d",
+      "sha256": "e4b9d192790309018248199725d46db643744ee7be19e51355cab5f4cf93db1f",
+      "bytes": 73
+    },
+    {
+      "path": "atlas_aci/indexing/extraction_cache.py",
+      "git_path": "mcp-server/src/atlas_aci/indexing/extraction_cache.py",
+      "mode": "100644",
+      "blob_sha1": "1da9d2fd70c57d7ee63963426ff79e36f665b8bc",
+      "sha256": "08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2",
+      "bytes": 20119
+    },
+    {
+      "path": "atlas_aci/label_propagation.py",
+      "git_path": "mcp-server/src/atlas_aci/label_propagation.py",
+      "mode": "100644",
+      "blob_sha1": "7556d39899486d1341f03d34745b679d30bded32",
+      "sha256": "c4bd26bc088c5b5ac49417275274655c4fc4476523182c4b51704e20a43000c0",
+      "bytes": 5107
+    },
+    {
+      "path": "atlas_aci/memex.py",
+      "git_path": "mcp-server/src/atlas_aci/memex.py",
+      "mode": "100644",
+      "blob_sha1": "f2fbcf547bfb64f97c16111a2dae72fdb677b5df",
+      "sha256": "2a350d68b494bc7e324a6bad63181f046891b3caa4ae5d53de0eb6d84c96f458",
+      "bytes": 3186
+    },
+    {
+      "path": "atlas_aci/providers/__init__.py",
+      "git_path": "mcp-server/src/atlas_aci/providers/__init__.py",
+      "mode": "100644",
+      "blob_sha1": "07497ec02d544329524807ef0e2dd2f4fc04228c",
+      "sha256": "a0b715438c340121a85cb26a07335277105c6ea705606d8c52d93f6511699d86",
+      "bytes": 52
+    },
+    {
+      "path": "atlas_aci/providers/python_imports.py",
+      "git_path": "mcp-server/src/atlas_aci/providers/python_imports.py",
+      "mode": "100644",
+      "blob_sha1": "335b7191cf17e11a3cc83fb1c24ea48d22c893a6",
+      "sha256": "de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014",
+      "bytes": 4907
+    },
+    {
+      "path": "atlas_aci/resolvers/__init__.py",
+      "git_path": "mcp-server/src/atlas_aci/resolvers/__init__.py",
+      "mode": "100644",
+      "blob_sha1": "6ed238f7236cc41c8cc026c2d65446bff756416e",
+      "sha256": "02216c2c82749b992db196e958a800ff70702078b699b9d50d057eb7daf34c65",
+      "bytes": 84
+    },
+    {
+      "path": "atlas_aci/resolvers/dependencies.py",
+      "git_path": "mcp-server/src/atlas_aci/resolvers/dependencies.py",
+      "mode": "100644",
+      "blob_sha1": "b759aa092a472fd3cd1fab883cc3034456fac82d",
+      "sha256": "0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6",
+      "bytes": 9993
+    },
+    {
+      "path": "atlas_aci/server.py",
+      "git_path": "mcp-server/src/atlas_aci/server.py",
+      "mode": "100644",
+      "blob_sha1": "99d9336e1ba04b9c2da5b0e6b8da5dc3668a8422",
+      "sha256": "cefbe74f3078c1d3bd25701dfc080e2260d6b639e3b7780a77e371545042b7f3",
+      "bytes": 22013
+    },
+    {
+      "path": "atlas_aci/storage/__init__.py",
+      "git_path": "mcp-server/src/atlas_aci/storage/__init__.py",
+      "mode": "100644",
+      "blob_sha1": "eefb30c2f1d4dd4c9bab117919158d0deb97074f",
+      "sha256": "a5c86b099d459153c262be671561811557ad2f764d24f4ba7c56e243d50bf8b6",
+      "bytes": 40
+    },
+    {
+      "path": "atlas_aci/storage/evidence.py",
+      "git_path": "mcp-server/src/atlas_aci/storage/evidence.py",
+      "mode": "100644",
+      "blob_sha1": "d3c9772707a60e7a6d4576d3a0184e7c47e68b75",
+      "sha256": "77345037702190ff0aa40920262181198a7590624f3f753bd26235e2d122dbe1",
+      "bytes": 32030
+    },
+    {
+      "path": "atlas_aci/tools/__init__.py",
+      "git_path": "mcp-server/src/atlas_aci/tools/__init__.py",
+      "mode": "100644",
+      "blob_sha1": "bbfc6c7f9390498f839db1324f1ea98eff622bb4",
+      "sha256": "7d9f836e22bca0d286d8d4001d8312f03659bad57ae2d29822be82fd415b410e",
+      "bytes": 46
+    },
+    {
+      "path": "atlas_aci/tools/graph_query.py",
+      "git_path": "mcp-server/src/atlas_aci/tools/graph_query.py",
+      "mode": "100644",
+      "blob_sha1": "b828c18f64559cc195e169ec56adc799e7a4db59",
+      "sha256": "5891b23d701b5cf56c08da0d416a8d0de562779a487c69464eaf501055b42c2c",
+      "bytes": 1101
+    },
+    {
+      "path": "atlas_aci/tools/list_dir.py",
+      "git_path": "mcp-server/src/atlas_aci/tools/list_dir.py",
+      "mode": "100644",
+      "blob_sha1": "6a523b01bc428ffd3908782a7bb961ee41be5be6",
+      "sha256": "52bb5f6a690bd04973b810c220e284beb3da3958df75ab8174eca0faea2e93e4",
+      "bytes": 2155
+    },
+    {
+      "path": "atlas_aci/tools/search_symbol.py",
+      "git_path": "mcp-server/src/atlas_aci/tools/search_symbol.py",
+      "mode": "100644",
+      "blob_sha1": "1aab5c5cd7b317d8d01568c1961fadb96ef05f6e",
+      "sha256": "d5a8a01c608c4ed20518530ece34e1d36ead79fe8dc899b5c36c5f88cac952a0",
+      "bytes": 1574
+    },
+    {
+      "path": "atlas_aci/tools/search_text.py",
+      "git_path": "mcp-server/src/atlas_aci/tools/search_text.py",
+      "mode": "100644",
+      "blob_sha1": "e87d1a59038b881884abc9bab0df3fa3980ea394",
+      "sha256": "9054de09b1d4c6840e4b75e3115e268611976507a07bf9c9685bcbde13b098f0",
+      "bytes": 3937
+    },
+    {
+      "path": "atlas_aci/tools/test_dry_run.py",
+      "git_path": "mcp-server/src/atlas_aci/tools/test_dry_run.py",
+      "mode": "100644",
+      "blob_sha1": "b31ce9cc7709c11800a3a2f601fa85913fe104b7",
+      "sha256": "21affeb347ce7aeaf4350b321b81bbcbd798c29078851633d2cb9d0fa83b4ca5",
+      "bytes": 4056
+    },
+    {
+      "path": "atlas_aci/tools/view_file.py",
+      "git_path": "mcp-server/src/atlas_aci/tools/view_file.py",
+      "mode": "100644",
+      "blob_sha1": "ee07b545dd8c6ce8b163a7bbce9c535694f3a652",
+      "sha256": "9f35c89195e2742dfb4c82a9cfbaf6a39bb7c465f176e0b03d55bfc1442ae2d3",
+      "bytes": 5459
+    }
+  ],
+  "scope": "Entire tracked pre-S08 source tree, no selected subset/source transformations. Current producer measures this fixed regression fixture; current source measured separately."
+}

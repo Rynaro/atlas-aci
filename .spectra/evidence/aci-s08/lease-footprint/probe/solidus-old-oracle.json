@@ -1,0 +1,21 @@
+{
+  "repo": "solidus",
+  "oracle_source_sha256": "bd77fa8ce6114f744a733fb2644f1b406cfee5b053b8d1e8655dae7040dfb479",
+  "actual_original_materialized_algorithm": true,
+  "graph_digest_exact": true,
+  "observation_digest_exact": true,
+  "all_individual_range_fields_committed_exact": true,
+  "range_proof": {
+    "version": 1,
+    "algorithm": "sha256-canonical-json-array-v1",
+    "total": 306720,
+    "occurrence": 153360,
+    "evidence": 153360,
+    "legacy": 0,
+    "sha256": "27047a93aaa997d3341d6307785793e2fcd8f27fb6284457268bfb3b7277c6bc"
+  },
+  "source_catalog_exact": true,
+  "source_bindings": 2519,
+  "snapshot_id": "828954bf1878d927e0fa2b9ed5a5c3ae87bbdc999d7f89dd2520bae9f1b97bc4",
+  "not_ordinary_lease_metric": true
+}

@@ -284,17 +284,19 @@ def test_read_once_and_warm_pinned_lease(tmp_path, monkeypatch):
     before = graph.evidence_records()
     path = graph.repo / "pkg/b.py"
     path.write_bytes(b"\n" + path.read_bytes())
-    original_read = type(path).read_bytes
+    from atlas_aci.storage import snapshots
+
+    original_read = snapshots.safe_source
     reads = []
 
-    def read(self):
-        if self.suffix == ".py" and self.is_relative_to(graph.repo):
-            reads.append(str(self.relative_to(graph.repo)))
-        return original_read(self)
+    def read(root, relative):
+        if (root / relative).suffix == ".py" and root == graph.repo:
+            reads.append(relative)
+        return original_read(root, relative)
 
     with graph.reader_lease() as held:
         with monkeypatch.context() as patch:
-            patch.setattr(type(path), "read_bytes", read)
+            patch.setattr(snapshots, "safe_source", read)
             counts.update(parser=0, extract=0)
             stats = graph.build()
         assert sorted(reads) == ["pkg/__init__.py", "pkg/a.py", "pkg/b.py"]

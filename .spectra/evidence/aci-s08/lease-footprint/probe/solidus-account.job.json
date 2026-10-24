@@ -1,0 +1,18 @@
+{
+  "name": "solidus-account",
+  "command": [
+    "/private/tmp/atlas-aci-aci-s08/mcp-server/.venv/bin/python",
+    "/private/tmp/atlas-aci-aci-s08/.spectra/evidence/aci-s08/lease-footprint/probe/account.py",
+    "solidus",
+    "/tmp/aci-s08-refined-probe-inputs/solidus",
+    "/private/tmp/atlas-aci-aci-s08/.spectra/evidence/aci-s08/lease-footprint/probe"
+  ],
+  "cwd": "/private/tmp/atlas-aci-aci-s08",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 12.691259625004022,
+  "elapsed_total": 161.45077825000044,
+  "peak_rss_bytes": 173834240,
+  "stdout": ".spectra/evidence/aci-s08/lease-footprint/probe/solidus-account.stdout.log",
+  "stderr": ".spectra/evidence/aci-s08/lease-footprint/probe/solidus-account.stderr.log"
+}

@@ -1,0 +1,11 @@
+{
+  "slice_id": "ACI-S08",
+  "criteria_changed": false,
+  "authorization": "Root explicit narrowly approved actual secure read seam after full549pass5fail",
+  "additional_paths": [
+    "mcp-server/tests/slices/test_s04_contract.py"
+  ],
+  "test": "test_failure_paths[read]",
+  "change": "Only Path.read_bytes fault injection -> snapshots.safe_source, same actual PermissionError; preserve all failure/G1/status/count assertions.",
+  "failure_evidence": ".spectra/evidence/aci-s08/full-suite-first.log"
+}

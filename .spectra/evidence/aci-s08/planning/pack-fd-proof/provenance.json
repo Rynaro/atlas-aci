@@ -1,0 +1,31 @@
+{
+  "at": "2026-10-24T18:33:48.311080+00:00",
+  "checker": "ATLAS /root/s15_preflight",
+  "status": "PRIMITIVE_FEASIBILITY_PASS",
+  "cases": 9,
+  "source_root": "/private/tmp/aci-s08-pack-proof-8f_xxbwp",
+  "raw_results_sha256": "8ca36b1bb6f63b9aa9582c946ece966b25ca4b50b127c7147d8fcd6cc4c6bb75",
+  "artifacts": {
+    "proof.py": "d8ee7f15a9567a97e5ce30135d792d38c26a26c8595cfbf710bffe0de7bb3374",
+    "reader.py": "cf7571b586464ce2a8b17302630d672cdbedfe080f6c55ecce34f8cd078624d8",
+    "results.json": "a598b2fbc6042d9f12ca2189d2389db6dae217f3c4e4e87424b9a2d48faa9a53",
+    "results.raw.txt": "8ca36b1bb6f63b9aa9582c946ece966b25ca4b50b127c7147d8fcd6cc4c6bb75",
+    "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout.log": "68a95119383de20e4414d5dedaf01b313e32d9d9a83e4e9901f41bdd9d1866a4",
+    "writer.py": "3ca698a2ef844dd0c120fab2c32a2f0f9cc26bdc3792d692b0cb3ae202fd1d4c"
+  },
+  "pack_bytes": 4194319,
+  "pack_sha256": "8246b3b30d88a5e3cfc50c75bbd7e440fa72bb40c945389c19af3d04e18b5db1",
+  "packaging": "Exact raw results retained; parsed JSON removes only terminal literal backslash+n. Scripts/logs byte-exact; embedded script hashes verified.",
+  "boundaries": [
+    "native macOS",
+    "Linux writer/read-only Linux reader",
+    "macOS host writer/Docker Desktop Linux readonly reader"
+  ],
+  "limitations": [
+    "Primitive only; no graph/manifest lifecycle implementation proof",
+    "Stat/nlink/path visibility may change or be cached; exact bytes/hash are the invariant",
+    "Process exit implies OS FD cleanup, not an observed physical disk reclaim measurement",
+    "No global hard disk bound across arbitrary active readonly processes"
+  ]
+}

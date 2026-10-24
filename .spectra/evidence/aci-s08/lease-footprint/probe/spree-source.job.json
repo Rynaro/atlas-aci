@@ -1,0 +1,16 @@
+{
+  "command": [
+    "/private/tmp/atlas-aci-aci-s08/mcp-server/.venv/bin/python",
+    "/private/tmp/atlas-aci-aci-s08/.spectra/evidence/aci-s08/lease-footprint/probe/measure_readers.py",
+    "source",
+    "/tmp/aci-s08-refined-probe-inputs/spree"
+  ],
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 0.6234582909964956,
+  "prior_seconds_charged": 1343.0798528349696,
+  "cumulative_seconds_charged": 1343.7033111259661,
+  "peak_rss_bytes": 47349760,
+  "per_job_cap_seconds": 600,
+  "total_cap_seconds": 2700
+}

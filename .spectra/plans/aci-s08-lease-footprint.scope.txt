@@ -1,0 +1,7 @@
+mcp-server/src/atlas_aci/storage/snapshots.py
+mcp-server/src/atlas_aci/codegraph.py
+mcp-server/tests/slices/test_s08_*.py
+.spectra/plans/aci-s08-lease-footprint.*
+.spectra/plans/ramza-calibration.jsonl
+.spectra/changes/aci-s08/lease-footprint/*
+.spectra/evidence/aci-s08/lease-footprint/*

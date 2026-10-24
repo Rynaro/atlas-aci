@@ -1,0 +1,16 @@
+{
+  "command": [
+    "/private/tmp/atlas-aci-aci-s08/mcp-server/.venv/bin/python",
+    "/private/tmp/atlas-aci-aci-s08/.spectra/evidence/aci-s08/lease-footprint/measure_baseline.py",
+    "mcp",
+    "/tmp/aci-s08-probe-inputs/spree"
+  ],
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 61.06127733399626,
+  "prior_charge_seconds": 658.0905001669889,
+  "cumulative_charge_seconds": 719.1517775009852,
+  "peak_rss_bytes": 3770580992,
+  "per_job_cap_seconds": 600,
+  "total_cap_seconds": 2700
+}

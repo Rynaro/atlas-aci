@@ -1,0 +1,15 @@
+{
+  "slice_id": "ACI-S08",
+  "criteria_sha256": "216f05f349bf35630f299ba814be697b8150e3b0da0bd2fef0512a21b34d3dba",
+  "at": "2026-10-24T18:23:33.877389+00:00",
+  "status": "DECLARED_BEFORE_IMPLEMENTATION",
+  "reason": "Expose existing view_file source reads through authenticated snapshot leases and preserve actual response bounds; document explicit API and platform/retention semantics. Storage/evidence producer closure is within original storage/* scope.",
+  "additional_paths": [
+    "mcp-server/src/atlas_aci/server.py",
+    "mcp-server/src/atlas_aci/tools/view_file.py",
+    "README.md",
+    "mcp-server/tests/test_server.py"
+  ],
+  "plan": ".spectra/plans/aci-s08.md",
+  "exclusions": "No CLI/config/DDL/portable source bundle changes; observed extra test needs require narrow recorded amendment."
+}

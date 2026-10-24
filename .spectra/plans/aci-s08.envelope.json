@@ -1,0 +1,50 @@
+{
+  "envelope_version": "2.0",
+  "message_id": "ad8f4a29-abe3-4baa-bcc5-b7ebb58bbd9d",
+  "thread_id": "fc6b16a6-62c5-4ae1-99e4-82fc7cbe2478",
+  "parent_id": null,
+  "from": {
+    "eidolon": "ramza",
+    "version": "1.1.0"
+  },
+  "to": {
+    "eidolon": "vivi",
+    "version": "n/a"
+  },
+  "performative": "PROPOSE",
+  "edge_origin": "roster",
+  "objective": "Implement ACI-S08 coherent graph/source snapshots using authenticated packed CAS and readonly descriptor leases, explicit worktree/overlay identity and honest legacy/import source availability.",
+  "artifact": {
+    "kind": "spec",
+    "schema_version": "1.0",
+    "path": "aci-s08.md",
+    "sha256": "260694c5cb057a97e82d110fa47256eecdc4b2eb969eb5a789626f9c2009c0ac",
+    "size_bytes": 27474
+  },
+  "integrity": {
+    "method": "sha256",
+    "value": "260694c5cb057a97e82d110fa47256eecdc4b2eb969eb5a789626f9c2009c0ac"
+  },
+  "trace": {
+    "ts": "2026-10-24T18:40:00.484727+00:00",
+    "host": "codex",
+    "model": "gpt-6-astra",
+    "tier": "standard"
+  },
+  "ise": {
+    "assertion_grade": "validated",
+    "provenance": {
+      "methodology_version": "ramza-1.1.0"
+    },
+    "receiver_authorization": {
+      "auto_route": true,
+      "auto_merge": false,
+      "auto_deploy": false
+    }
+  },
+  "confidence": 0.8625,
+  "x_ramza_acceptance_criteria": {
+    "path": "aci-s08.criteria.md",
+    "sha256": "216f05f349bf35630f299ba814be697b8150e3b0da0bd2fef0512a21b34d3dba"
+  }
+}

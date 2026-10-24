@@ -234,14 +234,16 @@ def test_consumed_buffer_hash_and_failure(tmp_path: Path, monkeypatch: pytest.Mo
     assert writer.search_symbol("later_name")["definitions"] == []
     prior = writer.generation_id
     monkeypatch.setattr(writer, "_extract", original)
-    original_read = Path.read_bytes
+    from atlas_aci.storage import snapshots
 
-    def fail_read(p):
-        if p == path:
+    original_read = snapshots.safe_source
+
+    def fail_read(root, relative):
+        if root / relative == path:
             raise OSError("eligible source unreadable")
-        return original_read(p)
+        return original_read(root, relative)
 
-    monkeypatch.setattr(Path, "read_bytes", fail_read)
+    monkeypatch.setattr(snapshots, "safe_source", fail_read)
     with pytest.raises(OSError, match="eligible source"):
         writer.build(since="HEAD")
     assert writer.generation_id == prior

@@ -472,26 +472,139 @@ def test_record_level_canonical_order_independent_of_rowid(tmp_path: Path) -> No
 # ---- Export size on this repo (informational, feeds AC-REL-2's pattern) ----
 
 
+def _measure_complete_self_source(repo: Path, tmp_path: Path, label: str) -> int:
+    """Measure the entire source input and verify coverage/portable byte parity."""
+    import os
+
+    from atlas_aci.codegraph import DEFAULT_LANGS, LANG_BY_EXT
+    from atlas_aci.config import DEFAULT_SKIP_PATTERNS
+
+    inputs = {
+        str(path.relative_to(repo)): {
+            "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+            "bytes": path.stat().st_size,
+        }
+        for path in sorted(repo.rglob("*"))
+        if path.is_file()
+    }
+    expected = {
+        path: row["sha256"]
+        for path, row in inputs.items()
+        if Path(path).suffix in LANG_BY_EXT
+        and not any(part in DEFAULT_SKIP_PATTERNS for part in Path(path).parts)
+    }
+    graph = CodeGraph(repo=repo)
+    graph.build()
+    out_path = tmp_path / (label + "-export.jsonl")
+    stats = graph.export_jsonl(out_path)
+    metadata = json.loads(
+        graph.db.execute("SELECT value FROM manifest WHERE key='generation_inputs'").fetchone()[0]
+    )
+    assert metadata["configuration"]["languages"] == sorted(DEFAULT_LANGS)
+    assert metadata["source_hashes"] == expected
+    assert {
+        row["path"]: row["observed_source_sha256"]
+        for row in graph.observation_records()
+        if row["type"] == "observation"
+    } == expected
+    assert stats["bytes_written"] == out_path.stat().st_size and stats["bytes_written"] > 0
+    target = tmp_path / (label + "-imported")
+    target.mkdir()
+    imported = CodeGraph(target)
+    imported.import_jsonl(out_path)
+    replay = tmp_path / (label + "-replay.jsonl")
+    imported.export_jsonl(replay)
+    assert replay.read_bytes() == out_path.read_bytes()
+    evidence = os.environ.get("ATLAS_ACI_S08_SIZE_EVIDENCE_DIR")
+    if evidence:
+        output = Path(evidence)
+        output.mkdir(parents=True, exist_ok=True)
+        (output / (label + ".json")).write_text(
+            json.dumps(
+                {
+                    "label": label,
+                    "source_file_count": len(inputs),
+                    "source_bytes": sum(row["bytes"] for row in inputs.values()),
+                    "source_files": inputs,
+                    "default_languages": sorted(DEFAULT_LANGS),
+                    "eligible_paths": sorted(expected),
+                    "eligible_count": len(expected),
+                    "source_coverage_exact": True,
+                    "bytes_written": stats["bytes_written"],
+                    "export_sha256": hashlib.sha256(out_path.read_bytes()).hexdigest(),
+                    "roundtrip_exact": True,
+                    "export_path": str(out_path),
+                    "fixed_regression_limit_bytes": 10 * 1024 * 1024
+                    if label == "fixed-fa75bec"
+                    else None,
+                },
+                sort_keys=True,
+                indent=2,
+            )
+            + "\n"
+        )
+    imported.close()
+    graph.close()
+    return stats["bytes_written"]
+
+
 def test_export_size_recorded_for_this_repo(tmp_path: Path) -> None:
-    """Not itself an acceptance criterion (AC-REL-2 is scoped to the larger
-    pinned Spree reference repo, measured once at release-prep) -- this
-    pins a sane, well-below-ceiling size on THIS project's own mcp-server/
-    tree as a same-machine sanity check that the format doesn't balloon.
-    Copies `src/` into a throwaway tmp dir first -- `CodeGraph` always
-    writes its own `.atlas/` under `self.repo`, and this must never touch
-    the real working tree."""
+    """Current entire src is measured, covered and losslessly portable.
+
+    Source growth is not format inflation. The unchanged 10MiB regression guard
+    below measures the entire frozen pre-S08 tree with this CURRENT producer.
+    Neither test changes the one-time Spree release measurement or its ceiling.
+    """
     import shutil
 
     real_src = Path(__file__).resolve().parent.parent / "src"
     repo = tmp_path / "self-repo"
     shutil.copytree(real_src, repo)
+    assert {str(p.relative_to(repo)): p.read_bytes() for p in repo.rglob("*") if p.is_file()} == {
+        str(p.relative_to(real_src)): p.read_bytes() for p in real_src.rglob("*") if p.is_file()
+    }
+    _measure_complete_self_source(repo, tmp_path, "current-entire-src")
 
-    graph = CodeGraph(repo=repo)
-    graph.build()
-    out_path = tmp_path / "self-export.jsonl"
-    stats = graph.export_jsonl(out_path)
-    assert stats["bytes_written"] < 10 * 1024 * 1024  # sane ceiling for this project's own size
-    assert stats["bytes_written"] == out_path.stat().st_size
+
+def test_export_size_fixed_entire_pre_s08_source(tmp_path: Path) -> None:
+    """The exact original 10MiB guard on all25 merged fa75bec source files."""
+    import base64
+    import gzip
+
+    fixture = Path(__file__).parent / "fixtures/s08/self-source-fa75bec.json.gz"
+    provenance = json.loads(fixture.with_name("self-source-fa75bec.provenance.json").read_text())
+    packed = fixture.read_bytes()
+    assert hashlib.sha256(packed).hexdigest() == provenance["compressed_sha256"]
+    raw = gzip.decompress(packed)
+    assert hashlib.sha256(raw).hexdigest() == provenance["uncompressed_sha256"]
+    payload = json.loads(raw)
+    assert payload["commit"] == provenance["commit"] == "fa75bec971502b72ce85f9e87ab7ec2876274ce9"
+    files = payload["files"]
+    assert [row["path"] for row in files] == [row["path"] for row in provenance["files"]]
+    assert len(files) == 25 and sum(row["bytes"] for row in files) == 420608
+    repo = tmp_path / "fixed-self-repo"
+    repo.mkdir()
+    vector = []
+    for row, origin in zip(files, provenance["files"], strict=True):
+        data = base64.b64decode(row["base64"], validate=True)
+        assert len(data) == row["bytes"] == origin["bytes"]
+        sha = hashlib.sha256(data).hexdigest()
+        assert sha == row["sha256"] == origin["sha256"]
+        assert (
+            hashlib.sha1(b"blob " + str(len(data)).encode() + b"\0" + data).hexdigest()
+            == origin["blob_sha1"]
+        )
+        path = repo / row["path"]
+        assert path.is_relative_to(repo) and ".." not in path.parts
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(data)
+        vector.append(row["path"] + "\0" + sha + "\n")
+    assert (
+        hashlib.sha256("".join(vector).encode()).hexdigest()
+        == provenance["path_hash_vector_sha256"]
+        == "25b170628dd977f65b5e27e68356e2e734d8bb4289581006d1e8e35ad258f675"
+    )
+    assert _measure_complete_self_source(repo, tmp_path, "fixed-fa75bec") < 10 * 1024 * 1024
 
 
 # ---- Checker MAJOR-1 (the nineteenth defect): import path-traversal matrix ----

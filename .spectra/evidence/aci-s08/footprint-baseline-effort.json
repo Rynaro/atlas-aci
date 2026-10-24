@@ -1,0 +1,8 @@
+{
+  "conservative_active_and_wall_seconds_charged": 4028.1208271980286,
+  "original_budget_seconds": 144000,
+  "remaining_seconds": 139971.87917280197,
+  "serial_probe_seconds_charged": 486.6451361659856,
+  "phase": "Correctness baseline complete; source held awaiting approved internal proof-footprint refinement. No output commit/COMPLETE receipt.",
+  "note": "Wall time since first execution preflight conservatively includes build/test/measurement/review waits; no reset."
+}

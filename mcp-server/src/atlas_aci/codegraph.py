@@ -20,6 +20,7 @@ import re
 import secrets
 import sqlite3
 import tempfile
+from collections.abc import Mapping
 from contextlib import contextmanager
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
@@ -35,6 +36,7 @@ from atlas_aci.label_propagation import label_propagation
 from atlas_aci.providers import python_imports
 from atlas_aci.resolvers import dependencies as dep
 from atlas_aci.storage import evidence as ev
+from atlas_aci.storage import snapshots as snap
 
 if TYPE_CHECKING:
     from tree_sitter_language_pack import SupportedLanguage
@@ -888,6 +890,12 @@ class CodeGraph:
         self._db: sqlite3.Connection | None = None
         self._closed = False
         self._lease_generation_id: str | None = None
+        self._validated_lease = False
+        self._acquisition_observations = None
+        self._source_lease: snap.SourceLease | None = None
+        self._source_builder: snap.Builder | None = None
+        self._source_predecessor: snap.SourceLease | None = None
+        self._overlays: dict[str, bytes] = {}
 
     def _validate_graph_namespace(self) -> None:
         """Reject static namespace redirection; configured root/source aliases are canonicalized."""
@@ -929,6 +937,11 @@ class CodeGraph:
 
     def close(self) -> None:
         """Idempotently release owned handles; a released lease cannot reopen."""
+        if self._source_lease is not None:
+            self._source_lease.close()
+            self._source_lease = None
+        self._validated_lease = False
+        self._acquisition_observations = None
         self._close_db()
         self._closed = True
 
@@ -947,7 +960,9 @@ class CodeGraph:
         ]
         return hashlib.sha256(ev.canonical(rows).encode()).hexdigest()
 
-    def _generation_data(self, conn: sqlite3.Connection) -> tuple[dict[str, Any], str] | None:
+    def _generation_data(
+        self, conn: sqlite3.Connection, *, retain_observations=False
+    ) -> tuple[dict[str, Any], str] | None:
         """Validate this opened schema/generation, including known epoch6 only."""
         try:
             values = dict(conn.execute("SELECT key,value FROM manifest"))
@@ -970,7 +985,7 @@ class CodeGraph:
                 not in (
                     {"atlas-generation.v1"}
                     if legacy
-                    else {"atlas-generation.v2", "atlas-generation.v3"}
+                    else {"atlas-generation.v2", "atlas-generation.v3", "atlas-generation.v4"}
                 )
                 or inputs.get("kind")
                 not in ({"build", "import"} if legacy else {"build", "import", "legacy_conversion"})
@@ -995,10 +1010,28 @@ class CodeGraph:
                 )
 
             common = {"format", "kind", "repository", "schema"}
-            if inputs["format"] == "atlas-generation.v3":
+            if inputs["format"] in {"atlas-generation.v3", "atlas-generation.v4"}:
                 common.add("observation_digest")
                 observations = self._observation_records(conn, require_current=True)
                 if inputs.get("observation_digest") != self._status_hash(observations):
+                    return None
+            if inputs["format"] == "atlas-generation.v4":
+                common.add("snapshot")
+                source = inputs.get("snapshot")
+                if not isinstance(source, dict):
+                    return None
+                if inputs["kind"] == "build":
+                    if (
+                        set(source) != {"state", "id", "manifest_sha256"}
+                        or source["state"] != "available"
+                        or not ev.hash_value(source["id"])
+                        or source["id"] != source["manifest_sha256"]
+                    ):
+                        return None
+                elif (
+                    source != {"state": "unavailable", "reason": "import"}
+                    or inputs["kind"] != "import"
+                ):
                     return None
             if inputs["kind"] == "build":
                 if set(inputs) != common | {"source_hashes", "configuration", "producer"}:
@@ -1017,7 +1050,7 @@ class CodeGraph:
                     or set(inputs["source_hashes"])
                     != (
                         {r["path"] for r in observations if r["type"] == "observation"}
-                        if inputs["format"] == "atlas-generation.v3"
+                        if inputs["format"] in {"atlas-generation.v3", "atlas-generation.v4"}
                         else {row[0] for row in conn.execute("SELECT path FROM files")}
                     )
                 ):
@@ -1073,6 +1106,12 @@ class CodeGraph:
                     )
                 ):
                     return None
+            if retain_observations:
+                self._acquisition_observations = (
+                    observations
+                    if inputs["format"] in {"atlas-generation.v3", "atlas-generation.v4"}
+                    else []
+                )
             return inputs, identifier
         except (sqlite3.Error, KeyError, ValueError, TypeError):
             return None
@@ -1088,34 +1127,135 @@ class CodeGraph:
             raise RuntimeError("No complete generation metadata; reindex or reimport")
         return data[1]
 
+    def _snapshot_binding(self, conn, observations=None):
+        import heapq
+
+        def ranges():
+            streams = (
+                (
+                    json.loads(row[0])
+                    for row in conn.execute("SELECT payload FROM " + table + " ORDER BY id")
+                )
+                for table in ("occurrences", "evidence")
+            )
+            yield from heapq.merge(*streams, key=lambda item: (item["id"], item["type"]))
+
+        return snap.closure(
+            lambda: ev.records(conn),
+            self._observation_records(conn) if observations is None else observations,
+            range_records=ranges,
+            occurrence=lambda identifier: ev.get(conn, "occurrence", identifier),
+        )
+
+    def _snapshot_context(self, inputs):
+        return {k: inputs[k] for k in ("repository", "schema", "configuration", "producer")}
+
+    @property
+    def snapshot_id(self):
+        return self._source_lease.snapshot_id if self._source_lease is not None else None
+
+    def read_source(self, path, source_sha256=None):
+        from atlas_aci.enforcement import ToolError
+
+        if self._source_lease is None:
+            raise ToolError(
+                "SOURCE_UNAVAILABLE",
+                "This generation has no authenticated source bytes.",
+                "different_tool",
+            )
+        try:
+            return self._source_lease.read(path, source_sha256)
+        except (ValueError, OSError) as exc:
+            raise ToolError("SOURCE_UNAVAILABLE", str(exc), "different_tool") from exc
+
     @contextmanager
-    def reader_lease(self):
-        """One independently opened RO connection for an entire graph request."""
+    def source_lease(self, snapshot_id):
         from atlas_aci.enforcement import ToolError
 
         if self._closed:
             raise RuntimeError("This graph is closed")
-        reader = CodeGraph(
-            self.repo,
-            langs=sorted(self.langs),
-            read_only=True,
-            query_limit=self.query_limit,
-            graph_root=self.graph_root,
-        )
+        lease = None
         try:
+            lease = snap.acquire(self.atlas_dir, snapshot_id, repository=self.repo)
+            yield lease
+        except (ValueError, OSError, TypeError, KeyError) as exc:
+            raise ToolError(
+                "SNAPSHOT_UNAVAILABLE",
+                "Requested source snapshot is unavailable: " + str(exc),
+                "different_tool",
+            ) from exc
+        finally:
+            if lease is not None:
+                lease.close()
+
+    @contextmanager
+    def reader_lease(self):
+        """Acquire SQLite, immutable manifest and one source-pack FD before exposure."""
+        from atlas_aci.enforcement import ToolError
+
+        if self._closed:
+            raise RuntimeError("This graph is closed")
+        reader = None
+        for attempt in range(2):
+            reader = CodeGraph(
+                self.repo,
+                langs=sorted(self.langs),
+                read_only=True,
+                query_limit=self.query_limit,
+                graph_root=self.graph_root,
+            )
             try:
-                data = reader._generation_data(reader.db)
-            except sqlite3.Error:
-                data = None
-            if data is None:
+                data = reader._generation_data(reader.db, retain_observations=True)
+                if data is None:
+                    raise ToolError(
+                        "INDEX_UNAVAILABLE",
+                        f"No complete compatible graph generation under {self.atlas_dir}. "
+                        "Run: atlas-aci index --repo <repo>, or reimport a valid graph.",
+                        "different_tool",
+                    )
+                reader._lease_generation_id = data[1]
+                inputs = data[0]
+                pointer = inputs.get("snapshot", {})
+                if pointer.get("state") == "available":
+                    binding = reader._snapshot_binding(reader.db, reader._acquisition_observations)
+                    expected = {**binding}
+                    reader._source_lease = snap.acquire(
+                        self.atlas_dir, pointer["id"], repository=self.repo, expected=expected
+                    )
+                    actual_context = reader._source_lease.manifest["context"]
+                    if any(
+                        actual_context[k] != value
+                        for k, value in reader._snapshot_context(inputs).items()
+                    ):
+                        raise ValueError("Graph/source provenance contradiction")
+                reader._validated_lease = True
+                reader._acquisition_observations = None
+                break
+            except sqlite3.Error as exc:
+                reader.close()
                 raise ToolError(
                     "INDEX_UNAVAILABLE",
                     f"No complete compatible graph generation under {self.atlas_dir}. "
-                    "Run: atlas-aci index --repo <repo>, "
-                    "or reimport a valid graph.",
+                    "Run: atlas-aci index --repo <repo>, or reimport a valid graph.",
                     "different_tool",
-                )
-            reader._lease_generation_id = data[1]
+                ) from exc
+            except FileNotFoundError as exc:
+                reader.close()
+                if attempt:
+                    raise ToolError(
+                        "SNAPSHOT_UNAVAILABLE",
+                        "Source snapshot changed during acquisition.",
+                        "different_tool",
+                    ) from exc
+            except (ValueError, OSError, KeyError, TypeError) as exc:
+                reader.close()
+                raise ToolError(
+                    "SNAPSHOT_UNAVAILABLE", "Invalid source snapshot: " + str(exc), "different_tool"
+                ) from exc
+            except BaseException:
+                reader.close()
+                raise
+        try:
             yield reader
         finally:
             reader.close()
@@ -1124,6 +1264,8 @@ class CodeGraph:
         """Validate the pinned handle when present; otherwise inspect RO once."""
         if self._closed:
             return False
+        if self._validated_lease:
+            return True
         if self._db is not None:
             return self._generation_data(self._db) is not None
         try:
@@ -1152,6 +1294,7 @@ class CodeGraph:
                     "indexing/extraction_cache.py",
                     "resolvers/dependencies.py",
                     "extractors/rust.py",
+                    "storage/snapshots.py",
                 )
             },
             "packages": {
@@ -1823,7 +1966,9 @@ class CodeGraph:
 
     # ---- Build / re-index (index-path only; never called by `serve`) ----
 
-    def build(self, since: str | None = None) -> dict[str, Any]:
+    def build(
+        self, since: str | None = None, *, overlays: Mapping[str, bytes] | None = None
+    ) -> dict[str, Any]:
         """Index the repo. Returns stats.
 
         A truthy ``since`` requests incremental reuse. Every eligible source
@@ -1849,7 +1994,26 @@ class CodeGraph:
             log.error("tree_sitter_unavailable", error=str(e))
             raise
 
+        from atlas_aci.config import DEFAULT_SKIP_PATTERNS
+
+        if overlays is not None and not isinstance(overlays, Mapping):
+            raise ValueError("overlays must be an explicit path-to-bytes mapping")
+        supplied_overlays = dict(overlays or {})
+        for path, source in supplied_overlays.items():
+            if (
+                not ev.relative_path(path)
+                or not isinstance(source, bytes)
+                or Path(path).suffix not in LANG_BY_EXT
+                or any(part in DEFAULT_SKIP_PATTERNS for part in Path(path).parts)
+            ):
+                raise ValueError("Unsafe, skipped or unrecognized overlay")
+            for parent in (self.repo / path, *(self.repo / path).parents):
+                if parent == self.repo:
+                    break
+                if parent.is_symlink():
+                    raise ValueError("Overlay source symlink")
         with self._writer_lock():
+            self._overlays = supplied_overlays
             swept = self._sweep_stale_epoch_files()
             if swept:
                 log.info("stale_epoch_files_swept", files=swept)
@@ -1888,7 +2052,14 @@ class CodeGraph:
         """All index modes mutate only staging, never an inode held by readers."""
         tmp_path = self._stage_path()
         conn = None
+        builder = None
+        predecessor = None
+        predecessor_data = None
+        predecessor_outputs_valid = False
+        self._untrusted_modern_predecessor = False
         try:
+            builder = snap.Builder(self.atlas_dir)
+            self._source_builder = builder
             conn = sqlite3.connect(tmp_path)
             conn.row_factory = sqlite3.Row
             inherited = False
@@ -1899,7 +2070,16 @@ class CodeGraph:
                 previous = sqlite3.connect(self.db_path.as_uri() + "?mode=ro", uri=True)
                 previous.row_factory = sqlite3.Row
                 try:
-                    if self._generation_data(previous) is not None:
+                    predecessor_data = self._generation_data(previous)
+                    if predecessor_data is not None:
+                        try:
+                            self._validate_evidence_projections(previous)
+                            dep.validate_outputs(previous)
+                            predecessor_outputs_valid = True
+                        except (ValueError, KeyError, TypeError):
+                            self._untrusted_modern_predecessor = (
+                                predecessor_data[0].get("format") == "atlas-generation.v4"
+                            )
                         self._proof_predecessor_records = list(
                             ev.records(previous)
                         ) + self._projection_records(previous)
@@ -1937,6 +2117,11 @@ class CodeGraph:
                     conn
                 )
                 inherited = False
+            if predecessor_data is not None and predecessor_outputs_valid:
+                with self.reader_lease() as old_reader:
+                    predecessor = old_reader._source_lease
+                    old_reader._source_lease = None
+            self._source_predecessor = predecessor
             stats = self._run_build(conn, get_parser, since=since if inherited else None)
             if self._generation_data(conn) is None:
                 raise RuntimeError("Staging did not produce a complete generation")
@@ -1944,8 +2129,18 @@ class CodeGraph:
             conn = None
             self._close_db()
             os.replace(tmp_path, self.db_path)
+            builder.published = True
+            try:
+                snap.retain(self.atlas_dir, stats["snapshot_id"])
+            except (OSError, ValueError):
+                log.warning("source_snapshot_prune_failed")
             return stats
         finally:
+            if predecessor is not None:
+                predecessor.close()
+            self._source_builder = None
+            if builder is not None:
+                builder.close()
             if conn is not None:
                 conn.close()
             for path in (tmp_path, Path(str(tmp_path) + "-journal")):
@@ -1955,6 +2150,9 @@ class CodeGraph:
         self, conn: sqlite3.Connection, get_parser: Any, since: str | None
     ) -> dict[str, Any]:
         """Index into staging; reuse only exact-buffer hashes and compatible facts."""
+        builder = self._source_builder
+        if builder is None:
+            raise RuntimeError("Source capture requires a staged build")
         base_inputs = self._build_inputs()
         self._capture_producer = ev.producer(base_inputs["producer"])
         previous_witness = dep.read(conn)
@@ -1967,9 +2165,9 @@ class CodeGraph:
         previous_base = {
             k: v
             for k, v in previous_inputs.items()
-            if k not in {"source_hashes", "observation_digest"}
+            if k not in {"source_hashes", "observation_digest", "snapshot"}
         }
-        if previous_base.get("format") == "atlas-generation.v3":
+        if previous_base.get("format") in {"atlas-generation.v3", "atlas-generation.v4"}:
             previous_base["format"] = base_inputs["format"]
         incremental = since is not None and previous_base == base_inputs
         invalid_predecessor_outputs = False
@@ -2023,7 +2221,10 @@ class CodeGraph:
         seen_paths: set[str] = set()
         unsupported_skipped: dict[str, int] = {}
 
-        for path in self._iter_source_files():
+        for path in sorted(
+            set(self._iter_source_files()) | {self.repo / name for name in self._overlays},
+            key=lambda p: str(p.relative_to(self.repo)),
+        ):
             ext = path.suffix
             lang = LANG_BY_EXT.get(ext)
 
@@ -2041,9 +2242,13 @@ class CodeGraph:
             if lang is None:
                 continue
             try:
-                stat = path.stat()
-                mtime_ns, size = stat.st_mtime_ns, stat.st_size
-                source = path.read_bytes()
+                if rel in self._overlays:
+                    source = self._overlays[rel]
+                    mtime_ns, size = 0, len(source)
+                else:
+                    source, stat = snap.safe_source(self.repo, rel)
+                    mtime_ns, size = stat.st_mtime_ns, stat.st_size
+                builder.add(source)
             except OSError:
                 observation.update(state="failed", reason="read_error")
                 self._build_observation["failure_reason"] = "read_error"
@@ -2403,11 +2608,25 @@ class CodeGraph:
             "removed_paths": sorted(removed),
         }
 
+        binding = self._snapshot_binding(conn)
+        context = {**self._snapshot_context(base_inputs), "identity": snap.identity(self.repo)}
+        if self._untrusted_modern_predecessor and any(
+            row["sha256"] not in builder.blobs for row in binding["source_bounds"]
+        ):
+            raise ValueError(
+                "Cannot authenticate historical source from an incoherent native predecessor"
+            )
+        snapshot_id = builder.publish(context, binding, self._source_predecessor)
         generation_id = self._store_generation(
             conn,
             {
                 **base_inputs,
-                "format": "atlas-generation.v3",
+                "format": "atlas-generation.v4",
+                "snapshot": {
+                    "state": "available",
+                    "id": snapshot_id,
+                    "manifest_sha256": snapshot_id,
+                },
                 "source_hashes": source_hashes,
                 "observation_digest": self._status_hash(all_observed),
             },
@@ -2430,6 +2649,7 @@ class CodeGraph:
         self._new_publication_token(conn)
         conn.commit()
         return {
+            "snapshot_id": snapshot_id,
             "binding_resolution": binding_stats,
             "extraction_cache": cache_stats,
             "files_indexed": files_indexed,
@@ -4667,6 +4887,10 @@ class CodeGraph:
                 legacy = None
                 self._close_db()
                 os.replace(tmp, self.db_path)
+                try:
+                    snap.retain(self.atlas_dir, None)
+                except (OSError, ValueError):
+                    log.warning("source_snapshot_prune_failed")
                 return {"schema_epoch": 7, "already_current": False}
             finally:
                 if conn is not None:
@@ -4799,8 +5023,8 @@ class CodeGraph:
                 # Only active records may substantiate a current observation.
                 by_path = {item["path"]: item for item in observations}
                 indexed_paths = set()
-                active = list(ev.records(conn))
-                for occurrence in (r for r in active if r["type"] == "occurrence"):
+                for occurrence_row in conn.execute("SELECT payload FROM occurrences ORDER BY id"):
+                    occurrence = json.loads(occurrence_row[0])
                     observation = by_path.get(occurrence["path"])
                     if occurrence["provenance_state"] == "source":
                         ev.require(observation is not None, "missing active source observation")
@@ -4817,7 +5041,8 @@ class CodeGraph:
                     )
                     if occurrence["role"] == "file":
                         indexed_paths.add(occurrence["path"])
-                for proof in (r for r in active if r["type"] == "evidence"):
+                for proof_row in conn.execute("SELECT payload FROM evidence ORDER BY id"):
+                    proof = json.loads(proof_row[0])
                     occurrence = ev.get(conn, "occurrence", proof["occurrence_id"])
                     observation = by_path.get(occurrence["path"])
                     if proof["provenance_state"] == "source":
@@ -5220,7 +5445,7 @@ class CodeGraph:
             header = {
                 "type": "header",
                 "format": ev.OBSERVATION_FORMAT
-                if generation_format == "atlas-generation.v3"
+                if generation_format in {"atlas-generation.v3", "atlas-generation.v4"}
                 else ev.FORMAT,
                 "schema_epoch": 7,
                 "content_hash": digest.hexdigest(),
@@ -5467,11 +5692,14 @@ class CodeGraph:
                     self._store_generation(
                         conn,
                         {
-                            "format": "atlas-generation.v3"
+                            "format": "atlas-generation.v4"
                             if header["format"] == ev.OBSERVATION_FORMAT
                             else "atlas-generation.v2",
                             **(
-                                {"observation_digest": self._status_hash(metadata)}
+                                {
+                                    "observation_digest": self._status_hash(metadata),
+                                    "snapshot": {"state": "unavailable", "reason": "import"},
+                                }
                                 if header["format"] == ev.OBSERVATION_FORMAT
                                 else {}
                             ),
@@ -5499,6 +5727,10 @@ class CodeGraph:
                 conn = None
                 self._close_db()
                 os.replace(tmp, self.db_path)
+                try:
+                    snap.retain(self.atlas_dir, None)
+                except (OSError, ValueError):
+                    log.warning("source_snapshot_prune_failed")
                 return {
                     "records_imported": len(records),
                     "schema_epoch": 7,

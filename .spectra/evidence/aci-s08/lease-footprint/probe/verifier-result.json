@@ -1,0 +1,8 @@
+{
+  "command": [
+    "mcp-server/.venv/bin/python",
+    "scripts/verify-probe-verdict.py",
+    ".spectra/changes/aci-s08/lease-footprint/probe/aci-s08-refined-probe-lpa-vs-louvain.json"
+  ],
+  "exit_code": 0
+}

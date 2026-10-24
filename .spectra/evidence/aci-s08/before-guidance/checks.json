@@ -1,0 +1,105 @@
+{
+  "ruff": {
+    "command": [
+      ".venv/bin/ruff",
+      "check",
+      "."
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0
+  },
+  "format": {
+    "command": [
+      ".venv/bin/ruff",
+      "format",
+      "--check",
+      "."
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0
+  },
+  "mypy": {
+    "command": [
+      ".venv/bin/mypy",
+      "src"
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0
+  },
+  "scripts-ruff": {
+    "command": [
+      ".venv/bin/ruff",
+      "check",
+      "../scripts",
+      "--exclude",
+      "fingerprint-fixture"
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0
+  },
+  "scripts-format": {
+    "command": [
+      ".venv/bin/ruff",
+      "format",
+      "--check",
+      "../scripts",
+      "--exclude",
+      "fingerprint-fixture"
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0
+  },
+  "scripts-mypy": {
+    "command": [
+      ".venv/bin/mypy",
+      "../scripts"
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0
+  },
+  "lock": {
+    "command": [
+      "/tmp/aci-s01-tools/bin/uv",
+      "lock",
+      "--check"
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0
+  },
+  "probe": {
+    "command": [
+      "mcp-server/.venv/bin/python",
+      "scripts/verify-probe-verdict.py",
+      ".spectra/changes/aci-s07-probe/aci-s07-probe-lpa-vs-louvain.json"
+    ],
+    "cwd": ".",
+    "exit_code": 0
+  },
+  "guard": {
+    "command": [
+      "env",
+      "-u",
+      "PYTHONPATH",
+      "/bin/bash",
+      "scripts/test-verify-probe-verdict.sh"
+    ],
+    "cwd": ".",
+    "exit_code": 0
+  },
+  "size-guard": {
+    "command": [
+      "/bin/bash",
+      "scripts/test-verify-export-size.sh"
+    ],
+    "cwd": ".",
+    "exit_code": 0
+  },
+  "classify": {
+    "command": [
+      "/bin/bash",
+      "scripts/test-harden-gate-classify.sh"
+    ],
+    "cwd": ".",
+    "exit_code": 0
+  }
+}

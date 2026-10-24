@@ -200,6 +200,7 @@ def test_partial_history_matches_same_predecessor_full_oracle(tmp_path):
     oracle = CodeGraph(graph.repo, graph_root=tmp_path / "history-oracle")
     oracle.atlas_dir.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(graph.db_path, oracle.db_path)
+    shutil.copytree(graph.atlas_dir / "source-snapshots", oracle.atlas_dir / "source-snapshots")
     # Both writers start with the same real G1 source/evidence; a fresh source-
     # only oracle could not supply the historical target closure.
     for index, content in enumerate(["def B(:\n pass\n", "def B(): pass\n"]):
@@ -355,6 +356,7 @@ def test_failed_caller_preserves_original_target_history(tmp_path):
     oracle = CodeGraph(graph.repo, graph_root=tmp_path / "history-oracle")
     oracle.atlas_dir.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(graph.db_path, oracle.db_path)
+    shutil.copytree(graph.atlas_dir / "source-snapshots", oracle.atlas_dir / "source-snapshots")
     (graph.repo / "pkg/a.py").write_text("def A(:\n B()\n")
     (graph.repo / "pkg/b.py").write_text("\ndef B(): pass\n")
     (graph.repo / "pkg/c.py").write_text("from .a import A\ndef C(): A()\n")

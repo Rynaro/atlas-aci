@@ -1,0 +1,28 @@
+{
+  "slice_id": "ACI-S08",
+  "criteria_changed": false,
+  "authorization": "Root explicit exact four predecessor test responsibilities after actual13fail compatibility run",
+  "additional_paths": [
+    "mcp-server/tests/slices/test_s03_contract.py",
+    "mcp-server/tests/slices/test_s09_cache_validation.py",
+    "mcp-server/tests/slices/test_s10_dependencies.py",
+    "mcp-server/tests/slices/test_s15_integration.py"
+  ],
+  "tests": {
+    "test_s03_contract.py": [
+      "test_consumed_buffer_hash_and_failure"
+    ],
+    "test_s09_cache_validation.py": [
+      "test_read_once_and_warm_pinned_lease"
+    ],
+    "test_s10_dependencies.py": [
+      "test_partial_history_matches_same_predecessor_full_oracle",
+      "test_failed_caller_preserves_original_target_history"
+    ],
+    "test_s15_integration.py": [
+      "test_current_and_historical_producer_module_sets"
+    ]
+  },
+  "changes": "Secure read seam spies preserve actual failures/read counts; copy complete native source store with real matched predecessor DB; active exact six-module set plus all2/3/4/5 historical positives. No assertion, oracle, cache/history/G1 relaxation.",
+  "failure_evidence": ".spectra/evidence/aci-s08/compatibility-first.log"
+}

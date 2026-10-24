@@ -304,14 +304,16 @@ def test_failure_paths(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, failure:
 
         monkeypatch.setattr(tree_sitter_language_pack, "get_parser", throwing)
     elif failure == "read":
-        original = Path.read_bytes
+        from atlas_aci.storage import snapshots
 
-        def unreadable(path):
-            if path == source:
+        original = snapshots.safe_source
+
+        def unreadable(root, relative):
+            if root / relative == source:
                 raise PermissionError("external path and message")
-            return original(path)
+            return original(root, relative)
 
-        monkeypatch.setattr(Path, "read_bytes", unreadable)
+        monkeypatch.setattr(snapshots, "safe_source", unreadable)
     else:
         source.write_text("def broken(:\n    pass\n")
 

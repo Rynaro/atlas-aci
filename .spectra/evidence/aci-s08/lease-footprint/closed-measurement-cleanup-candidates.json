@@ -1,0 +1,48 @@
+{
+  "status": "CANDIDATES_ONLY_NOT_DELETED",
+  "authority_required": "Root exact scoped approval after independent audit",
+  "paths": [
+    {
+      "path": "/tmp/aci-s08-probe-inputs/solidus/.atlas",
+      "real_path": "/private/tmp/aci-s08-probe-inputs/solidus/.atlas",
+      "allocated_kib": 948376,
+      "kind": "completed generated SQLite/cache/sourcepack only",
+      "parent_git_preserved": true
+    },
+    {
+      "path": "/tmp/aci-s08-probe-inputs/spree/.atlas",
+      "real_path": "/private/tmp/aci-s08-probe-inputs/spree/.atlas",
+      "allocated_kib": 1515032,
+      "kind": "completed generated SQLite/cache/sourcepack only",
+      "parent_git_preserved": true
+    },
+    {
+      "path": "/tmp/aci-s08-refined-probe-inputs/solidus/.atlas",
+      "real_path": "/private/tmp/aci-s08-refined-probe-inputs/solidus/.atlas",
+      "allocated_kib": 861704,
+      "kind": "completed generated SQLite/cache/sourcepack only",
+      "parent_git_preserved": true
+    },
+    {
+      "path": "/tmp/aci-s08-refined-probe-inputs/spree/.atlas",
+      "real_path": "/private/tmp/aci-s08-refined-probe-inputs/spree/.atlas",
+      "allocated_kib": 1373644,
+      "kind": "completed generated SQLite/cache/sourcepack only",
+      "parent_git_preserved": true
+    },
+    {
+      "path": "/tmp/aci-s08-spree-export.jsonl",
+      "bytes": 651845336,
+      "sha256": "3c65f32c4702d6d9398f17bde21c292c29af66ecd5bffd6d9ca68355bfce3832",
+      "kind": "completed full portable measurement scratch; exact hash/size/provenance retained"
+    },
+    {
+      "path": "/tmp/aci-s08-refined-spree-export.jsonl",
+      "bytes": 651845336,
+      "sha256": "39da8ac3fcf854317e3aace8ff05e1365d7b786a6d932aa64fdbcb7085adfb34",
+      "kind": "completed full portable measurement scratch; exact hash/size/provenance retained"
+    }
+  ],
+  "preserved": "ALL source parents/.git/seeds/SDK/UV/grammar assets/v1 fixture/9 source archives/compact graphs/20 partitions/logs/metadata/receipts",
+  "independent_audit": "ATLAS final refined measurement APPROVE; baseline integrity and frozen-old per-corpus comparisons complete"
+}

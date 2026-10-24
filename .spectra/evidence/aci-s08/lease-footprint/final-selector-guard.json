@@ -1,0 +1,12 @@
+{
+  "command": [
+    "env",
+    "-u",
+    "PYTHONPATH",
+    "/bin/bash",
+    "scripts/test-verify-probe-verdict.sh"
+  ],
+  "exit_code": 0,
+  "explicit_marker": true,
+  "pass_lines": 27
+}

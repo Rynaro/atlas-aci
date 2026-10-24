@@ -1,0 +1,42 @@
+{
+  "at": "2026-10-24T18:40:29.645196+00:00",
+  "phase": "DONE",
+  "confidence": 86.25,
+  "verdict": "AUTO_PROCEED",
+  "checks": [
+    {
+      "file": "aci-s08.envelope.json",
+      "schema": "ecl-envelope.v2.json",
+      "validator": "Draft202012Validator",
+      "format_check": true,
+      "valid": true
+    },
+    {
+      "file": "aci-s08.state.json",
+      "schema": "plan-state.v1.json",
+      "validator": "Draft7Validator",
+      "format_check": true,
+      "valid": true
+    }
+  ],
+  "product_files_unchanged": 96,
+  "ledger_counts": {
+    "merged": 10,
+    "remaining": 32
+  },
+  "spec_sha256": "260694c5cb057a97e82d110fa47256eecdc4b2eb969eb5a789626f9c2009c0ac",
+  "criteria_sha256": "216f05f349bf35630f299ba814be697b8150e3b0da0bd2fef0512a21b34d3dba",
+  "envelope_sha256": "d184c0b80f630026279250fc27d86a7c7e8ee8a2708717122a78e48ff0b20f4b",
+  "state_sha256": "9a803f145d49ac5243ed410b7b564bca7767554069be3ae4d8bb049103b7cb06",
+  "message_id": "ad8f4a29-abe3-4baa-bcc5-b7ebb58bbd9d",
+  "thread_id": "fc6b16a6-62c5-4ae1-99e4-82fc7cbe2478",
+  "scope_amendment": ".spectra/changes/aci-s08/scope-amendment.json",
+  "bookkeeping_amendment": ".spectra/changes/aci-s08/bookkeeping-amendment.json",
+  "primitive_qualified": true,
+  "product_implemented": false,
+  "notes": [
+    "Approved draft bytes unchanged; original independent18:37:43Z review distinct from18:39:18Z state-record timestamp.",
+    "Actual rejected cross-kernel flock proof and T\u2192R cycle1 retained; coalesced pack9-case primitive proof is not integrated product proof.",
+    "Root mechanical verifier/correlated trace before Vivi; single implementation receipt and five-day cap remain."
+  ]
+}

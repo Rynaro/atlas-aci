@@ -1,0 +1,16 @@
+{
+  "slice_id": "ACI-S08",
+  "criteria_changed": false,
+  "authorization": "Root explicit existing S06 Docker integration step only, recorded before edit",
+  "at": "2026-10-24T20:47:27.928233+00:00",
+  "additional_paths": [
+    ".github/workflows/ci.yml"
+  ],
+  "permitted_delta": {
+    "env_addition": "ATLAS_ACI_S08_DOCKER_IMAGE: atlas-aci-ci-smoketest",
+    "pytest_path_addition": "tests/slices/test_s08_docker.py",
+    "step_name": "S06+S08 optional clarity only"
+  },
+  "preserved": "same job/matrix/image build/permissions/budgets; no service, skip or privilege addition",
+  "reason": "Existing dedicated Docker step only selected S06; keep ongoing actual Linux S08 native snapshot regression enabled."
+}

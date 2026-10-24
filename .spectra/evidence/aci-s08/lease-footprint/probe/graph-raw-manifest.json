@@ -1,0 +1,22 @@
+[
+  {
+    "logical_path": "/private/tmp/atlas-aci-aci-s08/.spectra/evidence/aci-s08/lease-footprint/probe/solidus-graph.json",
+    "producer_output_path": "/tmp/aci-s08-refined-solidus-graph.json",
+    "compressed_path": ".spectra/evidence/aci-s08/lease-footprint/probe/solidus-graph.json.gz",
+    "uncompressed_bytes": 466687,
+    "uncompressed_sha256": "3c41da7d6893a6b14c68c5449e4e84737b596031431995a5eb4ae8bfe8abbfa0",
+    "compressed_bytes": 49010,
+    "compressed_sha256": "b95bf59614790ec978d076fa4bf658c31c2590662398aab2af8cfef92607bdc8",
+    "gzip_mtime": 0
+  },
+  {
+    "logical_path": "/private/tmp/atlas-aci-aci-s08/.spectra/evidence/aci-s08/lease-footprint/probe/spree-graph.json",
+    "producer_output_path": "/tmp/aci-s08-refined-spree-graph.json",
+    "compressed_path": ".spectra/evidence/aci-s08/lease-footprint/probe/spree-graph.json.gz",
+    "uncompressed_bytes": 1029032,
+    "uncompressed_sha256": "896acdb1af82b0faa29724b5656828fa5e7cebdf120c1c9faea24ee4984116c0",
+    "compressed_bytes": 98464,
+    "compressed_sha256": "749792bfe4fab949f8bc7023916d53490e38119114f71b1756fd5316073c198e",
+    "gzip_mtime": 0
+  }
+]

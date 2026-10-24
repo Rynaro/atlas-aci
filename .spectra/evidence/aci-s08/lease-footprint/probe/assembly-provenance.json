@@ -1,0 +1,59 @@
+{
+  "command": [
+    "/private/tmp/atlas-aci-aci-s08/mcp-server/.venv/bin/python",
+    "/private/tmp/atlas-aci-aci-s08/scripts/probe-assemble-graph-bundle.py",
+    "--out",
+    "/private/tmp/atlas-aci-aci-s08/.spectra/changes/aci-s08/lease-footprint/probe/probe-graphs.json.gz",
+    "--repo",
+    "solidus:/tmp/aci-s08-refined-solidus-graph.json:/private/tmp/atlas-aci-aci-s08/.spectra/evidence/aci-s08/lease-footprint/probe/solidus-modularity.stdout.log",
+    "--repo",
+    "spree:/tmp/aci-s08-refined-spree-graph.json:/private/tmp/atlas-aci-aci-s08/.spectra/evidence/aci-s08/lease-footprint/probe/spree-modularity.stdout.log"
+  ],
+  "exit_code": 0,
+  "indexer_fingerprint": "0605f4ae8f83e953d3dd95cd2bb0b55bf37e8d0fa3c0c31a176314ec7b94383f",
+  "verdict": "PASS",
+  "sources": {
+    "mcp-server/src/atlas_aci/codegraph.py": "30d0c8d718ed0115bc7b88051bd1ca7ba358665fabfe35b9a57029de2ebb0183",
+    "mcp-server/src/atlas_aci/storage/evidence.py": "65d1ce7d43df6d652c640229407ab0211d5bb1f4c766f1e694e2979d516a3525",
+    "mcp-server/src/atlas_aci/providers/python_imports.py": "de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014",
+    "mcp-server/src/atlas_aci/indexing/extraction_cache.py": "08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2",
+    "mcp-server/src/atlas_aci/resolvers/dependencies.py": "0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6",
+    "mcp-server/src/atlas_aci/extractors/rust.py": "28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a",
+    "mcp-server/src/atlas_aci/storage/snapshots.py": "67d3d7c3313b64315fa4bb2388cacdf30aae79b701ff0fc6c1b5c741f75ca616",
+    "mcp-server/src/atlas_aci/server.py": "f9a1f820f685205569ba6b1f5026ed982b7123bcb91cc33237805fcc60f43970",
+    "mcp-server/src/atlas_aci/tools/view_file.py": "31871a9d7594091a52790feac3a5746039cc8c939c7c3f7116e99a9f1f5e48e3"
+  },
+  "cache_sizes": {
+    "solidus": {
+      "entries": 2519,
+      "bytes": 334683424,
+      "source_snapshot_store": {
+        "packs": {
+          "files": 1,
+          "bytes": 6317973
+        },
+        "manifests": {
+          "files": 1,
+          "bytes": 1202989
+        }
+      }
+    },
+    "spree": {
+      "entries": 2358,
+      "bytes": 531906606,
+      "source_snapshot_store": {
+        "packs": {
+          "files": 1,
+          "bytes": 8566123
+        },
+        "manifests": {
+          "files": 1,
+          "bytes": 1137624
+        }
+      }
+    }
+  },
+  "prior_failed_probe_seconds_charged": 719.1517775009852,
+  "cumulative_probe_seconds_charged": 1391.461103625974,
+  "bundle_sha256": "c5bfe09753acccb2652e1ea730079e3269ed47b2ed58ee6d3ea642fc08ff1ffe"
+}

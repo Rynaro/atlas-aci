@@ -1,0 +1,16 @@
+{
+  "command": [
+    "/private/tmp/atlas-aci-aci-s08/mcp-server/.venv/bin/python",
+    "/private/tmp/atlas-aci-aci-s08/.spectra/evidence/aci-s08/lease-footprint/probe/measure_readers.py",
+    "source",
+    "/tmp/aci-s08-refined-probe-inputs/solidus"
+  ],
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 0.6704940420022467,
+  "prior_seconds_charged": 1247.7533832919726,
+  "cumulative_seconds_charged": 1248.4238773339748,
+  "peak_rss_bytes": 47808512,
+  "per_job_cap_seconds": 600,
+  "total_cap_seconds": 2700
+}

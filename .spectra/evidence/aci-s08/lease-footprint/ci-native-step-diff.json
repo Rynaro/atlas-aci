@@ -1,0 +1,10 @@
+{
+  "workflow_sha256": "846c876157c39d361b58494d2058220afecc74e679de39d2a57fcec30797e858",
+  "exact_reverse_reconstructs_base": true,
+  "changes": [
+    "existing step display name",
+    "one S08 image env",
+    "one native pytest path"
+  ],
+  "same_job_matrix_image_permissions_budgets": true
+}

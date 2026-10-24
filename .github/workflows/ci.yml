@@ -368,11 +368,12 @@ jobs:
         with:
           python-version-file: "mcp-server/pyproject.toml"
 
-      - name: Index read-only source into external root and query real MCP (S06)
+      - name: Read-only external-root and pinned-source MCP integration (S06+S08)
         working-directory: mcp-server
         env:
           ATLAS_ACI_S06_DOCKER_IMAGE: atlas-aci-ci-smoketest
+          ATLAS_ACI_S08_DOCKER_IMAGE: atlas-aci-ci-smoketest
         run: |
           set -euo pipefail
           uv sync --frozen --extra dev
-          uv run --frozen pytest tests/slices/test_s06_contract.py -q
+          uv run --frozen pytest tests/slices/test_s06_contract.py tests/slices/test_s08_docker.py -q
