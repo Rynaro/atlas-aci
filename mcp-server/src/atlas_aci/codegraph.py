@@ -21,7 +21,7 @@ import secrets
 import sqlite3
 import tempfile
 from contextlib import contextmanager
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, cast
@@ -29,6 +29,7 @@ from typing import TYPE_CHECKING, Any, cast
 import structlog
 
 from atlas_aci.config import DEFAULT_MAX_BOUND_FIELD_ELEMENTS, path_is_within
+from atlas_aci.indexing import extraction_cache as xc
 from atlas_aci.label_propagation import label_propagation
 from atlas_aci.providers import python_imports
 from atlas_aci.storage import evidence as ev
@@ -835,6 +836,11 @@ class CodeGraph:
     a bounded amount.
     """
 
+    _canonical_file_records: list[dict[str, Any]]
+    _canonical_imports: list[dict[str, Any]]
+    _canonical_bindings: dict[tuple[str, str, str, int], tuple[str, str]]
+    _canonical_file_entity: str
+
     def __init__(
         self,
         repo: Path,
@@ -1134,7 +1140,11 @@ class CodeGraph:
             ).hexdigest(),
             "modules": {
                 name: hashlib.sha256((Path(__file__).parent / name).read_bytes()).hexdigest()
-                for name in ("storage/evidence.py", "providers/python_imports.py")
+                for name in (
+                    "storage/evidence.py",
+                    "providers/python_imports.py",
+                    "indexing/extraction_cache.py",
+                )
             },
             "packages": {
                 name: importlib.metadata.version(name)
@@ -1927,6 +1937,15 @@ class CodeGraph:
         source_hashes: dict[str, str] = {}
         observed_records = []
         failed_histories = []
+        cache = xc.ExtractionCache(self.atlas_dir)
+        cache_stats: dict[str, Any] = {
+            "disk_hits": 0,
+            "misses": 0,
+            "miss_reasons": {},
+            "write_failures": 0,
+            "predecessor_reused": 0,
+            "parser_invocations": 0,
+        }
 
         if not incremental:
             for table in (*ev.TABLES.values(), "import_bindings"):
@@ -2010,65 +2029,81 @@ class CodeGraph:
                         "UPDATE files SET mtime_ns=?, size=? WHERE path=?", (mtime_ns, size, rel)
                     )
                     files_skipped += 1
+                    cache_stats["predecessor_reused"] += 1
                     observed_records.append(
                         ev.observation(rel, lang, source_hash, "indexed", None, None, None)
                     )
                     continue
-            try:
-                parser = get_parser(cast("SupportedLanguage", lang))
-                tree = parser.parse(source)
-            except Exception as exc:
-                observation.update(state="failed", reason="parser_exception")
-                self._build_observation["failure_reason"] = "parser_exception"
-                raise RuntimeError(f"Cannot index eligible source {rel}") from exc
-            if tree.root_node.has_error:
-                pending = [tree.root_node]
-                error_node = tree.root_node
-                while pending:
-                    node = pending.pop()
-                    if node.type == "ERROR" or node.is_missing:
-                        error_node = node
-                        break
-                    pending.extend(reversed(node.children))
-                observation.update(
-                    state="failed",
-                    reason="parse_error",
-                    location={
-                        "line": error_node.start_point[0] + 1,
-                        "column": error_node.start_point[1],
-                        "end_line": error_node.end_point[0] + 1,
-                        "end_column": error_node.end_point[1],
-                    },
-                )
-                history = self._proof_predecessor_history.get(rel) or self._retained_closure(
-                    rel, lang, self._proof_predecessor_records
-                )
-                if history:
-                    failed_histories.append(history)
-                observed_records.append(
-                    ev.observation(
-                        rel,
-                        lang,
-                        source_hash,
-                        "failed",
-                        "parse_error",
-                        observation["location"],
-                        history,
+            cache_inputs = xc.inputs(source, rel, lang, base_inputs)
+            packet, cache_reason = cache.lookup(cache_inputs, source)
+            if packet is None:
+                cache_stats["misses"] += 1
+                reasons = cache_stats["miss_reasons"]
+                reasons[cache_reason] = reasons.get(cache_reason, 0) + 1
+                try:
+                    parser = get_parser(cast("SupportedLanguage", lang))
+                    cache_stats["parser_invocations"] += 1
+                    tree = parser.parse(source)
+                except Exception as exc:
+                    observation.update(state="failed", reason="parser_exception")
+                    self._build_observation["failure_reason"] = "parser_exception"
+                    raise RuntimeError(f"Cannot index eligible source {rel}") from exc
+                if tree.root_node.has_error:
+                    pending = [tree.root_node]
+                    error_node = tree.root_node
+                    while pending:
+                        node = pending.pop()
+                        if node.type == "ERROR" or node.is_missing:
+                            error_node = node
+                            break
+                        pending.extend(reversed(node.children))
+                    observation.update(
+                        state="failed",
+                        reason="parse_error",
+                        location={
+                            "line": error_node.start_point[0] + 1,
+                            "column": error_node.start_point[1],
+                            "end_line": error_node.end_point[0] + 1,
+                            "end_column": error_node.end_point[1],
+                        },
                     )
-                )
-                # Failed files do not enter any active lookup/candidate table.
-                if incremental:
-                    for table in (
-                        "symbols",
-                        "refs",
-                        "assignment_targets",
-                        "rationale",
-                        "import_bindings",
-                        "files",
+                    history = self._proof_predecessor_history.get(rel) or self._retained_closure(
+                        rel, lang, self._proof_predecessor_records
+                    )
+                    if history:
+                        failed_histories.append(history)
+                    observed_records.append(
+                        ev.observation(
+                            rel,
+                            lang,
+                            source_hash,
+                            "failed",
+                            "parse_error",
+                            observation["location"],
+                            history,
+                        )
+                    )
+                    if not cache.write(
+                        cache_inputs,
+                        None,
+                        {"reason": "parse_error", "location": observation["location"]},
                     ):
-                        conn.execute(f"DELETE FROM {table} WHERE path=?", (rel,))
-                    ev.remove_path(conn, rel)
-                continue
+                        cache_stats["write_failures"] += 1
+                    # Failed files do not enter any active lookup/candidate table.
+                    if incremental:
+                        for table in (
+                            "symbols",
+                            "refs",
+                            "assignment_targets",
+                            "rationale",
+                            "import_bindings",
+                            "files",
+                        ):
+                            conn.execute(f"DELETE FROM {table} WHERE path=?", (rel,))
+                        ev.remove_path(conn, rel)
+                    continue
+            else:
+                cache_stats["disk_hits"] += 1
 
             if incremental:
                 # New or changed file — drop stale rows before re-extracting so
@@ -2080,14 +2115,47 @@ class CodeGraph:
 
             ev.remove_path(conn, rel)
             conn.execute("DELETE FROM import_bindings WHERE path=?", (rel,))
-            try:
-                symbols, refs, assignment_targets, rationale_comments = self._extract(
-                    tree, source, rel, lang
+            if packet is None:
+                try:
+                    symbols, refs, assignment_targets, rationale_comments = self._extract(
+                        tree, source, rel, lang
+                    )
+                except Exception:
+                    observation.update(state="failed", reason="extraction_error")
+                    self._build_observation["failure_reason"] = "extraction_error"
+                    raise
+                packet = xc.ExtractionPacket(
+                    {
+                        "symbols": [asdict(row) for row in symbols],
+                        "refs": [asdict(row) for row in refs],
+                        "assignments": [list(fact) for fact in assignment_targets],
+                        "rationale": [asdict(row) for row in rationale_comments],
+                        "records": list(
+                            {row["id"]: row for row in self._canonical_file_records}.values()
+                        ),
+                        "imports": self._canonical_imports,
+                        "bindings": [
+                            {"fact": list(fact), "links": list(links)}
+                            for fact, links in self._canonical_bindings.items()
+                        ],
+                        "file_entity": self._canonical_file_entity,
+                    }
                 )
-            except Exception:
-                observation.update(state="failed", reason="extraction_error")
-                self._build_observation["failure_reason"] = "extraction_error"
-                raise
+                packet.validate(cache_inputs, source)
+                if not cache.write(cache_inputs, packet):
+                    cache_stats["write_failures"] += 1
+            # Cold and hit paths restore the same complete raw packet before
+            # common insertion; global resolution never enters the cache.
+            symbols = [Symbol(**row) for row in packet.payload["symbols"]]
+            refs = [Reference(**row) for row in packet.payload["refs"]]
+            assignment_targets = [tuple(fact) for fact in packet.payload["assignments"]]
+            rationale_comments = [RationaleComment(**row) for row in packet.payload["rationale"]]
+            self._canonical_file_records = packet.payload["records"]
+            self._canonical_imports = packet.payload["imports"]
+            self._canonical_bindings = {
+                tuple(row["fact"]): tuple(row["links"]) for row in packet.payload["bindings"]
+            }
+            self._canonical_file_entity = packet.payload["file_entity"]
             for record in self._canonical_file_records:
                 ev.put(conn, record, rel if record["type"] != "producer" else None)
             for binding in self._canonical_imports:
@@ -2275,6 +2343,7 @@ class CodeGraph:
         self._new_publication_token(conn)
         conn.commit()
         return {
+            "extraction_cache": cache_stats,
             "files_indexed": files_indexed,
             "symbols": symbols_added,
             "refs": refs_added,
@@ -2613,7 +2682,7 @@ class CodeGraph:
                         "assertion_id": None,
                     }
                 )
-        self._canonical_bindings: dict[tuple[str, str, str, int], tuple[str, str]] = {}
+        self._canonical_bindings = {}
 
         def binding_capture(fact, node):
             self._canonical_bindings[fact] = observe(

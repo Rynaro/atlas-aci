@@ -1,0 +1,50 @@
+{
+  "envelope_version": "2.0",
+  "message_id": "0521c745-3e79-4975-b32c-d2db8deead24",
+  "thread_id": "b670282c-f55b-48e7-a3ce-d0e9cccbd155",
+  "parent_id": null,
+  "from": {
+    "eidolon": "ramza",
+    "version": "1.1.0"
+  },
+  "to": {
+    "eidolon": "vivi",
+    "version": "n/a"
+  },
+  "performative": "PROPOSE",
+  "edge_origin": "roster",
+  "objective": "Implement ACI-S09 validated content-addressed extraction packets with persistent local caching, exact input/producer keys, atomic writes, safe miss fallback and unchanged graph semantics.",
+  "artifact": {
+    "kind": "spec",
+    "schema_version": "1.0",
+    "path": "aci-s09.md",
+    "sha256": "cf2bbfa7bc4636f2f59df50d77221b66b53f63b22b46e1cc05298722f950a878",
+    "size_bytes": 21687
+  },
+  "integrity": {
+    "method": "sha256",
+    "value": "cf2bbfa7bc4636f2f59df50d77221b66b53f63b22b46e1cc05298722f950a878"
+  },
+  "trace": {
+    "ts": "2026-10-24T15:26:55.935613+00:00",
+    "host": "codex",
+    "model": "gpt-6-astra",
+    "tier": "standard"
+  },
+  "ise": {
+    "assertion_grade": "validated",
+    "provenance": {
+      "methodology_version": "ramza-1.1.0"
+    },
+    "receiver_authorization": {
+      "auto_route": true,
+      "auto_merge": false,
+      "auto_deploy": false
+    }
+  },
+  "confidence": 0.875,
+  "x_ramza_acceptance_criteria": {
+    "path": "aci-s09.criteria.md",
+    "sha256": "de38446751926cb40e918c324155eb1020503a678c2ca2aec366547561819c05"
+  }
+}

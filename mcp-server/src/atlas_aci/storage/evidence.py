@@ -258,7 +258,15 @@ def _validate_record(item: Any) -> None:
                 modules = fingerprint["modules"]
                 require(
                     isinstance(modules, dict)
-                    and set(modules) == {"storage/evidence.py", "providers/python_imports.py"},
+                    and set(modules)
+                    in (
+                        {"storage/evidence.py", "providers/python_imports.py"},
+                        {
+                            "storage/evidence.py",
+                            "providers/python_imports.py",
+                            "indexing/extraction_cache.py",
+                        },
+                    ),
                     "module set",
                 )
                 require(all(hash_value(value) for value in modules.values()), "module hashes")

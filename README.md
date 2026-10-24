@@ -308,6 +308,32 @@ with an empty runtime mount. Runtime indexing needs writable graph storage, not
 writable source or a parser download. Status/export/serve open graph state
 read-only and create no graph directory when the selected index is missing.
 
+### Content-addressed extraction cache
+
+Index writers store complete per-file raw extraction packets below the selected
+repository graph namespace, at `extraction-cache/v1/<prefix>/<key>.json`. The key
+includes exact consumed source bytes, relative path, language, schema, producer
+module/query/parser fingerprints and extraction configuration. Full builds and
+new writer instances can reuse valid packets without parsing; compatible
+incremental predecessor reuse is reported separately. Global bindings are always
+recomputed, so a changed or removed dependency still changes query results.
+
+Entries use closed records, source/link validation and atomic replacement.
+Missing, partial, corrupt, incompatible and failed entries reparse actual source;
+recovered syntax errors are retried and retain the existing partial/stale policy.
+Cache I/O failures fall back to extraction and appear in build diagnostics. Fatal
+source, parser, extraction or publication failures still preserve the previous
+completed generation. Derived cache symlinks are rejected rather than redirected.
+Serve, status, export and import never access or create the extraction cache.
+
+Build output includes `extraction_cache` counters: disk hits, misses by reason,
+write failures, predecessor reuse and parser invocations. These operational values
+never enter canonical facts, observation identities or portable exports. The
+owner-local cache validates integrity, not authenticity against an owner able to
+fabricate a fully coherent replacement. No eviction policy or speed guarantee is
+provided. It does not reduce the previously measured 651,844,965-byte Spree export
+or its approximately 1.98 GB peak export RSS; those remain disclosed costs.
+
 ### `status` — operator capabilities and completeness
 
 ```bash

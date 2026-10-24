@@ -1,0 +1,12 @@
+{
+  "slice_id": "ACI-S09",
+  "criteria_changed": false,
+  "base_commit": "dd88912f73b728a57d7fc424093b88b0238550e8",
+  "reason": "Current evidence producer validator has exact two-module allowlist; new extraction cache implementation must be fingerprinted with backward-compatible exact old/new shapes. README documents operator cache storage and failure behavior.",
+  "additional_paths": [
+    "mcp-server/src/atlas_aci/storage/evidence.py",
+    "README.md"
+  ],
+  "review": ".spectra/plans/aci-s09.review.json",
+  "no_epoch_ddl_or_portable_semantics_change": true
+}

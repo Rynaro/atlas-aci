@@ -1,0 +1,15 @@
+{
+  "slice_id": "ACI-S09",
+  "criteria_changed": false,
+  "additional_paths": [],
+  "output_digest_exclusions": [
+    ".spectra/state/aci-s09.execution.json",
+    ".spectra/evidence/aci-s09/final-reentry-before.json",
+    ".spectra/evidence/aci-s09/final-reentry-after.json",
+    ".spectra/evidence/aci-s09/final-reentry-summary.json",
+    ".spectra/evidence/aci-s09/final-resume-identity.json",
+    ".spectra/evidence/aci-s09/output-check-tests.log"
+  ],
+  "authorization": "Root explicit approval before first receipt/init; exclude only circular authoritative bookkeeping and post-output validation artifacts. Product/tests/stable pre-output evidence remain bound.",
+  "reason": "Receipt references output commit and digests; post-output proof necessarily follows immutable output commit."
+}

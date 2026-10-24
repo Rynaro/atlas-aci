@@ -1,0 +1,185 @@
+{
+  "slice_id": "ACI-S09",
+  "issue_url": "https://github.com/Rynaro/atlas-aci/issues/31",
+  "criteria_sha256": "de38446751926cb40e918c324155eb1020503a678c2ca2aec366547561819c05",
+  "base_commit": "dd88912f73b728a57d7fc424093b88b0238550e8",
+  "output_commit": null,
+  "declared_paths": [
+    "mcp-server/src/atlas_aci/indexing/__init__.py",
+    "mcp-server/src/atlas_aci/indexing/extraction_cache.py",
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/tests/slices/test_s09_*.py",
+    "mcp-server/src/atlas_aci/storage/evidence.py",
+    "README.md",
+    ".spectra/plans/aci-s09.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/evidence/aci-s09/*",
+    ".spectra/state/aci-s09.execution.json",
+    ".spectra/changes/aci-s09/*",
+    ".spectra/backlog/execution.json",
+    ".spectra/backlog/order.md"
+  ],
+  "output_digest_exclusions": [
+    ".spectra/state/aci-s09.execution.json",
+    ".spectra/evidence/aci-s09/final-reentry-before.json",
+    ".spectra/evidence/aci-s09/final-reentry-after.json",
+    ".spectra/evidence/aci-s09/final-reentry-summary.json",
+    ".spectra/evidence/aci-s09/final-resume-identity.json",
+    ".spectra/evidence/aci-s09/output-check-tests.log"
+  ],
+  "output_digests": {},
+  "status": "IN_PROGRESS",
+  "acceptance_results": [
+    {
+      "ac_id": "AC-S09-001",
+      "exit_code": 0,
+      "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/mcp-server/src mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s09_*.py -q",
+      "working_directory": ".",
+      "test_id": "mcp-server/tests/slices/test_s09_contract.py::test_same_stat_changed_content",
+      "evidence": [
+        ".spectra/evidence/aci-s09/focused-final.log.gz",
+        ".spectra/evidence/aci-s09/focused-final.exit",
+        ".spectra/evidence/aci-s09/vivi-pass2-result.json"
+      ],
+      "observation": "Final producer08f323 cache/f2add engine;45focusedtests pass, protected pass\u00b245/run both0 and tamper0. Exact output checkout still pending."
+    },
+    {
+      "ac_id": "AC-S09-002",
+      "exit_code": 0,
+      "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/mcp-server/src mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s09_*.py -q",
+      "working_directory": ".",
+      "test_id": "mcp-server/tests/slices/test_s09_contract.py::test_producer_change",
+      "evidence": [
+        ".spectra/evidence/aci-s09/focused-final.log.gz",
+        ".spectra/evidence/aci-s09/focused-final.exit",
+        ".spectra/evidence/aci-s09/vivi-pass2-result.json"
+      ],
+      "observation": "Final producer08f323 cache/f2add engine;45focusedtests pass, protected pass\u00b245/run both0 and tamper0. Exact output checkout still pending."
+    },
+    {
+      "ac_id": "AC-S09-003",
+      "exit_code": 0,
+      "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/mcp-server/src mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s09_*.py -q",
+      "working_directory": ".",
+      "test_id": "mcp-server/tests/slices/test_s09_contract.py::test_config_change",
+      "evidence": [
+        ".spectra/evidence/aci-s09/focused-final.log.gz",
+        ".spectra/evidence/aci-s09/focused-final.exit",
+        ".spectra/evidence/aci-s09/vivi-pass2-result.json"
+      ],
+      "observation": "Final producer08f323 cache/f2add engine;45focusedtests pass, protected pass\u00b245/run both0 and tamper0. Exact output checkout still pending."
+    },
+    {
+      "ac_id": "AC-S09-004",
+      "exit_code": 0,
+      "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/mcp-server/src mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s09_*.py -q",
+      "working_directory": ".",
+      "test_id": "mcp-server/tests/slices/test_s09_contract.py::test_partial_cache_rejected",
+      "evidence": [
+        ".spectra/evidence/aci-s09/focused-final.log.gz",
+        ".spectra/evidence/aci-s09/focused-final.exit",
+        ".spectra/evidence/aci-s09/vivi-pass2-result.json"
+      ],
+      "observation": "Final producer08f323 cache/f2add engine;45focusedtests pass, protected pass\u00b245/run both0 and tamper0. Exact output checkout still pending."
+    },
+    {
+      "ac_id": "AC-S09-005",
+      "exit_code": 0,
+      "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/mcp-server/src mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s09_*.py -q",
+      "working_directory": ".",
+      "test_id": "mcp-server/tests/slices/test_s09_contract.py::test_warm_replay",
+      "evidence": [
+        ".spectra/evidence/aci-s09/focused-final.log.gz",
+        ".spectra/evidence/aci-s09/focused-final.exit",
+        ".spectra/evidence/aci-s09/vivi-pass2-result.json"
+      ],
+      "observation": "Final producer08f323 cache/f2add engine;45focusedtests pass, protected pass\u00b245/run both0 and tamper0. Exact output checkout still pending."
+    },
+    {
+      "ac_id": "AC-S09-006",
+      "exit_code": 0,
+      "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/mcp-server/src mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s09_*.py -q",
+      "working_directory": ".",
+      "test_id": "mcp-server/tests/slices/test_s09_contract.py::test_unchanged_no_parse",
+      "evidence": [
+        ".spectra/evidence/aci-s09/focused-final.log.gz",
+        ".spectra/evidence/aci-s09/focused-final.exit",
+        ".spectra/evidence/aci-s09/vivi-pass2-result.json"
+      ],
+      "observation": "Final producer08f323 cache/f2add engine;45focusedtests pass, protected pass\u00b245/run both0 and tamper0. Exact output checkout still pending."
+    },
+    {
+      "ac_id": "AC-S09-RUN-01",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S09-RUN-02",
+      "exit_code": null
+    }
+  ],
+  "scope_amendments": [
+    ".spectra/changes/aci-s09/bookkeeping-amendment.json"
+  ],
+  "checks": {
+    "full_suite": {
+      "command": "ATLAS_ACI_S06_DOCKER_IMAGE=atlas-aci-s09-final ATLAS_ACI_S06_EVIDENCE_DIR=/tmp/atlas-aci-aci-s09/.spectra/evidence/aci-s09/docker-final PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/src .venv/bin/python -m pytest -p no:cacheprovider -q",
+      "working_directory": "mcp-server",
+      "exit_code": 0,
+      "passed": 453,
+      "skipped": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s09/full-suite.log.gz",
+        ".spectra/evidence/aci-s09/full-suite.exit"
+      ]
+    },
+    "static_and_guards": ".spectra/evidence/aci-s09/checks.json",
+    "docker": ".spectra/evidence/aci-s09/docker-final/docker-integration.json",
+    "pass2": ".spectra/evidence/aci-s09/vivi-pass2-result.json",
+    "fresh_probe": {
+      "status": "PASS",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s09/probe/verifier.log.gz",
+        ".spectra/evidence/aci-s09/probe/verifier.exit",
+        ".spectra/evidence/aci-s09/probe/assembly-provenance.json",
+        ".spectra/changes/aci-s09/probe/aci-s09-probe-lpa-vs-louvain.json"
+      ]
+    }
+  },
+  "scope_origin_amendment": ".spectra/changes/aci-s09/scope-amendment.json",
+  "independent_reviews": [
+    {
+      "reviewer": "ATLAS /root/s15_preflight",
+      "scope": "Corrected decoder08f323/enginef2add/storageeb518, exact typed-input equality, duplicate/coordinate rejects, four symlink component controls, real lifecycle/barriers; independent scoped source APPROVE."
+    },
+    {
+      "reviewer": "ATLAS /root/s15_preflight",
+      "scope": "Final source and unaffected gates APPROVE:453full/11staticguardszero/27probecontrols/size5/classify6; real finalDocker UID10001/EROFS/offline/readonly/MCP; immutable prior producer/probe/scripts untouched."
+    },
+    {
+      "reviewer": "ATLAS /root/s15_preflight",
+      "scope": "Fresh probe APPROVE: independently unchangedverifier0/PASS, exactrawgraphs and20partitions/networkx3.6.1,4877sourceinventories/pins/cleanSQL/nohistory/failedactive0, all22jobs0/no timeout, max178.338s,total378.203s<2700. StreamedSpreeexport651845063B/hash371fe45... verified; source08/f2/eb bound."
+    }
+  ],
+  "preserved_failed_runs": [
+    "warm-red.log",
+    "decoder-red.log",
+    "cache-symlink-red.log",
+    "coordinate-red.log",
+    "input-bool-red.log",
+    "lifecycle-first.log",
+    "scripts-format.log",
+    "vivi-pass2.log"
+  ],
+  "environment_notes": [
+    "Initial uv sync online failed DNS resolving hatchling; exact frozen offline dev sync succeeded in a new worktree environment.",
+    "Initial scripts-format invocation used repo-root Ruff defaults; rerun exact prior CI cwd=mcp-server was0/7formatted. Both outputs retained; no scripts changed.",
+    "Initial pass\u00b2 used shell assignments as argv and failed127 before testing; corrected env executable invocation passed45/run0/0 with tamper0."
+  ],
+  "limitations": [
+    "Owner-local derived cache integrity is not authenticity against a malicious coherent replacement; no eviction/TTL or speed guarantee.",
+    "Measured disk cache: Solidus333306797bytes/2519entries; Spree530609730bytes/2358entries.",
+    "Current full Spree export651845063bytes,66.407s,peakRSS1983627264bytes; historical S07/P3 measurements and thresholds unchanged.",
+    "86failed paths among4877default-eligible observations remain explicit partial coverage and supply no active facts."
+  ]
+}

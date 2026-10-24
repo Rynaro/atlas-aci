@@ -1,0 +1,69 @@
+{
+  "slice_id": "ACI-S09",
+  "issue_url": "https://github.com/Rynaro/atlas-aci/issues/31",
+  "criteria_sha256": "de38446751926cb40e918c324155eb1020503a678c2ca2aec366547561819c05",
+  "base_commit": "dd88912f73b728a57d7fc424093b88b0238550e8",
+  "output_commit": null,
+  "declared_paths": [
+    "mcp-server/src/atlas_aci/indexing/__init__.py",
+    "mcp-server/src/atlas_aci/indexing/extraction_cache.py",
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/tests/slices/test_s09_*.py",
+    "mcp-server/src/atlas_aci/storage/evidence.py",
+    "README.md",
+    ".spectra/plans/aci-s09.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/evidence/aci-s09/*",
+    ".spectra/state/aci-s09.execution.json",
+    ".spectra/changes/aci-s09/*",
+    ".spectra/backlog/execution.json",
+    ".spectra/backlog/order.md"
+  ],
+  "output_digest_exclusions": [
+    ".spectra/state/aci-s09.execution.json",
+    ".spectra/evidence/aci-s09/final-reentry-before.json",
+    ".spectra/evidence/aci-s09/final-reentry-after.json",
+    ".spectra/evidence/aci-s09/final-reentry-summary.json",
+    ".spectra/evidence/aci-s09/final-resume-identity.json",
+    ".spectra/evidence/aci-s09/output-check-tests.log"
+  ],
+  "output_digests": {},
+  "status": "IN_PROGRESS",
+  "acceptance_results": [
+    {
+      "ac_id": "AC-S09-001",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S09-002",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S09-003",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S09-004",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S09-005",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S09-006",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S09-RUN-01",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S09-RUN-02",
+      "exit_code": null
+    }
+  ],
+  "scope_amendments": [
+    ".spectra/changes/aci-s09/bookkeeping-amendment.json"
+  ]
+}

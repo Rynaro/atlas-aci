@@ -1,0 +1,10 @@
+{
+  "active_elapsed_seconds": 1185.4225251674652,
+  "budget_seconds": 86400,
+  "scope": "S09 three engineering days maximum; no human wait included in this continuous run",
+  "source_hashes": {
+    "mcp-server/src/atlas_aci/codegraph.py": "f2addac5907279121ec798875b17ca80af23e34b09e6e611bc4cc6972bb84a96",
+    "mcp-server/src/atlas_aci/indexing/extraction_cache.py": "08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2",
+    "mcp-server/src/atlas_aci/storage/evidence.py": "eb5185dfbf9e6e8e651705f487a928e1e19826351860091556c3aaa03591315a"
+  }
+}

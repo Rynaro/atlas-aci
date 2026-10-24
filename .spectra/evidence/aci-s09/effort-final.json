@@ -1,0 +1,9 @@
+{
+  "active_elapsed_seconds": 1327.6080198287964,
+  "budget_seconds": 86400,
+  "probe_serial_job_seconds": 378.20283079300134,
+  "probe_total_cap_seconds": 2700,
+  "probe_max_job_seconds": 178.3377873749996,
+  "probe_per_job_cap_seconds": 600,
+  "scope": "Original three-engineering-day allocation; no human review wait or reset."
+}
