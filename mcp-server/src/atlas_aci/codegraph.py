@@ -1052,22 +1052,17 @@ class CodeGraph:
     def build(self, since: str | None = None) -> dict[str, Any]:
         """Index the repo. Returns stats.
 
-        ``since`` is truthy → incremental mode: a per-file ``(mtime_ns, size)``
-        manifest (the ``files`` table) is consulted so files unchanged since the
-        last pass are skipped entirely (their existing symbols/refs carry
-        forward untouched), changed/new files are re-extracted after purging
-        their stale rows, and files that vanished from disk have their rows
-        removed. ``since=None`` performs a full rebuild: all ``symbols``,
-        ``refs``, and ``files`` rows are wiped and every file is re-indexed,
-        which also re-establishes a correct baseline manifest for a later
-        incremental pass.
+        A truthy ``since`` requests incremental reuse. Every eligible source
+        buffer is read and hashed once; facts are reused only when its exact
+        content hash and schema/configuration/producer compatibility match.
+        Changed, new, or removed files update the staged graph accordingly.
+        Missing or untrusted build provenance forces a full rebuild.
 
-        Per DIR-2, sweeping stale-epoch files and rebuilding on epoch
-        mismatch happen *only* here, never on the `serve` (read-only) path.
-        Per F17/AC-H-17, a full rebuild writes to a temporary file and
-        atomically replaces the target path; both modes run under a
-        single-writer file lock so two concurrent `index` invocations (e.g.
-        the documented backgrounded post-commit hook) cannot corrupt the DB.
+        Full and incremental builds both stage a complete database under the
+        shared publication lock, then atomically replace the published path.
+        Readers holding the previous generation keep its immutable inode.
+        Per DIR-2, stale-epoch sweeping and rebuilding are index-path only;
+        the read-only ``serve`` path never performs them.
         """
         if self.read_only:
             raise RuntimeError(

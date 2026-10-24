@@ -1,0 +1,11 @@
+{
+  "original_commit": "f68c97ce44fd27583297dffb65b8d0a388fe58b1",
+  "logical_path": ".spectra/evidence/aci-s03/metadata-and-allocation-red.log",
+  "gzip_path": ".spectra/evidence/aci-s03/metadata-and-allocation-red.log.gz",
+  "uncompressed_sha256": "5a4f593d5f7ad3b13e45678fa0d83aecbfa3b581450fe17405b966d85f190c2d",
+  "uncompressed_size": 13924,
+  "compressed_sha256": "ea8dc1366a5eeefd18839c5ac0ff7eccf9f57985b5e2d395ed5ed2cdaeac567a",
+  "compressed_size": 1693,
+  "roundtrip_matches_original_git_blob": true,
+  "note": "Lossless gzip avoids pytest raw-log trailing whitespace in final textual diff. Decode with gzip -dc."
+}
