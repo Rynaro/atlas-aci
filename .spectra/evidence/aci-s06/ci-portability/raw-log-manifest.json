@@ -1,0 +1,11 @@
+[
+  {
+    "logical_path": ".spectra/evidence/aci-s06/ci-portability/mount-root-ownership-failure.log",
+    "path": ".spectra/evidence/aci-s06/ci-portability/mount-root-ownership-failure.log.gz",
+    "raw_sha256": "72ca01344e1a8850ef725cc9aa116c3dd25a12add0448f83221353034c360d8c",
+    "raw_size": 1379,
+    "gzip_sha256": "1937c5ee5f677c7893e52c0b40ade9637145ecc6e7390d1ef35a385e9c10eac3",
+    "gzip_size": 581,
+    "mtime": 0
+  }
+]

@@ -1,0 +1,36 @@
+{
+  "slice_id": "ACI-S06",
+  "issue_url": "https://github.com/Rynaro/atlas-aci/issues/12",
+  "criteria_sha256": "32a587ee6d402a14cf324de7ab19a8e48204956f0696c74adfb1a4cdcb5772cc",
+  "base_commit": "7b11b275b300c100ab7b123a3ca4bb60977f5166",
+  "output_commit": null,
+  "declared_paths": [
+    "mcp-server/src/atlas_aci/__main__.py",
+    "mcp-server/src/atlas_aci/config.py",
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/src/atlas_aci/server.py",
+    "mcp-server/tests/slices/test_s06_*.py",
+    "README.md",
+    "hosts/*",
+    ".github/workflows/ci.yml",
+    "mcp-server/Dockerfile"
+  ],
+  "output_digests": {},
+  "status": "IN_PROGRESS",
+  "acceptance_results": [],
+  "scope_amendments": [
+    ".spectra/evidence/aci-s06/scope-amendment-02.json"
+  ],
+  "verification_evidence": [
+    ".spectra/evidence/aci-s06/frozen-checks.json",
+    ".spectra/evidence/aci-s06/docker-integration.json",
+    ".spectra/evidence/aci-s06/probe-selftest.result.json",
+    ".spectra/evidence/aci-s06/vivi-pass2-result.json",
+    ".spectra/evidence/aci-s06/independent-review.json",
+    ".spectra/evidence/aci-s06/fingerprint-after.json",
+    ".spectra/evidence/aci-s06/output-commit-focused.result.json"
+  ],
+  "previous_output_commit": "c7172c8d33de61f71c71048442d353197f5d1100",
+  "previous_completion_head": "4b123e4aa6118967655dd44deb26e343ccd50998",
+  "reopened_reason": "Observed Linux CI Docker snapshot ownership failure; corrective test validation pending"
+}

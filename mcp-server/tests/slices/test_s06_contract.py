@@ -142,7 +142,42 @@ def readonly_index(tmp_path_factory):
     namespace = graphs / "repos" / hashlib.sha256(b"/repo").hexdigest()
     assert (namespace / f"graph.{SCHEMA_EPOCH}.db").is_file()
     assert (namespace / ".index.lock").is_file()
-    graph_before = snapshot(graphs)
+
+    def graph_snapshot():
+        # Linux bind mounts preserve UID10001/mode0600 from mkstemp. Inspect
+        # as the production owner, with the graph mount itself read-only;
+        # the host pytest UID is not entitled to read those private files.
+        raw = run(
+            [
+                "--entrypoint",
+                "python",
+                image,
+                "-c",
+                "import os,json,hashlib;from pathlib import Path\n"
+                "assert os.geteuid()==10001\n"
+                "root=Path('/graphs');result={}\n"
+                "for p in [root,*sorted(root.rglob('*'))]:\n"
+                " s=p.stat()\n"
+                " result[str(p.relative_to(root))]={\n"
+                "  'sha256':hashlib.sha256(p.read_bytes()).hexdigest() if p.is_file() else None,\n"
+                "  'mtime_ns':s.st_mtime_ns,'size':s.st_size,'mode':s.st_mode,\n"
+                "  'uid':s.st_uid,'gid':s.st_gid}\n"
+                "print(json.dumps({'reader_uid':os.geteuid(),'files':result},sort_keys=True))",
+            ],
+            readonly_graph=True,
+        )
+        observed = json.loads(raw)
+        assert observed["reader_uid"] == 10001
+        record["graph_snapshot_reader_uid"] = observed["reader_uid"]
+        # Docker Desktop synthesizes the bind mount root owner per container.
+        # Preserve both observations; compare all its stable original fields
+        # and retain strict owner comparisons for every real descendant.
+        mount_root = observed["files"]["."]
+        ownership = {key: mount_root.pop(key) for key in ("uid", "gid")}
+        record.setdefault("graph_mount_root_ownership", []).append(ownership)
+        return observed["files"]
+
+    graph_before = graph_snapshot()
     name = "atlas-s06-" + uuid.uuid4().hex
     serve = [
         "run",
@@ -173,7 +208,7 @@ def readonly_index(tmp_path_factory):
         record["mcp"] = asyncio.run(mcp_calls("docker", serve))
         record["source_after"] = snapshot(source)
         record["graph_before"] = graph_before
-        record["graph_after"] = snapshot(graphs)
+        record["graph_after"] = graph_snapshot()
         inspect = subprocess.run(
             ["docker", "image", "inspect", image, "--format", "{{.Id}}"],
             capture_output=True,
