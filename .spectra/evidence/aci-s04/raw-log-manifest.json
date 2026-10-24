@@ -1,0 +1,43 @@
+{
+  "format": "aci-raw-log-packaging.v1",
+  "gzip_mtime": 0,
+  "entries": [
+    {
+      "logical_path": ".spectra/evidence/aci-s04/anchors-red.log",
+      "path": ".spectra/evidence/aci-s04/anchors-red.log.gz",
+      "uncompressed_size": 8860,
+      "uncompressed_sha256": "8f06fb5ece8f2c4fad11581df57a3f1f07791d47ddf47d31dd7465b28781189d",
+      "compressed_size": 1635,
+      "compressed_sha256": "05a47a099a4b71ce6244ac7e4fbf88a5ee856d3d9702603b1a0eed686a47abf7",
+      "roundtrip": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s04/full.log",
+      "path": ".spectra/evidence/aci-s04/full.log.gz",
+      "uncompressed_size": 3115,
+      "uncompressed_sha256": "c8228ee5b9029eb48c53ce78d1d0cf86f98d87735e2e81b1fe2cd2e255d6b7b4",
+      "compressed_size": 908,
+      "compressed_sha256": "f9877b61b93caf1b3112a7955369351d4e851664fb70906ad58fd42503b0cb75",
+      "roundtrip": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s04/identity-and-unverified-red.log",
+      "path": ".spectra/evidence/aci-s04/identity-and-unverified-red.log.gz",
+      "uncompressed_size": 2606,
+      "uncompressed_sha256": "c47e863d372da87f7f7eb667ea959666e3633c3200913970f5c361477372878a",
+      "compressed_size": 931,
+      "compressed_sha256": "a591219c4b6aecb18415645aca2013b5eb674b495d621368ce054d7795409e9f",
+      "roundtrip": true
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s04/reviewer-blockers-red.log",
+      "path": ".spectra/evidence/aci-s04/reviewer-blockers-red.log.gz",
+      "uncompressed_size": 2710,
+      "uncompressed_sha256": "cc5798081a04ae316f51835a4a897429a3a1864c8512c39031894a56064a0fdf",
+      "compressed_size": 991,
+      "compressed_sha256": "ae15051637c47f4a09dee866d62f192336cf7cac03ad7136b21faf7ce275bbce",
+      "roundtrip": true
+    }
+  ],
+  "unpack": "gzip -dc <path.log.gz> > <logical_path.log>"
+}

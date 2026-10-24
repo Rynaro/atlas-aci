@@ -1,0 +1,10 @@
+src/atlas_aci/codegraph.py:1406: error: Value of type "Any | None" is not indexable  [index]
+src/atlas_aci/codegraph.py:1428: error: Value of type "dict[str, Any] | None" is not indexable  [index]
+src/atlas_aci/codegraph.py:1689: error: No overload variant of "update" of "MutableMapping" matches argument types "str", "str", "dict[str, Any]"  [call-overload]
+src/atlas_aci/codegraph.py:1689: note: Possible overload variants:
+src/atlas_aci/codegraph.py:1689: note:     def update(self, SupportsKeysAndGetItem[str, str | None], /) -> None
+src/atlas_aci/codegraph.py:1689: note:     def update(self, SupportsKeysAndGetItem[str, str | None], /, **kwargs: str | None) -> None
+src/atlas_aci/codegraph.py:1689: note:     def update(self, Iterable[tuple[str, str | None]], /) -> None
+src/atlas_aci/codegraph.py:1689: note:     def update(self, Iterable[tuple[str, str | None]], /, **kwargs: str | None) -> None
+src/atlas_aci/codegraph.py:1689: note:     def update(self, **kwargs: str | None) -> None
+Found 3 errors in 1 file (checked 25 source files)

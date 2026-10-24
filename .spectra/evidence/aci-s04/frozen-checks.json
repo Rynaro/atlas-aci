@@ -1,0 +1,58 @@
+[
+  {
+    "name": "full-final",
+    "command": "uv run --frozen pytest -q",
+    "working_directory": "mcp-server",
+    "exit_code": 0,
+    "evidence": ".spectra/evidence/aci-s04/full-final.log"
+  },
+  {
+    "name": "lint-final",
+    "command": "uv run --frozen ruff check src/ tests/ ../scripts/ --exclude fingerprint-fixture",
+    "working_directory": "mcp-server",
+    "exit_code": 0,
+    "evidence": ".spectra/evidence/aci-s04/lint-final.log"
+  },
+  {
+    "name": "format-final",
+    "command": "uv run --frozen ruff format --check src/ tests/ ../scripts/ --exclude fingerprint-fixture",
+    "working_directory": "mcp-server",
+    "exit_code": 0,
+    "evidence": ".spectra/evidence/aci-s04/format-final.log"
+  },
+  {
+    "name": "types-final",
+    "command": "uv run --frozen mypy src/ ../scripts/",
+    "working_directory": "mcp-server",
+    "exit_code": 0,
+    "evidence": ".spectra/evidence/aci-s04/types-final.log"
+  },
+  {
+    "name": "compatibility-final",
+    "command": "uv run --frozen pytest tests/slices/test_s03_contract.py tests/test_codegraph.py -q",
+    "working_directory": "mcp-server",
+    "exit_code": 0,
+    "evidence": ".spectra/evidence/aci-s04/compatibility-final.log"
+  },
+  {
+    "name": "lock",
+    "command": "uv lock --check",
+    "working_directory": "mcp-server",
+    "exit_code": 0,
+    "evidence": ".spectra/evidence/aci-s04/lock.log"
+  },
+  {
+    "name": "harden",
+    "command": "bash ../scripts/test-harden-gate-classify.sh",
+    "working_directory": "mcp-server",
+    "exit_code": 0,
+    "evidence": ".spectra/evidence/aci-s04/harden.log"
+  },
+  {
+    "name": "export-size",
+    "command": "bash ../scripts/test-verify-export-size.sh",
+    "working_directory": "mcp-server",
+    "exit_code": 0,
+    "evidence": ".spectra/evidence/aci-s04/export-size.log"
+  }
+]

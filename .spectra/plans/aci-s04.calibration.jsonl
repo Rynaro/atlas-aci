@@ -1,0 +1,5 @@
+{"rubric":"complexity","total":8,"dims":{"scope":2,"ambiguity":2,"dependencies":2,"risk":2},"verdict":"extended","at":"2026-10-24T00:44:02Z","label":"observed-status-provenance"}
+{"rubric":"explore","total":89.5,"dims":{"alignment":10,"correctness":9,"maintainability":9,"performance":9,"simplicity":8,"risk":9,"innovation":5},"verdict":"elite","at":"2026-10-24T00:44:02Z","label":"generation-plus-correlated-attempt"}
+{"rubric":"explore","total":71,"dims":{"alignment":9,"correctness":8,"maintainability":6,"performance":7,"simplicity":4,"risk":5,"innovation":8},"verdict":"solid","at":"2026-10-24T00:44:02Z","label":"partial-generation-provenance-extension"}
+{"rubric":"explore","total":63,"dims":{"alignment":5,"correctness":4,"maintainability":9,"performance":10,"simplicity":10,"risk":3,"innovation":2},"verdict":"weak","at":"2026-10-24T00:44:09Z","label":"current-capability-table-only"}
+{"rubric":"confidence","total":90,"dims":{"pattern_match":85,"requirement_clarity":95,"decomposition_stability":90,"constraint_compliance":90},"verdict":"AUTO_PROCEED","at":"2026-10-24T00:47:11Z","label":"bounded-status-readiness"}

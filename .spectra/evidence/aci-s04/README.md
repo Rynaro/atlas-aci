@@ -1,0 +1,13 @@
+# ACI-S04 execution evidence
+
+The authoritative receipt is `.spectra/state/aci-s04.execution.json`. It was initialized before product edits; the genuine initial receipt is preserved in `interrupted-execution.json`. `parser-before.json` observes actual recovered-error Python, JavaScript and Ruby trees and the pre-fix publication of malformed Python facts. The five named product anchors first failed (`anchors-red.log.gz`).
+
+Final frozen checks are recorded with actual process return codes in `frozen-checks.json`: 302 tests pass, including the retained S03 lifecycle tests. The focused S04 module has 28 passing cases; Vivi's protected pass² result is `vivi-pass2-result.json`. `final-gates.json` records the unchanged probe verifier, explicit 27-control self-test and frozen criteria checks. The behavioral fingerprint remains unchanged; previous slice evidence, schema epoch, DDL, portable graph format, verifier, producers and lockfile have no changes.
+
+The initial full run exposed the internal publication token entering S01's logical index identity. S04-PATH-01 was authorized and recorded before the exact one-row exclusion in stdio_runner.py. Its regression proves token-only republication preserves logical identity while changed measured coverage still changes it. No prior test or artifact was weakened or edited.
+
+Independent review found two genuine defects: extraction/query exceptions were not classified, and stored capabilities were not correlated with selected languages. `reviewer-blockers-red.log.gz` preserves their actual failures before the fixes. The corrected tests use a real Tree-sitter QueryError, unchanged published SQLite bytes and contradictory coverage metadata. Corrected product approval is attributed in `independent-review.json`; no rubric score was computed for this lite plan.
+
+`raw-log-manifest.json` preserves hashes and sizes for deterministic, lossless gzip raw logs. Decode any with `gzip -dc <path.log.gz>`. Original logical paths in observed command records are retained. A trace-copy preflight initially looked in the original checkout; the existing correlated trace was found in the worktree and preserved as `handoff-verify.jsonl`. Failed lint/type invocations were corrected and are not counted as passing gates.
+
+Status is an operator snapshot of one pinned read-only generation plus one atomic diagnostic observation. It does not claim compiler semantics, total source-tree verification, an operating-system sandbox, or latest-completion linearizability. Old/imported coverage remains unknown. Publication tokens are internal correlation metadata and are excluded from canonical status and logical index identity.

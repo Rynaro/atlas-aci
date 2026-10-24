@@ -1,0 +1,12 @@
+{
+  "slice_id": "ACI-S04",
+  "id": "S04-PATH-01",
+  "criteria_changed": false,
+  "additional_paths": [
+    "atlas/evals/stdio_runner.py"
+  ],
+  "authorization": "Root approval via collaboration message, before edits",
+  "reason": "Actual full-suite S01 test_reindex_diagnostic_dates_do_not_change_identity failed because random internal diagnostic_publication_token entered the logical index hash. Exclude only that row; preserve coverage_snapshot and every other canonical/fact row.",
+  "failure_evidence": ".spectra/evidence/aci-s04/full.log.gz",
+  "observed_exit_code": 1
+}

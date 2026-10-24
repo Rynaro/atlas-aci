@@ -1,0 +1,12 @@
+{
+  "slice_id": "ACI-S04",
+  "base_commit": "7793d62d0ad00cd29ba0be5de53491f15ac28802",
+  "criteria_sha256": "947bf7c6701f496e5c88b979195582ad9fa19513a229f55f6e2848ddf7b4ba71",
+  "predecessors": [],
+  "existing_state": false,
+  "source_evidence": "ATLAS registry/provenance audit plus targeted generation validator, staging, extraction and CLI source inspection",
+  "central_decision": "A: immutable generation plus publication-correlated failed-attempt snapshot",
+  "prior_slice_artifacts": "immutable",
+  "scope_amendments": [],
+  "planning_tool_note": "One exploratory score invocation rejected an unknown flag before state recording; corrected invocation followed without phase reset."
+}

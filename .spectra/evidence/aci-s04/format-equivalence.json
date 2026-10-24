@@ -1,0 +1,6 @@
+{
+  "before_sha256": "be8e8e407d3a655dcd0e4289598ac095e3e71e36bf61531d89f8d3773ed20580",
+  "after_sha256": "456c0be21451a1f265501d79da9e90b11be669b0c261ded24c6a34674fa859df",
+  "ast_equivalent": true,
+  "change": "Adjacent SQL string wrapping only, identical runtime text."
+}

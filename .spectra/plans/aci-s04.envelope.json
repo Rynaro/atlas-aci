@@ -1,0 +1,50 @@
+{
+  "envelope_version": "2.0",
+  "message_id": "82156173-b9dc-4331-942d-fd3397749fd4",
+  "thread_id": "ac0a1ada-3ebd-4cbd-8c98-18b0a414d18c",
+  "parent_id": null,
+  "from": {
+    "eidolon": "ramza",
+    "version": "1.1.0"
+  },
+  "to": {
+    "eidolon": "vivi",
+    "version": "n/a"
+  },
+  "performative": "PROPOSE",
+  "edge_origin": "roster",
+  "objective": "Implement ACI-S04 truthful operator capabilities and generation-correlated completeness diagnostics.",
+  "artifact": {
+    "kind": "spec",
+    "schema_version": "1.0",
+    "path": "aci-s04.md",
+    "sha256": "e9bb7a0ece9995349a47a8a53a66cf4efc2918bdabf905801d5e2c30c24007e8",
+    "size_bytes": 20402
+  },
+  "integrity": {
+    "method": "sha256",
+    "value": "e9bb7a0ece9995349a47a8a53a66cf4efc2918bdabf905801d5e2c30c24007e8"
+  },
+  "trace": {
+    "ts": "2026-10-24T00:49:04.986795+00:00",
+    "host": "codex",
+    "model": "gpt-6-astra",
+    "tier": "standard"
+  },
+  "ise": {
+    "assertion_grade": "validated",
+    "provenance": {
+      "methodology_version": "ramza-1.1.0"
+    },
+    "receiver_authorization": {
+      "auto_route": true,
+      "auto_merge": false,
+      "auto_deploy": false
+    }
+  },
+  "confidence": 0.9,
+  "x_ramza_acceptance_criteria": {
+    "path": "aci-s04.criteria.md",
+    "sha256": "947bf7c6701f496e5c88b979195582ad9fa19513a229f55f6e2848ddf7b4ba71"
+  }
+}

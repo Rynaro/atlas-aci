@@ -80,7 +80,12 @@ def index_identity(path: Path) -> str:
                 if not (name == "files" and row[1] in {"mtime_ns", "indexed_at"})
             ]
             selected = ",".join('"' + column.replace('"', '""') + '"' for column in columns)
-            rows = list(connection.execute(f"SELECT {selected} FROM {quoted}"))
+            statement = f"SELECT {selected} FROM {quoted}"
+            if name == "manifest":
+                # Operational correlation token, never a logical graph input.
+                # Keep coverage_snapshot and every other manifest/fact row.
+                statement += " WHERE key <> 'diagnostic_publication_token'"
+            rows = list(connection.execute(statement))
             tables[name] = {"schema": sql, "columns": columns, "rows": sorted(rows, key=canonical)}
     return digest(tables)
 

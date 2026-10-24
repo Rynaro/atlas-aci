@@ -1,0 +1,26 @@
+[
+  {
+    "name": "probe-verifier",
+    "command": "mcp-server/.venv/bin/python scripts/verify-probe-verdict.py .spectra/changes/aci-s02-probe/aci-s02-probe-lpa-vs-louvain.json",
+    "exit_code": 0,
+    "evidence": ".spectra/evidence/aci-s04/probe-verifier-final.log"
+  },
+  {
+    "name": "probe-selftest",
+    "command": "bash scripts/test-verify-probe-verdict.sh",
+    "exit_code": 0,
+    "evidence": ".spectra/evidence/aci-s04/probe-selftest-final.log"
+  },
+  {
+    "name": "criteria",
+    "command": "/Users/henrique/workspace/oss/agents/atlas-aci/.eidolons/ramza/bin/ramza-freeze --state .spectra/plans/aci-s04.state.json --criteria .spectra/plans/aci-s04.criteria.md --verify",
+    "exit_code": 0,
+    "evidence": ".spectra/evidence/aci-s04/criteria-final.log"
+  },
+  {
+    "name": "ears",
+    "command": "/Users/henrique/workspace/oss/agents/atlas-aci/.eidolons/ramza/bin/ramza-ears-lint .spectra/plans/aci-s04.criteria.md",
+    "exit_code": 0,
+    "evidence": ".spectra/evidence/aci-s04/ears-final.log"
+  }
+]

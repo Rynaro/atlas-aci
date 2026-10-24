@@ -1,0 +1,27 @@
+{
+  "imported_source": "/tmp/atlas-aci-aci-s04/mcp-server/src/atlas_aci/codegraph.py",
+  "recovered_errors": {
+    "python": {
+      "has_error": true
+    },
+    "javascript": {
+      "has_error": true
+    },
+    "ruby": {
+      "has_error": true
+    }
+  },
+  "status_method_present": false,
+  "malformed_build_stats": {
+    "files_indexed": 1,
+    "symbols": 1,
+    "refs": 0,
+    "edges": 0,
+    "rationale": 0,
+    "files_skipped": 0,
+    "files_removed": 0,
+    "unsupported_skipped": {},
+    "schema_epoch": 6
+  },
+  "malformed_epoch_ok": true
+}

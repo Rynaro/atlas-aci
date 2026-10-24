@@ -1,0 +1,21 @@
+[
+  {
+    "identity": "atlas-s04-code-checker",
+    "agent": "/root/s15_preflight",
+    "verdict": "APPROVE",
+    "source_sha256": "02d7174b5b1126cd32b00e127f2e40b82b06f9ff6e75e76adaa6cae35b353f19",
+    "scope": "Corrected product and one-key baseline identity exclusion",
+    "observed_results": "Original real QueryError/G1 preserved; a.py extraction_error/failed/count1; incompatible same-byte provenance stays unknown. Contradictory Python-only/JS-enabled stored snapshot becomes unknown without recomputing older declarations. Exclusion exactly diagnostic_publication_token.",
+    "rubric_score": null,
+    "rubric_note": "No independent rubric score computed or required for lite plan.",
+    "provenance": "Genuine independent ATLAS observations delivered by parent collaboration messages."
+  },
+  {
+    "identity": "atlas-s04-final-checker",
+    "verdict": "APPROVE",
+    "source_sha256": "02d7174b5b1126cd32b00e127f2e40b82b06f9ff6e75e76adaa6cae35b353f19",
+    "scope": "Final tests, README, guards and evidence",
+    "observed_results": "5 selected real tests passed: threaded lease race, token/coverage identity, QueryError, contradictory configured capabilities, read-only legacy. Offline verifier actual0/PASS with unchanged S02 fingerprint. Actual27-control guard and full302 exit0, pass\u00b2 both0/tamper0 reviewed. README truthful; all4 lossless gzip lengths/hashes/mtime0 verified. Narrow token exclusion and prior artifacts unchanged.",
+    "provenance": "Genuine independent ATLAS observations supplied by parent collaboration message."
+  }
+]
