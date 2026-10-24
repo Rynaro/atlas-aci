@@ -3,7 +3,7 @@
   "issue_url": "https://github.com/Rynaro/atlas-aci/issues/30",
   "criteria_sha256": "216f05f349bf35630f299ba814be697b8150e3b0da0bd2fef0512a21b34d3dba",
   "base_commit": "fa75bec971502b72ce85f9e87ab7ec2876274ce9",
-  "output_commit": null,
+  "output_commit": "7217e9f1df0565dd055a86238fffc1c8491490e2",
   "declared_paths": [
     "mcp-server/src/atlas_aci/codegraph.py",
     "mcp-server/src/atlas_aci/storage/snapshots.py",
@@ -570,7 +570,7 @@
     "mcp-server/tests/test_server.py": "669370729d0b82a7c2b0485282690987705abf52ff5b20b50bf5704daee68573",
     "scripts/test-verify-probe-verdict.sh": "e921838274bc337538a9db0b7cd7573db94e76165b4e114677a4b073928392f8"
   },
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "acceptance_results": [
     {
       "ac_id": "AC-S08-001",
@@ -582,8 +582,22 @@
         ".spectra/evidence/aci-s08/lease-footprint/vivi-pass2-full.log",
         ".spectra/evidence/aci-s08/lease-footprint/full-suite.job.json",
         ".spectra/evidence/aci-s08/lease-footprint/docker-s08/native-docker-stdio.json",
-        ".spectra/evidence/aci-s08/raw-log-manifest.json"
-      ]
+        ".spectra/evidence/aci-s08/raw-log-manifest.json",
+        ".spectra/evidence/aci-s08/output-check-tests.log"
+      ],
+      "output_commit_test_command": [
+        "/private/tmp/atlas-aci-aci-s08/mcp-server/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:cacheprovider",
+        "tests/slices/test_s08_contract.py",
+        "tests/slices/test_s08_integration.py",
+        "tests/slices/test_s08_lease_footprint.py",
+        "tests/slices/test_s08_docker.py",
+        "-q"
+      ],
+      "output_commit_test_exit_code": 0
     },
     {
       "ac_id": "AC-S08-002",
@@ -595,8 +609,22 @@
         ".spectra/evidence/aci-s08/lease-footprint/vivi-pass2-full.log",
         ".spectra/evidence/aci-s08/lease-footprint/full-suite.job.json",
         ".spectra/evidence/aci-s08/lease-footprint/docker-s08/native-docker-stdio.json",
-        ".spectra/evidence/aci-s08/raw-log-manifest.json"
-      ]
+        ".spectra/evidence/aci-s08/raw-log-manifest.json",
+        ".spectra/evidence/aci-s08/output-check-tests.log"
+      ],
+      "output_commit_test_command": [
+        "/private/tmp/atlas-aci-aci-s08/mcp-server/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:cacheprovider",
+        "tests/slices/test_s08_contract.py",
+        "tests/slices/test_s08_integration.py",
+        "tests/slices/test_s08_lease_footprint.py",
+        "tests/slices/test_s08_docker.py",
+        "-q"
+      ],
+      "output_commit_test_exit_code": 0
     },
     {
       "ac_id": "AC-S08-003",
@@ -608,8 +636,22 @@
         ".spectra/evidence/aci-s08/lease-footprint/vivi-pass2-full.log",
         ".spectra/evidence/aci-s08/lease-footprint/full-suite.job.json",
         ".spectra/evidence/aci-s08/lease-footprint/docker-s08/native-docker-stdio.json",
-        ".spectra/evidence/aci-s08/raw-log-manifest.json"
-      ]
+        ".spectra/evidence/aci-s08/raw-log-manifest.json",
+        ".spectra/evidence/aci-s08/output-check-tests.log"
+      ],
+      "output_commit_test_command": [
+        "/private/tmp/atlas-aci-aci-s08/mcp-server/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:cacheprovider",
+        "tests/slices/test_s08_contract.py",
+        "tests/slices/test_s08_integration.py",
+        "tests/slices/test_s08_lease_footprint.py",
+        "tests/slices/test_s08_docker.py",
+        "-q"
+      ],
+      "output_commit_test_exit_code": 0
     },
     {
       "ac_id": "AC-S08-004",
@@ -621,8 +663,22 @@
         ".spectra/evidence/aci-s08/lease-footprint/vivi-pass2-full.log",
         ".spectra/evidence/aci-s08/lease-footprint/full-suite.job.json",
         ".spectra/evidence/aci-s08/lease-footprint/docker-s08/native-docker-stdio.json",
-        ".spectra/evidence/aci-s08/raw-log-manifest.json"
-      ]
+        ".spectra/evidence/aci-s08/raw-log-manifest.json",
+        ".spectra/evidence/aci-s08/output-check-tests.log"
+      ],
+      "output_commit_test_command": [
+        "/private/tmp/atlas-aci-aci-s08/mcp-server/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:cacheprovider",
+        "tests/slices/test_s08_contract.py",
+        "tests/slices/test_s08_integration.py",
+        "tests/slices/test_s08_lease_footprint.py",
+        "tests/slices/test_s08_docker.py",
+        "-q"
+      ],
+      "output_commit_test_exit_code": 0
     },
     {
       "ac_id": "AC-S08-005",
@@ -634,8 +690,22 @@
         ".spectra/evidence/aci-s08/lease-footprint/vivi-pass2-full.log",
         ".spectra/evidence/aci-s08/lease-footprint/full-suite.job.json",
         ".spectra/evidence/aci-s08/lease-footprint/docker-s08/native-docker-stdio.json",
-        ".spectra/evidence/aci-s08/raw-log-manifest.json"
-      ]
+        ".spectra/evidence/aci-s08/raw-log-manifest.json",
+        ".spectra/evidence/aci-s08/output-check-tests.log"
+      ],
+      "output_commit_test_command": [
+        "/private/tmp/atlas-aci-aci-s08/mcp-server/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:cacheprovider",
+        "tests/slices/test_s08_contract.py",
+        "tests/slices/test_s08_integration.py",
+        "tests/slices/test_s08_lease_footprint.py",
+        "tests/slices/test_s08_docker.py",
+        "-q"
+      ],
+      "output_commit_test_exit_code": 0
     },
     {
       "ac_id": "AC-S08-006",
@@ -647,16 +717,52 @@
         ".spectra/evidence/aci-s08/lease-footprint/vivi-pass2-full.log",
         ".spectra/evidence/aci-s08/lease-footprint/full-suite.job.json",
         ".spectra/evidence/aci-s08/lease-footprint/docker-s08/native-docker-stdio.json",
-        ".spectra/evidence/aci-s08/raw-log-manifest.json"
-      ]
+        ".spectra/evidence/aci-s08/raw-log-manifest.json",
+        ".spectra/evidence/aci-s08/output-check-tests.log"
+      ],
+      "output_commit_test_command": [
+        "/private/tmp/atlas-aci-aci-s08/mcp-server/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:cacheprovider",
+        "tests/slices/test_s08_contract.py",
+        "tests/slices/test_s08_integration.py",
+        "tests/slices/test_s08_lease_footprint.py",
+        "tests/slices/test_s08_docker.py",
+        "-q"
+      ],
+      "output_commit_test_exit_code": 0
     },
     {
       "ac_id": "AC-S08-RUN-01",
-      "exit_code": null
+      "exit_code": 0,
+      "command": [
+        "/private/tmp/atlas-aci-aci-s08/mcp-server/.venv/bin/python",
+        "/private/tmp/atlas-aci-s08-output-check/.spectra/evidence/aci-s08/verify_execution.py",
+        "--root",
+        "/private/tmp/atlas-aci-s08-output-check",
+        "--receipt",
+        "/private/tmp/atlas-aci-aci-s08/.spectra/state/aci-s08.execution.json"
+      ],
+      "evidence": [
+        ".spectra/evidence/aci-s08/final-reentry-before.json",
+        ".spectra/evidence/aci-s08/final-reentry-after.json",
+        ".spectra/evidence/aci-s08/final-reentry-summary.json",
+        ".spectra/evidence/aci-s08/output-check-tests.log"
+      ]
     },
     {
       "ac_id": "AC-S08-RUN-02",
-      "exit_code": null
+      "exit_code": 0,
+      "command": [
+        "/private/tmp/atlas-aci-aci-s08/mcp-server/.venv/bin/python",
+        "/private/tmp/atlas-aci-aci-s08/.spectra/evidence/aci-s08/verify_resume.py"
+      ],
+      "evidence": [
+        ".spectra/evidence/aci-s08/interrupted-execution.json",
+        ".spectra/evidence/aci-s08/final-resume-identity.json"
+      ]
     }
   ],
   "scope_amendments": [
@@ -698,7 +804,7 @@
     "path": ".spectra/plans/aci-s08-lease-footprint.md",
     "sha256": "97e8d4ead88420253958aa6e530bf7c9950660a7172451d8d03008d24c748231",
     "criteria_sha256": "2cbc4c2fe6516ef01a3f45b9a9570c73fd84f952aac6f7429a6d1f650dab8d54",
-    "status": "IN_PROGRESS",
+    "status": "COMPLETE",
     "results": [
       {
         "ac_id": "AC-S08-FP-001",
@@ -757,8 +863,21 @@
       },
       {
         "ac_id": "AC-S08-FP-006",
-        "exit_code": null,
-        "pending": "Final exact-output reentry/resume and completion receipt"
+        "exit_code": 0,
+        "command": [
+          "/private/tmp/atlas-aci-aci-s08/mcp-server/.venv/bin/python",
+          "/private/tmp/atlas-aci-s08-output-check/.spectra/evidence/aci-s08/verify_execution.py",
+          "--root",
+          "/private/tmp/atlas-aci-s08-output-check",
+          "--receipt",
+          "/private/tmp/atlas-aci-aci-s08/.spectra/state/aci-s08.execution.json"
+        ],
+        "evidence": [
+          ".spectra/evidence/aci-s08/final-reentry-summary.json",
+          ".spectra/evidence/aci-s08/final-resume-identity.json",
+          ".spectra/evidence/aci-s08/lease-footprint/local-gates-checkpoint.json",
+          ".spectra/evidence/aci-s08/lease-footprint/probe/cleanup-preservation-summary.json"
+        ]
       }
     ],
     "first_checkpoint": ".spectra/evidence/aci-s08/lease-footprint/first-checkpoint.json",
@@ -809,10 +928,45 @@
   "effort": {
     "recorded_epoch": 1792874914.927433,
     "original_started_epoch": 1792867357.40483,
-    "original_conservative_elapsed_seconds": 7557.522603034973,
+    "original_conservative_elapsed_seconds": 7807.422297000885,
     "original_cap_seconds": 144000,
     "supporting_started_epoch": 1792872075.4624681,
     "supporting_cap_seconds": 28800,
-    "policy": "Continuous conservative elapsed including waits/IO; no allocation reset."
+    "policy": "Continuous conservative elapsed including waits/IO; no allocation reset.",
+    "final_recorded_epoch": 1792875164.827127,
+    "supporting_conservative_elapsed_seconds": 3089.36465883255
+  },
+  "completed_at": "2026-10-24T20:51:04.657842+00:00",
+  "output_commit_verification": {
+    "checkout": "/private/tmp/atlas-aci-s08-output-check",
+    "passed": 64,
+    "command": [
+      "/private/tmp/atlas-aci-aci-s08/mcp-server/.venv/bin/python",
+      "-m",
+      "pytest",
+      "-p",
+      "no:cacheprovider",
+      "tests/slices/test_s08_contract.py",
+      "tests/slices/test_s08_integration.py",
+      "tests/slices/test_s08_lease_footprint.py",
+      "tests/slices/test_s08_docker.py",
+      "-q"
+    ],
+    "exit_code": 0,
+    "actual_source_import_verified": true,
+    "helper_sha256": "4720a14754b7ea473a35cd304d0ca196d3b04841de58cdd95b040b41e3d4a92b",
+    "digests": 527
+  },
+  "publication": "Not pushed; root owns final-head CI/PR/merge/sync.",
+  "completion_review": {
+    "reviewer": "ATLAS /root/s15_preflight",
+    "verdict": "APPROVE",
+    "output_commit": "7217e9f1df0565dd055a86238fffc1c8491490e2",
+    "actual_independent_helper_exit_code": 0,
+    "actual_independent_helper_status": "ALREADY_SATISFIED",
+    "verified_digests": 527,
+    "actual_independent_resume_exit_code": 0,
+    "verified_criteria": "original8+support6; frozen original/support specs and criteria unchanged",
+    "verified_evidence": "227raw streams, original archives, both graphs/partitions/inventories, genuinev1, compact catalogs/manifests, exact6 cleanup, final guards/CI/native and1392.813428293s cumulative budget"
   }
 }
