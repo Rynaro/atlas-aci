@@ -1,0 +1,13 @@
+{
+  "command": [
+    "/private/tmp/atlas-aci-aci-s08/mcp-server/.venv/bin/python",
+    "/private/tmp/atlas-aci-aci-s08/.spectra/evidence/aci-s08/verify_resume.py"
+  ],
+  "exit_code": 0,
+  "result": {
+    "authoritative_receipt": ".spectra/state/aci-s08.execution.json",
+    "criteria_sha256": "216f05f349bf35630f299ba814be697b8150e3b0da0bd2fef0512a21b34d3dba",
+    "identity_preserved": true,
+    "slice_id": "ACI-S08"
+  }
+}

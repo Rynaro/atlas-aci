@@ -1,0 +1,44 @@
+{
+  "reviewer": "ATLAS /root/s15_preflight",
+  "no_product_rubric_score_invented": true,
+  "source_hashes": {
+    "mcp-server/src/atlas_aci/codegraph.py": "30d0c8d718ed0115bc7b88051bd1ca7ba358665fabfe35b9a57029de2ebb0183",
+    "mcp-server/src/atlas_aci/storage/snapshots.py": "67d3d7c3313b64315fa4bb2388cacdf30aae79b701ff0fc6c1b5c741f75ca616"
+  },
+  "reviews": [
+    {
+      "scope": "first baseline artifact integrity only",
+      "verdict": "APPROVE",
+      "facts": "9 archived source hashes; six successful isolated jobs plus wrapper failure charge; genuine v1/native tokens and frozen old materialized oracle verified."
+    },
+    {
+      "scope": "compact source, strict own-graph proof, v1 adapter and one-lease marker",
+      "verdict": "APPROVE",
+      "actual_independent_tests": "12 module cases +9 original selected integration cases; true0"
+    },
+    {
+      "scope": "final source/native/static/unaffected gates",
+      "verdict": "APPROVE",
+      "actual_independent_tests": "26 v1/v2 negative field and coherent foreign/missing-current controls, true0",
+      "reviewed_records": "581 full/no skips;64x2 protected/tamper0;11 static and27/5/6 guards;all9 final image hashes;genuinev1 empty source/Linux/FD+SQLite close;nativev2 publication/MCP/prune/worktrees/RO snapshots."
+    },
+    {
+      "scope": "final refined corpus, frozen-old equivalence and isolated paired cost measurements",
+      "verdict": "APPROVE",
+      "facts": "Immutableverifier0/PASS both/current0605/bundlec5bfe097; rawgraphs20partitions/4877/profile10Rust0;9runtime7producer; allcapturedbytes/SQL/sourceproof/closedFDs; streamed651845336B/SHA39da8ac3;30jobs0/cumulative1391.461104; warmCPUcaveat truthful."
+    },
+    {
+      "scope": "final exact selectors and27 guards",
+      "verdict": "APPROVE",
+      "facts": "Reverse3workflow+1selftest selector replacements reconstruct exact base; real27PASS/27passed0failed/true0."
+    },
+    {
+      "scope": "authorized cleanup preservation and exact paths",
+      "verdict": "APPROVE",
+      "facts": "Exact6 absent/sourceparents.git retained;4compactmanifest/catalog streams valid;2519/2358 oldcatalog rows equalv2 allfields/samepack;preservation1.352325s/finalcumulative1392.813428."
+    }
+  ],
+  "pending": [
+    "final output/reentry/receipt"
+  ]
+}

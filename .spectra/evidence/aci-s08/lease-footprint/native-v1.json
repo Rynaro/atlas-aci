@@ -1,0 +1,104 @@
+{
+  "command": [
+    "docker",
+    "run",
+    "--rm",
+    "--read-only",
+    "--network",
+    "none",
+    "-v",
+    "/private/tmp/aci-s08-v1-native-r_nhjwrj/empty-source:/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/aci-s08-real-v1-tscoqpxw/repo:ro",
+    "-v",
+    "/private/tmp/aci-s08-v1-native-r_nhjwrj/graphs:/graphs:ro",
+    "--entrypoint",
+    "python",
+    "atlas-aci-s08-footprint",
+    "-c",
+    "import errno,json,os,sys,sqlite3\nfrom pathlib import Path\nfrom atlas_aci.codegraph import CodeGraph\nassert os.geteuid()==10001\nrepo=Path(sys.argv[1]);assert list(repo.iterdir())==[]\ntry:(repo/'sentinel').write_bytes(b'forbidden')\nexcept OSError as exc:assert exc.errno==errno.EROFS;error=exc.errno\nelse:raise AssertionError('source writable')\ng=CodeGraph(repo,graph_root=Path('/graphs'),read_only=True);base=len(os.listdir('/proc/self/fd'))\nwith g.reader_lease() as reader:\n assert len(os.listdir('/proc/self/fd'))==base+2\n assert reader.snapshot_id==sys.argv[2]\n assert reader._source_lease.manifest['format']=='atlas-source-snapshot.v1'\n assert reader.read_source('a.py')==b'def broken(:\\n pass\\n'\n assert b'def target' in reader.read_source('a.py',sys.argv[3])\n fd=reader._source_lease.fd;db=reader.db\n assert reader.epoch_ok()\nassert len(os.listdir('/proc/self/fd'))==base\ntry:os.fstat(fd)\nexcept OSError:pass\nelse:raise AssertionError('pack fd leaked')\ntry:db.execute('SELECT 1')\nexcept sqlite3.ProgrammingError:pass\nelse:raise AssertionError('SQLite leaked')\ng.close();assert list(repo.iterdir())==[]\nprint(json.dumps({'uid':os.geteuid(),'source_write_errno':error,'version':'v1','original_snapshot_id':sys.argv[2],'current_and_historical_bytes_exact':True,'source_empty_no_live_fallback':True,'fd_and_sqlite_closed':True}))\n",
+    "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/aci-s08-real-v1-tscoqpxw/repo",
+    "dfbf556e416953f6866ee9b552937172b0eaf70ca7b380deb652a0d28dab981d",
+    "2d8dc49249e13bf4e3ef5afd052c3ca0da9ad4692517dd74ceaa23a67fa22041"
+  ],
+  "exit_code": 0,
+  "stdout": "{\"uid\": 10001, \"source_write_errno\": 30, \"version\": \"v1\", \"original_snapshot_id\": \"dfbf556e416953f6866ee9b552937172b0eaf70ca7b380deb652a0d28dab981d\", \"current_and_historical_bytes_exact\": true, \"source_empty_no_live_fallback\": true, \"fd_and_sqlite_closed\": true}\n",
+  "stderr": "",
+  "image_id": "sha256:da089d0b288e9a77ea14434dfffdc86ee1278916ac502cd35a56a19b64290858",
+  "before": {
+    "repos/d044968212238ac36c553a04c2ff503d0a3eefda58db4f2afea81f6e756b03c1/graph.7.db": {
+      "sha256": "d440d4102fa32461a97e2459fecf4286bf304b326bbbd7a9d54a81a2471680fa",
+      "size": 184320,
+      "mode": 33188,
+      "mtime_ns": 1792873345818106056
+    },
+    "repos/d044968212238ac36c553a04c2ff503d0a3eefda58db4f2afea81f6e756b03c1/source-snapshots/catalog.json": {
+      "sha256": "72ea572c061d61743791ae187f56aad662efbb0169bec5320977102403924f3a",
+      "size": 135,
+      "mode": 33188,
+      "mtime_ns": 1792873345818240556
+    },
+    "repos/d044968212238ac36c553a04c2ff503d0a3eefda58db4f2afea81f6e756b03c1/source-snapshots/manifest.dfbf556e416953f6866ee9b552937172b0eaf70ca7b380deb652a0d28dab981d.json": {
+      "sha256": "dfbf556e416953f6866ee9b552937172b0eaf70ca7b380deb652a0d28dab981d",
+      "size": 5510,
+      "mode": 33188,
+      "mtime_ns": 1792873345818344390
+    },
+    "repos/d044968212238ac36c553a04c2ff503d0a3eefda58db4f2afea81f6e756b03c1/source-snapshots/manifest.e2de53463fd807ee8cb32128bdff8fda5f5113da4fb60f6298dafebaf0dae3f4.json": {
+      "sha256": "e2de53463fd807ee8cb32128bdff8fda5f5113da4fb60f6298dafebaf0dae3f4",
+      "size": 5298,
+      "mode": 33188,
+      "mtime_ns": 1792873345818426516
+    },
+    "repos/d044968212238ac36c553a04c2ff503d0a3eefda58db4f2afea81f6e756b03c1/source-snapshots/pack.538727baf2ba07bb4f7b6b7bc0ab91e957272bf21fd83232f1f7b8dbfbe3b758.bin": {
+      "sha256": "538727baf2ba07bb4f7b6b7bc0ab91e957272bf21fd83232f1f7b8dbfbe3b758",
+      "size": 95,
+      "mode": 33188,
+      "mtime_ns": 1792873345818503099
+    },
+    "repos/d044968212238ac36c553a04c2ff503d0a3eefda58db4f2afea81f6e756b03c1/source-snapshots/pack.59a9e18afcd8d96056eff98bbb0b7be9842a25cc1d60ac46ba773bee8b9ee05f.bin": {
+      "sha256": "59a9e18afcd8d96056eff98bbb0b7be9842a25cc1d60ac46ba773bee8b9ee05f",
+      "size": 114,
+      "mode": 33188,
+      "mtime_ns": 1792873345818572725
+    }
+  },
+  "after": {
+    "repos/d044968212238ac36c553a04c2ff503d0a3eefda58db4f2afea81f6e756b03c1/graph.7.db": {
+      "sha256": "d440d4102fa32461a97e2459fecf4286bf304b326bbbd7a9d54a81a2471680fa",
+      "size": 184320,
+      "mode": 33188,
+      "mtime_ns": 1792873345818106056
+    },
+    "repos/d044968212238ac36c553a04c2ff503d0a3eefda58db4f2afea81f6e756b03c1/source-snapshots/catalog.json": {
+      "sha256": "72ea572c061d61743791ae187f56aad662efbb0169bec5320977102403924f3a",
+      "size": 135,
+      "mode": 33188,
+      "mtime_ns": 1792873345818240556
+    },
+    "repos/d044968212238ac36c553a04c2ff503d0a3eefda58db4f2afea81f6e756b03c1/source-snapshots/manifest.dfbf556e416953f6866ee9b552937172b0eaf70ca7b380deb652a0d28dab981d.json": {
+      "sha256": "dfbf556e416953f6866ee9b552937172b0eaf70ca7b380deb652a0d28dab981d",
+      "size": 5510,
+      "mode": 33188,
+      "mtime_ns": 1792873345818344390
+    },
+    "repos/d044968212238ac36c553a04c2ff503d0a3eefda58db4f2afea81f6e756b03c1/source-snapshots/manifest.e2de53463fd807ee8cb32128bdff8fda5f5113da4fb60f6298dafebaf0dae3f4.json": {
+      "sha256": "e2de53463fd807ee8cb32128bdff8fda5f5113da4fb60f6298dafebaf0dae3f4",
+      "size": 5298,
+      "mode": 33188,
+      "mtime_ns": 1792873345818426516
+    },
+    "repos/d044968212238ac36c553a04c2ff503d0a3eefda58db4f2afea81f6e756b03c1/source-snapshots/pack.538727baf2ba07bb4f7b6b7bc0ab91e957272bf21fd83232f1f7b8dbfbe3b758.bin": {
+      "sha256": "538727baf2ba07bb4f7b6b7bc0ab91e957272bf21fd83232f1f7b8dbfbe3b758",
+      "size": 95,
+      "mode": 33188,
+      "mtime_ns": 1792873345818503099
+    },
+    "repos/d044968212238ac36c553a04c2ff503d0a3eefda58db4f2afea81f6e756b03c1/source-snapshots/pack.59a9e18afcd8d96056eff98bbb0b7be9842a25cc1d60ac46ba773bee8b9ee05f.bin": {
+      "sha256": "59a9e18afcd8d96056eff98bbb0b7be9842a25cc1d60ac46ba773bee8b9ee05f",
+      "size": 114,
+      "mode": 33188,
+      "mtime_ns": 1792873345818572725
+    }
+  },
+  "graph_store_bytes_metadata_unchanged": true,
+  "source_empty_after": true
+}

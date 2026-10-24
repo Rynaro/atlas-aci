@@ -1,0 +1,34 @@
+{
+  "previous_head": "1fc05a823b921bcd29651030d748e9e6374c822e",
+  "workflow_sha256": "8889a7e4ed17bd2908d7ac18ca130b82c4ee12668e0a0c78cf7e8923942c1417",
+  "only_two_authorized_inventory_blocks_changed": true,
+  "all_other_workflow_bytes_identical": true,
+  "shared_inventory_program_sha256": "6e87b0fb1abcddd7e92ce05c44596b64db7cc56fa8abc3395d5a4a0ffa7733f4",
+  "basic_steps_all_zero": true,
+  "complete_before_after_entries": 11,
+  "private_snapshot_mode": "0700",
+  "private_manifest_mode": "0600",
+  "same_principal_uid": 10001,
+  "shell_syntax_checks": [
+    {
+      "path": ".spectra/evidence/aci-s08/ci-remediation/step-3.sh",
+      "exit_code": 0
+    },
+    {
+      "path": ".spectra/evidence/aci-s08/ci-remediation/step-2.sh",
+      "exit_code": 0
+    },
+    {
+      "path": ".spectra/evidence/aci-s08/ci-remediation/step-5.sh",
+      "exit_code": 0
+    },
+    {
+      "path": ".spectra/evidence/aci-s08/ci-remediation/step-1.sh",
+      "exit_code": 0
+    },
+    {
+      "path": ".spectra/evidence/aci-s08/ci-remediation/step-4.sh",
+      "exit_code": 0
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 {
   "schema": "atlas-aci/backlog-execution.v1",
   "repository": "Rynaro/atlas-aci",
-  "updated_at": "2026-10-24T17:06:55.776476+00:00",
+  "updated_at": "2026-10-24T18:19:30.029747+00:00",
   "status": "IN_PROGRESS",
   "authorization": {
     "source": "Standing user instruction relayed by root: continue all open issues until cleared; validated merges and main sync automatically authorized",
@@ -22,7 +22,7 @@
     ],
     "publication_owner": "root orchestrator; executor never self-merges"
   },
-  "base_commit": "f055e56d2f862ff2dbee827c7b30dabc2a76b094",
+  "base_commit": "fa75bec971502b72ce85f9e87ab7ec2876274ce9",
   "queue_frozen": [
     12,
     29,
@@ -62,10 +62,10 @@
     62,
     63
   ],
-  "current_issue": 11,
-  "next_issue": 30,
-  "completed_issue_count": 9,
-  "remaining_issue_count": 33,
+  "current_issue": 30,
+  "next_issue": 33,
+  "completed_issue_count": 10,
+  "remaining_issue_count": 32,
   "queue_basis": "Agreed serial priority and declared dependency DAG from authoritative root inventory; reverify each live issue contract at pickup",
   "selection_policy": "All initially open issues selected, including optional branches; S23 release-gate contract is not silently changed",
   "dependency_constraints": [
@@ -195,19 +195,20 @@
     {
       "issue": 11,
       "slice_id": "ACI-S15",
-      "status": "IN_PROGRESS",
+      "status": "MERGED",
       "plan_path": ".spectra/plans/aci-s15.md",
       "receipt_path": ".spectra/state/aci-s15.execution.json",
-      "pull_request": null,
-      "merge_commit": null,
-      "blockers": []
+      "pull_request": 74,
+      "merge_commit": "fa75bec971502b72ce85f9e87ab7ec2876274ce9",
+      "blockers": [],
+      "merge_evidence": "Root GitHub merge/closure confirmation; actual merged base and COMPLETE S15 historical output digests verified"
     },
     {
       "issue": 30,
-      "slice_id": null,
-      "status": "QUEUED",
-      "plan_path": null,
-      "receipt_path": null,
+      "slice_id": "ACI-S08",
+      "status": "IN_PROGRESS",
+      "plan_path": ".spectra/plans/aci-s08.md",
+      "receipt_path": ".spectra/state/aci-s08.execution.json",
       "pull_request": null,
       "merge_commit": null,
       "blockers": []

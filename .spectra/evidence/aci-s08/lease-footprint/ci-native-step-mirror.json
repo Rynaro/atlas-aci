@@ -1,0 +1,37 @@
+{
+  "commands": [
+    {
+      "command": [
+        "/tmp/aci-s01-tools/bin/uv",
+        "sync",
+        "--frozen",
+        "--extra",
+        "dev"
+      ],
+      "cwd": "mcp-server",
+      "exit_code": 0,
+      "elapsed_seconds": 0.10665358300320804,
+      "stdout": "",
+      "stderr": "Checked 44 packages in 11ms\n"
+    },
+    {
+      "command": [
+        "/tmp/aci-s01-tools/bin/uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "tests/slices/test_s06_contract.py",
+        "tests/slices/test_s08_docker.py",
+        "-q"
+      ],
+      "cwd": "mcp-server",
+      "exit_code": 0,
+      "elapsed_seconds": 5.2868532499996945,
+      "stdout": "...................                                                      [100%]\n19 passed in 4.39s\n",
+      "stderr": ""
+    }
+  ],
+  "image_override": "atlas-aci-s08-footprint",
+  "image_id": "sha256:da089d0b288e9a77ea14434dfffdc86ee1278916ac502cd35a56a19b64290858",
+  "workflow_sha256": "846c876157c39d361b58494d2058220afecc74e679de39d2a57fcec30797e858"
+}

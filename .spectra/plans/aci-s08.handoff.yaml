@@ -1,0 +1,64 @@
+{
+  "slice_id": "ACI-S08",
+  "issue": 30,
+  "worktree": "/private/tmp/atlas-aci-aci-s08",
+  "branch": "aci-s08",
+  "base_commit": "fa75bec971502b72ce85f9e87ab7ec2876274ce9",
+  "spec": ".spectra/plans/aci-s08.md",
+  "envelope": ".spectra/plans/aci-s08.envelope.json",
+  "criteria_sha256": "216f05f349bf35630f299ba814be697b8150e3b0da0bd2fef0512a21b34d3dba",
+  "actual_confidence": {
+    "rubric": "confidence",
+    "total": 86.25,
+    "dims": {
+      "pattern_match": 80,
+      "requirement_clarity": 95,
+      "decomposition_stability": 85,
+      "constraint_compliance": 85
+    },
+    "verdict": "AUTO_PROCEED",
+    "at": "2026-10-24T18:39:18Z",
+    "label": "packed-source-snapshot-plan-after-native-proof-and-independent-review"
+  },
+  "confidence_basis": {
+    "pattern_match": "80: adapts proven S03 readonly descriptor/staged publication and S06 namespace, but packed CAS and secure source binding are new rather than a copied implementation.",
+    "requirement_clarity": "95: exact six product/eight total criteria, explicit legacy/import/overlay/retention and same-construction boundaries independently reviewed; no missing operator preference.",
+    "decomposition_stability": "85: actual cross-kernel failure removed and new primitive independently qualified; graph/manifest/pack acquisition, historical closure and closed import variants remain integrated execution risks.",
+    "constraint_compliance": "85: one helper and narrow public seam amendments within five engineering days, no dependencies/paid work; active-reader disk costs and integration breadth remain explicitly unproven."
+  },
+  "checker_evidence": ".spectra/plans/aci-s08.review.json",
+  "execution_prescriptions": [
+    "Validate nested blob ranges AND actual graph-authorized current/historical binding closure, including coherently rehashed foreign/missing sources.",
+    "Use one retained pack FD per live lease; prove full graph/manifest acquisition and pruning races. Bounded idle entries do not imply a global hard active-reader byte cap.",
+    "Preserve actual Git/non-Git/worktree identity, same-byte disk/overlay replay, branch/HEAD diagnostic exclusion; unavailable Git metadata in readonly Docker must not relabel the source or break host-indexed serving.",
+    "Implement a CLOSED explicit source-unavailable import/legacy variant. Native v4 missing/contradictory source data cannot use that exception. Old tokens never fall back to latest; retain G1 bookkeeping until graph pointer publication succeeds.",
+    "Preserve live-mode central bounds and historical hash selection; controlled-await cancellation closes SQLite/pack without claiming synchronous preemption. Distinguish one retained pack FD from transient dirfds."
+  ],
+  "primitive_evidence": ".spectra/evidence/aci-s08/planning/pack-fd-proof/provenance.json",
+  "rejected_primitive": ".spectra/evidence/aci-s08/planning/flock-domain-failure.json",
+  "first_execution_checkpoint": "Actual graph+manifest+pack lease across host writer/readonly Docker publication/prune, closed missing/foreign binding rejection and G1 preservation; primitive proof alone is not product acceptance.",
+  "scope_amendments": [
+    ".spectra/changes/aci-s08/scope-amendment.json",
+    ".spectra/changes/aci-s08/bookkeeping-amendment.json"
+  ],
+  "output_digest_exclusions": [
+    ".spectra/state/aci-s08.execution.json",
+    ".spectra/evidence/aci-s08/final-reentry-before.json",
+    ".spectra/evidence/aci-s08/final-reentry-after.json",
+    ".spectra/evidence/aci-s08/final-reentry-summary.json",
+    ".spectra/evidence/aci-s08/final-resume-identity.json",
+    ".spectra/evidence/aci-s08/output-check-tests.log"
+  ],
+  "authoritative_receipt": ".spectra/state/aci-s08.execution.json",
+  "helpers_root": "/Users/henrique/workspace/oss/agents/atlas-aci/.eidolons/ramza/bin",
+  "schemas_root": "/Users/henrique/workspace/oss/agents/atlas-aci/.eidolons/ramza/schemas",
+  "root_gate": "Root mechanical verify-envelope --block plus correlated verify_pass trace before one Vivi writer.",
+  "publication": "Root owns green-CI merge/sync under standing user authorization; no paid/release/deployment actions.",
+  "backlog": {
+    "merged": 10,
+    "remaining": 32,
+    "current_issue": 30,
+    "next_issue": 33
+  },
+  "validation_obligation": "AUTO_PROCEED is actual helper verdict on plan readiness; no human review or product success is claimed."
+}

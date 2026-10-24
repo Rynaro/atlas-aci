@@ -1,0 +1,21 @@
+{
+  "repo": "spree",
+  "oracle_source_sha256": "bd77fa8ce6114f744a733fb2644f1b406cfee5b053b8d1e8655dae7040dfb479",
+  "actual_original_materialized_algorithm": true,
+  "graph_digest_exact": true,
+  "observation_digest_exact": true,
+  "all_individual_range_fields_committed_exact": true,
+  "range_proof": {
+    "version": 1,
+    "algorithm": "sha256-canonical-json-array-v1",
+    "total": 491458,
+    "occurrence": 245729,
+    "evidence": 245729,
+    "legacy": 0,
+    "sha256": "1b18e67979da56484e540bc9dc28a6641ef0378e14b00e28ba8b26dca03f3d20"
+  },
+  "source_catalog_exact": true,
+  "source_bindings": 2358,
+  "snapshot_id": "71e706d7716ddabe9e081ea6ace56347704ec827537b20c8f5fc845c61690770",
+  "not_ordinary_lease_metric": true
+}

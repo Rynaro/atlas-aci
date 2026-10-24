@@ -1,0 +1,367 @@
+{
+  "status": "FIRST_CHECKPOINT_COMPLETE_BEFORE_PRODUCER_EDITS",
+  "sources": {
+    "mcp-server/src/atlas_aci/codegraph.py": "7565e53d9f530055bda2486774397a22d946c6e5e15952cb010519493216d2fb",
+    "mcp-server/src/atlas_aci/storage/evidence.py": "65d1ce7d43df6d652c640229407ab0211d5bb1f4c766f1e694e2979d516a3525",
+    "mcp-server/src/atlas_aci/providers/python_imports.py": "de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014",
+    "mcp-server/src/atlas_aci/indexing/extraction_cache.py": "08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2",
+    "mcp-server/src/atlas_aci/resolvers/dependencies.py": "0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6",
+    "mcp-server/src/atlas_aci/extractors/rust.py": "28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a",
+    "mcp-server/src/atlas_aci/storage/snapshots.py": "bd77fa8ce6114f744a733fb2644f1b406cfee5b053b8d1e8655dae7040dfb479",
+    "mcp-server/src/atlas_aci/server.py": "f9a1f820f685205569ba6b1f5026ed982b7123bcb91cc33237805fcc60f43970",
+    "mcp-server/src/atlas_aci/tools/view_file.py": "31871a9d7594091a52790feac3a5746039cc8c939c7c3f7116e99a9f1f5e48e3"
+  },
+  "measurements": [
+    {
+      "repo": "solidus",
+      "mode": "graph",
+      "job": {
+        "command": [
+          "/private/tmp/atlas-aci-aci-s08/mcp-server/.venv/bin/python",
+          "/private/tmp/atlas-aci-aci-s08/.spectra/evidence/aci-s08/lease-footprint/measure_baseline.py",
+          "graph",
+          "/tmp/aci-s08-probe-inputs/solidus"
+        ],
+        "exit_code": 0,
+        "timed_out": false,
+        "elapsed_seconds": 30.319614707987057,
+        "prior_charge_seconds": 486.6451361659856,
+        "cumulative_charge_seconds": 516.9647508739727,
+        "peak_rss_bytes": 3159588864,
+        "per_job_cap_seconds": 600,
+        "total_cap_seconds": 2700
+      },
+      "measurement": {
+        "mode": "graph",
+        "repo": "solidus",
+        "measurements": [
+          {
+            "ordinal": 0,
+            "label": "fresh_process_first_acquisition",
+            "seconds": 20.047369125008117,
+            "snapshot_id": "e25b0593af5599f49fe08c219ed59352f0378057926414f47b35198bd1a6d60b"
+          },
+          {
+            "ordinal": 1,
+            "label": "same_process_repeat_not_cold_filesystem",
+            "seconds": 10.171913291997043,
+            "snapshot_id": "e25b0593af5599f49fe08c219ed59352f0378057926414f47b35198bd1a6d60b"
+          }
+        ],
+        "client_or_direct_process_peak_rss_bytes": 3159588864,
+        "peak_rss_unit": "bytes_on_this_macOS_host",
+        "sources": {
+          "mcp-server/src/atlas_aci/codegraph.py": "7565e53d9f530055bda2486774397a22d946c6e5e15952cb010519493216d2fb",
+          "mcp-server/src/atlas_aci/storage/evidence.py": "65d1ce7d43df6d652c640229407ab0211d5bb1f4c766f1e694e2979d516a3525",
+          "mcp-server/src/atlas_aci/providers/python_imports.py": "de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014",
+          "mcp-server/src/atlas_aci/indexing/extraction_cache.py": "08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2",
+          "mcp-server/src/atlas_aci/resolvers/dependencies.py": "0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6",
+          "mcp-server/src/atlas_aci/extractors/rust.py": "28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a",
+          "mcp-server/src/atlas_aci/storage/snapshots.py": "bd77fa8ce6114f744a733fb2644f1b406cfee5b053b8d1e8655dae7040dfb479",
+          "mcp-server/src/atlas_aci/server.py": "f9a1f820f685205569ba6b1f5026ed982b7123bcb91cc33237805fcc60f43970",
+          "mcp-server/src/atlas_aci/tools/view_file.py": "31871a9d7594091a52790feac3a5746039cc8c939c7c3f7116e99a9f1f5e48e3"
+        },
+        "notes": [
+          "No uncached-filesystem claim.",
+          "Intervals exclude factory setup and stdio initialization. Outer job includes process startup/teardown.",
+          "MCP server peak RSS is emitted separately on stderr."
+        ]
+      }
+    },
+    {
+      "repo": "solidus",
+      "mode": "source",
+      "job": {
+        "command": [
+          "/private/tmp/atlas-aci-aci-s08/mcp-server/.venv/bin/python",
+          "/private/tmp/atlas-aci-aci-s08/.spectra/evidence/aci-s08/lease-footprint/measure_baseline.py",
+          "source",
+          "/tmp/aci-s08-probe-inputs/solidus"
+        ],
+        "exit_code": 0,
+        "timed_out": false,
+        "elapsed_seconds": 4.719446209011949,
+        "prior_charge_seconds": 516.9647508739727,
+        "cumulative_charge_seconds": 521.6841970829846,
+        "peak_rss_bytes": 917864448,
+        "per_job_cap_seconds": 600,
+        "total_cap_seconds": 2700
+      },
+      "measurement": {
+        "mode": "source",
+        "repo": "solidus",
+        "measurements": [
+          {
+            "ordinal": 0,
+            "label": "fresh_process_first_acquisition",
+            "seconds": 2.324174125009449,
+            "snapshot_id": "e25b0593af5599f49fe08c219ed59352f0378057926414f47b35198bd1a6d60b"
+          },
+          {
+            "ordinal": 1,
+            "label": "same_process_repeat_not_cold_filesystem",
+            "seconds": 2.274137625005096,
+            "snapshot_id": "e25b0593af5599f49fe08c219ed59352f0378057926414f47b35198bd1a6d60b"
+          }
+        ],
+        "client_or_direct_process_peak_rss_bytes": 917864448,
+        "peak_rss_unit": "bytes_on_this_macOS_host",
+        "sources": {
+          "mcp-server/src/atlas_aci/codegraph.py": "7565e53d9f530055bda2486774397a22d946c6e5e15952cb010519493216d2fb",
+          "mcp-server/src/atlas_aci/storage/evidence.py": "65d1ce7d43df6d652c640229407ab0211d5bb1f4c766f1e694e2979d516a3525",
+          "mcp-server/src/atlas_aci/providers/python_imports.py": "de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014",
+          "mcp-server/src/atlas_aci/indexing/extraction_cache.py": "08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2",
+          "mcp-server/src/atlas_aci/resolvers/dependencies.py": "0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6",
+          "mcp-server/src/atlas_aci/extractors/rust.py": "28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a",
+          "mcp-server/src/atlas_aci/storage/snapshots.py": "bd77fa8ce6114f744a733fb2644f1b406cfee5b053b8d1e8655dae7040dfb479",
+          "mcp-server/src/atlas_aci/server.py": "f9a1f820f685205569ba6b1f5026ed982b7123bcb91cc33237805fcc60f43970",
+          "mcp-server/src/atlas_aci/tools/view_file.py": "31871a9d7594091a52790feac3a5746039cc8c939c7c3f7116e99a9f1f5e48e3"
+        },
+        "notes": [
+          "No uncached-filesystem claim.",
+          "Intervals exclude factory setup and stdio initialization. Outer job includes process startup/teardown.",
+          "MCP server peak RSS is emitted separately on stderr."
+        ]
+      }
+    },
+    {
+      "repo": "solidus",
+      "mode": "mcp",
+      "job": {
+        "command": [
+          "/private/tmp/atlas-aci-aci-s08/mcp-server/.venv/bin/python",
+          "/private/tmp/atlas-aci-aci-s08/.spectra/evidence/aci-s08/lease-footprint/measure_baseline.py",
+          "mcp",
+          "/tmp/aci-s08-probe-inputs/solidus"
+        ],
+        "exit_code": 0,
+        "timed_out": false,
+        "elapsed_seconds": 37.22309716700693,
+        "prior_charge_seconds": 551.5921143749874,
+        "cumulative_charge_seconds": 588.8152115419944,
+        "peak_rss_bytes": 3527737344,
+        "per_job_cap_seconds": 600,
+        "total_cap_seconds": 2700
+      },
+      "measurement": {
+        "mode": "mcp",
+        "repo": "solidus",
+        "measurements": [
+          {
+            "ordinal": 0,
+            "label": "first_call_after_initialization",
+            "seconds": 18.308030583997606,
+            "result_bytes": 243,
+            "snapshot_id": "e25b0593af5599f49fe08c219ed59352f0378057926414f47b35198bd1a6d60b"
+          },
+          {
+            "ordinal": 1,
+            "label": "same_server_process_repeat",
+            "seconds": 18.38701462499739,
+            "result_bytes": 243,
+            "snapshot_id": "e25b0593af5599f49fe08c219ed59352f0378057926414f47b35198bd1a6d60b"
+          }
+        ],
+        "client_or_direct_process_peak_rss_bytes": 60014592,
+        "peak_rss_unit": "bytes_on_this_macOS_host",
+        "sources": {
+          "mcp-server/src/atlas_aci/codegraph.py": "7565e53d9f530055bda2486774397a22d946c6e5e15952cb010519493216d2fb",
+          "mcp-server/src/atlas_aci/storage/evidence.py": "65d1ce7d43df6d652c640229407ab0211d5bb1f4c766f1e694e2979d516a3525",
+          "mcp-server/src/atlas_aci/providers/python_imports.py": "de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014",
+          "mcp-server/src/atlas_aci/indexing/extraction_cache.py": "08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2",
+          "mcp-server/src/atlas_aci/resolvers/dependencies.py": "0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6",
+          "mcp-server/src/atlas_aci/extractors/rust.py": "28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a",
+          "mcp-server/src/atlas_aci/storage/snapshots.py": "bd77fa8ce6114f744a733fb2644f1b406cfee5b053b8d1e8655dae7040dfb479",
+          "mcp-server/src/atlas_aci/server.py": "f9a1f820f685205569ba6b1f5026ed982b7123bcb91cc33237805fcc60f43970",
+          "mcp-server/src/atlas_aci/tools/view_file.py": "31871a9d7594091a52790feac3a5746039cc8c939c7c3f7116e99a9f1f5e48e3"
+        },
+        "notes": [
+          "No uncached-filesystem claim.",
+          "Intervals exclude factory setup and stdio initialization. Outer job includes process startup/teardown.",
+          "MCP server peak RSS is emitted separately on stderr."
+        ]
+      }
+    },
+    {
+      "repo": "spree",
+      "mode": "graph",
+      "job": {
+        "command": [
+          "/private/tmp/atlas-aci-aci-s08/mcp-server/.venv/bin/python",
+          "/private/tmp/atlas-aci-aci-s08/.spectra/evidence/aci-s08/lease-footprint/measure_baseline.py",
+          "graph",
+          "/tmp/aci-s08-probe-inputs/spree"
+        ],
+        "exit_code": 0,
+        "timed_out": false,
+        "elapsed_seconds": 61.90310516700265,
+        "prior_charge_seconds": 588.8152115419944,
+        "cumulative_charge_seconds": 650.718316708997,
+        "peak_rss_bytes": 3580231680,
+        "per_job_cap_seconds": 600,
+        "total_cap_seconds": 2700
+      },
+      "measurement": {
+        "mode": "graph",
+        "repo": "spree",
+        "measurements": [
+          {
+            "ordinal": 0,
+            "label": "fresh_process_first_acquisition",
+            "seconds": 44.35923849999381,
+            "snapshot_id": "914d78320dd477e6c4ae7ba7b135f91c282cfffb04c94c92c2b84b9feaeb1441"
+          },
+          {
+            "ordinal": 1,
+            "label": "same_process_repeat_not_cold_filesystem",
+            "seconds": 17.40261441700568,
+            "snapshot_id": "914d78320dd477e6c4ae7ba7b135f91c282cfffb04c94c92c2b84b9feaeb1441"
+          }
+        ],
+        "client_or_direct_process_peak_rss_bytes": 3580231680,
+        "peak_rss_unit": "bytes_on_this_macOS_host",
+        "sources": {
+          "mcp-server/src/atlas_aci/codegraph.py": "7565e53d9f530055bda2486774397a22d946c6e5e15952cb010519493216d2fb",
+          "mcp-server/src/atlas_aci/storage/evidence.py": "65d1ce7d43df6d652c640229407ab0211d5bb1f4c766f1e694e2979d516a3525",
+          "mcp-server/src/atlas_aci/providers/python_imports.py": "de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014",
+          "mcp-server/src/atlas_aci/indexing/extraction_cache.py": "08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2",
+          "mcp-server/src/atlas_aci/resolvers/dependencies.py": "0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6",
+          "mcp-server/src/atlas_aci/extractors/rust.py": "28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a",
+          "mcp-server/src/atlas_aci/storage/snapshots.py": "bd77fa8ce6114f744a733fb2644f1b406cfee5b053b8d1e8655dae7040dfb479",
+          "mcp-server/src/atlas_aci/server.py": "f9a1f820f685205569ba6b1f5026ed982b7123bcb91cc33237805fcc60f43970",
+          "mcp-server/src/atlas_aci/tools/view_file.py": "31871a9d7594091a52790feac3a5746039cc8c939c7c3f7116e99a9f1f5e48e3"
+        },
+        "notes": [
+          "No uncached-filesystem claim.",
+          "Intervals exclude factory setup and stdio initialization. Outer job includes process startup/teardown.",
+          "MCP server peak RSS is emitted separately on stderr."
+        ]
+      }
+    },
+    {
+      "repo": "spree",
+      "mode": "source",
+      "job": {
+        "command": [
+          "/private/tmp/atlas-aci-aci-s08/mcp-server/.venv/bin/python",
+          "/private/tmp/atlas-aci-aci-s08/.spectra/evidence/aci-s08/lease-footprint/measure_baseline.py",
+          "source",
+          "/tmp/aci-s08-probe-inputs/spree"
+        ],
+        "exit_code": 0,
+        "timed_out": false,
+        "elapsed_seconds": 7.372183457991923,
+        "prior_charge_seconds": 650.718316708997,
+        "cumulative_charge_seconds": 658.0905001669889,
+        "peak_rss_bytes": 1464090624,
+        "per_job_cap_seconds": 600,
+        "total_cap_seconds": 2700
+      },
+      "measurement": {
+        "mode": "source",
+        "repo": "spree",
+        "measurements": [
+          {
+            "ordinal": 0,
+            "label": "fresh_process_first_acquisition",
+            "seconds": 3.6344572090019938,
+            "snapshot_id": "914d78320dd477e6c4ae7ba7b135f91c282cfffb04c94c92c2b84b9feaeb1441"
+          },
+          {
+            "ordinal": 1,
+            "label": "same_process_repeat_not_cold_filesystem",
+            "seconds": 3.573719667008845,
+            "snapshot_id": "914d78320dd477e6c4ae7ba7b135f91c282cfffb04c94c92c2b84b9feaeb1441"
+          }
+        ],
+        "client_or_direct_process_peak_rss_bytes": 1464090624,
+        "peak_rss_unit": "bytes_on_this_macOS_host",
+        "sources": {
+          "mcp-server/src/atlas_aci/codegraph.py": "7565e53d9f530055bda2486774397a22d946c6e5e15952cb010519493216d2fb",
+          "mcp-server/src/atlas_aci/storage/evidence.py": "65d1ce7d43df6d652c640229407ab0211d5bb1f4c766f1e694e2979d516a3525",
+          "mcp-server/src/atlas_aci/providers/python_imports.py": "de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014",
+          "mcp-server/src/atlas_aci/indexing/extraction_cache.py": "08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2",
+          "mcp-server/src/atlas_aci/resolvers/dependencies.py": "0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6",
+          "mcp-server/src/atlas_aci/extractors/rust.py": "28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a",
+          "mcp-server/src/atlas_aci/storage/snapshots.py": "bd77fa8ce6114f744a733fb2644f1b406cfee5b053b8d1e8655dae7040dfb479",
+          "mcp-server/src/atlas_aci/server.py": "f9a1f820f685205569ba6b1f5026ed982b7123bcb91cc33237805fcc60f43970",
+          "mcp-server/src/atlas_aci/tools/view_file.py": "31871a9d7594091a52790feac3a5746039cc8c939c7c3f7116e99a9f1f5e48e3"
+        },
+        "notes": [
+          "No uncached-filesystem claim.",
+          "Intervals exclude factory setup and stdio initialization. Outer job includes process startup/teardown.",
+          "MCP server peak RSS is emitted separately on stderr."
+        ]
+      }
+    },
+    {
+      "repo": "spree",
+      "mode": "mcp",
+      "job": {
+        "command": [
+          "/private/tmp/atlas-aci-aci-s08/mcp-server/.venv/bin/python",
+          "/private/tmp/atlas-aci-aci-s08/.spectra/evidence/aci-s08/lease-footprint/measure_baseline.py",
+          "mcp",
+          "/tmp/aci-s08-probe-inputs/spree"
+        ],
+        "exit_code": 0,
+        "timed_out": false,
+        "elapsed_seconds": 61.06127733399626,
+        "prior_charge_seconds": 658.0905001669889,
+        "cumulative_charge_seconds": 719.1517775009852,
+        "peak_rss_bytes": 3770580992,
+        "per_job_cap_seconds": 600,
+        "total_cap_seconds": 2700
+      },
+      "measurement": {
+        "mode": "mcp",
+        "repo": "spree",
+        "measurements": [
+          {
+            "ordinal": 0,
+            "label": "first_call_after_initialization",
+            "seconds": 29.899045540994848,
+            "result_bytes": 243,
+            "snapshot_id": "914d78320dd477e6c4ae7ba7b135f91c282cfffb04c94c92c2b84b9feaeb1441"
+          },
+          {
+            "ordinal": 1,
+            "label": "same_server_process_repeat",
+            "seconds": 30.655723499992746,
+            "result_bytes": 243,
+            "snapshot_id": "914d78320dd477e6c4ae7ba7b135f91c282cfffb04c94c92c2b84b9feaeb1441"
+          }
+        ],
+        "client_or_direct_process_peak_rss_bytes": 59916288,
+        "peak_rss_unit": "bytes_on_this_macOS_host",
+        "sources": {
+          "mcp-server/src/atlas_aci/codegraph.py": "7565e53d9f530055bda2486774397a22d946c6e5e15952cb010519493216d2fb",
+          "mcp-server/src/atlas_aci/storage/evidence.py": "65d1ce7d43df6d652c640229407ab0211d5bb1f4c766f1e694e2979d516a3525",
+          "mcp-server/src/atlas_aci/providers/python_imports.py": "de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014",
+          "mcp-server/src/atlas_aci/indexing/extraction_cache.py": "08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2",
+          "mcp-server/src/atlas_aci/resolvers/dependencies.py": "0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6",
+          "mcp-server/src/atlas_aci/extractors/rust.py": "28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a",
+          "mcp-server/src/atlas_aci/storage/snapshots.py": "bd77fa8ce6114f744a733fb2644f1b406cfee5b053b8d1e8655dae7040dfb479",
+          "mcp-server/src/atlas_aci/server.py": "f9a1f820f685205569ba6b1f5026ed982b7123bcb91cc33237805fcc60f43970",
+          "mcp-server/src/atlas_aci/tools/view_file.py": "31871a9d7594091a52790feac3a5746039cc8c939c7c3f7116e99a9f1f5e48e3"
+        },
+        "notes": [
+          "No uncached-filesystem claim.",
+          "Intervals exclude factory setup and stdio initialization. Outer job includes process startup/teardown.",
+          "MCP server peak RSS is emitted separately on stderr."
+        ]
+      }
+    }
+  ],
+  "budget": {
+    "cumulative_charge_seconds": 719.1517775009852,
+    "prior_baseline_charge_seconds": 486.6451361659856,
+    "new_serial_job_seconds": 232.50664133499959
+  },
+  "genuine_v1_provenance": ".spectra/evidence/aci-s08/lease-footprint/v1-fixture-provenance.json",
+  "frozen_oracle": ".spectra/evidence/aci-s08/lease-footprint/old-oracle-check.json",
+  "genuine_v1_restore_command_exit": 0,
+  "compact_requirement_red_exit": 1,
+  "wrapper_failure_preserved_and_charged": true,
+  "recorded_epoch": 1792872613.3047628
+}

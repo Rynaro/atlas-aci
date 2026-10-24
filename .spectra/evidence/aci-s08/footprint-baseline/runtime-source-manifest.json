@@ -1,0 +1,86 @@
+{
+  "reason": "Exact9 audited baseline runtime source bytes preserved BEFORE internal footprint refinement; seven graph producer files plus server/view. No output/COMPLETE claim.",
+  "files": [
+    {
+      "logical_path": "mcp-server/src/atlas_aci/codegraph.py",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/runtime-source/codegraph.py.txt.gz",
+      "uncompressed_sha256": "7565e53d9f530055bda2486774397a22d946c6e5e15952cb010519493216d2fb",
+      "uncompressed_bytes": 285644,
+      "compressed_sha256": "f75d1bdb18983e43425ebe6a5e6b1f0eeb194ba63aa649b84b30b5f7a9fc03e0",
+      "compressed_bytes": 67325,
+      "gzip_mtime": 0
+    },
+    {
+      "logical_path": "mcp-server/src/atlas_aci/extractors/rust.py",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/runtime-source/extractors/rust.py.txt.gz",
+      "uncompressed_sha256": "28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a",
+      "uncompressed_bytes": 3244,
+      "compressed_sha256": "13e5054ea979815c90006862437cbcbe7eabff6b59668a1cff0e1a8be48e11b6",
+      "compressed_bytes": 1199,
+      "gzip_mtime": 0
+    },
+    {
+      "logical_path": "mcp-server/src/atlas_aci/indexing/extraction_cache.py",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/runtime-source/indexing/extraction_cache.py.txt.gz",
+      "uncompressed_sha256": "08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2",
+      "uncompressed_bytes": 20119,
+      "compressed_sha256": "19308816a0f8067ac98779b144bb51898d49016fccebea94a3c2483ecb9a365e",
+      "compressed_bytes": 5031,
+      "gzip_mtime": 0
+    },
+    {
+      "logical_path": "mcp-server/src/atlas_aci/providers/python_imports.py",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/runtime-source/providers/python_imports.py.txt.gz",
+      "uncompressed_sha256": "de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014",
+      "uncompressed_bytes": 4907,
+      "compressed_sha256": "8e808c4951005d98d06766aa0f7e263b9912bb2850bbefe449f3bf54ac30ac3e",
+      "compressed_bytes": 1521,
+      "gzip_mtime": 0
+    },
+    {
+      "logical_path": "mcp-server/src/atlas_aci/resolvers/dependencies.py",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/runtime-source/resolvers/dependencies.py.txt.gz",
+      "uncompressed_sha256": "0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6",
+      "uncompressed_bytes": 9993,
+      "compressed_sha256": "ed6164250ae2e2496ef655266c41fc9a30ac67b22ecd1c3e06f4aafb71d579c3",
+      "compressed_bytes": 3086,
+      "gzip_mtime": 0
+    },
+    {
+      "logical_path": "mcp-server/src/atlas_aci/server.py",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/runtime-source/server.py.txt.gz",
+      "uncompressed_sha256": "f9a1f820f685205569ba6b1f5026ed982b7123bcb91cc33237805fcc60f43970",
+      "uncompressed_bytes": 22592,
+      "compressed_sha256": "b63257bac00ae0a6f13c053491810e1ab168641693e76886cd3ac1861a32b228",
+      "compressed_bytes": 7145,
+      "gzip_mtime": 0
+    },
+    {
+      "logical_path": "mcp-server/src/atlas_aci/storage/evidence.py",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/runtime-source/storage/evidence.py.txt.gz",
+      "uncompressed_sha256": "65d1ce7d43df6d652c640229407ab0211d5bb1f4c766f1e694e2979d516a3525",
+      "uncompressed_bytes": 32412,
+      "compressed_sha256": "3db383aee498be3c99156fd20663379c11a87ff008392c95048d9873675498a2",
+      "compressed_bytes": 7114,
+      "gzip_mtime": 0
+    },
+    {
+      "logical_path": "mcp-server/src/atlas_aci/storage/snapshots.py",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/runtime-source/storage/snapshots.py.txt.gz",
+      "uncompressed_sha256": "bd77fa8ce6114f744a733fb2644f1b406cfee5b053b8d1e8655dae7040dfb479",
+      "uncompressed_bytes": 23001,
+      "compressed_sha256": "b2b97f6e10d44bdfb0cedea22da0bdc14f651720f204557a437b31ba6da11f37",
+      "compressed_bytes": 5760,
+      "gzip_mtime": 0
+    },
+    {
+      "logical_path": "mcp-server/src/atlas_aci/tools/view_file.py",
+      "compressed_path": ".spectra/evidence/aci-s08/footprint-baseline/runtime-source/tools/view_file.py.txt.gz",
+      "uncompressed_sha256": "31871a9d7594091a52790feac3a5746039cc8c939c7c3f7116e99a9f1f5e48e3",
+      "uncompressed_bytes": 6445,
+      "compressed_sha256": "8cf728cbeca960ac9ffe8dc4b408dca2d67714760dff7c0f1895896c6c4c350c",
+      "compressed_bytes": 2283,
+      "gzip_mtime": 0
+    }
+  ]
+}

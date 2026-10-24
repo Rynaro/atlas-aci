@@ -278,8 +278,59 @@ jobs:
 
       - name: Snapshot .atlas before serve
         run: |
-          find /tmp/smoke-repo/.atlas -type f -exec stat -c '%n %Y %s' {} \; | sort > /tmp/atlas-before.txt
-          cat /tmp/atlas-before.txt
+          set -euo pipefail
+          # The image's reader principal can traverse its private snapshot
+          # objects; the runner UID cannot. Keep permissions intact and fail
+          # closed rather than accepting a partial host-side inventory.
+          cat > /tmp/atlas-inventory.py <<'PY'
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+          import stat
+          import sys
+
+          assert os.geteuid() == 10001
+          root = Path(sys.argv[1])
+          rows = []
+
+          def visit(path):
+              info = path.lstat()
+              row = {
+                  "path": str(path.relative_to(root)),
+                  "mode": info.st_mode,
+                  "uid": info.st_uid,
+                  "gid": info.st_gid,
+                  "size": info.st_size,
+                  "mtime_ns": info.st_mtime_ns,
+              }
+              if stat.S_ISDIR(info.st_mode):
+                  row.update(type="directory", sha256=None)
+                  rows.append(row)
+                  with os.scandir(path) as entries:
+                      children = sorted((Path(e.path) for e in entries))
+                  for child in children:
+                      visit(child)
+              elif stat.S_ISREG(info.st_mode):
+                  fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+                  with os.fdopen(fd, "rb") as stream:
+                      assert os.fstat(stream.fileno()) == info
+                      row.update(type="file", sha256=hashlib.file_digest(stream, "sha256").hexdigest())
+                  rows.append(row)
+              else:
+                  raise ValueError("Unexpected generated inventory entry: " + str(path))
+
+          assert root.is_dir() and not root.is_symlink()
+          visit(root)
+          # Emit nothing until every directory and file has been inspected.
+          print(json.dumps(sorted(rows, key=lambda r: r["path"]), sort_keys=True))
+          PY
+          docker run --rm --read-only --network none \
+            -v /tmp/smoke-repo:/repo:ro \
+            -v /tmp/atlas-inventory.py:/inventory.py:ro \
+            --entrypoint python atlas-aci-ci-smoketest /inventory.py /repo/.atlas \
+            > /tmp/atlas-before.json
+          cat /tmp/atlas-before.json
 
       - name: serve under --read-only :ro must start and stay alive (AC-H-16)
         run: |
@@ -316,8 +367,12 @@ jobs:
       - name: Confirm zero writes under .atlas (AC-H-16)
         run: |
           set -euo pipefail
-          find /tmp/smoke-repo/.atlas -type f -exec stat -c '%n %Y %s' {} \; | sort > /tmp/atlas-after.txt
-          if ! diff -u /tmp/atlas-before.txt /tmp/atlas-after.txt; then
+          docker run --rm --read-only --network none \
+            -v /tmp/smoke-repo:/repo:ro \
+            -v /tmp/atlas-inventory.py:/inventory.py:ro \
+            --entrypoint python atlas-aci-ci-smoketest /inventory.py /repo/.atlas \
+            > /tmp/atlas-after.json
+          if ! diff -u /tmp/atlas-before.json /tmp/atlas-after.json; then
             echo "FAIL (AC-H-16): .atlas contents changed under a read-only serve mount"
             exit 1
           fi
@@ -368,11 +423,12 @@ jobs:
         with:
           python-version-file: "mcp-server/pyproject.toml"
 
-      - name: Index read-only source into external root and query real MCP (S06)
+      - name: Read-only external-root and pinned-source MCP integration (S06+S08)
         working-directory: mcp-server
         env:
           ATLAS_ACI_S06_DOCKER_IMAGE: atlas-aci-ci-smoketest
+          ATLAS_ACI_S08_DOCKER_IMAGE: atlas-aci-ci-smoketest
         run: |
           set -euo pipefail
           uv sync --frozen --extra dev
-          uv run --frozen pytest tests/slices/test_s06_contract.py -q
+          uv run --frozen pytest tests/slices/test_s06_contract.py tests/slices/test_s08_docker.py -q

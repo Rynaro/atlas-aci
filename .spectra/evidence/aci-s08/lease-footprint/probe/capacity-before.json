@@ -1,0 +1,9 @@
+{
+  "epoch": 1792873370.077756,
+  "total_bytes": 245107195904,
+  "used_bytes": 236956155904,
+  "free_bytes": 8151040000,
+  "keep_baseline_measurement_state": true,
+  "new_input_root": "/tmp/aci-s08-refined-probe-inputs",
+  "prior_serial_job_charge_seconds": 719.1517775009852
+}

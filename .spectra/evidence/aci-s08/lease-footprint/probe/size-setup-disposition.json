@@ -1,0 +1,8 @@
+{
+  "run_exit_code": 0,
+  "main_actual_job_count": 21,
+  "all_main_job_exits": 0,
+  "incorrect_expected_count_in_evidence_setup": 22,
+  "actual_size_producer_started_in_failed_setup": false,
+  "reason": "Count22 includes later size job; incorrect assertion prevented run.exit marker, so size wrapper rejected before dispatch. Fixed actual21job gate after inspecting actual runner exit0/finalmarker; raw errors preserved."
+}

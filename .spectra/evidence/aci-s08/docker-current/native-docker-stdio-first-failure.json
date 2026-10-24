@@ -1,0 +1,441 @@
+{
+  "acquired": {
+    "errno": 30,
+    "generation_id": "6977dcb0b28247c153db425e04f480b802033593a3aee0541728f9c3903ed0c6",
+    "git_runtime_code": 128,
+    "identity": {
+      "common_dir": "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-288/test_native_publication_readon0/primary/.git",
+      "git_dir": "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-288/test_native_publication_readon0/primary/.git/worktrees/source",
+      "kind": "git",
+      "root": "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-288/test_native_publication_readon0/source",
+      "worktree_root": "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-288/test_native_publication_readon0/source"
+    },
+    "pack": {
+      "index": [
+        {
+          "length": 31,
+          "offset": 21,
+          "sha256": "80cba8a82d76d793d7c783ab002d03dd279f2f6288e48a28802da78930a7e14a"
+        }
+      ],
+      "sha256": "b6aeb68678310f2545e56021c173bfc6bdc75f8a0298487d0cdcd1e6669bb5a2",
+      "size": 52
+    },
+    "ready": true,
+    "token": "25924744c3fcd287b4f9ef0da0871fa5ca47c559161220dd3d770b8f376e443d",
+    "uid": 10001
+  },
+  "commands": [
+    {
+      "argv": [
+        "docker",
+        "run",
+        "--rm",
+        "--read-only",
+        "--network",
+        "none",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-288/test_native_publication_readon0/source:/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-288/test_native_publication_readon0/source:ro",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-288/test_native_publication_readon0/graphs:/graphs:ro",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-288/test_native_publication_readon0/memex:/memex",
+        "--entrypoint",
+        "python",
+        "atlas-aci-s08-final",
+        "-c",
+        "import hashlib,json,os;from pathlib import Path;r={};root=Path('/graphs');\nfor p in sorted(root.rglob('*')):\n s=p.stat();r[str(p.relative_to(root))]={'sha256':hashlib.sha256(p.read_bytes()).hexdigest() if p.is_file() else None,'mode':s.st_mode,'mtime_ns':s.st_mtime_ns,'uid':s.st_uid,'gid':s.st_gid}\nprint(json.dumps(r,sort_keys=True))"
+      ],
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "{\"repos\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792868683459237568, \"sha256\": null, \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792868683500983134, \"sha256\": null, \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/.index.lock\": {\"gid\": 10001, \"mode\": 33188, \"mtime_ns\": 1792868683460602617, \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/extraction-cache\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792868683474531611, \"sha256\": null, \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/extraction-cache/v1\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792868683474568237, \"sha256\": null, \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/extraction-cache/v1/ed\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792868683474813655, \"sha256\": null, \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/extraction-cache/v1/ed/edce6640a6fa4da5e7cbde9323e73e559035581cb033966313f5fa231e5c982c.json\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792868683474729654, \"sha256\": \"fdef5c4cb3adddef27a6988747bf85553aa64b048ce511fe0745a5115ce52207\", \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/graph.7.db\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792868683499772252, \"sha256\": \"878ca2732349aa4c1f2c498fa13a18cd6bc4166d0d6b709820a99e465c97bd5a\", \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/source-snapshots\": {\"gid\": 10001, \"mode\": 16832, \"mtime_ns\": 1792868683500840633, \"sha256\": null, \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/source-snapshots/catalog.json\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792868683500775091, \"sha256\": \"e9837aa16e1498306b8b1419311d9f45ab440343939b9b8fb7d63f8719525d2d\", \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/source-snapshots/manifest.25924744c3fcd287b4f9ef0da0871fa5ca47c559161220dd3d770b8f376e443d.json\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792868683497776616, \"sha256\": \"25924744c3fcd287b4f9ef0da0871fa5ca47c559161220dd3d770b8f376e443d\", \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/source-snapshots/pack.b6aeb68678310f2545e56021c173bfc6bdc75f8a0298487d0cdcd1e6669bb5a2.bin\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792868683496966819, \"sha256\": \"b6aeb68678310f2545e56021c173bfc6bdc75f8a0298487d0cdcd1e6669bb5a2\", \"uid\": 10001}}\n"
+    },
+    {
+      "argv": [
+        "docker",
+        "run",
+        "--rm",
+        "--read-only",
+        "--network",
+        "none",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-288/test_native_publication_readon0/source:/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-288/test_native_publication_readon0/source:ro",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-288/test_native_publication_readon0/graphs:/graphs:ro",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-288/test_native_publication_readon0/memex:/memex",
+        "--entrypoint",
+        "python",
+        "atlas-aci-s08-final",
+        "-c",
+        "import hashlib,json,os;from pathlib import Path;r={};root=Path('/graphs');\nfor p in sorted(root.rglob('*')):\n s=p.stat();r[str(p.relative_to(root))]={'sha256':hashlib.sha256(p.read_bytes()).hexdigest() if p.is_file() else None,'mode':s.st_mode,'mtime_ns':s.st_mtime_ns,'uid':s.st_uid,'gid':s.st_gid}\nprint(json.dumps(r,sort_keys=True))"
+      ],
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "{\"repos\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792868683459237568, \"sha256\": null, \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792868683500983134, \"sha256\": null, \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/.index.lock\": {\"gid\": 10001, \"mode\": 33188, \"mtime_ns\": 1792868683460602617, \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/extraction-cache\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792868683474531611, \"sha256\": null, \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/extraction-cache/v1\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792868683474568237, \"sha256\": null, \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/extraction-cache/v1/ed\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792868683474813655, \"sha256\": null, \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/extraction-cache/v1/ed/edce6640a6fa4da5e7cbde9323e73e559035581cb033966313f5fa231e5c982c.json\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792868683474729654, \"sha256\": \"fdef5c4cb3adddef27a6988747bf85553aa64b048ce511fe0745a5115ce52207\", \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/graph.7.db\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792868683499772252, \"sha256\": \"878ca2732349aa4c1f2c498fa13a18cd6bc4166d0d6b709820a99e465c97bd5a\", \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/source-snapshots\": {\"gid\": 10001, \"mode\": 16832, \"mtime_ns\": 1792868683500840633, \"sha256\": null, \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/source-snapshots/catalog.json\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792868683500775091, \"sha256\": \"e9837aa16e1498306b8b1419311d9f45ab440343939b9b8fb7d63f8719525d2d\", \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/source-snapshots/manifest.25924744c3fcd287b4f9ef0da0871fa5ca47c559161220dd3d770b8f376e443d.json\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792868683497776616, \"sha256\": \"25924744c3fcd287b4f9ef0da0871fa5ca47c559161220dd3d770b8f376e443d\", \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/source-snapshots/pack.b6aeb68678310f2545e56021c173bfc6bdc75f8a0298487d0cdcd1e6669bb5a2.bin\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792868683496966819, \"sha256\": \"b6aeb68678310f2545e56021c173bfc6bdc75f8a0298487d0cdcd1e6669bb5a2\", \"uid\": 10001}}\n"
+    },
+    {
+      "argv": [
+        "docker",
+        "run",
+        "--rm",
+        "--read-only",
+        "--network",
+        "none",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-288/test_native_publication_readon0/source:/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-288/test_native_publication_readon0/source:ro",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-288/test_native_publication_readon0/graphs:/graphs:ro",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-288/test_native_publication_readon0/memex:/memex",
+        "--entrypoint",
+        "python",
+        "atlas-aci-s08-final",
+        "-c",
+        "import hashlib,json,os;from pathlib import Path;r={};root=Path('/graphs');\nfor p in sorted(root.rglob('*')):\n s=p.stat();r[str(p.relative_to(root))]={'sha256':hashlib.sha256(p.read_bytes()).hexdigest() if p.is_file() else None,'mode':s.st_mode,'mtime_ns':s.st_mtime_ns,'uid':s.st_uid,'gid':s.st_gid}\nprint(json.dumps(r,sort_keys=True))"
+      ],
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "{\"repos\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792868683459237568, \"sha256\": null, \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792868684345470124, \"sha256\": null, \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/.index.lock\": {\"gid\": 10001, \"mode\": 33188, \"mtime_ns\": 1792868683460602617, \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/extraction-cache\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792868683474531611, \"sha256\": null, \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/extraction-cache/v1\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792868684315553207, \"sha256\": null, \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/extraction-cache/v1/0e\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792868684250393804, \"sha256\": null, \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/extraction-cache/v1/0e/0e8b588e4ac5ee809f352298727f8dd76ea74801466b65e2b8885e28d19a9e2f.json\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792868684250228845, \"sha256\": \"846e88c308902cdf408a7eb7eba99dd4d0857ea3cc2dbf67ddb78575ffedcc44\", \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/extraction-cache/v1/87\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792868684315846750, \"sha256\": null, \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/extraction-cache/v1/87/870a3196b2cb2ef28501909e495d484c32b7b8ccc90a8722957475af5973ac2d.json\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792868684315745041, \"sha256\": \"480eacb65717a13db5d88eb8e2d3abb7012a0d5ef0c22cc2ec3f22fb98614715\", \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/extraction-cache/v1/ed\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792868683474813655, \"sha256\": null, \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/extraction-cache/v1/ed/edce6640a6fa4da5e7cbde9323e73e559035581cb033966313f5fa231e5c982c.json\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792868683474729654, \"sha256\": \"fdef5c4cb3adddef27a6988747bf85553aa64b048ce511fe0745a5115ce52207\", \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/graph.7.db\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792868684343936407, \"sha256\": \"d6bb1f093f54cb191806702664bac6325949f744f73c385258912de94d8b3905\", \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/source-snapshots\": {\"gid\": 10001, \"mode\": 16832, \"mtime_ns\": 1792868684345343040, \"sha256\": null, \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/source-snapshots/catalog.json\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792868684345124288, \"sha256\": \"72876ba4752753cb584216e645456fac2e777d5ceef4c4b92d1c5b2e2d583840\", \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/source-snapshots/manifest.3e3f9f142ab67f1fa59a6e6608a7b5b3a91fa1d91d47975f57fbf67a48d2e87b.json\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792868684282796317, \"sha256\": \"3e3f9f142ab67f1fa59a6e6608a7b5b3a91fa1d91d47975f57fbf67a48d2e87b\", \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/source-snapshots/manifest.41eb1cd1b702843a1cb05d9b6bd1af1d9131e3c497feafe14e6052933ddb8d5e.json\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792868684342055188, \"sha256\": \"41eb1cd1b702843a1cb05d9b6bd1af1d9131e3c497feafe14e6052933ddb8d5e\", \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/source-snapshots/pack.00ecb2c83f4b95b38abcbc7fbef4d3a1287692f3dba67dcdc384741ac493692c.bin\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792868684281877561, \"sha256\": \"00ecb2c83f4b95b38abcbc7fbef4d3a1287692f3dba67dcdc384741ac493692c\", \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/source-snapshots/pack.2bbc4c1a0c092b80411b51d8cbf356f50e1060312877e04c8d4fe7060da12089.bin\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792868684341320392, \"sha256\": \"2bbc4c1a0c092b80411b51d8cbf356f50e1060312877e04c8d4fe7060da12089\", \"uid\": 10001}}\n"
+    },
+    {
+      "argv": [
+        "docker",
+        "run",
+        "--rm",
+        "--read-only",
+        "--network",
+        "none",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-288/test_native_publication_readon0/source:/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-288/test_native_publication_readon0/source:ro",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-288/test_native_publication_readon0/graphs:/graphs:ro",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-288/test_native_publication_readon0/memex:/memex",
+        "--entrypoint",
+        "python",
+        "atlas-aci-s08-final",
+        "-c",
+        "import hashlib,json,os;from pathlib import Path;r={};root=Path('/graphs');\nfor p in sorted(root.rglob('*')):\n s=p.stat();r[str(p.relative_to(root))]={'sha256':hashlib.sha256(p.read_bytes()).hexdigest() if p.is_file() else None,'mode':s.st_mode,'mtime_ns':s.st_mtime_ns,'uid':s.st_uid,'gid':s.st_gid}\nprint(json.dumps(r,sort_keys=True))"
+      ],
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "{\"repos\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792868683459237568, \"sha256\": null, \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792868684345470124, \"sha256\": null, \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/.index.lock\": {\"gid\": 10001, \"mode\": 33188, \"mtime_ns\": 1792868683460602617, \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/extraction-cache\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792868683474531611, \"sha256\": null, \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/extraction-cache/v1\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792868684315553207, \"sha256\": null, \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/extraction-cache/v1/0e\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792868684250393804, \"sha256\": null, \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/extraction-cache/v1/0e/0e8b588e4ac5ee809f352298727f8dd76ea74801466b65e2b8885e28d19a9e2f.json\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792868684250228845, \"sha256\": \"846e88c308902cdf408a7eb7eba99dd4d0857ea3cc2dbf67ddb78575ffedcc44\", \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/extraction-cache/v1/87\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792868684315846750, \"sha256\": null, \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/extraction-cache/v1/87/870a3196b2cb2ef28501909e495d484c32b7b8ccc90a8722957475af5973ac2d.json\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792868684315745041, \"sha256\": \"480eacb65717a13db5d88eb8e2d3abb7012a0d5ef0c22cc2ec3f22fb98614715\", \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/extraction-cache/v1/ed\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792868683474813655, \"sha256\": null, \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/extraction-cache/v1/ed/edce6640a6fa4da5e7cbde9323e73e559035581cb033966313f5fa231e5c982c.json\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792868683474729654, \"sha256\": \"fdef5c4cb3adddef27a6988747bf85553aa64b048ce511fe0745a5115ce52207\", \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/graph.7.db\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792868684343936407, \"sha256\": \"d6bb1f093f54cb191806702664bac6325949f744f73c385258912de94d8b3905\", \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/source-snapshots\": {\"gid\": 10001, \"mode\": 16832, \"mtime_ns\": 1792868684345343040, \"sha256\": null, \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/source-snapshots/catalog.json\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792868684345124288, \"sha256\": \"72876ba4752753cb584216e645456fac2e777d5ceef4c4b92d1c5b2e2d583840\", \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/source-snapshots/manifest.3e3f9f142ab67f1fa59a6e6608a7b5b3a91fa1d91d47975f57fbf67a48d2e87b.json\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792868684282796317, \"sha256\": \"3e3f9f142ab67f1fa59a6e6608a7b5b3a91fa1d91d47975f57fbf67a48d2e87b\", \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/source-snapshots/manifest.41eb1cd1b702843a1cb05d9b6bd1af1d9131e3c497feafe14e6052933ddb8d5e.json\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792868684342055188, \"sha256\": \"41eb1cd1b702843a1cb05d9b6bd1af1d9131e3c497feafe14e6052933ddb8d5e\", \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/source-snapshots/pack.00ecb2c83f4b95b38abcbc7fbef4d3a1287692f3dba67dcdc384741ac493692c.bin\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792868684281877561, \"sha256\": \"00ecb2c83f4b95b38abcbc7fbef4d3a1287692f3dba67dcdc384741ac493692c\", \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/source-snapshots/pack.2bbc4c1a0c092b80411b51d8cbf356f50e1060312877e04c8d4fe7060da12089.bin\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792868684341320392, \"sha256\": \"2bbc4c1a0c092b80411b51d8cbf356f50e1060312877e04c8d4fe7060da12089\", \"uid\": 10001}}\n"
+    },
+    {
+      "argv": [
+        "docker",
+        "run",
+        "--rm",
+        "--read-only",
+        "--network",
+        "none",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-288/test_native_publication_readon0/source:/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-288/test_native_publication_readon0/source:ro",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-288/test_native_publication_readon0/graphs:/graphs:ro",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-288/test_native_publication_readon0/memex:/memex",
+        "--entrypoint",
+        "python",
+        "atlas-aci-s08-final",
+        "-c",
+        "import hashlib,json,os;from pathlib import Path;r={};root=Path('/graphs');\nfor p in sorted(root.rglob('*')):\n s=p.stat();r[str(p.relative_to(root))]={'sha256':hashlib.sha256(p.read_bytes()).hexdigest() if p.is_file() else None,'mode':s.st_mode,'mtime_ns':s.st_mtime_ns,'uid':s.st_uid,'gid':s.st_gid}\nprint(json.dumps(r,sort_keys=True))"
+      ],
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "{\"repos\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792868683459237568, \"sha256\": null, \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792868684345470124, \"sha256\": null, \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/.index.lock\": {\"gid\": 10001, \"mode\": 33188, \"mtime_ns\": 1792868683460602617, \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/extraction-cache\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792868683474531611, \"sha256\": null, \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/extraction-cache/v1\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792868684315553207, \"sha256\": null, \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/extraction-cache/v1/0e\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792868684250393804, \"sha256\": null, \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/extraction-cache/v1/0e/0e8b588e4ac5ee809f352298727f8dd76ea74801466b65e2b8885e28d19a9e2f.json\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792868684250228845, \"sha256\": \"846e88c308902cdf408a7eb7eba99dd4d0857ea3cc2dbf67ddb78575ffedcc44\", \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/extraction-cache/v1/87\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792868684315846750, \"sha256\": null, \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/extraction-cache/v1/87/870a3196b2cb2ef28501909e495d484c32b7b8ccc90a8722957475af5973ac2d.json\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792868684315745041, \"sha256\": \"480eacb65717a13db5d88eb8e2d3abb7012a0d5ef0c22cc2ec3f22fb98614715\", \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/extraction-cache/v1/ed\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792868683474813655, \"sha256\": null, \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/extraction-cache/v1/ed/edce6640a6fa4da5e7cbde9323e73e559035581cb033966313f5fa231e5c982c.json\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792868683474729654, \"sha256\": \"fdef5c4cb3adddef27a6988747bf85553aa64b048ce511fe0745a5115ce52207\", \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/graph.7.db\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792868684343936407, \"sha256\": \"d6bb1f093f54cb191806702664bac6325949f744f73c385258912de94d8b3905\", \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/source-snapshots\": {\"gid\": 10001, \"mode\": 16832, \"mtime_ns\": 1792868684345343040, \"sha256\": null, \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/source-snapshots/catalog.json\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792868684345124288, \"sha256\": \"72876ba4752753cb584216e645456fac2e777d5ceef4c4b92d1c5b2e2d583840\", \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/source-snapshots/manifest.3e3f9f142ab67f1fa59a6e6608a7b5b3a91fa1d91d47975f57fbf67a48d2e87b.json\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792868684282796317, \"sha256\": \"3e3f9f142ab67f1fa59a6e6608a7b5b3a91fa1d91d47975f57fbf67a48d2e87b\", \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/source-snapshots/manifest.41eb1cd1b702843a1cb05d9b6bd1af1d9131e3c497feafe14e6052933ddb8d5e.json\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792868684342055188, \"sha256\": \"41eb1cd1b702843a1cb05d9b6bd1af1d9131e3c497feafe14e6052933ddb8d5e\", \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/source-snapshots/pack.00ecb2c83f4b95b38abcbc7fbef4d3a1287692f3dba67dcdc384741ac493692c.bin\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792868684281877561, \"sha256\": \"00ecb2c83f4b95b38abcbc7fbef4d3a1287692f3dba67dcdc384741ac493692c\", \"uid\": 10001}, \"repos/f6f9fd3a6cd07b1d5c3de2501ae6e3d4eaefb668997d4de30a88711c79dd6c95/source-snapshots/pack.2bbc4c1a0c092b80411b51d8cbf356f50e1060312877e04c8d4fe7060da12089.bin\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792868684341320392, \"sha256\": \"2bbc4c1a0c092b80411b51d8cbf356f50e1060312877e04c8d4fe7060da12089\", \"uid\": 10001}}\n"
+    }
+  ],
+  "g1": {
+    "binding_resolution": {
+      "affected_paths": [
+        "a.py"
+      ],
+      "affected_units": 1,
+      "mode": "full",
+      "reason": "full_requested_or_incompatible_inputs",
+      "removed_paths": [],
+      "removed_units": 0,
+      "reused_paths": [],
+      "reused_units": 0
+    },
+    "edges": 0,
+    "extraction_cache": {
+      "disk_hits": 0,
+      "miss_reasons": {
+        "missing": 1
+      },
+      "misses": 1,
+      "parser_invocations": 1,
+      "predecessor_reused": 0,
+      "write_failures": 0
+    },
+    "extraction_state": "complete",
+    "files_failed": 0,
+    "files_indexed": 1,
+    "files_removed": 0,
+    "files_skipped": 0,
+    "rationale": 0,
+    "refs": 0,
+    "schema_epoch": 7,
+    "snapshot_id": "25924744c3fcd287b4f9ef0da0871fa5ca47c559161220dd3d770b8f376e443d",
+    "symbols": 1,
+    "unsupported_skipped": {}
+  },
+  "g2": {
+    "binding_resolution": {
+      "affected_paths": [
+        "a.py"
+      ],
+      "affected_units": 1,
+      "mode": "full",
+      "reason": "full_requested_or_incompatible_inputs",
+      "removed_paths": [],
+      "removed_units": 0,
+      "reused_paths": [],
+      "reused_units": 0
+    },
+    "edges": 0,
+    "extraction_cache": {
+      "disk_hits": 0,
+      "miss_reasons": {
+        "missing": 1
+      },
+      "misses": 1,
+      "parser_invocations": 1,
+      "predecessor_reused": 0,
+      "write_failures": 0
+    },
+    "extraction_state": "complete",
+    "files_failed": 0,
+    "files_indexed": 1,
+    "files_removed": 0,
+    "files_skipped": 0,
+    "rationale": 0,
+    "refs": 0,
+    "schema_epoch": 7,
+    "snapshot_id": "3e3f9f142ab67f1fa59a6e6608a7b5b3a91fa1d91d47975f57fbf67a48d2e87b",
+    "symbols": 1,
+    "unsupported_skipped": {}
+  },
+  "g3": {
+    "binding_resolution": {
+      "affected_paths": [
+        "a.py"
+      ],
+      "affected_units": 1,
+      "mode": "full",
+      "reason": "full_requested_or_incompatible_inputs",
+      "removed_paths": [],
+      "removed_units": 0,
+      "reused_paths": [],
+      "reused_units": 0
+    },
+    "edges": 0,
+    "extraction_cache": {
+      "disk_hits": 0,
+      "miss_reasons": {
+        "missing": 1
+      },
+      "misses": 1,
+      "parser_invocations": 1,
+      "predecessor_reused": 0,
+      "write_failures": 0
+    },
+    "extraction_state": "complete",
+    "files_failed": 0,
+    "files_indexed": 1,
+    "files_removed": 0,
+    "files_skipped": 0,
+    "rationale": 0,
+    "refs": 0,
+    "schema_epoch": 7,
+    "snapshot_id": "41eb1cd1b702843a1cb05d9b6bd1af1d9131e3c497feafe14e6052933ddb8d5e",
+    "symbols": 1,
+    "unsupported_skipped": {}
+  },
+  "held_argv": [
+    "docker",
+    "run",
+    "--rm",
+    "-i",
+    "--name",
+    "aci-s08-held-e0973546902c4daea599c9e0c9b29d5a",
+    "--read-only",
+    "--network",
+    "none",
+    "-v",
+    "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-288/test_native_publication_readon0/source:/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-288/test_native_publication_readon0/source:ro",
+    "-v",
+    "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-288/test_native_publication_readon0/graphs:/graphs:ro",
+    "-v",
+    "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-288/test_native_publication_readon0/memex:/memex",
+    "--entrypoint",
+    "python",
+    "atlas-aci-s08-final",
+    "-u",
+    "-c",
+    "import errno,json,os,sys,sqlite3,subprocess\nfrom pathlib import Path\nfrom atlas_aci.codegraph import CodeGraph\nassert os.geteuid()==10001\nsource=Path(sys.argv[1]);g=CodeGraph(source,graph_root=Path('/graphs'),read_only=True)\ntry:(source/'negative-write').write_text('forbidden')\nexcept OSError as exc:assert exc.errno==errno.EROFS;code=exc.errno\nelse:raise AssertionError('source writable')\nbase=len(os.listdir('/proc/self/fd'))\ntry:\n with g.reader_lease() as failed:\n  fd=failed._source_lease.fd;db=failed.db\n  raise ValueError('controlled error')\nexcept ValueError:pass\ntry:os.fstat(fd)\nexcept OSError:pass\nelse:raise AssertionError('pack leaked')\ntry:db.execute('SELECT 1')\nexcept sqlite3.ProgrammingError:pass\nelse:raise AssertionError('SQLite leaked')\nassert len(os.listdir('/proc/self/fd'))==base\nwith g.reader_lease() as reader:\n assert len(os.listdir('/proc/self/fd'))==base+2\n print(json.dumps({'ready':True,'uid':os.geteuid(),'errno':code,'token':reader.snapshot_id,'generation_id':reader.generation_id,'pack':reader._source_lease.manifest['pack'],'identity':reader._source_lease.manifest['context']['identity'],'git_runtime_code':subprocess.run(['git','-C',str(source),'rev-parse','--absolute-git-dir'],capture_output=True).returncode}),flush=True)\n assert sys.stdin.readline().strip()=='READ'\n print(json.dumps({'bytes':reader.read_source('a.py').decode(),'definitions':reader.search_symbol('old_target')['definitions']}),flush=True)\nassert len(os.listdir('/proc/self/fd'))==base\ng.close()\n",
+    "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-288/test_native_publication_readon0/source"
+  ],
+  "held_result": {
+    "exit_code": 0,
+    "stderr": "",
+    "stdout": "{\"bytes\": \"def old_target():\\n    return 1\\n\", \"definitions\": [{\"id\": 1, \"name\": \"old_target\", \"kind\": \"function\", \"path\": \"a.py\", \"line_start\": 1, \"line_end\": 2, \"lang\": \"python\", \"entity_id\": \"1e1dd953a3b997b160a2bfe99e478d17b82a6ec98bdc7a731c02a86c07d2dc44\", \"occurrence_id\": \"3087f5f542fcc006cd11fd5bb7a21d039a5b0696ca7a97429a33acbb766ed1bb\"}]}\n"
+  },
+  "image": "atlas-aci-s08-final",
+  "mcp": [
+    {
+      "arguments": {
+        "query": "definitions_of:old_target"
+      },
+      "body": {
+        "definitions": [
+          {
+            "entity_id": "1e1dd953a3b997b160a2bfe99e478d17b82a6ec98bdc7a731c02a86c07d2dc44",
+            "id": 1,
+            "kind": "function",
+            "lang": "python",
+            "line_end": 2,
+            "line_start": 1,
+            "name": "old_target",
+            "occurrence_id": "3087f5f542fcc006cd11fd5bb7a21d039a5b0696ca7a97429a33acbb766ed1bb",
+            "path": "a.py"
+          }
+        ],
+        "generation_id": "6977dcb0b28247c153db425e04f480b802033593a3aee0541728f9c3903ed0c6",
+        "references": [],
+        "snapshot_id": "25924744c3fcd287b4f9ef0da0871fa5ca47c559161220dd3d770b8f376e443d",
+        "source_available": true
+      },
+      "tool": "graph_query"
+    },
+    {
+      "arguments": {
+        "end_line": 2,
+        "path": "a.py",
+        "snapshot_id": "25924744c3fcd287b4f9ef0da0871fa5ca47c559161220dd3d770b8f376e443d",
+        "source_sha256": "80cba8a82d76d793d7c783ab002d03dd279f2f6288e48a28802da78930a7e14a",
+        "start_line": 1
+      },
+      "body": {
+        "end_line": 2,
+        "lines": [
+          "def old_target():\n",
+          "    return 1\n"
+        ],
+        "path": "a.py",
+        "snapshot_id": "25924744c3fcd287b4f9ef0da0871fa5ca47c559161220dd3d770b8f376e443d",
+        "source_mode": "snapshot",
+        "source_sha256": "80cba8a82d76d793d7c783ab002d03dd279f2f6288e48a28802da78930a7e14a",
+        "start_line": 1
+      },
+      "tool": "view_file"
+    },
+    {
+      "arguments": {
+        "end_line": 2,
+        "path": "a.py",
+        "snapshot_id": "25924744c3fcd287b4f9ef0da0871fa5ca47c559161220dd3d770b8f376e443d",
+        "start_line": 1
+      },
+      "body": {
+        "end_line": 2,
+        "lines": [
+          "def old_target():\n",
+          "    return 1\n"
+        ],
+        "path": "a.py",
+        "snapshot_id": "25924744c3fcd287b4f9ef0da0871fa5ca47c559161220dd3d770b8f376e443d",
+        "source_mode": "snapshot",
+        "source_sha256": "80cba8a82d76d793d7c783ab002d03dd279f2f6288e48a28802da78930a7e14a",
+        "start_line": 1
+      },
+      "tool": "view_file"
+    },
+    {
+      "arguments": {
+        "end_line": 2,
+        "path": "a.py",
+        "start_line": 1
+      },
+      "body": {
+        "end_line": 2,
+        "lines": [
+          "def new_target():\n",
+          "    return 2\n"
+        ],
+        "path": "a.py",
+        "source_mode": "live",
+        "start_line": 1
+      },
+      "tool": "view_file"
+    },
+    {
+      "arguments": {
+        "end_line": 2,
+        "path": "a.py",
+        "snapshot_id": "25924744c3fcd287b4f9ef0da0871fa5ca47c559161220dd3d770b8f376e443d",
+        "start_line": 1
+      },
+      "body": {
+        "error": "SNAPSHOT_UNAVAILABLE",
+        "message": "Requested source snapshot is unavailable: [Errno 2] No such file or directory: 'manifest.25924744c3fcd287b4f9ef0da0871fa5ca47c559161220dd3d770b8f376e443d.json'",
+        "retry_hint": "different_tool"
+      },
+      "tool": "view_file"
+    },
+    {
+      "arguments": {
+        "name": "newest"
+      },
+      "body": {
+        "definitions": [
+          {
+            "entity_id": "46e5daf5bdac752374d9356ae97dd4efd1e3e78a8386a7e8176d82b2122ecf55",
+            "id": 1,
+            "kind": "function",
+            "lang": "python",
+            "line_end": 1,
+            "line_start": 1,
+            "name": "newest",
+            "occurrence_id": "92fbcd67be4897f34cb7cf241d37e3eac0f40c4668bb86fdf22565a15a32921c",
+            "path": "a.py"
+          }
+        ],
+        "generation_id": "e6167b9a80d310615a7f6d6b86455aa1a442626f3f7f815e5bbc20a9cac489bd",
+        "references": [],
+        "snapshot_id": "41eb1cd1b702843a1cb05d9b6bd1af1d9131e3c497feafe14e6052933ddb8d5e",
+        "source_available": true
+      },
+      "tool": "search_symbol"
+    }
+  ],
+  "publisher": "macOS native host",
+  "stdio_argv": [
+    "docker",
+    "run",
+    "--rm",
+    "-i",
+    "--name",
+    "aci-s08-mcp-12b19b727889439894aea55e5cee7b70",
+    "--read-only",
+    "--network",
+    "none",
+    "-v",
+    "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-288/test_native_publication_readon0/source:/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-288/test_native_publication_readon0/source:ro",
+    "-v",
+    "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-288/test_native_publication_readon0/graphs:/graphs:ro",
+    "-v",
+    "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-288/test_native_publication_readon0/memex:/memex",
+    "atlas-aci-s08-final",
+    "serve",
+    "--repo",
+    "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-288/test_native_publication_readon0/source",
+    "--graph-root",
+    "/graphs",
+    "--memex-root",
+    "/memex"
+  ]
+}

@@ -47,6 +47,8 @@ def build_tool_manifest(config: Config) -> list[dict[str, Any]]:
                     "path": {"type": "string", "description": "Repo-relative file path"},
                     "start_line": {"type": "integer", "minimum": 1},
                     "end_line": {"type": "integer", "minimum": 1},
+                    "snapshot_id": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+                    "source_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
                 },
             },
         },
@@ -402,10 +404,18 @@ async def dispatch_tool_call(
                 else await graph_query(arguments, config, enforcement, reader)
             )
             result["generation_id"] = reader.generation_id
+            result["snapshot_id"] = reader.snapshot_id
+            result["source_available"] = reader.snapshot_id is not None
             return apply_central_bounds(name, arguments, result, enforcement)
 
     if name == "view_file":
-        result = await view_file(arguments, config, enforcement)
+        if "snapshot_id" in arguments:
+            with code_graph.source_lease(arguments["snapshot_id"]) as source_reader:
+                result = await view_file(
+                    arguments, config, enforcement, source_reader=source_reader
+                )
+        else:
+            result = await view_file(arguments, config, enforcement)
     elif name == "list_dir":
         result = await list_dir(arguments, config, enforcement)
     elif name == "search_text":

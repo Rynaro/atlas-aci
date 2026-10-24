@@ -1,0 +1,44 @@
+{
+  "plan": "aci-s08-lease-footprint",
+  "slice_id": "ACI-S08",
+  "supporting": true,
+  "spec": ".spectra/plans/aci-s08-lease-footprint.md",
+  "criteria": ".spectra/plans/aci-s08-lease-footprint.criteria.md",
+  "state": ".spectra/plans/aci-s08-lease-footprint.state.json",
+  "scope": [
+    "mcp-server/src/atlas_aci/storage/snapshots.py",
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/tests/slices/test_s08_*.py",
+    ".spectra/plans/aci-s08-lease-footprint.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/changes/aci-s08/lease-footprint/*",
+    ".spectra/evidence/aci-s08/lease-footprint/*"
+  ],
+  "original_execution_identity": {
+    "slice_id": "ACI-S08",
+    "criteria_sha256": "216f05f349bf35630f299ba814be697b8150e3b0da0bd2fef0512a21b34d3dba",
+    "receipt": ".spectra/state/aci-s08.execution.json"
+  },
+  "stories": [
+    {
+      "name": "Compact internal source proof without weakening validation",
+      "timebox_engineering_days": 1,
+      "within_original_days": 5,
+      "executor": "same Vivi"
+    }
+  ],
+  "confidence": {
+    "rubric": "confidence",
+    "total": 88.75,
+    "dims": {
+      "pattern_match": 85,
+      "requirement_clarity": 95,
+      "decomposition_stability": 85,
+      "constraint_compliance": 90
+    },
+    "verdict": "AUTO_PROCEED",
+    "at": "2026-10-24T19:54:26Z",
+    "label": "compact-proof-plan-with-exact-old-algorithm-oracles"
+  },
+  "status": "READY"
+}

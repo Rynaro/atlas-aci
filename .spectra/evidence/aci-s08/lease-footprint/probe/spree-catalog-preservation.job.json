@@ -1,0 +1,15 @@
+{
+  "command": [
+    "/private/tmp/atlas-aci-aci-s08/mcp-server/.venv/bin/python",
+    "/private/tmp/atlas-aci-aci-s08/.spectra/evidence/aci-s08/lease-footprint/preserve_catalog.py",
+    "spree"
+  ],
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 0.7932038750004722,
+  "prior_seconds_charged": 1392.0202244179818,
+  "cumulative_seconds_charged": 1392.8134282929823,
+  "peak_rss_bytes": 727695360,
+  "per_job_cap_seconds": 600,
+  "total_cap_seconds": 2700
+}

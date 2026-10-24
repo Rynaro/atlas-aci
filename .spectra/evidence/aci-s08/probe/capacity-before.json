@@ -1,0 +1,7 @@
+{
+  "total": 245107195904,
+  "used": 233925115904,
+  "free": 11182080000,
+  "probe_not_started_yet": true,
+  "required_source_preservation": "S02 seed clones, SDK/uv cache, source worktrees, all compact evidence retained"
+}

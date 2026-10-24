@@ -1,0 +1,15 @@
+mcp-server/src/atlas_aci/codegraph.py
+mcp-server/src/atlas_aci/storage/snapshots.py
+mcp-server/src/atlas_aci/storage/evidence.py
+mcp-server/tests/slices/test_s08_*.py
+mcp-server/src/atlas_aci/server.py
+mcp-server/src/atlas_aci/tools/view_file.py
+README.md
+mcp-server/tests/test_server.py
+.spectra/plans/aci-s08.*
+.spectra/plans/ramza-calibration.jsonl
+.spectra/changes/aci-s08/*
+.spectra/evidence/aci-s08/*
+.spectra/state/aci-s08.execution.json
+.spectra/backlog/execution.json
+.spectra/backlog/order.md

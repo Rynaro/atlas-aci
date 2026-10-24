@@ -1,0 +1,14 @@
+{
+  "sources": {
+    "mcp-server/src/atlas_aci/codegraph.py": "30d0c8d718ed0115bc7b88051bd1ca7ba358665fabfe35b9a57029de2ebb0183",
+    "mcp-server/src/atlas_aci/storage/snapshots.py": "67d3d7c3313b64315fa4bb2388cacdf30aae79b701ff0fc6c1b5c741f75ca616",
+    "mcp-server/tests/slices/test_s08_lease_footprint.py": "a7d4e923b946fffdae831907b42e19dad8b7f6202118366fbcfd378d36c6c5a6",
+    "mcp-server/tests/slices/test_s08_integration.py": "3c0bd8be04dcd1372246a6f48a2edc9467313ca01cb6d82e0cebc3b27dad4432"
+  },
+  "focused_command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/tmp/atlas-aci-aci-s08/mcp-server/src mcp-server/.venv/bin/python -m pytest -p no:cacheprovider mcp-server/tests/slices/test_s08_contract.py mcp-server/tests/slices/test_s08_integration.py mcp-server/tests/slices/test_s08_lease_footprint.py -q",
+  "exit_code": 0,
+  "result": "62 passed in 2.74s",
+  "log": ".spectra/evidence/aci-s08/lease-footprint/compact-focused-third.log",
+  "lint_exit_code": 0,
+  "scope": "early proof/adapter/acquisition; final native/full/probe pending"
+}

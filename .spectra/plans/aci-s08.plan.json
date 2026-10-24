@@ -1,0 +1,54 @@
+{
+  "plan": "aci-s08",
+  "slice_id": "ACI-S08",
+  "spec": ".spectra/plans/aci-s08.md",
+  "criteria": ".spectra/plans/aci-s08.criteria.md",
+  "state": ".spectra/plans/aci-s08.state.json",
+  "scope": [
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/src/atlas_aci/storage/snapshots.py",
+    "mcp-server/src/atlas_aci/storage/evidence.py",
+    "mcp-server/tests/slices/test_s08_*.py",
+    "mcp-server/src/atlas_aci/server.py",
+    "mcp-server/src/atlas_aci/tools/view_file.py",
+    "README.md",
+    "mcp-server/tests/test_server.py",
+    ".spectra/plans/aci-s08.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/changes/aci-s08/*",
+    ".spectra/evidence/aci-s08/*",
+    ".spectra/state/aci-s08.execution.json",
+    ".spectra/backlog/execution.json",
+    ".spectra/backlog/order.md"
+  ],
+  "output_digest_exclusions": [
+    ".spectra/state/aci-s08.execution.json",
+    ".spectra/evidence/aci-s08/final-reentry-before.json",
+    ".spectra/evidence/aci-s08/final-reentry-after.json",
+    ".spectra/evidence/aci-s08/final-reentry-summary.json",
+    ".spectra/evidence/aci-s08/final-resume-identity.json",
+    ".spectra/evidence/aci-s08/output-check-tests.log"
+  ],
+  "stories": [
+    {
+      "name": "Coherent immutable source evidence and readonly retention",
+      "timebox_engineering_days": 5,
+      "executor": "Vivi",
+      "first_checkpoint": "Actual graph+manifest+pack lease across host writer/readonly Docker publication/prune, closed missing/foreign binding rejection and G1 preservation; primitive proof alone is not product acceptance."
+    }
+  ],
+  "confidence": {
+    "rubric": "confidence",
+    "total": 86.25,
+    "dims": {
+      "pattern_match": 80,
+      "requirement_clarity": 95,
+      "decomposition_stability": 85,
+      "constraint_compliance": 85
+    },
+    "verdict": "AUTO_PROCEED",
+    "at": "2026-10-24T18:39:18Z",
+    "label": "packed-source-snapshot-plan-after-native-proof-and-independent-review"
+  },
+  "status": "READY"
+}

@@ -1,0 +1,15 @@
+{
+  "command": [
+    "/private/tmp/atlas-aci-aci-s08/mcp-server/.venv/bin/python",
+    "/private/tmp/atlas-aci-aci-s08/.spectra/evidence/aci-s08/lease-footprint/probe/old_oracle.py",
+    "/tmp/aci-s08-refined-probe-inputs/spree"
+  ],
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 28.90475383400917,
+  "prior_seconds_charged": 1278.1772297509742,
+  "cumulative_seconds_charged": 1307.0819835849834,
+  "peak_rss_bytes": 2394521600,
+  "per_job_cap_seconds": 600,
+  "total_cap_seconds": 2700
+}

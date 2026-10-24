@@ -1,0 +1,85 @@
+{
+  "supporting_plan": "aci-s08-lease-footprint",
+  "slice_id": "ACI-S08",
+  "original_execution_identity": {
+    "slice_id": "ACI-S08",
+    "criteria_sha256": "216f05f349bf35630f299ba814be697b8150e3b0da0bd2fef0512a21b34d3dba",
+    "receipt": ".spectra/state/aci-s08.execution.json"
+  },
+  "worktree": "/private/tmp/atlas-aci-aci-s08",
+  "branch": "aci-s08",
+  "base_commit": "fa75bec971502b72ce85f9e87ab7ec2876274ce9",
+  "held_baseline_sources": {
+    "mcp-server/src/atlas_aci/codegraph.py": "7565e53d9f530055bda2486774397a22d946c6e5e15952cb010519493216d2fb",
+    "mcp-server/src/atlas_aci/storage/evidence.py": "65d1ce7d43df6d652c640229407ab0211d5bb1f4c766f1e694e2979d516a3525",
+    "mcp-server/src/atlas_aci/providers/python_imports.py": "de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014",
+    "mcp-server/src/atlas_aci/indexing/extraction_cache.py": "08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2",
+    "mcp-server/src/atlas_aci/resolvers/dependencies.py": "0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6",
+    "mcp-server/src/atlas_aci/extractors/rust.py": "28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a",
+    "mcp-server/src/atlas_aci/storage/snapshots.py": "bd77fa8ce6114f744a733fb2644f1b406cfee5b053b8d1e8655dae7040dfb479",
+    "mcp-server/src/atlas_aci/server.py": "f9a1f820f685205569ba6b1f5026ed982b7123bcb91cc33237805fcc60f43970",
+    "mcp-server/src/atlas_aci/tools/view_file.py": "31871a9d7594091a52790feac3a5746039cc8c939c7c3f7116e99a9f1f5e48e3"
+  },
+  "original_artifacts_immutable": {
+    ".spectra/plans/aci-s08.md": "260694c5cb057a97e82d110fa47256eecdc4b2eb969eb5a789626f9c2009c0ac",
+    ".spectra/plans/aci-s08.criteria.md": "216f05f349bf35630f299ba814be697b8150e3b0da0bd2fef0512a21b34d3dba",
+    ".spectra/plans/aci-s08.state.json": "9a803f145d49ac5243ed410b7b564bca7767554069be3ae4d8bb049103b7cb06",
+    ".spectra/plans/aci-s08.envelope.json": "d184c0b80f630026279250fc27d86a7c7e8ee8a2708717122a78e48ff0b20f4b"
+  },
+  "spec": ".spectra/plans/aci-s08-lease-footprint.md",
+  "envelope": ".spectra/plans/aci-s08-lease-footprint.envelope.json",
+  "supporting_criteria_sha256": "2cbc4c2fe6516ef01a3f45b9a9570c73fd84f952aac6f7429a6d1f650dab8d54",
+  "actual_confidence": {
+    "rubric": "confidence",
+    "total": 88.75,
+    "dims": {
+      "pattern_match": 85,
+      "requirement_clarity": 95,
+      "decomposition_stability": 85,
+      "constraint_compliance": 90
+    },
+    "verdict": "AUTO_PROCEED",
+    "at": "2026-10-24T19:54:26Z",
+    "label": "compact-proof-plan-with-exact-old-algorithm-oracles"
+  },
+  "confidence_basis": {
+    "pattern_match": "85: cursor-ordered existing typed records and canonical encoder are reusable; new compact schema and live/history merge remain implementation work.",
+    "requirement_clarity": "95: measured duplicate footprint, exact original digest/validation boundaries and non-goals are explicit and independently reviewed.",
+    "decomposition_stability": "85: three bounded steps with independent reference algorithms and strict v1 adapter; actual streaming/dedup correctness and costs still need proof.",
+    "constraint_compliance": "90: no native/platform/dependency/portable change; one-day supporting cap fits remaining original five-day allocation, and measured baseline486.645s is charged against2700 with no reset."
+  },
+  "checker_evidence": ".spectra/plans/aci-s08-lease-footprint.review.json",
+  "execution_prescriptions": [
+    "Keep the exact old graph JSON-array byte oracle independent from the streaming implementation, with full typed/history dedup and individual range validation.",
+    "Distinct coherently rehashed raw-range, projection and current-observation controls remain; compact commitments never replace actual own-DB validation or add a standalone graph authenticity claim.",
+    "Retain a REAL old v1 fixture/strict adapter, original IDs, native v4 missing-source rejection and closed import-unavailable variant.",
+    "Only mark owned lease validated after ALL checks; instrument real calls, then corrupt state before the next request and require independent rejection.",
+    "Measure isolated ordinary graph/source-only costs separately from whole accounting; carry baseline486.645136166s plus all later charges into cumulative600/2700 caps, and retain original five-day allocation."
+  ],
+  "scope_amendment": ".spectra/changes/aci-s08/lease-footprint/scope-amendment.json",
+  "first_checkpoint": "Audit held baseline; measure isolated fresh-process graph lease, ordinary bounded MCP query and source-only lease on both unchanged indexed corpora before editing. Establish independent materialized proof oracle and real v1 fixture.",
+  "budget": {
+    "original_engineering_days": 5,
+    "total_seconds": 144000,
+    "reported_charged_seconds": 3707.89,
+    "supporting_cap_seconds": 28800,
+    "probe_per_job_seconds": 600,
+    "probe_total_seconds": 2700,
+    "rule": "Charge all prior completed/running baseline jobs and new measurements; never reset cumulative caps. Use smaller remaining original allocation/support cap."
+  },
+  "prior_probe_seconds_charged": 486.645136166,
+  "measurements": "No hard memory/latency bar invented; compare isolated and aggregate metrics honestly. Fresh producer evidence cannot re-sign baseline.",
+  "authoritative_receipt": ".spectra/state/aci-s08.execution.json",
+  "output_digest_exclusions": [
+    ".spectra/state/aci-s08.execution.json",
+    ".spectra/evidence/aci-s08/final-reentry-before.json",
+    ".spectra/evidence/aci-s08/final-reentry-after.json",
+    ".spectra/evidence/aci-s08/final-reentry-summary.json",
+    ".spectra/evidence/aci-s08/final-resume-identity.json",
+    ".spectra/evidence/aci-s08/output-check-tests.log"
+  ],
+  "helpers_root": "/Users/henrique/workspace/oss/agents/atlas-aci/.eidolons/ramza/bin",
+  "schemas_root": "/Users/henrique/workspace/oss/agents/atlas-aci/.eidolons/ramza/schemas",
+  "root_gate": "Root mechanical verify-envelope --block with this supporting message/thread/spec correlation before the same Vivi writer resumes.",
+  "publication": "Root owns green CI/merge/sync; no new execution identity or paid/deployment action."
+}

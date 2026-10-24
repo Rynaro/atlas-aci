@@ -1,0 +1,41 @@
+{
+  "kind": "native-primitive-feasibility",
+  "status": "REJECTED_FOR_CROSS_KERNEL_RETENTION",
+  "checker": "atlas-s15_preflight",
+  "source": "Actual independent ATLAS report; no product implementation",
+  "fixture": "/private/tmp/aci-s08-lock-domain-8qo4aza2/snapshot.lock",
+  "image": "sha256:d01e6c42b3a84b3047e14c270566defcd5c9361e32e2de6a5168a4a36c714162",
+  "file": {
+    "size": 21,
+    "mode": "0644",
+    "uid": 501,
+    "gid": 0,
+    "mtime_ns": "1792866488932897374",
+    "sha256": "ab94de410a2e3cba23f53e3b33b2c0dc706d836a216761b0da3cda79f8a2b928"
+  },
+  "observations": {
+    "native_macos_ex_while_sh": {
+      "acquired": false,
+      "errno": 35
+    },
+    "native_macos_after_release": {
+      "acquired": true
+    },
+    "linux_ex_while_linux_sh": {
+      "acquired": false,
+      "errno": 11
+    },
+    "linux_after_release": {
+      "acquired": true
+    },
+    "macos_ex_while_linux_sh": {
+      "acquired": true
+    },
+    "linux_write_errno": 30,
+    "linux_uid": 10001,
+    "all_children_exit": 0,
+    "bytes_metadata_unchanged": true
+  },
+  "synchronization": "Separate processes; READY/stdin barriers, bounded selectors/communicate deadlines; no sleeps",
+  "disposition": "Reject catalog/per-snapshot flock design for required host-indexed graph served by readonly Docker. Preserve failure and qualify coalesced immutable pack open-FD alternative before adoption."
+}

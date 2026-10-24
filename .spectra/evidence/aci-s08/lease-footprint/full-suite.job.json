@@ -1,0 +1,20 @@
+{
+  "command": [
+    ".venv/bin/python",
+    "-m",
+    "pytest",
+    "-p",
+    "no:cacheprovider",
+    "-q"
+  ],
+  "cwd": "mcp-server",
+  "exit_code": 0,
+  "elapsed_seconds": 59.39353454200318,
+  "docker_image": "atlas-aci-s08-footprint",
+  "image_id": "sha256:da089d0b288e9a77ea14434dfffdc86ee1278916ac502cd35a56a19b64290858",
+  "docker_enabled": [
+    "S06",
+    "S15",
+    "S08"
+  ]
+}

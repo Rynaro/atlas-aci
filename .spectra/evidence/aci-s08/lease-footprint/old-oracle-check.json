@@ -1,0 +1,15 @@
+{
+  "exit_code": 0,
+  "oracle_source_sha256": "bd77fa8ce6114f744a733fb2644f1b406cfee5b053b8d1e8655dae7040dfb479",
+  "graph_canonical_array_bytes": 7777,
+  "graph_digest": "3eccb949d9efd7c1bdcf17af095184e3c09de8cfe9b23950311662b3b364abb4",
+  "range_count": 12,
+  "observation_digest": "ccb8e7252d2e4f4d56959a1546e9362f672f206539a334278d7f8d3ce2f45a6b",
+  "controls": [
+    "actual current+history",
+    "reverse input order",
+    "exact duplicate dedup",
+    "conflicting ID rejected"
+  ],
+  "no_product_edits": true
+}

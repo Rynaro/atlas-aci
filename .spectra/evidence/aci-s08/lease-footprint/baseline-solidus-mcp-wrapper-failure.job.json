@@ -1,0 +1,16 @@
+{
+  "command": [
+    "/private/tmp/atlas-aci-aci-s08/mcp-server/.venv/bin/python",
+    "/private/tmp/atlas-aci-aci-s08/.spectra/evidence/aci-s08/lease-footprint/measure_baseline.py",
+    "mcp",
+    "/tmp/aci-s08-probe-inputs/solidus"
+  ],
+  "exit_code": -15,
+  "timed_out": false,
+  "elapsed_seconds": 29.90791729200282,
+  "prior_charge_seconds": 521.6841970829846,
+  "cumulative_charge_seconds": 551.5921143749874,
+  "peak_rss_bytes": null,
+  "per_job_cap_seconds": 600,
+  "total_cap_seconds": 2700
+}

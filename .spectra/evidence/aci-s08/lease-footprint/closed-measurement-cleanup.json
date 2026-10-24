@@ -1,0 +1,84 @@
+{
+  "authority": "Root explicit exact6 scratch removal authorization after independent baseline/refined/native/oracle audits",
+  "at_epoch": 1792874606.928603,
+  "before_disk": {
+    "total": 245107195904,
+    "used": 240191995904,
+    "free": 4915200000
+  },
+  "preservation_summary": ".spectra/evidence/aci-s08/lease-footprint/probe/cleanup-preservation-summary.json",
+  "preservation_refs": [
+    ".spectra/evidence/aci-s08/lease-footprint/probe/solidus-catalog-preservation.json",
+    ".spectra/evidence/aci-s08/lease-footprint/probe/spree-catalog-preservation.json"
+  ],
+  "paths": [
+    {
+      "path": "/tmp/aci-s08-probe-inputs/solidus/.atlas",
+      "real_path": "/private/tmp/aci-s08-probe-inputs/solidus/.atlas",
+      "allocated_kib": 948376,
+      "kind": "completed generated SQLite/cache/sourcepack only",
+      "parent_git_preserved": true,
+      "files_before": 2524,
+      "logical_bytes_before": 965977920,
+      "allocated_kib_before": 948376,
+      "removed": true
+    },
+    {
+      "path": "/tmp/aci-s08-probe-inputs/spree/.atlas",
+      "real_path": "/private/tmp/aci-s08-probe-inputs/spree/.atlas",
+      "allocated_kib": 1515032,
+      "kind": "completed generated SQLite/cache/sourcepack only",
+      "parent_git_preserved": true,
+      "files_before": 2363,
+      "logical_bytes_before": 1546477358,
+      "allocated_kib_before": 1515032,
+      "removed": true
+    },
+    {
+      "path": "/tmp/aci-s08-refined-probe-inputs/solidus/.atlas",
+      "real_path": "/private/tmp/aci-s08-refined-probe-inputs/solidus/.atlas",
+      "allocated_kib": 861704,
+      "kind": "completed generated SQLite/cache/sourcepack only",
+      "parent_git_preserved": true,
+      "files_before": 2524,
+      "logical_bytes_before": 877228070,
+      "allocated_kib_before": 861704,
+      "removed": true
+    },
+    {
+      "path": "/tmp/aci-s08-refined-probe-inputs/spree/.atlas",
+      "real_path": "/private/tmp/aci-s08-refined-probe-inputs/spree/.atlas",
+      "allocated_kib": 1373644,
+      "kind": "completed generated SQLite/cache/sourcepack only",
+      "parent_git_preserved": true,
+      "files_before": 2363,
+      "logical_bytes_before": 1401696693,
+      "allocated_kib_before": 1373644,
+      "removed": true
+    },
+    {
+      "path": "/tmp/aci-s08-spree-export.jsonl",
+      "bytes": 651845336,
+      "sha256": "3c65f32c4702d6d9398f17bde21c292c29af66ecd5bffd6d9ca68355bfce3832",
+      "kind": "completed full portable measurement scratch; exact hash/size/provenance retained",
+      "verified_predelete_sha256": "3c65f32c4702d6d9398f17bde21c292c29af66ecd5bffd6d9ca68355bfce3832",
+      "removed": true
+    },
+    {
+      "path": "/tmp/aci-s08-refined-spree-export.jsonl",
+      "bytes": 651845336,
+      "sha256": "39da8ac3fcf854317e3aace8ff05e1365d7b786a6d932aa64fdbcb7085adfb34",
+      "kind": "completed full portable measurement scratch; exact hash/size/provenance retained",
+      "verified_predelete_sha256": "39da8ac3fcf854317e3aace8ff05e1365d7b786a6d932aa64fdbcb7085adfb34",
+      "removed": true
+    }
+  ],
+  "preserved": "ALL source parents/.git/seeds/SDK/UV/grammar assets/v1 fixture/9 source archives/compact graphs/20 partitions/logs/metadata/receipts",
+  "after_disk": {
+    "total": 245107195904,
+    "used": 234047995904,
+    "free": 11059200000
+  },
+  "free_bytes_increase": 6144000000,
+  "status": "EXACT6_REMOVED_SOURCE_PARENTS_AND_PROOF_RETAINED"
+}

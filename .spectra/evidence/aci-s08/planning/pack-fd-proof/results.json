@@ -1,0 +1,460 @@
+{
+  "image": "sha256:d01e6c42b3a84b3047e14c270566defcd5c9361e32e2de6a5168a4a36c714162",
+  "root": "/private/tmp/aci-s08-pack-proof-8f_xxbwp",
+  "cases": [
+    {
+      "case": "mac_native",
+      "reader_argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-u",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp/reader.py",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp/mac_native/pack-g1",
+        "8246b3b30d88a5e3cfc50c75bbd7e440fa72bb40c945389c19af3d04e18b5db1",
+        "[[0, 31, \"49fefa95586c0281f625fb1e5852d7afc14055e70debdc40f400ce0c2aeb2c40\"], [4093, 91, \"021310c78d830291153a2ca55efe9f199a3ae2195fc5eb1bf455ae07092ba696\"], [2097159, 127, \"774bec566ab02ce57b6cc6548e953e49fb0d857295d5ad6f2d75adc42dd378dc\"], [4194282, 37, \"acc70baf794a5ed66f2f0c1e3774c71f689f2ebabaee3e009c32b666c91aa358\"], [4194326, 16, \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"]]",
+        "normal"
+      ],
+      "writer_argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp/writer.py",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp/mac_native",
+        "absent"
+      ],
+      "ready": {
+        "stage": "opened",
+        "uid": 501,
+        "size": 4194319,
+        "data_fd_delta": 1
+      },
+      "result": {
+        "uid": 501,
+        "mode": "normal",
+        "data_fd_delta": 1,
+        "access_mode": 0,
+        "fd_write_errno": 9,
+        "path_exists_after_publication": false,
+        "samples_ok": true,
+        "full_sha256": "8246b3b30d88a5e3cfc50c75bbd7e440fa72bb40c945389c19af3d04e18b5db1",
+        "bytes_read": 4194319,
+        "eof_ok": true,
+        "stat_unchanged": false,
+        "status": "ok",
+        "closed_errno": 9,
+        "fd_count_restored": true
+      },
+      "reader_exit": 0,
+      "writer_exit": 0,
+      "stderr": "",
+      "original_sha256": "8246b3b30d88a5e3cfc50c75bbd7e440fa72bb40c945389c19af3d04e18b5db1",
+      "replacement_sha256": "cb654a4938f754f5baffb20893e2a2cf7f6064c8459df5092d7de409b338e37f",
+      "original_bytes": 4194319
+    },
+    {
+      "case": "linux_native",
+      "reader_argv": [
+        "docker",
+        "run",
+        "--rm",
+        "-i",
+        "--name",
+        "aci-s08-pack-cb94490bfe",
+        "--read-only",
+        "--network",
+        "none",
+        "-v",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp:/private/tmp/aci-s08-pack-proof-8f_xxbwp:ro",
+        "--entrypoint",
+        "python",
+        "sha256:d01e6c42b3a84b3047e14c270566defcd5c9361e32e2de6a5168a4a36c714162",
+        "-u",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp/reader.py",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp/linux_native/pack-g1",
+        "8246b3b30d88a5e3cfc50c75bbd7e440fa72bb40c945389c19af3d04e18b5db1",
+        "[[0, 31, \"49fefa95586c0281f625fb1e5852d7afc14055e70debdc40f400ce0c2aeb2c40\"], [4093, 91, \"021310c78d830291153a2ca55efe9f199a3ae2195fc5eb1bf455ae07092ba696\"], [2097159, 127, \"774bec566ab02ce57b6cc6548e953e49fb0d857295d5ad6f2d75adc42dd378dc\"], [4194282, 37, \"acc70baf794a5ed66f2f0c1e3774c71f689f2ebabaee3e009c32b666c91aa358\"], [4194326, 16, \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"]]",
+        "normal"
+      ],
+      "writer_argv": [
+        "docker",
+        "run",
+        "--rm",
+        "--read-only",
+        "--network",
+        "none",
+        "-v",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp:/private/tmp/aci-s08-pack-proof-8f_xxbwp",
+        "--entrypoint",
+        "python",
+        "sha256:d01e6c42b3a84b3047e14c270566defcd5c9361e32e2de6a5168a4a36c714162",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp/writer.py",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp/linux_native",
+        "absent"
+      ],
+      "ready": {
+        "stage": "opened",
+        "uid": 10001,
+        "size": 4194319,
+        "data_fd_delta": 1
+      },
+      "result": {
+        "uid": 10001,
+        "mode": "normal",
+        "data_fd_delta": 1,
+        "access_mode": 0,
+        "fd_write_errno": 9,
+        "path_exists_after_publication": false,
+        "samples_ok": true,
+        "full_sha256": "8246b3b30d88a5e3cfc50c75bbd7e440fa72bb40c945389c19af3d04e18b5db1",
+        "bytes_read": 4194319,
+        "eof_ok": true,
+        "stat_unchanged": false,
+        "status": "ok",
+        "closed_errno": 9,
+        "fd_count_restored": true
+      },
+      "reader_exit": 0,
+      "writer_exit": 0,
+      "stderr": "",
+      "original_sha256": "8246b3b30d88a5e3cfc50c75bbd7e440fa72bb40c945389c19af3d04e18b5db1",
+      "replacement_sha256": "cb654a4938f754f5baffb20893e2a2cf7f6064c8459df5092d7de409b338e37f",
+      "original_bytes": 4194319
+    },
+    {
+      "case": "host_docker_replaced",
+      "reader_argv": [
+        "docker",
+        "run",
+        "--rm",
+        "-i",
+        "--name",
+        "aci-s08-pack-95e4c4da43",
+        "--read-only",
+        "--network",
+        "none",
+        "-v",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp:/private/tmp/aci-s08-pack-proof-8f_xxbwp:ro",
+        "--entrypoint",
+        "python",
+        "sha256:d01e6c42b3a84b3047e14c270566defcd5c9361e32e2de6a5168a4a36c714162",
+        "-u",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp/reader.py",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp/host_docker_replaced/pack-g1",
+        "8246b3b30d88a5e3cfc50c75bbd7e440fa72bb40c945389c19af3d04e18b5db1",
+        "[[0, 31, \"49fefa95586c0281f625fb1e5852d7afc14055e70debdc40f400ce0c2aeb2c40\"], [4093, 91, \"021310c78d830291153a2ca55efe9f199a3ae2195fc5eb1bf455ae07092ba696\"], [2097159, 127, \"774bec566ab02ce57b6cc6548e953e49fb0d857295d5ad6f2d75adc42dd378dc\"], [4194282, 37, \"acc70baf794a5ed66f2f0c1e3774c71f689f2ebabaee3e009c32b666c91aa358\"], [4194326, 16, \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"]]",
+        "normal"
+      ],
+      "writer_argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp/writer.py",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp/host_docker_replaced",
+        "replace"
+      ],
+      "ready": {
+        "stage": "opened",
+        "uid": 10001,
+        "size": 4194319,
+        "data_fd_delta": 1
+      },
+      "result": {
+        "uid": 10001,
+        "mode": "normal",
+        "data_fd_delta": 1,
+        "access_mode": 0,
+        "fd_write_errno": 9,
+        "path_exists_after_publication": true,
+        "samples_ok": true,
+        "full_sha256": "8246b3b30d88a5e3cfc50c75bbd7e440fa72bb40c945389c19af3d04e18b5db1",
+        "bytes_read": 4194319,
+        "eof_ok": true,
+        "stat_unchanged": true,
+        "status": "ok",
+        "closed_errno": 9,
+        "fd_count_restored": true
+      },
+      "reader_exit": 0,
+      "writer_exit": 0,
+      "stderr": "",
+      "original_sha256": "8246b3b30d88a5e3cfc50c75bbd7e440fa72bb40c945389c19af3d04e18b5db1",
+      "replacement_sha256": "cb654a4938f754f5baffb20893e2a2cf7f6064c8459df5092d7de409b338e37f",
+      "original_bytes": 4194319
+    },
+    {
+      "case": "host_docker_error",
+      "reader_argv": [
+        "docker",
+        "run",
+        "--rm",
+        "-i",
+        "--name",
+        "aci-s08-pack-0d09aa0570",
+        "--read-only",
+        "--network",
+        "none",
+        "-v",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp:/private/tmp/aci-s08-pack-proof-8f_xxbwp:ro",
+        "--entrypoint",
+        "python",
+        "sha256:d01e6c42b3a84b3047e14c270566defcd5c9361e32e2de6a5168a4a36c714162",
+        "-u",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp/reader.py",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp/host_docker_error/pack-g1",
+        "8246b3b30d88a5e3cfc50c75bbd7e440fa72bb40c945389c19af3d04e18b5db1",
+        "[[0, 31, \"49fefa95586c0281f625fb1e5852d7afc14055e70debdc40f400ce0c2aeb2c40\"], [4093, 91, \"021310c78d830291153a2ca55efe9f199a3ae2195fc5eb1bf455ae07092ba696\"], [2097159, 127, \"774bec566ab02ce57b6cc6548e953e49fb0d857295d5ad6f2d75adc42dd378dc\"], [4194282, 37, \"acc70baf794a5ed66f2f0c1e3774c71f689f2ebabaee3e009c32b666c91aa358\"], [4194326, 16, \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"]]",
+        "error"
+      ],
+      "writer_argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp/writer.py",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp/host_docker_error",
+        "absent"
+      ],
+      "ready": {
+        "stage": "opened",
+        "uid": 10001,
+        "size": 4194319,
+        "data_fd_delta": 1
+      },
+      "result": {
+        "uid": 10001,
+        "mode": "error",
+        "data_fd_delta": 1,
+        "access_mode": 0,
+        "fd_write_errno": 9,
+        "path_exists_after_publication": true,
+        "samples_ok": true,
+        "full_sha256": "8246b3b30d88a5e3cfc50c75bbd7e440fa72bb40c945389c19af3d04e18b5db1",
+        "bytes_read": 4194319,
+        "eof_ok": true,
+        "stat_unchanged": true,
+        "status": "ok",
+        "consumer_error": "controlled consumer error",
+        "closed_errno": 9,
+        "fd_count_restored": true
+      },
+      "reader_exit": 0,
+      "writer_exit": 0,
+      "stderr": "",
+      "original_sha256": "8246b3b30d88a5e3cfc50c75bbd7e440fa72bb40c945389c19af3d04e18b5db1",
+      "replacement_sha256": "cb654a4938f754f5baffb20893e2a2cf7f6064c8459df5092d7de409b338e37f",
+      "original_bytes": 4194319
+    },
+    {
+      "case": "mac_exit",
+      "reader_argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-u",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp/reader.py",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp/mac_exit/pack-g1",
+        "8246b3b30d88a5e3cfc50c75bbd7e440fa72bb40c945389c19af3d04e18b5db1",
+        "[[0, 31, \"49fefa95586c0281f625fb1e5852d7afc14055e70debdc40f400ce0c2aeb2c40\"], [4093, 91, \"021310c78d830291153a2ca55efe9f199a3ae2195fc5eb1bf455ae07092ba696\"], [2097159, 127, \"774bec566ab02ce57b6cc6548e953e49fb0d857295d5ad6f2d75adc42dd378dc\"], [4194282, 37, \"acc70baf794a5ed66f2f0c1e3774c71f689f2ebabaee3e009c32b666c91aa358\"], [4194326, 16, \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"]]",
+        "exit"
+      ],
+      "writer_argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp/writer.py",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp/mac_exit",
+        "absent"
+      ],
+      "ready": {
+        "stage": "opened",
+        "uid": 501,
+        "size": 4194319,
+        "data_fd_delta": 1
+      },
+      "result": {
+        "status": "process_exit_closed_by_os"
+      },
+      "reader_exit": 0,
+      "writer_exit": 0,
+      "stderr": "",
+      "original_sha256": "8246b3b30d88a5e3cfc50c75bbd7e440fa72bb40c945389c19af3d04e18b5db1",
+      "replacement_sha256": "cb654a4938f754f5baffb20893e2a2cf7f6064c8459df5092d7de409b338e37f",
+      "original_bytes": 4194319
+    },
+    {
+      "case": "linux_exit",
+      "reader_argv": [
+        "docker",
+        "run",
+        "--rm",
+        "-i",
+        "--name",
+        "aci-s08-pack-3b8ed683bb",
+        "--read-only",
+        "--network",
+        "none",
+        "-v",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp:/private/tmp/aci-s08-pack-proof-8f_xxbwp:ro",
+        "--entrypoint",
+        "python",
+        "sha256:d01e6c42b3a84b3047e14c270566defcd5c9361e32e2de6a5168a4a36c714162",
+        "-u",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp/reader.py",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp/linux_exit/pack-g1",
+        "8246b3b30d88a5e3cfc50c75bbd7e440fa72bb40c945389c19af3d04e18b5db1",
+        "[[0, 31, \"49fefa95586c0281f625fb1e5852d7afc14055e70debdc40f400ce0c2aeb2c40\"], [4093, 91, \"021310c78d830291153a2ca55efe9f199a3ae2195fc5eb1bf455ae07092ba696\"], [2097159, 127, \"774bec566ab02ce57b6cc6548e953e49fb0d857295d5ad6f2d75adc42dd378dc\"], [4194282, 37, \"acc70baf794a5ed66f2f0c1e3774c71f689f2ebabaee3e009c32b666c91aa358\"], [4194326, 16, \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"]]",
+        "exit"
+      ],
+      "writer_argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp/writer.py",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp/linux_exit",
+        "absent"
+      ],
+      "ready": {
+        "stage": "opened",
+        "uid": 10001,
+        "size": 4194319,
+        "data_fd_delta": 1
+      },
+      "result": {
+        "status": "process_exit_closed_by_os"
+      },
+      "reader_exit": 0,
+      "writer_exit": 0,
+      "stderr": "",
+      "original_sha256": "8246b3b30d88a5e3cfc50c75bbd7e440fa72bb40c945389c19af3d04e18b5db1",
+      "replacement_sha256": "cb654a4938f754f5baffb20893e2a2cf7f6064c8459df5092d7de409b338e37f",
+      "original_bytes": 4194319
+    },
+    {
+      "case": "mac_race_missing",
+      "reader_argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-u",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp/reader.py",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp/mac_race_missing/pack-g1",
+        "8246b3b30d88a5e3cfc50c75bbd7e440fa72bb40c945389c19af3d04e18b5db1",
+        "[[0, 31, \"49fefa95586c0281f625fb1e5852d7afc14055e70debdc40f400ce0c2aeb2c40\"], [4093, 91, \"021310c78d830291153a2ca55efe9f199a3ae2195fc5eb1bf455ae07092ba696\"], [2097159, 127, \"774bec566ab02ce57b6cc6548e953e49fb0d857295d5ad6f2d75adc42dd378dc\"], [4194282, 37, \"acc70baf794a5ed66f2f0c1e3774c71f689f2ebabaee3e009c32b666c91aa358\"], [4194326, 16, \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"]]",
+        "race_missing"
+      ],
+      "writer_argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp/writer.py",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp/mac_race_missing",
+        "absent"
+      ],
+      "ready": {
+        "stage": "before_open",
+        "uid": 501
+      },
+      "result": {
+        "uid": 501,
+        "mode": "race_missing",
+        "status": "missing_retry"
+      },
+      "reader_exit": 0,
+      "writer_exit": 0,
+      "stderr": "",
+      "original_sha256": "8246b3b30d88a5e3cfc50c75bbd7e440fa72bb40c945389c19af3d04e18b5db1",
+      "replacement_sha256": "cb654a4938f754f5baffb20893e2a2cf7f6064c8459df5092d7de409b338e37f",
+      "original_bytes": 4194319
+    },
+    {
+      "case": "linux_race_missing",
+      "reader_argv": [
+        "docker",
+        "run",
+        "--rm",
+        "-i",
+        "--name",
+        "aci-s08-pack-98d02f9254",
+        "--read-only",
+        "--network",
+        "none",
+        "-v",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp:/private/tmp/aci-s08-pack-proof-8f_xxbwp:ro",
+        "--entrypoint",
+        "python",
+        "sha256:d01e6c42b3a84b3047e14c270566defcd5c9361e32e2de6a5168a4a36c714162",
+        "-u",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp/reader.py",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp/linux_race_missing/pack-g1",
+        "8246b3b30d88a5e3cfc50c75bbd7e440fa72bb40c945389c19af3d04e18b5db1",
+        "[[0, 31, \"49fefa95586c0281f625fb1e5852d7afc14055e70debdc40f400ce0c2aeb2c40\"], [4093, 91, \"021310c78d830291153a2ca55efe9f199a3ae2195fc5eb1bf455ae07092ba696\"], [2097159, 127, \"774bec566ab02ce57b6cc6548e953e49fb0d857295d5ad6f2d75adc42dd378dc\"], [4194282, 37, \"acc70baf794a5ed66f2f0c1e3774c71f689f2ebabaee3e009c32b666c91aa358\"], [4194326, 16, \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"]]",
+        "race_missing"
+      ],
+      "writer_argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp/writer.py",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp/linux_race_missing",
+        "absent"
+      ],
+      "ready": {
+        "stage": "before_open",
+        "uid": 10001
+      },
+      "result": {
+        "uid": 10001,
+        "mode": "race_missing",
+        "status": "missing_retry"
+      },
+      "reader_exit": 0,
+      "writer_exit": 0,
+      "stderr": "",
+      "original_sha256": "8246b3b30d88a5e3cfc50c75bbd7e440fa72bb40c945389c19af3d04e18b5db1",
+      "replacement_sha256": "cb654a4938f754f5baffb20893e2a2cf7f6064c8459df5092d7de409b338e37f",
+      "original_bytes": 4194319
+    },
+    {
+      "case": "linux_race_replaced",
+      "reader_argv": [
+        "docker",
+        "run",
+        "--rm",
+        "-i",
+        "--name",
+        "aci-s08-pack-54b9aba9f3",
+        "--read-only",
+        "--network",
+        "none",
+        "-v",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp:/private/tmp/aci-s08-pack-proof-8f_xxbwp:ro",
+        "--entrypoint",
+        "python",
+        "sha256:d01e6c42b3a84b3047e14c270566defcd5c9361e32e2de6a5168a4a36c714162",
+        "-u",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp/reader.py",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp/linux_race_replaced/pack-g1",
+        "8246b3b30d88a5e3cfc50c75bbd7e440fa72bb40c945389c19af3d04e18b5db1",
+        "[[0, 31, \"49fefa95586c0281f625fb1e5852d7afc14055e70debdc40f400ce0c2aeb2c40\"], [4093, 91, \"021310c78d830291153a2ca55efe9f199a3ae2195fc5eb1bf455ae07092ba696\"], [2097159, 127, \"774bec566ab02ce57b6cc6548e953e49fb0d857295d5ad6f2d75adc42dd378dc\"], [4194282, 37, \"acc70baf794a5ed66f2f0c1e3774c71f689f2ebabaee3e009c32b666c91aa358\"], [4194326, 16, \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"]]",
+        "race_replaced"
+      ],
+      "writer_argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp/writer.py",
+        "/private/tmp/aci-s08-pack-proof-8f_xxbwp/linux_race_replaced",
+        "replace"
+      ],
+      "ready": {
+        "stage": "before_open",
+        "uid": 10001
+      },
+      "result": {
+        "uid": 10001,
+        "mode": "race_replaced",
+        "data_fd_delta": 1,
+        "access_mode": 0,
+        "fd_write_errno": 9,
+        "path_exists_after_publication": true,
+        "samples_ok": false,
+        "full_sha256": "cb654a4938f754f5baffb20893e2a2cf7f6064c8459df5092d7de409b338e37f",
+        "bytes_read": 139279,
+        "eof_ok": true,
+        "stat_unchanged": true,
+        "status": "hash_mismatch_retry",
+        "closed_errno": 9,
+        "fd_count_restored": true
+      },
+      "reader_exit": 0,
+      "writer_exit": 0,
+      "stderr": "",
+      "original_sha256": "8246b3b30d88a5e3cfc50c75bbd7e440fa72bb40c945389c19af3d04e18b5db1",
+      "replacement_sha256": "cb654a4938f754f5baffb20893e2a2cf7f6064c8459df5092d7de409b338e37f",
+      "original_bytes": 4194319
+    }
+  ],
+  "scripts": {
+    "proof.py": "d8ee7f15a9567a97e5ce30135d792d38c26a26c8595cfbf710bffe0de7bb3374",
+    "reader.py": "cf7571b586464ce2a8b17302630d672cdbedfe080f6c55ecce34f8cd078624d8",
+    "writer.py": "3ca698a2ef844dd0c120fab2c32a2f0f9cc26bdc3792d692b0cb3ae202fd1d4c"
+  }
+}

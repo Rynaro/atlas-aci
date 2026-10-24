@@ -1,0 +1,13 @@
+{
+  "tool": "mcp__codex_apps__github_fetch_workflow_job_logs",
+  "job_id": 120985025373,
+  "run_id": 40131848502,
+  "url": "https://github.com/Rynaro/atlas-aci/actions/runs/40131848502",
+  "raw_representation": "exact decoded structuredContent.content UTF-8",
+  "raw_bytes": 118095,
+  "raw_sha256": "d773eb278e1914c75762458d43530195dee04092a892ec3ce566cf20de4971a4",
+  "compressed_bytes": 35767,
+  "compressed_sha256": "a5819eb5c62faff3c1b8798cf57034bc7834be8c0996cf347ed1178826e0afb1",
+  "gzip_mtime": 0,
+  "compressed_path": ".spectra/evidence/aci-s08/ci-remediation/failed-job.log.gz"
+}

@@ -1,0 +1,21 @@
+{
+  "name": "solidus-modularity",
+  "command": [
+    "/tmp/aci-s01-tools/bin/uv",
+    "run",
+    "--no-project",
+    "--with",
+    "networkx==3.6.1",
+    "python",
+    "scripts/probe-modularity.py",
+    "/tmp/aci-s08-refined-solidus-graph.json"
+  ],
+  "cwd": "/private/tmp/atlas-aci-aci-s08",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 0.4325062080024509,
+  "elapsed_total": 161.8840414169972,
+  "peak_rss_bytes": 53657600,
+  "stdout": ".spectra/evidence/aci-s08/lease-footprint/probe/solidus-modularity.stdout.log",
+  "stderr": ".spectra/evidence/aci-s08/lease-footprint/probe/solidus-modularity.stderr.log"
+}

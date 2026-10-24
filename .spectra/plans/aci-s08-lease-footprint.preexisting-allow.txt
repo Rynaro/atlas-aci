@@ -1,0 +1,13 @@
+README.md
+mcp-server/src/atlas_aci/codegraph.py
+mcp-server/src/atlas_aci/server.py
+mcp-server/src/atlas_aci/storage/evidence.py
+mcp-server/src/atlas_aci/tools/view_file.py
+mcp-server/tests/fixtures/s08/self-source-fa75bec.json.gz
+mcp-server/tests/fixtures/s08/self-source-fa75bec.provenance.json
+mcp-server/tests/slices/test_s03_contract.py
+mcp-server/tests/slices/test_s04_contract.py
+mcp-server/tests/slices/test_s09_cache_validation.py
+mcp-server/tests/slices/test_s10_dependencies.py
+mcp-server/tests/slices/test_s15_integration.py
+mcp-server/tests/test_export.py

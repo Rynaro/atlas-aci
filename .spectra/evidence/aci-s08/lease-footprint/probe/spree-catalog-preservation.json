@@ -1,0 +1,70 @@
+{
+  "repo": "spree",
+  "baseline_v1": {
+    "path": "/tmp/aci-s08-probe-inputs/spree/.atlas/source-snapshots/manifest.914d78320dd477e6c4ae7ba7b135f91c282cfffb04c94c92c2b84b9feaeb1441.json",
+    "bytes": 145713489,
+    "sha256": "914d78320dd477e6c4ae7ba7b135f91c282cfffb04c94c92c2b84b9feaeb1441",
+    "pack_path": "/tmp/aci-s08-probe-inputs/spree/.atlas/source-snapshots/pack.dc57d61df9c32a8963fb3c92ea923d2261143e83e9053b8e2909a97daf0e7630.bin",
+    "pack_bytes": 8566123,
+    "pack_sha256": "dc57d61df9c32a8963fb3c92ea923d2261143e83e9053b8e2909a97daf0e7630"
+  },
+  "refined_v2": {
+    "path": "/tmp/aci-s08-refined-probe-inputs/spree/.atlas/source-snapshots/manifest.71e706d7716ddabe9e081ea6ace56347704ec827537b20c8f5fc845c61690770.json",
+    "bytes": 1137624,
+    "sha256": "71e706d7716ddabe9e081ea6ace56347704ec827537b20c8f5fc845c61690770",
+    "pack_path": "/tmp/aci-s08-refined-probe-inputs/spree/.atlas/source-snapshots/pack.dc57d61df9c32a8963fb3c92ea923d2261143e83e9053b8e2909a97daf0e7630.bin",
+    "pack_bytes": 8566123,
+    "pack_sha256": "dc57d61df9c32a8963fb3c92ea923d2261143e83e9053b8e2909a97daf0e7630"
+  },
+  "full_per_source_catalog_bounds_size_available_exact": true,
+  "all_v1_individual_source_ranges_checked_before_aggregation": true,
+  "current_vector_exact": true,
+  "observation_digest_exact": true,
+  "pack_index_and_all_bytes_exact": true,
+  "total_ranges": 491458,
+  "bindings": 2358,
+  "old_graph_digest": "525ae143595a43b90fee887224552f11b50bb42656a22c5f6c739306694c4860",
+  "new_graph_digest": "fa9cbcaf6e39f025b164edfe40378e43f74cb4ab4f237bc0210d277aece44d83",
+  "new_graph_and_ranges_exact_old_algorithm": {
+    "repo": "spree",
+    "oracle_source_sha256": "bd77fa8ce6114f744a733fb2644f1b406cfee5b053b8d1e8655dae7040dfb479",
+    "actual_original_materialized_algorithm": true,
+    "graph_digest_exact": true,
+    "observation_digest_exact": true,
+    "all_individual_range_fields_committed_exact": true,
+    "range_proof": {
+      "version": 1,
+      "algorithm": "sha256-canonical-json-array-v1",
+      "total": 491458,
+      "occurrence": 245729,
+      "evidence": 245729,
+      "legacy": 0,
+      "sha256": "1b18e67979da56484e540bc9dc28a6641ef0378e14b00e28ba8b26dca03f3d20"
+    },
+    "source_catalog_exact": true,
+    "source_bindings": 2358,
+    "snapshot_id": "71e706d7716ddabe9e081ea6ace56347704ec827537b20c8f5fc845c61690770",
+    "not_ordinary_lease_metric": true
+  },
+  "artifacts": [
+    {
+      "logical_path": ".spectra/evidence/aci-s08/lease-footprint/probe/spree-source-manifest-v2.json",
+      "compressed_path": ".spectra/evidence/aci-s08/lease-footprint/probe/spree-source-manifest-v2.json.gz",
+      "uncompressed_bytes": 1137624,
+      "uncompressed_sha256": "71e706d7716ddabe9e081ea6ace56347704ec827537b20c8f5fc845c61690770",
+      "compressed_bytes": 367628,
+      "compressed_sha256": "fadaabae946c19a94d6b799cd7caa1d255547fc32165bf115b5b9ddcab3509ae",
+      "gzip_mtime": 0
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s08/lease-footprint/probe/spree-source-catalog-v1.json",
+      "compressed_path": ".spectra/evidence/aci-s08/lease-footprint/probe/spree-source-catalog-v1.json.gz",
+      "uncompressed_bytes": 528006,
+      "uncompressed_sha256": "88915c86dc624c541635aef4a4a9c0960804faa229f0bfa78a8679df6f034358",
+      "compressed_bytes": 140686,
+      "compressed_sha256": "27b881363df4a853625c976ca3a0d14952078f6d580a4a67b0435146e938f373",
+      "gzip_mtime": 0
+    }
+  ],
+  "note": "Full graph/range IDs legitimately differ with producer; the frozen old algorithm matched the complete new graph and committed range rows. All original v1 source catalog bounds independently equal v2. No145MB range-array archive required."
+}

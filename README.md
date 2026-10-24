@@ -362,6 +362,45 @@ This coarse policy does not avoid source discovery/hashing or promise a speedup
 for every incremental edit. It does not add resolver options or infer dependencies
 only from previously resolved edges.
 
+### Graph-linked source snapshots
+
+Graph tool responses include `snapshot_id` and `source_available`. Pass a
+non-null token to `view_file` to read the bytes used by that graph generation:
+`{"path":"src/example.py","start_line":1,"end_line":40,"snapshot_id":"..."}`.
+For historical evidence, also pass its `source_sha256`. A missing, pruned,
+foreign, or corrupt snapshot fails explicitly; it never substitutes live bytes.
+Old generations and source-free imports remain graph-readable with source
+unavailable. A token indicates an acquired source snapshot, not that every
+historical binding has materialized bytes. Retained imported/legacy history can
+remain source-unavailable; requesting its hash fails explicitly. Without a token, `view_file` preserves its live-file behavior and
+labels the result `source_mode: live`; snapshot results identify their mode,
+token and authenticated content hash. Existing line, list and byte caps apply.
+
+A graph request holds one read-only SQLite handle and one immutable source-pack
+FD. Publishers may complete and unlink old snapshot paths while an acquired
+reader continues reading its original bytes. Idle entries retain current plus
+one previous completed snapshot. Active readers retain unlinked pack storage
+until their descriptors close; this is **not a global hard disk-byte bound**.
+Packs coalesce source bytes and can duplicate unchanged bytes across snapshots.
+There is no TTL, writable reader lease file, background service or cross-kernel
+advisory-lock assumption. Supported storage is the tested POSIX local-filesystem
+envelope, including host publication with read-only Docker readers; operators
+must provide appropriate mount ownership/access and the same canonical source
+path. Host/container path aliases are not treated as equivalent.
+
+Snapshot identity includes the resolved source root, actual Git worktree/common
+metadata when available (or explicit unavailable/non-Git identity), configuration,
+producer, consumed source vector and retained evidence. Branch/HEAD-only changes
+are not identity inputs. Capture is a deterministic per-file byte vector, **not
+an atomic filesystem-wide instant**. Unsafe source symlinks abort publication.
+
+The Python build API additionally accepts explicit `overlays: Mapping[str,bytes]`:
+`graph.build(overlays={"new/unsaved.py": b"def draft(): pass\n"})`. It copies the
+mapping, validates eligible normalized relative paths, and hashes/parses/packs
+those bytes without writing them into the checkout. Same-byte disk and overlay
+builds replay identically. There is no implicit editor read, tombstone protocol,
+CLI overlay flag or compiler/build execution.
+
 ### Rust structural navigation
 
 Rust source is indexed by the locked Tree-sitter grammar, without running Cargo,
@@ -411,7 +450,7 @@ enabled provider supplies that operation. Every shipped producer reports compile
 semantic binding as unsupported. Structural confidence labels do not establish
 compiler semantics or completeness percentages.
 
-Index builds publish `atlas-generation.v3` inputs with a deterministic observation
+Index builds publish `atlas-generation.v4` inputs with a deterministic observation
 digest and an `atlas-coverage.v2` snapshot. Every recognized source file records
 its exact observed hash and indexed, failed, unsupported, or disabled outcome.
 Complete enumeration is separate from complete extraction: recovered syntax-error
