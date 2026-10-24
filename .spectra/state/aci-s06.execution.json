@@ -1,0 +1,148 @@
+{
+  "slice_id": "ACI-S06",
+  "issue_url": "https://github.com/Rynaro/atlas-aci/issues/12",
+  "criteria_sha256": "32a587ee6d402a14cf324de7ab19a8e48204956f0696c74adfb1a4cdcb5772cc",
+  "base_commit": "7b11b275b300c100ab7b123a3ca4bb60977f5166",
+  "output_commit": "ae50c9e8bc647000ab3383d443dc4e6bf65253b1",
+  "declared_paths": [
+    "mcp-server/src/atlas_aci/__main__.py",
+    "mcp-server/src/atlas_aci/config.py",
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/src/atlas_aci/server.py",
+    "mcp-server/tests/slices/test_s06_*.py",
+    "README.md",
+    "hosts/*",
+    ".github/workflows/ci.yml",
+    "mcp-server/Dockerfile"
+  ],
+  "output_digests": {
+    ".github/workflows/ci.yml": "90414fa8e3d653d63a3e0b02a026b61a117344447c022cc8fbf0eeb085db2883",
+    "README.md": "cece9b78ea9bfd9ce707e726b8053eec8225b5388386398a0a41a4c38e470b12",
+    "hosts/claude-code.md": "38ff9c891996ef13790338b14ad810ed9e67184a84934820176de8e5b5152211",
+    "hosts/copilot.md": "58ece621dda8b9e0168bc3ee32e65e4a9acc4113d5e17b49ec375f5e2cf635f7",
+    "hosts/cursor.md": "9eff1ec5ce850b863a6cafe86e9493a630e88425b18ba931745ef48c5d07e0ac",
+    "mcp-server/Dockerfile": "8abfc6635110f158f2ce60d473dabbcf447f38e62b71fbdc38e178b17654f529",
+    "mcp-server/src/atlas_aci/__main__.py": "081f2a5a0c2a9bc1d2f6e605bf557d16cbafeb32def3ea661a711fb710ab0972",
+    "mcp-server/src/atlas_aci/codegraph.py": "795b4c1ccc46d8d79c9a8e91413d5e57ac25d9541147fe46422201804c607988",
+    "mcp-server/src/atlas_aci/config.py": "c46d0f9a563dc9c1fca257417ee6e98d9cf4a3e88988aaca5f459692d3400195",
+    "mcp-server/src/atlas_aci/server.py": "d0e282f47913434f17461185d6de224fdba8e2add2a76b4c4a8dadcd866fa792",
+    "mcp-server/tests/slices/test_s06_contract.py": "21aeed93da5164d1650259efade1ab83e5b85eeb228ea2f95838fd77bcbdda0c"
+  },
+  "status": "COMPLETE",
+  "acceptance_results": [
+    {
+      "ac_id": "AC-S06-001",
+      "command": "ATLAS_ACI_S06_DOCKER_IMAGE=atlas-aci-s06 PYTHONPATH=/tmp/atlas-aci-aci-s06/mcp-server/src mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s06_contract.py -q",
+      "test_id": "mcp-server/tests/slices/test_s06_contract.py::test_readonly_source_index",
+      "working_directory": ".",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s06/ci-portability/focused.log",
+        ".spectra/evidence/aci-s06/ci-portability/docker-integration.json"
+      ]
+    },
+    {
+      "ac_id": "AC-S06-002",
+      "command": "ATLAS_ACI_S06_DOCKER_IMAGE=atlas-aci-s06 PYTHONPATH=/tmp/atlas-aci-aci-s06/mcp-server/src mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s06_contract.py -q",
+      "test_id": "mcp-server/tests/slices/test_s06_contract.py::test_source_unchanged",
+      "working_directory": ".",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s06/ci-portability/focused.log",
+        ".spectra/evidence/aci-s06/ci-portability/docker-integration.json"
+      ]
+    },
+    {
+      "ac_id": "AC-S06-003",
+      "command": "ATLAS_ACI_S06_DOCKER_IMAGE=atlas-aci-s06 PYTHONPATH=/tmp/atlas-aci-aci-s06/mcp-server/src mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s06_contract.py -q",
+      "test_id": "mcp-server/tests/slices/test_s06_contract.py::test_serve_external_root",
+      "working_directory": ".",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s06/ci-portability/focused.log",
+        ".spectra/evidence/aci-s06/ci-portability/docker-integration.json"
+      ]
+    },
+    {
+      "ac_id": "AC-S06-004",
+      "command": "ATLAS_ACI_S06_DOCKER_IMAGE=atlas-aci-s06 PYTHONPATH=/tmp/atlas-aci-aci-s06/mcp-server/src mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s06_contract.py -q",
+      "test_id": "mcp-server/tests/slices/test_s06_contract.py::test_default_compatibility",
+      "working_directory": ".",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s06/ci-portability/focused.log",
+        ".spectra/evidence/aci-s06/ci-portability/docker-integration.json"
+      ]
+    },
+    {
+      "ac_id": "AC-S06-005",
+      "command": "ATLAS_ACI_S06_DOCKER_IMAGE=atlas-aci-s06 PYTHONPATH=/tmp/atlas-aci-aci-s06/mcp-server/src mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s06_contract.py -q",
+      "test_id": "mcp-server/tests/slices/test_s06_contract.py::test_root_identity_isolation",
+      "working_directory": ".",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s06/ci-portability/focused.log",
+        ".spectra/evidence/aci-s06/ci-portability/docker-integration.json"
+      ]
+    },
+    {
+      "ac_id": "AC-S06-006",
+      "command": "ATLAS_ACI_S06_DOCKER_IMAGE=atlas-aci-s06 PYTHONPATH=/tmp/atlas-aci-aci-s06/mcp-server/src mcp-server/.venv/bin/python -m pytest mcp-server/tests/slices/test_s06_contract.py -q",
+      "test_id": "mcp-server/tests/slices/test_s06_contract.py::test_external_replay",
+      "working_directory": ".",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s06/ci-portability/focused.log",
+        ".spectra/evidence/aci-s06/ci-portability/docker-integration.json"
+      ]
+    },
+    {
+      "ac_id": "AC-S06-RUN-02",
+      "command": "python3 .spectra/evidence/aci-s06/verify_resume.py",
+      "working_directory": ".",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s06/interrupted-execution.json",
+        ".spectra/evidence/aci-s06/ci-portability/interrupted-execution.json",
+        ".spectra/evidence/aci-s06/ci-portability/resume-identity.json"
+      ]
+    },
+    {
+      "ac_id": "AC-S06-RUN-01",
+      "command": "python3 .spectra/evidence/aci-s06/verify_execution.py --root /tmp/atlas-aci-aci-s06-reentry-ci-portability --receipt /tmp/atlas-aci-aci-s06/.spectra/state/aci-s06.execution.json",
+      "working_directory": ".",
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s06/ci-portability/reentry-before.json",
+        ".spectra/evidence/aci-s06/ci-portability/reentry-products.json",
+        ".spectra/evidence/aci-s06/ci-portability/reentry-complete.json",
+        ".spectra/evidence/aci-s06/ci-portability/reentry-after.json"
+      ]
+    }
+  ],
+  "scope_amendments": [
+    ".spectra/evidence/aci-s06/scope-amendment-02.json"
+  ],
+  "previous_output_commit": "c7172c8d33de61f71c71048442d353197f5d1100",
+  "previous_completion_head": "4b123e4aa6118967655dd44deb26e343ccd50998",
+  "reopened_reason": "Observed Linux CI Docker snapshot ownership failure; corrective test validation pending",
+  "historical_verification_evidence": [
+    ".spectra/evidence/aci-s06/frozen-checks.json",
+    ".spectra/evidence/aci-s06/docker-integration.json",
+    ".spectra/evidence/aci-s06/probe-selftest.result.json",
+    ".spectra/evidence/aci-s06/vivi-pass2-result.json",
+    ".spectra/evidence/aci-s06/independent-review.json",
+    ".spectra/evidence/aci-s06/fingerprint-after.json",
+    ".spectra/evidence/aci-s06/output-commit-focused.result.json"
+  ],
+  "verification_evidence": [
+    ".spectra/evidence/aci-s06/ci-portability/focused.log",
+    ".spectra/evidence/aci-s06/ci-portability/docker-integration.json",
+    ".spectra/evidence/aci-s06/ci-portability/lint.log",
+    ".spectra/evidence/aci-s06/ci-portability/format.log",
+    ".spectra/evidence/aci-s06/ci-portability/types.log",
+    ".spectra/evidence/aci-s06/ci-portability/independent-review.json",
+    ".spectra/evidence/aci-s06/ci-portability/vivi-pass2-result.json",
+    ".spectra/evidence/aci-s06/ci-portability/output-commit-focused.result.json"
+  ]
+}

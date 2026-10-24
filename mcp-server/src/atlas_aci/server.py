@@ -435,7 +435,7 @@ def build_server_state(config: Config) -> tuple[Enforcement, Memex, CodeGraph]:
     """
     enforcement = Enforcement(config)
     memex = Memex(config.memex_root)
-    # read_only=True: `serve` never writes under .atlas (DIR-2). On a
+    # read_only=True: `serve` never writes graph storage (DIR-2). On a
     # current-epoch match the read-only connection just works; on a
     # mismatch/never-indexed repo, search_symbol/graph_query fail fast via
     # `code_graph.epoch_ok()` — no sweep, no rebuild, no write, ever.
@@ -446,6 +446,7 @@ def build_server_state(config: Config) -> tuple[Enforcement, Memex, CodeGraph]:
         repo=config.repo,
         read_only=True,
         query_limit=config.max_bound_field_elements + 1,
+        graph_root=config.graph_root,
     )
     return enforcement, memex, code_graph
 

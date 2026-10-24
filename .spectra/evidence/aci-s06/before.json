@@ -1,0 +1,6 @@
+{
+  "command": "atlas-aci index --repo <fixture> --graph-root <graphs>",
+  "exit_code": 2,
+  "output": "Usage: cli index [OPTIONS]\nTry 'cli index --help' for help.\n\nError: No such option: --graph-root\n",
+  "source": "/tmp/atlas-aci-aci-s06/mcp-server/src/atlas_aci/codegraph.py"
+}

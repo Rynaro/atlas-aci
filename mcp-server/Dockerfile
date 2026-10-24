@@ -9,20 +9,20 @@
 # ──────────────────────────────────────────────────────────────────────
 # Two invocations you'll want (see INTEGRATION.md for the full story):
 #
-#   1. One-time index build — needs a writable /repo so .atlas/ can be
-#      created inside the repo:
+#   1. One-time external index build — /repo may remain read-only;
+#      /graphs is operator-provided storage writable by UID10001:
 #
 #        docker run --rm \
-#            -v "$PWD":/repo \
-#            atlas-aci index --repo /repo --langs ruby,python,javascript,typescript
+#            --read-only -v "$PWD":/repo:ro -v /path/to/graphs:/graphs \
+#            atlas-aci index --repo /repo --graph-root /graphs
 #
 #   2. Long-lived serve — repo mounted read-only, memex on its own
 #      named volume so excerpts persist across runs:
 #
 #        docker run --rm -i --read-only \
 #            -v "$PWD":/repo:ro \
-#            -v atlas-memex:/memex \
-#            atlas-aci
+#            -v /path/to/graphs:/graphs:ro -v atlas-memex:/memex \
+#            atlas-aci serve --repo /repo --graph-root /graphs --memex-root /memex
 #
 # The read-only mount in step 2 is the OS-level guarantee that the
 # server cannot mutate your repo — stronger than any code-level check.
@@ -63,7 +63,7 @@ LABEL org.opencontainers.image.title="atlas-aci" \
 #   ripgrep — mandatory; search_text wraps it
 #   git     — general repo tooling for operators/test_dry_run; NOT used by
 #             `atlas-aci index --since <marker>`, which never shells out to
-#             git — it keys purely on each file's on-disk (mtime_ns, size)
+#             git — it hashes the exact consumed file buffers
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     apt-get update && apt-get install -y --no-install-recommends \
@@ -82,6 +82,12 @@ COPY --from=builder /dist/requirements.txt /dist/*.whl /tmp/
 RUN pip install --no-cache-dir -r /tmp/requirements.txt \
  && pip install --no-cache-dir --no-deps /tmp/*.whl \
  && rm /tmp/*.whl /tmp/requirements.txt
+
+# Linux parser wheels lazily fetch grammars. Prefetch the locked package's
+# existing shipped languages into the production HOME cache so indexing works
+# under --read-only and --network none without a writable parser cache mount.
+RUN HOME=/tmp python -c "from atlas_aci.codegraph import DEFAULT_LANGS; from tree_sitter_language_pack import download, get_parser; download(list(DEFAULT_LANGS)); [get_parser(lang) for lang in DEFAULT_LANGS]" \
+ && chmod -R a+rX /tmp/.cache/tree-sitter-language-pack
 
 # Pre-create the mount points and hand /memex to the unprivileged user.
 # /repo is operator-provided (read-only in production), so its ownership

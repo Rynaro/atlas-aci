@@ -1,0 +1,10 @@
+{
+  "pull_request": 70,
+  "head_commit": "4b123e4aa6118967655dd44deb26e343ccd50998",
+  "job_id": 120741939874,
+  "observed_result": "FAILED",
+  "reported_by": "Root observed GitHub CI logs",
+  "failure": "Read-only/offline production index succeeded. Linux host runner then raised PermissionError reading graph.6.db (production UID10001, mode0600) at test_s06_contract.py145;15passed3errors. macOS Desktop had permitted host access.",
+  "other_jobs": "pytest/ruff/mypy/scripts/guards, export OS matrix+diff and HardenGate independently green per root.",
+  "corrective_scope": "Tests and current S06 receipt/evidence only. Snapshot actual graph bytes/metadata inside production image as UID10001 with graph mount read-only; no permission relaxation."
+}

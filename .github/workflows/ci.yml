@@ -359,3 +359,20 @@ jobs:
           docker kill atlas-serve-smoketest-nomemex >/dev/null 2>&1 || true
           exec 3>&-
           rm -f /tmp/mcp-in
+
+      - name: Install uv for required external-root integration
+        uses: astral-sh/setup-uv@v5
+
+      - name: Set up host Python for real MCP client
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: "mcp-server/pyproject.toml"
+
+      - name: Index read-only source into external root and query real MCP (S06)
+        working-directory: mcp-server
+        env:
+          ATLAS_ACI_S06_DOCKER_IMAGE: atlas-aci-ci-smoketest
+        run: |
+          set -euo pipefail
+          uv sync --frozen --extra dev
+          uv run --frozen pytest tests/slices/test_s06_contract.py -q

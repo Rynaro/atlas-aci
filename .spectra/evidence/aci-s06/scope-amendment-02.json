@@ -1,0 +1,12 @@
+{
+  "slice_id": "ACI-S06",
+  "id": "S06-PATH-02",
+  "criteria_changed": false,
+  "additional_paths": [
+    "mcp-server/Dockerfile"
+  ],
+  "authorization": "Root approval before edit via collaboration message",
+  "reason": "Actual production Linux parser package lazily downloads grammar assets; strict read-only/offline indexing failed after genuine UID10001 EROFS source sentinel. Prefetch and verify only DEFAULT_LANGS at build time using locked official API and default HOME=/tmp cache; preserve runtime source/root isolation.",
+  "failure_evidence": ".spectra/evidence/aci-s06/docker-focused-first.log.gz",
+  "api_evidence": ".spectra/evidence/aci-s06/parser-cache-api.log"
+}

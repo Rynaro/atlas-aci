@@ -1,0 +1,58 @@
+[
+  {
+    "name": "full-final",
+    "command": "ATLAS_ACI_S06_DOCKER_IMAGE=atlas-aci-s06 uv run --frozen pytest -q",
+    "working_directory": "mcp-server",
+    "exit_code": 0,
+    "evidence": ".spectra/evidence/aci-s06/full-final.log"
+  },
+  {
+    "name": "lint-final",
+    "command": "uv run --frozen ruff check src/ tests/ ../scripts/ --exclude fingerprint-fixture",
+    "working_directory": "mcp-server",
+    "exit_code": 0,
+    "evidence": ".spectra/evidence/aci-s06/lint-final.log"
+  },
+  {
+    "name": "format-final",
+    "command": "uv run --frozen ruff format --check src/ tests/ ../scripts/ --exclude fingerprint-fixture",
+    "working_directory": "mcp-server",
+    "exit_code": 0,
+    "evidence": ".spectra/evidence/aci-s06/format-final.log"
+  },
+  {
+    "name": "types-final",
+    "command": "uv run --frozen mypy src/ ../scripts/",
+    "working_directory": "mcp-server",
+    "exit_code": 0,
+    "evidence": ".spectra/evidence/aci-s06/types-final.log"
+  },
+  {
+    "name": "lock",
+    "command": "uv lock --check",
+    "working_directory": "mcp-server",
+    "exit_code": 0,
+    "evidence": ".spectra/evidence/aci-s06/lock.log"
+  },
+  {
+    "name": "harden",
+    "command": "bash ../scripts/test-harden-gate-classify.sh",
+    "working_directory": "mcp-server",
+    "exit_code": 0,
+    "evidence": ".spectra/evidence/aci-s06/harden.log"
+  },
+  {
+    "name": "export-size",
+    "command": "bash ../scripts/test-verify-export-size.sh",
+    "working_directory": "mcp-server",
+    "exit_code": 0,
+    "evidence": ".spectra/evidence/aci-s06/export-size.log"
+  },
+  {
+    "name": "probe-selftest-final",
+    "command": "bash ../scripts/test-verify-probe-verdict.sh",
+    "working_directory": "mcp-server",
+    "exit_code": 0,
+    "evidence": ".spectra/evidence/aci-s06/probe-selftest-final.log"
+  }
+]

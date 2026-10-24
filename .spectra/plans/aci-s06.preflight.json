@@ -1,0 +1,21 @@
+{
+  "slice_id": "ACI-S06",
+  "base_commit": "7b11b275b300c100ab7b123a3ca4bb60977f5166",
+  "criteria_sha256": "32a587ee6d402a14cf324de7ab19a8e48204956f0696c74adfb1a4cdcb5772cc",
+  "predecessors": [],
+  "existing_state": false,
+  "source_evidence": "ATLAS storage/config/server/CLI audit plus targeted current source inspection",
+  "scope_amendments": [
+    {
+      "path": "mcp-server/src/atlas_aci/server.py",
+      "reason": "wire configured graph root to production graph constructor"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "reason": "enforce actual readonly-source index and external graph stdio integration"
+    }
+  ],
+  "docker_preflight": "Root escalated docker info succeeded: server29.8.0; actual product integration remains execution gate",
+  "backlog": "one authoritative .spectra/backlog/execution.json; verified42 total,5 merged,37 remaining",
+  "prior_slice_artifacts": "immutable"
+}

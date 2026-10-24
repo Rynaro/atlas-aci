@@ -1,0 +1,18 @@
+[
+  {
+    "identity": "atlas-s06-code-checker",
+    "verdict": "APPROVE",
+    "source_sha256": "795b4c1ccc46d8d79c9a8e91413d5e57ac25d9541147fe46422201804c607988",
+    "scope": "Corrected storage root propagation and namespace isolation",
+    "observations": "Both sibling-redirection reproductions reject before sibling byte changes; sibling remains valid; configured root/source aliases query correctly. Earlier4 independent host tests passed.",
+    "provenance": "Genuine independent ATLAS observations delivered by parent collaboration message."
+  },
+  {
+    "identity": "atlas-s06-final-checker",
+    "verdict": "APPROVE",
+    "source_sha256": "795b4c1ccc46d8d79c9a8e91413d5e57ac25d9541147fe46422201804c607988",
+    "scope": "Final tests, Dockerfile/CI/docs and required kernel read-only integration evidence",
+    "observations": "Independent selected4 tests passed; corrected aliases confirmed; actual Docker/full320 zero-skips evidence accepted; independent unchanged probePASS; actual27 controls; docs/CI/Docker/diff accepted.",
+    "provenance": "Genuine independent ATLAS observations delivered by parent collaboration message."
+  }
+]

@@ -1,0 +1,10 @@
+{
+  "output_commit": "c7172c8d33de61f71c71048442d353197f5d1100",
+  "products_exit_code": 0,
+  "complete_exit_code": 0,
+  "resume_exit_code": 0,
+  "git_diff_exit_code": 0,
+  "declared_tracked_files": 11,
+  "before_after_equal": true,
+  "status": "ALREADY_SATISFIED"
+}

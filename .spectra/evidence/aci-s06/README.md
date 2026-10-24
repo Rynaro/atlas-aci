@@ -1,0 +1,15 @@
+# ACI-S06 execution evidence
+
+The authoritative receipt is `.spectra/state/aci-s06.execution.json`, initialized before product changes. The genuine interrupted snapshot is preserved. `before.json` records the actual pre-change graph-root flag rejection. Product anchors first failed (`anchors-red.log.gz`).
+
+The final production image is built from this worktree with only the approved shipped-language parser prefetch amendment. `docker-build-final.log` records its build; `docker-integration.json` records image ID, actual commands, UID10001/source EROFS sentinel, writable graphs and read-only graph rejection, real MCP initialize/list/search/graph responses, and unchanged source/graph byte and metadata snapshots. The runtime uses --read-only, --network none, /repo:ro and the same /repo identity for indexing and serving. No chmod-only source claim or required-AC skip is used. Configured tests fail on Docker errors. Temporary named containers are cleaned up; only test-owned source/graph/memex binds are used.
+
+The first strict image run exposed Linux's lazy parser downloads, not a graph-storage failure. S06-PATH-02 was recorded before Dockerfile edits. Existing DEFAULT_LANGS are prefetched using the locked package's official API into the production HOME cache; runtime parser writes/network are unnecessary. Initial failure and official API inspection are preserved losslessly. No dependency or grammar/query support was added.
+
+Independent review found a static namespace alias could overwrite a sibling inside the same root. `sibling-redirect-red.log.gz` records both actual failures before the fix. The final canonical-namespace validation runs before construction, newly opening a database, and writer entry; derived redirects are rejected, while configured root and source aliases remain valid. Sibling bytes/metadata and validity are tested unchanged.
+
+Final frozen validation records 320 passing tests with Docker enabled and zero skips. The focused module has18 passing cases, including all6 named product criteria; Vivi's protected pass² has both exits0 and no tamper rejection. All27 probe guard controls complete with true0, and the existing immutable S02 verifier/fingerprint remain unchanged. No previous slice artifact, fact schema, epoch or DDL was modified.
+
+`raw-log-manifest.json` contains deterministic gzip/raw byte hashes and sizes; decode with `gzip -dc <path.log.gz>`. Original logical output paths in actual command logs are retained. One bookkeeping copy and the first ledger-key lookup used incorrect local paths/keys and were corrected; they were not validation passes. Final check outcomes, actual required Docker proof and receipt gates are the completion evidence.
+
+The external namespace is a canonical resolved-source-path storage identity, not a Git catalog or host/container alias map. Operator-owned storage does not provide a hostile concurrent symlink race sandbox. The backlog remains IN_PROGRESS/current#12 pending root's observed PR merge; future slice identities stay null.

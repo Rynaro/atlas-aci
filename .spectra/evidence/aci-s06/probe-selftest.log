@@ -1,0 +1,30 @@
+PASS: real recorded probe sidecar (genuine PASS) (exit=0)
+PASS: forged: failing numbers (LPA_Q=0.11111) under recorded PASS (exit=1)
+PASS: forged: recorded CUT over genuinely passing numbers (exit=1)
+PASS: forged: one repo's Louvain_Q_median below the 0.30 floor, recorded PASS (exit=1)
+PASS: forged: softened bar (q_struct=0.01, r=0.10) alongside failing LPA_Q=0.20 (exit=1)
+PASS: forged: stale bar declaration (q_struct=0.5) over otherwise-genuine passing numbers (exit=1)
+PASS: forged: solidus dropped from repos (only spree remains) (exit=1)
+PASS: forged: a third, unpinned repo added to repos (exit=1)
+PASS: forged: wrong seed set (seed 9 relabeled as seed 10) (exit=1)
+PASS: forged: solidus's pinned_sha altered to an unpinned value (exit=1)
+PASS: forged: under-reported Louvain baseline (all seeds Q=0.35, LPA_Q=0.31) (exit=1)
+PASS: forged: graph bundle tampered with, sha256 no longer matches (exit=1)
+PASS: forged: graph rewired (sha256 re-signed to match, counts unchanged, but Q now diverges) (exit=1)
+PASS: forged: stale indexer_fingerprint (does not match the current tree) (exit=1)
+PASS: forged: two node indices claim the identical (path, line, name) identity (exit=1)
+PASS: forged: lpa_labels relabeled (community IDs 0/1 swapped, same partition/Q/count) disagrees with the shipped algorithm re-run (exit=1)
+(building the one-time throwaway uv environment for behavioural fingerprint scenarios...)
+PASS: semantically-null comment edit does NOT flip the fingerprint
+PASS: editing confident_edges() alone flips the behavioural fingerprint
+PASS: editing _resolve_source_node() alone flips the behavioural fingerprint
+PASS: editing _resolve_edges() alone flips the behavioural fingerprint
+PASS: editing probe-export-confident-graph.py's own output alone flips the behavioural fingerprint
+PASS: editing _target_kind() alone does NOT flip the behavioural fingerprint (decorative metadata only)
+PASS: an unrelated new build_stats field does NOT flip the behavioural fingerprint
+PASS: gate resolves + verifies against the ACTIVE change-folder location (resolved=/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/tmp.yy91PLwR6p/pathres/active/.spectra/changes/aci-v2-harden-and-augment/probe-lpa-vs-louvain.json, verify-probe-verdict.py: PASS)
+PASS: gate resolves + verifies IDENTICALLY against the ARCHIVED location (simulated archive/2026-07-10-aci-v2-harden-and-augment/) (resolved=/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/tmp.yy91PLwR6p/pathres/archived/.spectra/changes/archive/2026-07-10-aci-v2-harden-and-augment/probe-lpa-vs-louvain.json, verify-probe-verdict.py: PASS)
+PASS: gate fails loudly when no probe artefact exists anywhere under .spectra/changes/ (exit=1: no probe-lpa-vs-louvain.json found under /var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/tmp.yy91PLwR6p/pathres/absent/.spectra/changes (checked active AND archive/ subtrees) -- exactly one is required)
+PASS: gate fails loudly when the probe artefact is duplicated (active AND archived copies both present) (exit=1: 2 candidates for probe-lpa-vs-louvain.json found under /var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/tmp.yy91PLwR6p/pathres/duplicated/.spectra/changes -- ambiguous, exactly one is required: /var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/tmp.yy91PLwR6p/pathres/duplicated/.spectra/changes/aci-v2-harden-and-augment/probe-lpa-vs-louvain.json /var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/tmp.yy91PLwR6p/pathres/duplicated/.spectra/changes/archive/2026-07-10-aci-v2-harden-and-augment/probe-lpa-vs-louvain.json)
+
+27 passed, 0 failed

@@ -1,0 +1,89 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 5.29kB done
+#1 DONE 0.0s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1
+#2 DONE 0.5s
+
+#3 docker-image://docker.io/docker/dockerfile:1@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+#3 resolve docker.io/docker/dockerfile:1@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e 0.0s done
+#3 CACHED
+
+#4 [internal] load metadata for docker.io/library/python:3.12-slim
+#4 ...
+
+#5 [internal] load metadata for ghcr.io/astral-sh/uv:latest
+#5 DONE 0.4s
+
+#4 [internal] load metadata for docker.io/library/python:3.12-slim
+#4 DONE 0.5s
+
+#6 [internal] load .dockerignore
+#6 transferring context: 460B done
+#6 DONE 0.0s
+
+#7 [builder 1/7] FROM docker.io/library/python:3.12-slim@sha256:a0f57064cbdcd6285fa45f51237ab0b35ea8ebaed06a1f5973e89e19dfb86704
+#7 resolve docker.io/library/python:3.12-slim@sha256:a0f57064cbdcd6285fa45f51237ab0b35ea8ebaed06a1f5973e89e19dfb86704 done
+#7 DONE 0.0s
+
+#8 FROM ghcr.io/astral-sh/uv:latest@sha256:32a7bb39b496babbd997b0a39a4d66c126bdaf5661b302bf6f06abda8deca6ff
+#8 resolve ghcr.io/astral-sh/uv:latest@sha256:32a7bb39b496babbd997b0a39a4d66c126bdaf5661b302bf6f06abda8deca6ff done
+#8 DONE 0.0s
+
+#9 [internal] load build context
+#9 transferring context: 2.15kB done
+#9 DONE 0.0s
+
+#10 [builder 5/7] COPY src ./src
+#10 CACHED
+
+#11 [builder 4/7] COPY pyproject.toml uv.lock README.md ./
+#11 CACHED
+
+#12 [builder 3/7] WORKDIR /build
+#12 CACHED
+
+#13 [builder 7/7] RUN uv export --frozen --no-dev --no-emit-project --format requirements-txt         --output-file /dist/requirements.txt
+#13 CACHED
+
+#14 [runtime 4/8] COPY --from=builder /dist/requirements.txt /dist/*.whl /tmp/
+#14 CACHED
+
+#15 [builder 6/7] RUN uv build --wheel --out-dir /dist
+#15 CACHED
+
+#16 [builder 2/7] COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+#16 CACHED
+
+#17 [runtime 3/8] RUN useradd --create-home --uid 10001 atlas
+#17 CACHED
+
+#18 [runtime 2/8] RUN --mount=type=cache,target=/var/cache/apt,sharing=locked     --mount=type=cache,target=/var/lib/apt,sharing=locked     apt-get update && apt-get install -y --no-install-recommends         ripgrep         git     && rm -rf /var/lib/apt/lists/*
+#18 CACHED
+
+#19 [runtime 5/8] RUN pip install --no-cache-dir -r /tmp/requirements.txt  && pip install --no-cache-dir --no-deps /tmp/*.whl  && rm /tmp/*.whl /tmp/requirements.txt
+#19 CACHED
+
+#20 [runtime 6/8] RUN HOME=/tmp python -c "from atlas_aci.codegraph import DEFAULT_LANGS; from tree_sitter_language_pack import download, get_parser; download(list(DEFAULT_LANGS)); [get_parser(lang) for lang in DEFAULT_LANGS]"  && chmod -R a+rX /tmp/.cache/tree-sitter-language-pack
+#20 DONE 3.0s
+
+#21 [runtime 7/8] RUN mkdir -p /repo /memex && chown atlas:atlas /memex
+#21 DONE 0.1s
+
+#22 [runtime 8/8] WORKDIR /home/atlas
+#22 DONE 0.0s
+
+#23 exporting to image
+#23 exporting layers 0.1s done
+#23 exporting manifest sha256:c72a008811847904627307acf062263cc468ee7d26af53c83e0512a1fb824aa7 done
+#23 exporting config sha256:70e6c7bb382aef6c3bc1dba8ec4acb9000f30781b3580662302e18516e31caca done
+#23 exporting attestation manifest sha256:c23198d6b303b55c82e451bdc1a542162675c85087744601f0b6ae99b38fa72b
+#23 exporting attestation manifest sha256:c23198d6b303b55c82e451bdc1a542162675c85087744601f0b6ae99b38fa72b done
+#23 exporting manifest list sha256:2909dfe72bb5aaf9aa09b837b8ac64d2647df9ced49e54893ae4ffbe391f1ca3 done
+#23 naming to docker.io/library/atlas-aci-s06:latest done
+#23 unpacking to docker.io/library/atlas-aci-s06:latest 0.0s done
+#23 DONE 0.1s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/rf2db27xmewk6sozeklvdm4pt

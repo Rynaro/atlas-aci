@@ -1,0 +1,357 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "docker",
+        "run",
+        "--rm",
+        "--name",
+        "atlas-s06-run-498c4f39f7944f958a4b5c448e241ef3",
+        "--read-only",
+        "--network",
+        "none",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-109/s06-container0/source:/repo:ro",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-109/s06-container0/graphs:/graphs",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-109/s06-container0/memex:/memex",
+        "--entrypoint",
+        "python",
+        "atlas-aci-s06",
+        "-c",
+        "import os,errno,json;from pathlib import Path\nassert os.geteuid()==10001\ntry: Path('/repo/s06-negative-write').write_text('forbidden')\nexcept OSError as e: assert e.errno==errno.EROFS;code=e.errno\nelse: raise AssertionError('source is writable')\np=Path('/graphs/write-sentinel');p.write_text('writable');p.unlink()\nprint(json.dumps({'source_errno':code,'uid':os.geteuid(),'graphs_writable':True}))"
+      ],
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "{\"source_errno\": 30, \"uid\": 10001, \"graphs_writable\": true}\n"
+    },
+    {
+      "argv": [
+        "docker",
+        "run",
+        "--rm",
+        "--name",
+        "atlas-s06-run-eb5a536ce54245deb36117859d55d385",
+        "--read-only",
+        "--network",
+        "none",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-109/s06-container0/source:/repo:ro",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-109/s06-container0/graphs:/graphs:ro",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-109/s06-container0/memex:/memex",
+        "atlas-aci-s06",
+        "index",
+        "--repo",
+        "/repo",
+        "--graph-root",
+        "/graphs"
+      ],
+      "exit_code": 1,
+      "stderr": "2026-10-24T01:39:22.000852Z [info     ] index_start                    langs=['ruby', 'python', 'typescript', 'javascript', 'scss', 'html', 'yaml', 'markdown', 'bash'] repo=/repo since=None\nError: [Errno 30] Read-only file system: '/graphs/repos'\n",
+      "stdout": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "run",
+        "--rm",
+        "--name",
+        "atlas-s06-run-672bf448c9304992a782d2424127d369",
+        "--read-only",
+        "--network",
+        "none",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-109/s06-container0/source:/repo:ro",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-109/s06-container0/graphs:/graphs",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-109/s06-container0/memex:/memex",
+        "atlas-aci-s06",
+        "index",
+        "--repo",
+        "/repo",
+        "--graph-root",
+        "/graphs"
+      ],
+      "exit_code": 0,
+      "stderr": "2026-10-24T01:39:22.189242Z [info     ] index_start                    langs=['ruby', 'python', 'typescript', 'javascript', 'scss', 'html', 'yaml', 'markdown', 'bash'] repo=/repo since=None\n2026-10-24T01:39:22.214674Z [info     ] index_done                     edges=1 files_indexed=1 files_removed=0 files_skipped=0 rationale=0 refs=1 schema_epoch=6 symbols=2 unsupported_skipped={}\n",
+      "stdout": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "run",
+        "--rm",
+        "--name",
+        "atlas-s06-run-b3a1aa0540674ef88462f59b87ae1e4c",
+        "--read-only",
+        "--network",
+        "none",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-109/s06-container0/source:/repo:ro",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-109/s06-container0/graphs:/graphs:ro",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-109/s06-container0/memex:/memex",
+        "--entrypoint",
+        "python",
+        "atlas-aci-s06",
+        "-c",
+        "import os,json,hashlib;from pathlib import Path\nassert os.geteuid()==10001\nroot=Path('/graphs');result={}\nfor p in [root,*sorted(root.rglob('*'))]:\n s=p.stat()\n result[str(p.relative_to(root))]={\n  'sha256':hashlib.sha256(p.read_bytes()).hexdigest() if p.is_file() else None,\n  'mtime_ns':s.st_mtime_ns,'size':s.st_size,'mode':s.st_mode,\n  'uid':s.st_uid,'gid':s.st_gid}\nprint(json.dumps({'reader_uid':os.geteuid(),'files':result},sort_keys=True))"
+      ],
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "{\"files\": {\".\": {\"gid\": 10001, \"mode\": 16895, \"mtime_ns\": 1792805962190954593, \"sha256\": null, \"size\": 96, \"uid\": 10001}, \"repos\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792805962191099177, \"sha256\": null, \"size\": 96, \"uid\": 10001}, \"repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792805962215379516, \"sha256\": null, \"size\": 128, \"uid\": 10001}, \"repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/.index.lock\": {\"gid\": 10001, \"mode\": 33188, \"mtime_ns\": 1792805962191732597, \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"size\": 0, \"uid\": 10001}, \"repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/graph.6.db\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792805962214835179, \"sha256\": \"cf19eb38797dc56fa5508ccb8980c730820b2ba35914d189cf34c55bd6231377\", \"size\": 90112, \"uid\": 10001}}, \"reader_uid\": 10001}\n"
+    },
+    {
+      "argv": [
+        "docker",
+        "run",
+        "--rm",
+        "--name",
+        "atlas-s06-run-e4d61a856e334053a80757fb21740183",
+        "--read-only",
+        "--network",
+        "none",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-109/s06-container0/source:/repo:ro",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-109/s06-container0/graphs:/graphs:ro",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-109/s06-container0/memex:/memex",
+        "--entrypoint",
+        "python",
+        "atlas-aci-s06",
+        "-c",
+        "import os,json,hashlib;from pathlib import Path\nassert os.geteuid()==10001\nroot=Path('/graphs');result={}\nfor p in [root,*sorted(root.rglob('*'))]:\n s=p.stat()\n result[str(p.relative_to(root))]={\n  'sha256':hashlib.sha256(p.read_bytes()).hexdigest() if p.is_file() else None,\n  'mtime_ns':s.st_mtime_ns,'size':s.st_size,'mode':s.st_mode,\n  'uid':s.st_uid,'gid':s.st_gid}\nprint(json.dumps({'reader_uid':os.geteuid(),'files':result},sort_keys=True))"
+      ],
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "{\"files\": {\".\": {\"gid\": 0, \"mode\": 16895, \"mtime_ns\": 1792805962190954593, \"sha256\": null, \"size\": 96, \"uid\": 0}, \"repos\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792805962191099177, \"sha256\": null, \"size\": 96, \"uid\": 10001}, \"repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792805962215379516, \"sha256\": null, \"size\": 128, \"uid\": 10001}, \"repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/.index.lock\": {\"gid\": 10001, \"mode\": 33188, \"mtime_ns\": 1792805962191732597, \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"size\": 0, \"uid\": 10001}, \"repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/graph.6.db\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792805962214835179, \"sha256\": \"cf19eb38797dc56fa5508ccb8980c730820b2ba35914d189cf34c55bd6231377\", \"size\": 90112, \"uid\": 10001}}, \"reader_uid\": 10001}\n"
+    }
+  ],
+  "graph_after": {
+    ".": {
+      "mode": 16895,
+      "mtime_ns": 1792805962190954593,
+      "sha256": null,
+      "size": 96
+    },
+    "repos": {
+      "gid": 10001,
+      "mode": 16877,
+      "mtime_ns": 1792805962191099177,
+      "sha256": null,
+      "size": 96,
+      "uid": 10001
+    },
+    "repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd": {
+      "gid": 10001,
+      "mode": 16877,
+      "mtime_ns": 1792805962215379516,
+      "sha256": null,
+      "size": 128,
+      "uid": 10001
+    },
+    "repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/.index.lock": {
+      "gid": 10001,
+      "mode": 33188,
+      "mtime_ns": 1792805962191732597,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "uid": 10001
+    },
+    "repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/graph.6.db": {
+      "gid": 10001,
+      "mode": 33152,
+      "mtime_ns": 1792805962214835179,
+      "sha256": "cf19eb38797dc56fa5508ccb8980c730820b2ba35914d189cf34c55bd6231377",
+      "size": 90112,
+      "uid": 10001
+    }
+  },
+  "graph_before": {
+    ".": {
+      "mode": 16895,
+      "mtime_ns": 1792805962190954593,
+      "sha256": null,
+      "size": 96
+    },
+    "repos": {
+      "gid": 10001,
+      "mode": 16877,
+      "mtime_ns": 1792805962191099177,
+      "sha256": null,
+      "size": 96,
+      "uid": 10001
+    },
+    "repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd": {
+      "gid": 10001,
+      "mode": 16877,
+      "mtime_ns": 1792805962215379516,
+      "sha256": null,
+      "size": 128,
+      "uid": 10001
+    },
+    "repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/.index.lock": {
+      "gid": 10001,
+      "mode": 33188,
+      "mtime_ns": 1792805962191732597,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "uid": 10001
+    },
+    "repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/graph.6.db": {
+      "gid": 10001,
+      "mode": 33152,
+      "mtime_ns": 1792805962214835179,
+      "sha256": "cf19eb38797dc56fa5508ccb8980c730820b2ba35914d189cf34c55bd6231377",
+      "size": 90112,
+      "uid": 10001
+    }
+  },
+  "graph_mount_root_ownership": [
+    {
+      "gid": 10001,
+      "uid": 10001
+    },
+    {
+      "gid": 0,
+      "uid": 0
+    }
+  ],
+  "graph_snapshot_reader_uid": 10001,
+  "image": "atlas-aci-s06",
+  "image_id": "sha256:581771cef00772c82f074f64b4727de2367960591e5ede215ed475504f68a63b",
+  "mcp": {
+    "responses": {
+      "graph_query": {
+        "body": {
+          "edges": [
+            {
+              "candidates": null,
+              "confidence": "INFERRED",
+              "relation": "call",
+              "source": {
+                "kind": "function",
+                "line": 4,
+                "name": "s06_caller",
+                "path": "sample.py"
+              },
+              "target": {
+                "line": 1,
+                "name": "s06_unique_target",
+                "path": "sample.py"
+              }
+            }
+          ],
+          "generation_id": "8897653e9591e931282b09c93c89009eee6e287b7cbc2691eb89aae85df3e603",
+          "unresolved_refs": 0
+        },
+        "is_error": false
+      },
+      "search_symbol": {
+        "body": {
+          "definitions": [
+            {
+              "id": 1,
+              "kind": "function",
+              "lang": "python",
+              "line_end": 2,
+              "line_start": 1,
+              "name": "s06_unique_target",
+              "path": "sample.py"
+            }
+          ],
+          "generation_id": "8897653e9591e931282b09c93c89009eee6e287b7cbc2691eb89aae85df3e603",
+          "references": [
+            {
+              "callee_name": "s06_unique_target",
+              "col": 11,
+              "id": 1,
+              "lang": "python",
+              "line": 4,
+              "path": "sample.py",
+              "qualified": 0,
+              "qualifier_name": "s06_unique_target",
+              "relation": "call",
+              "unresolved_reason": null
+            }
+          ]
+        },
+        "is_error": false
+      }
+    },
+    "tools": [
+      "view_file",
+      "list_dir",
+      "search_text",
+      "search_symbol",
+      "graph_query",
+      "test_dry_run",
+      "memex_read"
+    ]
+  },
+  "mount_proof": {
+    "graphs_writable": true,
+    "source_errno": 30,
+    "uid": 10001
+  },
+  "readonly_graph_rejected": true,
+  "source_after": {
+    ".": {
+      "mode": 16877,
+      "mtime_ns": 1792805961725471873,
+      "sha256": null,
+      "size": 96
+    },
+    "sample.py": {
+      "mode": 33188,
+      "mtime_ns": 1792805961725500664,
+      "sha256": "1859592567c8e7ba2db3e2c27b50c79d93fda396c92ab9be17af295c540f3baf",
+      "size": 88
+    }
+  },
+  "source_before": {
+    ".": {
+      "mode": 16877,
+      "mtime_ns": 1792805961725471873,
+      "sha256": null,
+      "size": 96
+    },
+    "sample.py": {
+      "mode": 33188,
+      "mtime_ns": 1792805961725500664,
+      "sha256": "1859592567c8e7ba2db3e2c27b50c79d93fda396c92ab9be17af295c540f3baf",
+      "size": 88
+    }
+  },
+  "stdio_argv": [
+    "docker",
+    "run",
+    "--rm",
+    "-i",
+    "--name",
+    "atlas-s06-e5dc23b4ed39402497a1f2139f4684a4",
+    "--read-only",
+    "--network",
+    "none",
+    "-v",
+    "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-109/s06-container0/source:/repo:ro",
+    "-v",
+    "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-109/s06-container0/graphs:/graphs:ro",
+    "-v",
+    "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-109/s06-container0/memex:/memex",
+    "atlas-aci-s06",
+    "serve",
+    "--repo",
+    "/repo",
+    "--graph-root",
+    "/graphs",
+    "--memex-root",
+    "/memex"
+  ]
+}
