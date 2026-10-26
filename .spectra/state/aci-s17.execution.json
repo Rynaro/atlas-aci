@@ -4,7 +4,7 @@
   "criteria_sha256": "e0fdcf05dfa37bc19b9429887298468fde18473526f0fb29e3edc317b76969b3",
   "frozen_spec_sha256": "b1336ee0ef378efc9fcd1e1d2fb02337a3a871c8a6a3b9378fc4731c46f488be",
   "base_commit": "73792406d65c81c6a5825ddd3b9cb1e26b195309",
-  "output_commit": "506e07d067e79428b95531c9709af26f3dcf172b",
+  "output_commit": "21952406d0c60da123e4cd808cb3537d6c851d18",
   "declared_paths": [
     "mcp-server/src/atlas_aci/query/*",
     "mcp-server/src/atlas_aci/indexing/*",
@@ -54,7 +54,7 @@
     ".spectra/evidence/aci-s17/final-resume-identity.json",
     ".spectra/evidence/aci-s17/output-check-tests.log"
   ],
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "started_epoch": 1792991372.405718,
   "engineering_budget_seconds": 86400,
   "acceptance_results": [
@@ -143,7 +143,7 @@
     }
   ],
   "last_checkpoint": {
-    "stage": "Exact output tests passed; actual no-op318digest reentry and original interrupted identity verified; independent completion audit pending",
+    "stage": "CI-only successor local completion independently approved; root publication and exact new-head remote CI remain pending",
     "runtime_manifest": ".spectra/evidence/aci-s17/source-final.json",
     "full_suite": {
       "exit_code": 1,
@@ -207,7 +207,7 @@
       "observed": "Independent actual clean detached helper0/ALREADY_SATISFIED, resume0, all318 current and committed bytes+before/after hashes equal;144streams and exact3cleanup already verified."
     }
   },
-  "elapsed_wall_upper_bound_seconds": 6082.942820072174,
+  "elapsed_wall_upper_bound_seconds": 7597.936572790146,
   "limitations": [
     "Lexical candidates are not semantic-resolution or relevance-quality guarantees; source-file spans cover whole UTF8 files, not matched-term offsets.",
     "Mandatory whole-generation canonical/source/FTS validation precedes the query VM/deadline interval; measured acquisition12.973/20.125s versus selected queries2\u20134ms is not full MCP latency.",
@@ -555,22 +555,22 @@
   },
   "execution_helper_sha256": "d181eb243a1ad4f0a86f0b9b55d153f0447fa233e156125c89849d50f9a6bf47",
   "output_checkout": {
-    "path": "/tmp/aci-s17-output-check",
-    "commit": "506e07d067e79428b95531c9709af26f3dcf172b",
+    "path": "/tmp/aci-s17-ci-output-check",
+    "commit": "21952406d0c60da123e4cd808cb3537d6c851d18",
     "frozen_environment_sync_exit_code": 0,
     "commands": [
       {
         "argv": [
-          "/tmp/aci-s17-output-check/mcp-server/.venv/bin/python",
+          "/tmp/aci-s17-ci-output-check/mcp-server/.venv/bin/python",
           "-c",
           "import hashlib,json;from pathlib import Path;import atlas_aci;r=Path(atlas_aci.__file__).resolve().parent;root=Path.cwd().resolve();assert r==root/'mcp-server/src/atlas_aci';expected=json.loads((root/'.spectra/evidence/aci-s17/source-final.json').read_text())['runtime_hashes'];actual={str(p.relative_to(r)):hashlib.sha256(p.read_bytes()).hexdigest() for p in r.rglob('*.py')};assert actual==expected;print(json.dumps({'own_source':str(r),'runtime_files':len(actual),'all_hashes_equal':True}))"
         ],
         "exit_code": 0,
-        "elapsed_seconds": 0.019624415988801047
+        "elapsed_seconds": 0.01958783299778588
       },
       {
         "argv": [
-          "/tmp/aci-s17-output-check/mcp-server/.venv/bin/python",
+          "/tmp/aci-s17-ci-output-check/mcp-server/.venv/bin/python",
           "-m",
           "pytest",
           "-q",
@@ -587,12 +587,12 @@
           "mcp-server/tests/slices/test_s17_storage.py"
         ],
         "exit_code": 0,
-        "elapsed_seconds": 12.10408487499808
+        "elapsed_seconds": 11.976244209014112
       }
     ],
     "log": ".spectra/evidence/aci-s17/output-check-tests.log"
   },
-  "completed_epoch": 1792997455.3485382,
+  "completed_epoch": 1792998970.3422909,
   "ci_remediation": {
     "failed_run": 40282454773,
     "failed_job": 121438542728,
@@ -603,6 +603,17 @@
     "checks": ".spectra/evidence/aci-s17/ci-remediation/checks.json",
     "published_metadata_preservation": ".spectra/evidence/aci-s17/ci-remediation/published-metadata-preservation.json",
     "linux_complete_overlay": ".spectra/evidence/aci-s17/ci-remediation/linux-complete-overlay-qualification-corrected.json",
-    "successor_output": "PENDING"
+    "successor_output": "21952406d0c60da123e4cd808cb3537d6c851d18",
+    "local_execution_status": "COMPLETE",
+    "completion_review": {
+      "verdict": "APPROVE",
+      "reviewer": "ATLAS agent /root/s15_preflight",
+      "output_commit": "21952406d0c60da123e4cd808cb3537d6c851d18",
+      "reviewed_receipt_sha256": "a0d64c21b1ce73b147585bed304b0978bf4dcca0bedecedc6f9c1761ec05db40",
+      "observed": "Independent actual helper0/ALREADY_SATISFIED, resume0, all337current+committed+before/after hashes equal;140rawstreams and failedCI/publishedoldmetadata bytepreservation verified."
+    },
+    "remote_exact_head_ci": "PENDING root publication and all-green new-head run",
+    "new_output_commit": "21952406d0c60da123e4cd808cb3537d6c851d18",
+    "new_output_tests": 41
   }
 }

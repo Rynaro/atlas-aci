@@ -1,4 +1,4 @@
-Exact detached output506e07d; fresh frozen UV --extra dev --python3.12 sync exit0.
-{"own_source": "/private/tmp/aci-s17-output-check/mcp-server/src/atlas_aci", "runtime_files": 39, "all_hashes_equal": true}
+Exact CI-only successor2195240; fresh frozen UV --extra dev --python3.12 sync exit0. Prior output/publication preserved in ci-remediation/.
+{"own_source": "/private/tmp/aci-s17-ci-output-check/mcp-server/src/atlas_aci", "runtime_files": 39, "all_hashes_equal": true}
 .........................................                                [100%]
-41 passed in 11.68s
+41 passed in 11.64s

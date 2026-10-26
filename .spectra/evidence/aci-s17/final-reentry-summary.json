@@ -1,11 +1,11 @@
 {
-  "output_commit": "506e07d067e79428b95531c9709af26f3dcf172b",
-  "detached_checkout": "/tmp/aci-s17-output-check",
+  "output_commit": "21952406d0c60da123e4cd808cb3537d6c851d18",
+  "detached_checkout": "/tmp/aci-s17-ci-output-check",
   "command": [
-    "/tmp/aci-s17-output-check/mcp-server/.venv/bin/python",
-    "/tmp/aci-s17-output-check/.spectra/evidence/aci-s17/verify_execution.py",
+    "/tmp/aci-s17-ci-output-check/mcp-server/.venv/bin/python",
+    "/tmp/aci-s17-ci-output-check/.spectra/evidence/aci-s17/verify_execution.py",
     "--root",
-    "/tmp/aci-s17-output-check",
+    "/tmp/aci-s17-ci-output-check",
     "--receipt",
     "/private/tmp/atlas-aci-aci-s17/.spectra/state/aci-s17.execution.json"
   ],
@@ -13,13 +13,15 @@
   "initial_status": "PRODUCTS_VERIFIED",
   "final_exit_code": 0,
   "status": "ALREADY_SATISFIED",
-  "digest_count": 318,
+  "digest_count": 337,
   "before_equals_after_equals_receipt": true,
   "helper_sha256": "d181eb243a1ad4f0a86f0b9b55d153f0447fa233e156125c89849d50f9a6bf47",
-  "exact_head": "506e07d067e79428b95531c9709af26f3dcf172b",
+  "exact_head": "21952406d0c60da123e4cd808cb3537d6c851d18",
   "detached_clean": true,
   "output_test_exit_codes": [
     0,
     0
-  ]
+  ],
+  "prior_output_preserved": "506e07d067e79428b95531c9709af26f3dcf172b",
+  "prior_complete_preservation": ".spectra/evidence/aci-s17/ci-remediation/published-complete-receipt.json"
 }
