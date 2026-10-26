@@ -4,7 +4,7 @@
   "criteria_sha256": "e0fdcf05dfa37bc19b9429887298468fde18473526f0fb29e3edc317b76969b3",
   "frozen_spec_sha256": "b1336ee0ef378efc9fcd1e1d2fb02337a3a871c8a6a3b9378fc4731c46f488be",
   "base_commit": "73792406d65c81c6a5825ddd3b9cb1e26b195309",
-  "output_commit": null,
+  "output_commit": "506e07d067e79428b95531c9709af26f3dcf172b",
   "declared_paths": [
     "mcp-server/src/atlas_aci/query/*",
     "mcp-server/src/atlas_aci/indexing/*",
@@ -54,7 +54,7 @@
     ".spectra/evidence/aci-s17/final-resume-identity.json",
     ".spectra/evidence/aci-s17/output-check-tests.log"
   ],
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "started_epoch": 1792991372.405718,
   "engineering_budget_seconds": 86400,
   "acceptance_results": [
@@ -126,15 +126,24 @@
     },
     {
       "ac_id": "AC-S17-RUN-01",
-      "exit_code": null
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s17/final-reentry-before.json",
+        ".spectra/evidence/aci-s17/final-reentry-after.json",
+        ".spectra/evidence/aci-s17/final-reentry-summary.json"
+      ]
     },
     {
       "ac_id": "AC-S17-RUN-02",
-      "exit_code": null
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s17/interrupted-execution.json",
+        ".spectra/evidence/aci-s17/final-resume-identity.json"
+      ]
     }
   ],
   "last_checkpoint": {
-    "stage": "All source/native/full/protected/fresh/selector/packaging/cleanup checks independently approved; preparing bounded output and detached execution proof",
+    "stage": "Exact output tests passed; actual no-op318digest reentry and original interrupted identity verified; independent completion audit pending",
     "runtime_manifest": ".spectra/evidence/aci-s17/source-final.json",
     "full_suite": {
       "exit_code": 1,
@@ -190,9 +199,15 @@
     "local_gates": "APPROVE full783/native/pass41x2/static11/size5/classify6",
     "fresh_probe_and_preservation": "APPROVE current0b3529 fingerprint/all4877/20partitions/rawSpree/4catalogs",
     "selectors_packaging_cleanup": "APPROVE exact3+1selectors/136raw+8compactstreams/exact3cleanup",
-    "completion": "PENDING"
+    "completion": {
+      "verdict": "APPROVE",
+      "reviewer": "ATLAS agent /root/s15_preflight",
+      "output_commit": "506e07d067e79428b95531c9709af26f3dcf172b",
+      "reviewed_receipt_sha256": "6b8dee11545b6d54d89f0328b8df70a469bcdd50baae3fb005d5433bd2c6ee25",
+      "observed": "Independent actual clean detached helper0/ALREADY_SATISFIED, resume0, all318 current and committed bytes+before/after hashes equal;144streams and exact3cleanup already verified."
+    }
   },
-  "elapsed_wall_upper_bound_seconds": 5912.37868475914,
+  "elapsed_wall_upper_bound_seconds": 6082.942820072174,
   "limitations": [
     "Lexical candidates are not semantic-resolution or relevance-quality guarantees; source-file spans cover whole UTF8 files, not matched-term offsets.",
     "Mandatory whole-generation canonical/source/FTS validation precedes the query VM/deadline interval; measured acquisition12.973/20.125s versus selected queries2\u20134ms is not full MCP latency.",
@@ -519,5 +534,44 @@
     "mcp-server/tests/test_server.py": "669370729d0b82a7c2b0485282690987705abf52ff5b20b50bf5704daee68573",
     "scripts/test-verify-probe-verdict.sh": "9451857e37406de6cf2eab569b2faab77d0b515fa4df6670e55cc84ef572c034"
   },
-  "execution_helper_sha256": "d181eb243a1ad4f0a86f0b9b55d153f0447fa233e156125c89849d50f9a6bf47"
+  "execution_helper_sha256": "d181eb243a1ad4f0a86f0b9b55d153f0447fa233e156125c89849d50f9a6bf47",
+  "output_checkout": {
+    "path": "/tmp/aci-s17-output-check",
+    "commit": "506e07d067e79428b95531c9709af26f3dcf172b",
+    "frozen_environment_sync_exit_code": 0,
+    "commands": [
+      {
+        "argv": [
+          "/tmp/aci-s17-output-check/mcp-server/.venv/bin/python",
+          "-c",
+          "import hashlib,json;from pathlib import Path;import atlas_aci;r=Path(atlas_aci.__file__).resolve().parent;root=Path.cwd().resolve();assert r==root/'mcp-server/src/atlas_aci';expected=json.loads((root/'.spectra/evidence/aci-s17/source-final.json').read_text())['runtime_hashes'];actual={str(p.relative_to(r)):hashlib.sha256(p.read_bytes()).hexdigest() for p in r.rglob('*.py')};assert actual==expected;print(json.dumps({'own_source':str(r),'runtime_files':len(actual),'all_hashes_equal':True}))"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.019624415988801047
+      },
+      {
+        "argv": [
+          "/tmp/aci-s17-output-check/mcp-server/.venv/bin/python",
+          "-m",
+          "pytest",
+          "-q",
+          "-p",
+          "no:cacheprovider",
+          "mcp-server/tests/slices/test_s17_admission.py",
+          "mcp-server/tests/slices/test_s17_contract.py",
+          "mcp-server/tests/slices/test_s17_docker.py",
+          "mcp-server/tests/slices/test_s17_documents.py",
+          "mcp-server/tests/slices/test_s17_lifetime.py",
+          "mcp-server/tests/slices/test_s17_query.py",
+          "mcp-server/tests/slices/test_s17_runner.py",
+          "mcp-server/tests/slices/test_s17_stdio.py",
+          "mcp-server/tests/slices/test_s17_storage.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 12.10408487499808
+      }
+    ],
+    "log": ".spectra/evidence/aci-s17/output-check-tests.log"
+  },
+  "completed_epoch": 1792997455.3485382
 }
