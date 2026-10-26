@@ -1,0 +1,7 @@
+{"jsonrpc":"2.0","id":1,"result":{"protocolVersion":"2024-11-05","capabilities":{"experimental":{}},"serverInfo":{"name":"resource-proof","version":"1.27.0"}}}
+{"jsonrpc":"2.0","id":2,"result":{"resourceTemplates":[{"name":"bytes","uriTemplate":"atlas-proof://bytes/{start}-{end}","mimeType":"application/octet-stream"}]}}
+{"jsonrpc":"2.0","id":3,"result":{"contents":[{"uri":"atlas-proof://bytes/0-5","mimeType":"application/octet-stream","_meta":{"start_byte":0,"end_byte":5,"total_bytes":5,"next_offset":null},"blob":"QcOpAFo="}]}}
+{"jsonrpc":"2.0","id":4,"result":{"contents":[{"uri":"atlas-proof://bytes/2-4","mimeType":"application/octet-stream","_meta":{"start_byte":2,"end_byte":4,"total_bytes":5,"next_offset":4},"blob":"qQA="}]}}
+{"jsonrpc":"2.0","id":5,"result":{"contents":[{"uri":"atlas-proof://bytes/5-5","mimeType":"application/octet-stream","_meta":{"start_byte":5,"end_byte":5,"total_bytes":5,"next_offset":null},"blob":""}]}}
+{"jsonrpc":"2.0","id":6,"error":{"code":-32042,"message":"EXPIRED_REFERENCE","data":{"reason":"retired"}}}
+{"jsonrpc":"2.0","id":7,"error":{"code":-32043,"message":"SCOPE_MISMATCH","data":{"reason":"foreign"}}}

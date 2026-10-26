@@ -1,0 +1,65 @@
+{
+  "slice_id": "ACI-S13",
+  "issue": 35,
+  "worktree": "/private/tmp/atlas-aci-aci-s13",
+  "branch": "aci-s13",
+  "base_commit": "bfa0e5935d5aefdd2d3c5c045eca1b2b08ebf56b",
+  "spec": ".spectra/plans/aci-s13.md",
+  "envelope": ".spectra/plans/aci-s13.envelope.json",
+  "criteria_sha256": "327911042d4d02566de953b5dab9f2c8fab043c06c7f1184f1d2795faee945ef",
+  "actual_confidence": {
+    "rubric": "confidence",
+    "total": 86.25,
+    "dims": {
+      "pattern_match": 85,
+      "requirement_clarity": 92,
+      "decomposition_stability": 86,
+      "constraint_compliance": 82
+    },
+    "verdict": "AUTO_PROCEED",
+    "at": "2026-10-26T03:35:47Z",
+    "label": "bounded-owned-spool-with-native-ownership-checkpoint"
+  },
+  "confidence_basis": {
+    "pattern_match": "Existing owned SQLite/pack leases, S12 bounded typed collection and S11 validated adapters are reused; independent native SDK raw-byte/serialization primitive passed. Cross-request registry remains new work.",
+    "requirement_clarity": "Six exact product criteria and two RUN obligations; independent criterion-fit review explicitly qualifies bounded immutable spooling with terminal outcomes and whole-proof atoms.",
+    "decomposition_stability": "Three bounded stories, precise ownership transfer, finite state policy, same-buffer chunk catalog and native first checkpoint; independent full review found no required revision.",
+    "constraint_compliance": "Three-day scope has real integration breadth, capacity/expiry and producer-bound probe obligations. No dependencies, persistent service, credential or format migration; early proof and allocation stop remain mandatory."
+  },
+  "checker_evidence": ".spectra/plans/aci-s13.review.json",
+  "execution_prescriptions": [
+    "Concatenate all pages against the captured bounded result, including metadata/tokens; preserve terminal reasons and whole-path atomicity.",
+    "First checkpoint must hold actual G1 SQLite and pack across G2/G3 publication/prune, prove pending/active/state/FD accounting and reject capacity before issuance; no early eviction or live fallback.",
+    "Execute cross-chunk/EOF/empty/post-acquisition tamper controls and measure complete SDK result/next URI/base64 and fixed ErrorData caps, not just raw bytes.",
+    "Preserve three-day allocation and early native ownership/quota proof; do not expand to a persistent retention service or resumable BFS.",
+    "Real parser/SQLite/SDK/host-Docker cancellation, idle expiry, shutdown/restart and scope forgery controls remain mandatory; archived SDK primitive does not prove product authorization/retention."
+  ],
+  "scope_amendments": [
+    ".spectra/changes/aci-s13/scope-amendment.json",
+    ".spectra/changes/aci-s13/bookkeeping-amendment.json"
+  ],
+  "output_digest_exclusions": [
+    ".spectra/state/aci-s13.execution.json",
+    ".spectra/evidence/aci-s13/final-reentry-before.json",
+    ".spectra/evidence/aci-s13/final-reentry-after.json",
+    ".spectra/evidence/aci-s13/final-reentry-summary.json",
+    ".spectra/evidence/aci-s13/final-resume-identity.json",
+    ".spectra/evidence/aci-s13/output-check-tests.log"
+  ],
+  "authoritative_receipt": ".spectra/state/aci-s13.execution.json",
+  "first_checkpoint": "Actual G1 SQLite+pack ownership across G2/G3/prune, identical cached page replay and resource bytes, finite quota rejection before issuance, native resource/error serialization; stop if persistent service or latest fallback is required.",
+  "helpers_root": "/Users/henrique/workspace/oss/agents/atlas-aci/.eidolons/ramza/bin",
+  "schemas_root": "/Users/henrique/workspace/oss/agents/atlas-aci/.eidolons/ramza/schemas",
+  "uv": "/tmp/aci-s01-tools/bin/uv",
+  "uv_cache": "/tmp/aci-s01-uv-cache",
+  "root_gate": "Root verify-envelope --block plus exact message/thread/spec correlated verify_pass before one Vivi writer.",
+  "publication": "Root owns validated green-CI merge/sync; executor never self-merges/deploys.",
+  "backlog": {
+    "merged": 13,
+    "remaining": 29,
+    "current_issue": 35,
+    "next_issue": 38
+  },
+  "probe": "Fresh final-producer same-pin/default-profile evidence for any producer change, even unchanged behavioral fingerprint; immutable verifier/bar,600s/job2700s cumulative including failures, two selectors only after independent audit.",
+  "sdk_qualification": ".spectra/evidence/aci-s13/planning/sdk/provenance.json"
+}

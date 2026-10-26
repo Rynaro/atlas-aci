@@ -1,0 +1,16 @@
+{
+  "command": [
+    "/private/tmp/atlas-aci-aci-s13/mcp-server/.venv/bin/python",
+    "/private/tmp/atlas-aci-aci-s13/.spectra/evidence/aci-s13/probe/lease_cost.py",
+    "solidus",
+    "/tmp/aci-s13-probe-inputs/solidus",
+    "/private/tmp/atlas-aci-aci-s13/.spectra/evidence/aci-s13/probe"
+  ],
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 40.79053100000601,
+  "peak_rss_bytes": 194969600,
+  "prior_serial_job_seconds_charged": 392.997676331026,
+  "per_job_seconds": 600,
+  "total_seconds": 2700
+}

@@ -2,7 +2,7 @@
 
 Authoritative state: execution.json. Standing user authorization is to validate, merge, sync main and continue all initially open issues. Root owns merges; one implementation writer per slice. No paid evaluation, credential or deployment changes are implied.
 
-Merged and receipted: #24 → #28 → #25 → #26 → #27 → #12 → #29 → #31 → #32 → #11 → #30 → #33 (PRs #65–#76). Current #34; next #35. Twelve merged, 30 remaining.
+Merged and receipted: #24 → #28 → #25 → #26 → #27 → #12 → #29 → #31 → #32 → #11 → #30 → #33 → #34 (PRs #65–#77). Current #35; next #38. Thirteen merged, 29 remaining.
 
 Frozen initial queue (skip merged entries using execution.json):
 

@@ -1,0 +1,55 @@
+{
+  "scope": "Three ATLAS integrated corrections, not final gates",
+  "hashes": {
+    "mcp-server/src/atlas_aci/codegraph.py": "3853cf9f98fc683dc1309aaceed8ad75fbe6ab16db9767551ed30ab225c92cd3",
+    "mcp-server/src/atlas_aci/query/admission.py": "f89761c0ef76c6cb438a12fb6e9814dd4a97ace79398a53acc3b26fc80e82d4d",
+    "mcp-server/src/atlas_aci/query/paging.py": "4924bbc6092e3204e1e805e6a5cc5255b524e55f90ce8260d9fa59d513c2801d",
+    "mcp-server/src/atlas_aci/query/leases.py": "e243b2f8eaed9191d425e236aba000568177354dec75dcfd0796f6d76fdd8a89",
+    "mcp-server/src/atlas_aci/protocol/graph.py": "de933c2eba9aa53b34ecf30212ffdfc5f876bccd243f5fde8a5195f5974b97e1",
+    "mcp-server/src/atlas_aci/protocol/results.py": "145885652357d28ac90458bf331c4def81956160483eac2fb65bd3601d7951cd",
+    "mcp-server/src/atlas_aci/protocol/resources.py": "e9857785d9b839301037c4d4c7cca39d44aa2b78d812d3abccb76648ebdf1744",
+    "mcp-server/src/atlas_aci/server.py": "1249d5dcd9b3d987d925dcfc7a327e333256e9f382a78cfc5decdf0002863d0e",
+    "mcp-server/src/atlas_aci/storage/snapshots.py": "8c7a6f3bc1d8756c8960b71b37dbb58a55fa27ae724b823baeb5fba43d87d45f"
+  },
+  "commands": [
+    {
+      "command": "pytest five non-stdio S13 modules",
+      "exit_code": 0,
+      "stdout": "integrated-corrected-first.log",
+      "result": "24 passed in 4.88s"
+    },
+    {
+      "command": "pytest all six S13 modules",
+      "exit_code": 0,
+      "stdout": "integrated-corrected-all.log",
+      "result": "29 passed in 9.17s"
+    },
+    {
+      "command": "pytest test_s12_admission.py test_s12_traversal.py",
+      "exit_code": 0,
+      "stdout": "predecessor-admission-corrected.log"
+    },
+    {
+      "command": "mypy src/atlas_aci",
+      "exit_code": 0,
+      "result": "36 source files"
+    },
+    {
+      "command": "ruff check changed correction paths",
+      "exit_code": 0
+    },
+    {
+      "command": "ruff format --check changed correction paths",
+      "exit_code": 0
+    }
+  ],
+  "red_evidence": [
+    "setup-budget-red.log",
+    "captured-metadata-red.log"
+  ],
+  "minima": {
+    "ordinary_navigation": 3436,
+    "retained_collection": 3448
+  },
+  "remaining": "Final native image/full/static/protected/producer probe/receipt are not complete."
+}

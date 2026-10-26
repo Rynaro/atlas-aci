@@ -104,6 +104,16 @@ class Config:
     # only fires when element-capping couldn't rescue the response.
     max_response_bytes: int = 1024 * 1024
 
+    # Process-owned graph references; no environment/CLI precedence or durable service.
+    max_graph_leases: int = 4
+    graph_lease_seconds: int = 300
+    max_lease_state_bytes: int = 16 * 1024 * 1024
+    max_total_lease_state_bytes: int = 64 * 1024 * 1024
+    max_retained_pack_bytes: int = 512 * 1024 * 1024
+    max_lease_pages: int = 256
+    max_lease_resources: int = 4096
+    lease_setup_ms: int = 2000
+
     # Rate limiting (set to 0 to disable)
     max_calls_per_minute: int = 200
 
@@ -113,6 +123,18 @@ class Config:
     graph_root: Path | None = None
 
     def __post_init__(self) -> None:
+        for name in (
+            "max_graph_leases",
+            "graph_lease_seconds",
+            "max_lease_state_bytes",
+            "max_total_lease_state_bytes",
+            "max_retained_pack_bytes",
+            "max_lease_pages",
+            "max_lease_resources",
+            "lease_setup_ms",
+        ):
+            if type(getattr(self, name)) is not int or getattr(self, name) <= 0:
+                raise ValueError("Retention policy must be finite positive integers: " + name)
         self.graph_root = self.graph_root.resolve() if self.graph_root is not None else None
         self.repo = self.repo.resolve()
         self.memex_root = self.memex_root.resolve()

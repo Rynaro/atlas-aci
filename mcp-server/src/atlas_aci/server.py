@@ -33,6 +33,7 @@ from atlas_aci.protocol.graph import (
     no_evidence_data,
     request_mode,
 )
+from atlas_aci.protocol.resources import RESOURCE_TEMPLATE, read_resource
 from atlas_aci.protocol.results import (
     STRUCTURED_VERSIONS,
     bounded_result,
@@ -40,6 +41,8 @@ from atlas_aci.protocol.results import (
     negotiated_version,
 )
 from atlas_aci.query.admission import MINIMUM_BUDGET
+from atlas_aci.query.leases import LeaseRegistry
+from atlas_aci.query.paging import issue_pages
 from atlas_aci.tools.graph_query import graph_query
 from atlas_aci.tools.list_dir import list_dir
 from atlas_aci.tools.search_symbol import search_symbol
@@ -328,9 +331,16 @@ def apply_central_bounds(
             from atlas_aci.protocol.graph import validate_navigation
 
             try:
-                validate_navigation(
-                    result, arguments["op"], enforcement.config.max_bound_field_elements
-                )
+                if arguments["op"] in {"page", "continue"}:
+                    from atlas_aci.protocol.graph import validate_page
+
+                    validate_page(
+                        result, arguments["op"], enforcement.config.max_bound_field_elements
+                    )
+                else:
+                    validate_navigation(
+                        result, arguments["op"], enforcement.config.max_bound_field_elements
+                    )
             except ValueError as exc:
                 raise ToolError("INVALID_RESULT", "Generated navigation proof is invalid.") from exc
     fields = bounded_fields_for(name, arguments)
@@ -431,6 +441,16 @@ async def dispatch_tool_call(
     mode = request_mode(arguments) if name == "graph_query" else None
     enforcement.assert_read_only(name)
     enforcement.assert_rate_limit()
+
+    if name == "graph_query" and mode == "structured" and arguments["op"] in {"page", "continue"}:
+        registry = getattr(code_graph, "_lease_registry", None)
+        if registry is None:
+            registry = code_graph._lease_registry = LeaseRegistry(config, code_graph)
+        if arguments["op"] == "page":
+            result = await issue_pages(registry, code_graph, arguments)
+        else:
+            result = json.loads(await registry.page(arguments["cursor"], arguments["query_digest"]))
+        return apply_central_bounds(name, arguments, result, enforcement)
 
     if name in {"search_symbol", "graph_query"}:
         with ExitStack() as stack:
@@ -554,12 +574,12 @@ async def call_tool_result(
         str(arguments.get("op"))
         if isinstance(arguments, dict)
         and isinstance(arguments.get("op"), str)
-        and arguments.get("op") in {"status", "neighborhood", "path"}
+        and arguments.get("op") in {"status", "neighborhood", "path", "page", "continue"}
         else "status"
     )
     budget = config.max_response_bytes
     if operation != "status" and isinstance(arguments, dict):
-        requested = arguments.get("max_bytes", budget)
+        requested = arguments.get("page_max_bytes" if operation == "page" else "max_bytes", budget)
         if type(requested) is int and 0 <= requested <= budget:
             budget = requested
     try:
@@ -599,7 +619,7 @@ async def call_tool_result(
         structured=structured,
         budget=budget,
         operation=operation,
-        minimum_budget=(MINIMUM_BUDGET if operation != "status" else 0),
+        minimum_budget=(MINIMUM_BUDGET if operation in {"neighborhood", "path"} else 0),
     )
 
 
@@ -635,6 +655,27 @@ async def run_stdio(config: Config) -> None:
             protocol_version=session_version(),
         )
 
+    @server.list_resources()
+    async def _list_resources():
+        return []
+
+    @server.list_resource_templates()
+    async def _list_resource_templates():
+        return [
+            types.ResourceTemplate(
+                name="ATLAS leased source span",
+                uriTemplate=RESOURCE_TEMPLATE,
+                mimeType="application/octet-stream",
+            )
+        ]
+
+    @server.read_resource()
+    async def _read_resource(uri):
+        registry = getattr(code_graph, "_lease_registry", None)
+        if registry is None:
+            registry = code_graph._lease_registry = LeaseRegistry(config, code_graph)
+        return await read_resource(registry, str(uri), enforcement)
+
     log.info("server_starting", repo=str(config.repo), memex=str(config.memex_root))
 
     try:
@@ -645,4 +686,7 @@ async def run_stdio(config: Config) -> None:
                 server.create_initialization_options(),
             )
     finally:
+        registry = getattr(code_graph, "_lease_registry", None)
+        if registry is not None:
+            await registry.aclose()
         code_graph.close()

@@ -1,0 +1,30 @@
+{
+  "slice_id": "ACI-S13",
+  "criteria_sha256": "327911042d4d02566de953b5dab9f2c8fab043c06c7f1184f1d2795faee945ef",
+  "before_implementation": true,
+  "reason": "Reviewed design needs explicit retained CodeGraph ownership, Config capacity policy, graph_query dispatch and enforcement resource checks; directly affected server tests, fixtures/docs and current-producer probe selectors. No criteria, stored format or old semantics waiver.",
+  "paths": [
+    "mcp-server/src/atlas_aci/protocol/*",
+    "mcp-server/src/atlas_aci/query/*",
+    "mcp-server/src/atlas_aci/storage/*",
+    "mcp-server/src/atlas_aci/server.py",
+    "mcp-server/tests/slices/test_s13_*.py",
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/src/atlas_aci/config.py",
+    "mcp-server/src/atlas_aci/tools/graph_query.py",
+    "mcp-server/src/atlas_aci/enforcement.py",
+    "mcp-server/tests/test_server.py",
+    "mcp-server/tests/fixtures/s13/*",
+    "atlas/docs/*",
+    ".github/workflows/harden-gate.yml",
+    "scripts/test-verify-probe-verdict.sh",
+    ".spectra/plans/aci-s13.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/changes/aci-s13/*",
+    ".spectra/evidence/aci-s13/*",
+    ".spectra/state/aci-s13.execution.json",
+    ".spectra/backlog/execution.json",
+    ".spectra/backlog/order.md"
+  ],
+  "authority": "Standing all-backlog work authorization; root mechanical handoff precedes implementation."
+}

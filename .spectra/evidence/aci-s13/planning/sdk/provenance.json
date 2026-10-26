@@ -1,0 +1,50 @@
+{
+  "source": "Independent ATLAS actual primitive; copied unchanged, not rerun by maker",
+  "command": "PYTHONDONTWRITEBYTECODE=1 /tmp/atlas-aci-aci-s12/mcp-server/.venv/bin/python -B /tmp/aci_s13_resource_sdk_proof.py",
+  "exit_code": 0,
+  "limits": "SDK serialization and raw-byte primitive only; not product ownership, retention or authorization assurance. Custom proof error numbers not product adoption.",
+  "files": [
+    {
+      "original_path": "/tmp/aci_s13_resource_sdk_proof.py",
+      "archived": "aci_s13_resource_sdk_proof.py",
+      "bytes": 4431,
+      "sha256": "bda562d9cfe8206beb6d8e5da0bb66f8adb3a9dd6322e3d2cfbab16460b62715"
+    },
+    {
+      "original_path": "/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/aci-s13-resource-sdk-proof-8m12p3lm/2024-11-05.frames.jsonl",
+      "archived": "2024-11-05.frames.jsonl",
+      "bytes": 1155,
+      "sha256": "e1ed9fc741a6d5f0c469d198c78ccb7f88d7e1c7942b00ce9f11e85029566e08"
+    },
+    {
+      "original_path": "/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/aci-s13-resource-sdk-proof-8m12p3lm/2024-11-05.stderr.log",
+      "archived": "2024-11-05.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "original_path": "/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/aci-s13-resource-sdk-proof-8m12p3lm/2025-06-18.frames.jsonl",
+      "archived": "2025-06-18.frames.jsonl",
+      "bytes": 1155,
+      "sha256": "2ea99600ff0a9405dabdeb5c385a5eb421335ae0802b04295f5592a0933979bf"
+    },
+    {
+      "original_path": "/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/aci-s13-resource-sdk-proof-8m12p3lm/2025-06-18.stderr.log",
+      "archived": "2025-06-18.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "original_path": "/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/aci-s13-resource-sdk-proof-8m12p3lm/result.json",
+      "archived": "result.json",
+      "bytes": 3844,
+      "sha256": "ec78397d92324492e6e54d13d2da1f6e752b667ab677927a510789822ca0ea5a"
+    },
+    {
+      "original_path": "/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/aci-s13-resource-sdk-proof-8m12p3lm/server.py",
+      "archived": "server.py",
+      "bytes": 1085,
+      "sha256": "01f47b9a31c7c42b32c717c7a84a5545b72671db6100bbbf233c12366c79e69d"
+    }
+  ]
+}

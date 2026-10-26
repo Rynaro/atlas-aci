@@ -1,0 +1,163 @@
+{
+  "interpreter": "/tmp/atlas-aci-aci-s12/mcp-server/.venv/bin/python",
+  "temporary_server": "/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/aci-s13-resource-sdk-proof-8m12p3lm/server.py",
+  "server_sha256": "01f47b9a31c7c42b32c717c7a84a5545b72671db6100bbbf233c12366c79e69d",
+  "results": [
+    {
+      "protocol": "2024-11-05",
+      "negotiated": "2024-11-05",
+      "reads": [
+        {
+          "span": [
+            0,
+            5
+          ],
+          "decoded_hex": "41c3a9005a",
+          "model_result_bytes": 177,
+          "actual_result_bytes": 177,
+          "jsonrpc_frame_bytes": 211,
+          "meta": {
+            "start_byte": 0,
+            "end_byte": 5,
+            "total_bytes": 5,
+            "next_offset": null
+          }
+        },
+        {
+          "span": [
+            2,
+            4
+          ],
+          "decoded_hex": "a900",
+          "model_result_bytes": 170,
+          "actual_result_bytes": 170,
+          "jsonrpc_frame_bytes": 204,
+          "meta": {
+            "start_byte": 2,
+            "end_byte": 4,
+            "total_bytes": 5,
+            "next_offset": 4
+          }
+        },
+        {
+          "span": [
+            5,
+            5
+          ],
+          "decoded_hex": "",
+          "model_result_bytes": 169,
+          "actual_result_bytes": 169,
+          "jsonrpc_frame_bytes": 203,
+          "meta": {
+            "start_byte": 5,
+            "end_byte": 5,
+            "total_bytes": 5,
+            "next_offset": null
+          }
+        }
+      ],
+      "errors": [
+        {
+          "label": "expired",
+          "error": {
+            "code": -32042,
+            "message": "EXPIRED_REFERENCE",
+            "data": {
+              "reason": "retired"
+            }
+          },
+          "frame_bytes": 106
+        },
+        {
+          "label": "scope",
+          "error": {
+            "code": -32043,
+            "message": "SCOPE_MISMATCH",
+            "data": {
+              "reason": "foreign"
+            }
+          },
+          "frame_bytes": 103
+        }
+      ]
+    },
+    {
+      "protocol": "2025-06-18",
+      "negotiated": "2025-06-18",
+      "reads": [
+        {
+          "span": [
+            0,
+            5
+          ],
+          "decoded_hex": "41c3a9005a",
+          "model_result_bytes": 177,
+          "actual_result_bytes": 177,
+          "jsonrpc_frame_bytes": 211,
+          "meta": {
+            "start_byte": 0,
+            "end_byte": 5,
+            "total_bytes": 5,
+            "next_offset": null
+          }
+        },
+        {
+          "span": [
+            2,
+            4
+          ],
+          "decoded_hex": "a900",
+          "model_result_bytes": 170,
+          "actual_result_bytes": 170,
+          "jsonrpc_frame_bytes": 204,
+          "meta": {
+            "start_byte": 2,
+            "end_byte": 4,
+            "total_bytes": 5,
+            "next_offset": 4
+          }
+        },
+        {
+          "span": [
+            5,
+            5
+          ],
+          "decoded_hex": "",
+          "model_result_bytes": 169,
+          "actual_result_bytes": 169,
+          "jsonrpc_frame_bytes": 203,
+          "meta": {
+            "start_byte": 5,
+            "end_byte": 5,
+            "total_bytes": 5,
+            "next_offset": null
+          }
+        }
+      ],
+      "errors": [
+        {
+          "label": "expired",
+          "error": {
+            "code": -32042,
+            "message": "EXPIRED_REFERENCE",
+            "data": {
+              "reason": "retired"
+            }
+          },
+          "frame_bytes": 106
+        },
+        {
+          "label": "scope",
+          "error": {
+            "code": -32043,
+            "message": "SCOPE_MISMATCH",
+            "data": {
+              "reason": "foreign"
+            }
+          },
+          "frame_bytes": 103
+        }
+      ]
+    }
+  ]
+}

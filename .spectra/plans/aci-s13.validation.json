@@ -1,0 +1,37 @@
+{
+  "at": "2026-10-26T03:36:39.638511+00:00",
+  "phase": "DONE",
+  "confidence": 86.25,
+  "verdict": "AUTO_PROCEED",
+  "checks": [
+    {
+      "file": "aci-s13.envelope.json",
+      "schema": "ecl-envelope.v2.json",
+      "validator": "Draft202012Validator",
+      "format_check": true,
+      "valid": true
+    },
+    {
+      "file": "aci-s13.state.json",
+      "schema": "plan-state.v1.json",
+      "validator": "Draft7Validator",
+      "format_check": true,
+      "valid": true
+    }
+  ],
+  "product_files_unchanged": 136,
+  "ledger_counts": {
+    "merged": 13,
+    "remaining": 29
+  },
+  "spec_sha256": "3f329efc5d94c34f4947c1c87a22e20e7ce90aa6c10f18b06d319908f9b8df01",
+  "criteria_sha256": "327911042d4d02566de953b5dab9f2c8fab043c06c7f1184f1d2795faee945ef",
+  "envelope_sha256": "5cdfa6f8fcf7405132c6ea7cf6fc10a4608b2a6fb2a838bd30e78967e39f1c68",
+  "state_sha256": "803dab48f7aa92d5f4d58d4652d6c0a0572f568aefbe9e6b9158ac2d40134e7e",
+  "message_id": "c296fd58-b914-4306-82cf-94c0c1eb54c2",
+  "thread_id": "8356a040-8b86-4a36-92d8-d1c3ff097e28",
+  "scope_amendment": ".spectra/changes/aci-s13/scope-amendment.json",
+  "bookkeeping_amendment": ".spectra/changes/aci-s13/bookkeeping-amendment.json",
+  "schema_validation": "jsonschema.validators.validator_for(schema); check_schema; validate with FormatChecker using original mcp-server/.venv/bin/python",
+  "note": "Approved draft unchanged. Genuine independent review03:34:48Z retained separately from state score03:35:46Z. No product edits. SDK original byte archives preserve actual primitive only. Root mechanical gate/correlated trace before single writer; native ownership/capacity checkpoint remains unverified."
+}

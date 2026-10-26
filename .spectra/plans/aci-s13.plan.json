@@ -1,0 +1,69 @@
+{
+  "plan": "aci-s13",
+  "slice_id": "ACI-S13",
+  "spec": ".spectra/plans/aci-s13.md",
+  "criteria": ".spectra/plans/aci-s13.criteria.md",
+  "state": ".spectra/plans/aci-s13.state.json",
+  "scope": [
+    "mcp-server/src/atlas_aci/protocol/*",
+    "mcp-server/src/atlas_aci/query/*",
+    "mcp-server/src/atlas_aci/storage/*",
+    "mcp-server/src/atlas_aci/server.py",
+    "mcp-server/tests/slices/test_s13_*.py",
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/src/atlas_aci/config.py",
+    "mcp-server/src/atlas_aci/tools/graph_query.py",
+    "mcp-server/src/atlas_aci/enforcement.py",
+    "mcp-server/tests/test_server.py",
+    "mcp-server/tests/fixtures/s13/*",
+    "atlas/docs/*",
+    ".github/workflows/harden-gate.yml",
+    "scripts/test-verify-probe-verdict.sh",
+    ".spectra/plans/aci-s13.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/changes/aci-s13/*",
+    ".spectra/evidence/aci-s13/*",
+    ".spectra/state/aci-s13.execution.json",
+    ".spectra/backlog/execution.json",
+    ".spectra/backlog/order.md"
+  ],
+  "output_digest_exclusions": [
+    ".spectra/state/aci-s13.execution.json",
+    ".spectra/evidence/aci-s13/final-reentry-before.json",
+    ".spectra/evidence/aci-s13/final-reentry-after.json",
+    ".spectra/evidence/aci-s13/final-reentry-summary.json",
+    ".spectra/evidence/aci-s13/final-resume-identity.json",
+    ".spectra/evidence/aci-s13/output-check-tests.log"
+  ],
+  "stories": [
+    {
+      "name": "Owned immutable result pages",
+      "timebox_engineering_days": 1,
+      "executor": "Vivi"
+    },
+    {
+      "name": "Authenticated bounded evidence resources",
+      "timebox_engineering_days": 1,
+      "executor": "Vivi"
+    },
+    {
+      "name": "Native lifecycle, compatibility and current producer gates",
+      "timebox_engineering_days": 1,
+      "executor": "Vivi"
+    }
+  ],
+  "confidence": {
+    "rubric": "confidence",
+    "total": 86.25,
+    "dims": {
+      "pattern_match": 85,
+      "requirement_clarity": 92,
+      "decomposition_stability": 86,
+      "constraint_compliance": 82
+    },
+    "verdict": "AUTO_PROCEED",
+    "at": "2026-10-26T03:35:47Z",
+    "label": "bounded-owned-spool-with-native-ownership-checkpoint"
+  },
+  "status": "READY"
+}

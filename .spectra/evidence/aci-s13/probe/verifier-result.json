@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "/private/tmp/atlas-aci-aci-s13/mcp-server/.venv/bin/python",
+    "scripts/verify-probe-verdict.py",
+    ".spectra/changes/aci-s13/probe/aci-s13-probe-lpa-vs-louvain.json"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 0.21408662502653897,
+  "stdout": "verifier-result.log",
+  "stderr": "verifier-error.log"
+}

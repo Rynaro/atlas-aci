@@ -55,7 +55,7 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 # below -- the moment aci-v2-harden-and-augment was archived for real
 # (a SKIP is exit 0; CI would have stayed green while testing nothing).
 # See scripts/resolve-probe-artifact.sh for the search/ambiguity rules.
-REAL_JSON_REL="$(cd "$REPO_ROOT" && "$RESOLVE" aci-s12-probe-lpa-vs-louvain.json 2>/dev/null)" || REAL_JSON_REL=""
+REAL_JSON_REL="$(cd "$REPO_ROOT" && "$RESOLVE" aci-s13-probe-lpa-vs-louvain.json 2>/dev/null)" || REAL_JSON_REL=""
 
 if [ -z "$REAL_JSON_REL" ] || [ ! -f "$REPO_ROOT/$REAL_JSON_REL" ]; then
     echo "SKIP: no probe-lpa-vs-louvain.json found under $REPO_ROOT/.spectra/changes/ (A3 not yet built in this tree)."

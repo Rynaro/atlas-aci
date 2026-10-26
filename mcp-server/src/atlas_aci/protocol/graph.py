@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 from typing import Any
 
 from jsonschema import Draft202012Validator  # type: ignore[import-untyped]
@@ -83,10 +84,28 @@ for operation in ("neighborhood", "path"):
         ["target"] if operation == "path" else []
     )
     NAV_INPUTS.append(schema)
+PAGE_INPUT = obj(
+    {
+        "schema_version": {"const": VERSION},
+        "op": {"const": "page"},
+        "query": {"oneOf": NAV_INPUTS},
+        "page_max_bytes": {"type": "integer", "minimum": 1},
+        "expected_generation_id": HASH,
+    }
+)
+PAGE_INPUT["required"] = ["schema_version", "op", "query", "page_max_bytes"]
+CONTINUE_INPUT = obj(
+    {
+        "schema_version": {"const": VERSION},
+        "op": {"const": "continue"},
+        "cursor": {"type": "string", "minLength": 1, "maxLength": 2048},
+        "query_digest": HASH,
+    }
+)
 GRAPH_INPUT_SCHEMA = {
     "type": "object",
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "oneOf": [LEGACY_INPUT, STRUCTURED_INPUT, *NAV_INPUTS],
+    "oneOf": [LEGACY_INPUT, STRUCTURED_INPUT, *NAV_INPUTS, PAGE_INPUT, CONTINUE_INPUT],
 }
 LOCATION = obj({key: COUNT for key in ("line", "column", "end_line", "end_column")})
 STATE_REASON = obj({"state": STRING, "reason": STRING})
@@ -363,16 +382,93 @@ NAV_DATA = {
         }
     ),
 }
+CAPTURED_COMMON = copy.deepcopy(NAV_COMMON)
+CAPTURED_COMMON["stop_reason"] = nullable(
+    {
+        "enum": [
+            "deadline",
+            "depth_limit",
+            "visited_node_limit",
+            "examined_edge_limit",
+            "byte_limit",
+            "element_limit",
+            "retained_collection_limit",
+        ]
+    }
+)
+CAPTURED_SCHEMA = {
+    "oneOf": [
+        obj({**CAPTURED_COMMON, "query_operation": {"const": "neighborhood"}}),
+        obj(
+            {**CAPTURED_COMMON, "query_operation": {"const": "path"}, "target": nullable(SELECTION)}
+        ),
+    ]
+}
+RESOURCE_DESCRIPTOR = obj(
+    {
+        "id": HASH,
+        "repository": HASH,
+        "generation_id": HASH,
+        "snapshot_id": HASH,
+        "path": STRING,
+        "source_sha256": HASH,
+        "source_size": COUNT,
+        "start_byte": COUNT,
+        "end_byte": COUNT,
+        "evidence_id": HASH,
+        "occurrence_id": HASH,
+        "provenance_state": {"const": "source"},
+        "uri": {"type": "string", "maxLength": 4096},
+    }
+)
+ATOM_SCHEMA = {
+    "oneOf": [
+        obj({"kind": {"const": "node"}, "node": IDENTITY, "resources": array(HASH)}),
+        obj(
+            {
+                "kind": {"const": "edge"},
+                "proof": HOP,
+                "nodes": array(IDENTITY),
+                "resources": array(HASH),
+            }
+        ),
+        obj(
+            {
+                "kind": {"const": "path"},
+                "path": obj({"nodes": array(IDENTITY), "hops": array(HOP)}),
+                "resources": array(HASH),
+            }
+        ),
+    ]
+}
+PAGE_DATA_SCHEMA = obj(
+    {
+        "projection": {"const": "captured_result_page"},
+        "query_digest": HASH,
+        "lease_id": {"type": "string", "pattern": "^[0-9a-f]{32}$"},
+        "captured": CAPTURED_SCHEMA,
+        "items": array(ATOM_SCHEMA),
+        "resources": array(RESOURCE_DESCRIPTOR),
+        "offset": COUNT,
+        "returned_count": COUNT,
+        "total_count": COUNT,
+        "has_more": BOOL,
+        "next_cursor": nullable({"type": "string", "minLength": 1, "maxLength": 2048}),
+        "setup_proof_reads": COUNT,
+    }
+)
 ERROR_SCHEMA = obj({"code": STRING, "message": STRING, "retry_hint": STRING})
 ENVELOPE_SCHEMA = obj(
     {
         "schema_version": {"const": VERSION},
-        "operation": {"enum": ["status", "neighborhood", "path"]},
+        "operation": {"enum": ["status", "neighborhood", "path", "page", "continue"]},
         "status": {"enum": ["ok", "error"]},
         "generation_id": nullable(HASH),
         "snapshot_id": nullable(HASH),
         "evidence_status": {"enum": ["available", "partial", "unknown", "unavailable"]},
-        "data": {"anyOf": [STATUS_DATA_SCHEMA, *NAV_DATA.values(), {"type": "null"}]},
+        "data": {
+            "anyOf": [STATUS_DATA_SCHEMA, *NAV_DATA.values(), PAGE_DATA_SCHEMA, {"type": "null"}]
+        },
         "error": nullable(ERROR_SCHEMA),
         "bounds": BOUNDS_SCHEMA,
     }
@@ -386,7 +482,12 @@ ENVELOPE_SCHEMA["oneOf"] = [
             "error": {"type": "null"},
         }
     }
-    for operation, schema in {"status": STATUS_DATA_SCHEMA, **NAV_DATA}.items()
+    for operation, schema in {
+        "status": STATUS_DATA_SCHEMA,
+        **NAV_DATA,
+        "page": PAGE_DATA_SCHEMA,
+        "continue": PAGE_DATA_SCHEMA,
+    }.items()
 ] + [
     {"properties": {"status": {"const": "error"}, "data": {"type": "null"}, "error": ERROR_SCHEMA}}
 ]
@@ -408,23 +509,38 @@ def request_mode(arguments: Any) -> str:
     if not isinstance(arguments, dict):
         raise ToolError("INVALID_INPUT", "Tool arguments must match the published schema.")
     structured = any(key in arguments for key in RESERVED)
-    if structured and "query" in arguments:
+    if (
+        structured
+        and "query" in arguments
+        and not (arguments.get("op") == "page" and isinstance(arguments["query"], dict))
+    ):
         raise ToolError("MIXED_REQUEST", "Legacy and structured fields cannot be mixed.")
     if structured and arguments.get("schema_version") != VERSION:
         raise ToolError("UNSUPPORTED_SCHEMA_VERSION", "Unsupported graph schema version.")
     if structured and (
         not isinstance(arguments.get("op"), str)
-        or arguments.get("op") not in {"status", "neighborhood", "path"}
+        or arguments.get("op") not in {"status", "neighborhood", "path", "page", "continue"}
     ):
         raise ToolError("INVALID_OPERATION", "Unsupported graph operation.")
     if structured and any(
-        key in arguments and type(arguments[key]) is not int for key in (*LIMITS, "max_bytes")
+        key in arguments and type(arguments[key]) is not int
+        for key in (*LIMITS, "max_bytes", "page_max_bytes")
     ):
         raise ToolError(
             "INVALID_INPUT", "Traversal limits must be integers, not booleans or floats."
         )
     if not INPUT_VALIDATOR.is_valid(arguments):
         raise ToolError("INVALID_INPUT", "Tool arguments must match the published schema.")
+    if structured and arguments["op"] == "page":
+        if (
+            request_mode(arguments["query"]) != "structured"
+            or arguments["query"]["op"] not in NAV_DATA
+        ):
+            raise ToolError("INVALID_INPUT", "Only bounded traversal queries can be paged.")
+        expected = arguments.get("expected_generation_id")
+        nested = arguments["query"].get("expected_generation_id")
+        if expected is not None and nested is not None and expected != nested:
+            raise ToolError("INVALID_INPUT", "Generation guards must agree.")
     return "structured" if structured else "legacy"
 
 
@@ -521,12 +637,7 @@ def validate_navigation(payload, operation, element_limit):
     if payload["status"] == "error":
         return
     data = payload["data"]
-    if (data["outcome"] == "partial") != (data["stop_reason"] is not None):
-        raise ValueError("Invalid traversal frontier status")
-    if data["work"]["visited_nodes"] > data["effective_limits"]["max_visited_nodes"]:
-        raise ValueError("Visited-node budget exceeded")
-    if data["work"]["examined_edges"] > data["effective_limits"]["max_examined_edges"]:
-        raise ValueError("Examined-edge budget exceeded")
+    validate_captured(data, element_limit)
     nodes = data.get("nodes", [])
     hops = data.get("edges", [])
     if operation == "path" and data["path"] is not None:
@@ -539,27 +650,9 @@ def validate_navigation(payload, operation, element_limit):
 
     if any(len(items) > element_limit for items in lists({"nodes": nodes, "hops": hops})):
         raise ValueError("Whole proof exceeds element cap")
-    for name in ("seed", "target"):
-        if data.get(name) is not None and any(
-            len(items) > element_limit for items in lists(data[name])
-        ):
-            raise ValueError("Endpoint candidate exceeds element cap")
     identities = {node["id"]: node for node in nodes}
     if len(identities) != len(nodes):
         raise ValueError("Duplicate returned entity identity")
-    for selection_name in ("seed", "target"):
-        selection = data.get(selection_name)
-        if selection is None:
-            continue
-        unique = selection["state"] == "unique"
-        if unique != (selection["entity_id"] is not None):
-            raise ValueError("Endpoint uniqueness contradiction")
-        if unique and any(c["id"] != selection["entity_id"] for c in selection["candidates"]):
-            raise ValueError("Endpoint candidate identity contradiction")
-        for candidate in selection["candidates"]:
-            ev.validate_record(
-                {"type": "entity", **{k: v for k, v in candidate.items() if k != "projection"}}
-            )
     for node in nodes:
         ev.validate_record(
             {"type": "entity", **{k: v for k, v in node.items() if k != "projection"}}
@@ -573,48 +666,7 @@ def validate_navigation(payload, operation, element_limit):
     ):
         raise ValueError("Path endpoint differs from selected target")
     for hop in hops:
-        for kind in ("assertion", "evidence", "occurrence", "producer"):
-            ev.validate_record(hop[kind])
-        assertion, evidence, occurrence = (
-            hop[key] for key in ("assertion", "evidence", "occurrence")
-        )
-        if (
-            assertion["evidence_id"] != evidence["id"]
-            or evidence["occurrence_id"] != occurrence["id"]
-            or evidence["producer_id"] != hop["producer"]["id"]
-            or assertion["resolution"] not in data["confidence"]
-            or assertion["relation"] not in data["relations"]
-            or hop["traversal_direction"] != data["direction"]
-            or not {assertion["source_entity_id"], assertion["target_entity_id"]}
-            <= identities.keys()
-        ):
-            raise ValueError("Disconnected canonical proof")
-        source = identities[assertion["source_entity_id"]]
-        target = identities[assertion["target_entity_id"]]
-        legacy = evidence["provenance_state"] == "legacy_unavailable"
-        if (
-            source["path"] != occurrence["path"]
-            or source["language"] != occurrence["language"]
-            or (
-                occurrence["entity_id"] != source["id"]
-                and not (legacy and occurrence["entity_id"] is None)
-            )
-            or legacy != (source["identity_basis"] == "legacy_projection")
-            or legacy != (target["identity_basis"] == "legacy_projection")
-            or (not legacy) != (hop["producer"]["identity_basis"] == "parsed")
-        ):
-            raise ValueError("Assertion source ownership/provenance contradiction")
-        if any(
-            evidence[key] != occurrence[key]
-            for key in (
-                "source_sha256",
-                "source_size",
-                "start_byte",
-                "end_byte",
-                "provenance_state",
-            )
-        ):
-            raise ValueError("Inconsistent source proof")
+        validate_hop(hop, identities, data)
     if operation == "path" and data["path"] is not None:
         for source, hop, target in zip(nodes[:-1], hops, nodes[1:], strict=True):
             assertion = hop["assertion"]
@@ -623,3 +675,179 @@ def validate_navigation(payload, operation, element_limit):
                 expected = expected[::-1]
             if (source["id"], target["id"]) != expected:
                 raise ValueError("Path direction contradiction")
+
+
+def validate_hop(hop, identities, data):
+    for kind in ("assertion", "evidence", "occurrence", "producer"):
+        ev.validate_record(hop[kind])
+    assertion, evidence, occurrence = (hop[key] for key in ("assertion", "evidence", "occurrence"))
+    if (
+        assertion["evidence_id"] != evidence["id"]
+        or evidence["occurrence_id"] != occurrence["id"]
+        or evidence["producer_id"] != hop["producer"]["id"]
+        or assertion["resolution"] not in data["confidence"]
+        or assertion["relation"] not in data["relations"]
+        or hop["traversal_direction"] != data["direction"]
+        or not {assertion["source_entity_id"], assertion["target_entity_id"]} <= identities.keys()
+    ):
+        raise ValueError("Disconnected canonical proof")
+    source = identities[assertion["source_entity_id"]]
+    target = identities[assertion["target_entity_id"]]
+    legacy = evidence["provenance_state"] == "legacy_unavailable"
+    if (
+        source["path"] != occurrence["path"]
+        or source["language"] != occurrence["language"]
+        or (
+            occurrence["entity_id"] != source["id"]
+            and not (legacy and occurrence["entity_id"] is None)
+        )
+        or legacy != (source["identity_basis"] == "legacy_projection")
+        or legacy != (target["identity_basis"] == "legacy_projection")
+        or (not legacy) != (hop["producer"]["identity_basis"] == "parsed")
+    ):
+        raise ValueError("Assertion source ownership/provenance contradiction")
+    if any(
+        evidence[key] != occurrence[key]
+        for key in (
+            "source_sha256",
+            "source_size",
+            "start_byte",
+            "end_byte",
+            "provenance_state",
+        )
+    ):
+        raise ValueError("Inconsistent source proof")
+
+
+def validate_page(payload, operation, element_limit):
+    """Validate a labelled projection of captured results without re-clipping atoms."""
+    if payload.get("operation") != operation or not STRUCTURED_VALIDATOR.is_valid(payload):
+        raise ValueError("Invalid page result schema/operation")
+    if payload["status"] == "error":
+        return
+    data = payload["data"]
+    captured = data["captured"]
+    items = data["items"]
+    validate_captured(captured, element_limit)
+    if (
+        data["returned_count"] != len(items)
+        or data["offset"] + len(items) > data["total_count"]
+        or data["has_more"] != (data["offset"] + len(items) < data["total_count"])
+        or data["has_more"] != (data["next_cursor"] is not None)
+        or (data["has_more"] and not items)
+    ):
+        raise ValueError("Invalid captured page extent")
+    if (captured["outcome"] == "partial") != (captured["stop_reason"] is not None):
+        raise ValueError("Invalid captured query outcome")
+    from atlas_aci.protocol.resources import parse_uri
+    from atlas_aci.query.admission import lists
+    from atlas_aci.query.leases import digest
+
+    if any(
+        len(value) > element_limit
+        for value in lists({"items": items, "resources": data["resources"]})
+    ):
+        raise ValueError("Page atom exceeds element cap")
+    descriptors = {d["id"]: d for d in data["resources"]}
+    if len(descriptors) != len(data["resources"]):
+        raise ValueError("Duplicate resource descriptor")
+    referenced = set()
+    for atom in items:
+        if atom["kind"] == "path":
+            if captured["query_operation"] != "path" or captured["outcome"] != "complete":
+                raise ValueError("Invalid whole path atom")
+            nodes = atom["path"]["nodes"]
+            hops = atom["path"]["hops"]
+            nav = {k: v for k, v in captured.items() if k != "query_operation"}
+            nav["path"] = atom["path"]
+            projected = envelope(
+                nav,
+                operation="path",
+                generation_id=payload["generation_id"],
+                snapshot_id=payload["snapshot_id"],
+                evidence_status=payload["evidence_status"],
+            )
+            projected["bounds"]["element_limit"] = element_limit
+            validate_navigation(projected, "path", element_limit)
+        elif atom["kind"] == "edge":
+            if captured["query_operation"] != "neighborhood":
+                raise ValueError("Wrong edge atom operation")
+            nodes = atom["nodes"]
+            hops = [atom["proof"]]
+            if len(nodes) != 2:
+                raise ValueError("Edge must carry both endpoint projections")
+        else:
+            if captured["query_operation"] != "neighborhood":
+                raise ValueError("Wrong node atom operation")
+            nodes = [atom["node"]]
+            hops = []
+        identities = {n["id"]: n for n in nodes}
+        for node in nodes:
+            ev.validate_record(
+                {"type": "entity", **{k: v for k, v in node.items() if k != "projection"}}
+            )
+        for hop in hops:
+            validate_hop(hop, identities, captured)
+        known = {hop["evidence"]["id"]: hop for hop in hops}
+        for identifier in atom["resources"]:
+            if identifier not in descriptors:
+                raise ValueError("Missing issued resource descriptor")
+            descriptor = descriptors[identifier]
+            hop = known.get(descriptor["evidence_id"])
+            if hop is None:
+                raise ValueError("Resource not in returned proof membership")
+            proof = hop["evidence"]
+            occurrence = hop["occurrence"]
+            if (
+                descriptor["generation_id"] != payload["generation_id"]
+                or descriptor["snapshot_id"] != payload["snapshot_id"]
+                or descriptor["path"] != occurrence["path"]
+                or descriptor["occurrence_id"] != occurrence["id"]
+                or any(
+                    descriptor[k] != proof[k]
+                    for k in (
+                        "source_sha256",
+                        "source_size",
+                        "start_byte",
+                        "end_byte",
+                        "provenance_state",
+                    )
+                )
+                or descriptor["id"]
+                != digest({k: v for k, v in descriptor.items() if k not in {"id", "uri"}})
+                or parse_uri(descriptor["uri"])[0] != identifier
+            ):
+                raise ValueError("Issued resource proof contradiction")
+            referenced.add(identifier)
+    if referenced != descriptors.keys():
+        raise ValueError("Unreferenced resource descriptor")
+
+
+def validate_captured(data, element_limit):
+    """Shared S12 metadata invariants; no assumption that a later page contains its root."""
+    from atlas_aci.query.admission import lists
+
+    if (data["outcome"] == "partial") != (data["stop_reason"] is not None):
+        raise ValueError("Invalid traversal frontier status")
+    if data["work"]["visited_nodes"] > data["effective_limits"]["max_visited_nodes"]:
+        raise ValueError("Visited-node budget exceeded")
+    if data["work"]["examined_edges"] > data["effective_limits"]["max_examined_edges"]:
+        raise ValueError("Examined-edge budget exceeded")
+    for name in ("seed", "target"):
+        if data.get(name) is not None and any(
+            len(items) > element_limit for items in lists(data[name])
+        ):
+            raise ValueError("Endpoint candidate exceeds element cap")
+    for selection_name in ("seed", "target"):
+        selection = data.get(selection_name)
+        if selection is None:
+            continue
+        unique = selection["state"] == "unique"
+        if unique != (selection["entity_id"] is not None):
+            raise ValueError("Endpoint uniqueness contradiction")
+        if unique and any(c["id"] != selection["entity_id"] for c in selection["candidates"]):
+            raise ValueError("Endpoint candidate identity contradiction")
+        for candidate in selection["candidates"]:
+            ev.validate_record(
+                {"type": "entity", **{k: v for k, v in candidate.items() if k != "projection"}}
+            )

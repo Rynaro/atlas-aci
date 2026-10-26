@@ -1,0 +1,38 @@
+{
+  "checks": [
+    {
+      "path": ".github/workflows/harden-gate.yml",
+      "check": "exact reverse baseline",
+      "exit_code": 0,
+      "replacements": 3,
+      "sha256": "e80eed1df13c038d51772c42becb3c68a9e9a807078e13fa29d81fe106e95dc0"
+    },
+    {
+      "path": "scripts/test-verify-probe-verdict.sh",
+      "check": "exact reverse baseline",
+      "exit_code": 0,
+      "replacements": 1,
+      "sha256": "34af75ff4fc2bf47959d35f149332bf2fd5e59728b8d3b4d8633b0cd27ce6606"
+    },
+    {
+      "argv": [
+        "scripts/resolve-probe-artifact.sh",
+        "aci-s13-probe-lpa-vs-louvain.md"
+      ],
+      "exit_code": 0,
+      "stdout": ".spectra/changes/aci-s13/probe/aci-s13-probe-lpa-vs-louvain.md\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "scripts/resolve-probe-artifact.sh",
+        "aci-s13-probe-lpa-vs-louvain.json"
+      ],
+      "exit_code": 0,
+      "stdout": ".spectra/changes/aci-s13/probe/aci-s13-probe-lpa-vs-louvain.json\n",
+      "stderr": ""
+    }
+  ],
+  "all_zero": true,
+  "immutable_verifier_sha256": "f1cf558fb41e2d04cd33039070e82ce922797f954a4e9793f98aa9eab3f736c6"
+}

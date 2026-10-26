@@ -1,0 +1,79 @@
+{
+  "slice_id": "ACI-S13",
+  "issue_url": "https://github.com/Rynaro/atlas-aci/issues/35",
+  "criteria_sha256": "327911042d4d02566de953b5dab9f2c8fab043c06c7f1184f1d2795faee945ef",
+  "frozen_spec_sha256": "3f329efc5d94c34f4947c1c87a22e20e7ce90aa6c10f18b06d319908f9b8df01",
+  "base_commit": "bfa0e5935d5aefdd2d3c5c045eca1b2b08ebf56b",
+  "output_commit": null,
+  "declared_paths": [
+    "mcp-server/src/atlas_aci/protocol/*",
+    "mcp-server/src/atlas_aci/query/*",
+    "mcp-server/src/atlas_aci/storage/*",
+    "mcp-server/src/atlas_aci/server.py",
+    "mcp-server/tests/slices/test_s13_*.py",
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/src/atlas_aci/config.py",
+    "mcp-server/src/atlas_aci/tools/graph_query.py",
+    "mcp-server/src/atlas_aci/enforcement.py",
+    "mcp-server/tests/test_server.py",
+    "mcp-server/tests/fixtures/s13/*",
+    "atlas/docs/*",
+    ".github/workflows/harden-gate.yml",
+    "scripts/test-verify-probe-verdict.sh",
+    ".spectra/plans/aci-s13.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/changes/aci-s13/*",
+    ".spectra/evidence/aci-s13/*",
+    ".spectra/state/aci-s13.execution.json",
+    ".spectra/backlog/execution.json",
+    ".spectra/backlog/order.md"
+  ],
+  "scope_amendments": [
+    ".spectra/changes/aci-s13/scope-amendment.json"
+  ],
+  "output_digest_exclusions": [
+    ".spectra/state/aci-s13.execution.json",
+    ".spectra/evidence/aci-s13/final-reentry-before.json",
+    ".spectra/evidence/aci-s13/final-reentry-after.json",
+    ".spectra/evidence/aci-s13/final-reentry-summary.json",
+    ".spectra/evidence/aci-s13/final-resume-identity.json",
+    ".spectra/evidence/aci-s13/output-check-tests.log"
+  ],
+  "status": "IN_PROGRESS",
+  "started_epoch": 1792985861.258568,
+  "engineering_budget_seconds": 86400,
+  "acceptance_results": [
+    {
+      "ac_id": "AC-S13-001",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S13-002",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S13-003",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S13-004",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S13-005",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S13-006",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S13-RUN-01",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S13-RUN-02",
+      "exit_code": null
+    }
+  ]
+}

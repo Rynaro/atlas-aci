@@ -23,6 +23,7 @@ FORMAT = "atlas-source-snapshot.v2"
 V1 = "atlas-source-snapshot.v1"
 RANGE_DOMAIN = b"atlas-source-ranges.v2\x00"
 CHUNK = 1024 * 1024
+AUTH_CHUNK = 64 * 1024
 
 
 def require(condition, message):
@@ -641,6 +642,8 @@ def _compare_binding(manifest, expected):
 class SourceLease:
     def __init__(self, fd, manifest, snapshot_id):
         self.fd = fd
+        self.chunk_catalog = None
+        self.chunk_catalog_bytes = 0
         self.manifest = manifest
         self.snapshot_id = snapshot_id
         self.index = {r["sha256"]: r for r in manifest["pack"]["index"]}
@@ -674,6 +677,36 @@ class SourceLease:
         require(hashlib.sha256(data).hexdigest() == source_hash, "source checksum")
         return bytes(data)
 
+    def read_span(self, path, source_hash, start, end, offset, max_bytes):
+        """Read only verified aligned buffers; caller separately authorizes exact evidence span."""
+        require(self.fd is not None, "closed source lease")
+        require(self.chunk_catalog is not None, "source chunk catalog unavailable")
+        require(ev.relative_path(path) and ev.hash_value(source_hash), "source identity")
+        require(self.bindings.get((path, source_hash)) is True, "source membership")
+        require(all(type(v) is int for v in (start, end, offset, max_bytes)), "span integers")
+        row = self.index[source_hash]
+        require(
+            0 <= start <= end <= row["length"] and 0 <= offset <= end - start and max_bytes >= 0,
+            "span bounds",
+        )
+        begin = start + offset
+        finish = min(end, begin + max_bytes)
+        result = bytearray()
+        for position in range(begin // AUTH_CHUNK, (finish + AUTH_CHUNK - 1) // AUTH_CHUNK):
+            if begin == finish:
+                break
+            chunk_start = position * AUTH_CHUNK
+            count = min(AUTH_CHUNK, row["length"] - chunk_start)
+            block = os.pread(self.fd, count, row["offset"] + chunk_start)
+            require(
+                len(block) == count
+                and hashlib.sha256(block).hexdigest() == self.chunk_catalog[source_hash][position],
+                "source chunk checksum",
+            )
+            # Return bytes from exactly this authenticated buffer, never a reread.
+            result.extend(block[max(begin - chunk_start, 0) : min(finish - chunk_start, count)])
+        return bytes(result)
+
     def __enter__(self):
         return self
 
@@ -681,7 +714,7 @@ class SourceLease:
         self.close()
 
 
-def acquire(atlas_dir, snapshot_id, *, repository, expected=None):
+def acquire(atlas_dir, snapshot_id, *, repository, expected=None, chunk_catalog_bytes=None):
     require(ev.hash_value(snapshot_id), "snapshot identifier")
     directory_fd = directory(atlas_dir / "source-snapshots")
     pack_fd = None
@@ -694,6 +727,28 @@ def acquire(atlas_dir, snapshot_id, *, repository, expected=None):
         if expected is not None:
             _compare_binding(manifest, expected)
         pack = manifest["pack"]
+        catalog = None
+        catalog_size = 0
+        if chunk_catalog_bytes is not None:
+            require(
+                type(chunk_catalog_bytes) is int and chunk_catalog_bytes > 0,
+                "source chunk catalog allowance",
+            )
+            # Exact canonical size depends only on fixed hash widths and blob lengths.
+            catalog_size = (
+                2
+                + sum(
+                    (
+                        69
+                        if r["length"] == 0
+                        else 68 + ((r["length"] + AUTH_CHUNK - 1) // AUTH_CHUNK) * 67
+                    )
+                    for r in pack["index"]
+                )
+                + max(0, len(pack["index"]) - 1)
+            )
+            require(catalog_size <= chunk_catalog_bytes, "source chunk catalog capacity")
+            catalog = {}
         pack_fd = open_file(directory_fd, "pack." + pack["sha256"] + ".bin")
         require(os.fstat(pack_fd).st_size == pack["size"], "pack size")
         require(os.pread(pack_fd, len(HEADER), 0) == HEADER, "pack header")
@@ -712,13 +767,26 @@ def acquire(atlas_dir, snapshot_id, *, repository, expected=None):
             offset = index["offset"]
             remaining = index["length"]
             blob = hashlib.sha256()
+            hashes = []
             while remaining:
-                data = os.pread(pack_fd, min(CHUNK, remaining), offset)
-                require(bool(data), "blob truncation")
+                step = min(AUTH_CHUNK if catalog is not None else CHUNK, remaining)
+                data = os.pread(pack_fd, step, offset)
+                require(bool(data) and (catalog is None or len(data) == step), "blob truncation")
                 blob.update(data)
+                if catalog is not None:
+                    hashes.append(hashlib.sha256(data).hexdigest())
                 offset += len(data)
                 remaining -= len(data)
             require(blob.hexdigest() == row["sha256"], "blob checksum")
+            if catalog is not None:
+                catalog[row["sha256"]] = hashes
+        if catalog is not None:
+            actual_size = len(ev.canonical(catalog).encode())
+            require(
+                actual_size <= catalog_size <= chunk_catalog_bytes, "source chunk catalog capacity"
+            )
+            lease.chunk_catalog = catalog
+            lease.chunk_catalog_bytes = actual_size
         pack_fd = None
         return lease
     finally:

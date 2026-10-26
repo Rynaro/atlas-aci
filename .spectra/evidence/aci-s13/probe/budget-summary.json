@@ -1,0 +1,30 @@
+{
+  "actual_job_count": 24,
+  "serial_job_elapsed_seconds": 562.2349279550544,
+  "maximum_job_seconds": 209.2559602500114,
+  "all_jobs_zero": true,
+  "per_job_cap_seconds": 600,
+  "total_cap_seconds": 2700,
+  "prior_seconds_charged": 0,
+  "catalog_preservation_seconds": 0.08313970800372772,
+  "verifier": {
+    "argv": [
+      "/private/tmp/atlas-aci-aci-s13/mcp-server/.venv/bin/python",
+      "scripts/verify-probe-verdict.py",
+      ".spectra/changes/aci-s13/probe/aci-s13-probe-lpa-vs-louvain.json"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.21408662502653897,
+    "stdout": "verifier-result.log",
+    "stderr": "verifier-error.log"
+  },
+  "cumulative_charged_seconds": 566.1095557040961,
+  "assembly": {
+    "exit_code": 0,
+    "tool_observed_wall_seconds": 0.366336291,
+    "command": "PATH=/tmp/aci-s01-tools/bin:$PATH UV_CACHE_DIR=/tmp/aci-s01-uv-cache UV_OFFLINE=1 mcp-server/.venv/bin/python .spectra/evidence/aci-s13/probe/assemble.py",
+    "evidence": "assemble-run.log",
+    "scope": "Tool-returned command wall time, including shell/process overhead; no replacement measurement."
+  },
+  "cleanup_reverification_seconds": 3.2110651250113733
+}
