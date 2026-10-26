@@ -1,0 +1,356 @@
+{
+  "native_epoch": 8,
+  "generation_id": "441679835206c93ee809edc0f285a139b1ab618d7f259d9e0a04ee04d830ec74",
+  "snapshot_id": "774347056bdd6ac7056070eb02f194ee11dbb6ec49042b3696674ef52d45f69b",
+  "captured_result": {
+    "scope": "current_published_evidence",
+    "outcome": "partial",
+    "stop_reason": "depth_limit",
+    "effective_limits": {
+      "max_visited_nodes": 100,
+      "max_examined_edges": 1000,
+      "max_depth": 1,
+      "deadline_ms": 2000
+    },
+    "seed": {
+      "selector_kind": "name",
+      "state": "unique",
+      "candidates": [
+        {
+          "projection": "entity_identity",
+          "id": "d683ad4587035ab55396ebc73fd5e6e78f7dead818a9aac9cb79f896d0b4c2a9",
+          "name": "A",
+          "kind": "function",
+          "language": "python",
+          "path": "a.py",
+          "owners": [
+            {
+              "kind": "module",
+              "name": null,
+              "ordinal": 0
+            }
+          ],
+          "identity_basis": "parsed",
+          "ordinal": 0
+        }
+      ],
+      "candidates_complete": true,
+      "entity_id": "d683ad4587035ab55396ebc73fd5e6e78f7dead818a9aac9cb79f896d0b4c2a9"
+    },
+    "direction": "outgoing",
+    "relations": [
+      "call"
+    ],
+    "confidence": [
+      "EXTRACTED",
+      "INFERRED"
+    ],
+    "work": {
+      "examined_edges": 3,
+      "edge_queries": 4,
+      "edge_rows": 3,
+      "confirmed_edge_eof": 1,
+      "interrupted_edge_steps": 0,
+      "endpoint_queries": 2,
+      "endpoint_rows": 1,
+      "hydration_queries": 10,
+      "hydration_rows": 10,
+      "sql_queries": 16,
+      "interrupted_sql_queries": 0,
+      "visited_nodes": 2
+    },
+    "frontier": {
+      "commitment": "798a689f4421076a1ff6508a54f2177b326b79576dfa349dd46ce74b14e10a16",
+      "queued_nodes": 1,
+      "depth": 1
+    },
+    "unknown_relations_traversed": false,
+    "nodes": [
+      {
+        "projection": "entity_identity",
+        "id": "d683ad4587035ab55396ebc73fd5e6e78f7dead818a9aac9cb79f896d0b4c2a9",
+        "name": "A",
+        "kind": "function",
+        "language": "python",
+        "path": "a.py",
+        "owners": [
+          {
+            "kind": "module",
+            "name": null,
+            "ordinal": 0
+          }
+        ],
+        "identity_basis": "parsed",
+        "ordinal": 0
+      },
+      {
+        "projection": "entity_identity",
+        "id": "2c44c8ed118e7ed3aade9b882450ac188921cc512a9ae7baea2edf696299773e",
+        "name": "B",
+        "kind": "function",
+        "language": "python",
+        "path": "a.py",
+        "owners": [
+          {
+            "kind": "module",
+            "name": null,
+            "ordinal": 0
+          }
+        ],
+        "identity_basis": "parsed",
+        "ordinal": 0
+      }
+    ],
+    "edges": [
+      {
+        "projection": "canonical_assertion_proof",
+        "traversal_direction": "outgoing",
+        "assertion": {
+          "candidate_ids": [],
+          "evidence_id": "5e7c9446ab8b9a36621ba0d43c9df8415a934e873679ee5dc2969d4091025984",
+          "id": "5465d13fc1889441de7166c5539e1630d35efe8b573a2e93f61bab6d74d51c44",
+          "raw_target": "B",
+          "relation": "call",
+          "resolution": "INFERRED",
+          "source_entity_id": "d683ad4587035ab55396ebc73fd5e6e78f7dead818a9aac9cb79f896d0b4c2a9",
+          "target_entity_id": "2c44c8ed118e7ed3aade9b882450ac188921cc512a9ae7baea2edf696299773e",
+          "type": "assertion",
+          "unresolved_reason": null
+        },
+        "evidence": {
+          "end_byte": 11,
+          "id": "5e7c9446ab8b9a36621ba0d43c9df8415a934e873679ee5dc2969d4091025984",
+          "occurrence_id": "5ca02651dbfe008e09734a3cac6102e0479494d98cb69ee2d32391f4ff295a2e",
+          "producer_id": "fc554df98489883f0afff1b6b2a22194ec9b1764872116683b823866c98827c2",
+          "provenance_state": "source",
+          "source_sha256": "56f6cc519fe15fb6e8a73fbedfc0678bdfef33a0ac6d0d1ad87877c67677d0a7",
+          "source_size": 39,
+          "start_byte": 10,
+          "type": "evidence"
+        },
+        "occurrence": {
+          "column": 1,
+          "end_byte": 11,
+          "end_column": 2,
+          "end_line": 2,
+          "entity_id": "d683ad4587035ab55396ebc73fd5e6e78f7dead818a9aac9cb79f896d0b4c2a9",
+          "id": "5ca02651dbfe008e09734a3cac6102e0479494d98cb69ee2d32391f4ff295a2e",
+          "kind": "reference",
+          "language": "python",
+          "line": 2,
+          "path": "a.py",
+          "provenance_state": "source",
+          "role": "reference:call",
+          "source_sha256": "56f6cc519fe15fb6e8a73fbedfc0678bdfef33a0ac6d0d1ad87877c67677d0a7",
+          "source_size": 39,
+          "start_byte": 10,
+          "type": "occurrence"
+        },
+        "producer": {
+          "fingerprint": {
+            "codegraph_sha256": "4df28b1fcaeb7c5d0051f1c5412e0d06a38ad3d10652d18a82d7b7d16c6bcfe2",
+            "modules": {
+              "extractors/rust.py": "28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a",
+              "indexing/extraction_cache.py": "08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2",
+              "providers/python_imports.py": "de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014",
+              "resolvers/dependencies.py": "0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6",
+              "storage/evidence.py": "3f14fa87ed9b060cc1d09e7e57cb002275c99b501829412a202d225870f3eb92",
+              "storage/snapshots.py": "b8aecf567335dda0f2d0162c2eb6a334a4efae7d785755a0d8e862b52d96396f"
+            },
+            "packages": {
+              "tree-sitter": "0.25.2",
+              "tree-sitter-language-pack": "1.6.0"
+            },
+            "queries_sha256": "a222468d9bb15cbf5cfccc368bd65ca69de7ed22e91ae85e628228f2f227b944"
+          },
+          "id": "fc554df98489883f0afff1b6b2a22194ec9b1764872116683b823866c98827c2",
+          "identity_basis": "parsed",
+          "type": "producer"
+        },
+        "source_availability": "available"
+      },
+      {
+        "projection": "canonical_assertion_proof",
+        "traversal_direction": "outgoing",
+        "assertion": {
+          "candidate_ids": [],
+          "evidence_id": "e2192e5620861bbe0e82ac1488a126cb95b8b63195acd63334028ada6af0d58e",
+          "id": "e7ba8473aa0db2ccf6397f1ff4595a2f2dd1c00b7c79331dd2dd52c6fbc0a6b9",
+          "raw_target": "B",
+          "relation": "call",
+          "resolution": "INFERRED",
+          "source_entity_id": "d683ad4587035ab55396ebc73fd5e6e78f7dead818a9aac9cb79f896d0b4c2a9",
+          "target_entity_id": "2c44c8ed118e7ed3aade9b882450ac188921cc512a9ae7baea2edf696299773e",
+          "type": "assertion",
+          "unresolved_reason": null
+        },
+        "evidence": {
+          "end_byte": 16,
+          "id": "e2192e5620861bbe0e82ac1488a126cb95b8b63195acd63334028ada6af0d58e",
+          "occurrence_id": "614bb6297a064ea62bfb1cdd5749a2410c27d097affad5ead969c9627218bbd7",
+          "producer_id": "fc554df98489883f0afff1b6b2a22194ec9b1764872116683b823866c98827c2",
+          "provenance_state": "source",
+          "source_sha256": "56f6cc519fe15fb6e8a73fbedfc0678bdfef33a0ac6d0d1ad87877c67677d0a7",
+          "source_size": 39,
+          "start_byte": 15,
+          "type": "evidence"
+        },
+        "occurrence": {
+          "column": 6,
+          "end_byte": 16,
+          "end_column": 7,
+          "end_line": 2,
+          "entity_id": "d683ad4587035ab55396ebc73fd5e6e78f7dead818a9aac9cb79f896d0b4c2a9",
+          "id": "614bb6297a064ea62bfb1cdd5749a2410c27d097affad5ead969c9627218bbd7",
+          "kind": "reference",
+          "language": "python",
+          "line": 2,
+          "path": "a.py",
+          "provenance_state": "source",
+          "role": "reference:call",
+          "source_sha256": "56f6cc519fe15fb6e8a73fbedfc0678bdfef33a0ac6d0d1ad87877c67677d0a7",
+          "source_size": 39,
+          "start_byte": 15,
+          "type": "occurrence"
+        },
+        "producer": {
+          "fingerprint": {
+            "codegraph_sha256": "4df28b1fcaeb7c5d0051f1c5412e0d06a38ad3d10652d18a82d7b7d16c6bcfe2",
+            "modules": {
+              "extractors/rust.py": "28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a",
+              "indexing/extraction_cache.py": "08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2",
+              "providers/python_imports.py": "de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014",
+              "resolvers/dependencies.py": "0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6",
+              "storage/evidence.py": "3f14fa87ed9b060cc1d09e7e57cb002275c99b501829412a202d225870f3eb92",
+              "storage/snapshots.py": "b8aecf567335dda0f2d0162c2eb6a334a4efae7d785755a0d8e862b52d96396f"
+            },
+            "packages": {
+              "tree-sitter": "0.25.2",
+              "tree-sitter-language-pack": "1.6.0"
+            },
+            "queries_sha256": "a222468d9bb15cbf5cfccc368bd65ca69de7ed22e91ae85e628228f2f227b944"
+          },
+          "id": "fc554df98489883f0afff1b6b2a22194ec9b1764872116683b823866c98827c2",
+          "identity_basis": "parsed",
+          "type": "producer"
+        },
+        "source_availability": "available"
+      },
+      {
+        "projection": "canonical_assertion_proof",
+        "traversal_direction": "outgoing",
+        "assertion": {
+          "candidate_ids": [],
+          "evidence_id": "83287a68c9681f765336593b918d4c518dac18a6fe0b406fa3fede32d49a3517",
+          "id": "f78f9aa6558a437adb29018021c37715c082dbee1ead210d9dfa263b2731b65d",
+          "raw_target": "B",
+          "relation": "call",
+          "resolution": "INFERRED",
+          "source_entity_id": "d683ad4587035ab55396ebc73fd5e6e78f7dead818a9aac9cb79f896d0b4c2a9",
+          "target_entity_id": "2c44c8ed118e7ed3aade9b882450ac188921cc512a9ae7baea2edf696299773e",
+          "type": "assertion",
+          "unresolved_reason": null
+        },
+        "evidence": {
+          "end_byte": 21,
+          "id": "83287a68c9681f765336593b918d4c518dac18a6fe0b406fa3fede32d49a3517",
+          "occurrence_id": "92504defcfe324b994071c03d9d84592fa5a6f6caf95ba311f82f2e0307ca657",
+          "producer_id": "fc554df98489883f0afff1b6b2a22194ec9b1764872116683b823866c98827c2",
+          "provenance_state": "source",
+          "source_sha256": "56f6cc519fe15fb6e8a73fbedfc0678bdfef33a0ac6d0d1ad87877c67677d0a7",
+          "source_size": 39,
+          "start_byte": 20,
+          "type": "evidence"
+        },
+        "occurrence": {
+          "column": 11,
+          "end_byte": 21,
+          "end_column": 12,
+          "end_line": 2,
+          "entity_id": "d683ad4587035ab55396ebc73fd5e6e78f7dead818a9aac9cb79f896d0b4c2a9",
+          "id": "92504defcfe324b994071c03d9d84592fa5a6f6caf95ba311f82f2e0307ca657",
+          "kind": "reference",
+          "language": "python",
+          "line": 2,
+          "path": "a.py",
+          "provenance_state": "source",
+          "role": "reference:call",
+          "source_sha256": "56f6cc519fe15fb6e8a73fbedfc0678bdfef33a0ac6d0d1ad87877c67677d0a7",
+          "source_size": 39,
+          "start_byte": 20,
+          "type": "occurrence"
+        },
+        "producer": {
+          "fingerprint": {
+            "codegraph_sha256": "4df28b1fcaeb7c5d0051f1c5412e0d06a38ad3d10652d18a82d7b7d16c6bcfe2",
+            "modules": {
+              "extractors/rust.py": "28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a",
+              "indexing/extraction_cache.py": "08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2",
+              "providers/python_imports.py": "de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014",
+              "resolvers/dependencies.py": "0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6",
+              "storage/evidence.py": "3f14fa87ed9b060cc1d09e7e57cb002275c99b501829412a202d225870f3eb92",
+              "storage/snapshots.py": "b8aecf567335dda0f2d0162c2eb6a334a4efae7d785755a0d8e862b52d96396f"
+            },
+            "packages": {
+              "tree-sitter": "0.25.2",
+              "tree-sitter-language-pack": "1.6.0"
+            },
+            "queries_sha256": "a222468d9bb15cbf5cfccc368bd65ca69de7ed22e91ae85e628228f2f227b944"
+          },
+          "id": "fc554df98489883f0afff1b6b2a22194ec9b1764872116683b823866c98827c2",
+          "identity_basis": "parsed",
+          "type": "producer"
+        },
+        "source_availability": "available"
+      }
+    ]
+  },
+  "captured_result_sha256": "6d02b03b8df34d94d7aa2482448a5339df0351447d4cca55306e7f8625fc1d4f",
+  "source_sha256": "56f6cc519fe15fb6e8a73fbedfc0678bdfef33a0ac6d0d1ad87877c67677d0a7",
+  "source_bytes": 39,
+  "g1_names_pruned_after_g3": true,
+  "held_sqlite_generation_retained": true,
+  "held_pack_bytes_retained": true,
+  "baseline_page_request": {
+    "schema_version": "atlas.graph.v1",
+    "op": "page",
+    "query": {
+      "op": "neighborhood",
+      "seed": {
+        "name": "A"
+      }
+    },
+    "page_max_bytes": 20000
+  },
+  "baseline_page_result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"bounds\":{\"element_limit\":0,\"lists\":{},\"truncated\":false},\"data\":null,\"error\":{\"code\":\"MIXED_REQUEST\",\"message\":\"Legacy and structured fields cannot be mixed.\",\"retry_hint\":\"none\"},\"evidence_status\":\"unavailable\",\"generation_id\":null,\"operation\":\"status\",\"schema_version\":\"atlas.graph.v1\",\"snapshot_id\":null,\"status\":\"error\"}"
+      }
+    ],
+    "structuredContent": {
+      "schema_version": "atlas.graph.v1",
+      "operation": "status",
+      "status": "error",
+      "generation_id": null,
+      "snapshot_id": null,
+      "evidence_status": "unavailable",
+      "data": null,
+      "error": {
+        "code": "MIXED_REQUEST",
+        "message": "Legacy and structured fields cannot be mixed.",
+        "retry_hint": "none"
+      },
+      "bounds": {
+        "element_limit": 0,
+        "truncated": false,
+        "lists": {}
+      }
+    },
+    "isError": true
+  },
+  "product_feature_missing": true,
+  "sqlite_closed_after_context": true,
+  "pack_fd_closed_after_context": true
+}

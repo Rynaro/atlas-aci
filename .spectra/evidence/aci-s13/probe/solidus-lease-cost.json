@@ -1,0 +1,72 @@
+{
+  "repo": "solidus",
+  "generation_id": "1454e92f693e6235b5c55ee79c5674b476ada69fa24b74af6b9f09b5f0d50182",
+  "snapshot_id": "3dbb4ebec109d6dae1a8c8afd7dc6ffd2d9ff924c076acd09d5059ab9db7c5ff",
+  "fixture_selection": "one actual assertion source selected outside isolated intervals; no graph rows fabricated",
+  "lease_acquisition_seconds": 29.411466499994276,
+  "lease_acquisition_cpu_seconds": 11.554305,
+  "mandatory_validation_outside_traversal_deadline": true,
+  "query_including_admission_and_sdk_encoding_seconds": 0.0007719169952906668,
+  "query_including_admission_and_sdk_encoding_cpu_seconds": 0.0006730000000008118,
+  "work": {
+    "examined_edges": 1,
+    "edge_queries": 1,
+    "edge_rows": 1,
+    "confirmed_edge_eof": 0,
+    "interrupted_edge_steps": 0,
+    "endpoint_queries": 1,
+    "endpoint_rows": 1,
+    "hydration_queries": 0,
+    "hydration_rows": 0,
+    "sql_queries": 2,
+    "interrupted_sql_queries": 0,
+    "visited_nodes": 1
+  },
+  "outcome": "partial",
+  "stop_reason": "examined_edge_limit",
+  "actual_sql_trace": [
+    "SELECT id,payload FROM entities WHERE id='03f75d61134ccf4e56ea8092666f478635124fc0adb671908cdc2729c601dba3'",
+    "SELECT id,payload FROM assertions INDEXED BY idx_assertions_source_relation_id WHERE json_extract(payload,'$.source_entity_id')='03f75d61134ccf4e56ea8092666f478635124fc0adb671908cdc2729c601dba3' AND json_extract(payload,'$.relation')='call' AND id>'' ORDER BY id LIMIT 1"
+  ],
+  "result_bytes_dual": 4364,
+  "resource_scope": "outer job RSS is process lifetime peak, not retained bytes per request",
+  "cache_state": "new process; OS page-cache state uncontrolled after preceding index/export/account jobs",
+  "pack_fd_closed": true,
+  "sqlite_closed": true,
+  "retained_resource_lease_sample": {
+    "issuance_including_mandatory_acquisition_seconds": 11.051518207998015,
+    "issuance_cpu_seconds": 11.051160999999999,
+    "usage": {
+      "pending": 0,
+      "active": 1,
+      "state_bytes": 2222916,
+      "referenced_pack_bytes": 6317973,
+      "sqlite_handles": 1,
+      "pack_fds": 1
+    },
+    "chunk_catalog_canonical_bytes": 337471,
+    "page_count": 1,
+    "resource_count": 1,
+    "captured_work": {
+      "confirmed_edge_eof": 0,
+      "edge_queries": 1,
+      "edge_rows": 1,
+      "endpoint_queries": 1,
+      "endpoint_rows": 1,
+      "examined_edges": 1,
+      "hydration_queries": 4,
+      "hydration_rows": 4,
+      "interrupted_edge_steps": 0,
+      "interrupted_sql_queries": 0,
+      "sql_queries": 6,
+      "visited_nodes": 2
+    },
+    "generation_id": "1454e92f693e6235b5c55ee79c5674b476ada69fa24b74af6b9f09b5f0d50182",
+    "snapshot_id": "3dbb4ebec109d6dae1a8c8afd7dc6ffd2d9ff924c076acd09d5059ab9db7c5ff",
+    "resource_handler_seconds": 0.0012261249939911067,
+    "resource_result_bytes": 1413,
+    "raw_source_bytes_returned": 20,
+    "pack_fd_closed": true,
+    "sqlite_closed": true
+  }
+}

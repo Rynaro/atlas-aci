@@ -1,0 +1,72 @@
+{
+  "repo": "spree",
+  "generation_id": "ba0635586ff51e3e03017535cf62d8ed421b9a3d610c2ba499442b79634112eb",
+  "snapshot_id": "707075eecf0697ddf07191b47df9e49359fae2b484ee8824c2587246c535219f",
+  "fixture_selection": "one actual assertion source selected outside isolated intervals; no graph rows fabricated",
+  "lease_acquisition_seconds": 17.867093082983047,
+  "lease_acquisition_cpu_seconds": 17.866675,
+  "mandatory_validation_outside_traversal_deadline": true,
+  "query_including_admission_and_sdk_encoding_seconds": 0.0008313329890370369,
+  "query_including_admission_and_sdk_encoding_cpu_seconds": 0.0007330000000003167,
+  "work": {
+    "examined_edges": 1,
+    "edge_queries": 1,
+    "edge_rows": 1,
+    "confirmed_edge_eof": 0,
+    "interrupted_edge_steps": 0,
+    "endpoint_queries": 1,
+    "endpoint_rows": 1,
+    "hydration_queries": 0,
+    "hydration_rows": 0,
+    "sql_queries": 2,
+    "interrupted_sql_queries": 0,
+    "visited_nodes": 1
+  },
+  "outcome": "partial",
+  "stop_reason": "examined_edge_limit",
+  "actual_sql_trace": [
+    "SELECT id,payload FROM entities WHERE id='9903c075c8be7e089e0ea7e91d0fff6745050b50122400101d86f21cf3ae39a6'",
+    "SELECT id,payload FROM assertions INDEXED BY idx_assertions_source_relation_id WHERE json_extract(payload,'$.source_entity_id')='9903c075c8be7e089e0ea7e91d0fff6745050b50122400101d86f21cf3ae39a6' AND json_extract(payload,'$.relation')='call' AND id>'' ORDER BY id LIMIT 1"
+  ],
+  "result_bytes_dual": 4484,
+  "resource_scope": "outer job RSS is process lifetime peak, not retained bytes per request",
+  "cache_state": "new process; OS page-cache state uncontrolled after preceding index/export/account jobs",
+  "pack_fd_closed": true,
+  "sqlite_closed": true,
+  "retained_resource_lease_sample": {
+    "issuance_including_mandatory_acquisition_seconds": 17.77673116599908,
+    "issuance_cpu_seconds": 17.776238000000003,
+    "usage": {
+      "pending": 0,
+      "active": 1,
+      "state_bytes": 2102700,
+      "referenced_pack_bytes": 8566123,
+      "sqlite_handles": 1,
+      "pack_fds": 1
+    },
+    "chunk_catalog_canonical_bytes": 320952,
+    "page_count": 1,
+    "resource_count": 1,
+    "captured_work": {
+      "confirmed_edge_eof": 0,
+      "edge_queries": 1,
+      "edge_rows": 1,
+      "endpoint_queries": 1,
+      "endpoint_rows": 1,
+      "examined_edges": 1,
+      "hydration_queries": 4,
+      "hydration_rows": 4,
+      "interrupted_edge_steps": 0,
+      "interrupted_sql_queries": 0,
+      "sql_queries": 6,
+      "visited_nodes": 2
+    },
+    "generation_id": "ba0635586ff51e3e03017535cf62d8ed421b9a3d610c2ba499442b79634112eb",
+    "snapshot_id": "707075eecf0697ddf07191b47df9e49359fae2b484ee8824c2587246c535219f",
+    "resource_handler_seconds": 0.0003260830126237124,
+    "resource_result_bytes": 1403,
+    "raw_source_bytes_returned": 11,
+    "pack_fd_closed": true,
+    "sqlite_closed": true
+  }
+}

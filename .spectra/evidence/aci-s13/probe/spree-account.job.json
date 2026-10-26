@@ -1,0 +1,18 @@
+{
+  "name": "spree-account",
+  "command": [
+    "/private/tmp/atlas-aci-aci-s13/mcp-server/.venv/bin/python",
+    "/private/tmp/atlas-aci-aci-s13/.spectra/evidence/aci-s13/probe/account.py",
+    "spree",
+    "/tmp/aci-s13-probe-inputs/spree",
+    "/private/tmp/atlas-aci-aci-s13/.spectra/evidence/aci-s13/probe"
+  ],
+  "cwd": "/private/tmp/atlas-aci-aci-s13",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 18.961373875004938,
+  "elapsed_total": 392.0116611249978,
+  "peak_rss_bytes": 255197184,
+  "stdout": ".spectra/evidence/aci-s13/probe/spree-account.stdout.log",
+  "stderr": ".spectra/evidence/aci-s13/probe/spree-account.stderr.log"
+}

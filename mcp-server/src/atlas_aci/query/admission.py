@@ -54,7 +54,7 @@ def framed(data, operation, generation_id, snapshot_id, element_limit, evidence_
     return payload
 
 
-def reserve(data):
+def reserve(data, stop_reason="examined_edge_limit"):
     """Reserve final bounded counters and stop/frontier fields BEFORE proof admission."""
     result = copy.deepcopy(data)
     # Upper bounds from fixed one-row dispatch: two endpoints*two queries plus
@@ -63,7 +63,7 @@ def reserve(data):
     result["work"] = {name: 999999999 for name in result["work"]}
     result["frontier"] = {"commitment": "f" * 64, "queued_nodes": 1000, "depth": 32}
     result["outcome"] = "disambiguation"
-    result["stop_reason"] = "examined_edge_limit"
+    result["stop_reason"] = stop_reason
     return result
 
 
@@ -130,7 +130,7 @@ class Admission:
         return self.encode(result)
 
 
-def minimum_budget():
+def minimum_budget(stop_reason="examined_edge_limit"):
     """Measured common dual-framing metadata minimum, independent of user names."""
     selection = {
         "selector_kind": "entity_id",
@@ -186,7 +186,7 @@ def minimum_budget():
             generation_id="f" * 64,
             snapshot_id="f" * 64,
         )
-        sizes.append(admission.size(reserve(data)))
+        sizes.append(admission.size(reserve(data, stop_reason)))
     return max(sizes)
 
 

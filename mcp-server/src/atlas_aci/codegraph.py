@@ -42,6 +42,8 @@ from atlas_aci.storage import snapshots as snap
 if TYPE_CHECKING:
     from tree_sitter_language_pack import SupportedLanguage
 
+    from atlas_aci.query.leases import LeaseRegistry
+
 log = structlog.get_logger()
 
 # Map file extensions → tree-sitter language names.
@@ -892,6 +894,7 @@ class CodeGraph:
         self.db_path = self.atlas_dir / f"graph.{SCHEMA_EPOCH}.db"
         if not read_only:
             self.atlas_dir.mkdir(parents=True, exist_ok=True)
+        self._lease_registry: LeaseRegistry | None = None
         self._db: sqlite3.Connection | None = None
         self._closed = False
         self._lease_generation_id: str | None = None
@@ -955,6 +958,8 @@ class CodeGraph:
 
     def close(self) -> None:
         """Idempotently release owned handles; a released lease cannot reopen."""
+        if self._lease_registry is not None:
+            self._lease_registry.close()
         if self._source_lease is not None:
             self._source_lease.close()
             self._source_lease = None
@@ -1210,7 +1215,7 @@ class CodeGraph:
                 lease.close()
 
     @contextmanager
-    def reader_lease(self):
+    def reader_lease(self, *, chunk_catalog_bytes=None):
         """Acquire SQLite, immutable manifest and one source-pack FD before exposure."""
         from atlas_aci.enforcement import ToolError
 
@@ -1242,7 +1247,15 @@ class CodeGraph:
                     binding = reader._snapshot_binding(reader.db, reader._acquisition_observations)
                     expected = {**binding}
                     reader._source_lease = snap.acquire(
-                        self.atlas_dir, pointer["id"], repository=self.repo, expected=expected
+                        self.atlas_dir,
+                        pointer["id"],
+                        repository=self.repo,
+                        expected=expected,
+                        **(
+                            {"chunk_catalog_bytes": chunk_catalog_bytes}
+                            if chunk_catalog_bytes is not None
+                            else {}
+                        ),
                     )
                     actual_context = reader._source_lease.manifest["context"]
                     if any(

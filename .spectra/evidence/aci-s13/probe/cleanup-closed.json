@@ -1,0 +1,87 @@
+{
+  "authority": "Root exact three-path conditional approval; ATLAS final raw and explicit four-stream preservation APPROVE. All jobs/readers closed.",
+  "expected_paths": [
+    "/tmp/aci-s13-probe-inputs/solidus/.atlas",
+    "/tmp/aci-s13-probe-inputs/spree/.atlas",
+    "/tmp/aci-s13-spree-export.jsonl"
+  ],
+  "predelete": [
+    {
+      "path": "/tmp/aci-s13-probe-inputs/solidus/.atlas",
+      "resolved_path": "/private/tmp/aci-s13-probe-inputs/solidus/.atlas",
+      "allocated_kib": 894732,
+      "generation_id": "1454e92f693e6235b5c55ee79c5674b476ada69fa24b74af6b9f09b5f0d50182",
+      "snapshot_id": "3dbb4ebec109d6dae1a8c8afd7dc6ffd2d9ff924c076acd09d5059ab9db7c5ff",
+      "database_bytes": 568844288,
+      "database_sha256": "fa741d3927ffd57af8686a023205f698ee87de114490e777efc1756463f1ced1",
+      "preserved_files": [
+        {
+          "path": "/tmp/aci-s13-probe-inputs/solidus/.atlas/source-snapshots/manifest.3dbb4ebec109d6dae1a8c8afd7dc6ffd2d9ff924c076acd09d5059ab9db7c5ff.json",
+          "bytes": 1202949,
+          "sha256": "3dbb4ebec109d6dae1a8c8afd7dc6ffd2d9ff924c076acd09d5059ab9db7c5ff",
+          "durable": ".spectra/evidence/aci-s13/probe/solidus-source-manifest.json.gz"
+        },
+        {
+          "path": "/tmp/aci-s13-probe-inputs/solidus/.atlas/source-snapshots/catalog.json",
+          "bytes": 68,
+          "sha256": "8afe1b281cb7ea3c8d858d84a2799cac01f775ddd78a9fa0f6df83a1d8d60285",
+          "durable": ".spectra/evidence/aci-s13/probe/solidus-source-catalog.json.gz"
+        }
+      ],
+      "pack_bytes": 6317973,
+      "pack_sha256": "6fe75a80550254f2408f69b4217d9be6bf55e87dbd118ddff951381e8d48a996",
+      "index_members_verified": 2474,
+      "current_observations_verified": 2519,
+      "context_exact": true
+    },
+    {
+      "path": "/tmp/aci-s13-probe-inputs/spree/.atlas",
+      "resolved_path": "/private/tmp/aci-s13-probe-inputs/spree/.atlas",
+      "allocated_kib": 1426588,
+      "generation_id": "ba0635586ff51e3e03017535cf62d8ed421b9a3d610c2ba499442b79634112eb",
+      "snapshot_id": "707075eecf0697ddf07191b47df9e49359fae2b484ee8824c2587246c535219f",
+      "database_bytes": 914300928,
+      "database_sha256": "eaa1f16d7aecc9cd63983cd632a140cd6735b2acff074400d60381c411bb4017",
+      "preserved_files": [
+        {
+          "path": "/tmp/aci-s13-probe-inputs/spree/.atlas/source-snapshots/manifest.707075eecf0697ddf07191b47df9e49359fae2b484ee8824c2587246c535219f.json",
+          "bytes": 1137584,
+          "sha256": "707075eecf0697ddf07191b47df9e49359fae2b484ee8824c2587246c535219f",
+          "durable": ".spectra/evidence/aci-s13/probe/spree-source-manifest.json.gz"
+        },
+        {
+          "path": "/tmp/aci-s13-probe-inputs/spree/.atlas/source-snapshots/catalog.json",
+          "bytes": 68,
+          "sha256": "51584635a68a3ae0a6d9dd2b8b2e505926de8438c26b077338afa2a8cd72c316",
+          "durable": ".spectra/evidence/aci-s13/probe/spree-source-catalog.json.gz"
+        }
+      ],
+      "pack_bytes": 8566123,
+      "pack_sha256": "dc57d61df9c32a8963fb3c92ea923d2261143e83e9053b8e2909a97daf0e7630",
+      "index_members_verified": 2355,
+      "current_observations_verified": 2358,
+      "context_exact": true
+    },
+    {
+      "path": "/tmp/aci-s13-spree-export.jsonl",
+      "bytes": 651845336,
+      "sha256": "241dedc74190f5f3deb90995111294148568ed0f40d131c1391ca9335bc66a8e"
+    }
+  ],
+  "retained_evidence": [
+    "source-catalog-raw-manifest.json",
+    "graph-raw-manifest.json",
+    "../raw-manifest.json"
+  ],
+  "df_before": "Filesystem   1024-blocks      Used Available Capacity iused    ifree %iused  Mounted on\n/dev/disk3s5   239362496 205200000   6240000    98% 2441448 62466640    4%   /System/Volumes/Data\n",
+  "all_preconditions_passed": true,
+  "deleted_exact_paths": [
+    "/tmp/aci-s13-probe-inputs/solidus/.atlas",
+    "/tmp/aci-s13-probe-inputs/spree/.atlas",
+    "/tmp/aci-s13-spree-export.jsonl"
+  ],
+  "source_parents_git_preserved": true,
+  "df_after": "Filesystem   1024-blocks      Used Available Capacity iused    ifree %iused  Mounted on\n/dev/disk3s5   239362496 203600000   7760000    97% 2436043 77630240    3%   /System/Volumes/Data\n",
+  "elapsed_seconds": 3.2110651250113733,
+  "exit_code": 0
+}

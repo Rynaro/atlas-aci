@@ -1,0 +1,19 @@
+{
+  "name": "spree-clone",
+  "command": [
+    "git",
+    "clone",
+    "--no-checkout",
+    "--no-local",
+    "/tmp/aci-s02-probe-inputs/spree",
+    "/tmp/aci-s13-probe-inputs/spree"
+  ],
+  "cwd": "/private/tmp/atlas-aci-aci-s13",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 0.8919000000169035,
+  "elapsed_total": 163.13883312500548,
+  "peak_rss_bytes": 92192768,
+  "stdout": ".spectra/evidence/aci-s13/probe/spree-clone.stdout.log",
+  "stderr": ".spectra/evidence/aci-s13/probe/spree-clone.stderr.log"
+}

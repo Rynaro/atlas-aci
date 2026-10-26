@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "env",
+    "-u",
+    "PYTHONPATH",
+    "/bin/bash",
+    "scripts/test-verify-probe-verdict.sh"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 6.881932666001376,
+  "actual_pass_markers": 27,
+  "explicit_final_marker": true
+}

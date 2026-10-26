@@ -1,0 +1,129 @@
+{
+  "ruff": {
+    "argv": [
+      ".venv/bin/ruff",
+      "check",
+      "src/",
+      "tests/"
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0,
+    "elapsed_seconds": 0.04542308297823183,
+    "log": "ruff.log"
+  },
+  "format": {
+    "argv": [
+      ".venv/bin/ruff",
+      "format",
+      "--check",
+      "src/",
+      "tests/"
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0,
+    "elapsed_seconds": 0.010905333998380229,
+    "log": "format.log"
+  },
+  "mypy": {
+    "argv": [
+      ".venv/bin/mypy",
+      "src/"
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0,
+    "elapsed_seconds": 0.578635750018293,
+    "log": "mypy.log"
+  },
+  "scripts-ruff": {
+    "argv": [
+      ".venv/bin/ruff",
+      "check",
+      "../scripts/",
+      "--exclude",
+      "fingerprint-fixture"
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0,
+    "elapsed_seconds": 0.022584125021239743,
+    "log": "scripts-ruff.log"
+  },
+  "scripts-format": {
+    "argv": [
+      ".venv/bin/ruff",
+      "format",
+      "--check",
+      "../scripts/",
+      "--exclude",
+      "fingerprint-fixture"
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0,
+    "elapsed_seconds": 0.011191041994607076,
+    "log": "scripts-format.log"
+  },
+  "scripts-mypy": {
+    "argv": [
+      ".venv/bin/mypy",
+      "../scripts/"
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0,
+    "elapsed_seconds": 0.12142508299439214,
+    "log": "scripts-mypy.log"
+  },
+  "lock": {
+    "argv": [
+      "/tmp/aci-s01-tools/bin/uv",
+      "lock",
+      "--check"
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0,
+    "elapsed_seconds": 0.12680708299740218,
+    "log": "lock.log"
+  },
+  "size-guard": {
+    "argv": [
+      "/bin/bash",
+      "scripts/test-verify-export-size.sh"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "elapsed_seconds": 0.6804103750037029,
+    "log": "size-guard.log"
+  },
+  "classify": {
+    "argv": [
+      "/bin/bash",
+      "scripts/test-harden-gate-classify.sh"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "elapsed_seconds": 0.830745500017656,
+    "log": "classify.log"
+  },
+  "probe": {
+    "argv": [
+      "/private/tmp/atlas-aci-aci-s13/mcp-server/.venv/bin/python",
+      "scripts/verify-probe-verdict.py",
+      ".spectra/changes/aci-s13/probe/aci-s13-probe-lpa-vs-louvain.json"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.21408662502653897,
+    "stdout": "verifier-result.log",
+    "stderr": "verifier-error.log"
+  },
+  "guard": {
+    "argv": [
+      "env",
+      "-u",
+      "PYTHONPATH",
+      "/bin/bash",
+      "scripts/test-verify-probe-verdict.sh"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 6.881932666001376,
+    "actual_pass_markers": 27,
+    "explicit_final_marker": true
+  }
+}

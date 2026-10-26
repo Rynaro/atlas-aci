@@ -1,0 +1,17 @@
+{
+  "slice_id": "ACI-S13",
+  "criteria_sha256": "327911042d4d02566de953b5dab9f2c8fab043c06c7f1184f1d2795faee945ef",
+  "criteria_changed": false,
+  "before_edit": true,
+  "paths": [
+    ".github/workflows/harden-gate.yml",
+    "scripts/test-verify-probe-verdict.sh"
+  ],
+  "authority": "Frozen S13 scope amendment declares these two artifact-selection paths. No selection edit until actual unchanged verifier PASS and independent ATLAS fresh-artifact approval.",
+  "allowed_delta": "Existing three workflow references and one self-test basename only, from S12 to unique colocated S13 sidecar/report/bundle. All verifier, resolver, bar, seeds and 27 semantic controls remain unchanged.",
+  "before_sha256": {
+    ".github/workflows/harden-gate.yml": "3a7e40e2d8d7d71d6d61aa22d512c060537f2dc696dfad41fb66dd22f8f45d1a",
+    "scripts/test-verify-probe-verdict.sh": "24c206b99ea32bc473e1ed7407d1f35eb23c7f816addedb6c06a875b10a7660d"
+  },
+  "new_artifact": ".spectra/changes/aci-s13/probe/aci-s13-probe-lpa-vs-louvain.json"
+}

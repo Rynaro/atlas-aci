@@ -1,7 +1,7 @@
 {
   "schema": "atlas-aci/backlog-execution.v1",
   "repository": "Rynaro/atlas-aci",
-  "updated_at": "2026-10-24T22:59:14.803734+00:00",
+  "updated_at": "2026-10-26T03:19:42.796691+00:00",
   "status": "IN_PROGRESS",
   "authorization": {
     "source": "Standing user instruction relayed by root: continue all open issues until cleared; validated merges and main sync automatically authorized",
@@ -22,7 +22,7 @@
     ],
     "publication_owner": "root orchestrator; executor never self-merges"
   },
-  "base_commit": "69fe066f573f29651fb53ad0dac65ae13836b752",
+  "base_commit": "bfa0e5935d5aefdd2d3c5c045eca1b2b08ebf56b",
   "queue_frozen": [
     12,
     29,
@@ -62,10 +62,10 @@
     62,
     63
   ],
-  "current_issue": 34,
-  "next_issue": 35,
-  "completed_issue_count": 12,
-  "remaining_issue_count": 30,
+  "current_issue": 35,
+  "next_issue": 38,
+  "completed_issue_count": 13,
+  "remaining_issue_count": 29,
   "queue_basis": "Agreed serial priority and declared dependency DAG from authoritative root inventory; reverify each live issue contract at pickup",
   "selection_policy": "All initially open issues selected, including optional branches; S23 release-gate contract is not silently changed",
   "dependency_constraints": [
@@ -229,19 +229,20 @@
     {
       "issue": 34,
       "slice_id": "ACI-S12",
-      "status": "PLANNING",
+      "status": "MERGED",
       "plan_path": ".spectra/plans/aci-s12.md",
       "receipt_path": ".spectra/state/aci-s12.execution.json",
-      "pull_request": null,
-      "merge_commit": null,
-      "blockers": []
+      "pull_request": 77,
+      "merge_commit": "bfa0e5935d5aefdd2d3c5c045eca1b2b08ebf56b",
+      "blockers": [],
+      "merge_evidence": "Root verified final40433257 ALL CI/Harden SUCCESS, merge and closure; actual ancestor COMPLETE receipt output bytes verified locally."
     },
     {
       "issue": 35,
-      "slice_id": null,
-      "status": "QUEUED",
-      "plan_path": null,
-      "receipt_path": null,
+      "slice_id": "ACI-S13",
+      "status": "PLANNING",
+      "plan_path": ".spectra/plans/aci-s13.md",
+      "receipt_path": ".spectra/state/aci-s13.execution.json",
       "pull_request": null,
       "merge_commit": null,
       "blockers": []
@@ -536,7 +537,7 @@
     "For genuine blockers record missing capability and evidence, then select independent eligible work if safe",
     "Final bookkeeping must reconcile actual closures, receipts, merges and queue before COMPLETE"
   ],
-  "queue_note": "Frozen queue preserved;12 merged/30 remaining after PR76. Current34 ACI-S12,next35. Optional selection does not change S23 release criteria.",
+  "queue_note": "Frozen queue preserved;13 merged/29 remaining after PR77. Current35 ACI-S13,next38. Optional selection does not amend S23 release criteria.",
   "handoff_notes": [
     "S23 future release-gate context: S07 current default-profile Spree v2 JSONL measured651,844,965bytes, export peakRSS1,983,594,496bytes; see .spectra/evidence/aci-s07/parser-prerequisite/fresh-probe-attempt3/export-size-attribution.json. Historical P3 Ruby-only measurement/84.63%/100MiB evidence remains unchanged and is not a current-format saving or like-for-like comparison. No release thresholds amended.",
     "S09 measured owner-local cache disk cost: Solidus333306797B, Spree530609730B. Current Spree portable export651845063B/66.407s/peakRSS1983627264B. Carry into existing S23/#44 cost ledger; no new size/speed ceiling or optimization scope.",
