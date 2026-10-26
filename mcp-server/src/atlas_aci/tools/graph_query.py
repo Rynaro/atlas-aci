@@ -9,6 +9,8 @@ from atlas_aci.codegraph import SCHEMA_EPOCH, CodeGraph
 from atlas_aci.config import Config
 from atlas_aci.enforcement import Enforcement, ToolError
 from atlas_aci.protocol.graph import envelope, request_mode
+from atlas_aci.query.admission import MINIMUM_BUDGET, Admission
+from atlas_aci.query.traversal import navigate
 
 
 async def graph_query(
@@ -30,7 +32,30 @@ async def graph_query(
             "different_tool",
         )
 
-    if mode == "structured":
+    if mode == "structured" and args["op"] != "status":
+        budget = args.get("max_bytes", config.max_response_bytes)
+        if budget > config.max_response_bytes or budget < MINIMUM_BUDGET:
+            raise ToolError("INVALID_BUDGET", "Traversal budget cannot represent bounded metadata.")
+        admission = Admission(
+            operation=args["op"],
+            budget=budget,
+            element_limit=config.max_bound_field_elements,
+            generation_id=code_graph.generation_id,
+            snapshot_id=code_graph.snapshot_id,
+            evidence_status=code_graph._lease_evidence_status,
+        )
+        data = await navigate(
+            code_graph,
+            operation=args["op"],
+            **{
+                key: value
+                for key, value in args.items()
+                if key not in {"op", "schema_version", "expected_generation_id", "max_bytes"}
+            },
+            admit=admission,
+        )
+        result = admission.finish(data)
+    elif mode == "structured":
         data = code_graph.published_status()
         state = data["completeness"]["state"]
         result = envelope(

@@ -1,0 +1,19 @@
+{
+  "source_hashes": {
+    "mcp-server/src/atlas_aci/codegraph.py": "5cf36bd781afd563e1a70058511abc8df4b83c9ba2b2bad8b201a58d6d728cf1",
+    "mcp-server/src/atlas_aci/storage/evidence.py": "3f14fa87ed9b060cc1d09e7e57cb002275c99b501829412a202d225870f3eb92",
+    "mcp-server/src/atlas_aci/storage/snapshots.py": "b8aecf567335dda0f2d0162c2eb6a334a4efae7d785755a0d8e862b52d96396f",
+    "mcp-server/tests/slices/test_s12_storage.py": "3834ec188ee1652392c87b6910dcb17831e47942ffb128fbf8215f0652dbda25"
+  },
+  "test_log": ".spectra/evidence/aci-s12/native-presence-corrected.log",
+  "native_epoch": 8,
+  "portable_epoch": 7,
+  "stage": "native/readcompat only;query counters/BFS/SDK branches not implemented",
+  "pending": [
+    "Linux qualification",
+    "production indexed cursor/progress/work instrumentation",
+    "nine product criteria and integration"
+  ],
+  "observed_tests": 17,
+  "ruff_exit_code": 0
+}

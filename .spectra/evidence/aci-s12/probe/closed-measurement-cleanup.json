@@ -1,0 +1,15 @@
+{
+  "exit_code": 0,
+  "removed_exact_paths": [
+    "/tmp/aci-s12-probe-inputs/solidus/.atlas",
+    "/tmp/aci-s12-probe-inputs/spree/.atlas",
+    "/tmp/aci-s12-spree-export.jsonl"
+  ],
+  "available_bytes_before": 6594560000,
+  "available_bytes_after": 8110080000,
+  "observed_available_bytes_gain": 1515520000,
+  "elapsed_seconds": 7.508159333985532,
+  "source_parents_git_retained": true,
+  "all_compact_and_preserved_evidence_retained": true,
+  "df_after": "Filesystem   1024-blocks      Used Available Capacity iused    ifree %iused  Mounted on\n/dev/disk3s5   239362496 203600000   7920000    97% 2414455 79511760    3%   /System/Volumes/Data\n"
+}

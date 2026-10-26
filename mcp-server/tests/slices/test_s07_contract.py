@@ -10,7 +10,7 @@ from pathlib import Path
 
 import pytest
 
-from atlas_aci.codegraph import CodeGraph
+from atlas_aci.codegraph import SCHEMA_EPOCH, CodeGraph
 
 FIXTURES = Path(__file__).resolve().parents[1] / "fixtures/s07"
 
@@ -625,7 +625,7 @@ def test_migrate_validates_current_path_even_with_cached_legacy_handle(tmp_path:
         other = CodeGraph(repo, graph_root=root)
         assert other.migrate_legacy()["already_current"] is False
         current = other.db_path.read_bytes()
-        assert writer.migrate_legacy() == {"schema_epoch": 7, "already_current": True}
+        assert writer.migrate_legacy() == {"schema_epoch": SCHEMA_EPOCH, "already_current": True}
         assert other.db_path.read_bytes() == current and old_path.read_bytes() == old
         assert held.generation_id == generation and held.search_symbol("A")["definitions"]
         other.close()

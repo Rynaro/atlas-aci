@@ -1,0 +1,84 @@
+{
+  "base_commit": "69fe066f573f29651fb53ad0dac65ae13836b752",
+  "actual_source": "/private/tmp/atlas-aci-aci-s12/mcp-server/src/atlas_aci/codegraph.py",
+  "source_files": 29,
+  "source_artifact": {
+    "path": "mcp-server/tests/fixtures/s12/baseline-source.json.gz",
+    "uncompressed_bytes": 663405,
+    "uncompressed_sha256": "620924f3b0ba76d89756b01449d16f63e520c67b3e6635c0e6e562440294314c",
+    "compressed_bytes": 186847,
+    "compressed_sha256": "d7476317d2016ad10b73ffd690a9f7764bb66847689598dde116fcc9f3c9a720",
+    "gzip_mtime": 0
+  },
+  "native_fixture": {
+    "path": "mcp-server/tests/fixtures/s12/native7.json.gz",
+    "uncompressed_bytes": 282286,
+    "uncompressed_sha256": "7d6e49d287a0ddd68e6175e03b0b8160fadf20dd879138f2443ade279fa0b809",
+    "compressed_bytes": 38716,
+    "compressed_sha256": "d2d54ca139d378cf4db2557f4a5c5b4cb34f8b84aea9902925b5f1949817f734",
+    "gzip_mtime": 0
+  },
+  "original_repository": "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/aci-s12-native7-iqkafokk",
+  "identity": {
+    "generation_id": "f982718e5f77fa66b465bf322747efd91401fa5293f57772f6b0cc4b268d7eec",
+    "snapshot_id": "7cec109a11dcb667fe11a930096484b31c992f98d7e6ab55c11c76d7c1cda565",
+    "source_bytes": {
+      "a.py": "ZGVmIEEoKToKIEIoKTsgQigpCmRlZiBCKCk6CiBDKCkKZGVmIEMoKToKIEEoKQo=",
+      "types.rb": "Y2xhc3MgQmFzZQplbmQKY2xhc3MgQ2hpbGQgPCBCYXNlCmVuZAo=",
+      "history.py": "ZGVmIGJyb2tlbig6CiBwYXNzCg=="
+    },
+    "captured_original_source": {
+      "a.py": "def A():\n B(); B()\ndef B():\n C()\ndef C():\n A()\n",
+      "history.py": "def retired():\n pass\ndef stale_caller():\n retired()\n",
+      "types.rb": "class Base\nend\nclass Child < Base\nend\n"
+    }
+  },
+  "sqlite_version": "3.53.1",
+  "native_signature": "9536086b279a9dc5121c3a853f8a1d5c151393db1e6a4f0104f3b8a72b6c3a79",
+  "baseline_query_plan": [
+    [
+      5,
+      0,
+      224,
+      "SCAN assertions USING INDEX sqlite_autoindex_assertions_1"
+    ]
+  ],
+  "baseline_typed_result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"bounds\":{\"element_limit\":0,\"lists\":{},\"truncated\":false},\"data\":null,\"error\":{\"code\":\"INVALID_OPERATION\",\"message\":\"Unsupported graph operation.\",\"retry_hint\":\"none\"},\"evidence_status\":\"unavailable\",\"generation_id\":null,\"operation\":\"status\",\"schema_version\":\"atlas.graph.v1\",\"snapshot_id\":null,\"status\":\"error\"}"
+      }
+    ],
+    "structuredContent": {
+      "schema_version": "atlas.graph.v1",
+      "operation": "status",
+      "status": "error",
+      "generation_id": null,
+      "snapshot_id": null,
+      "evidence_status": "unavailable",
+      "data": null,
+      "error": {
+        "code": "INVALID_OPERATION",
+        "message": "Unsupported graph operation.",
+        "retry_hint": "none"
+      },
+      "bounds": {
+        "element_limit": 0,
+        "truncated": false,
+        "lists": {}
+      }
+    },
+    "isError": true
+  },
+  "portable": {
+    "path": "mcp-server/tests/fixtures/s12/baseline-evidence.jsonl",
+    "bytes": 38267,
+    "sha256": "20169baac6976d463fe5158338f7b0ea7fdedc431a90d85a04387a9b1d7ad480"
+  },
+  "packages": {
+    "mcp": "1.27.0",
+    "tree-sitter": "0.25.2",
+    "tree-sitter-language-pack": "1.6.0"
+  }
+}

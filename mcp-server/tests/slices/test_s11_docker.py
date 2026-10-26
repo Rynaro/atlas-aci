@@ -178,10 +178,10 @@ def test_offline_readonly_status_and_legacy(tmp_path):
         path.mkdir(parents=True, exist_ok=True)
         (path / "docker-status.json").write_text(json.dumps(record, indent=2) + "\n")
 
-    # Docker Desktop presents synthetic ownership on the /repo mount root.
-    # Both raw observations remain above; only these two presentation fields
-    # are excluded. Every other root field, every descendant and /graphs
-    # (including its root) retain strict metadata and hash equality.
+    # Docker Desktop presents synthetic ownership on the /repo and /graphs mount roots.
+    # Both raw observations remain above; only the two root presentation fields
+    # are excluded. Every other field on both roots and every descendant
+    # retain strict metadata, ownership and hash equality.
     def comparable(observed):
         return {
             **observed,
@@ -189,7 +189,7 @@ def test_offline_readonly_status_and_legacy(tmp_path):
                 path: {
                     key: value
                     for key, value in row.items()
-                    if path != "/repo" or key not in {"uid", "gid"}
+                    if path not in {"/repo", "/graphs"} or key not in {"uid", "gid"}
                 }
                 for path, row in observed["entries"].items()
             },

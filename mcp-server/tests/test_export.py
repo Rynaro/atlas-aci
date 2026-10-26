@@ -20,7 +20,7 @@ from pathlib import Path
 
 import pytest
 
-from atlas_aci.codegraph import SCHEMA_EPOCH, CodeGraph
+from atlas_aci.codegraph import PORTABLE_SCHEMA_EPOCH, SCHEMA_EPOCH, CodeGraph
 
 
 def _write(repo: Path, rel: str, content: str) -> None:
@@ -125,7 +125,7 @@ def test_canonical_jsonl_shape(tmp_path: Path) -> None:
 
     header = json.loads(lines[0])
     assert header["type"] == "header"
-    assert header["schema_epoch"] == SCHEMA_EPOCH
+    assert header["schema_epoch"] == PORTABLE_SCHEMA_EPOCH
     assert isinstance(header["content_hash"], str) and len(header["content_hash"]) == 64
 
     body_types = {json.loads(line)["type"] for line in lines[1:]}
@@ -396,7 +396,7 @@ def test_header_record_epoch_and_content_hash(tmp_path: Path) -> None:
     if lines and lines[-1] == "":
         lines.pop()
     header = json.loads(lines[0])
-    assert header["schema_epoch"] == SCHEMA_EPOCH
+    assert header["schema_epoch"] == PORTABLE_SCHEMA_EPOCH
 
     body_text = "".join(line + "\n" for line in lines[1:])
     assert header["content_hash"] == hashlib.sha256(body_text.encode("utf-8")).hexdigest()

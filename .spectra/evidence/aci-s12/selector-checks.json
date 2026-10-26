@@ -1,0 +1,66 @@
+{
+  "shell-syntax": {
+    "command": [
+      "/bin/bash",
+      "-n",
+      "scripts/test-verify-probe-verdict.sh"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.0025712499918881804,
+    "log": ".spectra/evidence/aci-s12/selector-shell-syntax.log"
+  },
+  "resolve-md": {
+    "command": [
+      "scripts/resolve-probe-artifact.sh",
+      "aci-s12-probe-lpa-vs-louvain.md"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.00571508301072754,
+    "log": ".spectra/evidence/aci-s12/selector-resolve-md.log"
+  },
+  "resolve-json": {
+    "command": [
+      "scripts/resolve-probe-artifact.sh",
+      "aci-s12-probe-lpa-vs-louvain.json"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.005383582989452407,
+    "log": ".spectra/evidence/aci-s12/selector-resolve-json.log"
+  },
+  "immutable-inputs": {
+    "command": [
+      "git",
+      "diff",
+      "--exit-code",
+      "69fe066f573f29651fb53ad0dac65ae13836b752",
+      "--",
+      "scripts/verify-probe-verdict.py",
+      "scripts/resolve-probe-artifact.sh",
+      "scripts/probe-export-confident-graph.py",
+      "scripts/probe-modularity.py",
+      "scripts/probe-assemble-graph-bundle.py",
+      ".spectra/changes/aci-s11",
+      ".spectra/changes/aci-s08",
+      ".spectra/changes/archive"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.01074904200504534,
+    "log": ".spectra/evidence/aci-s12/selector-immutable-inputs.log"
+  },
+  "current-probe": {
+    "command": [
+      "mcp-server/.venv/bin/python",
+      "scripts/verify-probe-verdict.py",
+      ".spectra/changes/aci-s12/probe/aci-s12-probe-lpa-vs-louvain.json"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.21050391701282933,
+    "log": ".spectra/evidence/aci-s12/selector-current-probe.log"
+  },
+  "reverse-exact-baseline": {
+    "exit_code": 0,
+    "workflow_replacements": 3,
+    "selftest_replacements": 1,
+    "whole_files_equal_baseline_after_reversal": true
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "accepted": false,
+  "reason": "CLI --tests word-splits argv; cd ... && pytest executes cd without running tests; empty full-log and no pytest count. Journal pass is vacuous and NOT evidence for product readiness.",
+  "actual_journal_exit": 0,
+  "actual_tests_observed": 0,
+  "correction": "Direct Python argv with repository-relative test paths; verify real 85-test marker and both passk return codes."
+}

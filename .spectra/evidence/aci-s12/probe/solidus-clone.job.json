@@ -1,0 +1,19 @@
+{
+  "name": "solidus-clone",
+  "command": [
+    "git",
+    "clone",
+    "--no-checkout",
+    "--no-local",
+    "/tmp/aci-s02-probe-inputs/solidus",
+    "/tmp/aci-s12-probe-inputs/solidus"
+  ],
+  "cwd": "/private/tmp/atlas-aci-aci-s12",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 0.14531433299998753,
+  "elapsed_total": 0.14677737501915544,
+  "peak_rss_bytes": 15433728,
+  "stdout": ".spectra/evidence/aci-s12/probe/solidus-clone.stdout.log",
+  "stderr": ".spectra/evidence/aci-s12/probe/solidus-clone.stderr.log"
+}

@@ -1,0 +1,156 @@
+{
+  "image_id": "sha256:be675a7aa7d17537643ccf7ccdeaab889def08f7b9121ef1c35635f75999966f",
+  "commands": [
+    {
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--read-only",
+        "--network",
+        "none",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/aci-s12-linux-aw59xrao/source:/repo:ro",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/aci-s12-linux-aw59xrao/graphs:/graphs",
+        "sha256:be675a7aa7d17537643ccf7ccdeaab889def08f7b9121ef1c35635f75999966f",
+        "index",
+        "--repo",
+        "/repo",
+        "--graph-root",
+        "/graphs"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "2026-10-24T23:44:18.193836Z [info     ] index_start                    langs=['rust', 'ruby', 'python', 'typescript', 'javascript', 'scss', 'html', 'yaml', 'markdown', 'bash'] repo=/repo since=None\n2026-10-24T23:44:18.300670Z [info     ] index_done                     binding_resolution={'mode': 'full', 'reason': 'full_requested_or_incompatible_inputs', 'affected_units': 3, 'reused_units': 0, 'removed_units': 0, 'affected_paths': ['a.py', 'history.py', 'types.rb'], 'reused_paths': [], 'removed_paths': []} edges=6 extraction_cache={'disk_hits': 0, 'misses': 3, 'miss_reasons': {'missing': 3}, 'write_failures': 0, 'predecessor_reused': 0, 'parser_invocations': 3} extraction_state=complete files_failed=0 files_indexed=3 files_removed=0 files_skipped=0 rationale=0 refs=6 schema_epoch=8 snapshot_id=8918c4dbb925fa2e3cf0def6705a311428343d301cf6d257789f29a5a011b28b symbols=7 unsupported_skipped={}\n"
+    },
+    {
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--read-only",
+        "--network",
+        "none",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/aci-s12-linux-aw59xrao/source:/repo:ro",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/aci-s12-linux-aw59xrao/graphs:/graphs",
+        "sha256:be675a7aa7d17537643ccf7ccdeaab889def08f7b9121ef1c35635f75999966f",
+        "index",
+        "--repo",
+        "/repo",
+        "--graph-root",
+        "/graphs",
+        "--since",
+        "HEAD"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "2026-10-24T23:44:18.471374Z [info     ] index_start                    langs=['rust', 'ruby', 'python', 'typescript', 'javascript', 'scss', 'html', 'yaml', 'markdown', 'bash'] repo=/repo since=HEAD\n2026-10-24T23:44:18.528629Z [info     ] index_done                     binding_resolution={'mode': 'affected', 'reason': 'complete_dependency_match', 'affected_units': 1, 'reused_units': 1, 'removed_units': 1, 'affected_paths': ['a.py'], 'reused_paths': ['types.rb'], 'removed_paths': ['history.py']} edges=5 extraction_cache={'disk_hits': 0, 'misses': 1, 'miss_reasons': {'missing': 1}, 'write_failures': 0, 'predecessor_reused': 2, 'parser_invocations': 1} extraction_state=partial files_failed=1 files_indexed=0 files_removed=0 files_skipped=2 rationale=0 refs=0 schema_epoch=8 snapshot_id=751e32ac7d5134e7853e84c315f647ce04b40ab60bf8c5cf859c9a60790bd78d symbols=0 unsupported_skipped={}\n"
+    },
+    {
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--read-only",
+        "--network",
+        "none",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/aci-s12-linux-aw59xrao/source:/repo:ro",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/aci-s12-linux-aw59xrao/graphs:/graphs:ro",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/aci-s12-linux-aw59xrao/oldgraphs:/oldgraphs:ro",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/aci-s12-linux-aw59xrao/sixgraphs:/sixgraphs:ro",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/aci-s12-native7-iqkafokk:/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/aci-s12-native7-iqkafokk:ro",
+        "--entrypoint",
+        "python",
+        "sha256:be675a7aa7d17537643ccf7ccdeaab889def08f7b9121ef1c35635f75999966f",
+        "-c",
+        "import errno,hashlib,json,os,sqlite3,sys,time\nfrom pathlib import Path\nimport atlas_aci\nfrom atlas_aci.codegraph import CodeGraph\nfrom atlas_aci.enforcement import ToolError\nfrom atlas_aci.query.indexed import IndexedReader,QueryStopped,OUTGOING_SQL,INCOMING_SQL,NAME_SQL\nassert os.geteuid()==10001\ntry:Path('/repo/forbidden-write').write_text('forbidden')\nexcept OSError as e:assert e.errno==errno.EROFS\nelse:raise AssertionError('source writable')\ng=CodeGraph(Path('/repo'),graph_root=Path('/graphs'),read_only=True)\nbefore=len(os.listdir('/proc/self/fd'));start=time.monotonic()\nwith g.reader_lease() as r:\n validation=time.monotonic()-start;assert r._lease_schema_epoch==8\n assert len(os.listdir('/proc/self/fd'))==before+2\n seed=r.db.execute(NAME_SQL,('A','')).fetchone()[0]\n plans={name:[x[3] for x in r.db.execute('EXPLAIN QUERY PLAN '+sql,args)] for name,sql,args in [('out',OUTGOING_SQL,(seed,'call','')),('in',INCOMING_SQL,(seed,'call','')),('name',NAME_SQL,('A',''))]}\n assert all(all('SCAN' not in row and 'TEMP B-TREE' not in row for row in plan) for plan in plans.values())\n trace=[];r.db.set_trace_callback(trace.append)\n with IndexedReader(r,max_examined_edges=2,deadline_ms=2000) as query:\n  seed=query.name_candidates('A')[0]['id'];a=query.edge(seed,'call','outgoing','');b=query.edge(seed,'call','outgoing',a['id'])\n  try:query.edge(seed,'call','outgoing',b['id']);raise AssertionError('overrun')\n  except QueryStopped as e:assert e.reason=='examined_edge_limit'\n  counts=dict(query.counts)\n assert counts['edge_rows']==counts['examined_edges']==2 and len(trace)==4\n r.db.set_trace_callback(None)\n try:r.db.execute('CREATE TABLE forbidden(x)');raise AssertionError('SQLite writable')\n except sqlite3.OperationalError as e:assert e.sqlite_errorcode==sqlite3.SQLITE_READONLY\n deadline=IndexedReader(r,max_examined_edges=1,deadline_ms=100)\n try:\n  with deadline:deadline._one('WITH RECURSIVE x(n) AS (VALUES(0) UNION ALL SELECT n+1 FROM x WHERE n<10000000) SELECT sum(n) FROM x',(),'hydration')\n except QueryStopped as e:assert e.reason=='deadline' and e.__cause__.sqlite_errorcode==sqlite3.SQLITE_INTERRUPT\n else:raise AssertionError('no real interruption')\n assert r.db.execute('WITH RECURSIVE x(n) AS (VALUES(0) UNION ALL SELECT n+1 FROM x WHERE n<1000) SELECT sum(n) FROM x').fetchone()[0]==500500\n assert not deadline._installed\n result={'uid':os.geteuid(),'source_negative_errno':errno.EROFS,'sqlite_version':sqlite3.sqlite_version,'native_epoch':r._lease_schema_epoch,'plans':plans,'trace':trace,'counts':counts,'deadline_counts':deadline.counts,'hook_cleared':True,'lease_validation_seconds':validation}\n assert r.read_source('history.py')==b'def broken(:\\n pass\\n'\nassert len(os.listdir('/proc/self/fd'))==before\ng.close()\nold=[]\nfor repo,storage,epoch in [(sys.argv[1],'/oldgraphs',7),(sys.argv[2],'/sixgraphs',6)]:\n g=CodeGraph(Path(repo),graph_root=Path(storage),read_only=True)\n with g.reader_lease() as r:\n  assert r._lease_schema_epoch==epoch and r.query('definitions_of:A')['definitions']\n  trace=[];r.db.set_trace_callback(trace.append)\n  try:IndexedReader(r,max_examined_edges=1,deadline_ms=100);raise AssertionError('old schema traversed')\n  except ToolError as e:assert e.code=='INDEX_UPGRADE_REQUIRED'\n  assert not trace\n  old.append({'epoch':epoch,'generation_id':r.generation_id,'snapshot_id':r.snapshot_id,'upgrade_required_without_navigation_SQL':True})\n g.close()\nresult['old']=old\npackage=Path(atlas_aci.__file__).parent\nresult['runtime_hashes']={name:hashlib.sha256((package/name).read_bytes()).hexdigest() for name in json.loads(sys.argv[3])}\nprint(json.dumps(result))\n",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/aci-s12-native7-iqkafokk",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/tmpko7axlv6",
+        "[\"codegraph.py\", \"storage/evidence.py\", \"storage/snapshots.py\", \"query/indexed.py\", \"query/__init__.py\"]"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"uid\": 10001, \"source_negative_errno\": 30, \"sqlite_version\": \"3.46.1\", \"native_epoch\": 8, \"plans\": {\"out\": [\"SEARCH assertions USING INDEX idx_assertions_source_relation_id (<expr>=? AND <expr>=? AND id>?)\"], \"in\": [\"SEARCH assertions USING INDEX idx_assertions_target_relation_id (<expr>=? AND <expr>=? AND id>?)\"], \"name\": [\"SEARCH entities USING INDEX idx_entities_name_id (<expr>=? AND id>?)\"]}, \"trace\": [\"SELECT id,payload FROM entities INDEXED BY idx_entities_name_id WHERE json_extract(payload,'$.name')='A' AND id>'' ORDER BY id LIMIT 1\", \"SELECT id,payload FROM entities INDEXED BY idx_entities_name_id WHERE json_extract(payload,'$.name')='A' AND id>'d683ad4587035ab55396ebc73fd5e6e78f7dead818a9aac9cb79f896d0b4c2a9' ORDER BY id LIMIT 1\", \"SELECT id,payload FROM assertions INDEXED BY idx_assertions_source_relation_id WHERE json_extract(payload,'$.source_entity_id')='d683ad4587035ab55396ebc73fd5e6e78f7dead818a9aac9cb79f896d0b4c2a9' AND json_extract(payload,'$.relation')='call' AND id>'' ORDER BY id LIMIT 1\", \"SELECT id,payload FROM assertions INDEXED BY idx_assertions_source_relation_id WHERE json_extract(payload,'$.source_entity_id')='d683ad4587035ab55396ebc73fd5e6e78f7dead818a9aac9cb79f896d0b4c2a9' AND json_extract(payload,'$.relation')='call' AND id>'346c9296bed59b343b1c6e994f4066e23147daddb1bb1baaea632b61eeda812f' ORDER BY id LIMIT 1\"], \"counts\": {\"examined_edges\": 2, \"edge_queries\": 2, \"edge_rows\": 2, \"confirmed_edge_eof\": 0, \"interrupted_edge_steps\": 0, \"endpoint_queries\": 2, \"endpoint_rows\": 1, \"hydration_queries\": 0, \"hydration_rows\": 0, \"sql_queries\": 4, \"interrupted_sql_queries\": 0}, \"deadline_counts\": {\"examined_edges\": 0, \"edge_queries\": 0, \"edge_rows\": 0, \"confirmed_edge_eof\": 0, \"interrupted_edge_steps\": 0, \"endpoint_queries\": 0, \"endpoint_rows\": 0, \"hydration_queries\": 1, \"hydration_rows\": 0, \"sql_queries\": 1, \"interrupted_sql_queries\": 1}, \"hook_cleared\": true, \"lease_validation_seconds\": 0.004726792001747526, \"old\": [{\"epoch\": 7, \"generation_id\": \"f982718e5f77fa66b465bf322747efd91401fa5293f57772f6b0cc4b268d7eec\", \"snapshot_id\": \"7cec109a11dcb667fe11a930096484b31c992f98d7e6ab55c11c76d7c1cda565\", \"upgrade_required_without_navigation_SQL\": true}, {\"epoch\": 6, \"generation_id\": \"9f5bae6dbf126ca381de924f9368b7c9df86b1985423ed302241f43c96490086\", \"snapshot_id\": null, \"upgrade_required_without_navigation_SQL\": true}], \"runtime_hashes\": {\"codegraph.py\": \"5cf36bd781afd563e1a70058511abc8df4b83c9ba2b2bad8b201a58d6d728cf1\", \"storage/evidence.py\": \"3f14fa87ed9b060cc1d09e7e57cb002275c99b501829412a202d225870f3eb92\", \"storage/snapshots.py\": \"b8aecf567335dda0f2d0162c2eb6a334a4efae7d785755a0d8e862b52d96396f\", \"query/indexed.py\": \"45c959d2e290802e35d4b3942d04f01b9ac37e3f2e6655b048f83ef945e93809\", \"query/__init__.py\": \"a087ec8bad394a0a78e29b84d8b0c095ed377f492c92bdbf80484932d3481128\"}}\n",
+      "stderr": ""
+    }
+  ],
+  "result": {
+    "uid": 10001,
+    "source_negative_errno": 30,
+    "sqlite_version": "3.46.1",
+    "native_epoch": 8,
+    "plans": {
+      "out": [
+        "SEARCH assertions USING INDEX idx_assertions_source_relation_id (<expr>=? AND <expr>=? AND id>?)"
+      ],
+      "in": [
+        "SEARCH assertions USING INDEX idx_assertions_target_relation_id (<expr>=? AND <expr>=? AND id>?)"
+      ],
+      "name": [
+        "SEARCH entities USING INDEX idx_entities_name_id (<expr>=? AND id>?)"
+      ]
+    },
+    "trace": [
+      "SELECT id,payload FROM entities INDEXED BY idx_entities_name_id WHERE json_extract(payload,'$.name')='A' AND id>'' ORDER BY id LIMIT 1",
+      "SELECT id,payload FROM entities INDEXED BY idx_entities_name_id WHERE json_extract(payload,'$.name')='A' AND id>'d683ad4587035ab55396ebc73fd5e6e78f7dead818a9aac9cb79f896d0b4c2a9' ORDER BY id LIMIT 1",
+      "SELECT id,payload FROM assertions INDEXED BY idx_assertions_source_relation_id WHERE json_extract(payload,'$.source_entity_id')='d683ad4587035ab55396ebc73fd5e6e78f7dead818a9aac9cb79f896d0b4c2a9' AND json_extract(payload,'$.relation')='call' AND id>'' ORDER BY id LIMIT 1",
+      "SELECT id,payload FROM assertions INDEXED BY idx_assertions_source_relation_id WHERE json_extract(payload,'$.source_entity_id')='d683ad4587035ab55396ebc73fd5e6e78f7dead818a9aac9cb79f896d0b4c2a9' AND json_extract(payload,'$.relation')='call' AND id>'346c9296bed59b343b1c6e994f4066e23147daddb1bb1baaea632b61eeda812f' ORDER BY id LIMIT 1"
+    ],
+    "counts": {
+      "examined_edges": 2,
+      "edge_queries": 2,
+      "edge_rows": 2,
+      "confirmed_edge_eof": 0,
+      "interrupted_edge_steps": 0,
+      "endpoint_queries": 2,
+      "endpoint_rows": 1,
+      "hydration_queries": 0,
+      "hydration_rows": 0,
+      "sql_queries": 4,
+      "interrupted_sql_queries": 0
+    },
+    "deadline_counts": {
+      "examined_edges": 0,
+      "edge_queries": 0,
+      "edge_rows": 0,
+      "confirmed_edge_eof": 0,
+      "interrupted_edge_steps": 0,
+      "endpoint_queries": 0,
+      "endpoint_rows": 0,
+      "hydration_queries": 1,
+      "hydration_rows": 0,
+      "sql_queries": 1,
+      "interrupted_sql_queries": 1
+    },
+    "hook_cleared": true,
+    "lease_validation_seconds": 0.004726792001747526,
+    "old": [
+      {
+        "epoch": 7,
+        "generation_id": "f982718e5f77fa66b465bf322747efd91401fa5293f57772f6b0cc4b268d7eec",
+        "snapshot_id": "7cec109a11dcb667fe11a930096484b31c992f98d7e6ab55c11c76d7c1cda565",
+        "upgrade_required_without_navigation_SQL": true
+      },
+      {
+        "epoch": 6,
+        "generation_id": "9f5bae6dbf126ca381de924f9368b7c9df86b1985423ed302241f43c96490086",
+        "snapshot_id": null,
+        "upgrade_required_without_navigation_SQL": true
+      }
+    ],
+    "runtime_hashes": {
+      "codegraph.py": "5cf36bd781afd563e1a70058511abc8df4b83c9ba2b2bad8b201a58d6d728cf1",
+      "storage/evidence.py": "3f14fa87ed9b060cc1d09e7e57cb002275c99b501829412a202d225870f3eb92",
+      "storage/snapshots.py": "b8aecf567335dda0f2d0162c2eb6a334a4efae7d785755a0d8e862b52d96396f",
+      "query/indexed.py": "45c959d2e290802e35d4b3942d04f01b9ac37e3f2e6655b048f83ef945e93809",
+      "query/__init__.py": "a087ec8bad394a0a78e29b84d8b0c095ed377f492c92bdbf80484932d3481128"
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "sources": {
+    "mcp-server/src/atlas_aci/codegraph.py": "4df28b1fcaeb7c5d0051f1c5412e0d06a38ad3d10652d18a82d7b7d16c6bcfe2",
+    "mcp-server/src/atlas_aci/storage/evidence.py": "3f14fa87ed9b060cc1d09e7e57cb002275c99b501829412a202d225870f3eb92",
+    "mcp-server/src/atlas_aci/providers/python_imports.py": "de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014",
+    "mcp-server/src/atlas_aci/indexing/extraction_cache.py": "08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2",
+    "mcp-server/src/atlas_aci/resolvers/dependencies.py": "0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6",
+    "mcp-server/src/atlas_aci/extractors/rust.py": "28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a",
+    "mcp-server/src/atlas_aci/storage/snapshots.py": "b8aecf567335dda0f2d0162c2eb6a334a4efae7d785755a0d8e862b52d96396f",
+    "mcp-server/src/atlas_aci/server.py": "e669731d139193c7b0ec02a109427c3fed3c9a443f279f3147b4b2e12a2895a8",
+    "mcp-server/src/atlas_aci/tools/view_file.py": "31871a9d7594091a52790feac3a5746039cc8c939c7c3f7116e99a9f1f5e48e3",
+    "mcp-server/src/atlas_aci/tools/graph_query.py": "e3a47c96ae46e7c1f5dad05e9f73030d0d7239968e3faf2f288f32693325bee9",
+    "mcp-server/src/atlas_aci/protocol/__init__.py": "c2c58dae1889144d01a1c3ef229a60047b9e1df757c5a6ef9f79f17dd07dcae4",
+    "mcp-server/src/atlas_aci/protocol/graph.py": "9809b4409f907c23324f493a3e682c5a67ec0954584e7637fbdd1cec9855718f",
+    "mcp-server/src/atlas_aci/protocol/results.py": "461a40dbe673d52e0645a42c444af3c01d7949ff902b62e5ee9bd9b71744949f",
+    "mcp-server/src/atlas_aci/query/__init__.py": "a087ec8bad394a0a78e29b84d8b0c095ed377f492c92bdbf80484932d3481128",
+    "mcp-server/src/atlas_aci/query/indexed.py": "45c959d2e290802e35d4b3942d04f01b9ac37e3f2e6655b048f83ef945e93809",
+    "mcp-server/src/atlas_aci/query/traversal.py": "e456ad864483a7bacc67423db5c9e286cdbf646913a84a97dd9adb50174fdbad",
+    "mcp-server/src/atlas_aci/query/admission.py": "7d75a1d0641079c3dfe63f5373c6f46bd56b2bcd41682e7749863576ef4057f2"
+  },
+  "pins": {
+    "solidus": [
+      "https://github.com/solidusio/solidus.git",
+      "4026945d614e81383c007ed1ab1278a0195ce5d9"
+    ],
+    "spree": [
+      "https://github.com/spree/spree.git",
+      "6699cde44303ea85ef6e56c5e87c44a738ab73fc"
+    ]
+  },
+  "default_profile": true,
+  "source_transformations": false,
+  "networkx": "3.6.1",
+  "per_job_seconds": 600,
+  "total_seconds": 2700,
+  "prior_probe_seconds_charged": 0.0,
+  "base_commit": "69fe066f573f29651fb53ad0dac65ae13836b752"
+}

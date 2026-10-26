@@ -39,6 +39,7 @@ from atlas_aci.protocol.results import (
     failure_payload,
     negotiated_version,
 )
+from atlas_aci.query.admission import MINIMUM_BUDGET
 from atlas_aci.tools.graph_query import graph_query
 from atlas_aci.tools.list_dir import list_dir
 from atlas_aci.tools.search_symbol import search_symbol
@@ -321,7 +322,17 @@ def apply_central_bounds(
         return result
 
     if name == "graph_query" and any(key in arguments for key in RESERVED) and "data" in result:
-        result = bound_status(result, enforcement.config.max_bound_field_elements)
+        if arguments.get("op") == "status":
+            result = bound_status(result, enforcement.config.max_bound_field_elements)
+        else:
+            from atlas_aci.protocol.graph import validate_navigation
+
+            try:
+                validate_navigation(
+                    result, arguments["op"], enforcement.config.max_bound_field_elements
+                )
+            except ValueError as exc:
+                raise ToolError("INVALID_RESULT", "Generated navigation proof is invalid.") from exc
     fields = bounded_fields_for(name, arguments)
     truncated_fields: set[str] = set()
     for field in fields:
@@ -426,7 +437,11 @@ async def dispatch_tool_call(
             try:
                 reader = stack.enter_context(code_graph.reader_lease())
             except ToolError:
-                if mode != "structured" or not code_graph.index_is_absent():
+                if (
+                    mode != "structured"
+                    or arguments.get("op") != "status"
+                    or not code_graph.index_is_absent()
+                ):
                     raise
                 if arguments.get("expected_generation_id") is not None:
                     raise ToolError(
@@ -535,6 +550,18 @@ async def call_tool_result(
         else None
     )
     structured = name == "graph_query" and protocol_version in STRUCTURED_VERSIONS
+    operation = (
+        str(arguments.get("op"))
+        if isinstance(arguments, dict)
+        and isinstance(arguments.get("op"), str)
+        and arguments.get("op") in {"status", "neighborhood", "path"}
+        else "status"
+    )
+    budget = config.max_response_bytes
+    if operation != "status" and isinstance(arguments, dict):
+        requested = arguments.get("max_bytes", budget)
+        if type(requested) is int and 0 <= requested <= budget:
+            budget = requested
     try:
         descriptors = {tool["name"]: tool for tool in build_tool_manifest(config, protocol_version)}
         if name not in descriptors:
@@ -551,16 +578,28 @@ async def call_tool_result(
             and payload.get("error") in {"INVALID_QUERY", "UNKNOWN_VERB"}
         )
     except ToolError as exc:
-        payload = failure_payload(exc.code, exc.message, exc.retry_hint, mode=mode or "legacy")
+        payload = failure_payload(
+            exc.code, exc.message, exc.retry_hint, mode=mode or "legacy", operation=operation
+        )
         error = True
     except Exception:
         log.exception("tool_unhandled_error", tool=name)
         payload = failure_payload(
-            "INTERNAL", "Tool execution failed unexpectedly.", "none", mode=mode or "legacy"
+            "INTERNAL",
+            "Tool execution failed unexpectedly.",
+            "none",
+            mode=mode or "legacy",
+            operation=operation,
         )
         error = True
     return bounded_result(
-        payload, error=error, mode=mode, structured=structured, budget=config.max_response_bytes
+        payload,
+        error=error,
+        mode=mode,
+        structured=structured,
+        budget=budget,
+        operation=operation,
+        minimum_budget=(MINIMUM_BUDGET if operation != "status" else 0),
     )
 
 

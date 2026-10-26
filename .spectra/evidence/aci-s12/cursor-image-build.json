@@ -1,0 +1,15 @@
+{
+  "command": [
+    "docker",
+    "build",
+    "-t",
+    "atlas-aci-s12-cursor",
+    "-f",
+    "mcp-server/Dockerfile",
+    "mcp-server"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 11.884485875008977,
+  "source_checkpoint": ".spectra/evidence/aci-s12/indexed-source-checkpoint.json",
+  "image_id": "sha256:be675a7aa7d17537643ccf7ccdeaab889def08f7b9121ef1c35635f75999966f"
+}

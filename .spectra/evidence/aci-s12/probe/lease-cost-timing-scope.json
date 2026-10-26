@@ -1,0 +1,13 @@
+{
+  "measured_keys": [
+    "query_including_admission_and_sdk_encoding_seconds",
+    "query_including_admission_and_sdk_encoding_cpu_seconds"
+  ],
+  "scope": "Traversal, actual admission framing measurements, and final sdk_result construction/text JSON encoding. Final result_bytes()/wire-dump and byte assertion are outside interval; not total MCP wire latency.",
+  "executed_helper_sha256": "8ccdbb9569bf4d5fef2604d1ffeacca387109638934aa62de871ccd98de8332c",
+  "raw_record_sha256": {
+    "solidus": "84ea672d83c19521b82d5bcc5e8a276076c1007799a091b8ae30efa218095f5f",
+    "spree": "6edd3b2b9a71d88b3a6c5db8b88bb390b6a4cde986fbff6cc77ecf243d94740a"
+  },
+  "numeric_records_unchanged": true
+}

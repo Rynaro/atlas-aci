@@ -1,0 +1,66 @@
+"""Remove only root-authorized, independently audited closed S12 scratch outputs."""
+import gzip
+import hashlib
+import json
+import os
+from pathlib import Path
+import shutil
+import sqlite3
+import stat
+import subprocess
+import time
+
+here=Path(__file__).resolve().parent
+started=time.monotonic()
+before=os.statvfs('/tmp').f_bavail*os.statvfs('/tmp').f_frsize
+artifacts=json.loads((here/'source-catalog-raw-manifest.json').read_text())
+root=here.parents[3]
+# Complete raw-stream preservation was independently approved before cleanup.
+for item in json.loads((here.parent/'raw-manifest.json').read_text()):
+ packed=(root/item['compressed_path']).read_bytes();raw_bytes=gzip.decompress(packed)
+ assert len(packed)==item['compressed_bytes'] and hashlib.sha256(packed).hexdigest()==item['compressed_sha256']
+ assert len(raw_bytes)==item['uncompressed_bytes'] and hashlib.sha256(raw_bytes).hexdigest()==item['uncompressed_sha256']
+ assert packed[4:8]==b'\0'*4
+pre=[]
+for name in ('solidus','spree'):
+ repo=Path('/tmp/aci-s12-probe-inputs')/name;atlas=repo/'.atlas'
+ assert stat.S_ISDIR(atlas.lstat().st_mode) and not atlas.is_symlink()
+ assert atlas.resolve().parent==repo.resolve() and (repo/'.git').is_dir()
+ expected_pin=json.loads((here/'environment.json').read_text())['pins'][name][1]
+ assert subprocess.check_output(['git','rev-parse','HEAD'],cwd=repo,text=True).strip()==expected_pin
+ assert not subprocess.check_output(['git','status','--porcelain','--untracked-files=no'],cwd=repo,text=True).strip()
+ assert not any(p.is_symlink() for p in atlas.rglob('*'))
+ account=json.loads((here/(name+'-accounting.json')).read_text())
+ with sqlite3.connect((atlas/'graph.8.db').as_uri()+'?mode=ro',uri=True) as conn:
+  metadata=dict(conn.execute('SELECT key,value FROM manifest'))
+ assert metadata['generation_id']==account['source_snapshot']['generation_id']
+ assert json.loads(metadata['generation_inputs'])['schema']['epoch']==8
+ with sqlite3.connect((atlas/'graph.8.db').as_uri()+'?mode=ro',uri=True) as conn:
+  names={row[0] for row in conn.execute("SELECT name FROM sqlite_schema WHERE type='index'")}
+ assert {'idx_assertions_source_relation_id','idx_assertions_target_relation_id','idx_entities_name_id'} <= names
+ with (atlas/'graph.8.db').open('rb') as stream:native_sha=hashlib.file_digest(stream,'sha256').hexdigest()
+ assert json.loads(metadata['generation_inputs'])==account['generation_inputs']
+ for item in [a for a in artifacts if a['repo']==name]:
+  packed=(root/item['compressed_path']).read_bytes();raw=gzip.decompress(packed)
+  assert hashlib.sha256(packed).hexdigest()==item['compressed_sha256']
+  assert hashlib.sha256(raw).hexdigest()==item['uncompressed_sha256']
+  assert Path(item['original_path']).read_bytes()==raw
+ pack=atlas/'source-snapshots'/('pack.'+account['source_snapshot']['pack_sha256']+'.bin')
+ assert stat.S_ISREG(pack.lstat().st_mode) and not pack.is_symlink()
+ with pack.open('rb') as stream:pack_sha=hashlib.file_digest(stream,'sha256').hexdigest()
+ assert pack_sha==account['source_snapshot']['pack_sha256'] and pack.stat().st_size==account['source_snapshot']['pack_bytes']
+ pre.append({'path':str(atlas),'resolved_path':str(atlas.resolve()),'allocated_kib':int(subprocess.check_output(['du','-sk',str(atlas)],text=True).split()[0]),'native_db_sha256':native_sha,'native_db_bytes':(atlas/'graph.8.db').stat().st_size,'generation_id':metadata['generation_id'],'snapshot_id':account['source_snapshot']['snapshot_id'],'pack_sha256':pack_sha,'pack_bytes':pack.stat().st_size,'source_parent_git':str(repo/'.git')})
+raw=Path('/tmp/aci-s12-spree-export.jsonl');assert stat.S_ISREG(raw.lstat().st_mode) and not raw.is_symlink()
+expected=json.loads((here/'spree-export-size.json').read_text())
+with raw.open('rb') as stream:sha=hashlib.file_digest(stream,'sha256').hexdigest()
+assert raw.stat().st_size==expected['bytes']==651845336 and sha==expected['sha256']=='3ed093aca904d72d04ca0875eb865f23058baf4486dcb7d05edce00798d25346'
+pre.append({'path':str(raw),'bytes':raw.stat().st_size,'sha256':sha})
+(here/'closed-measurement-cleanup-preflight.json').write_text(json.dumps({'authorized_exact_paths':pre,'available_bytes':before,'independent_raw_and_preservation_audit':'ATLAS PASS before removal'},indent=2)+'\n')
+for item in pre[:2]:shutil.rmtree(item['path'])
+raw.unlink()
+assert all(not Path(item['path']).exists() for item in pre)
+assert all(Path(item['source_parent_git']).is_dir() for item in pre[:2])
+after=os.statvfs('/tmp').f_bavail*os.statvfs('/tmp').f_frsize
+result={'exit_code':0,'removed_exact_paths':[item['path'] for item in pre],'available_bytes_before':before,'available_bytes_after':after,'observed_available_bytes_gain':after-before,'elapsed_seconds':time.monotonic()-started,'source_parents_git_retained':True,'all_compact_and_preserved_evidence_retained':True,'df_after':subprocess.check_output(['df','-k','/tmp'],text=True)}
+(here/'closed-measurement-cleanup.json').write_text(json.dumps(result,indent=2)+'\n')
+print(json.dumps(result))

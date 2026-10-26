@@ -1,0 +1,33 @@
+{
+  "command": [
+    ".venv/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "tests/slices/test_s07_contract.py::test_migrate_validates_current_path_even_with_cached_legacy_handle",
+    "tests/slices/test_s08_integration.py::test_coherently_rehashed_foreign_binding_fails_before_exposure",
+    "tests/test_export.py::test_canonical_jsonl_shape",
+    "tests/test_export.py::test_header_record_epoch_and_content_hash",
+    "tests/slices/test_s11_docker.py",
+    "tests/slices/test_s12_docker.py"
+  ],
+  "cwd": "mcp-server",
+  "exit_code": 0,
+  "elapsed_seconds": 3.701886041992111,
+  "image_id": "sha256:c6d25bcc2cfe94b46e4d51ab3f81c559fd73a145cc7b1c458f4ee980e47b68ee",
+  "native_environment": {
+    "ATLAS_ACI_S06_DOCKER_IMAGE": "sha256:c6d25bcc2cfe94b46e4d51ab3f81c559fd73a145cc7b1c458f4ee980e47b68ee",
+    "ATLAS_ACI_S06_EVIDENCE_DIR": "/private/tmp/atlas-aci-aci-s12/.spectra/evidence/aci-s12/docker-final/s06",
+    "ATLAS_ACI_S08_DOCKER_IMAGE": "sha256:c6d25bcc2cfe94b46e4d51ab3f81c559fd73a145cc7b1c458f4ee980e47b68ee",
+    "ATLAS_ACI_S08_EVIDENCE_DIR": "/private/tmp/atlas-aci-aci-s12/.spectra/evidence/aci-s12/docker-final/s08",
+    "ATLAS_ACI_S15_DOCKER_IMAGE": "sha256:c6d25bcc2cfe94b46e4d51ab3f81c559fd73a145cc7b1c458f4ee980e47b68ee",
+    "ATLAS_ACI_S15_EVIDENCE_DIR": "/private/tmp/atlas-aci-aci-s12/.spectra/evidence/aci-s12/docker-final/s15",
+    "ATLAS_ACI_S11_DOCKER_IMAGE": "sha256:c6d25bcc2cfe94b46e4d51ab3f81c559fd73a145cc7b1c458f4ee980e47b68ee",
+    "ATLAS_ACI_S11_EVIDENCE_DIR": "/private/tmp/atlas-aci-aci-s12/.spectra/evidence/aci-s12/docker-final/s11",
+    "ATLAS_ACI_S12_DOCKER_IMAGE": "sha256:c6d25bcc2cfe94b46e4d51ab3f81c559fd73a145cc7b1c458f4ee980e47b68ee",
+    "ATLAS_ACI_S12_EVIDENCE_DIR": "/private/tmp/atlas-aci-aci-s12/.spectra/evidence/aci-s12/docker-final/s12"
+  },
+  "source_checkpoint": ".spectra/evidence/aci-s12/source-final.json"
+}

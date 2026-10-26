@@ -358,7 +358,7 @@ def _validate_v1(value):
         isinstance(schema, dict)
         and set(schema) == {"epoch", "ddl_hash"}
         and type(schema["epoch"]) is int
-        and schema["epoch"] == 7
+        and schema["epoch"] in {7, 8}
         and ev.hash_value(schema["ddl_hash"]),
         "schema",
     )

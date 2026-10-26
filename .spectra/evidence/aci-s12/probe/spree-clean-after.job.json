@@ -1,0 +1,17 @@
+{
+  "name": "spree-clean-after",
+  "command": [
+    "git",
+    "status",
+    "--porcelain",
+    "--untracked-files=no"
+  ],
+  "cwd": "/tmp/aci-s12-probe-inputs/spree",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 0.2657744169991929,
+  "elapsed_total": 375.1971459170163,
+  "peak_rss_bytes": 7733248,
+  "stdout": ".spectra/evidence/aci-s12/probe/spree-clean-after.stdout.log",
+  "stderr": ".spectra/evidence/aci-s12/probe/spree-clean-after.stderr.log"
+}

@@ -1,0 +1,17 @@
+{
+  "source_hashes": {
+    "mcp-server/src/atlas_aci/query/indexed.py": "45c959d2e290802e35d4b3942d04f01b9ac37e3f2e6655b048f83ef945e93809",
+    "mcp-server/src/atlas_aci/query/__init__.py": "a087ec8bad394a0a78e29b84d8b0c095ed377f492c92bdbf80484932d3481128",
+    "mcp-server/tests/slices/test_s12_indexed.py": "fbb5cac05a6a44579cbae44ecd697d07996a4fe01d516faa1b4fe3a0ce932e7a"
+  },
+  "test_log": ".spectra/evidence/aci-s12/indexed-stable.log",
+  "actual_trace": ".spectra/evidence/aci-s12/indexed-checkpoint.json",
+  "tests": 6,
+  "ruff_exit_code": 0,
+  "mypy_exit_code": 0,
+  "not_implemented": [
+    "BFS/path/proof hydration/admission",
+    "public operation schemas/SDK",
+    "Linux cursor qualification"
+  ]
+}

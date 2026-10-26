@@ -1,0 +1,14 @@
+{
+  "command": [
+    "/private/tmp/aci-s12-output-check/mcp-server/.venv/bin/python",
+    "/private/tmp/atlas-aci-aci-s12/.spectra/evidence/aci-s12/verify_resume.py"
+  ],
+  "cwd": "/private/tmp/atlas-aci-aci-s12",
+  "exit_code": 0,
+  "result": {
+    "authoritative_receipt": ".spectra/state/aci-s12.execution.json",
+    "criteria_sha256": "210baed6d4e4969c7e2223559580ec14a0c4ed4e277b062e891b8edc62159395",
+    "identity_preserved": true,
+    "slice_id": "ACI-S12"
+  }
+}

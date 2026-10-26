@@ -1,0 +1,35 @@
+{
+  "authorized_exact_paths": [
+    {
+      "path": "/tmp/aci-s12-probe-inputs/solidus/.atlas",
+      "resolved_path": "/private/tmp/aci-s12-probe-inputs/solidus/.atlas",
+      "allocated_kib": 894836,
+      "native_db_sha256": "bc844700b907564ea207f017a79e17d6ac39056510d47f875c6ede3e3ad59df2",
+      "native_db_bytes": 568950784,
+      "generation_id": "1d9f7e38538c1027f5610e842111d8aa99fc63f4359ee5b3c4273cc5d505dda6",
+      "snapshot_id": "dbb23ed08347f677bc660c190c2fb7b49e88341e90e0e92bc7be3dd10508a412",
+      "pack_sha256": "6fe75a80550254f2408f69b4217d9be6bf55e87dbd118ddff951381e8d48a996",
+      "pack_bytes": 6317973,
+      "source_parent_git": "/tmp/aci-s12-probe-inputs/solidus/.git"
+    },
+    {
+      "path": "/tmp/aci-s12-probe-inputs/spree/.atlas",
+      "resolved_path": "/private/tmp/aci-s12-probe-inputs/spree/.atlas",
+      "allocated_kib": 1426492,
+      "native_db_sha256": "ed86b8c20e043c340bdf029c7320943cc1ccd30a5e3d741a7631a4bbe7d11995",
+      "native_db_bytes": 914202624,
+      "generation_id": "57349ac655bb261c71df328d0a1c8288e9824fd78f398036e75869e7bedbe1c7",
+      "snapshot_id": "c688534558877785b1b917e3f413254d93613a87c854c7f4ef85ad0eeb814681",
+      "pack_sha256": "dc57d61df9c32a8963fb3c92ea923d2261143e83e9053b8e2909a97daf0e7630",
+      "pack_bytes": 8566123,
+      "source_parent_git": "/tmp/aci-s12-probe-inputs/spree/.git"
+    },
+    {
+      "path": "/tmp/aci-s12-spree-export.jsonl",
+      "bytes": 651845336,
+      "sha256": "3ed093aca904d72d04ca0875eb865f23058baf4486dcb7d05edce00798d25346"
+    }
+  ],
+  "available_bytes": 6594560000,
+  "independent_raw_and_preservation_audit": "ATLAS PASS before removal"
+}

@@ -1,0 +1,15 @@
+{
+  "available_bytes": 9940340736,
+  "disk_path": "/tmp",
+  "observed_epoch": 1792887443.7172549,
+  "no_previous_s12_probe_attempt": true,
+  "previous_probe_seconds_charged": 0.0,
+  "per_job_seconds": 600,
+  "total_seconds": 2700,
+  "source_snapshot": ".spectra/evidence/aci-s12/source-final.json",
+  "approved_local_full_passed": 708,
+  "approved_protected_passes": [
+    85,
+    85
+  ]
+}

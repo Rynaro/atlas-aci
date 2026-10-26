@@ -1,0 +1,65 @@
+{
+  "slice_id": "ACI-S12",
+  "issue": 34,
+  "worktree": "/private/tmp/atlas-aci-aci-s12",
+  "branch": "aci-s12",
+  "base_commit": "69fe066f573f29651fb53ad0dac65ae13836b752",
+  "spec": ".spectra/plans/aci-s12.md",
+  "envelope": ".spectra/plans/aci-s12.envelope.json",
+  "criteria_sha256": "210baed6d4e4969c7e2223559580ec14a0c4ed4e277b062e891b8edc62159395",
+  "actual_confidence": {
+    "rubric": "confidence",
+    "total": 86.25,
+    "dims": {
+      "pattern_match": 85,
+      "requirement_clarity": 90,
+      "decomposition_stability": 85,
+      "constraint_compliance": 85
+    },
+    "verdict": "AUTO_PROCEED",
+    "at": "2026-10-24T23:07:18Z",
+    "label": "bounded-indexed-navigation-with-native-upgrade-checkpoint"
+  },
+  "confidence_basis": {
+    "pattern_match": "Existing canonical payloads/SQLite atomic publication and S11 one-lease validated SDK adapter are reused; exact expression-index/RO-interrupt primitives actually qualified.",
+    "requirement_clarity": "Nine exact product criteria with explicit counter, deadline/acquisition, partial/no-path, proof and whole-result budget semantics.",
+    "decomposition_stability": "Independent source/plan review covers native8/old7/6, portable7, source/history retention and concrete SQL/protocol seams; no external adjacency service.",
+    "constraint_compliance": "Five-day three-story scope, no packages/paid spend, native compatibility/work-trace first checkpoint and cumulative fresh-probe budget. Integrated implementation remains execution risk."
+  },
+  "checker_evidence": ".spectra/plans/aci-s12.review.json",
+  "execution_prescriptions": [
+    "Preserve deadline-after-authenticated-lease boundary and label charged interrupted steps separately from actual fetched rows in responses/docs.",
+    "First checkpoint executes native8/old7/6 compatibility, retained historical/source closure and portable7 separation; native epoch bump is not an automatic successful migration.",
+    "Instrument actual SEARCH/no-sort plans, fetched rows, fixed hydration lookups and reserve-before-fetch before broad traversal coding; no counter-only assurance.",
+    "Keep per-relation sequential keyset processing with three bounded index patterns, no merge lookahead or fallback scan; five-day stop remains real.",
+    "Real parser/SQLite, progress interruption/corruption negatives, coherent whole-path SDK bytes, intended-operation validation, Linux and older protocol parity remain mandatory.",
+    "Admission may measure actual SDK structured+text worst-case with common conservative minimum; prove it dominates text-only including flags/escaping, final adapter checks actual negotiated output. Never trust client-supplied representation."
+  ],
+  "scope_amendments": [
+    ".spectra/changes/aci-s12/scope-amendment.json",
+    ".spectra/changes/aci-s12/bookkeeping-amendment.json"
+  ],
+  "output_digest_exclusions": [
+    ".spectra/state/aci-s12.execution.json",
+    ".spectra/evidence/aci-s12/final-reentry-before.json",
+    ".spectra/evidence/aci-s12/final-reentry-after.json",
+    ".spectra/evidence/aci-s12/final-reentry-summary.json",
+    ".spectra/evidence/aci-s12/final-resume-identity.json",
+    ".spectra/evidence/aci-s12/output-check-tests.log"
+  ],
+  "authoritative_receipt": ".spectra/state/aci-s12.execution.json",
+  "first_checkpoint": "Capture genuine baseline7 fixture; prove native8/old7/6 source/history+portable compatibility and actual indexed SQL charged-work/interrupt behavior before broad traversal implementation.",
+  "helpers_root": "/Users/henrique/workspace/oss/agents/atlas-aci/.eidolons/ramza/bin",
+  "schemas_root": "/Users/henrique/workspace/oss/agents/atlas-aci/.eidolons/ramza/schemas",
+  "uv": "/tmp/aci-s01-tools/bin/uv",
+  "uv_cache": "/tmp/aci-s01-uv-cache",
+  "root_gate": "Root verify-envelope --block plus exact message/thread/spec correlated verify_pass before one Vivi writer.",
+  "publication": "Root owns validated green-CI merge/sync; executor never self-merges/deploys.",
+  "backlog": {
+    "merged": 12,
+    "remaining": 30,
+    "current_issue": 34,
+    "next_issue": 35
+  },
+  "probe": "Fresh final-producer same-pin/default-profile evidence for any producer change; native epoch8 changes fingerprint. Preserve frozen verifier/bar,600s/job2700s cumulative including failures; switch only two selectors after independent audit."
+}

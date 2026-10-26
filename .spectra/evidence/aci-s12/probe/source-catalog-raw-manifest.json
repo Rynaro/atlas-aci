@@ -1,0 +1,62 @@
+[
+  {
+    "repo": "solidus",
+    "kind": "manifest",
+    "original_path": "/tmp/aci-s12-probe-inputs/solidus/.atlas/source-snapshots/manifest.dbb23ed08347f677bc660c190c2fb7b49e88341e90e0e92bc7be3dd10508a412.json",
+    "compressed_path": ".spectra/evidence/aci-s12/probe/solidus-source-manifest.json.gz",
+    "uncompressed_bytes": 1202949,
+    "uncompressed_sha256": "dbb23ed08347f677bc660c190c2fb7b49e88341e90e0e92bc7be3dd10508a412",
+    "compressed_bytes": 383657,
+    "compressed_sha256": "5a0aa8c7875f8f41ef5ea40fd0720c5db62e25bd8dba4a1064f1dc2a593c9597",
+    "gzip_mtime": 0,
+    "snapshot_id": "dbb23ed08347f677bc660c190c2fb7b49e88341e90e0e92bc7be3dd10508a412",
+    "pack_sha256": "6fe75a80550254f2408f69b4217d9be6bf55e87dbd118ddff951381e8d48a996",
+    "pack_bytes": 6317973,
+    "source_closure_evidence": ".spectra/evidence/aci-s12/probe/solidus-accounting.json"
+  },
+  {
+    "repo": "solidus",
+    "kind": "catalog",
+    "original_path": "/tmp/aci-s12-probe-inputs/solidus/.atlas/source-snapshots/catalog.json",
+    "compressed_path": ".spectra/evidence/aci-s12/probe/solidus-source-catalog.json.gz",
+    "uncompressed_bytes": 68,
+    "uncompressed_sha256": "f9c051b211f67ff966d7597c2fc8b8015d30047d65d7751b3455140800b55967",
+    "compressed_bytes": 79,
+    "compressed_sha256": "f7e608cd03220d65b715811449bd9bd9d4dab465f0c9e41b58d3b53068aec5e4",
+    "gzip_mtime": 0,
+    "snapshot_id": "dbb23ed08347f677bc660c190c2fb7b49e88341e90e0e92bc7be3dd10508a412",
+    "pack_sha256": "6fe75a80550254f2408f69b4217d9be6bf55e87dbd118ddff951381e8d48a996",
+    "pack_bytes": 6317973,
+    "source_closure_evidence": ".spectra/evidence/aci-s12/probe/solidus-accounting.json"
+  },
+  {
+    "repo": "spree",
+    "kind": "manifest",
+    "original_path": "/tmp/aci-s12-probe-inputs/spree/.atlas/source-snapshots/manifest.c688534558877785b1b917e3f413254d93613a87c854c7f4ef85ad0eeb814681.json",
+    "compressed_path": ".spectra/evidence/aci-s12/probe/spree-source-manifest.json.gz",
+    "uncompressed_bytes": 1137584,
+    "uncompressed_sha256": "c688534558877785b1b917e3f413254d93613a87c854c7f4ef85ad0eeb814681",
+    "compressed_bytes": 367610,
+    "compressed_sha256": "37b45ab9e8668cfc899992da84508446232489a88e3b3d1eb8f3dafff8719737",
+    "gzip_mtime": 0,
+    "snapshot_id": "c688534558877785b1b917e3f413254d93613a87c854c7f4ef85ad0eeb814681",
+    "pack_sha256": "dc57d61df9c32a8963fb3c92ea923d2261143e83e9053b8e2909a97daf0e7630",
+    "pack_bytes": 8566123,
+    "source_closure_evidence": ".spectra/evidence/aci-s12/probe/spree-accounting.json"
+  },
+  {
+    "repo": "spree",
+    "kind": "catalog",
+    "original_path": "/tmp/aci-s12-probe-inputs/spree/.atlas/source-snapshots/catalog.json",
+    "compressed_path": ".spectra/evidence/aci-s12/probe/spree-source-catalog.json.gz",
+    "uncompressed_bytes": 68,
+    "uncompressed_sha256": "0b84fc6563ec6fcf3cbee9169be3cdebfb80f6dc1e2413de328624c1caef9452",
+    "compressed_bytes": 77,
+    "compressed_sha256": "caa6ab4ad3f0d80bd7b5988d0a30f97cd46e06958ad7cb8bf2dd49437aa71f2b",
+    "gzip_mtime": 0,
+    "snapshot_id": "c688534558877785b1b917e3f413254d93613a87c854c7f4ef85ad0eeb814681",
+    "pack_sha256": "dc57d61df9c32a8963fb3c92ea923d2261143e83e9053b8e2909a97daf0e7630",
+    "pack_bytes": 8566123,
+    "source_closure_evidence": ".spectra/evidence/aci-s12/probe/spree-accounting.json"
+  }
+]
