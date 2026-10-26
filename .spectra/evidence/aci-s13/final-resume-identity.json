@@ -1,0 +1,11 @@
+{
+  "authoritative_receipt": ".spectra/state/aci-s13.execution.json",
+  "criteria_sha256": "327911042d4d02566de953b5dab9f2c8fab043c06c7f1184f1d2795faee945ef",
+  "identity_preserved": true,
+  "slice_id": "ACI-S13",
+  "exit_code": 0,
+  "command": [
+    "/private/tmp/atlas-aci-aci-s13/mcp-server/.venv/bin/python",
+    "/private/tmp/atlas-aci-aci-s13/.spectra/evidence/aci-s13/verify_resume.py"
+  ]
+}

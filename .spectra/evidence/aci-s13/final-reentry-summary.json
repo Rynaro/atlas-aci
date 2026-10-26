@@ -1,0 +1,25 @@
+{
+  "output_commit": "07a583f2f680c8fef175a0833c00607d58826b0c",
+  "predecessor_output_commit": "460f91956df5f74ac206c5a85400ba24a5e908d4",
+  "successor_delta": "Only verification helper AC/RUN prefixes; rejected predecessor helper preserved in output-check-tests.log",
+  "detached_checkout": "/private/tmp/aci-s13-output-reentry",
+  "helper_sha256": "56670cfd5696627dc156542450e3bd537a0f2f9daf9dba04c69291ae00879b86",
+  "helper_command": [
+    "/private/tmp/aci-s13-output-reentry/mcp-server/.venv/bin/python",
+    "/private/tmp/aci-s13-output-reentry/.spectra/evidence/aci-s13/verify_execution.py",
+    "--root",
+    "/private/tmp/aci-s13-output-reentry",
+    "--receipt",
+    "/private/tmp/atlas-aci-aci-s13/.spectra/state/aci-s13.execution.json"
+  ],
+  "partial_helper_exit_code": 0,
+  "complete_helper_exit_code": 0,
+  "status": "ALREADY_SATISFIED",
+  "digest_count": 273,
+  "before_after_receipt_exact": true,
+  "git_diff_exit_code": 0,
+  "git_status_clean": true,
+  "source_runtime_count": 36,
+  "resume_exit_code": 0,
+  "receipt_sha256": "6f0e280abede262ef51f3c51b335ed032d15002f29a91800106bd1d0b5b2d2f9"
+}

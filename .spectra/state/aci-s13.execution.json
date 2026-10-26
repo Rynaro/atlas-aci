@@ -4,7 +4,7 @@
   "criteria_sha256": "327911042d4d02566de953b5dab9f2c8fab043c06c7f1184f1d2795faee945ef",
   "frozen_spec_sha256": "3f329efc5d94c34f4947c1c87a22e20e7ce90aa6c10f18b06d319908f9b8df01",
   "base_commit": "bfa0e5935d5aefdd2d3c5c045eca1b2b08ebf56b",
-  "output_commit": null,
+  "output_commit": "07a583f2f680c8fef175a0833c00607d58826b0c",
   "declared_paths": [
     "mcp-server/src/atlas_aci/protocol/*",
     "mcp-server/src/atlas_aci/query/*",
@@ -39,7 +39,7 @@
     ".spectra/evidence/aci-s13/final-resume-identity.json",
     ".spectra/evidence/aci-s13/output-check-tests.log"
   ],
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "started_epoch": 1792985861.258568,
   "engineering_budget_seconds": 86400,
   "acceptance_results": [
@@ -51,9 +51,10 @@
       "evidence": [
         ".spectra/evidence/aci-s13/full-suite.job.json",
         ".spectra/evidence/aci-s13/full-suite.log",
-        ".spectra/evidence/aci-s13/vivi-pass2-loop.json"
+        ".spectra/evidence/aci-s13/vivi-pass2-loop.json",
+        ".spectra/evidence/aci-s13/output-check-tests.log"
       ],
-      "qualification": "Observed current worktree; exact output-commit run pending."
+      "qualification": "Passed on exact recorded output commit with its own frozen environment and36runtime source hashes verified."
     },
     {
       "ac_id": "AC-S13-002",
@@ -63,9 +64,10 @@
       "evidence": [
         ".spectra/evidence/aci-s13/full-suite.job.json",
         ".spectra/evidence/aci-s13/full-suite.log",
-        ".spectra/evidence/aci-s13/vivi-pass2-loop.json"
+        ".spectra/evidence/aci-s13/vivi-pass2-loop.json",
+        ".spectra/evidence/aci-s13/output-check-tests.log"
       ],
-      "qualification": "Observed current worktree; exact output-commit run pending."
+      "qualification": "Passed on exact recorded output commit with its own frozen environment and36runtime source hashes verified."
     },
     {
       "ac_id": "AC-S13-003",
@@ -75,9 +77,10 @@
       "evidence": [
         ".spectra/evidence/aci-s13/full-suite.job.json",
         ".spectra/evidence/aci-s13/full-suite.log",
-        ".spectra/evidence/aci-s13/vivi-pass2-loop.json"
+        ".spectra/evidence/aci-s13/vivi-pass2-loop.json",
+        ".spectra/evidence/aci-s13/output-check-tests.log"
       ],
-      "qualification": "Observed current worktree; exact output-commit run pending."
+      "qualification": "Passed on exact recorded output commit with its own frozen environment and36runtime source hashes verified."
     },
     {
       "ac_id": "AC-S13-004",
@@ -87,9 +90,10 @@
       "evidence": [
         ".spectra/evidence/aci-s13/full-suite.job.json",
         ".spectra/evidence/aci-s13/full-suite.log",
-        ".spectra/evidence/aci-s13/vivi-pass2-loop.json"
+        ".spectra/evidence/aci-s13/vivi-pass2-loop.json",
+        ".spectra/evidence/aci-s13/output-check-tests.log"
       ],
-      "qualification": "Observed current worktree; exact output-commit run pending."
+      "qualification": "Passed on exact recorded output commit with its own frozen environment and36runtime source hashes verified."
     },
     {
       "ac_id": "AC-S13-005",
@@ -99,9 +103,10 @@
       "evidence": [
         ".spectra/evidence/aci-s13/full-suite.job.json",
         ".spectra/evidence/aci-s13/full-suite.log",
-        ".spectra/evidence/aci-s13/vivi-pass2-loop.json"
+        ".spectra/evidence/aci-s13/vivi-pass2-loop.json",
+        ".spectra/evidence/aci-s13/output-check-tests.log"
       ],
-      "qualification": "Observed current worktree; exact output-commit run pending."
+      "qualification": "Passed on exact recorded output commit with its own frozen environment and36runtime source hashes verified."
     },
     {
       "ac_id": "AC-S13-006",
@@ -111,17 +116,39 @@
       "evidence": [
         ".spectra/evidence/aci-s13/full-suite.job.json",
         ".spectra/evidence/aci-s13/full-suite.log",
-        ".spectra/evidence/aci-s13/vivi-pass2-loop.json"
+        ".spectra/evidence/aci-s13/vivi-pass2-loop.json",
+        ".spectra/evidence/aci-s13/output-check-tests.log"
       ],
-      "qualification": "Observed current worktree; exact output-commit run pending."
+      "qualification": "Passed on exact recorded output commit with its own frozen environment and36runtime source hashes verified."
     },
     {
       "ac_id": "AC-S13-RUN-01",
-      "exit_code": null
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s13/final-reentry-before.json",
+        ".spectra/evidence/aci-s13/final-reentry-after.json",
+        ".spectra/evidence/aci-s13/final-reentry-summary.json"
+      ],
+      "command": [
+        "/private/tmp/aci-s13-output-reentry/mcp-server/.venv/bin/python",
+        "/private/tmp/aci-s13-output-reentry/.spectra/evidence/aci-s13/verify_execution.py",
+        "--root",
+        "/private/tmp/aci-s13-output-reentry",
+        "--receipt",
+        "/private/tmp/atlas-aci-aci-s13/.spectra/state/aci-s13.execution.json"
+      ]
     },
     {
       "ac_id": "AC-S13-RUN-02",
-      "exit_code": null
+      "exit_code": 0,
+      "evidence": [
+        ".spectra/evidence/aci-s13/final-resume-identity.json",
+        ".spectra/evidence/aci-s13/interrupted-execution.json"
+      ],
+      "command": [
+        "/private/tmp/atlas-aci-aci-s13/mcp-server/.venv/bin/python",
+        "/private/tmp/atlas-aci-aci-s13/.spectra/evidence/aci-s13/verify_resume.py"
+      ]
     }
   ],
   "current_checkpoint": {
@@ -164,13 +191,7 @@
       "verdict": "APPROVE"
     }
   ],
-  "pending_gates": [
-    "output_commit",
-    "exact_output_tests",
-    "RUN-01 detached no-op",
-    "RUN-02 resume identity",
-    "independent completion audit"
-  ],
+  "pending_gates": [],
   "output_digests": {
     ".github/workflows/harden-gate.yml": "e80eed1df13c038d51772c42becb3c68a9e9a807078e13fa29d81fe106e95dc0",
     ".spectra/backlog/execution.json": "477a6b2283651f5e101fc3ccadedad92e0b89b087c211d5de6ab97f077b66772",
@@ -385,7 +406,7 @@
     ".spectra/evidence/aci-s13/size-guard.log.gz": "0bfb637604fe424cdaca1e44786e4d0a28d2c115c05bbcbe7b4cda4c3f527f09",
     ".spectra/evidence/aci-s13/source-final.json": "75d46d7fef66bb32b42773b81aec666150e812a7770be003cd1c8cce5f3b26ce",
     ".spectra/evidence/aci-s13/stdio-first.log.gz": "a0e1dce3bac8fb1f3d117e66a81bb1b652d99c28d3b99995c9107da1e4ad63e3",
-    ".spectra/evidence/aci-s13/verify_execution.py": "19ad1e062299db14bd91e556c4b0413ad03e5cab19f28589f4e2e53bb7091d3a",
+    ".spectra/evidence/aci-s13/verify_execution.py": "56670cfd5696627dc156542450e3bd537a0f2f9daf9dba04c69291ae00879b86",
     ".spectra/evidence/aci-s13/verify_resume.py": "9f99279d9cb511e6acd8512631078557292f05251b42c7bd1b04988b89526999",
     ".spectra/evidence/aci-s13/vivi-pass2-candidate.diff.gz": "9f1b5234a3a723d98bd15fa8408773b4a70eddf35aef590679a3d20b648cd8e0",
     ".spectra/evidence/aci-s13/vivi-pass2-feedback.json": "c8520f922ee6e9a9ea948c0ab3d1a0dfc01f1394ce682d6e86f990f8e8fa7281",
@@ -445,5 +466,18 @@
     "mcp-server/tests/slices/test_s13_stdio.py": "7c54b4ab47a919149959b5e4c3e8cd5df2bd0e09d90cd593f1d7810d00e3c2ee",
     "mcp-server/tests/test_server.py": "669370729d0b82a7c2b0485282690987705abf52ff5b20b50bf5704daee68573",
     "scripts/test-verify-probe-verdict.sh": "34af75ff4fc2bf47959d35f149332bf2fd5e59728b8d3b4d8633b0cd27ce6606"
-  }
+  },
+  "exact_output_tests": {
+    "command": ".venv/bin/python -m pytest -q -p no:cacheprovider tests/slices/test_s13_*.py",
+    "exit_code": 0,
+    "evidence": ".spectra/evidence/aci-s13/output-check-tests.log",
+    "runtime_hashes_verified": 36,
+    "fresh_frozen_dev_environment": true,
+    "native_image_id": "sha256:d788f9e9ace4e4bad602859ee24d2fd1119778e01ead6c44d50aa1252b24d18b",
+    "output_commit": "07a583f2f680c8fef175a0833c00607d58826b0c",
+    "actual_passed_count": 33
+  },
+  "completed_at": "2026-10-26T04:47:11.153650+00:00",
+  "engineering_elapsed_wall_upper_bound_seconds": 4169.895138978958,
+  "completion_qualification": "Observed product/native/protected/fresh checks independently approved. This COMPLETE candidate is prepared for final independent receipt review; remote CI/release remains root-owned."
 }
