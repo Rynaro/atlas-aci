@@ -1,0 +1,34 @@
+{
+  "output_commit": "5d80631d63ed55ecdc521dcef2c01ae115509689",
+  "detached_checkout": "/private/tmp/aci-s18-output-check",
+  "command": [
+    "/private/tmp/aci-s18-output-check/mcp-server/.venv/bin/python",
+    "/private/tmp/aci-s18-output-check/.spectra/evidence/aci-s18/verify_execution.py",
+    "--root",
+    "/private/tmp/aci-s18-output-check",
+    "--receipt",
+    "/private/tmp/atlas-aci-aci-s18/.spectra/state/aci-s18.execution.json"
+  ],
+  "initial_exit_code": 0,
+  "initial_status": "PRODUCTS_VERIFIED",
+  "final_exit_code": 0,
+  "status": "ALREADY_SATISFIED",
+  "digest_count": 303,
+  "before_equals_after_equals_receipt": true,
+  "helper_sha256": "c5f4f125c0ac2bbb1eaf7376ebe094141c59d4e257ccd7e71f922a5a74918e93",
+  "exact_head": "5d80631d63ed55ecdc521dcef2c01ae115509689",
+  "detached_clean": true,
+  "source_import_count": 47,
+  "frozen_environment_exit_code": 0,
+  "source_import_exit_code": 0,
+  "output_test_exit_code": 0,
+  "output_test_count": 44,
+  "output_test_elapsed_seconds": 21.14,
+  "output_test_log": ".spectra/evidence/aci-s18/output-check-tests.log",
+  "resume_command": [
+    "/private/tmp/aci-s18-output-check/mcp-server/.venv/bin/python",
+    "/private/tmp/aci-s18-output-check/.spectra/evidence/aci-s18/verify_resume.py"
+  ],
+  "resume_exit_code": 0,
+  "git_diff_exit_code": 0
+}
