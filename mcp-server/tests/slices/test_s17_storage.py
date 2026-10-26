@@ -30,9 +30,42 @@ def old8(tmp_path):
     return graph, fixture
 
 
+def captured_sources(fixture, replacement=None):
+    """Replay captured Python buffers without an ambient original source tree."""
+    sources = {path: base64.b64decode(raw) for path, raw in fixture["source_files"].items()}
+    if replacement is not None:
+        sources["b.py"] = replacement
+    return sources
+
+
+def assert_captured_paths(reader, sources):
+    records = json.loads(
+        reader.db.execute("SELECT value FROM manifest WHERE key='source_observations'").fetchone()[
+            0
+        ]
+    )
+    observations = [row for row in records if row["type"] == "observation"]
+    assert {row["path"] for row in observations} == set(sources)
+    assert {row["path"]: row["observed_source_sha256"] for row in observations} == {
+        path: hashlib.sha256(raw).hexdigest() for path, raw in sources.items()
+    }
+    indexed = {row["path"] for row in observations if row["state"] == "indexed"}
+    assert indexed == {"a.py", "b.py"}
+    assert {
+        row[0] for row in reader.db.execute("SELECT DISTINCT path FROM retrieval_documents")
+    } == indexed
+    assert {
+        row[0]
+        for row in reader.db.execute(
+            "SELECT path FROM retrieval_documents WHERE kind='source_file'"
+        )
+    } == indexed
+
+
 def test_genuine_held8_upgrade9_overlay_and_replay(tmp_path):
     graph, fixture = old8(tmp_path)
     replacement = b"def B_new():\n pass\n"
+    sources = captured_sources(fixture, replacement)
     try:
         with graph.reader_lease() as held:
             assert held._lease_schema_epoch == 8 and held.generation_id == fixture["generation_id"]
@@ -45,7 +78,7 @@ def test_genuine_held8_upgrade9_overlay_and_replay(tmp_path):
                     base64.b64decode(fixture["historical_source"]["history.py"])
                 ).hexdigest(),
             )
-            graph.build(overlays={"b.py": replacement})
+            graph.build(overlays=sources)
             assert SCHEMA_EPOCH == 9 and graph.db_path.name == "graph.9.db"
             assert not (graph.atlas_dir / "graph.8.db").exists()
             assert (
@@ -59,6 +92,7 @@ def test_genuine_held8_upgrade9_overlay_and_replay(tmp_path):
                         "SELECT value FROM manifest WHERE key='generation_inputs'"
                     ).fetchone()[0]
                 )
+                assert_captured_paths(current, sources)
                 assert inputs["format"] == "atlas-generation.v5"
                 assert (
                     inputs["retrieval"]["source_count"] == 2
@@ -81,8 +115,9 @@ def test_genuine_held8_upgrade9_overlay_and_replay(tmp_path):
                 )
                 identity = current.generation_id
                 descriptor = inputs["retrieval"]
-            graph.build(since="HEAD", overlays={"b.py": replacement})
+            graph.build(since="HEAD", overlays=sources)
             with graph.reader_lease() as current:
+                assert_captured_paths(current, sources)
                 assert current.generation_id == identity
                 assert (
                     json.loads(
@@ -153,15 +188,16 @@ def test_failure_after_real_fts_work_preserves_old8_and_retries(tmp_path, monkey
         with graph.reader_lease() as held:
             monkeypatch.setattr(ret, "populate", failed)
             with pytest.raises(sqlite3.OperationalError, match="controlled derivative"):
-                graph.build(overlays={"b.py": b"def updated():\n pass\n"})
+                graph.build(overlays=captured_sources(fixture, b"def updated():\n pass\n"))
             assert (graph.atlas_dir / "graph.8.db").read_bytes() == before
             assert not graph.db_path.exists()
             assert not list(graph.atlas_dir.glob(".graph.*.tmp.*"))
             assert not list(graph.atlas_dir.glob(".sources-stage.*"))
             assert held.read_source("b.py") == base64.b64decode(fixture["source_files"]["b.py"])
             monkeypatch.setattr(ret, "populate", original)
-            graph.build()
+            graph.build(overlays=captured_sources(fixture))
             with graph.reader_lease() as current:
+                assert_captured_paths(current, captured_sources(fixture))
                 assert current._lease_schema_epoch == 9
     finally:
         graph.close()
@@ -170,11 +206,14 @@ def test_failure_after_real_fts_work_preserves_old8_and_retries(tmp_path, monkey
 def test_present_native9_fts_id_corruption_never_falls_back(tmp_path):
     graph, fixture = old8(tmp_path)
     try:
-        graph.build()
+        graph.build(overlays=captured_sources(fixture))
+        with graph.reader_lease() as current:
+            assert_captured_paths(current, captured_sources(fixture))
         with sqlite3.connect(graph.db_path) as conn:
             rows = conn.execute(
                 "SELECT rowid,candidate_id FROM retrieval_fts ORDER BY rowid LIMIT 2"
             ).fetchall()
+            assert len(rows) == 2 and rows[0][1] != rows[1][1]
             for row, other in ((rows[0], rows[1]), (rows[1], rows[0])):
                 conn.execute("UPDATE retrieval_fts_content SET c0=? WHERE id=?", (other[1], row[0]))
             assert conn.execute("PRAGMA integrity_check(retrieval_fts)").fetchall() == [("ok",)]

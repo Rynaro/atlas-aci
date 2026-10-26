@@ -1,8 +1,10 @@
 """Lossless typed SQLite BLOB row capture without logical identity exclusions."""
 
+import gzip
+import hashlib
 import importlib.util
+import json
 import sqlite3
-import subprocess
 import types
 from pathlib import Path
 
@@ -29,10 +31,12 @@ def test_blob_identity_lossless_typed_and_diagnostic_only_invariance(tmp_path, m
         conn.execute("INSERT INTO facts VALUES (?)", ("original",))
     frozen = types.ModuleType("frozen_runner")
     frozen.__file__ = str(ROOT / "atlas/evals/stdio_runner.py")
-    source = subprocess.check_output(
-        ["git", "show", "73792406d65c81c6a5825ddd3b9cb1e26b195309:atlas/evals/stdio_runner.py"],
-        cwd=ROOT,
-    )
+    fixture_root = ROOT / "mcp-server/tests/fixtures/s17"
+    provenance = json.loads((fixture_root / "stdio-runner-7379240.provenance.json").read_text())
+    source = gzip.decompress((fixture_root / "stdio-runner-7379240.py.gz").read_bytes())
+    assert provenance["origin_commit"] == "73792406d65c81c6a5825ddd3b9cb1e26b195309"
+    assert hashlib.sha256(source).hexdigest() == provenance["raw_sha256"]
+    assert len(source) == provenance["raw_bytes"]
     exec(compile(source, frozen.__file__, "exec"), frozen.__dict__)
     assert runner.index_identity(db) == frozen.index_identity(db)
     seen = {}

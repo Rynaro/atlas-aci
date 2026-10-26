@@ -1,0 +1,37 @@
+[
+  {
+    "origin_head": "4788aba536ad6b8fc0a055391f7e303c0c9f5d9e",
+    "origin_path": ".spectra/evidence/aci-s17/final-reentry-before.json",
+    "preserved_path": ".spectra/evidence/aci-s17/ci-remediation/published-final-reentry-before.json",
+    "bytes": 40275,
+    "sha256": "7d31fadc5e09d57f715f9ed0e5537ee58db2d863d3c0c2e44a5b26b4ec6e8b7f"
+  },
+  {
+    "origin_head": "4788aba536ad6b8fc0a055391f7e303c0c9f5d9e",
+    "origin_path": ".spectra/evidence/aci-s17/final-reentry-after.json",
+    "preserved_path": ".spectra/evidence/aci-s17/ci-remediation/published-final-reentry-after.json",
+    "bytes": 40275,
+    "sha256": "7d31fadc5e09d57f715f9ed0e5537ee58db2d863d3c0c2e44a5b26b4ec6e8b7f"
+  },
+  {
+    "origin_head": "4788aba536ad6b8fc0a055391f7e303c0c9f5d9e",
+    "origin_path": ".spectra/evidence/aci-s17/final-reentry-summary.json",
+    "preserved_path": ".spectra/evidence/aci-s17/ci-remediation/published-final-reentry-summary.json",
+    "bytes": 831,
+    "sha256": "be964ea0587a8e05810fc05c202b48315a6f2f2c4a3d035225bad14ab1703e38"
+  },
+  {
+    "origin_head": "4788aba536ad6b8fc0a055391f7e303c0c9f5d9e",
+    "origin_path": ".spectra/evidence/aci-s17/final-resume-identity.json",
+    "preserved_path": ".spectra/evidence/aci-s17/ci-remediation/published-final-resume-identity.json",
+    "bytes": 399,
+    "sha256": "33863d3eb3bd8a00c64e1f2dac18e35b05b687d74dfd8656ac2a950f91eeb815"
+  },
+  {
+    "origin_head": "4788aba536ad6b8fc0a055391f7e303c0c9f5d9e",
+    "origin_path": ".spectra/evidence/aci-s17/output-check-tests.log",
+    "preserved_path": ".spectra/evidence/aci-s17/ci-remediation/published-output-check-tests.log",
+    "bytes": 307,
+    "sha256": "9ff6877b9b27a13ac4ec3c9c392f0765f9f2ae00090a54a42979d578192d57b2"
+  }
+]

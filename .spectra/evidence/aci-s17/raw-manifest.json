@@ -30,6 +30,46 @@
     "gzip_mtime": 0
   },
   {
+    "logical_path": ".spectra/evidence/aci-s17/ci-remediation/corrected-fixtures-final.log",
+    "producer_output_path": ".spectra/evidence/aci-s17/ci-remediation/corrected-fixtures-final.log",
+    "compressed_path": ".spectra/evidence/aci-s17/ci-remediation/corrected-fixtures-final.log.gz",
+    "uncompressed_bytes": 98,
+    "uncompressed_sha256": "4a372a72e53f28381843e889ad3a76589427dc59ea165e4a96185878899503a9",
+    "compressed_bytes": 51,
+    "compressed_sha256": "4b5c6b2ed5f1bf0065b025d69f9636045e9294cde5d4947384913ca7b3c31490",
+    "gzip_mtime": 0
+  },
+  {
+    "logical_path": ".spectra/evidence/aci-s17/ci-remediation/corrected-fixtures-host.log",
+    "producer_output_path": ".spectra/evidence/aci-s17/ci-remediation/corrected-fixtures-host.log",
+    "compressed_path": ".spectra/evidence/aci-s17/ci-remediation/corrected-fixtures-host.log.gz",
+    "uncompressed_bytes": 98,
+    "uncompressed_sha256": "4a372a72e53f28381843e889ad3a76589427dc59ea165e4a96185878899503a9",
+    "compressed_bytes": 51,
+    "compressed_sha256": "4b5c6b2ed5f1bf0065b025d69f9636045e9294cde5d4947384913ca7b3c31490",
+    "gzip_mtime": 0
+  },
+  {
+    "logical_path": ".spectra/evidence/aci-s17/ci-remediation/published-output-check-tests.log",
+    "producer_output_path": ".spectra/evidence/aci-s17/ci-remediation/published-output-check-tests.log",
+    "compressed_path": ".spectra/evidence/aci-s17/ci-remediation/published-output-check-tests.log.gz",
+    "uncompressed_bytes": 307,
+    "uncompressed_sha256": "9ff6877b9b27a13ac4ec3c9c392f0765f9f2ae00090a54a42979d578192d57b2",
+    "compressed_bytes": 218,
+    "compressed_sha256": "df0a0d41bb96fa3fcc9616bea9691357ad393ad72778544e10d660de078bec2e",
+    "gzip_mtime": 0
+  },
+  {
+    "logical_path": ".spectra/evidence/aci-s17/ci-remediation/runner-no-git.log",
+    "producer_output_path": ".spectra/evidence/aci-s17/ci-remediation/runner-no-git.log",
+    "compressed_path": ".spectra/evidence/aci-s17/ci-remediation/runner-no-git.log.gz",
+    "uncompressed_bytes": 98,
+    "uncompressed_sha256": "a71df3ef716cabe43ead70bd8311cda3aeadcb986bea501da0ea9262f31c3925",
+    "compressed_bytes": 49,
+    "compressed_sha256": "e3de453e27b2e36307bd6ac40738e9b47591e00c706be5d8ff80f7b93b8b1d37",
+    "gzip_mtime": 0
+  },
+  {
     "logical_path": ".spectra/evidence/aci-s17/classify.log",
     "producer_output_path": ".spectra/evidence/aci-s17/classify.log",
     "compressed_path": ".spectra/evidence/aci-s17/classify.log.gz",

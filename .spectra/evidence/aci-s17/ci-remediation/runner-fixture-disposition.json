@@ -1,0 +1,18 @@
+{
+  "slice_id": "ACI-S17",
+  "criteria_changed": false,
+  "before_test_edit": true,
+  "authority": "Root CI test-fixture-only correction after actual shallow-checkout git-show failure; fixture/test paths already declared",
+  "capture_phase": "Extracted NOW during post-publication CI remediation; not a pre-edit capture",
+  "captured_utc": "2026-10-26T07:03:15Z",
+  "origin_commit": "73792406d65c81c6a5825ddd3b9cb1e26b195309",
+  "origin_path": "atlas/evals/stdio_runner.py",
+  "origin_blob_sha1": "8cb4986a06dd9df3f1a26eca416c9988df8c1693",
+  "raw_bytes": 16418,
+  "raw_sha256": "47ba5bb044bc29ee6c1a9d2f93bea0f75fc3e993fdc38df31f1cc6e0c5559d65",
+  "compressed_bytes": 5092,
+  "compressed_sha256": "e748a45f9e382b9c4186ce2364051711bb48528015bb3dd94d8c8ddf37e91920",
+  "gzip_mtime": 0,
+  "preserved_published_head": "4788aba536ad6b8fc0a055391f7e303c0c9f5d9e",
+  "fixture_path": "mcp-server/tests/fixtures/s17/stdio-runner-7379240.py.gz"
+}
