@@ -22,7 +22,7 @@ def main():
     assert hashlib.sha256((root / '.spectra/plans/aci-s13.md').read_bytes()).hexdigest() == receipt['frozen_spec_sha256']
     assert receipt['status'] in {'IN_PROGRESS', 'COMPLETE', 'ALREADY_SATISFIED'}
     completed = {r['ac_id'] for r in receipt['acceptance_results'] if r['exit_code'] == 0}
-    assert {f'AC-S12-{i:03d}' for i in range(1, 7)} <= completed
+    assert {f'AC-S13-{i:03d}' for i in range(1, 7)} <= completed
     expected_scope = list(state['declared_scope'])
     for name in receipt.get('scope_amendments', []):
         amendment = json.loads((root / name).read_text())
@@ -41,7 +41,7 @@ def main():
     subprocess.run(['git', '-C', str(root), 'diff', '--exit-code', receipt['output_commit'], '--', *paths, *[':(exclude)' + name for name in exclusions]], check=True)
     assert not subprocess.check_output(['git', '-C', str(root), 'status', '--porcelain']), 'Re-entry checkout must be clean'
     if receipt['status'] in {'COMPLETE', 'ALREADY_SATISFIED'}:
-        assert {'AC-S12-RUN-01', 'AC-S12-RUN-02'} <= completed
+        assert {'AC-S13-RUN-01', 'AC-S13-RUN-02'} <= completed
     print(json.dumps({'slice_id': receipt['slice_id'], 'criteria_sha256': criteria_sha,
                       'output_commit': receipt['output_commit'], 'output_digests': actual,
                       'status': 'ALREADY_SATISFIED' if receipt['status'] != 'IN_PROGRESS' else 'PRODUCTS_VERIFIED'}, sort_keys=True))
