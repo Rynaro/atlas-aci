@@ -1,0 +1,83 @@
+{
+  "source": "Independent ATLAS actual experiments; original files copied losslessly, not rerun by maker",
+  "host_command": "PYTHONDONTWRITEBYTECODE=1 /tmp/atlas-aci-aci-s13/mcp-server/.venv/bin/python -B /tmp/aci_s17_fts_integrity_proof.py",
+  "host_exit": 0,
+  "linux_command": "docker run --rm --read-only --network none -v SCRATCHROOT:/proof:ro --entrypoint python sha256:d788f9e9ace4e4bad602859ee24d2fd1119778e01ead6c44d50aa1252b24d18b -B /proof/linux-proof-corrected.py",
+  "linux_first_exit": 1,
+  "linux_first_reason": "Harness tuple-list comparison; original script and empty result preserved",
+  "linux_corrected_exit": 0,
+  "qualified": "Internal-content FTS read-only integrity on host3.53.1 and Linux3.46.1; external-content negative does not qualify",
+  "limits": "Primitive and document-granularity criterion fit only; product native9 closure/publication unverified",
+  "files": [
+    {
+      "original": "/tmp/aci_s17_fts_integrity_proof.py",
+      "archived": "aci_s17_fts_integrity_proof.py",
+      "raw_bytes": 2262,
+      "raw_sha256": "b2df3551fea7a8c438e19eae7b8f9f7d1a2726866b5b9f03a7a326f60cfbcbba",
+      "encoding": "identity"
+    },
+    {
+      "original": "/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/aci-s17-fts-integrity-qwjq1wed/external-healthy.db",
+      "archived": "external-healthy.db.gz",
+      "raw_bytes": 24576,
+      "raw_sha256": "dcdf09a09e7c8732c6298574ce86ecbf301f646068730f30a73b61e1fe7d91c6",
+      "encoding": "gzip"
+    },
+    {
+      "original": "/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/aci-s17-fts-integrity-qwjq1wed/external.db",
+      "archived": "external.db.gz",
+      "raw_bytes": 24576,
+      "raw_sha256": "15c00a277f9686ace06f5b450e962061ef1720404e5e1ebaa14e885b8ef97259",
+      "encoding": "gzip"
+    },
+    {
+      "original": "/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/aci-s17-fts-integrity-qwjq1wed/internal-healthy.db",
+      "archived": "internal-healthy.db.gz",
+      "raw_bytes": 24576,
+      "raw_sha256": "bf85aa4e298c1a0ec30b600db0d45d42f6ecc8a57f842c43084eac2194745228",
+      "encoding": "gzip"
+    },
+    {
+      "original": "/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/aci-s17-fts-integrity-qwjq1wed/internal.db",
+      "archived": "internal.db.gz",
+      "raw_bytes": 24576,
+      "raw_sha256": "edbf028ea03ef165cb437094d5c0c7490e638d4841fccf8d216f6e8b4e140930",
+      "encoding": "gzip"
+    },
+    {
+      "original": "/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/aci-s17-fts-integrity-qwjq1wed/linux-proof-corrected.py",
+      "archived": "linux-proof-corrected.py",
+      "raw_bytes": 1165,
+      "raw_sha256": "056e6c62d08b33a5e4370d4326b456de94f92ef22bef81a868604168b3cfbeb7",
+      "encoding": "identity"
+    },
+    {
+      "original": "/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/aci-s17-fts-integrity-qwjq1wed/linux-proof.py",
+      "archived": "linux-proof.py",
+      "raw_bytes": 1164,
+      "raw_sha256": "e6a7e98c2d1ef98b1114c21f41890bd0f3a7ab09bdaa3798bdae75a08993c6a8",
+      "encoding": "identity"
+    },
+    {
+      "original": "/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/aci-s17-fts-integrity-qwjq1wed/linux-result-corrected.json",
+      "archived": "linux-result-corrected.json",
+      "raw_bytes": 1151,
+      "raw_sha256": "b8c4f01c2f79f4855af0ebe7f8ab04b500bf56c7a5240de3f4e43395a1a5214f",
+      "encoding": "identity"
+    },
+    {
+      "original": "/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/aci-s17-fts-integrity-qwjq1wed/linux-result.json",
+      "archived": "linux-result.json",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "identity"
+    },
+    {
+      "original": "/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/aci-s17-fts-integrity-qwjq1wed/result.json",
+      "archived": "result.json",
+      "raw_bytes": 2572,
+      "raw_sha256": "2ea12bc3a42331b771a7eb79f8202076f06961629b38c735ece176a155d82b0b",
+      "encoding": "identity"
+    }
+  ]
+}

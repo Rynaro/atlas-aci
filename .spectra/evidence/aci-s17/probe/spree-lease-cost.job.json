@@ -1,0 +1,16 @@
+{
+  "command": [
+    "/private/tmp/atlas-aci-aci-s17/mcp-server/.venv/bin/python",
+    "/private/tmp/atlas-aci-aci-s17/.spectra/evidence/aci-s17/probe/lease_cost.py",
+    "spree",
+    "/tmp/aci-s17-probe-inputs/spree",
+    "/private/tmp/atlas-aci-aci-s17/.spectra/evidence/aci-s17/probe"
+  ],
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 20.706062832992757,
+  "peak_rss_bytes": 726024192,
+  "prior_serial_job_seconds_charged": 468.1463209580397,
+  "per_job_seconds": 600,
+  "total_seconds": 2700
+}

@@ -1,0 +1,17 @@
+{
+  "name": "solidus-clean-after",
+  "command": [
+    "git",
+    "status",
+    "--porcelain",
+    "--untracked-files=no"
+  ],
+  "cwd": "/tmp/aci-s17-probe-inputs/solidus",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 0.3135101670050062,
+  "elapsed_total": 168.6267971660127,
+  "peak_rss_bytes": 7618560,
+  "stdout": ".spectra/evidence/aci-s17/probe/solidus-clean-after.stdout.log",
+  "stderr": ".spectra/evidence/aci-s17/probe/solidus-clean-after.stderr.log"
+}

@@ -1,0 +1,88 @@
+{
+  "slice_id": "ACI-S17",
+  "issue_url": "https://github.com/Rynaro/atlas-aci/issues/38",
+  "criteria_sha256": "e0fdcf05dfa37bc19b9429887298468fde18473526f0fb29e3edc317b76969b3",
+  "frozen_spec_sha256": "b1336ee0ef378efc9fcd1e1d2fb02337a3a871c8a6a3b9378fc4731c46f488be",
+  "base_commit": "73792406d65c81c6a5825ddd3b9cb1e26b195309",
+  "output_commit": null,
+  "declared_paths": [
+    "mcp-server/src/atlas_aci/query/*",
+    "mcp-server/src/atlas_aci/indexing/*",
+    "mcp-server/src/atlas_aci/storage/*",
+    "mcp-server/tests/slices/test_s17_*.py",
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/src/atlas_aci/protocol/graph.py",
+    "mcp-server/src/atlas_aci/protocol/results.py",
+    "mcp-server/src/atlas_aci/server.py",
+    "mcp-server/src/atlas_aci/tools/graph_query.py",
+    "mcp-server/tests/test_schema_epoch.py",
+    "mcp-server/tests/test_export.py",
+    "mcp-server/tests/test_cli_export_import.py",
+    "mcp-server/tests/test_codegraph.py",
+    "mcp-server/tests/test_server.py",
+    "mcp-server/tests/slices/test_s07_contract.py",
+    "mcp-server/tests/slices/test_s08_contract.py",
+    "mcp-server/tests/slices/test_s08_integration.py",
+    "mcp-server/tests/slices/test_s12_contract.py",
+    "mcp-server/tests/slices/test_s13_contract.py",
+    "mcp-server/tests/fixtures/s17/*",
+    "atlas/docs/*",
+    ".github/workflows/harden-gate.yml",
+    "scripts/test-verify-probe-verdict.sh",
+    ".spectra/plans/aci-s17.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/changes/aci-s17/*",
+    ".spectra/evidence/aci-s17/*",
+    ".spectra/state/aci-s17.execution.json",
+    ".spectra/backlog/execution.json",
+    ".spectra/backlog/order.md"
+  ],
+  "scope_amendments": [
+    ".spectra/changes/aci-s17/scope-amendment.json"
+  ],
+  "output_digest_exclusions": [
+    ".spectra/state/aci-s17.execution.json",
+    ".spectra/evidence/aci-s17/final-reentry-before.json",
+    ".spectra/evidence/aci-s17/final-reentry-after.json",
+    ".spectra/evidence/aci-s17/final-reentry-summary.json",
+    ".spectra/evidence/aci-s17/final-resume-identity.json",
+    ".spectra/evidence/aci-s17/output-check-tests.log"
+  ],
+  "status": "IN_PROGRESS",
+  "started_epoch": 1792991372.405718,
+  "engineering_budget_seconds": 86400,
+  "acceptance_results": [
+    {
+      "ac_id": "AC-S17-001",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S17-002",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S17-003",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S17-004",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S17-005",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S17-006",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S17-RUN-01",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S17-RUN-02",
+      "exit_code": null
+    }
+  ]
+}

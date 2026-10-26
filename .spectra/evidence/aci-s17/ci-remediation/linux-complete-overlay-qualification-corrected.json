@@ -1,0 +1,23 @@
+{
+  "command": [
+    "docker",
+    "run",
+    "--rm",
+    "--read-only",
+    "--network",
+    "none",
+    "-v",
+    "/private/tmp/atlas-aci-aci-s17/mcp-server/tests/fixtures/s17:/fixture:ro",
+    "-v",
+    "/tmp/aci-s17-ci-overlay-qualification:/proof",
+    "--entrypoint",
+    "python",
+    "sha256:4822daf80efe7f79000a0cc80b9894d622f481e5854dfa1b59415985c51c439e",
+    "-c",
+    "import base64,gzip,json,hashlib,os,sqlite3\nfrom pathlib import Path\nfrom atlas_aci.codegraph import CodeGraph\nf=json.loads(gzip.decompress(Path('/fixture/native8.json.gz').read_bytes()));repo=Path(f['original_repository']);assert not repo.exists();assert os.geteuid()==10001\ng=CodeGraph(repo,graph_root=Path('/proof/graphs-corrected'))\nfor name,row in f['native_files'].items():\n p=g.atlas_dir/name;p.parent.mkdir(parents=True,exist_ok=True);raw=base64.b64decode(row['base64']);assert hashlib.sha256(raw).hexdigest()==row['sha256'];p.write_bytes(raw)\nvector={p:base64.b64decode(raw) for p,raw in f['source_files'].items()};replacement=b'def B_new():\\n pass\\n';overlay={**vector,'b.py':replacement}\nwith g.reader_lease() as held:\n assert held._lease_schema_epoch==8 and held.generation_id==f['generation_id'];oldsource=held._source_lease;oldfd=oldsource.fd;old=held.read_source('history.py',hashlib.sha256(base64.b64decode(f['historical_source']['history.py'])).hexdigest())\n g.build(overlays=overlay)\n with g.reader_lease() as reader:\n  inputs=json.loads(reader.db.execute(\"SELECT value FROM manifest WHERE key='generation_inputs'\").fetchone()[0]);assert inputs['retrieval']['source_count']==2 and inputs['retrieval']['coverage']['state']=='partial';assert reader.read_source('b.py')==replacement;assert reader.read_source('history.py',hashlib.sha256(old).hexdigest())==old;sid=reader.generation_id;rows=reader.db.execute('SELECT rowid,candidate_id FROM retrieval_fts ORDER BY rowid LIMIT 2').fetchall();assert len(rows)==2\n g.build(since='HEAD',overlays=overlay)\n with g.reader_lease() as reader:assert reader.generation_id==sid\n assert held._source_lease.fd==oldfd\nassert oldsource.fd is None and not repo.exists()\nprint(json.dumps({'uid':os.geteuid(),'original_repository_absent_before_after':True,'old_generation':f['generation_id'],'new_generation':sid,'source_count':2,'coverage':'partial','swap_attack_rows':len(rows),'held_history_exact':True,'replay_exact':True,'old_fd_closed':True}));g.close()\n"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 0.32130375,
+  "stdout": "{\"uid\": 10001, \"original_repository_absent_before_after\": true, \"old_generation\": \"d1f2669f2012e24df792df05c0165216aa313fd7b456d3bd17ae1b0e23d08f9b\", \"new_generation\": \"19af0ec5eed59d91bba856b57819d1f2fd5ae4209eb3e3998fbf86230f972916\", \"source_count\": 2, \"coverage\": \"partial\", \"swap_attack_rows\": 2, \"held_history_exact\": true, \"replay_exact\": true, \"old_fd_closed\": true}\n",
+  "stderr": ""
+}

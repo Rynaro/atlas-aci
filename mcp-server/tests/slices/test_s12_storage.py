@@ -66,7 +66,7 @@ g.close()
 
 
 def test_native_epoch_and_indexed_keysets(tmp_path):
-    assert SCHEMA_EPOCH == 8
+    assert SCHEMA_EPOCH == 9
     repo = tmp_path / "repo"
     repo.mkdir()
     (repo / "a.py").write_text("def A():\n B(); B()\ndef B():\n A()\n")
@@ -134,6 +134,7 @@ def test_genuine_native7_original_identity_readonly(tmp_path):
             if p.is_file()
         } == before
         assert not (graph.atlas_dir / "graph.8.db").exists()
+        assert not graph.db_path.exists()
     finally:
         graph.close()
 
@@ -157,17 +158,18 @@ def test_staged_upgrade_preserves_history_and_held_source(tmp_path, monkeypatch)
 
             def fail_after_real_work(*args, **kwargs):
                 operation(*args, **kwargs)
-                raise RuntimeError("controlled failure before native8 publication")
+                raise RuntimeError("controlled failure before native9 publication")
 
             with monkeypatch.context() as patch:
                 patch.setattr(graph, "_run_build", fail_after_real_work)
-                with pytest.raises(RuntimeError, match="before native8"):
+                with pytest.raises(RuntimeError, match="before native9"):
                     graph.build(since="HEAD")
             assert old.read_bytes() == original and not (graph.atlas_dir / "graph.8.db").exists()
+            assert not graph.db_path.exists()
             assert held.read_source("history.py", old_hash) == old_source
             assert not list(graph.atlas_dir.glob(".graph.*.tmp.*"))
             graph.build(since="HEAD")
-            assert graph.db_path.name == "graph.8.db" and graph.db_path.exists()
+            assert graph.db_path.name == f"graph.{SCHEMA_EPOCH}.db" and graph.db_path.exists()
             assert not old.exists()
             assert held.read_source("history.py", old_hash) == old_source
             with graph.reader_lease() as current:
@@ -187,7 +189,7 @@ def test_portable7_import_publishes_native8_without_rewriting_evidence(tmp_path)
     artifact = FIXTURES / "baseline-evidence.jsonl"
     graph.import_jsonl(artifact)
     try:
-        assert graph.db_path.name == "graph.8.db"
+        assert graph.db_path.name == f"graph.{SCHEMA_EPOCH}.db"
         output = tmp_path / "roundtrip.jsonl"
         graph.export_jsonl(output)
         assert output.read_bytes() == artifact.read_bytes()
@@ -197,7 +199,7 @@ def test_portable7_import_publishes_native8_without_rewriting_evidence(tmp_path)
         graph.close()
 
 
-@pytest.mark.parametrize("epoch", [6, 9, True, "7", "8"])
+@pytest.mark.parametrize("epoch", [6, 10, True, "7", "8", "9"])
 def test_source_manifest_schema_epoch_is_closed(epoch):
     from atlas_aci.storage import snapshots
 
@@ -228,7 +230,7 @@ def test_genuine_epoch6_reader_and_writer_conversion(tmp_path):
             assert held.query("definitions_of:A")["definitions"]
             assert path.read_bytes() == raw
             with graph.reader_lease() as current:
-                assert current._lease_schema_epoch == 8 and current.snapshot_id is None
+                assert current._lease_schema_epoch == SCHEMA_EPOCH and current.snapshot_id is None
                 assert current.query("definitions_of:A")["definitions"]
     finally:
         graph.close()

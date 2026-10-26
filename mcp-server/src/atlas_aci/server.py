@@ -331,7 +331,11 @@ def apply_central_bounds(
             from atlas_aci.protocol.graph import validate_navigation
 
             try:
-                if arguments["op"] in {"page", "continue"}:
+                if arguments["op"] == "retrieve":
+                    from atlas_aci.protocol.graph import validate_retrieval
+
+                    validate_retrieval(result, enforcement.config.max_bound_field_elements)
+                elif arguments["op"] in {"page", "continue"}:
                     from atlas_aci.protocol.graph import validate_page
 
                     validate_page(
@@ -574,7 +578,8 @@ async def call_tool_result(
         str(arguments.get("op"))
         if isinstance(arguments, dict)
         and isinstance(arguments.get("op"), str)
-        and arguments.get("op") in {"status", "neighborhood", "path", "page", "continue"}
+        and arguments.get("op")
+        in {"status", "neighborhood", "path", "page", "continue", "retrieve"}
         else "status"
     )
     budget = config.max_response_bytes

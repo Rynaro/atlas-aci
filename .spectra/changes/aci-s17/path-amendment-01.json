@@ -1,0 +1,15 @@
+{
+  "slice_id": "ACI-S17",
+  "criteria_changed": false,
+  "before_edit": true,
+  "additional_paths": [
+    "mcp-server/tests/slices/test_s15_integration.py",
+    "mcp-server/tests/slices/test_s12_storage.py"
+  ],
+  "authority": "Root explicit two-file authorization after RAMZA/ATLAS confirmed actual3failed4passed predecessor-seams-red.log.",
+  "limits": "Only current producer set adds indexing/retrieval.py; historical2..6 and arbitrary-key negative retained. Only current writer/import/conversion epoch/filename9 and unsupported integer9\u219210 expectations; retain genuine6/7/8, foreign schema8, portable7, source/history and dangling-current controls.",
+  "before_sha256": {
+    "mcp-server/tests/slices/test_s15_integration.py": "bfe201ff011460a096deba2eee977e57f8d2d08581acc0c769cf8d63d1d865cf",
+    "mcp-server/tests/slices/test_s12_storage.py": "3834ec188ee1652392c87b6910dcb17831e47942ffb128fbf8215f0652dbda25"
+  }
+}

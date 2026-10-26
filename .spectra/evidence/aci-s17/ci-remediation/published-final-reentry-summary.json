@@ -1,0 +1,25 @@
+{
+  "output_commit": "506e07d067e79428b95531c9709af26f3dcf172b",
+  "detached_checkout": "/tmp/aci-s17-output-check",
+  "command": [
+    "/tmp/aci-s17-output-check/mcp-server/.venv/bin/python",
+    "/tmp/aci-s17-output-check/.spectra/evidence/aci-s17/verify_execution.py",
+    "--root",
+    "/tmp/aci-s17-output-check",
+    "--receipt",
+    "/private/tmp/atlas-aci-aci-s17/.spectra/state/aci-s17.execution.json"
+  ],
+  "initial_exit_code": 0,
+  "initial_status": "PRODUCTS_VERIFIED",
+  "final_exit_code": 0,
+  "status": "ALREADY_SATISFIED",
+  "digest_count": 318,
+  "before_equals_after_equals_receipt": true,
+  "helper_sha256": "d181eb243a1ad4f0a86f0b9b55d153f0447fa233e156125c89849d50f9a6bf47",
+  "exact_head": "506e07d067e79428b95531c9709af26f3dcf172b",
+  "detached_clean": true,
+  "output_test_exit_codes": [
+    0,
+    0
+  ]
+}

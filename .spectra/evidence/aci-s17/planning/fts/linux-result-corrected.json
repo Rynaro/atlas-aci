@@ -1,0 +1,56 @@
+{
+  "sqlite_version": "3.46.1",
+  "uid": 10001,
+  "results": [
+    {
+      "kind": "internal",
+      "state": "healthy",
+      "readonly_pragma": [
+        [
+          "ok"
+        ]
+      ],
+      "private_memory_rank1": "ok",
+      "source_bytes_mode_mtime_unchanged": true
+    },
+    {
+      "kind": "internal",
+      "state": "corrupt",
+      "readonly_pragma": [
+        [
+          "malformed inverted index for FTS5 table main.docs"
+        ]
+      ],
+      "private_memory_rank1": {
+        "code": 267,
+        "error": "database disk image is malformed"
+      },
+      "source_bytes_mode_mtime_unchanged": true
+    },
+    {
+      "kind": "external",
+      "state": "healthy",
+      "readonly_pragma": [
+        [
+          "ok"
+        ]
+      ],
+      "private_memory_rank1": "ok",
+      "source_bytes_mode_mtime_unchanged": true
+    },
+    {
+      "kind": "external",
+      "state": "corrupt",
+      "readonly_pragma": [
+        [
+          "ok"
+        ]
+      ],
+      "private_memory_rank1": {
+        "code": 267,
+        "error": "database disk image is malformed"
+      },
+      "source_bytes_mode_mtime_unchanged": true
+    }
+  ]
+}

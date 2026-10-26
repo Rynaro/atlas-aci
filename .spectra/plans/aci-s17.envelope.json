@@ -1,0 +1,50 @@
+{
+  "envelope_version": "2.0",
+  "message_id": "0a04056f-6b5a-4d48-a4fa-633d392a58ee",
+  "thread_id": "036c7c79-15d4-4485-a5d9-ad1924bc6371",
+  "parent_id": null,
+  "from": {
+    "eidolon": "ramza",
+    "version": "1.1.0"
+  },
+  "to": {
+    "eidolon": "vivi",
+    "version": "n/a"
+  },
+  "performative": "PROPOSE",
+  "edge_origin": "roster",
+  "objective": "Implement ACI-S17 native generation-owned exact and SQLite FTS5 candidates with source-span provenance, deterministic filtered ranking, closed old/import compatibility and bounded validated SDK output.",
+  "artifact": {
+    "kind": "spec",
+    "schema_version": "1.0",
+    "path": "aci-s17.md",
+    "sha256": "b1336ee0ef378efc9fcd1e1d2fb02337a3a871c8a6a3b9378fc4731c46f488be",
+    "size_bytes": 23132
+  },
+  "integrity": {
+    "method": "sha256",
+    "value": "b1336ee0ef378efc9fcd1e1d2fb02337a3a871c8a6a3b9378fc4731c46f488be"
+  },
+  "trace": {
+    "ts": "2026-10-26T05:07:46.223907+00:00",
+    "host": "codex",
+    "model": "gpt-6-astra",
+    "tier": "standard"
+  },
+  "ise": {
+    "assertion_grade": "validated",
+    "provenance": {
+      "methodology_version": "ramza-1.1.0"
+    },
+    "receiver_authorization": {
+      "auto_route": true,
+      "auto_merge": false,
+      "auto_deploy": false
+    }
+  },
+  "confidence": 0.86,
+  "x_ramza_acceptance_criteria": {
+    "path": "aci-s17.criteria.md",
+    "sha256": "e0fdcf05dfa37bc19b9429887298468fde18473526f0fb29e3edc317b76969b3"
+  }
+}

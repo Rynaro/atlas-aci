@@ -1,0 +1,143 @@
+{
+  "repo": "spree",
+  "generation_id": "fa8c4178083478e2e41df4e8a09679aed845030a862f185e90231b17e8ce41d5",
+  "snapshot_id": "c29fa6ac8e692a6cbac11784ae4f9b7a51ffc7f8c13a669684071f90a7365db3",
+  "lease_acquisition_seconds": 20.125253334001172,
+  "lease_acquisition_cpu_seconds": 20.104365,
+  "mandatory_validation_outside_query_deadline": true,
+  "queries": [
+    {
+      "label": "exact_id",
+      "text": "000240dff93f44f48028cbad3d31404fe1ee1b19094c1f854c57a68ccfa17570",
+      "path_prefixes": [],
+      "seconds": 0.002533833001507446,
+      "cpu_seconds": 0.002448000000001116,
+      "work": {
+        "exact_queries": 4,
+        "lexical_queries": 1,
+        "metadata_queries": 1,
+        "hydration_queries": 3,
+        "sql_queries": 9,
+        "key_rows": 1,
+        "hydrated_rows": 3,
+        "vm_operations_reserved": 330,
+        "vm_progress_callbacks": 321,
+        "interrupted_sql_queries": 0
+      },
+      "candidates": [
+        {
+          "candidate_id": "000240dff93f44f48028cbad3d31404fe1ee1b19094c1f854c57a68ccfa17570",
+          "kind": "entity",
+          "path": "spree/core/lib/spree/core/preferences/masking.rb",
+          "match_tier": "exact_entity_id"
+        }
+      ],
+      "actual_sql_trace": [
+        "SELECT json_extract(value,'$.retrieval') FROM manifest WHERE key='generation_inputs'",
+        "SELECT d.candidate_id FROM retrieval_documents AS d WHERE d.candidate_id='000240dff93f44f48028cbad3d31404fe1ee1b19094c1f854c57a68ccfa17570' AND d.kind='entity' ORDER BY d.candidate_id LIMIT 6",
+        "SELECT d.candidate_id FROM retrieval_documents AS d WHERE d.qualified_label='000240dff93f44f48028cbad3d31404fe1ee1b19094c1f854c57a68ccfa17570' AND d.candidate_id NOT IN ('000240dff93f44f48028cbad3d31404fe1ee1b19094c1f854c57a68ccfa17570') ORDER BY d.candidate_id LIMIT 5",
+        "SELECT d.candidate_id FROM retrieval_documents AS d WHERE d.path='000240dff93f44f48028cbad3d31404fe1ee1b19094c1f854c57a68ccfa17570' AND d.candidate_id NOT IN ('000240dff93f44f48028cbad3d31404fe1ee1b19094c1f854c57a68ccfa17570') ORDER BY d.candidate_id LIMIT 5",
+        "SELECT d.candidate_id FROM retrieval_documents AS d WHERE d.name='000240dff93f44f48028cbad3d31404fe1ee1b19094c1f854c57a68ccfa17570' AND d.candidate_id NOT IN ('000240dff93f44f48028cbad3d31404fe1ee1b19094c1f854c57a68ccfa17570') ORDER BY d.candidate_id LIMIT 5",
+        "SELECT d.candidate_id,bm25(retrieval_fts) FROM retrieval_fts JOIN retrieval_documents AS d ON d.candidate_id=retrieval_fts.candidate_id WHERE retrieval_fts MATCH '\"000240dff93f44f48028cbad3d31404fe1ee1b19094c1f854c57a68ccfa17570\"' AND d.candidate_id NOT IN ('000240dff93f44f48028cbad3d31404fe1ee1b19094c1f854c57a68ccfa17570') ORDER BY bm25(retrieval_fts),d.candidate_id LIMIT 5",
+        "-- PRAGMA 'main'.data_version",
+        "-- SELECT pgno FROM 'main'.'retrieval_fts_idx' WHERE segid=? AND term<=? ORDER BY term DESC LIMIT 1",
+        "-- SELECT pgno FROM 'main'.'retrieval_fts_idx' WHERE segid=? AND term<=? ORDER BY term DESC LIMIT 1",
+        "-- SELECT pgno FROM 'main'.'retrieval_fts_idx' WHERE segid=? AND term<=? ORDER BY term DESC LIMIT 1",
+        "-- SELECT pgno FROM 'main'.'retrieval_fts_idx' WHERE segid=? AND term<=? ORDER BY term DESC LIMIT 1",
+        "-- SELECT pgno FROM 'main'.'retrieval_fts_idx' WHERE segid=? AND term<=? ORDER BY term DESC LIMIT 1",
+        "-- SELECT pgno FROM 'main'.'retrieval_fts_idx' WHERE segid=? AND term<=? ORDER BY term DESC LIMIT 1",
+        "SELECT candidate_id,kind,entity_id,qualified_label,name,path,language,provenance FROM retrieval_documents WHERE candidate_id='000240dff93f44f48028cbad3d31404fe1ee1b19094c1f854c57a68ccfa17570'",
+        "SELECT payload FROM occurrences WHERE id='9bda54d2a862c80e2017ecff331b2dedef43cb70ff43c3f33b25a5c45cfdd587'",
+        "SELECT payload FROM evidence WHERE id='65774f5a7e7dd68b7c0783ec90eedf70ec89fcb000c6f5a000285981ae5f005a'"
+      ],
+      "result_bytes_dual": 7908,
+      "diagnostic_reason": "matched"
+    },
+    {
+      "label": "lexical_phrase",
+      "text": "bump recurse",
+      "path_prefixes": [
+        "spree/.gem_release.yml"
+      ],
+      "seconds": 0.0016617920191492885,
+      "cpu_seconds": 0.0015760000000000218,
+      "work": {
+        "exact_queries": 4,
+        "lexical_queries": 1,
+        "metadata_queries": 1,
+        "hydration_queries": 1,
+        "sql_queries": 7,
+        "key_rows": 1,
+        "hydrated_rows": 1,
+        "vm_operations_reserved": 650,
+        "vm_progress_callbacks": 643,
+        "interrupted_sql_queries": 0
+      },
+      "candidates": [
+        {
+          "candidate_id": "e885ea402ccfbf3431c2531c0b71aef48db9951f90e787031d992fee8940017e",
+          "kind": "source_file",
+          "path": "spree/.gem_release.yml",
+          "match_tier": "lexical"
+        }
+      ],
+      "actual_sql_trace": [
+        "SELECT json_extract(value,'$.retrieval') FROM manifest WHERE key='generation_inputs'",
+        "SELECT d.candidate_id FROM retrieval_documents AS d WHERE d.candidate_id='bump recurse' AND d.kind='entity' AND ((d.path='spree/.gem_release.yml' OR substr(d.path,1,23)='spree/.gem_release.yml/')) ORDER BY d.candidate_id LIMIT 6",
+        "SELECT d.candidate_id FROM retrieval_documents AS d WHERE d.qualified_label='bump recurse' AND ((d.path='spree/.gem_release.yml' OR substr(d.path,1,23)='spree/.gem_release.yml/')) ORDER BY d.candidate_id LIMIT 6",
+        "SELECT d.candidate_id FROM retrieval_documents AS d WHERE d.path='bump recurse' AND ((d.path='spree/.gem_release.yml' OR substr(d.path,1,23)='spree/.gem_release.yml/')) ORDER BY d.candidate_id LIMIT 6",
+        "SELECT d.candidate_id FROM retrieval_documents AS d WHERE d.name='bump recurse' AND ((d.path='spree/.gem_release.yml' OR substr(d.path,1,23)='spree/.gem_release.yml/')) ORDER BY d.candidate_id LIMIT 6",
+        "SELECT d.candidate_id,bm25(retrieval_fts) FROM retrieval_fts JOIN retrieval_documents AS d ON d.candidate_id=retrieval_fts.candidate_id WHERE retrieval_fts MATCH '\"bump recurse\"' AND ((d.path='spree/.gem_release.yml' OR substr(d.path,1,23)='spree/.gem_release.yml/')) ORDER BY bm25(retrieval_fts),d.candidate_id LIMIT 6",
+        "-- PRAGMA 'main'.data_version",
+        "-- SELECT pgno FROM 'main'.'retrieval_fts_idx' WHERE segid=? AND term<=? ORDER BY term DESC LIMIT 1",
+        "-- SELECT pgno FROM 'main'.'retrieval_fts_idx' WHERE segid=? AND term<=? ORDER BY term DESC LIMIT 1",
+        "-- SELECT pgno FROM 'main'.'retrieval_fts_idx' WHERE segid=? AND term<=? ORDER BY term DESC LIMIT 1",
+        "-- SELECT pgno FROM 'main'.'retrieval_fts_idx' WHERE segid=? AND term<=? ORDER BY term DESC LIMIT 1",
+        "-- SELECT pgno FROM 'main'.'retrieval_fts_idx' WHERE segid=? AND term<=? ORDER BY term DESC LIMIT 1",
+        "-- SELECT pgno FROM 'main'.'retrieval_fts_idx' WHERE segid=? AND term<=? ORDER BY term DESC LIMIT 1",
+        "-- SELECT pgno FROM 'main'.'retrieval_fts_idx' WHERE segid=? AND term<=? ORDER BY term DESC LIMIT 1",
+        "-- SELECT pgno FROM 'main'.'retrieval_fts_idx' WHERE segid=? AND term<=? ORDER BY term DESC LIMIT 1",
+        "-- SELECT pgno FROM 'main'.'retrieval_fts_idx' WHERE segid=? AND term<=? ORDER BY term DESC LIMIT 1",
+        "-- SELECT pgno FROM 'main'.'retrieval_fts_idx' WHERE segid=? AND term<=? ORDER BY term DESC LIMIT 1",
+        "-- SELECT pgno FROM 'main'.'retrieval_fts_idx' WHERE segid=? AND term<=? ORDER BY term DESC LIMIT 1",
+        "-- SELECT pgno FROM 'main'.'retrieval_fts_idx' WHERE segid=? AND term<=? ORDER BY term DESC LIMIT 1",
+        "-- SELECT T.'rowid', T.c0, T.c1 FROM 'main'.'retrieval_fts_content' T WHERE T.'rowid'=?",
+        "-- SELECT pgno FROM 'main'.'retrieval_fts_idx' WHERE segid=? AND term<=? ORDER BY term DESC LIMIT 1",
+        "-- SELECT pgno FROM 'main'.'retrieval_fts_idx' WHERE segid=? AND term<=? ORDER BY term DESC LIMIT 1",
+        "-- SELECT pgno FROM 'main'.'retrieval_fts_idx' WHERE segid=? AND term<=? ORDER BY term DESC LIMIT 1",
+        "-- SELECT pgno FROM 'main'.'retrieval_fts_idx' WHERE segid=? AND term<=? ORDER BY term DESC LIMIT 1",
+        "-- SELECT pgno FROM 'main'.'retrieval_fts_idx' WHERE segid=? AND term<=? ORDER BY term DESC LIMIT 1",
+        "-- SELECT pgno FROM 'main'.'retrieval_fts_idx' WHERE segid=? AND term<=? ORDER BY term DESC LIMIT 1",
+        "-- SELECT pgno FROM 'main'.'retrieval_fts_idx' WHERE segid=? AND term<=? ORDER BY term DESC LIMIT 1",
+        "-- SELECT pgno FROM 'main'.'retrieval_fts_idx' WHERE segid=? AND term<=? ORDER BY term DESC LIMIT 1",
+        "-- SELECT pgno FROM 'main'.'retrieval_fts_idx' WHERE segid=? AND term<=? ORDER BY term DESC LIMIT 1",
+        "-- SELECT pgno FROM 'main'.'retrieval_fts_idx' WHERE segid=? AND term<=? ORDER BY term DESC LIMIT 1",
+        "-- SELECT pgno FROM 'main'.'retrieval_fts_idx' WHERE segid=? AND term<=? ORDER BY term DESC LIMIT 1",
+        "-- SELECT pgno FROM 'main'.'retrieval_fts_idx' WHERE segid=? AND term<=? ORDER BY term DESC LIMIT 1",
+        "-- SELECT sz FROM 'main'.'retrieval_fts_docsize' WHERE id=?",
+        "SELECT candidate_id,kind,entity_id,qualified_label,name,path,language,provenance FROM retrieval_documents WHERE candidate_id='e885ea402ccfbf3431c2531c0b71aef48db9951f90e787031d992fee8940017e'"
+      ],
+      "result_bytes_dual": 4376,
+      "diagnostic_reason": "matched"
+    }
+  ],
+  "sample_selection": "actual native entityID and first two ASCII words in one available source file, selected outside intervals",
+  "query_interval": "core ranking, whole-candidate admission and SDK result construction; final wire dump/size calculation outside interval",
+  "resource_scope": "outer job RSS is process lifetime peak, not retained memory per request",
+  "cache_state": "new process; OS page-cache state uncontrolled",
+  "retrieval_dbstat_bytes": {
+    "retrieval_documents": 51515392,
+    "retrieval_fts_config": 4096,
+    "retrieval_fts_content": 18935808,
+    "retrieval_fts_data": 5779456,
+    "retrieval_fts_docsize": 233472,
+    "retrieval_fts_idx": 28672,
+    "sqlite_autoindex_retrieval_documents_1": 1851392
+  },
+  "retrieval_document_counts": {
+    "entity": 19742,
+    "source_file": 2332
+  },
+  "pack_fd_closed": true,
+  "sqlite_closed": true
+}

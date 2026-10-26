@@ -1,0 +1,17 @@
+{
+  "slice_id": "ACI-S17",
+  "criteria_changed": false,
+  "before_edit": true,
+  "authority": "Frozen scope and root conditional authorization now released after independent ATLAS fresh/PASS and four-catalog preservation approval",
+  "changes": {
+    ".github/workflows/harden-gate.yml": {
+      "before_sha256": "e80eed1df13c038d51772c42becb3c68a9e9a807078e13fa29d81fe106e95dc0",
+      "replacements": 3
+    },
+    "scripts/test-verify-probe-verdict.sh": {
+      "before_sha256": "34af75ff4fc2bf47959d35f149332bf2fd5e59728b8d3b4d8633b0cd27ce6606",
+      "replacements": 1
+    }
+  },
+  "limits": "Exact3workflow+1selftest artifact basename references only; bar/verifier/resolver/27mutations/history unchanged"
+}

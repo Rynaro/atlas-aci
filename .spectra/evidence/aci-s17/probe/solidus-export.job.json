@@ -1,0 +1,20 @@
+{
+  "name": "solidus-export",
+  "command": [
+    "/tmp/aci-s01-tools/bin/uv",
+    "run",
+    "--frozen",
+    "python",
+    "../scripts/probe-export-confident-graph.py",
+    "/tmp/aci-s17-probe-inputs/solidus",
+    "/tmp/aci-s17-solidus-graph.json"
+  ],
+  "cwd": "/private/tmp/atlas-aci-aci-s17/mcp-server",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 167.71890283300309,
+  "elapsed_total": 168.31135637499392,
+  "peak_rss_bytes": 976175104,
+  "stdout": ".spectra/evidence/aci-s17/probe/solidus-export.stdout.log",
+  "stderr": ".spectra/evidence/aci-s17/probe/solidus-export.stderr.log"
+}

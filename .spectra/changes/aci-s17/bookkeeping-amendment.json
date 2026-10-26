@@ -1,0 +1,12 @@
+{
+  "slice_id": "ACI-S17",
+  "reason": "Only self-referential receipt and post-output proof logs excluded; all implementation/stable pre-output evidence remains hashed.",
+  "output_digest_exclusions": [
+    ".spectra/state/aci-s17.execution.json",
+    ".spectra/evidence/aci-s17/final-reentry-before.json",
+    ".spectra/evidence/aci-s17/final-reentry-after.json",
+    ".spectra/evidence/aci-s17/final-reentry-summary.json",
+    ".spectra/evidence/aci-s17/final-resume-identity.json",
+    ".spectra/evidence/aci-s17/output-check-tests.log"
+  ]
+}

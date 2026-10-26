@@ -1,0 +1,16 @@
+{
+  "serial_job_count": 24,
+  "all_exit_codes_zero": true,
+  "no_timeouts": true,
+  "maximum_job_seconds": 236.85848687501857,
+  "prior_probe_seconds_charged": 0,
+  "serial_job_seconds": 585.1573445000104,
+  "verifier_and_preservation_seconds": 0.3026180010056123,
+  "assembly_tool_wall_seconds": 0.3770475,
+  "cumulative_seconds_including_verifier_preservation_assembly": 585.837010001016,
+  "per_job_cap_seconds": 600,
+  "total_cap_seconds": 2700,
+  "timing_scope": "Sum of serial child job elapsed_seconds, plus verifier/preservation and actual assembly exec process wall from tool result; orchestration overhead is separately recorded in runner-result.json, not an exact all-turn wall clock.",
+  "closed_scratch_reverification_cleanup_seconds": 3.989143624989083,
+  "cumulative_with_closed_scratch_reverification_seconds": 589.8261536260051
+}

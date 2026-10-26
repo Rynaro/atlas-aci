@@ -14,6 +14,7 @@ from atlas_aci.protocol.graph import (
     envelope,
     validate_navigation,
     validate_page,
+    validate_retrieval,
 )
 
 STRUCTURED_VERSIONS = frozenset({"2025-06-18", "2025-11-25"})
@@ -83,7 +84,7 @@ FIXED_ERROR_ENVELOPE_CAP = max(
             fixed_result("INVALID_BUDGET", mode=mode, structured=structured, operation=operation)
         )
     )
-    for operation in ("status", "neighborhood", "path", "page", "continue")
+    for operation in ("status", "neighborhood", "path", "page", "continue", "retrieve")
     for mode in ("legacy", "structured")
     for structured in (False, True)
 )
@@ -125,6 +126,8 @@ def bounded_result(
                 validate_navigation(payload, operation, payload["bounds"]["element_limit"])
             elif mode == "structured" and operation in {"page", "continue"}:
                 validate_page(payload, operation, payload["bounds"]["element_limit"])
+            elif mode == "structured" and operation == "retrieve":
+                validate_retrieval(payload, payload["bounds"]["element_limit"])
         result = sdk_result(payload, error=error, structured=structured)
         return result if len(result_bytes(result)) <= budget else fallback
     except (TypeError, ValueError, OverflowError, RecursionError):

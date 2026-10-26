@@ -1,0 +1,12 @@
+{
+  "slice_id": "ACI-S17",
+  "criteria_changed": false,
+  "before_edit": true,
+  "additional_paths": [
+    "atlas/evals/stdio_runner.py"
+  ],
+  "authority": "Root explicit narrow authorization after ATLAS/RAMZA confirmed full12 BLOB adaptation failures",
+  "limits": "index_identity row capture only: actual bytes to closed typed lowercase hex object; every non-BLOB cell/table/virtual/shadow row retained; no exclusion/canonical/digest changes",
+  "before_sha256": "47ba5bb044bc29ee6c1a9d2f93bea0f75fc3e993fdc38df31f1cc6e0c5559d65",
+  "red_evidence": ".spectra/evidence/aci-s17/full-suite.log"
+}

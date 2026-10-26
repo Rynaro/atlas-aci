@@ -1,7 +1,7 @@
 {
   "schema": "atlas-aci/backlog-execution.v1",
   "repository": "Rynaro/atlas-aci",
-  "updated_at": "2026-10-26T03:19:42.796691+00:00",
+  "updated_at": "2026-10-26T04:57:46.908799+00:00",
   "status": "IN_PROGRESS",
   "authorization": {
     "source": "Standing user instruction relayed by root: continue all open issues until cleared; validated merges and main sync automatically authorized",
@@ -22,7 +22,7 @@
     ],
     "publication_owner": "root orchestrator; executor never self-merges"
   },
-  "base_commit": "bfa0e5935d5aefdd2d3c5c045eca1b2b08ebf56b",
+  "base_commit": "73792406d65c81c6a5825ddd3b9cb1e26b195309",
   "queue_frozen": [
     12,
     29,
@@ -62,10 +62,10 @@
     62,
     63
   ],
-  "current_issue": 35,
-  "next_issue": 38,
-  "completed_issue_count": 13,
-  "remaining_issue_count": 29,
+  "current_issue": 38,
+  "next_issue": 39,
+  "completed_issue_count": 14,
+  "remaining_issue_count": 28,
   "queue_basis": "Agreed serial priority and declared dependency DAG from authoritative root inventory; reverify each live issue contract at pickup",
   "selection_policy": "All initially open issues selected, including optional branches; S23 release-gate contract is not silently changed",
   "dependency_constraints": [
@@ -240,19 +240,20 @@
     {
       "issue": 35,
       "slice_id": "ACI-S13",
-      "status": "PLANNING",
+      "status": "MERGED",
       "plan_path": ".spectra/plans/aci-s13.md",
       "receipt_path": ".spectra/state/aci-s13.execution.json",
-      "pull_request": null,
-      "merge_commit": null,
-      "blockers": []
+      "pull_request": 78,
+      "merge_commit": "73792406d65c81c6a5825ddd3b9cb1e26b195309",
+      "blockers": [],
+      "merge_evidence": "Root verified final2bf003d ALL CI/Harden SUCCESS, merge and closure; actual ancestor COMPLETE receipt and selected source digests verified locally."
     },
     {
       "issue": 38,
-      "slice_id": null,
-      "status": "QUEUED",
-      "plan_path": null,
-      "receipt_path": null,
+      "slice_id": "ACI-S17",
+      "status": "PLANNING",
+      "plan_path": ".spectra/plans/aci-s17.md",
+      "receipt_path": ".spectra/state/aci-s17.execution.json",
       "pull_request": null,
       "merge_commit": null,
       "blockers": []
@@ -537,11 +538,12 @@
     "For genuine blockers record missing capability and evidence, then select independent eligible work if safe",
     "Final bookkeeping must reconcile actual closures, receipts, merges and queue before COMPLETE"
   ],
-  "queue_note": "Frozen queue preserved;13 merged/29 remaining after PR77. Current35 ACI-S13,next38. Optional selection does not amend S23 release criteria.",
+  "queue_note": "Frozen queue preserved;14 merged/28 remaining after PR78. Current38 ACI-S17,next39. Optional selection does not amend S23 criteria.",
   "handoff_notes": [
     "S23 future release-gate context: S07 current default-profile Spree v2 JSONL measured651,844,965bytes, export peakRSS1,983,594,496bytes; see .spectra/evidence/aci-s07/parser-prerequisite/fresh-probe-attempt3/export-size-attribution.json. Historical P3 Ruby-only measurement/84.63%/100MiB evidence remains unchanged and is not a current-format saving or like-for-like comparison. No release thresholds amended.",
     "S09 measured owner-local cache disk cost: Solidus333306797B, Spree530609730B. Current Spree portable export651845063B/66.407s/peakRSS1983627264B. Carry into existing S23/#44 cost ledger; no new size/speed ceiling or optimization scope.",
     "S10 current costs:cache333779707B/531055280B;Spreeexport651845158B/67.266639s/RSS1983397888B. OriginalunbatchedSpree600s timeout preserved; grouped-read correction validated samewitness/graphtruth and freshPASS137.386s/190.188s. Carry existingS23/#44cost context, no new thresholds/optimization scope.",
-    "S15 current Rust-enabled default-profile costs: Spree portable export651845246B/66.847463s/RSS1972158464B; cache334235404B/531484506B. Same-pin trees have zero .rs; no Rust performance claim. First disk-full probe failure and exact authorized scratch cleanup preserved; fresh PASS with649.735072s cumulative charge. Carry existing S23/#44 cost context, no new threshold or optimization scope."
+    "S15 current Rust-enabled default-profile costs: Spree portable export651845246B/66.847463s/RSS1972158464B; cache334235404B/531484506B. Same-pin trees have zero .rs; no Rust performance claim. First disk-full probe failure and exact authorized scratch cleanup preserved; fresh PASS with649.735072s cumulative charge. Carry existing S23/#44 cost context, no new threshold or optimization scope.",
+    "S17 native9 current costs: Spree portable export651845427B/96.305s/processRSS2047279104B; retrieval dbstat pages82550784B/78348288B; mandatory lease12.973/20.125s, selected exactID/lexical2\u20134ms after acquisition (not MCP latency), process peaks not retained bytes. Cache bytes {'solidus': 335136422, 'spree': 532333396}. Fresh actualPASS/current0b3529, all4877/profile10/Rust0, original artifacts and thresholds unchanged. Carry existingS23/#44 cost context; no new optimization scope or ceiling."
   ]
 }

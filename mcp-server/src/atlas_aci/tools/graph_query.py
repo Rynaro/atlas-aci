@@ -10,6 +10,9 @@ from atlas_aci.config import Config
 from atlas_aci.enforcement import Enforcement, ToolError
 from atlas_aci.protocol.graph import envelope, request_mode
 from atlas_aci.query.admission import MINIMUM_BUDGET, Admission
+from atlas_aci.query.retrieval import LIMITS as RETRIEVAL_LIMITS
+from atlas_aci.query.retrieval import retrieve
+from atlas_aci.query.retrieval_admission import RetrievalAdmission
 from atlas_aci.query.traversal import navigate
 
 
@@ -32,7 +35,23 @@ async def graph_query(
             "different_tool",
         )
 
-    if mode == "structured" and args["op"] != "status":
+    if mode == "structured" and args["op"] == "retrieve":
+        budget = args.get("max_bytes", config.max_response_bytes)
+        if type(budget) is not int or not 0 <= budget <= config.max_response_bytes:
+            raise ToolError("INVALID_BUDGET", "Invalid retrieval result budget.")
+        retrieval_admission = RetrievalAdmission(
+            code_graph, budget=budget, element_limit=config.max_bound_field_elements
+        )
+        await retrieve(
+            code_graph,
+            text=args["text"],
+            repository=args.get("repository"),
+            path_prefixes=args.get("path_prefixes"),
+            **{key: args[key] for key in RETRIEVAL_LIMITS if key in args},
+            admit=retrieval_admission,
+        )
+        result = retrieval_admission.result
+    elif mode == "structured" and args["op"] != "status":
         budget = args.get("max_bytes", config.max_response_bytes)
         if budget > config.max_response_bytes or budget < MINIMUM_BUDGET:
             raise ToolError("INVALID_BUDGET", "Traversal budget cannot represent bounded metadata.")

@@ -1,0 +1,117 @@
+{
+  "repo": "qualification",
+  "generation_id": "d2085961d49bdf6e2a0e79e03a4f065b9022fb6a0fe08455d7f334118493756f",
+  "snapshot_id": "d895a356e4be56f9a7921ca2b57533d4d3ed43c57334ef070034ee3b30ffb797",
+  "lease_acquisition_seconds": 0.0012866669858340174,
+  "lease_acquisition_cpu_seconds": 0.0012870000000000104,
+  "mandatory_validation_outside_query_deadline": true,
+  "queries": [
+    {
+      "label": "exact_id",
+      "text": "6396f028c85e7db2b7d9134be97edceb1993e671d36c3de2811e76f56f177012",
+      "path_prefixes": [],
+      "seconds": 0.0019132080196868628,
+      "cpu_seconds": 0.0018309999999999993,
+      "work": {
+        "exact_queries": 4,
+        "lexical_queries": 1,
+        "metadata_queries": 1,
+        "hydration_queries": 3,
+        "sql_queries": 9,
+        "key_rows": 1,
+        "hydrated_rows": 3,
+        "vm_operations_reserved": 245,
+        "vm_progress_callbacks": 236,
+        "interrupted_sql_queries": 0
+      },
+      "candidates": [
+        {
+          "candidate_id": "6396f028c85e7db2b7d9134be97edceb1993e671d36c3de2811e76f56f177012",
+          "kind": "entity",
+          "path": "a.py",
+          "match_tier": "exact_entity_id"
+        }
+      ],
+      "actual_sql_trace": [
+        "SELECT json_extract(value,'$.retrieval') FROM manifest WHERE key='generation_inputs'",
+        "SELECT d.candidate_id FROM retrieval_documents AS d WHERE d.candidate_id='6396f028c85e7db2b7d9134be97edceb1993e671d36c3de2811e76f56f177012' AND d.kind='entity' ORDER BY d.candidate_id LIMIT 6",
+        "SELECT d.candidate_id FROM retrieval_documents AS d WHERE d.qualified_label='6396f028c85e7db2b7d9134be97edceb1993e671d36c3de2811e76f56f177012' AND d.candidate_id NOT IN ('6396f028c85e7db2b7d9134be97edceb1993e671d36c3de2811e76f56f177012') ORDER BY d.candidate_id LIMIT 5",
+        "SELECT d.candidate_id FROM retrieval_documents AS d WHERE d.path='6396f028c85e7db2b7d9134be97edceb1993e671d36c3de2811e76f56f177012' AND d.candidate_id NOT IN ('6396f028c85e7db2b7d9134be97edceb1993e671d36c3de2811e76f56f177012') ORDER BY d.candidate_id LIMIT 5",
+        "SELECT d.candidate_id FROM retrieval_documents AS d WHERE d.name='6396f028c85e7db2b7d9134be97edceb1993e671d36c3de2811e76f56f177012' AND d.candidate_id NOT IN ('6396f028c85e7db2b7d9134be97edceb1993e671d36c3de2811e76f56f177012') ORDER BY d.candidate_id LIMIT 5",
+        "SELECT d.candidate_id,bm25(retrieval_fts) FROM retrieval_fts JOIN retrieval_documents AS d ON d.candidate_id=retrieval_fts.candidate_id WHERE retrieval_fts MATCH '\"6396f028c85e7db2b7d9134be97edceb1993e671d36c3de2811e76f56f177012\"' AND d.candidate_id NOT IN ('6396f028c85e7db2b7d9134be97edceb1993e671d36c3de2811e76f56f177012') ORDER BY bm25(retrieval_fts),d.candidate_id LIMIT 5",
+        "-- PRAGMA 'main'.data_version",
+        "-- SELECT pgno FROM 'main'.'retrieval_fts_idx' WHERE segid=? AND term<=? ORDER BY term DESC LIMIT 1",
+        "SELECT candidate_id,kind,entity_id,qualified_label,name,path,language,provenance FROM retrieval_documents WHERE candidate_id='6396f028c85e7db2b7d9134be97edceb1993e671d36c3de2811e76f56f177012'",
+        "SELECT payload FROM occurrences WHERE id='0c94af0ff3b7837317e46b833c2e1043295a4cd1de83ac8bb42d48403cdcfacf'",
+        "SELECT payload FROM evidence WHERE id='0b1ff0485e8e803d744a197cd7b6649d2057be4368afa0638e58072b20351b3e'"
+      ],
+      "result_bytes_dual": 6856,
+      "diagnostic_reason": "matched"
+    },
+    {
+      "label": "lexical_phrase",
+      "text": "def Alpha",
+      "path_prefixes": [
+        "a.py"
+      ],
+      "seconds": 0.0013397090078797191,
+      "cpu_seconds": 0.0012570000000000081,
+      "work": {
+        "exact_queries": 4,
+        "lexical_queries": 1,
+        "metadata_queries": 1,
+        "hydration_queries": 1,
+        "sql_queries": 7,
+        "key_rows": 1,
+        "hydrated_rows": 1,
+        "vm_operations_reserved": 310,
+        "vm_progress_callbacks": 303,
+        "interrupted_sql_queries": 0
+      },
+      "candidates": [
+        {
+          "candidate_id": "bfa047d0578cdee0c5d660973fbe8ae152e0c74cbc0523e6cf2a5641053ce52d",
+          "kind": "source_file",
+          "path": "a.py",
+          "match_tier": "lexical"
+        }
+      ],
+      "actual_sql_trace": [
+        "SELECT json_extract(value,'$.retrieval') FROM manifest WHERE key='generation_inputs'",
+        "SELECT d.candidate_id FROM retrieval_documents AS d WHERE d.candidate_id='def Alpha' AND d.kind='entity' AND ((d.path='a.py' OR substr(d.path,1,5)='a.py/')) ORDER BY d.candidate_id LIMIT 6",
+        "SELECT d.candidate_id FROM retrieval_documents AS d WHERE d.qualified_label='def Alpha' AND ((d.path='a.py' OR substr(d.path,1,5)='a.py/')) ORDER BY d.candidate_id LIMIT 6",
+        "SELECT d.candidate_id FROM retrieval_documents AS d WHERE d.path='def Alpha' AND ((d.path='a.py' OR substr(d.path,1,5)='a.py/')) ORDER BY d.candidate_id LIMIT 6",
+        "SELECT d.candidate_id FROM retrieval_documents AS d WHERE d.name='def Alpha' AND ((d.path='a.py' OR substr(d.path,1,5)='a.py/')) ORDER BY d.candidate_id LIMIT 6",
+        "SELECT d.candidate_id,bm25(retrieval_fts) FROM retrieval_fts JOIN retrieval_documents AS d ON d.candidate_id=retrieval_fts.candidate_id WHERE retrieval_fts MATCH '\"def Alpha\"' AND ((d.path='a.py' OR substr(d.path,1,5)='a.py/')) ORDER BY bm25(retrieval_fts),d.candidate_id LIMIT 6",
+        "-- PRAGMA 'main'.data_version",
+        "-- SELECT pgno FROM 'main'.'retrieval_fts_idx' WHERE segid=? AND term<=? ORDER BY term DESC LIMIT 1",
+        "-- SELECT pgno FROM 'main'.'retrieval_fts_idx' WHERE segid=? AND term<=? ORDER BY term DESC LIMIT 1",
+        "-- SELECT T.'rowid', T.c0, T.c1 FROM 'main'.'retrieval_fts_content' T WHERE T.'rowid'=?",
+        "-- SELECT pgno FROM 'main'.'retrieval_fts_idx' WHERE segid=? AND term<=? ORDER BY term DESC LIMIT 1",
+        "-- SELECT pgno FROM 'main'.'retrieval_fts_idx' WHERE segid=? AND term<=? ORDER BY term DESC LIMIT 1",
+        "-- SELECT sz FROM 'main'.'retrieval_fts_docsize' WHERE id=?",
+        "SELECT candidate_id,kind,entity_id,qualified_label,name,path,language,provenance FROM retrieval_documents WHERE candidate_id='bfa047d0578cdee0c5d660973fbe8ae152e0c74cbc0523e6cf2a5641053ce52d'"
+      ],
+      "result_bytes_dual": 4256,
+      "diagnostic_reason": "matched"
+    }
+  ],
+  "sample_selection": "actual native entityID and first two ASCII words in one available source file, selected outside intervals",
+  "query_interval": "core ranking, whole-candidate admission and SDK result construction; final wire dump/size calculation outside interval",
+  "resource_scope": "outer job RSS is process lifetime peak, not retained memory per request",
+  "cache_state": "new process; OS page-cache state uncontrolled",
+  "retrieval_dbstat_bytes": {
+    "retrieval_documents": 4096,
+    "retrieval_fts_config": 4096,
+    "retrieval_fts_content": 4096,
+    "retrieval_fts_data": 4096,
+    "retrieval_fts_docsize": 4096,
+    "retrieval_fts_idx": 4096
+  },
+  "retrieval_document_counts": {
+    "entity": 2,
+    "source_file": 1
+  },
+  "pack_fd_closed": true,
+  "sqlite_closed": true
+}

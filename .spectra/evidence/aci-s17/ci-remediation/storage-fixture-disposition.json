@@ -1,0 +1,12 @@
+{
+  "slice_id": "ACI-S17",
+  "criteria_changed": false,
+  "before_edit": true,
+  "authority": "Root explicit complete captured-source public-overlay disposition after RAMZA+ATLAS actual absent-parent Linux diagnosis",
+  "path": "mcp-server/tests/slices/test_s17_storage.py",
+  "before_sha256": "bec0458e5231933d4999ba32c71cd97fa6eb96fbc125167d9147d66d9da25bf0",
+  "cause": "Frozen native8 files restored at original identity, but Linux lacks ambient original source directory. No reanchor or literal-path writes permitted.",
+  "correction": "Supply all exact decoded source_files through public Python overlays on initial/failure/retry/replay. Only b.py override; assert complete observation/document paths and hashes; preserve all existing assertions.",
+  "linux_qualification": ".spectra/evidence/aci-s17/ci-remediation/linux-complete-overlay-qualification-corrected.json",
+  "production_changed": false
+}

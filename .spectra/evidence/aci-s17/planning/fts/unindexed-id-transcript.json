@@ -1,0 +1,28 @@
+{
+  "provenance": "Exact source/output relayed by ATLAS for tool9dfd7e; original inline command had no persistent file. This archival record is newly materialized, not an original script hash.",
+  "command": "PYTHONDONTWRITEBYTECODE=1 /tmp/atlas-aci-aci-s13/mcp-server/.venv/bin/python -B -",
+  "exit_code": 0,
+  "source": "import sqlite3,json\nc=sqlite3.connect(':memory:');c.execute('create virtual table f using fts5(text,candidate_id UNINDEXED)');c.executemany('insert into f(rowid,text,candidate_id) values(?,?,?)',[(1,'alpha phrase','A'),(2,'beta phrase','B')]);c.execute(\"update f_content set c1=case id when 1 then 'B' else 'A' end\");print(json.dumps({'integrity':c.execute('pragma integrity_check(f)').fetchall(),'alpha_result':c.execute('select candidate_id,text from f where f match ? order by bm25(f)',('\"alpha phrase\"',)).fetchall(),'candidate_id_set':c.execute('select candidate_id from f order by candidate_id').fetchall()}));c.close()\n",
+  "stdout": {
+    "integrity": [
+      [
+        "ok"
+      ]
+    ],
+    "alpha_result": [
+      [
+        "B",
+        "alpha phrase"
+      ]
+    ],
+    "candidate_id_set": [
+      [
+        "A"
+      ],
+      [
+        "B"
+      ]
+    ]
+  },
+  "limits": "Derived primitive only, not product parser/AST proof."
+}

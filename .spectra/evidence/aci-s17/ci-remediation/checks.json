@@ -1,0 +1,67 @@
+{
+  "production_runtime_files": 39,
+  "all_production_hashes_unchanged": true,
+  "native_image_unchanged": "sha256:4822daf80efe7f79000a0cc80b9894d622f481e5854dfa1b59415985c51c439e",
+  "checks": [
+    {
+      "cwd": "mcp-server",
+      "argv": [
+        ".venv/bin/ruff",
+        "check",
+        "src/",
+        "tests/"
+      ],
+      "exit_code": 0,
+      "observed_stdout": "All checks passed!\n"
+    },
+    {
+      "cwd": "mcp-server",
+      "argv": [
+        ".venv/bin/ruff",
+        "format",
+        "--check",
+        "src/",
+        "tests/"
+      ],
+      "exit_code": 0,
+      "observed_stdout": "101 files already formatted\n"
+    },
+    {
+      "cwd": "mcp-server",
+      "argv": [
+        ".venv/bin/mypy",
+        "src/"
+      ],
+      "exit_code": 0,
+      "source_files_checked": 39
+    },
+    {
+      "argv": [
+        "mcp-server/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "mcp-server/tests/slices/test_s17_storage.py",
+        "mcp-server/tests/slices/test_s17_runner.py"
+      ],
+      "exit_code": 0,
+      "passed": 8,
+      "log": ".spectra/evidence/aci-s17/ci-remediation/corrected-fixtures-final.log"
+    },
+    {
+      "env": {
+        "PATH": "/nonexistent"
+      },
+      "argv": [
+        "mcp-server/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "mcp-server/tests/slices/test_s17_runner.py"
+      ],
+      "exit_code": 0,
+      "passed": 1,
+      "log": ".spectra/evidence/aci-s17/ci-remediation/runner-no-git.log"
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "checker": "atlas-s17-plan-checker",
+  "author": "ramza-backlog-order-s17",
+  "verdict": "APPROVE",
+  "reviewed_spec_sha256": "b1336ee0ef378efc9fcd1e1d2fb02337a3a871c8a6a3b9378fc4731c46f488be",
+  "reviewed_state_sha256": "c36e6e67563454497307c51fdd553f601fbc50b7a83c2d19c246e307c48d0a0b",
+  "base_commit": "73792406d65c81c6a5825ddd3b9cb1e26b195309",
+  "criteria_sha256": "e0fdcf05dfa37bc19b9429887298468fde18473526f0fb29e3edc317b76969b3",
+  "original_review_at": "2026-10-26T05:06:23Z",
+  "recorded_at": "2026-10-26T05:07:07.825213+00:00",
+  "original_score": {
+    "rubric": "refine",
+    "cycle": 1,
+    "total": 4.2,
+    "min": 4,
+    "dims": {
+      "clarity": 4,
+      "completeness": 4,
+      "actionability": 4,
+      "efficiency": 4,
+      "testability": 5
+    },
+    "verdict": "pass",
+    "at": "2026-10-26T05:06:23Z"
+  },
+  "mechanical_checks": {
+    "structural_full": 0,
+    "ears": 0,
+    "criteria_count": 8,
+    "criteria_digest": true,
+    "reviewed_state_digest": true
+  },
+  "execution_prescriptions": [
+    "Qualified label serialization includes leaf entity name/kind/ordinal plus owners/path/language; no compiler namespace or term-offset claim.",
+    "Validate a bijection of BOTH ordinary keyed documents and actual internal FTS content candidate_id to exact text/provenance. Swapped UNINDEXED IDs with same ID set and healthy PRAGMA must reject.",
+    "First checkpoint executes native9 full/incremental/import, held genuine old8 lease, failing publication and closed v5/sourcefree/legacy variants; no native9 v4 fallback or live reread for historical source.",
+    "Preserve filter-before-cap and deterministic rank; interrupted ranking is an error, not timing-partial candidates. Global integrity is outside query counters; qualify temp-sort readonly memory cost and retain three-day limit.",
+    "Real parser/SQLite/SDK/Linux corruption, literal phrase escaping/tokenless no-match, whole-atom bytes, old S13 leases/resources and fresh same-pin evidence remain mandatory."
+  ],
+  "mandatory_interpretation_confirmed_by_maker": "Document closure covers BOTH ordinary metadata and actual FTS content row mapping; not only hashes/counts/ID set. No scope or criteria change.",
+  "additional_primitive": {
+    "provenance": "ATLAS transcript9dfd7e; original inline command has no retained script/hash. This record is a description, not invented raw evidence.",
+    "experiment": "In-memory internal FTS5(text,candidate_id UNINDEXED): A=alpha phrase,B=beta phrase. Directly swap only f_content.c1 A/B. integrity_check(f) returns ok, MATCH alpha phrase returns B; ID set unchanged.",
+    "implication": "Exact FTS candidate_id to text/provenance bijection required in addition to PRAGMA integrity."
+  },
+  "limitations": "Plan approval only; integrated native9 metadata/source/FTS publication and current producer measurements unverified."
+}

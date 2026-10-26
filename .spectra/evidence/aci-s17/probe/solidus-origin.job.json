@@ -1,0 +1,18 @@
+{
+  "name": "solidus-origin",
+  "command": [
+    "git",
+    "remote",
+    "set-url",
+    "origin",
+    "https://github.com/solidusio/solidus.git"
+  ],
+  "cwd": "/tmp/aci-s17-probe-inputs/solidus",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 0.010209458996541798,
+  "elapsed_total": 0.16878183299559169,
+  "peak_rss_bytes": 4456448,
+  "stdout": ".spectra/evidence/aci-s17/probe/solidus-origin.stdout.log",
+  "stderr": ".spectra/evidence/aci-s17/probe/solidus-origin.stderr.log"
+}

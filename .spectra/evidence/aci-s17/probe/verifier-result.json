@@ -1,0 +1,10 @@
+{
+  "command": [
+    "/private/tmp/atlas-aci-aci-s17/mcp-server/.venv/bin/python",
+    "scripts/verify-probe-verdict.py",
+    ".spectra/changes/aci-s17/probe/aci-s17-probe-lpa-vs-louvain.json"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 0.22106441701180302,
+  "stdout": ".spectra/evidence/aci-s17/probe/verifier-result.log"
+}

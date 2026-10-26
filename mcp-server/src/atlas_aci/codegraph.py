@@ -33,6 +33,7 @@ import structlog
 from atlas_aci.config import DEFAULT_MAX_BOUND_FIELD_ELEMENTS, path_is_within
 from atlas_aci.extractors import rust
 from atlas_aci.indexing import extraction_cache as xc
+from atlas_aci.indexing import retrieval as ret
 from atlas_aci.label_propagation import label_propagation
 from atlas_aci.providers import python_imports
 from atlas_aci.resolvers import dependencies as dep
@@ -330,7 +331,7 @@ assert set(LANG_BY_EXT.values()) <= set(QUERIES) | UNSUPPORTED_LANGS, (
 #
 # Recompute via:
 #   python -c "from atlas_aci.codegraph import SCHEMA, ddl_hash; print(ddl_hash(SCHEMA))"
-SCHEMA_EPOCH = 8
+SCHEMA_EPOCH = 9
 # Exchange records carry no native indexes; preserve their established epoch.
 PORTABLE_SCHEMA_EPOCH = 7
 
@@ -528,11 +529,15 @@ def ddl_hash(ddl: str) -> str:
     return hashlib.sha256(ddl.encode("utf-8")).hexdigest()
 
 
+SCHEMA += ret.DDL
+
 # Hand-maintained — see the SCHEMA_EPOCH docstring above. Do NOT replace this
 # with `ddl_hash(SCHEMA)`; that would make the pairing test a tautology.
 PREVIOUS_DDL_HASH = "23aee629ec89a6bd420ed3719e2e42de9d0a456b52e1b29aa3760bc05a0eb26a"
-EXPECTED_DDL_HASH = "0058d56574c5f1d19feb475f04dd2f4af2b93519b26dcfc78a36233664ca8731"
+EPOCH8_DDL_HASH = "0058d56574c5f1d19feb475f04dd2f4af2b93519b26dcfc78a36233664ca8731"
+EXPECTED_DDL_HASH = "5e9223d6c87e8f4c1a00120629999ff6f8856ed1bc914832536d0961340252a1"
 SQLITE_SCHEMA_HASHES = {
+    9: "ed510dbfa13078bd2e2205c6f32da74ffe3974d1198280efd0fca2651de568a9",
     6: "2a40eed9dbb5f1f4d913a857895b1dfc8ac7daa3edf4e9e033d02084b7de1475",
     7: "9536086b279a9dc5121c3a853f8a1d5c151393db1e6a4f0104f3b8a72b6c3a79",
     8: "87d603375b7d0a4ce26949e720e2d5aaf1e90f1b68bc590b890ebdec5e0b535b",
@@ -902,6 +907,7 @@ class CodeGraph:
         self._validated_lease = False
         self._lease_evidence_status = "unknown"
         self._acquisition_observations = None
+        self._acquisition_retrieval_documents = None
         self._source_lease: snap.SourceLease | None = None
         self._source_builder: snap.Builder | None = None
         self._source_predecessor: snap.SourceLease | None = None
@@ -922,6 +928,7 @@ class CodeGraph:
         # evidence, and nonregular objects must be rejected before SQLite open.
         for candidate in (
             self.db_path,
+            self.atlas_dir / "graph.8.db",
             self.atlas_dir / "graph.7.db",
             self.atlas_dir / "graph.6.db",
         ):
@@ -963,6 +970,7 @@ class CodeGraph:
         if self._source_lease is not None:
             self._source_lease.close()
             self._source_lease = None
+        self._acquisition_retrieval_documents = None
         self._validated_lease = False
         self._lease_evidence_status = "unknown"
         self._acquisition_observations = None
@@ -985,13 +993,13 @@ class CodeGraph:
         return hashlib.sha256(ev.canonical(rows).encode()).hexdigest()
 
     def _generation_data(
-        self, conn: sqlite3.Connection, *, retain_observations=False
+        self, conn: sqlite3.Connection, *, retain_observations=False, _check_retrieval=True
     ) -> tuple[dict[str, Any], str] | None:
         """Validate this opened native schema, including exact old6/7 adapters."""
         try:
             values = dict(conn.execute("SELECT key,value FROM manifest"))
             epoch = values.get("epoch")
-            if epoch not in {"6", "7", "8"}:
+            if epoch not in {"6", "7", "8", "9"}:
                 return None
             legacy = epoch == "6"
             filename = Path(conn.execute("PRAGMA database_list").fetchone()[2]).name
@@ -1001,9 +1009,12 @@ class CodeGraph:
             identifier = values["generation_id"]
             expected_schema = {
                 "epoch": int(epoch),
-                "ddl_hash": {"6": LEGACY_DDL_HASH, "7": PREVIOUS_DDL_HASH, "8": EXPECTED_DDL_HASH}[
-                    epoch
-                ],
+                "ddl_hash": {
+                    "6": LEGACY_DDL_HASH,
+                    "7": PREVIOUS_DDL_HASH,
+                    "8": EPOCH8_DDL_HASH,
+                    "9": EXPECTED_DDL_HASH,
+                }[epoch],
             }
             if (
                 not isinstance(inputs, dict)
@@ -1011,6 +1022,8 @@ class CodeGraph:
                 not in (
                     {"atlas-generation.v1"}
                     if legacy
+                    else {"atlas-generation.v5"}
+                    if epoch == "9"
                     else {"atlas-generation.v2", "atlas-generation.v3", "atlas-generation.v4"}
                 )
                 or inputs.get("kind")
@@ -1036,12 +1049,23 @@ class CodeGraph:
                 )
 
             common = {"format", "kind", "repository", "schema"}
-            if inputs["format"] in {"atlas-generation.v3", "atlas-generation.v4"}:
+            if inputs["format"] == "atlas-generation.v5":
+                ret.shape(inputs.get("retrieval"))
+            if inputs["format"] in {
+                "atlas-generation.v3",
+                "atlas-generation.v4",
+                "atlas-generation.v5",
+            }:
                 common.add("observation_digest")
-                observations = self._observation_records(conn, require_current=True)
+                observations = self._observation_records(
+                    conn,
+                    require_current=inputs["kind"] == "build"
+                    or inputs["format"] != "atlas-generation.v5"
+                    or inputs["retrieval"]["coverage"]["source_policy"] == "import",
+                )
                 if inputs.get("observation_digest") != self._status_hash(observations):
                     return None
-            if inputs["format"] == "atlas-generation.v4":
+            if inputs["format"] in {"atlas-generation.v4", "atlas-generation.v5"}:
                 common.add("snapshot")
                 source = inputs.get("snapshot")
                 if not isinstance(source, dict):
@@ -1055,10 +1079,36 @@ class CodeGraph:
                     ):
                         return None
                 elif (
+                    inputs["format"] == "atlas-generation.v5"
+                    and inputs["kind"] == "legacy_conversion"
+                ):
+                    if source != {"state": "unavailable", "reason": "legacy_source"}:
+                        return None
+                elif (
                     source != {"state": "unavailable", "reason": "import"}
                     or inputs["kind"] != "import"
                 ):
                     return None
+            if inputs["format"] == "atlas-generation.v5":
+                common.add("retrieval")
+                policy = (
+                    "available"
+                    if inputs["kind"] == "build"
+                    else "import"
+                    if inputs["kind"] == "import"
+                    else "legacy_source"
+                )
+                actual_policy = inputs["retrieval"]["coverage"]["source_policy"]
+                if actual_policy != policy and not (
+                    policy == "import" and actual_policy == "import_v1"
+                ):
+                    return None
+                if actual_policy == "import_v1" and observations:
+                    return None
+                if _check_retrieval:
+                    retrieval_documents = ret.stores(conn, inputs["retrieval"])
+                    if retain_observations:
+                        self._acquisition_retrieval_documents = retrieval_documents
             if inputs["kind"] == "build":
                 if set(inputs) != common | {"source_hashes", "configuration", "producer"}:
                     return None
@@ -1076,7 +1126,8 @@ class CodeGraph:
                     or set(inputs["source_hashes"])
                     != (
                         {r["path"] for r in observations if r["type"] == "observation"}
-                        if inputs["format"] in {"atlas-generation.v3", "atlas-generation.v4"}
+                        if inputs["format"]
+                        in {"atlas-generation.v3", "atlas-generation.v4", "atlas-generation.v5"}
                         else {row[0] for row in conn.execute("SELECT path FROM files")}
                     )
                 ):
@@ -1135,7 +1186,8 @@ class CodeGraph:
             if retain_observations:
                 self._acquisition_observations = (
                     observations
-                    if inputs["format"] in {"atlas-generation.v3", "atlas-generation.v4"}
+                    if inputs["format"]
+                    in {"atlas-generation.v3", "atlas-generation.v4", "atlas-generation.v5"}
                     else []
                 )
             return inputs, identifier
@@ -1263,6 +1315,18 @@ class CodeGraph:
                         for k, value in reader._snapshot_context(inputs).items()
                     ):
                         raise ValueError("Graph/source provenance contradiction")
+                if inputs["format"] == "atlas-generation.v5":
+                    descriptor = inputs["retrieval"]
+                    wanted, coverage = ret.expected(
+                        reader.db, reader._source_lease, descriptor["coverage"]["source_policy"]
+                    )
+                    if (
+                        reader._acquisition_retrieval_documents != wanted
+                        or descriptor != ret.descriptor(wanted, coverage)
+                    ):
+                        raise ValueError("Retrieval canonical/source document closure")
+                    reader._acquisition_retrieval_documents = None
+                    del wanted, coverage, descriptor
                 # Reuse only facts already authenticated on THIS opened lease.
                 # No traversal SQL/global status materialization is hidden in work counters.
                 reader._lease_evidence_status = (
@@ -1272,12 +1336,17 @@ class CodeGraph:
                         for row in (reader._acquisition_observations or [])
                     )
                     else "available"
-                    if inputs["format"] == "atlas-generation.v4"
+                    if inputs["format"] in {"atlas-generation.v4", "atlas-generation.v5"}
                     and reader._source_lease is not None
                     else "unknown"
                 )
                 reader._validated_lease = True
                 reader._acquisition_observations = None
+                # No full native validation documents or generation-input copies
+                # remain hidden in a retained S13 context-manager frame.
+                if pointer.get("state") == "available":
+                    del binding, expected, actual_context
+                del inputs, data, pointer
                 break
             except sqlite3.Error as exc:
                 reader.close()
@@ -1343,6 +1412,7 @@ class CodeGraph:
                     "resolvers/dependencies.py",
                     "extractors/rust.py",
                     "storage/snapshots.py",
+                    "indexing/retrieval.py",
                 )
             },
             "packages": {
@@ -1747,7 +1817,12 @@ class CodeGraph:
     def index_is_absent(self) -> bool:
         """Diagnose actual absence only; permissions/broken links are not absence."""
         self._validate_graph_namespace()
-        for path in (self.db_path, self.atlas_dir / "graph.7.db", self.atlas_dir / "graph.6.db"):
+        for path in (
+            self.db_path,
+            self.atlas_dir / "graph.8.db",
+            self.atlas_dir / "graph.7.db",
+            self.atlas_dir / "graph.6.db",
+        ):
             try:
                 path.lstat()
             except FileNotFoundError:
@@ -2160,6 +2235,41 @@ class CodeGraph:
         }
 
     def _store_generation(self, conn: sqlite3.Connection, inputs: dict[str, Any]) -> str:
+        original_format = inputs["format"]
+        inputs = {**inputs, "format": "atlas-generation.v5"}
+        inputs["observation_digest"] = self._status_hash(self._observation_records(conn))
+        if inputs["kind"] == "build":
+            pointer = inputs.get("snapshot")
+            ev.require(
+                isinstance(pointer, dict) and pointer.get("state") == "available",
+                "native9 build source snapshot",
+            )
+            pointer = cast("dict[str, Any]", pointer)
+            with snap.acquire(
+                self.atlas_dir,
+                pointer["id"],
+                repository=self.repo,
+                expected=self._snapshot_binding(conn),
+            ) as source:
+                ev.require(
+                    all(
+                        source.manifest["context"][key] == value
+                        for key, value in self._snapshot_context(inputs).items()
+                    ),
+                    "native9 source context",
+                )
+                inputs["retrieval"] = ret.populate(conn, source, "available")
+        else:
+            policy = (
+                ("import_v1" if original_format == "atlas-generation.v2" else "import")
+                if inputs["kind"] == "import"
+                else "legacy_source"
+            )
+            inputs["snapshot"] = {
+                "state": "unavailable",
+                "reason": "import" if inputs["kind"] == "import" else "legacy_source",
+            }
+            inputs["retrieval"] = ret.populate(conn, None, policy)
         raw = self._canonical_generation(inputs)
         identifier = hashlib.sha256(raw.encode()).hexdigest()
         conn.executemany(
@@ -2289,17 +2399,18 @@ class CodeGraph:
             return []
         removed = []
         for f in sorted(self.atlas_dir.glob("graph.*.db")):
-            if f.name not in {self.db_path.name, "graph.7.db", "graph.6.db"}:
+            if f.name not in {self.db_path.name, "graph.8.db", "graph.7.db", "graph.6.db"}:
                 f.unlink()
                 removed.append(f.name)
         return removed
 
     def _retire_previous_native(self) -> None:
-        """Only after successful atomic8 publication; held7 leases keep their inode."""
-        try:
-            (self.atlas_dir / "graph.7.db").unlink(missing_ok=True)
-        except OSError:
-            log.warning("previous_native_retirement_failed")
+        """Only after successful atomic9 publication; held old readers keep their inodes."""
+        for epoch in (7, 8):
+            try:
+                (self.atlas_dir / f"graph.{epoch}.db").unlink(missing_ok=True)
+            except OSError:
+                log.warning("previous_native_retirement_failed")
 
     def _build_atomic(self, get_parser: Any, since: str | None) -> dict[str, Any]:
         """All index modes mutate only staging, never an inode held by readers."""
@@ -2324,16 +2435,16 @@ class CodeGraph:
                 previous = sqlite3.connect(selected.as_uri() + "?mode=ro", uri=True)
                 previous.row_factory = sqlite3.Row
                 try:
-                    predecessor_data = self._generation_data(previous)
+                    predecessor_data = self._generation_data(previous, _check_retrieval=False)
                     if predecessor_data is not None:
                         try:
                             self._validate_evidence_projections(previous)
                             dep.validate_outputs(previous)
                             predecessor_outputs_valid = True
                         except (ValueError, KeyError, TypeError):
-                            self._untrusted_modern_predecessor = (
-                                predecessor_data[0].get("format") == "atlas-generation.v4"
-                            )
+                            self._untrusted_modern_predecessor = predecessor_data[0].get(
+                                "format"
+                            ) in {"atlas-generation.v4", "atlas-generation.v5"}
                         self._proof_predecessor_records = list(
                             ev.records(previous)
                         ) + self._projection_records(previous)
@@ -2347,6 +2458,33 @@ class CodeGraph:
                             for r in self._observation_records(previous)
                             if r["type"] == "history"
                         }
+                        pointer = predecessor_data[0].get("snapshot", {})
+                        if predecessor_outputs_valid and pointer.get("state") == "available":
+                            predecessor = snap.acquire(
+                                self.atlas_dir,
+                                pointer["id"],
+                                repository=self.repo,
+                                expected=self._snapshot_binding(previous),
+                            )
+                            ev.require(
+                                all(
+                                    predecessor.manifest["context"][key] == value
+                                    for key, value in self._snapshot_context(
+                                        predecessor_data[0]
+                                    ).items()
+                                ),
+                                "predecessor source context",
+                            )
+                    else:
+                        row = previous.execute(
+                            "SELECT value FROM manifest WHERE key='source_observations'"
+                        ).fetchone()
+                        if row is not None and any(
+                            r.get("type") == "history" for r in json.loads(row[0])
+                        ):
+                            raise ValueError(
+                                "Cannot authenticate history from invalid native metadata"
+                            )
                 finally:
                     previous.close()
             if since is not None and selected == self.db_path:
@@ -2371,10 +2509,6 @@ class CodeGraph:
                     conn
                 )
                 inherited = False
-            if predecessor_data is not None and predecessor_outputs_valid:
-                with self.reader_lease() as old_reader:
-                    predecessor = old_reader._source_lease
-                    old_reader._source_lease = None
             self._source_predecessor = predecessor
             stats = self._run_build(conn, get_parser, since=since if inherited else None)
             if self._generation_data(conn) is None:
@@ -2420,9 +2554,13 @@ class CodeGraph:
         previous_base = {
             k: v
             for k, v in previous_inputs.items()
-            if k not in {"source_hashes", "observation_digest", "snapshot"}
+            if k not in {"source_hashes", "observation_digest", "snapshot", "retrieval"}
         }
-        if previous_base.get("format") in {"atlas-generation.v3", "atlas-generation.v4"}:
+        if previous_base.get("format") in {
+            "atlas-generation.v3",
+            "atlas-generation.v4",
+            "atlas-generation.v5",
+        }:
             previous_base["format"] = base_inputs["format"]
         incremental = since is not None and previous_base == base_inputs
         invalid_predecessor_outputs = False
@@ -5679,11 +5817,12 @@ class CodeGraph:
             projections = self._projection_records(conn)
 
             metadata = self._observation_records(conn)
-            generation_format = json.loads(
+            generation_inputs = json.loads(
                 conn.execute("SELECT value FROM manifest WHERE key='generation_inputs'").fetchone()[
                     0
                 ]
-            )["format"]
+            )
+            generation_format = generation_inputs["format"]
             self._validate_history(metadata)
 
             def all_records():
@@ -5701,7 +5840,13 @@ class CodeGraph:
             header = {
                 "type": "header",
                 "format": ev.OBSERVATION_FORMAT
-                if generation_format in {"atlas-generation.v3", "atlas-generation.v4"}
+                if generation_format
+                in {"atlas-generation.v3", "atlas-generation.v4", "atlas-generation.v5"}
+                and not (
+                    generation_format == "atlas-generation.v5"
+                    and generation_inputs["retrieval"]["coverage"]["source_policy"]
+                    in {"import_v1", "legacy_source"}
+                )
                 else ev.FORMAT,
                 "schema_epoch": PORTABLE_SCHEMA_EPOCH,
                 "content_hash": digest.hexdigest(),

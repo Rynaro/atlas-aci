@@ -1,0 +1,79 @@
+{
+  "plan": "aci-s17",
+  "slice_id": "ACI-S17",
+  "spec": ".spectra/plans/aci-s17.md",
+  "criteria": ".spectra/plans/aci-s17.criteria.md",
+  "state": ".spectra/plans/aci-s17.state.json",
+  "scope": [
+    "mcp-server/src/atlas_aci/query/*",
+    "mcp-server/src/atlas_aci/indexing/*",
+    "mcp-server/src/atlas_aci/storage/*",
+    "mcp-server/tests/slices/test_s17_*.py",
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/src/atlas_aci/protocol/graph.py",
+    "mcp-server/src/atlas_aci/protocol/results.py",
+    "mcp-server/src/atlas_aci/server.py",
+    "mcp-server/src/atlas_aci/tools/graph_query.py",
+    "mcp-server/tests/test_schema_epoch.py",
+    "mcp-server/tests/test_export.py",
+    "mcp-server/tests/test_cli_export_import.py",
+    "mcp-server/tests/test_codegraph.py",
+    "mcp-server/tests/test_server.py",
+    "mcp-server/tests/slices/test_s07_contract.py",
+    "mcp-server/tests/slices/test_s08_contract.py",
+    "mcp-server/tests/slices/test_s08_integration.py",
+    "mcp-server/tests/slices/test_s12_contract.py",
+    "mcp-server/tests/slices/test_s13_contract.py",
+    "mcp-server/tests/fixtures/s17/*",
+    "atlas/docs/*",
+    ".github/workflows/harden-gate.yml",
+    "scripts/test-verify-probe-verdict.sh",
+    ".spectra/plans/aci-s17.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/changes/aci-s17/*",
+    ".spectra/evidence/aci-s17/*",
+    ".spectra/state/aci-s17.execution.json",
+    ".spectra/backlog/execution.json",
+    ".spectra/backlog/order.md"
+  ],
+  "output_digest_exclusions": [
+    ".spectra/state/aci-s17.execution.json",
+    ".spectra/evidence/aci-s17/final-reentry-before.json",
+    ".spectra/evidence/aci-s17/final-reentry-after.json",
+    ".spectra/evidence/aci-s17/final-reentry-summary.json",
+    ".spectra/evidence/aci-s17/final-resume-identity.json",
+    ".spectra/evidence/aci-s17/output-check-tests.log"
+  ],
+  "stories": [
+    {
+      "name": "Native generation-owned lexical derivative",
+      "timebox_engineering_days": 1,
+      "executor": "Vivi",
+      "first_checkpoint": "Before broad API: actual production-table healthy/corrupt host+Linux RO integrity, FTS candidate-ID/text bijection attack, native9 full/incremental/import, genuine held old8 lease and failed publication preserving G1/source; no unsupported runtime fallback."
+    },
+    {
+      "name": "Exact-first bounded candidate protocol",
+      "timebox_engineering_days": 1,
+      "executor": "Vivi"
+    },
+    {
+      "name": "Compatibility/native/current-producer gates",
+      "timebox_engineering_days": 1,
+      "executor": "Vivi"
+    }
+  ],
+  "confidence": {
+    "rubric": "confidence",
+    "total": 86,
+    "dims": {
+      "pattern_match": 88,
+      "requirement_clarity": 92,
+      "decomposition_stability": 84,
+      "constraint_compliance": 80
+    },
+    "verdict": "AUTO_PROCEED",
+    "at": "2026-10-26T05:07:08Z",
+    "label": "native-fts-with-qualified-readonly-integrity-checkpoint"
+  },
+  "status": "READY"
+}

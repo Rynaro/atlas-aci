@@ -85,7 +85,13 @@ def index_identity(path: Path) -> str:
                 # Operational correlation token, never a logical graph input.
                 # Keep coverage_snapshot and every other manifest/fact row.
                 statement += " WHERE key <> 'diagnostic_publication_token'"
-            rows = list(connection.execute(statement))
+            rows = [
+                tuple(
+                    {"sqlite_type": "blob", "hex": cell.hex()} if isinstance(cell, bytes) else cell
+                    for cell in row
+                )
+                for row in connection.execute(statement)
+            ]
             tables[name] = {"schema": sql, "columns": columns, "rows": sorted(rows, key=canonical)}
     return digest(tables)
 

@@ -1,0 +1,14 @@
+{
+  "slice_id": "ACI-S17",
+  "criteria_changed": false,
+  "scope": "Existing declared native9/v5, sourcefree/legacy portable adapters and S10 binding compatibility.",
+  "observed_red": [
+    "old-portable-format-red.log:2failed oldcanonical-v1 byte replay header changed",
+    "predecessor-seams-corrected.log:1failed38passed Rust unchanged binding unit unnecessarily rebound"
+  ],
+  "corrections": [
+    "Closed source-unavailable import_v1 retrieval policy preserves existing portable canonical-v1 export framing; observation-v2 and legacy-conversion variants remain explicit. No source text becomes available.",
+    "Exclude only derived retrieval descriptor from predecessor binding base comparison, as snapshot/source-observation commitments already are; full retrieval rebuild remains mandatory."
+  ],
+  "new_api_or_provider": false
+}
