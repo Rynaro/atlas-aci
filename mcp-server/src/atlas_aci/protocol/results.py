@@ -12,6 +12,7 @@ from atlas_aci.protocol.graph import (
     LEGACY_VALIDATOR,
     STRUCTURED_VALIDATOR,
     envelope,
+    validate_context,
     validate_navigation,
     validate_page,
     validate_retrieval,
@@ -84,7 +85,7 @@ FIXED_ERROR_ENVELOPE_CAP = max(
             fixed_result("INVALID_BUDGET", mode=mode, structured=structured, operation=operation)
         )
     )
-    for operation in ("status", "neighborhood", "path", "page", "continue", "retrieve")
+    for operation in ("status", "neighborhood", "path", "page", "continue", "retrieve", "context")
     for mode in ("legacy", "structured")
     for structured in (False, True)
 )
@@ -122,7 +123,15 @@ def bounded_result(
                 raise ValueError("Result operation differs from request")
             if mode == "structured" and error != (payload["status"] == "error"):
                 raise ValueError("Structured status and MCP error flag disagree")
-            if mode == "structured" and operation in {"neighborhood", "path"}:
+            if mode == "structured" and (
+                operation == "context"
+                or (
+                    operation == "continue"
+                    and (payload.get("data") or {}).get("projection") == "task_context"
+                )
+            ):
+                validate_context(payload, operation, payload["bounds"]["element_limit"])
+            elif mode == "structured" and operation in {"neighborhood", "path"}:
                 validate_navigation(payload, operation, payload["bounds"]["element_limit"])
             elif mode == "structured" and operation in {"page", "continue"}:
                 validate_page(payload, operation, payload["bounds"]["element_limit"])

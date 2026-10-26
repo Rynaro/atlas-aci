@@ -655,19 +655,21 @@ def request_mode(arguments: Any) -> str:
     if structured and (
         not isinstance(arguments.get("op"), str)
         or arguments.get("op")
-        not in {"status", "neighborhood", "path", "page", "continue", "retrieve"}
+        not in {"status", "neighborhood", "path", "page", "continue", "retrieve", "context"}
     ):
         raise ToolError("INVALID_OPERATION", "Unsupported graph operation.")
+    from atlas_aci.query.context_limits import LIMITS as CONTEXT_LIMITS
+
     if structured and any(
         key in arguments and type(arguments[key]) is not int
-        for key in (*LIMITS, *RETRIEVAL_LIMITS, "max_bytes", "page_max_bytes")
+        for key in (*LIMITS, *RETRIEVAL_LIMITS, *CONTEXT_LIMITS, "max_bytes", "page_max_bytes")
     ):
         raise ToolError(
             "INVALID_INPUT", "Traversal limits must be integers, not booleans or floats."
         )
     if not INPUT_VALIDATOR.is_valid(arguments):
         raise ToolError("INVALID_INPUT", "Tool arguments must match the published schema.")
-    if structured and arguments["op"] == "retrieve":
+    if structured and arguments["op"] in {"retrieve", "context"}:
         from atlas_aci.query.retrieval import normalized
 
         normalized(
@@ -1159,3 +1161,33 @@ def validate_retrieval(payload, element_limit):
                     ),
                     "source occurrence reference",
                 )
+
+
+def validate_context(payload, operation, element_limit):
+    from atlas_aci.protocol.context import validate_context as validate
+
+    return validate(payload, operation, element_limit)
+
+
+def _register_context_schemas():
+    # Register after all shared canonical schemas exist; semantic imports stay lazy.
+    from atlas_aci.protocol.context import CONTEXT_DATA, CONTEXT_INPUT
+
+    GRAPH_INPUT_SCHEMA["oneOf"].append(CONTEXT_INPUT)
+    ENVELOPE_SCHEMA["properties"]["operation"]["enum"].append("context")
+    ENVELOPE_SCHEMA["properties"]["data"]["anyOf"].append(CONTEXT_DATA)
+    for operation in ("context", "continue"):
+        ENVELOPE_SCHEMA["oneOf"].append(
+            {
+                "properties": {
+                    "operation": {"const": operation},
+                    "status": {"const": "ok"},
+                    "data": CONTEXT_DATA,
+                    "error": {"type": "null"},
+                }
+            }
+        )
+    return Draft202012Validator(GRAPH_INPUT_SCHEMA), Draft202012Validator(ENVELOPE_SCHEMA)
+
+
+INPUT_VALIDATOR, STRUCTURED_VALIDATOR = _register_context_schemas()

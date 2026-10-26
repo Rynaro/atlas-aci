@@ -69,6 +69,8 @@ class OwnedLease:
     resources: dict
     state_bytes: int
     pack_bytes: int
+    context_authority: str | None = None
+    structured: bool | None = None
 
     def close(self):
         self.owner.close()
@@ -107,6 +109,12 @@ class LeaseRegistry:
                 "policy": {name: getattr(self.config, name) for name in POLICY},
             }
         )
+
+    def context_authority(self):
+        from atlas_aci.query.context_tokens import declaration
+
+        tokenizer = self.config.context_tokenizer
+        return digest({"tokenizer": declaration(tokenizer), "operator_object": id(tokenizer)})
 
     def usage(self):
         return {
@@ -252,10 +260,25 @@ class LeaseRegistry:
             or payload["generation"] != lease.reader.generation_id
         ):
             raise ToolError("SCOPE_MISMATCH", "Reference scope does not match.")
+        if (
+            lease.context_authority is not None
+            and lease.context_authority != self.context_authority()
+        ):
+            raise ToolError("SCOPE_MISMATCH", "Context tokenizer authority changed.")
         return lease, payload["index"]
 
     async def install(
-        self, stack, reader, query, pages, resources, *, reservation, check_setup=None
+        self,
+        stack,
+        reader,
+        query,
+        pages,
+        resources,
+        *,
+        reservation,
+        check_setup=None,
+        context_authority=None,
+        structured=None,
     ):
         """Adopt only complete immutable pages; caller still owns failures/cancellation."""
         async with self._lock:
@@ -284,6 +307,8 @@ class LeaseRegistry:
                 0,
                 0,
             )
+            lease.context_authority = context_authority
+            lease.structured = structured
             built = pages(lease) if callable(pages) else pages
             built = tuple(bytes(page) for page in built)
             # Lifetime begins at completed issuance, not during page construction.
@@ -328,6 +353,9 @@ class LeaseRegistry:
                     "query_limit": reader.query_limit,
                 },
             }
+            if context_authority is not None:
+                lease_metadata["context_authority"] = context_authority
+                lease_metadata["structured"] = structured
             base_bytes = state_bytes + len(canonical_bytes(lease_metadata))
             state_bytes = base_bytes
             while True:
@@ -353,6 +381,8 @@ class LeaseRegistry:
             lease.pack_bytes = pack_bytes
             if check_setup is not None:
                 check_setup()  # Final real deadline boundary, immediately before ownership commit.
+            if context_authority is not None and context_authority != self.context_authority():
+                raise ToolError("SCOPE_MISMATCH", "Context tokenizer changed during setup.")
             lease.owner = stack.pop_all()
             reservation.consumed = True
             del self._reservations[reservation.identifier]
@@ -365,9 +395,11 @@ class LeaseRegistry:
             self._ensure_timer()
             return lease
 
-    async def page(self, token, query_digest):
+    async def page(self, token, query_digest, *, structured=None):
         async with self._lock:
             lease, index = self.authenticate(token, "cursor")
+            if lease.structured is not None and lease.structured != structured:
+                raise ToolError("SCOPE_MISMATCH", "Context representation changed.")
             if query_digest != lease.query:
                 raise ToolError("SCOPE_MISMATCH", "Reference query does not match.")
             if type(index) is not int or not 0 <= index < len(lease.pages):

@@ -1,0 +1,75 @@
+{
+  "baseline_producer": {
+    "codegraph_sha256": "bfea442d81490e8bc4102ec6196929bf5a938383cb8d0dded098f13e4c0a358e",
+    "modules": {
+      "extractors/rust.py": "28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a",
+      "indexing/extraction_cache.py": "08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2",
+      "indexing/retrieval.py": "a70fd241efea13fc850d72e86389c2c0b41c5a0ac2c32b33044b728f103452a8",
+      "providers/python_imports.py": "de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014",
+      "resolvers/dependencies.py": "0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6",
+      "storage/evidence.py": "abd92c6a86d1086c2d3680a519c8f81f62d131dbae52da6b44f4525bfcc0a58d",
+      "storage/snapshots.py": "6e800008cbbbda1b345f199aecbda193eb27c68b15aeb1ff941b5a840ab5be82"
+    },
+    "packages": {
+      "tree-sitter": "0.25.2",
+      "tree-sitter-language-pack": "1.6.0"
+    },
+    "queries_sha256": "a222468d9bb15cbf5cfccc368bd65ca69de7ed22e91ae85e628228f2f227b944"
+  },
+  "producer_inputs_unchanged": true,
+  "paths": {
+    "mcp-server/src/atlas_aci/codegraph.py": {
+      "sha256": "bfea442d81490e8bc4102ec6196929bf5a938383cb8d0dded098f13e4c0a358e",
+      "baseline_sha256": "bfea442d81490e8bc4102ec6196929bf5a938383cb8d0dded098f13e4c0a358e"
+    },
+    "mcp-server/src/atlas_aci/extractors/__init__.py": {
+      "sha256": "94ee5ec863d8c3faecd3e184a93c2253554c4dead963aee87d9d690821e56d81",
+      "baseline_sha256": "94ee5ec863d8c3faecd3e184a93c2253554c4dead963aee87d9d690821e56d81"
+    },
+    "mcp-server/src/atlas_aci/extractors/rust.py": {
+      "sha256": "28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a",
+      "baseline_sha256": "28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a"
+    },
+    "mcp-server/src/atlas_aci/indexing/__init__.py": {
+      "sha256": "e4b9d192790309018248199725d46db643744ee7be19e51355cab5f4cf93db1f",
+      "baseline_sha256": "e4b9d192790309018248199725d46db643744ee7be19e51355cab5f4cf93db1f"
+    },
+    "mcp-server/src/atlas_aci/indexing/extraction_cache.py": {
+      "sha256": "08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2",
+      "baseline_sha256": "08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2"
+    },
+    "mcp-server/src/atlas_aci/indexing/retrieval.py": {
+      "sha256": "a70fd241efea13fc850d72e86389c2c0b41c5a0ac2c32b33044b728f103452a8",
+      "baseline_sha256": "a70fd241efea13fc850d72e86389c2c0b41c5a0ac2c32b33044b728f103452a8"
+    },
+    "mcp-server/src/atlas_aci/providers/__init__.py": {
+      "sha256": "a0b715438c340121a85cb26a07335277105c6ea705606d8c52d93f6511699d86",
+      "baseline_sha256": "a0b715438c340121a85cb26a07335277105c6ea705606d8c52d93f6511699d86"
+    },
+    "mcp-server/src/atlas_aci/providers/python_imports.py": {
+      "sha256": "de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014",
+      "baseline_sha256": "de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014"
+    },
+    "mcp-server/src/atlas_aci/resolvers/__init__.py": {
+      "sha256": "02216c2c82749b992db196e958a800ff70702078b699b9d50d057eb7daf34c65",
+      "baseline_sha256": "02216c2c82749b992db196e958a800ff70702078b699b9d50d057eb7daf34c65"
+    },
+    "mcp-server/src/atlas_aci/resolvers/dependencies.py": {
+      "sha256": "0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6",
+      "baseline_sha256": "0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6"
+    },
+    "mcp-server/src/atlas_aci/storage/__init__.py": {
+      "sha256": "a5c86b099d459153c262be671561811557ad2f764d24f4ba7c56e243d50bf8b6",
+      "baseline_sha256": "a5c86b099d459153c262be671561811557ad2f764d24f4ba7c56e243d50bf8b6"
+    },
+    "mcp-server/src/atlas_aci/storage/evidence.py": {
+      "sha256": "abd92c6a86d1086c2d3680a519c8f81f62d131dbae52da6b44f4525bfcc0a58d",
+      "baseline_sha256": "abd92c6a86d1086c2d3680a519c8f81f62d131dbae52da6b44f4525bfcc0a58d"
+    },
+    "mcp-server/src/atlas_aci/storage/snapshots.py": {
+      "sha256": "6e800008cbbbda1b345f199aecbda193eb27c68b15aeb1ff941b5a840ab5be82",
+      "baseline_sha256": "6e800008cbbbda1b345f199aecbda193eb27c68b15aeb1ff941b5a840ab5be82"
+    }
+  },
+  "scope": "Fact producer only; query/API runtime is separately bound to fresh local/native/full/protected evidence. Historical S17 corpus outputs are not re-signed or claimed to evaluate S18 context relevance."
+}

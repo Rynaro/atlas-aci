@@ -46,7 +46,7 @@ class IndexedReader:
     The small VM quantum is cooperative interruption, not a hard latency bound.
     """
 
-    def __init__(self, reader: Any, *, max_examined_edges: int, deadline_ms: int):
+    def __init__(self, reader: Any, *, max_examined_edges: int, deadline_ms: int, accounting=None):
         if reader._closed or not reader._validated_lease:
             raise RuntimeError("Navigation requires an acquired graph lease")
         if reader._lease_schema_epoch not in {8, 9}:
@@ -60,6 +60,8 @@ class IndexedReader:
             raise ValueError("Invalid examined-edge allowance")
         if type(deadline_ms) is not int or not 0 <= deadline_ms <= 2000:
             raise ValueError("Invalid traversal deadline")
+        self.accounting = accounting
+        self.shared_stop_reason = None
         self.reader = reader
         self.conn = reader.db
         self.max_examined_edges = max_examined_edges
@@ -81,7 +83,9 @@ class IndexedReader:
         }
 
     def __enter__(self):
-        self.conn.set_progress_handler(self._progress, VM_OP_QUANTUM)
+        self.conn.set_progress_handler(
+            self._progress, self.accounting.vm_quantum if self.accounting else VM_OP_QUANTUM
+        )
         self._installed = True
         return self
 
@@ -96,29 +100,38 @@ class IndexedReader:
                 self._installed = False
 
     def _progress(self):
+        if self.accounting is not None:
+            try:
+                self.accounting.progress(self.accounting.vm_quantum)
+            except QueryStopped as exc:
+                self.shared_stop_reason = exc.reason
+                return 1
         if time.monotonic_ns() >= self.deadline_ns:
             self.deadline_triggered = True
             return 1
         return 0
 
     def check_deadline(self):
+        if self.accounting is not None:
+            self.accounting.check()
         if time.monotonic_ns() >= self.deadline_ns:
             raise QueryStopped("deadline")
 
     def _one(self, sql, parameters, family):
         """Private fixed-SQL callers only; execute/fetch at most one actual row."""
         self.check_deadline()
+        if self.accounting is not None:
+            self.accounting.before_sql(family)
         self.counts[family + "_queries"] += 1
         self.counts["sql_queries"] += 1
         try:
             row = self.conn.execute(sql, parameters).fetchone()
         except sqlite3.Error as exc:
-            if (
-                getattr(exc, "sqlite_errorcode", None) == sqlite3.SQLITE_INTERRUPT
-                and self.deadline_triggered
+            if getattr(exc, "sqlite_errorcode", None) == sqlite3.SQLITE_INTERRUPT and (
+                self.deadline_triggered or self.shared_stop_reason is not None
             ):
                 self.counts["interrupted_sql_queries"] += 1
-                raise QueryStopped("deadline") from exc
+                raise QueryStopped(self.shared_stop_reason or "deadline") from exc
             raise
         if row is not None:
             self.counts[family + "_rows"] += 1
@@ -164,6 +177,8 @@ class IndexedReader:
             raise ValueError("Invalid adjacency selector")
         if not ev.hash_value(endpoint) or (after != "" and not ev.hash_value(after)):
             raise ValueError("Invalid adjacency key")
+        if self.accounting is not None:
+            self.accounting.reserve_edge()
         self.counts["examined_edges"] += 1  # Reserve BEFORE the actual indexed step.
         before = self.counts["sql_queries"]
         try:
@@ -175,10 +190,14 @@ class IndexedReader:
         except QueryStopped:
             if self.counts["sql_queries"] == before:
                 self.counts["examined_edges"] -= 1  # No in-flight SQL was started.
+                if self.accounting is not None:
+                    self.accounting.refund_edge()
             else:
                 self.counts["interrupted_edge_steps"] += 1
             raise
         if row is None:
             self.counts["examined_edges"] -= 1  # Only confirmed EOF refunds.
+            if self.accounting is not None:
+                self.accounting.refund_edge()
             self.counts["confirmed_edge_eof"] += 1
         return self._record(row, "assertion")

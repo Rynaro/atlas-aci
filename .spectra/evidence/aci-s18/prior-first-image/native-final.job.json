@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "mcp-server/.venv/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "mcp-server/tests/slices/test_s18_docker.py"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 3.4851049169999997,
+  "image_id": "sha256:edbeb3a9c1172f9728b3a36aac5ceebaa7882187146f7f60c3976a3e9d9f1f22"
+}

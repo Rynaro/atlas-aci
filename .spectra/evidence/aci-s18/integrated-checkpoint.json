@@ -1,0 +1,55 @@
+{
+  "source_sha256": {
+    "mcp-server/src/atlas_aci/protocol/context.py": "6846cb29e6b8fdad033c637c88df1edfe3b2bb28be79af6da9848d93a0828b5d",
+    "mcp-server/src/atlas_aci/query/context.py": "1b3282f8722e7db122ddcecbf64568f22d6f894ff096203d0e0921c8a1780c48",
+    "mcp-server/src/atlas_aci/query/context_admission.py": "054d7c2962434445367c0216729f58f703aa2ddc1eb1c30e6e4e545aaf2dc486",
+    "mcp-server/src/atlas_aci/query/context_bundles.py": "912af1cd5e8a92998743bc98dd8799f6b03c225222ef3b8e0b9b7840e38bcaf7",
+    "mcp-server/src/atlas_aci/query/context_limits.py": "fb79129e959c6be601765baca96fbc227ec36c5cdcef8c7d89d158ac6976fe20",
+    "mcp-server/src/atlas_aci/query/context_pages.py": "f21f331177c2c42b198edc79de3783436d90834de2812cf71147ba00fda581a9",
+    "mcp-server/src/atlas_aci/query/context_tokens.py": "01a2eb950b13acb3314b11526ba91efad766b3e7c7e7f45b52547a8d004ae576",
+    "mcp-server/src/atlas_aci/query/context_work.py": "8f37a5c99c458f4d4fbe03322c9471b4bf7a172b10e8d240f9f056c7a6b2bf02",
+    "mcp-server/src/atlas_aci/config.py": "c9e96a22c1f06f894e238ac0ea81b0c74125d76a9bf17273397101768868f5aa",
+    "mcp-server/src/atlas_aci/protocol/graph.py": "a0c48f85062b9e997212888c6690dc288cb1eb63fba3f6f1bcd1c0b4b6e976c4",
+    "mcp-server/src/atlas_aci/protocol/results.py": "e1a21ed5b3b4aaab2bdd5e1fb76b6edee573ceccfc8503138ecc21b61368e066",
+    "mcp-server/src/atlas_aci/query/indexed.py": "f0202385a3782ab438ab2b8b39c6c2759bf1f606c96ff4f21b86672c4c50a8df",
+    "mcp-server/src/atlas_aci/query/leases.py": "017e8c3ea847f37f0ad548049f50dc1438dc0bb2442fd76bc54598fae92e90aa",
+    "mcp-server/src/atlas_aci/query/retrieval.py": "4b8d77c4db886cfe3501e21da2439e5cd3bc963a3e86c3cd9412fb0cf6fdbaa7",
+    "mcp-server/src/atlas_aci/query/traversal.py": "a350bb6f967d37f8eaaa2bb416896ad3cebc25db3d1a891507d6e7f2526e1fcd",
+    "mcp-server/src/atlas_aci/server.py": "0009a13b2f5f211e7bf10c56e5c870aeb70328167432c9e84cdf32488434e4c1",
+    "mcp-server/src/atlas_aci/tools/graph_query.py": "a6faddc2c0d9a5aeea55787b71959bb3e8dcdea4ca42652bd8dcc91f115fa5ce"
+  },
+  "command": [
+    "mcp-server/.venv/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "mcp-server/tests/slices/test_s18_work.py",
+    "mcp-server/tests/slices/test_s18_atoms.py",
+    "mcp-server/tests/slices/test_s18_contract.py",
+    "mcp-server/tests/slices/test_s18_pages.py",
+    "mcp-server/tests/slices/test_s13_ownership.py",
+    "mcp-server/tests/slices/test_s13_paging.py",
+    "mcp-server/tests/slices/test_s13_resources.py"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 4.862381792,
+  "log": ".spectra/evidence/aci-s18/integration-held-tests.log",
+  "unfinished": [
+    "local frozen useful-span comparison",
+    "extended resource forgery/legacy/expiry controls",
+    "final native Docker/image/full/static/protected suite",
+    "final output/reentry/receipt"
+  ],
+  "native_stdio": {
+    "command": [
+      "mcp-server/.venv/bin/python",
+      "-m",
+      "pytest",
+      "-q",
+      "-s",
+      "mcp-server/tests/slices/test_s18_stdio.py"
+    ],
+    "exit_code": 0,
+    "log": ".spectra/evidence/aci-s18/stdio-corrected.log"
+  }
+}

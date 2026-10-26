@@ -1,0 +1,35 @@
+{
+  "argv": [
+    ".venv/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "tests/"
+  ],
+  "cwd": "mcp-server",
+  "exit_code": 0,
+  "elapsed_seconds": 149.87164108399884,
+  "native_environment": {
+    "ATLAS_ACI_S06_DOCKER_IMAGE": "sha256:80d22011a233ba73a97c91b261fef420e8d0cfd5bce562b069d375aff70cfa35",
+    "ATLAS_ACI_S06_EVIDENCE_DIR": "/private/tmp/atlas-aci-aci-s18/.spectra/evidence/aci-s18/docker-final/s06",
+    "ATLAS_ACI_S08_DOCKER_IMAGE": "sha256:80d22011a233ba73a97c91b261fef420e8d0cfd5bce562b069d375aff70cfa35",
+    "ATLAS_ACI_S08_EVIDENCE_DIR": "/private/tmp/atlas-aci-aci-s18/.spectra/evidence/aci-s18/docker-final/s08",
+    "ATLAS_ACI_S15_DOCKER_IMAGE": "sha256:80d22011a233ba73a97c91b261fef420e8d0cfd5bce562b069d375aff70cfa35",
+    "ATLAS_ACI_S15_EVIDENCE_DIR": "/private/tmp/atlas-aci-aci-s18/.spectra/evidence/aci-s18/docker-final/s15",
+    "ATLAS_ACI_S11_DOCKER_IMAGE": "sha256:80d22011a233ba73a97c91b261fef420e8d0cfd5bce562b069d375aff70cfa35",
+    "ATLAS_ACI_S11_EVIDENCE_DIR": "/private/tmp/atlas-aci-aci-s18/.spectra/evidence/aci-s18/docker-final/s11",
+    "ATLAS_ACI_S12_DOCKER_IMAGE": "sha256:80d22011a233ba73a97c91b261fef420e8d0cfd5bce562b069d375aff70cfa35",
+    "ATLAS_ACI_S12_EVIDENCE_DIR": "/private/tmp/atlas-aci-aci-s18/.spectra/evidence/aci-s18/docker-final/s12",
+    "ATLAS_ACI_S13_DOCKER_IMAGE": "sha256:80d22011a233ba73a97c91b261fef420e8d0cfd5bce562b069d375aff70cfa35",
+    "ATLAS_ACI_S13_EVIDENCE_DIR": "/private/tmp/atlas-aci-aci-s18/.spectra/evidence/aci-s18/docker-final/s13",
+    "ATLAS_ACI_S17_DOCKER_IMAGE": "sha256:80d22011a233ba73a97c91b261fef420e8d0cfd5bce562b069d375aff70cfa35",
+    "ATLAS_ACI_S17_EVIDENCE_DIR": "/private/tmp/atlas-aci-aci-s18/.spectra/evidence/aci-s18/docker-final/s17",
+    "ATLAS_ACI_S18_DOCKER_IMAGE": "sha256:80d22011a233ba73a97c91b261fef420e8d0cfd5bce562b069d375aff70cfa35",
+    "ATLAS_ACI_S18_EVIDENCE_DIR": "/private/tmp/atlas-aci-aci-s18/.spectra/evidence/aci-s18/docker-final/s18",
+    "ATLAS_ACI_S13_NATIVE_RECORD": "/private/tmp/atlas-aci-aci-s18/.spectra/evidence/aci-s18/s13-native-full.json",
+    "ATLAS_ACI_S17_NATIVE_RECORD": "/private/tmp/atlas-aci-aci-s18/.spectra/evidence/aci-s18/s17-native-full.json",
+    "ATLAS_ACI_S18_NATIVE_RECORD": "/private/tmp/atlas-aci-aci-s18/.spectra/evidence/aci-s18/s18-native-full.json"
+  }
+}

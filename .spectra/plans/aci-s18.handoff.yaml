@@ -1,0 +1,67 @@
+{
+  "slice_id": "ACI-S18",
+  "issue": 39,
+  "worktree": "/private/tmp/atlas-aci-aci-s18",
+  "branch": "aci-s18",
+  "base_commit": "ae307760ec928572da406e174bfe922848faabaf",
+  "spec": ".spectra/plans/aci-s18.md",
+  "envelope": ".spectra/plans/aci-s18.envelope.json",
+  "criteria_sha256": "e4e84bc226ea5437c3f6931cd25acc7951f92ca7f701439a5b0baeea15ff88f6",
+  "actual_confidence": {
+    "rubric": "confidence",
+    "total": 86.25,
+    "dims": {
+      "pattern_match": 88,
+      "requirement_clarity": 90,
+      "decomposition_stability": 85,
+      "constraint_compliance": 82
+    },
+    "verdict": "AUTO_PROCEED",
+    "at": "2026-10-26T07:41:48Z",
+    "label": "one-reader-context-with-wire-tokenizer-checkpoint"
+  },
+  "confidence_basis": {
+    "pattern_match": "Existing acquired-reader retrieval/navigation, canonical proof hydration, SDK adapters and atomic retained-page registry are reused; no new native schema/provider.",
+    "requirement_clarity": "Seven exact criteria; independent review confirms whole-bundle, emitted-payload tokenizer/fixed-point and stable fingerprint boundaries.",
+    "decomposition_stability": "Five-day three-story sequence with real one-reader/shared-work/native-wire checkpoint; optional accounting integration and typed resource validation remain execution risks.",
+    "constraint_compliance": "No paid models/tokenizer dependency/backend; freeze local labels and lexical baseline first. Breadth of native/resource/accounting tests warrants allocation stop and genuine evidence, not assumed completion."
+  },
+  "checker_evidence": ".spectra/plans/aci-s18.review.json",
+  "execution_prescriptions": [
+    "First checkpoint actual multiseed SQL trace proves single connection and global cumulative allowances including additional hydration, source and token work; no per-seed renewal.",
+    "Under byte/list boundary omit whole definition/path; verify EVERY resource against returned typed own-G1 records. File variant must not invent evidence.",
+    "Count after all URI/cursor/representation strings are fixed. Independently tokenize actual wire result bytes for old text-only/dual SDK; cycle/exception yields bounded error, then bytes rechecked.",
+    "Freeze quality labels/budgets/ranker before packer implementation; report reference versus inline yield and regressions without a posthoc quality bar.",
+    "Canonical fingerprints exclude only enumerated lease/usage operational fields, preserving stable proofs/spans/config/frontiers; cached same-cursor bytes and real G1/G2/G3/expiry/capacity tests remain mandatory.",
+    "Add OPTIONAL context-owned accounting/callback integration to query/indexed.py and traversal.py: conservative per-statement tail reservation, actual progress charges and shared absolute deadline; preserve old S12 behavior when absent. Real multiseed trace must exhaust one allowance across retrieval/navigation/PK hydration and prove owned-hook cleanup. No nonexistent VM arguments/counters."
+  ],
+  "scope_amendments": [
+    ".spectra/changes/aci-s18/scope-amendment.json",
+    ".spectra/changes/aci-s18/bookkeeping-amendment.json"
+  ],
+  "output_digest_exclusions": [
+    ".spectra/state/aci-s18.execution.json",
+    ".spectra/evidence/aci-s18/final-reentry-before.json",
+    ".spectra/evidence/aci-s18/final-reentry-after.json",
+    ".spectra/evidence/aci-s18/final-reentry-summary.json",
+    ".spectra/evidence/aci-s18/final-resume-identity.json",
+    ".spectra/evidence/aci-s18/output-check-tests.log"
+  ],
+  "authoritative_receipt": ".spectra/state/aci-s18.execution.json",
+  "first_checkpoint": "Freeze/hash labeled local corpus, task spans, budgets/ranker and actual lexical baseline BEFORE packer; then prove one G1 multi-seed cumulative budget, complete bundle, actual text-only/dual wire token counts and retained G1 page/source across G2/G3.",
+  "helpers_root": "/Users/henrique/workspace/oss/agents/atlas-aci/.eidolons/ramza/bin",
+  "schemas_root": "/Users/henrique/workspace/oss/agents/atlas-aci/.eidolons/ramza/schemas",
+  "uv": "/tmp/aci-s01-tools/bin/uv",
+  "uv_cache": "/tmp/aci-s01-uv-cache",
+  "root_gate": "Root verify-envelope --block and exact message/thread/spec-correlated verify_pass before one Vivi writer.",
+  "publication": "Root owns validated green-CI merge/sync, executor never self-merges/deploys.",
+  "backlog": {
+    "merged": 15,
+    "remaining": 27,
+    "current_issue": 39,
+    "next_issue": 36
+  },
+  "probe": "Mechanically verify actual producer closure. Any changed producer requires fresh final-source exact-pin DEFAULT_LANGS proof, immutable verifier/bar,600s/job2700s cumulative incl failures; two selectors only after audit. Unchanged producer applicability must be evidenced, never imply old graph measurements validate new context API.",
+  "evaluation": "Freeze labels/lexical baseline/budgets/ranker before packing code; report inline versus reference yield and regressions, no paid model or invented superiority threshold.",
+  "tokenizer": "Operator-local optional declared algorithm, exact final negotiated SDK-result fixed-point or failclosed error; absent explicitly estimated. No model-tokenizer availability claim."
+}

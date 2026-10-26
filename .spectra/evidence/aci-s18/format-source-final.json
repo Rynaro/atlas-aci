@@ -1,0 +1,10 @@
+{
+  "exit_code": 0,
+  "changes": {
+    "mcp-server/src/atlas_aci/protocol/context.py": {
+      "before_sha256": "5e0ffa100e712d620071afacc394052f3c4a4e8c450ac45c64fe4c8615f5fc1d",
+      "after_sha256": "7bdd7e38e1dc8b25bd37ef6fc2cb6ddc46c55ca9e32a2adfa9e21d4342b41447",
+      "ast_identical": true
+    }
+  }
+}

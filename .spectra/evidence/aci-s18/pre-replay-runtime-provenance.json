@@ -1,0 +1,23 @@
+{
+  "argv": [
+    "docker",
+    "run",
+    "--rm",
+    "--read-only",
+    "--network",
+    "none",
+    "--entrypoint",
+    "python",
+    "sha256:80d22011a233ba73a97c91b261fef420e8d0cfd5bce562b069d375aff70cfa35",
+    "-c",
+    "import atlas_aci,base64,json;from pathlib import Path;r=Path(atlas_aci.__file__).parent;print(json.dumps({str(p.relative_to(r)):base64.b64encode(p.read_bytes()).decode() for p in sorted(r.rglob('*.py'))},sort_keys=True))"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 0.18566679197829217,
+  "source_count": 47,
+  "raw_sha256": "5566485f44e7b5eae49d28b007a5c09f282a146d3ca092cc95c567f0775b0be8",
+  "raw_bytes": 953700,
+  "compressed_sha256": "4b8c2269eac8f56b57f3c50e4fd7c5dff5394318af4a21a48b79e20369e7336f",
+  "compressed_bytes": 259670,
+  "gzip_mtime": 0
+}

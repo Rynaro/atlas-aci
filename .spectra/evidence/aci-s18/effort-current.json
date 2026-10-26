@@ -1,0 +1,11 @@
+{
+  "slice_id": "ACI-S18",
+  "status": "IN_PROGRESS",
+  "original_started_epoch": 1793000814.351153,
+  "now_epoch": 1793005896.0351439,
+  "elapsed_wall_upper_bound_seconds": 5081.683990955353,
+  "engineering_budget_seconds": 432000,
+  "scope": "Conservative elapsed upper bound includes all review/tool waiting this task; no engineering-time reset.",
+  "current_phase": "Canonical replay correction independently reviewing before refreshed final gates.",
+  "criteria_sha256": "e4e84bc226ea5437c3f6931cd25acc7951f92ca7f701439a5b0baeea15ff88f6"
+}

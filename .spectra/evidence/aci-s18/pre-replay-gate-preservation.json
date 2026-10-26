@@ -1,0 +1,263 @@
+{
+  "reason": "Prior826-pass/image80/protected43/localyield records remain truthful historical source-bound evidence, not final after required canonical replay correction. Exactbytes retained, no reset of task or earlier failures.",
+  "files": [
+    {
+      "logical_path": ".spectra/evidence/aci-s18/source-final.json",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/source-final.json",
+      "bytes": 4579,
+      "sha256": "02acb8b77ff574012cccd8450adc8329d8f987f56a8aaec1eae9f2970348716f"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/docker-build.log",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/docker-build.log",
+      "bytes": 52897,
+      "sha256": "65c9881af49a6b1f4c65924d5098b03a4d83efd7e9989b2860ffed3bfb98698b"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/docker-build.job.json",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/docker-build.job.json",
+      "bytes": 243,
+      "sha256": "f57f5b807102b3c9fd60acabdec57c70a51c338c72189121039100c3b0cdb807"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/docker-image-id.txt",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/docker-image-id.txt",
+      "bytes": 72,
+      "sha256": "e3bd196b4c3b84bbbdaea4519188ef182376fa93b7172df82eb11c1fdefcc996"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/full-suite.log",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/full-suite.log",
+      "bytes": 992,
+      "sha256": "ed0befd0c21fac92933cf1fa3818adf6e33d7a9be90d2cff96c143a4dad32f46"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/full-suite.job.json",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/full-suite.job.json",
+      "bytes": 2345,
+      "sha256": "d5eb877b3d2fdb8d2cb21e6d7a4e0f7a824baacc29e28097134121badd5471ed"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/docker-final/s06/docker-integration.json",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/docker-final/s06/docker-integration.json",
+      "bytes": 24979,
+      "sha256": "51539eee19230a555842685bbda289e79dcbc22a12208ea2eea9fb1341a59966"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/docker-final/s08/native-docker-stdio.json",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/docker-final/s08/native-docker-stdio.json",
+      "bytes": 43433,
+      "sha256": "a1a24aea558e6cb4f23fa53dc13750fe5a719c1892a21e4454208aebe77359a0"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/docker-final/s11/docker-status.json",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/docker-final/s11/docker-status.json",
+      "bytes": 65150,
+      "sha256": "09cdd19ad954fb4a46c01f189f94f01f677cfd537c546d82c958c8b255dbef23"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/docker-final/s12/docker-status.json",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/docker-final/s12/docker-status.json",
+      "bytes": 96581,
+      "sha256": "43cf3a0b2dc67f004f144530e7d605ca963bfbc67c944f1f564dc7733d474b2f"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/docker-final/s15/docker-rust.json",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/docker-final/s15/docker-rust.json",
+      "bytes": 80217,
+      "sha256": "94d72a7359d5433ed95347069c05a17d8c9fb29c92c96ac44c5e05ddc990f35b"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/s13-native-full.json",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/s13-native-full.json",
+      "bytes": 68433,
+      "sha256": "a711a0c95116854ac258c8033624985bc8e89767d7432e1ec09cb87405f51520"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/s17-native-full.json",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/s17-native-full.json",
+      "bytes": 69860,
+      "sha256": "50bac2a6146be44ae88819fb2eb36183c8fc7d38f14f419c0f0c4d63caedc2f1"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/s18-native-full.json",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/s18-native-full.json",
+      "bytes": 80760,
+      "sha256": "98b62cace33446609bc3c8afde0e324a3b9d61e2e6a4c9a9cdddda79d00ba20f"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/native-pass2.json",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/native-pass2.json",
+      "bytes": 80760,
+      "sha256": "63f395bb9fc6802ab159692e71a157466767b336592b970635044a77bf405397"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/vivi-pass2-final.stdout.log",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/vivi-pass2-final.stdout.log",
+      "bytes": 805,
+      "sha256": "85b05adcfce1f420d182f21372709c7fcefd2a875808a5f90fd321964caa2ac3"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/vivi-pass2-final.stderr.log",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/vivi-pass2-final.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/vivi-pass2-final.job.json",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/vivi-pass2-final.job.json",
+      "bytes": 754,
+      "sha256": "1044341f5b3afe31f82771271ebbefc94ffc89e0d5cadbabad3b2a8f8e39c689"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/protected-inputs.json",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/protected-inputs.json",
+      "bytes": 5486,
+      "sha256": "72bdd47a49f273e80f1b76212102f30e13cce90f681b7abf47b4ace06d39789d"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/protected-loop/feedback.json",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/protected-loop/feedback.json",
+      "bytes": 293,
+      "sha256": "9f72bf5fd35ec068251fe9fd1749a2828cca78fa35497214f768cca798ff948e"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/protected-loop/full-log.txt",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/protected-loop/full-log.txt",
+      "bytes": 100,
+      "sha256": "cc06b7beb38d0fc3a0b83baee640179163137aabd2dfd0012e805380be279b3e"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/protected-loop/last-output.txt",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/protected-loop/last-output.txt",
+      "bytes": 100,
+      "sha256": "d9e07f9d4fda6771a27517808cfb6bc3dc45f92fa1760bb5bdad74116710104b"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/protected-loop/loop.json",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/protected-loop/loop.json",
+      "bytes": 805,
+      "sha256": "85b05adcfce1f420d182f21372709c7fcefd2a875808a5f90fd321964caa2ac3"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/protected-loop/loop.json.envelope.json",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/protected-loop/loop.json.envelope.json",
+      "bytes": 406,
+      "sha256": "8f9107f7bb73ffaf3b5d1e93eac118674d06d20c5dc117fa535a60346b6305ba"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/checks.json",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/checks.json",
+      "bytes": 4057,
+      "sha256": "214d556c8afe49e0574b8fc226e3361aa9fe849910dff6d71492d362dade314c"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/local-yield.json",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/local-yield.json",
+      "bytes": 726090,
+      "sha256": "e3e2062709dcbe7741eb9f85d3730f51ae8cb11cd44a0c8394d631fba974f406"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/local-yield.md",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/local-yield.md",
+      "bytes": 3523,
+      "sha256": "41db411c25284432cefbba2a8505770aeed39a836f1296b9710e78b86786a93c"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/local-yield-final.log",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/local-yield-final.log",
+      "bytes": 176,
+      "sha256": "b9e972e932ff837a0dc75f645da2bc88f6b1a30831388796e6d9a19a1e319f44"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/ruff.log",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/ruff.log",
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/format.log",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/format.log",
+      "bytes": 28,
+      "sha256": "2fcba2071ad461b6c9a1655f5f7af639c36f5ea07efd65ca7e56a9a0fa53b912"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/mypy.log",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/mypy.log",
+      "bytes": 364,
+      "sha256": "ce1be9f3b9bb8d029ae7a986f1d62a4a0e6c3d3fbec34f66c472b1a2fc9b8862"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/scripts-ruff.log",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/scripts-ruff.log",
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/scripts-format.log",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/scripts-format.log",
+      "bytes": 26,
+      "sha256": "0321fffcb91606a42c0a19d8c1121d5c544379d663821fce616c71a7bb62f6b5"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/scripts-mypy.log",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/scripts-mypy.log",
+      "bytes": 44,
+      "sha256": "14fdf673bd175fe32ef42df34666481bb15e465313f7dbef32d0aea2ba76a26e"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/lock.log",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/lock.log",
+      "bytes": 29,
+      "sha256": "9e394b6b9a5b61f7a50e3083c6a1432056c414983b5f3cbb0e01163eb9626cbc"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/size-guard.log",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/size-guard.log",
+      "bytes": 400,
+      "sha256": "970e558394ae49cd67e8c08a9985b49b896e77c8fe865640efa5cd7c3cc1f06a"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/classify.log",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/classify.log",
+      "bytes": 508,
+      "sha256": "882efe40d183063030b93ad847b975d88dc63049810ee8e933680928364923ff"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/amended-runner-ruff.log",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/amended-runner-ruff.log",
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/amended-runner-format.log",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/amended-runner-format.log",
+      "bytes": 25,
+      "sha256": "fd2299c9f1c6dc869070883e281051bfe93aacf66c1a3b0069f45b4aa410ca50"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/guard.log",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/guard.log",
+      "bytes": 3643,
+      "sha256": "b11824103517db06fa4b011b41867489d50116dab39bad2eed58a54852d50cf0"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/verifier.log",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/verifier.log",
+      "bytes": 800,
+      "sha256": "76b222feca2a6bd663d61bee80c7d7ea1bd177689fde4c2d1a5a6dbde3006256"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/eval-ruff.log",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/eval-ruff.log",
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/eval-format.log",
+      "preserved_path": ".spectra/evidence/aci-s18/pre-replay-gates/eval-format.log",
+      "bytes": 26,
+      "sha256": "3bc53bf3e981a98a34a852e175bf9b77af841edea74fca595d9aedcbaf9a4938"
+    }
+  ]
+}

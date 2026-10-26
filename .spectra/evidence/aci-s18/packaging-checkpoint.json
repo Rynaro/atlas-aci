@@ -1,0 +1,7 @@
+{
+  "raw_streams": 142,
+  "all_raw_and_compressed_lengths_and_sha256_verified": true,
+  "all_gzip_mtime": 0,
+  "relocations": "first-image-preservation.json and pre-replay-gate-preservation.json preserve original output paths; canonical raw-manifest logical paths name retained evidence, producer_output_path records original command location where known.",
+  "source_unchanged": true
+}

@@ -1,0 +1,22 @@
+{
+  "scope": "Pure whole-bundle/actual SDK token accounting/prefix unit; no publiccontext/schema/continuation claim",
+  "hashes": {
+    "query/context_bundles.py": "72c39f2ac40a088c9edf7413287200968b9f269ac9116f64cf8b77f551b8bb48",
+    "query/context_tokens.py": "a8569753c2120519d9059281451baac730cb280facd9706e42c723b75a1e98aa",
+    "query/context_admission.py": "e0339e6b65eef0deafe44dcc6e21a81625bd52ac2d6f39ca25948e8ae6501d7e"
+  },
+  "initial_tests": {
+    "passed": 5,
+    "exit_code": 0,
+    "log": ".spectra/evidence/aci-s18/whole-atoms-first.log"
+  },
+  "lint": {
+    "exit_code": 0,
+    "log": ".spectra/evidence/aci-s18/whole-unit-lint.log"
+  },
+  "mypy": {
+    "exit_code": 0,
+    "checked_source_files": 43,
+    "log": ".spectra/evidence/aci-s18/whole-unit-mypy.log"
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "satisfies_S18_protected_gate": false,
+  "reason": "Actual tests and protected glob were S17 due copied lowercase selector. Retained as predecessor-only evidence, not counted S18.",
+  "source_or_full_suite_invalidation": false
+}

@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "docker",
+    "build",
+    "-t",
+    "atlas-aci:s18-final",
+    "mcp-server"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 13.796233416,
+  "image_id": "sha256:edbeb3a9c1172f9728b3a36aac5ceebaa7882187146f7f60c3976a3e9d9f1f22"
+}

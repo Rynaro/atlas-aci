@@ -1,0 +1,38 @@
+{
+  "at": "2026-10-26T07:43:00.295740+00:00",
+  "phase": "DONE",
+  "confidence": 86.25,
+  "verdict": "AUTO_PROCEED",
+  "checks": [
+    {
+      "file": "aci-s18.envelope.json",
+      "schema": "ecl-envelope.v2.json",
+      "validator": "Draft202012Validator",
+      "format_check": true,
+      "valid": true
+    },
+    {
+      "file": "aci-s18.state.json",
+      "schema": "plan-state.v1.json",
+      "validator": "Draft7Validator",
+      "format_check": true,
+      "valid": true
+    }
+  ],
+  "product_files_unchanged": 118,
+  "product_diff_empty": true,
+  "ledger_counts": {
+    "merged": 15,
+    "remaining": 27
+  },
+  "spec_sha256": "0a0ea3e005685affb5bf506ee159ebd89f891a0c3ad663c471656a8c753b3918",
+  "criteria_sha256": "e4e84bc226ea5437c3f6931cd25acc7951f92ca7f701439a5b0baeea15ff88f6",
+  "envelope_sha256": "36f0d56170456547c3bacaa73af404c7f870a5941f02cb8c6b722ea9e836f12f",
+  "state_sha256": "4817ad405e88a27888b216092528425e79607f2e284f61541d795f3934c817e2",
+  "message_id": "ca05d427-f652-4b26-9a72-7f2e47e5a7e2",
+  "thread_id": "6b799fb1-4cf4-43b2-9f8e-3c4f07c010e0",
+  "scope_amendment": ".spectra/changes/aci-s18/scope-amendment.json",
+  "bookkeeping_amendment": ".spectra/changes/aci-s18/bookkeeping-amendment.json",
+  "schema_validation": "Original mcp-server/.venv/bin/python; jsonschema.validators.validator_for/check_schema/validate with FormatChecker; canonical .eidolons/ramza/schemas",
+  "note": "Approved draft unchanged. Genuine review07:40:47Z separate from state recording07:41:48Z. Weak Explore69.5 explicitly rejected. No product/native tokenizer execution claim. Freeze labeled local corpus and lexical baseline before packer. Root ECL block/correlated trace before single writer."
+}

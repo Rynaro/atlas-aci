@@ -1,0 +1,38 @@
+{
+  "fixture": "mcp-server/tests/fixtures/s18/useful-spans.v1.json",
+  "bytes": 8646,
+  "sha256": "07553bd3d51be01a1d522fc59c240bf41ecf312a051c413c609585c60999b507",
+  "before_packer_implementation": true,
+  "budgets": [
+    4000,
+    12000,
+    32000
+  ],
+  "ranker": {
+    "id": "atlas-context-diversity.v1",
+    "highest_exact_anchor_first": true,
+    "tier_order": [
+      "exact_entity_id",
+      "exact_qualified_label",
+      "exact_path",
+      "exact_name",
+      "lexical"
+    ],
+    "bundle_kind_order": [
+      "definition",
+      "path",
+      "relationship",
+      "lexical_file"
+    ],
+    "within_queue_order": [
+      "tier_rank",
+      "seed_rank",
+      "hop_distance",
+      "source_unavailable",
+      "bundle_kind_rank",
+      "stable_bundle_id"
+    ],
+    "diversity": "After highest exact definition anchor: deterministic rounds over files ordered by their best queue front; emit at most one per file per round, rotating owner queues ordered by their best front. Primary source path/owner identifies the queue; no degree scans.",
+    "no_posthoc_weight_or_budget_tuning": true
+  }
+}

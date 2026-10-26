@@ -1,0 +1,81 @@
+{
+  "slice_id": "ACI-S18",
+  "issue_url": "https://github.com/Rynaro/atlas-aci/issues/39",
+  "criteria_sha256": "e4e84bc226ea5437c3f6931cd25acc7951f92ca7f701439a5b0baeea15ff88f6",
+  "frozen_spec_sha256": "0a0ea3e005685affb5bf506ee159ebd89f891a0c3ad663c471656a8c753b3918",
+  "base_commit": "ae307760ec928572da406e174bfe922848faabaf",
+  "output_commit": null,
+  "declared_paths": [
+    "mcp-server/src/atlas_aci/query/*",
+    "mcp-server/src/atlas_aci/protocol/*",
+    "mcp-server/src/atlas_aci/tools/graph_query.py",
+    "mcp-server/tests/slices/test_s18_*.py",
+    "atlas/evals/*",
+    "mcp-server/src/atlas_aci/server.py",
+    "mcp-server/src/atlas_aci/config.py",
+    "mcp-server/tests/test_server.py",
+    "mcp-server/tests/fixtures/s18/*",
+    "atlas/docs/*",
+    ".github/workflows/harden-gate.yml",
+    "scripts/test-verify-probe-verdict.sh",
+    ".spectra/plans/aci-s18.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/changes/aci-s18/*",
+    ".spectra/evidence/aci-s18/*",
+    ".spectra/state/aci-s18.execution.json",
+    ".spectra/backlog/execution.json",
+    ".spectra/backlog/order.md"
+  ],
+  "scope_amendments": [
+    ".spectra/changes/aci-s18/scope-amendment.json"
+  ],
+  "output_digest_exclusions": [
+    ".spectra/state/aci-s18.execution.json",
+    ".spectra/evidence/aci-s18/final-reentry-before.json",
+    ".spectra/evidence/aci-s18/final-reentry-after.json",
+    ".spectra/evidence/aci-s18/final-reentry-summary.json",
+    ".spectra/evidence/aci-s18/final-resume-identity.json",
+    ".spectra/evidence/aci-s18/output-check-tests.log"
+  ],
+  "status": "IN_PROGRESS",
+  "started_epoch": 1793000814.351153,
+  "engineering_budget_seconds": 432000,
+  "acceptance_results": [
+    {
+      "ac_id": "AC-S18-001",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S18-002",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S18-003",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S18-004",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S18-005",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S18-006",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S18-007",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S18-RUN-01",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S18-RUN-02",
+      "exit_code": null
+    }
+  ]
+}
