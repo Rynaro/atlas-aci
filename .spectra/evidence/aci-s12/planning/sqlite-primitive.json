@@ -1,0 +1,48 @@
+{
+  "provenance": "Independent ATLAS inline tool execution relayed in collaboration messages; temporary databases deleted normally. This is transcript-derived evidence, not claimed retained original files.",
+  "interpreter": "/tmp/atlas-aci-aci-s11/mcp-server/.venv/bin/python -B",
+  "cwd": "/tmp/atlas-aci-aci-s12",
+  "sqlite_runtime_version": "3.53.1",
+  "sqlite_version_basis": "Runtime-linked, not uv-pinned",
+  "initial_environment_failure": {
+    "exit_code": 127,
+    "reason": "New S12 worktree had no .venv; no product execution"
+  },
+  "real_parser_fixture": {
+    "tool_chunk": "96db7d",
+    "artifact_sha256": "75253c5c6d4d8c88b626a12ab9373f3f865c9d4eb6f4d16134c0ec61a6fa86e7",
+    "canonical_rows": 73,
+    "outgoing_rows": 2,
+    "incoming_rows": 1,
+    "name_rows": 2,
+    "plans": "All exact single-relation/ID keyset and name queries SEARCH respective expression index; no SCAN/temp B-tree; LIMIT1 pages equal full ordered rows",
+    "exit_code": 0
+  },
+  "readonly_sql_primitive": {
+    "tool_chunk": "e4b92e",
+    "synthetic_tiny_sql_case": true,
+    "stdout": {
+      "mode": "ro",
+      "plan": [
+        "SEARCH t USING INDEX ix (<expr>=? AND <expr>=? AND id>?)"
+      ],
+      "interrupt_cleanup_reusable": true,
+      "write_rejected": "SQLITE_READONLY"
+    },
+    "exit_code": 0,
+    "interrupt_code": 9,
+    "write_error_code": 8
+  },
+  "limits": [
+    "Primitive only, not integrated product/migration/deadline/counter proof",
+    "Exact expressions and single relation, not IN/OR sort",
+    "No public get_progress_handler; clear owned hook or restore known callback explicitly",
+    "Typed validators and all real Linux/native schema/source/portable controls remain required",
+    "No original script/result file hashes invented"
+  ],
+  "transcript_source_copies": {
+    "sqlite-real-parser-transcript.py.txt": "ee276bf77056d9bd69586afce1d064384f1daf6c7f258524d00d70ca7b3b86dc",
+    "sqlite-readonly-transcript.py.txt": "866ac5a1a258e253df14111f99dc99041dadc67a835d99bba9a4c9a84b1e2f3f"
+  },
+  "copy_note": "Source transcribed from independent actual inline commands; these hashes describe new archival copies, not original on-disk artifacts. No rerun performed."
+}

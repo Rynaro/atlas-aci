@@ -1,0 +1,19 @@
+{
+  "slice_id": "ACI-S12",
+  "criteria_changed": false,
+  "criteria_sha256": "210baed6d4e4969c7e2223559580ec14a0c4ed4e277b062e891b8edc62159395",
+  "before_edit": true,
+  "additional_paths": [],
+  "already_declared_paths": [
+    ".github/workflows/harden-gate.yml",
+    "scripts/test-verify-probe-verdict.sh"
+  ],
+  "authority": "Root after independently audited fresh S12 PASS",
+  "allowed_delta": "Exactly three workflow references and one self-test basename to the unique new S12 sidecar; retain verifier/resolver/bar/all27controls unchanged",
+  "before_sha256": {
+    ".github/workflows/harden-gate.yml": "52530266e13bb48540885b78ce50c09ec417845661b153027f78b0e1812950bd",
+    "scripts/test-verify-probe-verdict.sh": "307d214ccd9899a84bdc437bb08105be041c1a93d5d5656902f12f35e56d3d5d"
+  },
+  "new_sidecar": ".spectra/changes/aci-s12/probe/aci-s12-probe-lpa-vs-louvain.json",
+  "actual_verifier": ".spectra/evidence/aci-s12/probe/verifier-result.json"
+}

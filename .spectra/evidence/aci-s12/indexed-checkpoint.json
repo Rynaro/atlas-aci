@@ -1,0 +1,56 @@
+{
+  "native_epoch": 8,
+  "sqlite_runtime": "3.53.1",
+  "lease_validation_seconds": 0.0011689170059980825,
+  "validation_cost_outside_traversal_deadline": true,
+  "plans": {
+    "out": [
+      "SEARCH assertions USING INDEX idx_assertions_source_relation_id (<expr>=? AND <expr>=? AND id>?)"
+    ],
+    "in": [
+      "SEARCH assertions USING INDEX idx_assertions_target_relation_id (<expr>=? AND <expr>=? AND id>?)"
+    ],
+    "name": [
+      "SEARCH entities USING INDEX idx_entities_name_id (<expr>=? AND id>?)"
+    ]
+  },
+  "actual_navigation_trace": [
+    "SELECT id,payload FROM entities INDEXED BY idx_entities_name_id WHERE json_extract(payload,'$.name')='A' AND id>'' ORDER BY id LIMIT 1",
+    "SELECT id,payload FROM entities INDEXED BY idx_entities_name_id WHERE json_extract(payload,'$.name')='A' AND id>'d683ad4587035ab55396ebc73fd5e6e78f7dead818a9aac9cb79f896d0b4c2a9' ORDER BY id LIMIT 1",
+    "SELECT id,payload FROM assertions INDEXED BY idx_assertions_source_relation_id WHERE json_extract(payload,'$.source_entity_id')='d683ad4587035ab55396ebc73fd5e6e78f7dead818a9aac9cb79f896d0b4c2a9' AND json_extract(payload,'$.relation')='call' AND id>'' ORDER BY id LIMIT 1",
+    "SELECT id,payload FROM assertions INDEXED BY idx_assertions_source_relation_id WHERE json_extract(payload,'$.source_entity_id')='d683ad4587035ab55396ebc73fd5e6e78f7dead818a9aac9cb79f896d0b4c2a9' AND json_extract(payload,'$.relation')='call' AND id>'d04d2b5ba719997b2dc7bf95e2b1e9b5aebf2c132d290d9c8a09ec78b1116999' ORDER BY id LIMIT 1"
+  ],
+  "counts": {
+    "examined_edges": 2,
+    "edge_queries": 2,
+    "edge_rows": 2,
+    "confirmed_edge_eof": 0,
+    "interrupted_edge_steps": 0,
+    "endpoint_queries": 2,
+    "endpoint_rows": 1,
+    "hydration_queries": 0,
+    "hydration_rows": 0,
+    "sql_queries": 4,
+    "interrupted_sql_queries": 0
+  },
+  "distinct_assertion_ids": [
+    "d04d2b5ba719997b2dc7bf95e2b1e9b5aebf2c132d290d9c8a09ec78b1116999",
+    "ef18b24db40d5f4ceff0be1063849fc6075c88d375e1e47ac9ed117c21d5b00a"
+  ],
+  "deadline_counts": {
+    "examined_edges": 0,
+    "edge_queries": 0,
+    "edge_rows": 0,
+    "confirmed_edge_eof": 0,
+    "interrupted_edge_steps": 0,
+    "endpoint_queries": 0,
+    "endpoint_rows": 0,
+    "hydration_queries": 1,
+    "hydration_rows": 0,
+    "sql_queries": 1,
+    "interrupted_sql_queries": 1
+  },
+  "actual_sqlite_interrupt_code": 9,
+  "owned_hook_cleared_connection_usable": true,
+  "actual_pack_fd_closed": true
+}

@@ -60,5 +60,6 @@ are outside that ceiling. The smallest bounded overflow error is 148 bytes for
 legacy text, 251 for legacy text plus structured content, 403 for structured
 status text, and 729 for structured status text plus structured content. A
 configured ceiling below the applicable minimum returns `INVALID_BUDGET` under
-a separately measured fixed 785-byte error-envelope cap. Oversized results use a
+a separately measured fixed error-envelope cap (785 bytes for status; 797 bytes
+across status and navigation operations). Oversized results use a
 fixed bounded error rather than recursively returning oversized diagnostics.

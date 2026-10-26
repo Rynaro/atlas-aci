@@ -1,0 +1,149 @@
+{
+  "command": [
+    "/private/tmp/atlas-aci-aci-s12/mcp-server/.venv/bin/python",
+    "/private/tmp/atlas-aci-aci-s12/scripts/probe-assemble-graph-bundle.py",
+    "--out",
+    "/private/tmp/atlas-aci-aci-s12/.spectra/changes/aci-s12/probe/probe-graphs.json.gz",
+    "--repo",
+    "solidus:/tmp/aci-s12-solidus-graph.json:/private/tmp/atlas-aci-aci-s12/.spectra/evidence/aci-s12/probe/solidus-modularity.stdout.log",
+    "--repo",
+    "spree:/tmp/aci-s12-spree-graph.json:/private/tmp/atlas-aci-aci-s12/.spectra/evidence/aci-s12/probe/spree-modularity.stdout.log"
+  ],
+  "exit_code": 0,
+  "indexer_fingerprint": "1ebe6acc94891417dc7388830499f2c046a06fa6a034de4d520abf6adb880f4a",
+  "verdict": "PASS",
+  "sources": {
+    "mcp-server/src/atlas_aci/codegraph.py": "4df28b1fcaeb7c5d0051f1c5412e0d06a38ad3d10652d18a82d7b7d16c6bcfe2",
+    "mcp-server/src/atlas_aci/storage/evidence.py": "3f14fa87ed9b060cc1d09e7e57cb002275c99b501829412a202d225870f3eb92",
+    "mcp-server/src/atlas_aci/providers/python_imports.py": "de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014",
+    "mcp-server/src/atlas_aci/indexing/extraction_cache.py": "08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2",
+    "mcp-server/src/atlas_aci/resolvers/dependencies.py": "0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6",
+    "mcp-server/src/atlas_aci/extractors/rust.py": "28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a",
+    "mcp-server/src/atlas_aci/storage/snapshots.py": "b8aecf567335dda0f2d0162c2eb6a334a4efae7d785755a0d8e862b52d96396f",
+    "mcp-server/src/atlas_aci/server.py": "e669731d139193c7b0ec02a109427c3fed3c9a443f279f3147b4b2e12a2895a8",
+    "mcp-server/src/atlas_aci/tools/view_file.py": "31871a9d7594091a52790feac3a5746039cc8c939c7c3f7116e99a9f1f5e48e3",
+    "mcp-server/src/atlas_aci/tools/graph_query.py": "e3a47c96ae46e7c1f5dad05e9f73030d0d7239968e3faf2f288f32693325bee9",
+    "mcp-server/src/atlas_aci/protocol/__init__.py": "c2c58dae1889144d01a1c3ef229a60047b9e1df757c5a6ef9f79f17dd07dcae4",
+    "mcp-server/src/atlas_aci/protocol/graph.py": "9809b4409f907c23324f493a3e682c5a67ec0954584e7637fbdd1cec9855718f",
+    "mcp-server/src/atlas_aci/protocol/results.py": "461a40dbe673d52e0645a42c444af3c01d7949ff902b62e5ee9bd9b71744949f",
+    "mcp-server/src/atlas_aci/query/__init__.py": "a087ec8bad394a0a78e29b84d8b0c095ed377f492c92bdbf80484932d3481128",
+    "mcp-server/src/atlas_aci/query/indexed.py": "45c959d2e290802e35d4b3942d04f01b9ac37e3f2e6655b048f83ef945e93809",
+    "mcp-server/src/atlas_aci/query/traversal.py": "e456ad864483a7bacc67423db5c9e286cdbf646913a84a97dd9adb50174fdbad",
+    "mcp-server/src/atlas_aci/query/admission.py": "7d75a1d0641079c3dfe63f5373c6f46bd56b2bcd41682e7749863576ef4057f2"
+  },
+  "cache_sizes": {
+    "solidus": {
+      "entries": 2519,
+      "bytes": 334683424,
+      "source_snapshot_store": {
+        "packs": {
+          "files": 1,
+          "bytes": 6317973
+        },
+        "manifests": {
+          "files": 1,
+          "bytes": 1202949
+        },
+        "catalog": {
+          "files": 1,
+          "bytes": 68
+        }
+      }
+    },
+    "spree": {
+      "entries": 2358,
+      "bytes": 531906606,
+      "source_snapshot_store": {
+        "packs": {
+          "files": 1,
+          "bytes": 8566123
+        },
+        "manifests": {
+          "files": 1,
+          "bytes": 1137584
+        },
+        "catalog": {
+          "files": 1,
+          "bytes": 68
+        }
+      }
+    }
+  },
+  "isolated_lease_costs": {
+    "solidus": {
+      "repo": "solidus",
+      "generation_id": "1d9f7e38538c1027f5610e842111d8aa99fc63f4359ee5b3c4273cc5d505dda6",
+      "snapshot_id": "dbb23ed08347f677bc660c190c2fb7b49e88341e90e0e92bc7be3dd10508a412",
+      "fixture_selection": "one actual assertion source selected outside isolated intervals; no graph rows fabricated",
+      "lease_acquisition_seconds": 30.31546141699073,
+      "lease_acquisition_cpu_seconds": 11.529582,
+      "mandatory_validation_outside_traversal_deadline": true,
+      "query_including_admission_and_sdk_encoding_seconds": 0.000761916977353394,
+      "query_including_admission_and_sdk_encoding_cpu_seconds": 0.000664000000000442,
+      "work": {
+        "examined_edges": 1,
+        "edge_queries": 1,
+        "edge_rows": 1,
+        "confirmed_edge_eof": 0,
+        "interrupted_edge_steps": 0,
+        "endpoint_queries": 1,
+        "endpoint_rows": 1,
+        "hydration_queries": 0,
+        "hydration_rows": 0,
+        "sql_queries": 2,
+        "interrupted_sql_queries": 0,
+        "visited_nodes": 1
+      },
+      "outcome": "partial",
+      "stop_reason": "examined_edge_limit",
+      "actual_sql_trace": [
+        "SELECT id,payload FROM entities WHERE id='869f663fc178d1f7c76f75cf3e2a13d87b8562f79566662ab337afcbc2ed6676'",
+        "SELECT id,payload FROM assertions INDEXED BY idx_assertions_source_relation_id WHERE json_extract(payload,'$.source_entity_id')='869f663fc178d1f7c76f75cf3e2a13d87b8562f79566662ab337afcbc2ed6676' AND json_extract(payload,'$.relation')='call' AND id>'' ORDER BY id LIMIT 1"
+      ],
+      "result_bytes_dual": 4032,
+      "resource_scope": "outer job RSS is process lifetime peak, not retained bytes per request",
+      "cache_state": "new process; OS page-cache state uncontrolled after preceding index/export/account jobs",
+      "pack_fd_closed": true,
+      "sqlite_closed": true
+    },
+    "spree": {
+      "repo": "spree",
+      "generation_id": "57349ac655bb261c71df328d0a1c8288e9824fd78f398036e75869e7bedbe1c7",
+      "snapshot_id": "c688534558877785b1b917e3f413254d93613a87c854c7f4ef85ad0eeb814681",
+      "fixture_selection": "one actual assertion source selected outside isolated intervals; no graph rows fabricated",
+      "lease_acquisition_seconds": 17.867535790981492,
+      "lease_acquisition_cpu_seconds": 17.86711,
+      "mandatory_validation_outside_traversal_deadline": true,
+      "query_including_admission_and_sdk_encoding_seconds": 0.0008334580052178353,
+      "query_including_admission_and_sdk_encoding_cpu_seconds": 0.0007359999999998479,
+      "work": {
+        "examined_edges": 1,
+        "edge_queries": 1,
+        "edge_rows": 1,
+        "confirmed_edge_eof": 0,
+        "interrupted_edge_steps": 0,
+        "endpoint_queries": 1,
+        "endpoint_rows": 1,
+        "hydration_queries": 0,
+        "hydration_rows": 0,
+        "sql_queries": 2,
+        "interrupted_sql_queries": 0,
+        "visited_nodes": 1
+      },
+      "outcome": "partial",
+      "stop_reason": "examined_edge_limit",
+      "actual_sql_trace": [
+        "SELECT id,payload FROM entities WHERE id='fbaa6392c6e48df9a297d4636eb98b970a43aacefdec2fa6a166c0b29c05a697'",
+        "SELECT id,payload FROM assertions INDEXED BY idx_assertions_source_relation_id WHERE json_extract(payload,'$.source_entity_id')='fbaa6392c6e48df9a297d4636eb98b970a43aacefdec2fa6a166c0b29c05a697' AND json_extract(payload,'$.relation')='call' AND id>'' ORDER BY id LIMIT 1"
+      ],
+      "result_bytes_dual": 5148,
+      "resource_scope": "outer job RSS is process lifetime peak, not retained bytes per request",
+      "cache_state": "new process; OS page-cache state uncontrolled after preceding index/export/account jobs",
+      "pack_fd_closed": true,
+      "sqlite_closed": true
+    }
+  },
+  "prior_failed_probe_seconds_charged": 0.0,
+  "cumulative_probe_seconds_charged": 535.7625479610579,
+  "bundle_sha256": "c5bfe09753acccb2652e1ea730079e3269ed47b2ed58ee6d3ea642fc08ff1ffe"
+}

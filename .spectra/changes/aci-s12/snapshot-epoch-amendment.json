@@ -1,0 +1,17 @@
+{
+  "slice_id": "ACI-S12",
+  "criteria_changed": false,
+  "recorded_before_edit_epoch": 1792884056.896186,
+  "additional_paths": [
+    "mcp-server/src/atlas_aci/storage/snapshots.py"
+  ],
+  "observed_failure": ".spectra/evidence/aci-s12/native-storage-first.log",
+  "authorization": "Root/RAMZA narrow execution amendment: shared _validate_v1 schema epoch predicate permits exact native7/8; v2 delegates. Preserve all other context/range/pack/own-graph checks.",
+  "constraints": [
+    "type(epoch) is int",
+    "exact schema keys epoch/ddl_hash",
+    "existing hash validation retained",
+    "unknown6/9/bool/string reject",
+    "old7/new8 source and held readers/failure preserve"
+  ]
+}

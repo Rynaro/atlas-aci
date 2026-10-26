@@ -1,0 +1,35 @@
+{
+  "slice_id": "ACI-S12",
+  "criteria_sha256": "210baed6d4e4969c7e2223559580ec14a0c4ed4e277b062e891b8edc62159395",
+  "criteria_changed": false,
+  "before_edits": true,
+  "authority": "Root exact bounded scope approval after ATLAS independent seven-failure triage",
+  "additional_paths": [
+    "mcp-server/tests/slices/test_s07_contract.py",
+    "mcp-server/tests/slices/test_s08_integration.py",
+    "mcp-server/tests/slices/test_s11_docker.py"
+  ],
+  "already_declared_paths": [
+    "mcp-server/tests/test_export.py",
+    "mcp-server/tests/slices/test_s12_docker.py"
+  ],
+  "evidence": ".spectra/evidence/aci-s12/full-suite.log",
+  "observed_result": {
+    "passed": 701,
+    "failed": 7,
+    "exit_code": 1
+  },
+  "allowed_delta": {
+    "s07": "Only native epoch expectation in test_migrate_validates_current_path_even_with_cached_legacy_handle uses SCHEMA_EPOCH; all actual malformed/current/held-reader obligations intact",
+    "s08": "Only selected native DB seam in test_coherently_rehashed_foreign_binding_fails_before_exposure: authenticated lease PRAGMA database_list, reopen mode=rw/no create and assert same coherent forgery installed; all v1/v2 attacks/rejections intact",
+    "export": "Only two portable header assertions use PORTABLE_SCHEMA_EPOCH, not native SCHEMA_EPOCH; all byte/hash/shape guards retained",
+    "docker": "Only /graphs root uid/gid presentation excluded alongside existing /repo root projection; both raw inventories retained, every other root field/all descendant metadata+hash+owners strict, no permissions/walk behavior changes"
+  },
+  "before_sha256": {
+    "mcp-server/tests/slices/test_s07_contract.py": "472fd3370933eaa9e31a35f09df1423cb1fb4e73a34a2588beab963f20f07218",
+    "mcp-server/tests/slices/test_s08_integration.py": "3c0bd8be04dcd1372246a6f48a2edc9467313ca01cb6d82e0cebc3b27dad4432",
+    "mcp-server/tests/slices/test_s11_docker.py": "038bca9882fffcde268e66d433693ce3bd5e9b8db099b6175023d30b567d4c1f",
+    "mcp-server/tests/test_export.py": "9ad12860a4176ba943390504a97bd5340d1e8257ebfa0370dae4a9aa9bdb139c",
+    "mcp-server/tests/slices/test_s12_docker.py": "261fdb517ad42797e1c97a6c3e127977d7caa0df46bf2b34ddf21d9e95b3c48d"
+  }
+}

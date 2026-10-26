@@ -1,0 +1,68 @@
+{
+  "reviews": [
+    {
+      "reviewer": "ATLAS /root/s15_preflight",
+      "scope": "Pre-edit genuine native7/source/portable baseline",
+      "verdict": "APPROVE",
+      "observed": "119 source hashes equal Git69fe066; all29 archived sources equal original bytes; actual original-identity old reader retains generation/source/history and four legacy query outputs."
+    },
+    {
+      "reviewer": "ATLAS /root/s15_preflight",
+      "scope": "Native8/old7+6 storage, malformed-present selection, source binding",
+      "verdict": "APPROVE",
+      "observed": "17 independent real cases pass; dangling8/7 never fall back; directory/FIFO/symlink rejected before SQLite open; held readers and failed/successful atomic upgrade/source history preserved."
+    },
+    {
+      "reviewer": "ATLAS /root/s15_preflight",
+      "scope": "Indexed cursor and Linux primitive",
+      "verdict": "APPROVE",
+      "observed": "6 independent tests plus actual raw-row/EOF/parallel cases; actual Linux SQLite3.46.1 SEARCH plans and INTERRUPT9 ownership/cleanup; five checkpoint image hashes and real pack/SQLite FD closure."
+    },
+    {
+      "reviewer": "ATLAS /root/s15_preflight",
+      "scope": "BFS unit",
+      "verdict": "APPROVE",
+      "source": "17897bcc497748ba594e17fd6f523d31c368b847ce49c27e9f7b5f93cd0b133f",
+      "observed": "7 tests plus independent diamond/cycle/disconnected/incoming controls. This approval predates final admission; not a standalone final-source approval."
+    },
+    {
+      "reviewer": "ATLAS /root/s15_preflight",
+      "scope": "Corrected integrated operation schemas/proofs/admission/lifetimes",
+      "verdict": "APPROVE",
+      "source_checkpoint": ".spectra/evidence/aci-s12/source-final.json",
+      "observed": "34 independent admission/lifetime cases pass, including nested seed+target caps, selected endpoint consistency, rehashed source owner crosslink, controlled cancel/error SQLite+pack close, genuine7/partial history and source-free imports."
+    },
+    {
+      "reviewer": "ATLAS /root/s15_preflight",
+      "scope": "Native SDK and documentation",
+      "verdict": "APPROVE",
+      "observed": "Three independently rerun real stdio cases pass; all7 executed version-matrix cases reviewed; absent8 wording corrected; no inferred full/probe verdict."
+    },
+    {
+      "reviewer": "ATLAS /root/s15_preflight",
+      "scope": "Seven-failure narrow compatibility corrections",
+      "verdict": "APPROVE",
+      "observed": "7 independently selected host cases0; exact9-case Docker-enabled job0; genuine v1/v2 coherent forgery installation/rejection retained; only native-vs-portable expectations and measured synthetic root owners adjusted."
+    },
+    {
+      "reviewer": "ATLAS /root/s15_preflight",
+      "scope": "Final local source/unaffected gates",
+      "verdict": "APPROVE",
+      "source_checkpoint": ".spectra/evidence/aci-s12/source-final.json",
+      "observed": "Actual full708/0, nine preprobe static checks0, size5/classify6, all five native image integrations and17runtime hashes, genuine DIRECT-ARGV protected85x2 run0/tamper0. Empty-log first journal explicitly rejected. Fresh producer probe/27guards/completion remain separate pending gates."
+    },
+    {
+      "reviewer": "ATLAS /root/s15_preflight",
+      "scope": "Final current producer fresh raw proof",
+      "verdict": "APPROVE",
+      "observed": "Immutable verifier actual0/PASS both/current1ebe; all4877 original hashes and actual captured bytes/native8/current nohistory+failed SQL0, all17runtime+7producer hashes, both exactpins/profile10/Rust0; two raw graphs+20partitions equalbundlec5bfe097; fullSpree651845336B/SHA3ed093ac and four preservedcatalog streams exact. All24jobs0/no timeouts; distinct measured acquisition/query timing and sample UNRESOLVED/nohydration scope reviewed. Final wire-dump outside query timer clarified without numeric changes."
+    },
+    {
+      "reviewer": "ATLAS /root/s15_preflight",
+      "scope": "Exact selectors and timing label",
+      "verdict": "APPROVE",
+      "observed": "Exact3workflow+1selftest replacements reverse wholefiles to69fe066; all27actualcontrols/final27passed0failed and11checks0; verifier/resolver/lock immutable. Original timinghelper and rawrecord hashes verified; report scope precise. Packaging and root-conditional exact cleanup remain local actions after this scoped approval; no completion self-sign."
+    }
+  ],
+  "independent_rubric_score_not_invented": true
+}

@@ -19,6 +19,7 @@ import os
 import re
 import secrets
 import sqlite3
+import stat
 import tempfile
 from collections.abc import Mapping
 from contextlib import contextmanager
@@ -327,7 +328,9 @@ assert set(LANG_BY_EXT.values()) <= set(QUERIES) | UNSUPPORTED_LANGS, (
 #
 # Recompute via:
 #   python -c "from atlas_aci.codegraph import SCHEMA, ddl_hash; print(ddl_hash(SCHEMA))"
-SCHEMA_EPOCH = 7
+SCHEMA_EPOCH = 8
+# Exchange records carry no native indexes; preserve their established epoch.
+PORTABLE_SCHEMA_EPOCH = 7
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS symbols (
@@ -525,10 +528,12 @@ def ddl_hash(ddl: str) -> str:
 
 # Hand-maintained — see the SCHEMA_EPOCH docstring above. Do NOT replace this
 # with `ddl_hash(SCHEMA)`; that would make the pairing test a tautology.
-EXPECTED_DDL_HASH = "23aee629ec89a6bd420ed3719e2e42de9d0a456b52e1b29aa3760bc05a0eb26a"
+PREVIOUS_DDL_HASH = "23aee629ec89a6bd420ed3719e2e42de9d0a456b52e1b29aa3760bc05a0eb26a"
+EXPECTED_DDL_HASH = "0058d56574c5f1d19feb475f04dd2f4af2b93519b26dcfc78a36233664ca8731"
 SQLITE_SCHEMA_HASHES = {
     6: "2a40eed9dbb5f1f4d913a857895b1dfc8ac7daa3edf4e9e033d02084b7de1475",
     7: "9536086b279a9dc5121c3a853f8a1d5c151393db1e6a4f0104f3b8a72b6c3a79",
+    8: "87d603375b7d0a4ce26949e720e2d5aaf1e90f1b68bc590b890ebdec5e0b535b",
 }
 
 
@@ -890,7 +895,9 @@ class CodeGraph:
         self._db: sqlite3.Connection | None = None
         self._closed = False
         self._lease_generation_id: str | None = None
+        self._lease_schema_epoch: int | None = None
         self._validated_lease = False
+        self._lease_evidence_status = "unknown"
         self._acquisition_observations = None
         self._source_lease: snap.SourceLease | None = None
         self._source_builder: snap.Builder | None = None
@@ -908,10 +915,21 @@ class CodeGraph:
                 )
 
     def _read_db_path(self) -> Path:
-        if self.db_path.exists():
-            return self.db_path
-        legacy = self.atlas_dir / "graph.6.db"
-        return legacy if legacy.exists() else self.db_path
+        # Presence is not Path.exists(): dangling links must not expose older
+        # evidence, and nonregular objects must be rejected before SQLite open.
+        for candidate in (
+            self.db_path,
+            self.atlas_dir / "graph.7.db",
+            self.atlas_dir / "graph.6.db",
+        ):
+            try:
+                mode = candidate.lstat().st_mode
+            except FileNotFoundError:
+                continue
+            if not stat.S_ISREG(mode):
+                raise ValueError(f"Native graph must be a regular file: {candidate}")
+            return candidate
+        return self.db_path
 
     @property
     def db(self) -> sqlite3.Connection:
@@ -941,6 +959,7 @@ class CodeGraph:
             self._source_lease.close()
             self._source_lease = None
         self._validated_lease = False
+        self._lease_evidence_status = "unknown"
         self._acquisition_observations = None
         self._close_db()
         self._closed = True
@@ -963,11 +982,11 @@ class CodeGraph:
     def _generation_data(
         self, conn: sqlite3.Connection, *, retain_observations=False
     ) -> tuple[dict[str, Any], str] | None:
-        """Validate this opened schema/generation, including known epoch6 only."""
+        """Validate this opened native schema, including exact old6/7 adapters."""
         try:
             values = dict(conn.execute("SELECT key,value FROM manifest"))
             epoch = values.get("epoch")
-            if epoch not in {"6", "7"}:
+            if epoch not in {"6", "7", "8"}:
                 return None
             legacy = epoch == "6"
             filename = Path(conn.execute("PRAGMA database_list").fetchone()[2]).name
@@ -976,8 +995,10 @@ class CodeGraph:
             inputs = json.loads(values["generation_inputs"])
             identifier = values["generation_id"]
             expected_schema = {
-                "epoch": 6 if legacy else 7,
-                "ddl_hash": LEGACY_DDL_HASH if legacy else EXPECTED_DDL_HASH,
+                "epoch": int(epoch),
+                "ddl_hash": {"6": LEGACY_DDL_HASH, "7": PREVIOUS_DDL_HASH, "8": EXPECTED_DDL_HASH}[
+                    epoch
+                ],
             }
             if (
                 not isinstance(inputs, dict)
@@ -1214,6 +1235,7 @@ class CodeGraph:
                         "different_tool",
                     )
                 reader._lease_generation_id = data[1]
+                reader._lease_schema_epoch = data[0]["schema"]["epoch"]
                 inputs = data[0]
                 pointer = inputs.get("snapshot", {})
                 if pointer.get("state") == "available":
@@ -1228,6 +1250,19 @@ class CodeGraph:
                         for k, value in reader._snapshot_context(inputs).items()
                     ):
                         raise ValueError("Graph/source provenance contradiction")
+                # Reuse only facts already authenticated on THIS opened lease.
+                # No traversal SQL/global status materialization is hidden in work counters.
+                reader._lease_evidence_status = (
+                    "partial"
+                    if any(
+                        row.get("type") == "observation" and row["state"] == "failed"
+                        for row in (reader._acquisition_observations or [])
+                    )
+                    else "available"
+                    if inputs["format"] == "atlas-generation.v4"
+                    and reader._source_lease is not None
+                    else "unknown"
+                )
                 reader._validated_lease = True
                 reader._acquisition_observations = None
                 break
@@ -1699,7 +1734,7 @@ class CodeGraph:
     def index_is_absent(self) -> bool:
         """Diagnose actual absence only; permissions/broken links are not absence."""
         self._validate_graph_namespace()
-        for path in (self.db_path, self.atlas_dir / "graph.6.db"):
+        for path in (self.db_path, self.atlas_dir / "graph.7.db", self.atlas_dir / "graph.6.db"):
             try:
                 path.lstat()
             except FileNotFoundError:
@@ -2236,16 +2271,22 @@ class CodeGraph:
                 raise
 
     def _sweep_stale_epoch_files(self) -> list[str]:
-        """Index-path only (DIR-2): remove ``.atlas/graph.*.db`` files whose
-        epoch differs from `SCHEMA_EPOCH`. `serve` never calls this."""
+        """Index-only: sweep unknown epochs, preserving old6/7 until publication."""
         if not self.atlas_dir.exists():
             return []
         removed = []
         for f in sorted(self.atlas_dir.glob("graph.*.db")):
-            if f.name not in {self.db_path.name, "graph.6.db"}:
+            if f.name not in {self.db_path.name, "graph.7.db", "graph.6.db"}:
                 f.unlink()
                 removed.append(f.name)
         return removed
+
+    def _retire_previous_native(self) -> None:
+        """Only after successful atomic8 publication; held7 leases keep their inode."""
+        try:
+            (self.atlas_dir / "graph.7.db").unlink(missing_ok=True)
+        except OSError:
+            log.warning("previous_native_retirement_failed")
 
     def _build_atomic(self, get_parser: Any, since: str | None) -> dict[str, Any]:
         """All index modes mutate only staging, never an inode held by readers."""
@@ -2265,8 +2306,9 @@ class CodeGraph:
             self._proof_predecessor_records = []
             self._proof_predecessor_history = {}
             self._proof_predecessor_observations = {}
-            if self.db_path.exists():
-                previous = sqlite3.connect(self.db_path.as_uri() + "?mode=ro", uri=True)
+            selected = self._read_db_path()
+            if selected.exists() and selected.name != "graph.6.db":
+                previous = sqlite3.connect(selected.as_uri() + "?mode=ro", uri=True)
                 previous.row_factory = sqlite3.Row
                 try:
                     predecessor_data = self._generation_data(previous)
@@ -2294,7 +2336,7 @@ class CodeGraph:
                         }
                 finally:
                     previous.close()
-            if since is not None:
+            if since is not None and selected == self.db_path:
                 try:
                     previous = sqlite3.connect(self.db_path.as_uri() + "?mode=ro", uri=True)
                     try:
@@ -2306,7 +2348,7 @@ class CodeGraph:
                 except sqlite3.Error:
                     pass  # missing/legacy metadata means rebuild, never invented provenance
             conn.executescript(SCHEMA)
-            if not self.db_path.exists() and (self.atlas_dir / "graph.6.db").exists():
+            if selected.name == "graph.6.db" and selected.exists():
                 with sqlite3.connect(
                     (self.atlas_dir / "graph.6.db").as_uri() + "?mode=ro", uri=True
                 ) as legacy:
@@ -2329,6 +2371,7 @@ class CodeGraph:
             self._close_db()
             os.replace(tmp_path, self.db_path)
             builder.published = True
+            self._retire_previous_native()
             try:
                 snap.retain(self.atlas_dir, stats["snapshot_id"])
             except (OSError, ValueError):
@@ -5006,7 +5049,7 @@ class CodeGraph:
                 "format": "atlas-generation.v2",
                 "kind": "legacy_conversion",
                 "repository": str(self.repo),
-                "schema": {"epoch": 7, "ddl_hash": EXPECTED_DDL_HASH},
+                "schema": {"epoch": SCHEMA_EPOCH, "ddl_hash": EXPECTED_DDL_HASH},
                 "converter": self._producer_inputs(),
                 "legacy": {
                     "kind": kind,
@@ -5061,12 +5104,12 @@ class CodeGraph:
                     current.row_factory = sqlite3.Row
                     metadata = self._generation_data(current)
                     ev.require(
-                        metadata is not None and metadata[0]["schema"]["epoch"] == 7,
+                        metadata is not None and metadata[0]["schema"]["epoch"] == SCHEMA_EPOCH,
                         "existing current generation unavailable",
                     )
                 finally:
                     current.close()
-                return {"schema_epoch": 7, "already_current": True}
+                return {"schema_epoch": SCHEMA_EPOCH, "already_current": True}
             tmp = self._stage_path()
             conn = legacy = None
             try:
@@ -5086,11 +5129,12 @@ class CodeGraph:
                 legacy = None
                 self._close_db()
                 os.replace(tmp, self.db_path)
+                self._retire_previous_native()
                 try:
                     snap.retain(self.atlas_dir, None)
                 except (OSError, ValueError):
                     log.warning("source_snapshot_prune_failed")
-                return {"schema_epoch": 7, "already_current": False}
+                return {"schema_epoch": SCHEMA_EPOCH, "already_current": False}
             finally:
                 if conn is not None:
                     conn.close()
@@ -5646,7 +5690,7 @@ class CodeGraph:
                 "format": ev.OBSERVATION_FORMAT
                 if generation_format in {"atlas-generation.v3", "atlas-generation.v4"}
                 else ev.FORMAT,
-                "schema_epoch": 7,
+                "schema_epoch": PORTABLE_SCHEMA_EPOCH,
                 "content_hash": digest.hexdigest(),
                 "record_count": count,
             }
@@ -5663,7 +5707,7 @@ class CodeGraph:
             return {
                 "records_written": count,
                 "content_hash": digest.hexdigest(),
-                "schema_epoch": 7,
+                "schema_epoch": PORTABLE_SCHEMA_EPOCH,
                 "bytes_written": size + len(head),
                 **counts,
             }
@@ -5695,7 +5739,7 @@ class CodeGraph:
                 and (
                     legacy
                     or (
-                        header["schema_epoch"] == 7
+                        header["schema_epoch"] == PORTABLE_SCHEMA_EPOCH
                         and header["format"] in {ev.FORMAT, ev.OBSERVATION_FORMAT}
                     )
                 ),
@@ -5904,7 +5948,7 @@ class CodeGraph:
                             ),
                             "kind": "import",
                             "repository": str(self.repo),
-                            "schema": {"epoch": 7, "ddl_hash": EXPECTED_DDL_HASH},
+                            "schema": {"epoch": SCHEMA_EPOCH, "ddl_hash": EXPECTED_DDL_HASH},
                             "importer": self._producer_inputs(),
                             "artifact": {
                                 "sha256": hashlib.sha256(artifact).hexdigest(),
@@ -5926,13 +5970,14 @@ class CodeGraph:
                 conn = None
                 self._close_db()
                 os.replace(tmp, self.db_path)
+                self._retire_previous_native()
                 try:
                     snap.retain(self.atlas_dir, None)
                 except (OSError, ValueError):
                     log.warning("source_snapshot_prune_failed")
                 return {
                     "records_imported": len(records),
-                    "schema_epoch": 7,
+                    "schema_epoch": SCHEMA_EPOCH,
                     "content_hash": header["content_hash"],
                     **counts,
                 }

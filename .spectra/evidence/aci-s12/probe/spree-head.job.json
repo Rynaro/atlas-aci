@@ -1,0 +1,16 @@
+{
+  "name": "spree-head",
+  "command": [
+    "git",
+    "rev-parse",
+    "HEAD"
+  ],
+  "cwd": "/tmp/aci-s12-probe-inputs/spree",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 0.011969667015364394,
+  "elapsed_total": 164.54365212502307,
+  "peak_rss_bytes": 4358144,
+  "stdout": ".spectra/evidence/aci-s12/probe/spree-head.stdout.log",
+  "stderr": ".spectra/evidence/aci-s12/probe/spree-head.stderr.log"
+}

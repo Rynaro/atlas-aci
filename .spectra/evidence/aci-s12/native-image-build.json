@@ -1,0 +1,15 @@
+{
+  "command": [
+    "docker",
+    "build",
+    "-t",
+    "atlas-aci-s12-native",
+    "-f",
+    "mcp-server/Dockerfile",
+    "mcp-server"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 10.367966541001806,
+  "source_checkpoint": ".spectra/evidence/aci-s12/native-source-checkpoint.json",
+  "image_id": "sha256:451cbd9834375d96c7edcc77e171dfbf0c860a0a15feac63a748204f02f4abe3"
+}

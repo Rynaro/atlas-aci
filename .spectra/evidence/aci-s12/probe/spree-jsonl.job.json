@@ -1,0 +1,22 @@
+{
+  "command": [
+    "/tmp/aci-s01-tools/bin/uv",
+    "run",
+    "--frozen",
+    "python",
+    "-m",
+    "atlas_aci",
+    "export",
+    "--repo",
+    "/tmp/aci-s12-probe-inputs/spree",
+    "/tmp/aci-s12-spree-export.jsonl"
+  ],
+  "cwd": "/private/tmp/atlas-aci-aci-s12/mcp-server",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 91.62631750002038,
+  "peak_rss_bytes": 1959526400,
+  "prior_seconds_charged": 444.1362304610375,
+  "per_job_seconds": 600,
+  "total_seconds": 2700
+}

@@ -1,0 +1,31 @@
+{
+  "source_checkpoint": ".spectra/evidence/aci-s12/source-final.json",
+  "full": {
+    "record": ".spectra/evidence/aci-s12/full-suite-corrected.job.json",
+    "exit_code": 0,
+    "passed": 708,
+    "skipped": 0
+  },
+  "static": {
+    "record": ".spectra/evidence/aci-s12/checks-preprobe.json",
+    "count": 9,
+    "all_exit_zero": true,
+    "post_test_edits": [
+      "compatibility-lint.log",
+      "compatibility-format.log"
+    ]
+  },
+  "protected": {
+    "record": "vivi-pass2-actual-loop.json",
+    "exit_code": 0,
+    "passed_per_run": 85,
+    "runs": 2,
+    "tamper_rejections": 0,
+    "rejected_prior_empty_log": "pass2-vacuous-disposition.json"
+  },
+  "pending": [
+    "fresh final-producer corpus PASS",
+    "27 original guard controls after audited new selector"
+  ],
+  "nine_runtime_source_hashes_plus_query": 17
+}

@@ -1,0 +1,63 @@
+{
+  "plan": "aci-s12",
+  "slice_id": "ACI-S12",
+  "spec": ".spectra/plans/aci-s12.md",
+  "criteria": ".spectra/plans/aci-s12.criteria.md",
+  "state": ".spectra/plans/aci-s12.state.json",
+  "scope": [
+    "mcp-server/src/atlas_aci/query/*",
+    "mcp-server/src/atlas_aci/tools/graph_query.py",
+    "mcp-server/src/atlas_aci/enforcement.py",
+    "mcp-server/tests/slices/test_s12_*.py",
+    "mcp-server/src/atlas_aci/storage/evidence.py",
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/src/atlas_aci/protocol/graph.py",
+    "mcp-server/src/atlas_aci/protocol/results.py",
+    "mcp-server/src/atlas_aci/server.py",
+    "mcp-server/tests/test_schema_epoch.py",
+    "mcp-server/tests/test_export.py",
+    "mcp-server/tests/test_cli_export_import.py",
+    "mcp-server/tests/test_server.py",
+    "mcp-server/tests/fixtures/s12/*",
+    "atlas/docs/*",
+    ".github/workflows/harden-gate.yml",
+    "scripts/test-verify-probe-verdict.sh",
+    ".spectra/plans/aci-s12.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/changes/aci-s12/*",
+    ".spectra/evidence/aci-s12/*",
+    ".spectra/state/aci-s12.execution.json",
+    ".spectra/backlog/execution.json",
+    ".spectra/backlog/order.md"
+  ],
+  "output_digest_exclusions": [
+    ".spectra/state/aci-s12.execution.json",
+    ".spectra/evidence/aci-s12/final-reentry-before.json",
+    ".spectra/evidence/aci-s12/final-reentry-after.json",
+    ".spectra/evidence/aci-s12/final-reentry-summary.json",
+    ".spectra/evidence/aci-s12/final-resume-identity.json",
+    ".spectra/evidence/aci-s12/output-check-tests.log"
+  ],
+  "stories": [
+    {
+      "name": "Indexed bounded directional evidence navigation",
+      "timebox_engineering_days": 5,
+      "executor": "Vivi",
+      "first_checkpoint": "Capture genuine baseline7 fixture; prove native8/old7/6 source/history+portable compatibility and actual indexed SQL charged-work/interrupt behavior before broad traversal implementation."
+    }
+  ],
+  "confidence": {
+    "rubric": "confidence",
+    "total": 86.25,
+    "dims": {
+      "pattern_match": 85,
+      "requirement_clarity": 90,
+      "decomposition_stability": 85,
+      "constraint_compliance": 85
+    },
+    "verdict": "AUTO_PROCEED",
+    "at": "2026-10-24T23:07:18Z",
+    "label": "bounded-indexed-navigation-with-native-upgrade-checkpoint"
+  },
+  "status": "READY"
+}

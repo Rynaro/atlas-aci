@@ -1,0 +1,270 @@
+{
+  "slice_id": "ACI-S12",
+  "issue_url": "https://github.com/Rynaro/atlas-aci/issues/34",
+  "criteria_sha256": "210baed6d4e4969c7e2223559580ec14a0c4ed4e277b062e891b8edc62159395",
+  "frozen_spec_sha256": "f004a13c8fbc0a0cc0d69b8847d816c5bcc73fad2505f275ee76ca2d25a4c6e2",
+  "base_commit": "69fe066f573f29651fb53ad0dac65ae13836b752",
+  "output_commit": null,
+  "declared_paths": [
+    "mcp-server/src/atlas_aci/query/*",
+    "mcp-server/src/atlas_aci/tools/graph_query.py",
+    "mcp-server/src/atlas_aci/enforcement.py",
+    "mcp-server/tests/slices/test_s12_*.py",
+    "mcp-server/src/atlas_aci/storage/evidence.py",
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/src/atlas_aci/protocol/graph.py",
+    "mcp-server/src/atlas_aci/protocol/results.py",
+    "mcp-server/src/atlas_aci/server.py",
+    "mcp-server/tests/test_schema_epoch.py",
+    "mcp-server/tests/test_export.py",
+    "mcp-server/tests/test_cli_export_import.py",
+    "mcp-server/tests/test_server.py",
+    "mcp-server/tests/fixtures/s12/*",
+    "atlas/docs/*",
+    ".github/workflows/harden-gate.yml",
+    "scripts/test-verify-probe-verdict.sh",
+    ".spectra/plans/aci-s12.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/changes/aci-s12/*",
+    ".spectra/evidence/aci-s12/*",
+    ".spectra/state/aci-s12.execution.json",
+    ".spectra/backlog/execution.json",
+    ".spectra/backlog/order.md",
+    "mcp-server/src/atlas_aci/storage/snapshots.py",
+    "mcp-server/tests/slices/test_s07_contract.py",
+    "mcp-server/tests/slices/test_s08_integration.py",
+    "mcp-server/tests/slices/test_s11_docker.py"
+  ],
+  "scope_amendments": [
+    ".spectra/changes/aci-s12/scope-amendment.json",
+    ".spectra/changes/aci-s12/snapshot-epoch-amendment.json",
+    ".spectra/changes/aci-s12/compatibility-test-amendment.json"
+  ],
+  "output_digest_exclusions": [
+    ".spectra/state/aci-s12.execution.json",
+    ".spectra/evidence/aci-s12/final-reentry-before.json",
+    ".spectra/evidence/aci-s12/final-reentry-after.json",
+    ".spectra/evidence/aci-s12/final-reentry-summary.json",
+    ".spectra/evidence/aci-s12/final-resume-identity.json",
+    ".spectra/evidence/aci-s12/output-check-tests.log"
+  ],
+  "output_digests": {},
+  "status": "IN_PROGRESS",
+  "started_epoch": 1792883353.944028,
+  "engineering_budget_seconds": 144000,
+  "acceptance_results": [
+    {
+      "ac_id": "AC-S12-001",
+      "exit_code": 0,
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ],
+      "cwd": "mcp-server",
+      "evidence": ".spectra/evidence/aci-s12/full-suite-corrected.log",
+      "job_record": ".spectra/evidence/aci-s12/full-suite-corrected.job.json",
+      "test_name": "test_direction_filter",
+      "source_checkpoint": ".spectra/evidence/aci-s12/source-final.json"
+    },
+    {
+      "ac_id": "AC-S12-002",
+      "exit_code": 0,
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ],
+      "cwd": "mcp-server",
+      "evidence": ".spectra/evidence/aci-s12/full-suite-corrected.log",
+      "job_record": ".spectra/evidence/aci-s12/full-suite-corrected.job.json",
+      "test_name": "test_path_evidence",
+      "source_checkpoint": ".spectra/evidence/aci-s12/source-final.json"
+    },
+    {
+      "ac_id": "AC-S12-003",
+      "exit_code": 0,
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ],
+      "cwd": "mcp-server",
+      "evidence": ".spectra/evidence/aci-s12/full-suite-corrected.log",
+      "job_record": ".spectra/evidence/aci-s12/full-suite-corrected.job.json",
+      "test_name": "test_visit_budget",
+      "source_checkpoint": ".spectra/evidence/aci-s12/source-final.json"
+    },
+    {
+      "ac_id": "AC-S12-004",
+      "exit_code": 0,
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ],
+      "cwd": "mcp-server",
+      "evidence": ".spectra/evidence/aci-s12/full-suite-corrected.log",
+      "job_record": ".spectra/evidence/aci-s12/full-suite-corrected.job.json",
+      "test_name": "test_deadline",
+      "source_checkpoint": ".spectra/evidence/aci-s12/source-final.json"
+    },
+    {
+      "ac_id": "AC-S12-005",
+      "exit_code": 0,
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ],
+      "cwd": "mcp-server",
+      "evidence": ".spectra/evidence/aci-s12/full-suite-corrected.log",
+      "job_record": ".spectra/evidence/aci-s12/full-suite-corrected.job.json",
+      "test_name": "test_ambiguous_seed",
+      "source_checkpoint": ".spectra/evidence/aci-s12/source-final.json"
+    },
+    {
+      "ac_id": "AC-S12-006",
+      "exit_code": 0,
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ],
+      "cwd": "mcp-server",
+      "evidence": ".spectra/evidence/aci-s12/full-suite-corrected.log",
+      "job_record": ".spectra/evidence/aci-s12/full-suite-corrected.job.json",
+      "test_name": "test_traversal_replay",
+      "source_checkpoint": ".spectra/evidence/aci-s12/source-final.json"
+    },
+    {
+      "ac_id": "AC-S12-007",
+      "exit_code": 0,
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ],
+      "cwd": "mcp-server",
+      "evidence": ".spectra/evidence/aci-s12/full-suite-corrected.log",
+      "job_record": ".spectra/evidence/aci-s12/full-suite-corrected.job.json",
+      "test_name": "test_examined_edge_budget",
+      "source_checkpoint": ".spectra/evidence/aci-s12/source-final.json"
+    },
+    {
+      "ac_id": "AC-S12-008",
+      "exit_code": 0,
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ],
+      "cwd": "mcp-server",
+      "evidence": ".spectra/evidence/aci-s12/full-suite-corrected.log",
+      "job_record": ".spectra/evidence/aci-s12/full-suite-corrected.job.json",
+      "test_name": "test_serialized_byte_budget",
+      "source_checkpoint": ".spectra/evidence/aci-s12/source-final.json"
+    },
+    {
+      "ac_id": "AC-S12-009",
+      "exit_code": 0,
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ],
+      "cwd": "mcp-server",
+      "evidence": ".spectra/evidence/aci-s12/full-suite-corrected.log",
+      "job_record": ".spectra/evidence/aci-s12/full-suite-corrected.job.json",
+      "test_name": "test_depth_budget",
+      "source_checkpoint": ".spectra/evidence/aci-s12/source-final.json"
+    },
+    {
+      "ac_id": "AC-S12-RUN-01",
+      "exit_code": null
+    },
+    {
+      "ac_id": "AC-S12-RUN-02",
+      "exit_code": null
+    }
+  ],
+  "progress": {
+    "local_gates": ".spectra/evidence/aci-s12/local-gate-summary.json",
+    "full_corrected": {
+      "passed": 708,
+      "exit_code": 0
+    },
+    "protected_actual": {
+      "passed_per_run": 85,
+      "run_exit_codes": [
+        0,
+        0
+      ],
+      "tamper_rejections": 0,
+      "prior_empty_log_rejected": true
+    },
+    "current_runtime_hashes": ".spectra/evidence/aci-s12/source-final.json",
+    "fresh_probe": "Actual PASS; ATLAS independently approved measurement integrity",
+    "conservative_elapsed_wall_seconds": 4221.7574031353,
+    "engineering_cap_seconds": 144000,
+    "clock_not_reset": true
+  },
+  "verification": {
+    "independent_reviews": ".spectra/evidence/aci-s12/independent-reviews.json",
+    "full_suite": ".spectra/evidence/aci-s12/full-suite-corrected.job.json",
+    "protected_pass2": ".spectra/evidence/aci-s12/vivi-pass2-actual-loop.json",
+    "all11_checks": ".spectra/evidence/aci-s12/checks.json",
+    "fresh_probe": ".spectra/evidence/aci-s12/probe/verifier-result.json",
+    "selectors": ".spectra/evidence/aci-s12/selector-checks.json",
+    "raw_manifest": ".spectra/evidence/aci-s12/raw-manifest.json",
+    "cleanup": ".spectra/evidence/aci-s12/probe/closed-measurement-cleanup.json",
+    "memory_persistence": "Terminal prior automatic-review rejection; not retried."
+  },
+  "elapsed_wall_upper_bound_seconds": 5168.053749084473,
+  "limitations": {
+    "mandatory_validation": "Outside traversal deadline/work; measured graph leases30.315/17.868s wall, not hard total latency bounds. Sample raw-row query has no hop hydration, not positive path throughput. Final wire dump outside sampled query timer.",
+    "portable_export_bytes": 651845336,
+    "portable_export_peak_rss_bytes": 1959526400,
+    "partial_files": 86,
+    "eligible_files": 4877,
+    "rust_files_in_corpora": 0,
+    "default_language_count": 10,
+    "budget_record": ".spectra/evidence/aci-s12/probe/budget-final.json"
+  },
+  "resumed_active_epoch": 1792983798.437242,
+  "effort_accounting": {
+    "prior_conservative_active_upper_bound_seconds": 5768.053749084473,
+    "prior_extra_allowance_seconds": 600,
+    "prior_extra_allowance_reason": "Conservative allowance for final pre-pause metadata work after last saved elapsed checkpoint; not a claim of exact time spent.",
+    "idle_wait_not_charged": true,
+    "idle_wait_reason": "Usage limit followed by explicit user continuation on26Oct; no product work during wait.",
+    "original_started_epoch_preserved": 1792883353.944028
+  }
+}

@@ -5,6 +5,7 @@ import hashlib
 import json
 import os
 import sqlite3
+from pathlib import Path
 
 import pytest
 from test_s08_contract import NEW, OLD, make
@@ -84,6 +85,8 @@ def test_coherently_rehashed_foreign_binding_fails_before_exposure(tmp_path, mut
         _repo, g = make(tmp_path)
     with g.reader_lease() as reader:
         value = json.loads(json.dumps(reader._source_lease.manifest))
+        selected_db = Path(reader.db.execute("PRAGMA database_list").fetchone()[2])
+        assert selected_db.is_file()
     if mutation == "missing_current":
         value["current"] = (
             [r for r in value["current"] if r["path"] != "b.py"] if version == "v1" else []
@@ -101,7 +104,7 @@ def test_coherently_rehashed_foreign_binding_fails_before_exposure(tmp_path, mut
     raw = ev.canonical(value).encode()
     identifier = hashlib.sha256(raw).hexdigest()
     (g.atlas_dir / "source-snapshots" / f"manifest.{identifier}.json").write_bytes(raw)
-    with sqlite3.connect(g.db_path) as conn:
+    with sqlite3.connect(selected_db.as_uri() + "?mode=rw", uri=True) as conn:
         inputs = json.loads(
             conn.execute("SELECT value FROM manifest WHERE key='generation_inputs'").fetchone()[0]
         )
@@ -112,6 +115,19 @@ def test_coherently_rehashed_foreign_binding_fails_before_exposure(tmp_path, mut
         conn.execute(
             "UPDATE manifest SET value=? WHERE key='generation_id'", (snap.digest(inputs),)
         )
+    with sqlite3.connect(selected_db.as_uri() + "?mode=ro", uri=True) as installed:
+        assert (
+            json.loads(
+                installed.execute(
+                    "SELECT value FROM manifest WHERE key='generation_inputs'"
+                ).fetchone()[0]
+            )
+            == inputs
+        )
+        assert installed.execute("SELECT value FROM manifest WHERE key='generation_id'").fetchone()[
+            0
+        ] == snap.digest(inputs)
+    assert (g.atlas_dir / "source-snapshots" / f"manifest.{identifier}.json").read_bytes() == raw
     with pytest.raises(ToolError, match="closure"), g.reader_lease():
         pytest.fail("incoherent snapshot exposed")
     g.close()

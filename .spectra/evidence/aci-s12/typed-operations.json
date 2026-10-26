@@ -1,0 +1,811 @@
+{
+  "source_checkpoint": ".spectra/evidence/aci-s12/source-final.json",
+  "results": [
+    {
+      "arguments": {
+        "schema_version": "atlas.graph.v1",
+        "deadline_ms": 2000,
+        "op": "neighborhood",
+        "seed": {
+          "name": "A"
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"bounds\":{\"element_limit\":200,\"lists\":{},\"truncated\":false},\"data\":{\"confidence\":[\"EXTRACTED\",\"INFERRED\"],\"direction\":\"outgoing\",\"edges\":[],\"effective_limits\":{\"deadline_ms\":2000,\"max_depth\":3,\"max_examined_edges\":1000,\"max_visited_nodes\":100},\"frontier\":{\"commitment\":\"ac9cd7b953baff985cf3e25b37eaad3425e4a63e455e4edc92ae0c3992d947c7\",\"depth\":0,\"queued_nodes\":0},\"nodes\":[],\"outcome\":\"disambiguation\",\"relations\":[\"call\"],\"scope\":\"current_published_evidence\",\"seed\":{\"candidates\":[{\"id\":\"bb63874a0026227d287a8ec9b6a96172ff48e082791ddeae7dbe4ed1c831747c\",\"identity_basis\":\"parsed\",\"kind\":\"class\",\"language\":\"ruby\",\"name\":\"A\",\"ordinal\":0,\"owners\":[],\"path\":\"types.rb\",\"projection\":\"entity_identity\"},{\"id\":\"d683ad4587035ab55396ebc73fd5e6e78f7dead818a9aac9cb79f896d0b4c2a9\",\"identity_basis\":\"parsed\",\"kind\":\"function\",\"language\":\"python\",\"name\":\"A\",\"ordinal\":0,\"owners\":[{\"kind\":\"module\",\"name\":null,\"ordinal\":0}],\"path\":\"a.py\",\"projection\":\"entity_identity\"}],\"candidates_complete\":false,\"entity_id\":null,\"selector_kind\":\"name\",\"state\":\"ambiguous\"},\"stop_reason\":null,\"unknown_relations_traversed\":false,\"work\":{\"confirmed_edge_eof\":0,\"edge_queries\":0,\"edge_rows\":0,\"endpoint_queries\":2,\"endpoint_rows\":2,\"examined_edges\":0,\"hydration_queries\":0,\"hydration_rows\":0,\"interrupted_edge_steps\":0,\"interrupted_sql_queries\":0,\"sql_queries\":2,\"visited_nodes\":0}},\"error\":null,\"evidence_status\":\"available\",\"generation_id\":\"8c4ddb3ce0ed0044e268f2c73d4f155abc75514ee939400241ccef7d0c1f0b2a\",\"operation\":\"neighborhood\",\"schema_version\":\"atlas.graph.v1\",\"snapshot_id\":\"731c8be540ecc83c8f57674560aff6695902cd751aa96393e7a3868b27a99621\",\"status\":\"ok\"}"
+          }
+        ],
+        "structuredContent": {
+          "schema_version": "atlas.graph.v1",
+          "operation": "neighborhood",
+          "status": "ok",
+          "generation_id": "8c4ddb3ce0ed0044e268f2c73d4f155abc75514ee939400241ccef7d0c1f0b2a",
+          "snapshot_id": "731c8be540ecc83c8f57674560aff6695902cd751aa96393e7a3868b27a99621",
+          "evidence_status": "available",
+          "data": {
+            "scope": "current_published_evidence",
+            "outcome": "disambiguation",
+            "stop_reason": null,
+            "effective_limits": {
+              "max_visited_nodes": 100,
+              "max_examined_edges": 1000,
+              "max_depth": 3,
+              "deadline_ms": 2000
+            },
+            "seed": {
+              "selector_kind": "name",
+              "state": "ambiguous",
+              "candidates": [
+                {
+                  "projection": "entity_identity",
+                  "id": "bb63874a0026227d287a8ec9b6a96172ff48e082791ddeae7dbe4ed1c831747c",
+                  "name": "A",
+                  "kind": "class",
+                  "language": "ruby",
+                  "path": "types.rb",
+                  "owners": [],
+                  "identity_basis": "parsed",
+                  "ordinal": 0
+                },
+                {
+                  "projection": "entity_identity",
+                  "id": "d683ad4587035ab55396ebc73fd5e6e78f7dead818a9aac9cb79f896d0b4c2a9",
+                  "name": "A",
+                  "kind": "function",
+                  "language": "python",
+                  "path": "a.py",
+                  "owners": [
+                    {
+                      "kind": "module",
+                      "name": null,
+                      "ordinal": 0
+                    }
+                  ],
+                  "identity_basis": "parsed",
+                  "ordinal": 0
+                }
+              ],
+              "candidates_complete": false,
+              "entity_id": null
+            },
+            "direction": "outgoing",
+            "relations": [
+              "call"
+            ],
+            "confidence": [
+              "EXTRACTED",
+              "INFERRED"
+            ],
+            "work": {
+              "examined_edges": 0,
+              "edge_queries": 0,
+              "edge_rows": 0,
+              "confirmed_edge_eof": 0,
+              "interrupted_edge_steps": 0,
+              "endpoint_queries": 2,
+              "endpoint_rows": 2,
+              "hydration_queries": 0,
+              "hydration_rows": 0,
+              "sql_queries": 2,
+              "interrupted_sql_queries": 0,
+              "visited_nodes": 0
+            },
+            "frontier": {
+              "commitment": "ac9cd7b953baff985cf3e25b37eaad3425e4a63e455e4edc92ae0c3992d947c7",
+              "queued_nodes": 0,
+              "depth": 0
+            },
+            "unknown_relations_traversed": false,
+            "nodes": [],
+            "edges": []
+          },
+          "error": null,
+          "bounds": {
+            "element_limit": 200,
+            "truncated": false,
+            "lists": {}
+          }
+        },
+        "isError": false
+      }
+    },
+    {
+      "arguments": {
+        "schema_version": "atlas.graph.v1",
+        "deadline_ms": 2000,
+        "op": "neighborhood",
+        "seed": {
+          "entity_id": "d683ad4587035ab55396ebc73fd5e6e78f7dead818a9aac9cb79f896d0b4c2a9"
+        },
+        "max_depth": 1
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"bounds\":{\"element_limit\":200,\"lists\":{},\"truncated\":true},\"data\":{\"confidence\":[\"EXTRACTED\",\"INFERRED\"],\"direction\":\"outgoing\",\"edges\":[{\"assertion\":{\"candidate_ids\":[],\"evidence_id\":\"8de120cdff2e1bfcb5ba30db0d828b7fb6a31dca5e7945c57beb3e7c74ea225a\",\"id\":\"1e9dd1b01f38ae6bb48ede01c9d060ac3e3f05001bced16baf8c864e8a7c7137\",\"raw_target\":\"B\",\"relation\":\"call\",\"resolution\":\"INFERRED\",\"source_entity_id\":\"d683ad4587035ab55396ebc73fd5e6e78f7dead818a9aac9cb79f896d0b4c2a9\",\"target_entity_id\":\"2c44c8ed118e7ed3aade9b882450ac188921cc512a9ae7baea2edf696299773e\",\"type\":\"assertion\",\"unresolved_reason\":null},\"evidence\":{\"end_byte\":11,\"id\":\"8de120cdff2e1bfcb5ba30db0d828b7fb6a31dca5e7945c57beb3e7c74ea225a\",\"occurrence_id\":\"f1c08a0d34edadaa71597fcc692e01c80ee3f07cc56378880ad2d24d53998247\",\"producer_id\":\"fc554df98489883f0afff1b6b2a22194ec9b1764872116683b823866c98827c2\",\"provenance_state\":\"source\",\"source_sha256\":\"04d4ebc7c2f2180bc1da82bcd1acc0b3aa9dcdceb4d073b0aced438281e5161a\",\"source_size\":34,\"start_byte\":10,\"type\":\"evidence\"},\"occurrence\":{\"column\":1,\"end_byte\":11,\"end_column\":2,\"end_line\":2,\"entity_id\":\"d683ad4587035ab55396ebc73fd5e6e78f7dead818a9aac9cb79f896d0b4c2a9\",\"id\":\"f1c08a0d34edadaa71597fcc692e01c80ee3f07cc56378880ad2d24d53998247\",\"kind\":\"reference\",\"language\":\"python\",\"line\":2,\"path\":\"a.py\",\"provenance_state\":\"source\",\"role\":\"reference:call\",\"source_sha256\":\"04d4ebc7c2f2180bc1da82bcd1acc0b3aa9dcdceb4d073b0aced438281e5161a\",\"source_size\":34,\"start_byte\":10,\"type\":\"occurrence\"},\"producer\":{\"fingerprint\":{\"codegraph_sha256\":\"4df28b1fcaeb7c5d0051f1c5412e0d06a38ad3d10652d18a82d7b7d16c6bcfe2\",\"modules\":{\"extractors/rust.py\":\"28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a\",\"indexing/extraction_cache.py\":\"08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2\",\"providers/python_imports.py\":\"de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014\",\"resolvers/dependencies.py\":\"0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6\",\"storage/evidence.py\":\"3f14fa87ed9b060cc1d09e7e57cb002275c99b501829412a202d225870f3eb92\",\"storage/snapshots.py\":\"b8aecf567335dda0f2d0162c2eb6a334a4efae7d785755a0d8e862b52d96396f\"},\"packages\":{\"tree-sitter\":\"0.25.2\",\"tree-sitter-language-pack\":\"1.6.0\"},\"queries_sha256\":\"a222468d9bb15cbf5cfccc368bd65ca69de7ed22e91ae85e628228f2f227b944\"},\"id\":\"fc554df98489883f0afff1b6b2a22194ec9b1764872116683b823866c98827c2\",\"identity_basis\":\"parsed\",\"type\":\"producer\"},\"projection\":\"canonical_assertion_proof\",\"source_availability\":\"available\",\"traversal_direction\":\"outgoing\"},{\"assertion\":{\"candidate_ids\":[],\"evidence_id\":\"60e202b260580b68215836d3d5b337fa22b5bca535126d89c63f23f8fea202fd\",\"id\":\"210519d71b0ec224da29b48d7ecdc670dc50d6aeef9c9d0f2759721435c031e3\",\"raw_target\":\"B\",\"relation\":\"call\",\"resolution\":\"INFERRED\",\"source_entity_id\":\"d683ad4587035ab55396ebc73fd5e6e78f7dead818a9aac9cb79f896d0b4c2a9\",\"target_entity_id\":\"2c44c8ed118e7ed3aade9b882450ac188921cc512a9ae7baea2edf696299773e\",\"type\":\"assertion\",\"unresolved_reason\":null},\"evidence\":{\"end_byte\":16,\"id\":\"60e202b260580b68215836d3d5b337fa22b5bca535126d89c63f23f8fea202fd\",\"occurrence_id\":\"72daac57d7dc277c878762ab9cee6577e997d92d6ddc04923e42880b9db42722\",\"producer_id\":\"fc554df98489883f0afff1b6b2a22194ec9b1764872116683b823866c98827c2\",\"provenance_state\":\"source\",\"source_sha256\":\"04d4ebc7c2f2180bc1da82bcd1acc0b3aa9dcdceb4d073b0aced438281e5161a\",\"source_size\":34,\"start_byte\":15,\"type\":\"evidence\"},\"occurrence\":{\"column\":6,\"end_byte\":16,\"end_column\":7,\"end_line\":2,\"entity_id\":\"d683ad4587035ab55396ebc73fd5e6e78f7dead818a9aac9cb79f896d0b4c2a9\",\"id\":\"72daac57d7dc277c878762ab9cee6577e997d92d6ddc04923e42880b9db42722\",\"kind\":\"reference\",\"language\":\"python\",\"line\":2,\"path\":\"a.py\",\"provenance_state\":\"source\",\"role\":\"reference:call\",\"source_sha256\":\"04d4ebc7c2f2180bc1da82bcd1acc0b3aa9dcdceb4d073b0aced438281e5161a\",\"source_size\":34,\"start_byte\":15,\"type\":\"occurrence\"},\"producer\":{\"fingerprint\":{\"codegraph_sha256\":\"4df28b1fcaeb7c5d0051f1c5412e0d06a38ad3d10652d18a82d7b7d16c6bcfe2\",\"modules\":{\"extractors/rust.py\":\"28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a\",\"indexing/extraction_cache.py\":\"08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2\",\"providers/python_imports.py\":\"de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014\",\"resolvers/dependencies.py\":\"0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6\",\"storage/evidence.py\":\"3f14fa87ed9b060cc1d09e7e57cb002275c99b501829412a202d225870f3eb92\",\"storage/snapshots.py\":\"b8aecf567335dda0f2d0162c2eb6a334a4efae7d785755a0d8e862b52d96396f\"},\"packages\":{\"tree-sitter\":\"0.25.2\",\"tree-sitter-language-pack\":\"1.6.0\"},\"queries_sha256\":\"a222468d9bb15cbf5cfccc368bd65ca69de7ed22e91ae85e628228f2f227b944\"},\"id\":\"fc554df98489883f0afff1b6b2a22194ec9b1764872116683b823866c98827c2\",\"identity_basis\":\"parsed\",\"type\":\"producer\"},\"projection\":\"canonical_assertion_proof\",\"source_availability\":\"available\",\"traversal_direction\":\"outgoing\"}],\"effective_limits\":{\"deadline_ms\":2000,\"max_depth\":1,\"max_examined_edges\":1000,\"max_visited_nodes\":100},\"frontier\":{\"commitment\":\"2eab0e9b422eca39221461a32f68617b16938905bd412c8f936dbecf69bf5fda\",\"depth\":1,\"queued_nodes\":1},\"nodes\":[{\"id\":\"d683ad4587035ab55396ebc73fd5e6e78f7dead818a9aac9cb79f896d0b4c2a9\",\"identity_basis\":\"parsed\",\"kind\":\"function\",\"language\":\"python\",\"name\":\"A\",\"ordinal\":0,\"owners\":[{\"kind\":\"module\",\"name\":null,\"ordinal\":0}],\"path\":\"a.py\",\"projection\":\"entity_identity\"},{\"id\":\"2c44c8ed118e7ed3aade9b882450ac188921cc512a9ae7baea2edf696299773e\",\"identity_basis\":\"parsed\",\"kind\":\"function\",\"language\":\"python\",\"name\":\"B\",\"ordinal\":0,\"owners\":[{\"kind\":\"module\",\"name\":null,\"ordinal\":0}],\"path\":\"a.py\",\"projection\":\"entity_identity\"}],\"outcome\":\"partial\",\"relations\":[\"call\"],\"scope\":\"current_published_evidence\",\"seed\":{\"candidates\":[{\"id\":\"d683ad4587035ab55396ebc73fd5e6e78f7dead818a9aac9cb79f896d0b4c2a9\",\"identity_basis\":\"parsed\",\"kind\":\"function\",\"language\":\"python\",\"name\":\"A\",\"ordinal\":0,\"owners\":[{\"kind\":\"module\",\"name\":null,\"ordinal\":0}],\"path\":\"a.py\",\"projection\":\"entity_identity\"}],\"candidates_complete\":true,\"entity_id\":\"d683ad4587035ab55396ebc73fd5e6e78f7dead818a9aac9cb79f896d0b4c2a9\",\"selector_kind\":\"entity_id\",\"state\":\"unique\"},\"stop_reason\":\"depth_limit\",\"unknown_relations_traversed\":false,\"work\":{\"confirmed_edge_eof\":1,\"edge_queries\":3,\"edge_rows\":2,\"endpoint_queries\":1,\"endpoint_rows\":1,\"examined_edges\":2,\"hydration_queries\":7,\"hydration_rows\":7,\"interrupted_edge_steps\":0,\"interrupted_sql_queries\":0,\"sql_queries\":11,\"visited_nodes\":2}},\"error\":null,\"evidence_status\":\"available\",\"generation_id\":\"8c4ddb3ce0ed0044e268f2c73d4f155abc75514ee939400241ccef7d0c1f0b2a\",\"operation\":\"neighborhood\",\"schema_version\":\"atlas.graph.v1\",\"snapshot_id\":\"731c8be540ecc83c8f57674560aff6695902cd751aa96393e7a3868b27a99621\",\"status\":\"ok\"}"
+          }
+        ],
+        "structuredContent": {
+          "schema_version": "atlas.graph.v1",
+          "operation": "neighborhood",
+          "status": "ok",
+          "generation_id": "8c4ddb3ce0ed0044e268f2c73d4f155abc75514ee939400241ccef7d0c1f0b2a",
+          "snapshot_id": "731c8be540ecc83c8f57674560aff6695902cd751aa96393e7a3868b27a99621",
+          "evidence_status": "available",
+          "data": {
+            "scope": "current_published_evidence",
+            "outcome": "partial",
+            "stop_reason": "depth_limit",
+            "effective_limits": {
+              "max_visited_nodes": 100,
+              "max_examined_edges": 1000,
+              "max_depth": 1,
+              "deadline_ms": 2000
+            },
+            "seed": {
+              "selector_kind": "entity_id",
+              "state": "unique",
+              "candidates": [
+                {
+                  "projection": "entity_identity",
+                  "id": "d683ad4587035ab55396ebc73fd5e6e78f7dead818a9aac9cb79f896d0b4c2a9",
+                  "name": "A",
+                  "kind": "function",
+                  "language": "python",
+                  "path": "a.py",
+                  "owners": [
+                    {
+                      "kind": "module",
+                      "name": null,
+                      "ordinal": 0
+                    }
+                  ],
+                  "identity_basis": "parsed",
+                  "ordinal": 0
+                }
+              ],
+              "candidates_complete": true,
+              "entity_id": "d683ad4587035ab55396ebc73fd5e6e78f7dead818a9aac9cb79f896d0b4c2a9"
+            },
+            "direction": "outgoing",
+            "relations": [
+              "call"
+            ],
+            "confidence": [
+              "EXTRACTED",
+              "INFERRED"
+            ],
+            "work": {
+              "examined_edges": 2,
+              "edge_queries": 3,
+              "edge_rows": 2,
+              "confirmed_edge_eof": 1,
+              "interrupted_edge_steps": 0,
+              "endpoint_queries": 1,
+              "endpoint_rows": 1,
+              "hydration_queries": 7,
+              "hydration_rows": 7,
+              "sql_queries": 11,
+              "interrupted_sql_queries": 0,
+              "visited_nodes": 2
+            },
+            "frontier": {
+              "commitment": "2eab0e9b422eca39221461a32f68617b16938905bd412c8f936dbecf69bf5fda",
+              "queued_nodes": 1,
+              "depth": 1
+            },
+            "unknown_relations_traversed": false,
+            "nodes": [
+              {
+                "projection": "entity_identity",
+                "id": "d683ad4587035ab55396ebc73fd5e6e78f7dead818a9aac9cb79f896d0b4c2a9",
+                "name": "A",
+                "kind": "function",
+                "language": "python",
+                "path": "a.py",
+                "owners": [
+                  {
+                    "kind": "module",
+                    "name": null,
+                    "ordinal": 0
+                  }
+                ],
+                "identity_basis": "parsed",
+                "ordinal": 0
+              },
+              {
+                "projection": "entity_identity",
+                "id": "2c44c8ed118e7ed3aade9b882450ac188921cc512a9ae7baea2edf696299773e",
+                "name": "B",
+                "kind": "function",
+                "language": "python",
+                "path": "a.py",
+                "owners": [
+                  {
+                    "kind": "module",
+                    "name": null,
+                    "ordinal": 0
+                  }
+                ],
+                "identity_basis": "parsed",
+                "ordinal": 0
+              }
+            ],
+            "edges": [
+              {
+                "projection": "canonical_assertion_proof",
+                "traversal_direction": "outgoing",
+                "assertion": {
+                  "candidate_ids": [],
+                  "evidence_id": "8de120cdff2e1bfcb5ba30db0d828b7fb6a31dca5e7945c57beb3e7c74ea225a",
+                  "id": "1e9dd1b01f38ae6bb48ede01c9d060ac3e3f05001bced16baf8c864e8a7c7137",
+                  "raw_target": "B",
+                  "relation": "call",
+                  "resolution": "INFERRED",
+                  "source_entity_id": "d683ad4587035ab55396ebc73fd5e6e78f7dead818a9aac9cb79f896d0b4c2a9",
+                  "target_entity_id": "2c44c8ed118e7ed3aade9b882450ac188921cc512a9ae7baea2edf696299773e",
+                  "type": "assertion",
+                  "unresolved_reason": null
+                },
+                "evidence": {
+                  "end_byte": 11,
+                  "id": "8de120cdff2e1bfcb5ba30db0d828b7fb6a31dca5e7945c57beb3e7c74ea225a",
+                  "occurrence_id": "f1c08a0d34edadaa71597fcc692e01c80ee3f07cc56378880ad2d24d53998247",
+                  "producer_id": "fc554df98489883f0afff1b6b2a22194ec9b1764872116683b823866c98827c2",
+                  "provenance_state": "source",
+                  "source_sha256": "04d4ebc7c2f2180bc1da82bcd1acc0b3aa9dcdceb4d073b0aced438281e5161a",
+                  "source_size": 34,
+                  "start_byte": 10,
+                  "type": "evidence"
+                },
+                "occurrence": {
+                  "column": 1,
+                  "end_byte": 11,
+                  "end_column": 2,
+                  "end_line": 2,
+                  "entity_id": "d683ad4587035ab55396ebc73fd5e6e78f7dead818a9aac9cb79f896d0b4c2a9",
+                  "id": "f1c08a0d34edadaa71597fcc692e01c80ee3f07cc56378880ad2d24d53998247",
+                  "kind": "reference",
+                  "language": "python",
+                  "line": 2,
+                  "path": "a.py",
+                  "provenance_state": "source",
+                  "role": "reference:call",
+                  "source_sha256": "04d4ebc7c2f2180bc1da82bcd1acc0b3aa9dcdceb4d073b0aced438281e5161a",
+                  "source_size": 34,
+                  "start_byte": 10,
+                  "type": "occurrence"
+                },
+                "producer": {
+                  "fingerprint": {
+                    "codegraph_sha256": "4df28b1fcaeb7c5d0051f1c5412e0d06a38ad3d10652d18a82d7b7d16c6bcfe2",
+                    "modules": {
+                      "extractors/rust.py": "28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a",
+                      "indexing/extraction_cache.py": "08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2",
+                      "providers/python_imports.py": "de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014",
+                      "resolvers/dependencies.py": "0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6",
+                      "storage/evidence.py": "3f14fa87ed9b060cc1d09e7e57cb002275c99b501829412a202d225870f3eb92",
+                      "storage/snapshots.py": "b8aecf567335dda0f2d0162c2eb6a334a4efae7d785755a0d8e862b52d96396f"
+                    },
+                    "packages": {
+                      "tree-sitter": "0.25.2",
+                      "tree-sitter-language-pack": "1.6.0"
+                    },
+                    "queries_sha256": "a222468d9bb15cbf5cfccc368bd65ca69de7ed22e91ae85e628228f2f227b944"
+                  },
+                  "id": "fc554df98489883f0afff1b6b2a22194ec9b1764872116683b823866c98827c2",
+                  "identity_basis": "parsed",
+                  "type": "producer"
+                },
+                "source_availability": "available"
+              },
+              {
+                "projection": "canonical_assertion_proof",
+                "traversal_direction": "outgoing",
+                "assertion": {
+                  "candidate_ids": [],
+                  "evidence_id": "60e202b260580b68215836d3d5b337fa22b5bca535126d89c63f23f8fea202fd",
+                  "id": "210519d71b0ec224da29b48d7ecdc670dc50d6aeef9c9d0f2759721435c031e3",
+                  "raw_target": "B",
+                  "relation": "call",
+                  "resolution": "INFERRED",
+                  "source_entity_id": "d683ad4587035ab55396ebc73fd5e6e78f7dead818a9aac9cb79f896d0b4c2a9",
+                  "target_entity_id": "2c44c8ed118e7ed3aade9b882450ac188921cc512a9ae7baea2edf696299773e",
+                  "type": "assertion",
+                  "unresolved_reason": null
+                },
+                "evidence": {
+                  "end_byte": 16,
+                  "id": "60e202b260580b68215836d3d5b337fa22b5bca535126d89c63f23f8fea202fd",
+                  "occurrence_id": "72daac57d7dc277c878762ab9cee6577e997d92d6ddc04923e42880b9db42722",
+                  "producer_id": "fc554df98489883f0afff1b6b2a22194ec9b1764872116683b823866c98827c2",
+                  "provenance_state": "source",
+                  "source_sha256": "04d4ebc7c2f2180bc1da82bcd1acc0b3aa9dcdceb4d073b0aced438281e5161a",
+                  "source_size": 34,
+                  "start_byte": 15,
+                  "type": "evidence"
+                },
+                "occurrence": {
+                  "column": 6,
+                  "end_byte": 16,
+                  "end_column": 7,
+                  "end_line": 2,
+                  "entity_id": "d683ad4587035ab55396ebc73fd5e6e78f7dead818a9aac9cb79f896d0b4c2a9",
+                  "id": "72daac57d7dc277c878762ab9cee6577e997d92d6ddc04923e42880b9db42722",
+                  "kind": "reference",
+                  "language": "python",
+                  "line": 2,
+                  "path": "a.py",
+                  "provenance_state": "source",
+                  "role": "reference:call",
+                  "source_sha256": "04d4ebc7c2f2180bc1da82bcd1acc0b3aa9dcdceb4d073b0aced438281e5161a",
+                  "source_size": 34,
+                  "start_byte": 15,
+                  "type": "occurrence"
+                },
+                "producer": {
+                  "fingerprint": {
+                    "codegraph_sha256": "4df28b1fcaeb7c5d0051f1c5412e0d06a38ad3d10652d18a82d7b7d16c6bcfe2",
+                    "modules": {
+                      "extractors/rust.py": "28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a",
+                      "indexing/extraction_cache.py": "08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2",
+                      "providers/python_imports.py": "de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014",
+                      "resolvers/dependencies.py": "0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6",
+                      "storage/evidence.py": "3f14fa87ed9b060cc1d09e7e57cb002275c99b501829412a202d225870f3eb92",
+                      "storage/snapshots.py": "b8aecf567335dda0f2d0162c2eb6a334a4efae7d785755a0d8e862b52d96396f"
+                    },
+                    "packages": {
+                      "tree-sitter": "0.25.2",
+                      "tree-sitter-language-pack": "1.6.0"
+                    },
+                    "queries_sha256": "a222468d9bb15cbf5cfccc368bd65ca69de7ed22e91ae85e628228f2f227b944"
+                  },
+                  "id": "fc554df98489883f0afff1b6b2a22194ec9b1764872116683b823866c98827c2",
+                  "identity_basis": "parsed",
+                  "type": "producer"
+                },
+                "source_availability": "available"
+              }
+            ]
+          },
+          "error": null,
+          "bounds": {
+            "element_limit": 200,
+            "truncated": true,
+            "lists": {}
+          }
+        },
+        "isError": false
+      }
+    },
+    {
+      "arguments": {
+        "schema_version": "atlas.graph.v1",
+        "deadline_ms": 2000,
+        "op": "path",
+        "seed": {
+          "entity_id": "e475e838e00c5f14816dab1b2d755797b95eae97b0c34dac3399c80b92a381ab"
+        },
+        "target": {
+          "entity_id": "bb63874a0026227d287a8ec9b6a96172ff48e082791ddeae7dbe4ed1c831747c"
+        },
+        "relations": [
+          "superclass"
+        ],
+        "confidence": [
+          "EXTRACTED"
+        ]
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"bounds\":{\"element_limit\":200,\"lists\":{},\"truncated\":false},\"data\":{\"confidence\":[\"EXTRACTED\"],\"direction\":\"outgoing\",\"effective_limits\":{\"deadline_ms\":2000,\"max_depth\":3,\"max_examined_edges\":1000,\"max_visited_nodes\":100},\"frontier\":{\"commitment\":\"cb8544cc00767b7e17c60524a6f470f9d6fa6ffb61e664a0f74021d6c85dd413\",\"depth\":1,\"queued_nodes\":2},\"outcome\":\"complete\",\"path\":{\"hops\":[{\"assertion\":{\"candidate_ids\":[],\"evidence_id\":\"dfc504dca3fcffee18c08bf9ad7ac7dfba9ad43dd3bcd3c27dfe0d4f38edb8cc\",\"id\":\"c3a4f23253dc33b5f4d3f001e3d7e94ed2274d025183689e2d594b7ef1d4d766\",\"raw_target\":\"A\",\"relation\":\"superclass\",\"resolution\":\"EXTRACTED\",\"source_entity_id\":\"e475e838e00c5f14816dab1b2d755797b95eae97b0c34dac3399c80b92a381ab\",\"target_entity_id\":\"bb63874a0026227d287a8ec9b6a96172ff48e082791ddeae7dbe4ed1c831747c\",\"type\":\"assertion\",\"unresolved_reason\":null},\"evidence\":{\"end_byte\":27,\"id\":\"dfc504dca3fcffee18c08bf9ad7ac7dfba9ad43dd3bcd3c27dfe0d4f38edb8cc\",\"occurrence_id\":\"4d24c65536183b1a7e5d058560b71739794ab3653f9619ac7b2697dd2c03413d\",\"producer_id\":\"fc554df98489883f0afff1b6b2a22194ec9b1764872116683b823866c98827c2\",\"provenance_state\":\"source\",\"source_sha256\":\"5bacf87b17ed2e59b2d71a6904359e5d9306cb7652ce4d0fb27153c9464bcdbe\",\"source_size\":32,\"start_byte\":26,\"type\":\"evidence\"},\"occurrence\":{\"column\":14,\"end_byte\":27,\"end_column\":15,\"end_line\":3,\"entity_id\":\"e475e838e00c5f14816dab1b2d755797b95eae97b0c34dac3399c80b92a381ab\",\"id\":\"4d24c65536183b1a7e5d058560b71739794ab3653f9619ac7b2697dd2c03413d\",\"kind\":\"reference\",\"language\":\"ruby\",\"line\":3,\"path\":\"types.rb\",\"provenance_state\":\"source\",\"role\":\"reference:superclass\",\"source_sha256\":\"5bacf87b17ed2e59b2d71a6904359e5d9306cb7652ce4d0fb27153c9464bcdbe\",\"source_size\":32,\"start_byte\":26,\"type\":\"occurrence\"},\"producer\":{\"fingerprint\":{\"codegraph_sha256\":\"4df28b1fcaeb7c5d0051f1c5412e0d06a38ad3d10652d18a82d7b7d16c6bcfe2\",\"modules\":{\"extractors/rust.py\":\"28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a\",\"indexing/extraction_cache.py\":\"08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2\",\"providers/python_imports.py\":\"de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014\",\"resolvers/dependencies.py\":\"0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6\",\"storage/evidence.py\":\"3f14fa87ed9b060cc1d09e7e57cb002275c99b501829412a202d225870f3eb92\",\"storage/snapshots.py\":\"b8aecf567335dda0f2d0162c2eb6a334a4efae7d785755a0d8e862b52d96396f\"},\"packages\":{\"tree-sitter\":\"0.25.2\",\"tree-sitter-language-pack\":\"1.6.0\"},\"queries_sha256\":\"a222468d9bb15cbf5cfccc368bd65ca69de7ed22e91ae85e628228f2f227b944\"},\"id\":\"fc554df98489883f0afff1b6b2a22194ec9b1764872116683b823866c98827c2\",\"identity_basis\":\"parsed\",\"type\":\"producer\"},\"projection\":\"canonical_assertion_proof\",\"source_availability\":\"available\",\"traversal_direction\":\"outgoing\"}],\"nodes\":[{\"id\":\"e475e838e00c5f14816dab1b2d755797b95eae97b0c34dac3399c80b92a381ab\",\"identity_basis\":\"parsed\",\"kind\":\"class\",\"language\":\"ruby\",\"name\":\"Child\",\"ordinal\":0,\"owners\":[],\"path\":\"types.rb\",\"projection\":\"entity_identity\"},{\"id\":\"bb63874a0026227d287a8ec9b6a96172ff48e082791ddeae7dbe4ed1c831747c\",\"identity_basis\":\"parsed\",\"kind\":\"class\",\"language\":\"ruby\",\"name\":\"A\",\"ordinal\":0,\"owners\":[],\"path\":\"types.rb\",\"projection\":\"entity_identity\"}]},\"relations\":[\"superclass\"],\"scope\":\"current_published_evidence\",\"seed\":{\"candidates\":[{\"id\":\"e475e838e00c5f14816dab1b2d755797b95eae97b0c34dac3399c80b92a381ab\",\"identity_basis\":\"parsed\",\"kind\":\"class\",\"language\":\"ruby\",\"name\":\"Child\",\"ordinal\":0,\"owners\":[],\"path\":\"types.rb\",\"projection\":\"entity_identity\"}],\"candidates_complete\":true,\"entity_id\":\"e475e838e00c5f14816dab1b2d755797b95eae97b0c34dac3399c80b92a381ab\",\"selector_kind\":\"entity_id\",\"state\":\"unique\"},\"stop_reason\":null,\"target\":{\"candidates\":[{\"id\":\"bb63874a0026227d287a8ec9b6a96172ff48e082791ddeae7dbe4ed1c831747c\",\"identity_basis\":\"parsed\",\"kind\":\"class\",\"language\":\"ruby\",\"name\":\"A\",\"ordinal\":0,\"owners\":[],\"path\":\"types.rb\",\"projection\":\"entity_identity\"}],\"candidates_complete\":true,\"entity_id\":\"bb63874a0026227d287a8ec9b6a96172ff48e082791ddeae7dbe4ed1c831747c\",\"selector_kind\":\"entity_id\",\"state\":\"unique\"},\"unknown_relations_traversed\":false,\"work\":{\"confirmed_edge_eof\":0,\"edge_queries\":1,\"edge_rows\":1,\"endpoint_queries\":2,\"endpoint_rows\":2,\"examined_edges\":1,\"hydration_queries\":4,\"hydration_rows\":4,\"interrupted_edge_steps\":0,\"interrupted_sql_queries\":0,\"sql_queries\":7,\"visited_nodes\":2}},\"error\":null,\"evidence_status\":\"available\",\"generation_id\":\"8c4ddb3ce0ed0044e268f2c73d4f155abc75514ee939400241ccef7d0c1f0b2a\",\"operation\":\"path\",\"schema_version\":\"atlas.graph.v1\",\"snapshot_id\":\"731c8be540ecc83c8f57674560aff6695902cd751aa96393e7a3868b27a99621\",\"status\":\"ok\"}"
+          }
+        ],
+        "structuredContent": {
+          "schema_version": "atlas.graph.v1",
+          "operation": "path",
+          "status": "ok",
+          "generation_id": "8c4ddb3ce0ed0044e268f2c73d4f155abc75514ee939400241ccef7d0c1f0b2a",
+          "snapshot_id": "731c8be540ecc83c8f57674560aff6695902cd751aa96393e7a3868b27a99621",
+          "evidence_status": "available",
+          "data": {
+            "scope": "current_published_evidence",
+            "outcome": "complete",
+            "stop_reason": null,
+            "effective_limits": {
+              "max_visited_nodes": 100,
+              "max_examined_edges": 1000,
+              "max_depth": 3,
+              "deadline_ms": 2000
+            },
+            "seed": {
+              "selector_kind": "entity_id",
+              "state": "unique",
+              "candidates": [
+                {
+                  "projection": "entity_identity",
+                  "id": "e475e838e00c5f14816dab1b2d755797b95eae97b0c34dac3399c80b92a381ab",
+                  "name": "Child",
+                  "kind": "class",
+                  "language": "ruby",
+                  "path": "types.rb",
+                  "owners": [],
+                  "identity_basis": "parsed",
+                  "ordinal": 0
+                }
+              ],
+              "candidates_complete": true,
+              "entity_id": "e475e838e00c5f14816dab1b2d755797b95eae97b0c34dac3399c80b92a381ab"
+            },
+            "direction": "outgoing",
+            "relations": [
+              "superclass"
+            ],
+            "confidence": [
+              "EXTRACTED"
+            ],
+            "work": {
+              "examined_edges": 1,
+              "edge_queries": 1,
+              "edge_rows": 1,
+              "confirmed_edge_eof": 0,
+              "interrupted_edge_steps": 0,
+              "endpoint_queries": 2,
+              "endpoint_rows": 2,
+              "hydration_queries": 4,
+              "hydration_rows": 4,
+              "sql_queries": 7,
+              "interrupted_sql_queries": 0,
+              "visited_nodes": 2
+            },
+            "frontier": {
+              "commitment": "cb8544cc00767b7e17c60524a6f470f9d6fa6ffb61e664a0f74021d6c85dd413",
+              "queued_nodes": 2,
+              "depth": 1
+            },
+            "unknown_relations_traversed": false,
+            "target": {
+              "selector_kind": "entity_id",
+              "state": "unique",
+              "candidates": [
+                {
+                  "projection": "entity_identity",
+                  "id": "bb63874a0026227d287a8ec9b6a96172ff48e082791ddeae7dbe4ed1c831747c",
+                  "name": "A",
+                  "kind": "class",
+                  "language": "ruby",
+                  "path": "types.rb",
+                  "owners": [],
+                  "identity_basis": "parsed",
+                  "ordinal": 0
+                }
+              ],
+              "candidates_complete": true,
+              "entity_id": "bb63874a0026227d287a8ec9b6a96172ff48e082791ddeae7dbe4ed1c831747c"
+            },
+            "path": {
+              "nodes": [
+                {
+                  "projection": "entity_identity",
+                  "id": "e475e838e00c5f14816dab1b2d755797b95eae97b0c34dac3399c80b92a381ab",
+                  "name": "Child",
+                  "kind": "class",
+                  "language": "ruby",
+                  "path": "types.rb",
+                  "owners": [],
+                  "identity_basis": "parsed",
+                  "ordinal": 0
+                },
+                {
+                  "projection": "entity_identity",
+                  "id": "bb63874a0026227d287a8ec9b6a96172ff48e082791ddeae7dbe4ed1c831747c",
+                  "name": "A",
+                  "kind": "class",
+                  "language": "ruby",
+                  "path": "types.rb",
+                  "owners": [],
+                  "identity_basis": "parsed",
+                  "ordinal": 0
+                }
+              ],
+              "hops": [
+                {
+                  "projection": "canonical_assertion_proof",
+                  "traversal_direction": "outgoing",
+                  "assertion": {
+                    "candidate_ids": [],
+                    "evidence_id": "dfc504dca3fcffee18c08bf9ad7ac7dfba9ad43dd3bcd3c27dfe0d4f38edb8cc",
+                    "id": "c3a4f23253dc33b5f4d3f001e3d7e94ed2274d025183689e2d594b7ef1d4d766",
+                    "raw_target": "A",
+                    "relation": "superclass",
+                    "resolution": "EXTRACTED",
+                    "source_entity_id": "e475e838e00c5f14816dab1b2d755797b95eae97b0c34dac3399c80b92a381ab",
+                    "target_entity_id": "bb63874a0026227d287a8ec9b6a96172ff48e082791ddeae7dbe4ed1c831747c",
+                    "type": "assertion",
+                    "unresolved_reason": null
+                  },
+                  "evidence": {
+                    "end_byte": 27,
+                    "id": "dfc504dca3fcffee18c08bf9ad7ac7dfba9ad43dd3bcd3c27dfe0d4f38edb8cc",
+                    "occurrence_id": "4d24c65536183b1a7e5d058560b71739794ab3653f9619ac7b2697dd2c03413d",
+                    "producer_id": "fc554df98489883f0afff1b6b2a22194ec9b1764872116683b823866c98827c2",
+                    "provenance_state": "source",
+                    "source_sha256": "5bacf87b17ed2e59b2d71a6904359e5d9306cb7652ce4d0fb27153c9464bcdbe",
+                    "source_size": 32,
+                    "start_byte": 26,
+                    "type": "evidence"
+                  },
+                  "occurrence": {
+                    "column": 14,
+                    "end_byte": 27,
+                    "end_column": 15,
+                    "end_line": 3,
+                    "entity_id": "e475e838e00c5f14816dab1b2d755797b95eae97b0c34dac3399c80b92a381ab",
+                    "id": "4d24c65536183b1a7e5d058560b71739794ab3653f9619ac7b2697dd2c03413d",
+                    "kind": "reference",
+                    "language": "ruby",
+                    "line": 3,
+                    "path": "types.rb",
+                    "provenance_state": "source",
+                    "role": "reference:superclass",
+                    "source_sha256": "5bacf87b17ed2e59b2d71a6904359e5d9306cb7652ce4d0fb27153c9464bcdbe",
+                    "source_size": 32,
+                    "start_byte": 26,
+                    "type": "occurrence"
+                  },
+                  "producer": {
+                    "fingerprint": {
+                      "codegraph_sha256": "4df28b1fcaeb7c5d0051f1c5412e0d06a38ad3d10652d18a82d7b7d16c6bcfe2",
+                      "modules": {
+                        "extractors/rust.py": "28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a",
+                        "indexing/extraction_cache.py": "08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2",
+                        "providers/python_imports.py": "de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014",
+                        "resolvers/dependencies.py": "0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6",
+                        "storage/evidence.py": "3f14fa87ed9b060cc1d09e7e57cb002275c99b501829412a202d225870f3eb92",
+                        "storage/snapshots.py": "b8aecf567335dda0f2d0162c2eb6a334a4efae7d785755a0d8e862b52d96396f"
+                      },
+                      "packages": {
+                        "tree-sitter": "0.25.2",
+                        "tree-sitter-language-pack": "1.6.0"
+                      },
+                      "queries_sha256": "a222468d9bb15cbf5cfccc368bd65ca69de7ed22e91ae85e628228f2f227b944"
+                    },
+                    "id": "fc554df98489883f0afff1b6b2a22194ec9b1764872116683b823866c98827c2",
+                    "identity_basis": "parsed",
+                    "type": "producer"
+                  },
+                  "source_availability": "available"
+                }
+              ]
+            }
+          },
+          "error": null,
+          "bounds": {
+            "element_limit": 200,
+            "truncated": false,
+            "lists": {}
+          }
+        },
+        "isError": false
+      }
+    },
+    {
+      "arguments": {
+        "schema_version": "atlas.graph.v1",
+        "deadline_ms": 2000,
+        "op": "path",
+        "seed": {
+          "entity_id": "bb63874a0026227d287a8ec9b6a96172ff48e082791ddeae7dbe4ed1c831747c"
+        },
+        "target": {
+          "entity_id": "e475e838e00c5f14816dab1b2d755797b95eae97b0c34dac3399c80b92a381ab"
+        },
+        "relations": [
+          "superclass"
+        ],
+        "direction": "incoming"
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"bounds\":{\"element_limit\":200,\"lists\":{},\"truncated\":false},\"data\":{\"confidence\":[\"EXTRACTED\",\"INFERRED\"],\"direction\":\"incoming\",\"effective_limits\":{\"deadline_ms\":2000,\"max_depth\":3,\"max_examined_edges\":1000,\"max_visited_nodes\":100},\"frontier\":{\"commitment\":\"251949e66ed8d60c9f86aaf09986cdfd7818cffee30bd3ed9bafed12093bb5df\",\"depth\":1,\"queued_nodes\":2},\"outcome\":\"complete\",\"path\":{\"hops\":[{\"assertion\":{\"candidate_ids\":[],\"evidence_id\":\"dfc504dca3fcffee18c08bf9ad7ac7dfba9ad43dd3bcd3c27dfe0d4f38edb8cc\",\"id\":\"c3a4f23253dc33b5f4d3f001e3d7e94ed2274d025183689e2d594b7ef1d4d766\",\"raw_target\":\"A\",\"relation\":\"superclass\",\"resolution\":\"EXTRACTED\",\"source_entity_id\":\"e475e838e00c5f14816dab1b2d755797b95eae97b0c34dac3399c80b92a381ab\",\"target_entity_id\":\"bb63874a0026227d287a8ec9b6a96172ff48e082791ddeae7dbe4ed1c831747c\",\"type\":\"assertion\",\"unresolved_reason\":null},\"evidence\":{\"end_byte\":27,\"id\":\"dfc504dca3fcffee18c08bf9ad7ac7dfba9ad43dd3bcd3c27dfe0d4f38edb8cc\",\"occurrence_id\":\"4d24c65536183b1a7e5d058560b71739794ab3653f9619ac7b2697dd2c03413d\",\"producer_id\":\"fc554df98489883f0afff1b6b2a22194ec9b1764872116683b823866c98827c2\",\"provenance_state\":\"source\",\"source_sha256\":\"5bacf87b17ed2e59b2d71a6904359e5d9306cb7652ce4d0fb27153c9464bcdbe\",\"source_size\":32,\"start_byte\":26,\"type\":\"evidence\"},\"occurrence\":{\"column\":14,\"end_byte\":27,\"end_column\":15,\"end_line\":3,\"entity_id\":\"e475e838e00c5f14816dab1b2d755797b95eae97b0c34dac3399c80b92a381ab\",\"id\":\"4d24c65536183b1a7e5d058560b71739794ab3653f9619ac7b2697dd2c03413d\",\"kind\":\"reference\",\"language\":\"ruby\",\"line\":3,\"path\":\"types.rb\",\"provenance_state\":\"source\",\"role\":\"reference:superclass\",\"source_sha256\":\"5bacf87b17ed2e59b2d71a6904359e5d9306cb7652ce4d0fb27153c9464bcdbe\",\"source_size\":32,\"start_byte\":26,\"type\":\"occurrence\"},\"producer\":{\"fingerprint\":{\"codegraph_sha256\":\"4df28b1fcaeb7c5d0051f1c5412e0d06a38ad3d10652d18a82d7b7d16c6bcfe2\",\"modules\":{\"extractors/rust.py\":\"28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a\",\"indexing/extraction_cache.py\":\"08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2\",\"providers/python_imports.py\":\"de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014\",\"resolvers/dependencies.py\":\"0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6\",\"storage/evidence.py\":\"3f14fa87ed9b060cc1d09e7e57cb002275c99b501829412a202d225870f3eb92\",\"storage/snapshots.py\":\"b8aecf567335dda0f2d0162c2eb6a334a4efae7d785755a0d8e862b52d96396f\"},\"packages\":{\"tree-sitter\":\"0.25.2\",\"tree-sitter-language-pack\":\"1.6.0\"},\"queries_sha256\":\"a222468d9bb15cbf5cfccc368bd65ca69de7ed22e91ae85e628228f2f227b944\"},\"id\":\"fc554df98489883f0afff1b6b2a22194ec9b1764872116683b823866c98827c2\",\"identity_basis\":\"parsed\",\"type\":\"producer\"},\"projection\":\"canonical_assertion_proof\",\"source_availability\":\"available\",\"traversal_direction\":\"incoming\"}],\"nodes\":[{\"id\":\"bb63874a0026227d287a8ec9b6a96172ff48e082791ddeae7dbe4ed1c831747c\",\"identity_basis\":\"parsed\",\"kind\":\"class\",\"language\":\"ruby\",\"name\":\"A\",\"ordinal\":0,\"owners\":[],\"path\":\"types.rb\",\"projection\":\"entity_identity\"},{\"id\":\"e475e838e00c5f14816dab1b2d755797b95eae97b0c34dac3399c80b92a381ab\",\"identity_basis\":\"parsed\",\"kind\":\"class\",\"language\":\"ruby\",\"name\":\"Child\",\"ordinal\":0,\"owners\":[],\"path\":\"types.rb\",\"projection\":\"entity_identity\"}]},\"relations\":[\"superclass\"],\"scope\":\"current_published_evidence\",\"seed\":{\"candidates\":[{\"id\":\"bb63874a0026227d287a8ec9b6a96172ff48e082791ddeae7dbe4ed1c831747c\",\"identity_basis\":\"parsed\",\"kind\":\"class\",\"language\":\"ruby\",\"name\":\"A\",\"ordinal\":0,\"owners\":[],\"path\":\"types.rb\",\"projection\":\"entity_identity\"}],\"candidates_complete\":true,\"entity_id\":\"bb63874a0026227d287a8ec9b6a96172ff48e082791ddeae7dbe4ed1c831747c\",\"selector_kind\":\"entity_id\",\"state\":\"unique\"},\"stop_reason\":null,\"target\":{\"candidates\":[{\"id\":\"e475e838e00c5f14816dab1b2d755797b95eae97b0c34dac3399c80b92a381ab\",\"identity_basis\":\"parsed\",\"kind\":\"class\",\"language\":\"ruby\",\"name\":\"Child\",\"ordinal\":0,\"owners\":[],\"path\":\"types.rb\",\"projection\":\"entity_identity\"}],\"candidates_complete\":true,\"entity_id\":\"e475e838e00c5f14816dab1b2d755797b95eae97b0c34dac3399c80b92a381ab\",\"selector_kind\":\"entity_id\",\"state\":\"unique\"},\"unknown_relations_traversed\":false,\"work\":{\"confirmed_edge_eof\":0,\"edge_queries\":1,\"edge_rows\":1,\"endpoint_queries\":2,\"endpoint_rows\":2,\"examined_edges\":1,\"hydration_queries\":4,\"hydration_rows\":4,\"interrupted_edge_steps\":0,\"interrupted_sql_queries\":0,\"sql_queries\":7,\"visited_nodes\":2}},\"error\":null,\"evidence_status\":\"available\",\"generation_id\":\"8c4ddb3ce0ed0044e268f2c73d4f155abc75514ee939400241ccef7d0c1f0b2a\",\"operation\":\"path\",\"schema_version\":\"atlas.graph.v1\",\"snapshot_id\":\"731c8be540ecc83c8f57674560aff6695902cd751aa96393e7a3868b27a99621\",\"status\":\"ok\"}"
+          }
+        ],
+        "structuredContent": {
+          "schema_version": "atlas.graph.v1",
+          "operation": "path",
+          "status": "ok",
+          "generation_id": "8c4ddb3ce0ed0044e268f2c73d4f155abc75514ee939400241ccef7d0c1f0b2a",
+          "snapshot_id": "731c8be540ecc83c8f57674560aff6695902cd751aa96393e7a3868b27a99621",
+          "evidence_status": "available",
+          "data": {
+            "scope": "current_published_evidence",
+            "outcome": "complete",
+            "stop_reason": null,
+            "effective_limits": {
+              "max_visited_nodes": 100,
+              "max_examined_edges": 1000,
+              "max_depth": 3,
+              "deadline_ms": 2000
+            },
+            "seed": {
+              "selector_kind": "entity_id",
+              "state": "unique",
+              "candidates": [
+                {
+                  "projection": "entity_identity",
+                  "id": "bb63874a0026227d287a8ec9b6a96172ff48e082791ddeae7dbe4ed1c831747c",
+                  "name": "A",
+                  "kind": "class",
+                  "language": "ruby",
+                  "path": "types.rb",
+                  "owners": [],
+                  "identity_basis": "parsed",
+                  "ordinal": 0
+                }
+              ],
+              "candidates_complete": true,
+              "entity_id": "bb63874a0026227d287a8ec9b6a96172ff48e082791ddeae7dbe4ed1c831747c"
+            },
+            "direction": "incoming",
+            "relations": [
+              "superclass"
+            ],
+            "confidence": [
+              "EXTRACTED",
+              "INFERRED"
+            ],
+            "work": {
+              "examined_edges": 1,
+              "edge_queries": 1,
+              "edge_rows": 1,
+              "confirmed_edge_eof": 0,
+              "interrupted_edge_steps": 0,
+              "endpoint_queries": 2,
+              "endpoint_rows": 2,
+              "hydration_queries": 4,
+              "hydration_rows": 4,
+              "sql_queries": 7,
+              "interrupted_sql_queries": 0,
+              "visited_nodes": 2
+            },
+            "frontier": {
+              "commitment": "251949e66ed8d60c9f86aaf09986cdfd7818cffee30bd3ed9bafed12093bb5df",
+              "queued_nodes": 2,
+              "depth": 1
+            },
+            "unknown_relations_traversed": false,
+            "target": {
+              "selector_kind": "entity_id",
+              "state": "unique",
+              "candidates": [
+                {
+                  "projection": "entity_identity",
+                  "id": "e475e838e00c5f14816dab1b2d755797b95eae97b0c34dac3399c80b92a381ab",
+                  "name": "Child",
+                  "kind": "class",
+                  "language": "ruby",
+                  "path": "types.rb",
+                  "owners": [],
+                  "identity_basis": "parsed",
+                  "ordinal": 0
+                }
+              ],
+              "candidates_complete": true,
+              "entity_id": "e475e838e00c5f14816dab1b2d755797b95eae97b0c34dac3399c80b92a381ab"
+            },
+            "path": {
+              "nodes": [
+                {
+                  "projection": "entity_identity",
+                  "id": "bb63874a0026227d287a8ec9b6a96172ff48e082791ddeae7dbe4ed1c831747c",
+                  "name": "A",
+                  "kind": "class",
+                  "language": "ruby",
+                  "path": "types.rb",
+                  "owners": [],
+                  "identity_basis": "parsed",
+                  "ordinal": 0
+                },
+                {
+                  "projection": "entity_identity",
+                  "id": "e475e838e00c5f14816dab1b2d755797b95eae97b0c34dac3399c80b92a381ab",
+                  "name": "Child",
+                  "kind": "class",
+                  "language": "ruby",
+                  "path": "types.rb",
+                  "owners": [],
+                  "identity_basis": "parsed",
+                  "ordinal": 0
+                }
+              ],
+              "hops": [
+                {
+                  "projection": "canonical_assertion_proof",
+                  "traversal_direction": "incoming",
+                  "assertion": {
+                    "candidate_ids": [],
+                    "evidence_id": "dfc504dca3fcffee18c08bf9ad7ac7dfba9ad43dd3bcd3c27dfe0d4f38edb8cc",
+                    "id": "c3a4f23253dc33b5f4d3f001e3d7e94ed2274d025183689e2d594b7ef1d4d766",
+                    "raw_target": "A",
+                    "relation": "superclass",
+                    "resolution": "EXTRACTED",
+                    "source_entity_id": "e475e838e00c5f14816dab1b2d755797b95eae97b0c34dac3399c80b92a381ab",
+                    "target_entity_id": "bb63874a0026227d287a8ec9b6a96172ff48e082791ddeae7dbe4ed1c831747c",
+                    "type": "assertion",
+                    "unresolved_reason": null
+                  },
+                  "evidence": {
+                    "end_byte": 27,
+                    "id": "dfc504dca3fcffee18c08bf9ad7ac7dfba9ad43dd3bcd3c27dfe0d4f38edb8cc",
+                    "occurrence_id": "4d24c65536183b1a7e5d058560b71739794ab3653f9619ac7b2697dd2c03413d",
+                    "producer_id": "fc554df98489883f0afff1b6b2a22194ec9b1764872116683b823866c98827c2",
+                    "provenance_state": "source",
+                    "source_sha256": "5bacf87b17ed2e59b2d71a6904359e5d9306cb7652ce4d0fb27153c9464bcdbe",
+                    "source_size": 32,
+                    "start_byte": 26,
+                    "type": "evidence"
+                  },
+                  "occurrence": {
+                    "column": 14,
+                    "end_byte": 27,
+                    "end_column": 15,
+                    "end_line": 3,
+                    "entity_id": "e475e838e00c5f14816dab1b2d755797b95eae97b0c34dac3399c80b92a381ab",
+                    "id": "4d24c65536183b1a7e5d058560b71739794ab3653f9619ac7b2697dd2c03413d",
+                    "kind": "reference",
+                    "language": "ruby",
+                    "line": 3,
+                    "path": "types.rb",
+                    "provenance_state": "source",
+                    "role": "reference:superclass",
+                    "source_sha256": "5bacf87b17ed2e59b2d71a6904359e5d9306cb7652ce4d0fb27153c9464bcdbe",
+                    "source_size": 32,
+                    "start_byte": 26,
+                    "type": "occurrence"
+                  },
+                  "producer": {
+                    "fingerprint": {
+                      "codegraph_sha256": "4df28b1fcaeb7c5d0051f1c5412e0d06a38ad3d10652d18a82d7b7d16c6bcfe2",
+                      "modules": {
+                        "extractors/rust.py": "28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a",
+                        "indexing/extraction_cache.py": "08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2",
+                        "providers/python_imports.py": "de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014",
+                        "resolvers/dependencies.py": "0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6",
+                        "storage/evidence.py": "3f14fa87ed9b060cc1d09e7e57cb002275c99b501829412a202d225870f3eb92",
+                        "storage/snapshots.py": "b8aecf567335dda0f2d0162c2eb6a334a4efae7d785755a0d8e862b52d96396f"
+                      },
+                      "packages": {
+                        "tree-sitter": "0.25.2",
+                        "tree-sitter-language-pack": "1.6.0"
+                      },
+                      "queries_sha256": "a222468d9bb15cbf5cfccc368bd65ca69de7ed22e91ae85e628228f2f227b944"
+                    },
+                    "id": "fc554df98489883f0afff1b6b2a22194ec9b1764872116683b823866c98827c2",
+                    "identity_basis": "parsed",
+                    "type": "producer"
+                  },
+                  "source_availability": "available"
+                }
+              ]
+            }
+          },
+          "error": null,
+          "bounds": {
+            "element_limit": 200,
+            "truncated": false,
+            "lists": {}
+          }
+        },
+        "isError": false
+      }
+    }
+  ],
+  "all_controls_passed": true
+}

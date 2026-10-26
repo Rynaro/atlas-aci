@@ -1,0 +1,36 @@
+{
+  "at": "2026-10-24T23:08:25.216193+00:00",
+  "phase": "DONE",
+  "confidence": 86.25,
+  "verdict": "AUTO_PROCEED",
+  "checks": [
+    {
+      "file": "aci-s12.envelope.json",
+      "schema": "ecl-envelope.v2.json",
+      "validator": "Draft202012Validator",
+      "format_check": true,
+      "valid": true
+    },
+    {
+      "file": "aci-s12.state.json",
+      "schema": "plan-state.v1.json",
+      "validator": "Draft7Validator",
+      "format_check": true,
+      "valid": true
+    }
+  ],
+  "product_files_unchanged": 119,
+  "ledger_counts": {
+    "merged": 12,
+    "remaining": 30
+  },
+  "spec_sha256": "f004a13c8fbc0a0cc0d69b8847d816c5bcc73fad2505f275ee76ca2d25a4c6e2",
+  "criteria_sha256": "210baed6d4e4969c7e2223559580ec14a0c4ed4e277b062e891b8edc62159395",
+  "envelope_sha256": "245464835c3b8fc9367a5cdbee0556c54020dbb815dd79530feab9a47da4db65",
+  "state_sha256": "90d5fa673432ec85d4ecab406b276ac785054fd99564cbe79c747b7e97356419",
+  "message_id": "7e5ee134-adb9-433d-8849-02a3f5cf513b",
+  "thread_id": "7ce2d2d7-ccf5-49b5-8c94-bd352c6f217a",
+  "scope_amendment": ".spectra/changes/aci-s12/scope-amendment.json",
+  "bookkeeping_amendment": ".spectra/changes/aci-s12/bookkeeping-amendment.json",
+  "note": "Approved draft unchanged. Genuine independent review23:06:36Z retained separately from state recording23:07:17Z. No product edits. Primitive transcript archive distinguishes actual inline experiments from newly transcribed source copies; no rerun. Root ECL/correlated trace before execution; native compatibility/work-trace checkpoint unverified."
+}

@@ -1,0 +1,27 @@
+{
+  "command": [
+    "/Users/henrique/.local/bin/eidolons",
+    "sandbox",
+    "loop",
+    "--allow-unsafe-host",
+    "--base",
+    "69fe066f573f29651fb53ad0dac65ae13836b752",
+    "--tests",
+    "cd mcp-server && .venv/bin/python -m pytest -q -p no:cacheprovider tests/slices/test_s12_*.py",
+    "--lint-hook",
+    "cd mcp-server && .venv/bin/ruff check src/ tests/",
+    "--protect",
+    "mcp-server/tests/slices/test_s12_*.py",
+    "--k",
+    "2",
+    "--max-attempts",
+    "1",
+    "--out",
+    "/tmp/aci-s12-pass2",
+    "--json"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 3.341355417011073,
+  "source_checkpoint": ".spectra/evidence/aci-s12/source-final.json",
+  "base_red_evidence": ".spectra/evidence/aci-s12/baseline-checkpoint.json"
+}

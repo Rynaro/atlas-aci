@@ -26,6 +26,22 @@ DDL = "\n".join(
     f"CREATE INDEX IF NOT EXISTS idx_{table}_path ON {table}(path);"
     for table in TABLES.values()
 )
+# Native-only navigation indexes; portable canonical records are unchanged.
+NAVIGATION_INDEXES = {
+    "idx_assertions_source_relation_id": (
+        "CREATE INDEX IF NOT EXISTS idx_assertions_source_relation_id ON assertions("
+        "json_extract(payload,'$.source_entity_id'),json_extract(payload,'$.relation'),id);"
+    ),
+    "idx_assertions_target_relation_id": (
+        "CREATE INDEX IF NOT EXISTS idx_assertions_target_relation_id ON assertions("
+        "json_extract(payload,'$.target_entity_id'),json_extract(payload,'$.relation'),id);"
+    ),
+    "idx_entities_name_id": (
+        "CREATE INDEX IF NOT EXISTS idx_entities_name_id ON entities("
+        "json_extract(payload,'$.name'),id);"
+    ),
+}
+DDL += "\n" + "\n".join(NAVIGATION_INDEXES.values())
 RELATIONS = frozenset(
     {"call", "construct", "import", "superclass", "include", "extend", "prepend", "rationale_for"}
 )

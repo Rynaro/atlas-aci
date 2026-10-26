@@ -1,0 +1,15 @@
+{
+  "primary_serial_jobs": 24,
+  "primary_serial_elapsed_seconds": 535.7625479610579,
+  "prior_failed_attempt_seconds": 0,
+  "preservation_seconds": 0.08273062499938533,
+  "verifier_seconds": 0.21487012499710545,
+  "charged_elapsed_seconds_including_preservation_and_verifier": 536.0601487110544,
+  "maximum_primary_job_seconds": 210.29690049999044,
+  "per_job_cap_seconds": 600,
+  "total_cap_seconds": 2700,
+  "conservative_wall_seconds_since_preflight_including_orchestration": 726.582257270813,
+  "all_actual_jobs_exit_zero": true,
+  "no_timeouts": true,
+  "note": "Serial job sum is not total wall runtime; cold/warm OS cache state uncontrolled. Assembly tool observed0.347198084s separately; conservative wall includes assembly/orchestration as well."
+}

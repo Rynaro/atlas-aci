@@ -1,0 +1,12 @@
+{
+  "command": [
+    "mcp-server/.venv/bin/python",
+    "scripts/verify-probe-verdict.py",
+    ".spectra/changes/aci-s12/probe/aci-s12-probe-lpa-vs-louvain.json"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 0.21487012499710545,
+  "stdout": ".spectra/evidence/aci-s12/probe/verifier-result.log",
+  "stderr": ".spectra/evidence/aci-s12/probe/verifier.stderr.log",
+  "computed_pass_and_recorded_pass": true
+}

@@ -1,0 +1,22 @@
+[
+  {
+    "logical_path": "/private/tmp/atlas-aci-aci-s12/.spectra/evidence/aci-s12/probe/solidus-graph.json",
+    "producer_output_path": "/tmp/aci-s12-solidus-graph.json",
+    "compressed_path": ".spectra/evidence/aci-s12/probe/solidus-graph.json.gz",
+    "uncompressed_bytes": 466679,
+    "uncompressed_sha256": "8b083774eff7f4fa759610c55ec9afb734022c03109b271a7b886fee5ec2889c",
+    "compressed_bytes": 49004,
+    "compressed_sha256": "afc4fdf6356bafc342872a1a755dcd5353ec7f23b4759dda3573cc73efb47f20",
+    "gzip_mtime": 0
+  },
+  {
+    "logical_path": "/private/tmp/atlas-aci-aci-s12/.spectra/evidence/aci-s12/probe/spree-graph.json",
+    "producer_output_path": "/tmp/aci-s12-spree-graph.json",
+    "compressed_path": ".spectra/evidence/aci-s12/probe/spree-graph.json.gz",
+    "uncompressed_bytes": 1029024,
+    "uncompressed_sha256": "1be01fc8254ef2e8bf85bb45bfa91f6cea25f8be1e5e68424e2581d6ba2fb6fe",
+    "compressed_bytes": 98462,
+    "compressed_sha256": "978c576d559e6a90481b1a4be0fced3a79669881f3475bfaaf6d95767e96b812",
+    "gzip_mtime": 0
+  }
+]

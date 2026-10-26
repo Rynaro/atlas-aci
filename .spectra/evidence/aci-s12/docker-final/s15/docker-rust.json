@@ -1,0 +1,1544 @@
+{
+  "after": {
+    "/graphs": {
+      ".": {
+        "mode": 16895,
+        "mtime_ns": 1792887206560036616,
+        "sha256": null,
+        "size": 96
+      },
+      "repos": {
+        "gid": 10001,
+        "mode": 16877,
+        "mtime_ns": 1792887206560180950,
+        "sha256": null,
+        "size": 96,
+        "uid": 10001
+      },
+      "repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd": {
+        "gid": 10001,
+        "mode": 16877,
+        "mtime_ns": 1792887206633526480,
+        "sha256": null,
+        "size": 192,
+        "uid": 10001
+      },
+      "repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/.index.lock": {
+        "gid": 10001,
+        "mode": 33188,
+        "mtime_ns": 1792887206562209378,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0,
+        "uid": 10001
+      },
+      "repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache": {
+        "gid": 10001,
+        "mode": 16877,
+        "mtime_ns": 1792887206598164243,
+        "sha256": null,
+        "size": 96,
+        "uid": 10001
+      },
+      "repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache/v1": {
+        "gid": 10001,
+        "mode": 16877,
+        "mtime_ns": 1792887206614417458,
+        "sha256": null,
+        "size": 160,
+        "uid": 10001
+      },
+      "repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache/v1/13": {
+        "gid": 10001,
+        "mode": 16877,
+        "mtime_ns": 1792887206614937628,
+        "sha256": null,
+        "size": 96,
+        "uid": 10001
+      },
+      "repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache/v1/13/13679b41ae6370e0494dd3e7373d6301e3e1cf2dc8243ff3a1265d0757120eb5.json": {
+        "gid": 10001,
+        "mode": 33152,
+        "mtime_ns": 1792887206614765960,
+        "sha256": "fe51ee5aa81dcb2f38d2da9755d94e6ddac6350ce3cf41c06d543302877f8c01",
+        "size": 10928,
+        "uid": 10001
+      },
+      "repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache/v1/44": {
+        "gid": 10001,
+        "mode": 16877,
+        "mtime_ns": 1792887206609275846,
+        "sha256": null,
+        "size": 96,
+        "uid": 10001
+      },
+      "repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache/v1/44/44b8ce0a88de14e854bbe1b21e36c69c6ac45db8e21c9703a43adac1c20d7b28.json": {
+        "gid": 10001,
+        "mode": 33152,
+        "mtime_ns": 1792887206609083804,
+        "sha256": "118f1faa99c0c2de4b7dbd079fc843d3e613db5ccefcc607a9c50295fa83113e",
+        "size": 62536,
+        "uid": 10001
+      },
+      "repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache/v1/ef": {
+        "gid": 10001,
+        "mode": 16877,
+        "mtime_ns": 1792887206598765830,
+        "sha256": null,
+        "size": 96,
+        "uid": 10001
+      },
+      "repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache/v1/ef/ef441c5ae75ef27aabc215c31bc5f4b1e1b758d00564e0bc14ce8d98f27004c6.json": {
+        "gid": 10001,
+        "mode": 33152,
+        "mtime_ns": 1792887206598595496,
+        "sha256": "864c10b55876b38f23026e17f1fc1d45f4ec7861958dc78bfafb7cfefde308ec",
+        "size": 7483,
+        "uid": 10001
+      },
+      "repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/graph.8.db": {
+        "gid": 10001,
+        "mode": 33152,
+        "mtime_ns": 1792887206630543339,
+        "sha256": "10a6a1c8b0ee2b5d51b81902edf70d0588ceda190a7ca837260fd785e19f19dc",
+        "size": 282624,
+        "uid": 10001
+      },
+      "repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/source-snapshots": {
+        "gid": 10001,
+        "mode": 16832,
+        "mtime_ns": 1792887206633011394,
+        "sha256": null,
+        "size": 160,
+        "uid": 10001
+      },
+      "repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/source-snapshots/catalog.json": {
+        "gid": 10001,
+        "mode": 33152,
+        "mtime_ns": 1792887206632860102,
+        "sha256": "a20b9970c740e30c4ceff1c95cec1b8dde852d31c08f364a8745fb1767fef873",
+        "size": 68,
+        "uid": 10001
+      },
+      "repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/source-snapshots/manifest.3ec97f4267138f3bf61c3fac8dc12914d828bd3d46e516bec749b2b5c1e292a0.json": {
+        "gid": 10001,
+        "mode": 33152,
+        "mtime_ns": 1792887206627002278,
+        "sha256": "3ec97f4267138f3bf61c3fac8dc12914d828bd3d46e516bec749b2b5c1e292a0",
+        "size": 3067,
+        "uid": 10001
+      },
+      "repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/source-snapshots/pack.29e0eb381d70949bf49a505515014e4f0842fe08d4360fc7dc534bf90f180e9a.bin": {
+        "gid": 10001,
+        "mode": 33152,
+        "mtime_ns": 1792887206625837604,
+        "sha256": "29e0eb381d70949bf49a505515014e4f0842fe08d4360fc7dc534bf90f180e9a",
+        "size": 1161,
+        "uid": 10001
+      }
+    },
+    "/repo": {
+      ".": {
+        "mode": 16877,
+        "mtime_ns": 1792882681224775938,
+        "sha256": null,
+        "size": 192
+      },
+      "Cargo.toml": {
+        "gid": 10001,
+        "mode": 33188,
+        "mtime_ns": 1792882681224426478,
+        "sha256": "30a3396ad1efc76ac42c63d33f015fe8f453b0b5ce13e099fb18bf8647734626",
+        "size": 55,
+        "uid": 10001
+      },
+      "alpha": {
+        "gid": 10001,
+        "mode": 16877,
+        "mtime_ns": 1792882681224514645,
+        "sha256": null,
+        "size": 128,
+        "uid": 10001
+      },
+      "alpha/Cargo.toml": {
+        "gid": 10001,
+        "mode": 33188,
+        "mtime_ns": 1792882681224494645,
+        "sha256": "7952cf92cf174a94fe88092697617552f6f8c3d522e6b6ca13ca846e489d2219",
+        "size": 60,
+        "uid": 10001
+      },
+      "alpha/src": {
+        "gid": 10001,
+        "mode": 16877,
+        "mtime_ns": 1792882681224584812,
+        "sha256": null,
+        "size": 128,
+        "uid": 10001
+      },
+      "alpha/src/external.rs": {
+        "gid": 10001,
+        "mode": 33188,
+        "mtime_ns": 1792882681224559979,
+        "sha256": "98a3e19c71703201995c5869501a1725290c1fa913f775a71521347842ca0099",
+        "size": 40,
+        "uid": 10001
+      },
+      "alpha/src/lib.rs": {
+        "gid": 10001,
+        "mode": 33188,
+        "mtime_ns": 1792882681224609937,
+        "sha256": "f2950118a49f7ed3d470b63ecdac9fa812146c47bb1c3e764de53143294409e3",
+        "size": 1016,
+        "uid": 10001
+      },
+      "beta": {
+        "gid": 10001,
+        "mode": 16877,
+        "mtime_ns": 1792882681224709021,
+        "sha256": null,
+        "size": 128,
+        "uid": 10001
+      },
+      "beta/Cargo.toml": {
+        "gid": 10001,
+        "mode": 33188,
+        "mtime_ns": 1792882681224684771,
+        "sha256": "80554bd1a3fdd1f39ea7ec2a8cfccd0f6322044899308cfe2dc9e8f264151e17",
+        "size": 59,
+        "uid": 10001
+      },
+      "beta/src": {
+        "gid": 10001,
+        "mode": 16877,
+        "mtime_ns": 1792882681224736022,
+        "sha256": null,
+        "size": 96,
+        "uid": 10001
+      },
+      "beta/src/lib.rs": {
+        "gid": 10001,
+        "mode": 33188,
+        "mtime_ns": 1792882681224755688,
+        "sha256": "ad05caeb4adb1ead286165ae42930f500cf1ca50e2bb3a5a8027d30f5e4d8c22",
+        "size": 84,
+        "uid": 10001
+      },
+      "declarations.json": {
+        "gid": 10001,
+        "mode": 33188,
+        "mtime_ns": 1792882681224796855,
+        "sha256": "8367def1e3661e72a0b5b0b071aa1e555868fe6da6b150c671fc14bd2058161a",
+        "size": 1196,
+        "uid": 10001
+      }
+    }
+  },
+  "before": {
+    "/graphs": {
+      ".": {
+        "mode": 16895,
+        "mtime_ns": 1792887206560036616,
+        "sha256": null,
+        "size": 96
+      },
+      "repos": {
+        "gid": 10001,
+        "mode": 16877,
+        "mtime_ns": 1792887206560180950,
+        "sha256": null,
+        "size": 96,
+        "uid": 10001
+      },
+      "repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd": {
+        "gid": 10001,
+        "mode": 16877,
+        "mtime_ns": 1792887206633526480,
+        "sha256": null,
+        "size": 192,
+        "uid": 10001
+      },
+      "repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/.index.lock": {
+        "gid": 10001,
+        "mode": 33188,
+        "mtime_ns": 1792887206562209378,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0,
+        "uid": 10001
+      },
+      "repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache": {
+        "gid": 10001,
+        "mode": 16877,
+        "mtime_ns": 1792887206598164243,
+        "sha256": null,
+        "size": 96,
+        "uid": 10001
+      },
+      "repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache/v1": {
+        "gid": 10001,
+        "mode": 16877,
+        "mtime_ns": 1792887206614417458,
+        "sha256": null,
+        "size": 160,
+        "uid": 10001
+      },
+      "repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache/v1/13": {
+        "gid": 10001,
+        "mode": 16877,
+        "mtime_ns": 1792887206614937628,
+        "sha256": null,
+        "size": 96,
+        "uid": 10001
+      },
+      "repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache/v1/13/13679b41ae6370e0494dd3e7373d6301e3e1cf2dc8243ff3a1265d0757120eb5.json": {
+        "gid": 10001,
+        "mode": 33152,
+        "mtime_ns": 1792887206614765960,
+        "sha256": "fe51ee5aa81dcb2f38d2da9755d94e6ddac6350ce3cf41c06d543302877f8c01",
+        "size": 10928,
+        "uid": 10001
+      },
+      "repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache/v1/44": {
+        "gid": 10001,
+        "mode": 16877,
+        "mtime_ns": 1792887206609275846,
+        "sha256": null,
+        "size": 96,
+        "uid": 10001
+      },
+      "repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache/v1/44/44b8ce0a88de14e854bbe1b21e36c69c6ac45db8e21c9703a43adac1c20d7b28.json": {
+        "gid": 10001,
+        "mode": 33152,
+        "mtime_ns": 1792887206609083804,
+        "sha256": "118f1faa99c0c2de4b7dbd079fc843d3e613db5ccefcc607a9c50295fa83113e",
+        "size": 62536,
+        "uid": 10001
+      },
+      "repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache/v1/ef": {
+        "gid": 10001,
+        "mode": 16877,
+        "mtime_ns": 1792887206598765830,
+        "sha256": null,
+        "size": 96,
+        "uid": 10001
+      },
+      "repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache/v1/ef/ef441c5ae75ef27aabc215c31bc5f4b1e1b758d00564e0bc14ce8d98f27004c6.json": {
+        "gid": 10001,
+        "mode": 33152,
+        "mtime_ns": 1792887206598595496,
+        "sha256": "864c10b55876b38f23026e17f1fc1d45f4ec7861958dc78bfafb7cfefde308ec",
+        "size": 7483,
+        "uid": 10001
+      },
+      "repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/graph.8.db": {
+        "gid": 10001,
+        "mode": 33152,
+        "mtime_ns": 1792887206630543339,
+        "sha256": "10a6a1c8b0ee2b5d51b81902edf70d0588ceda190a7ca837260fd785e19f19dc",
+        "size": 282624,
+        "uid": 10001
+      },
+      "repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/source-snapshots": {
+        "gid": 10001,
+        "mode": 16832,
+        "mtime_ns": 1792887206633011394,
+        "sha256": null,
+        "size": 160,
+        "uid": 10001
+      },
+      "repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/source-snapshots/catalog.json": {
+        "gid": 10001,
+        "mode": 33152,
+        "mtime_ns": 1792887206632860102,
+        "sha256": "a20b9970c740e30c4ceff1c95cec1b8dde852d31c08f364a8745fb1767fef873",
+        "size": 68,
+        "uid": 10001
+      },
+      "repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/source-snapshots/manifest.3ec97f4267138f3bf61c3fac8dc12914d828bd3d46e516bec749b2b5c1e292a0.json": {
+        "gid": 10001,
+        "mode": 33152,
+        "mtime_ns": 1792887206627002278,
+        "sha256": "3ec97f4267138f3bf61c3fac8dc12914d828bd3d46e516bec749b2b5c1e292a0",
+        "size": 3067,
+        "uid": 10001
+      },
+      "repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/source-snapshots/pack.29e0eb381d70949bf49a505515014e4f0842fe08d4360fc7dc534bf90f180e9a.bin": {
+        "gid": 10001,
+        "mode": 33152,
+        "mtime_ns": 1792887206625837604,
+        "sha256": "29e0eb381d70949bf49a505515014e4f0842fe08d4360fc7dc534bf90f180e9a",
+        "size": 1161,
+        "uid": 10001
+      }
+    },
+    "/repo": {
+      ".": {
+        "mode": 16877,
+        "mtime_ns": 1792882681224775938,
+        "sha256": null,
+        "size": 192
+      },
+      "Cargo.toml": {
+        "gid": 10001,
+        "mode": 33188,
+        "mtime_ns": 1792882681224426478,
+        "sha256": "30a3396ad1efc76ac42c63d33f015fe8f453b0b5ce13e099fb18bf8647734626",
+        "size": 55,
+        "uid": 10001
+      },
+      "alpha": {
+        "gid": 10001,
+        "mode": 16877,
+        "mtime_ns": 1792882681224514645,
+        "sha256": null,
+        "size": 128,
+        "uid": 10001
+      },
+      "alpha/Cargo.toml": {
+        "gid": 10001,
+        "mode": 33188,
+        "mtime_ns": 1792882681224494645,
+        "sha256": "7952cf92cf174a94fe88092697617552f6f8c3d522e6b6ca13ca846e489d2219",
+        "size": 60,
+        "uid": 10001
+      },
+      "alpha/src": {
+        "gid": 10001,
+        "mode": 16877,
+        "mtime_ns": 1792882681224584812,
+        "sha256": null,
+        "size": 128,
+        "uid": 10001
+      },
+      "alpha/src/external.rs": {
+        "gid": 10001,
+        "mode": 33188,
+        "mtime_ns": 1792882681224559979,
+        "sha256": "98a3e19c71703201995c5869501a1725290c1fa913f775a71521347842ca0099",
+        "size": 40,
+        "uid": 10001
+      },
+      "alpha/src/lib.rs": {
+        "gid": 10001,
+        "mode": 33188,
+        "mtime_ns": 1792882681224609937,
+        "sha256": "f2950118a49f7ed3d470b63ecdac9fa812146c47bb1c3e764de53143294409e3",
+        "size": 1016,
+        "uid": 10001
+      },
+      "beta": {
+        "gid": 10001,
+        "mode": 16877,
+        "mtime_ns": 1792882681224709021,
+        "sha256": null,
+        "size": 128,
+        "uid": 10001
+      },
+      "beta/Cargo.toml": {
+        "gid": 10001,
+        "mode": 33188,
+        "mtime_ns": 1792882681224684771,
+        "sha256": "80554bd1a3fdd1f39ea7ec2a8cfccd0f6322044899308cfe2dc9e8f264151e17",
+        "size": 59,
+        "uid": 10001
+      },
+      "beta/src": {
+        "gid": 10001,
+        "mode": 16877,
+        "mtime_ns": 1792882681224736022,
+        "sha256": null,
+        "size": 96,
+        "uid": 10001
+      },
+      "beta/src/lib.rs": {
+        "gid": 10001,
+        "mode": 33188,
+        "mtime_ns": 1792882681224755688,
+        "sha256": "ad05caeb4adb1ead286165ae42930f500cf1ca50e2bb3a5a8027d30f5e4d8c22",
+        "size": 84,
+        "uid": 10001
+      },
+      "declarations.json": {
+        "gid": 10001,
+        "mode": 33188,
+        "mtime_ns": 1792882681224796855,
+        "sha256": "8367def1e3661e72a0b5b0b071aa1e555868fe6da6b150c671fc14bd2058161a",
+        "size": 1196,
+        "uid": 10001
+      }
+    }
+  },
+  "commands": [
+    {
+      "argv": [
+        "docker",
+        "run",
+        "--rm",
+        "--read-only",
+        "--network",
+        "none",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-387/test_rust_offline_readonly_std0/source:/repo:ro",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-387/test_rust_offline_readonly_std0/graphs:/graphs",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-387/test_rust_offline_readonly_std0/memex:/memex",
+        "--entrypoint",
+        "python",
+        "sha256:c6d25bcc2cfe94b46e4d51ab3f81c559fd73a145cc7b1c458f4ee980e47b68ee",
+        "-c",
+        "import errno,os,json,hashlib,platform,importlib.metadata;from pathlib import Path\nfrom tree_sitter_language_pack import get_language,get_parser;import tree_sitter_language_pack as pack\nassert os.geteuid()==10001\ntry: Path('/repo/negative-write').write_text('forbidden')\nexcept OSError as e: assert e.errno==errno.EROFS;source_errno=e.errno\nelse: raise AssertionError('source writable')\nlang=get_language('rust');parser=get_parser('rust')\ntree=parser.parse(b'mod inner { pub fn call() {} } struct S; impl S {fn method() {}} trait T {fn sig();} macro_rules! m {()=>{}}')\nassert not tree.root_node.has_error\nlibs=list(Path('/tmp/.cache/tree-sitter-language-pack').rglob('libtree_sitter_rust.so'));assert len(libs)==1\nnative=Path(pack.__file__).parent/'_native.abi3.so'\nprint(json.dumps({'uid':os.geteuid(),'source_errno':source_errno,'platform':platform.machine(),'package':importlib.metadata.version('tree-sitter-language-pack'),'tree_sitter':importlib.metadata.version('tree-sitter'),'abi':lang.abi_version,'semantic_version':lang.semantic_version,'rust_sha256':hashlib.sha256(libs[0].read_bytes()).hexdigest(),'rust_bytes':libs[0].stat().st_size,'sdk_sha256':hashlib.sha256(native.read_bytes()).hexdigest(),'tree':str(tree.root_node)},sort_keys=True))"
+      ],
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "{\"abi\": 15, \"package\": \"1.6.0\", \"platform\": \"aarch64\", \"rust_bytes\": 1188008, \"rust_sha256\": \"f6bc54faf7be5c341eb09d9ca58d82aa41e73d871d2c8a8f813f066cdb6c25e5\", \"sdk_sha256\": \"6a4afb637653349b9aba9da4c78bbc434215314cf4c2231562d70141f01e8da7\", \"semantic_version\": [0, 24, 1], \"source_errno\": 30, \"tree\": \"(source_file (mod_item name: (identifier) body: (declaration_list (function_item (visibility_modifier) name: (identifier) parameters: (parameters) body: (block)))) (struct_item name: (type_identifier)) (impl_item type: (type_identifier) body: (declaration_list (function_item name: (identifier) parameters: (parameters) body: (block)))) (trait_item name: (type_identifier) body: (declaration_list (function_signature_item name: (identifier) parameters: (parameters)))) (macro_definition name: (identifier) (macro_rule left: (token_tree_pattern) right: (token_tree))))\", \"tree_sitter\": \"0.25.2\", \"uid\": 10001}\n"
+    },
+    {
+      "argv": [
+        "docker",
+        "run",
+        "--rm",
+        "--read-only",
+        "--network",
+        "none",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-387/test_rust_offline_readonly_std0/source:/repo:ro",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-387/test_rust_offline_readonly_std0/graphs:/graphs",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-387/test_rust_offline_readonly_std0/memex:/memex",
+        "sha256:c6d25bcc2cfe94b46e4d51ab3f81c559fd73a145cc7b1c458f4ee980e47b68ee",
+        "index",
+        "--repo",
+        "/repo",
+        "--graph-root",
+        "/graphs"
+      ],
+      "exit_code": 0,
+      "stderr": "2026-10-25T00:13:26.556671Z [info     ] index_start                    langs=['rust', 'ruby', 'python', 'typescript', 'javascript', 'scss', 'html', 'yaml', 'markdown', 'bash'] repo=/repo since=None\n2026-10-25T00:13:26.630998Z [info     ] index_done                     binding_resolution={'mode': 'full', 'reason': 'full_requested_or_incompatible_inputs', 'affected_units': 3, 'reused_units': 0, 'removed_units': 0, 'affected_paths': ['alpha/src/external.rs', 'alpha/src/lib.rs', 'beta/src/lib.rs'], 'reused_paths': [], 'removed_paths': []} edges=0 extraction_cache={'disk_hits': 0, 'misses': 3, 'miss_reasons': {'missing': 3}, 'write_failures': 0, 'predecessor_reused': 0, 'parser_invocations': 3} extraction_state=complete files_failed=0 files_indexed=3 files_removed=0 files_skipped=0 rationale=0 refs=11 schema_epoch=8 snapshot_id=3ec97f4267138f3bf61c3fac8dc12914d828bd3d46e516bec749b2b5c1e292a0 symbols=28 unsupported_skipped={}\n",
+      "stdout": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "run",
+        "--rm",
+        "--read-only",
+        "--network",
+        "none",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-387/test_rust_offline_readonly_std0/source:/repo:ro",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-387/test_rust_offline_readonly_std0/graphs:/graphs:ro",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-387/test_rust_offline_readonly_std0/memex:/memex",
+        "sha256:c6d25bcc2cfe94b46e4d51ab3f81c559fd73a145cc7b1c458f4ee980e47b68ee",
+        "status",
+        "--repo",
+        "/repo",
+        "--graph-root",
+        "/graphs"
+      ],
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "{\"attempt\":{\"applicability\":\"none\",\"attempt_id\":null,\"observation\":null,\"observed_failed_count\":null,\"reason\":null},\"completeness\":{\"counts\":{\"disabled\":0,\"failed\":0,\"indexed\":3,\"unsupported\":0},\"enumeration\":\"complete\",\"excluded_count\":null,\"files\":[{\"extraction_state\":\"indexed\",\"fact_source_sha256\":\"98a3e19c71703201995c5869501a1725290c1fa913f775a71521347842ca0099\",\"fact_source_sha256s\":[\"98a3e19c71703201995c5869501a1725290c1fa913f775a71521347842ca0099\"],\"failed_source_sha256\":null,\"location\":null,\"observed_source_sha256\":\"98a3e19c71703201995c5869501a1725290c1fa913f775a71521347842ca0099\",\"path\":\"alpha/src/external.rs\",\"reason\":null,\"refresh_verification\":\"verified_unchanged\",\"retained_facts\":true,\"stale\":false},{\"extraction_state\":\"indexed\",\"fact_source_sha256\":\"f2950118a49f7ed3d470b63ecdac9fa812146c47bb1c3e764de53143294409e3\",\"fact_source_sha256s\":[\"f2950118a49f7ed3d470b63ecdac9fa812146c47bb1c3e764de53143294409e3\"],\"failed_source_sha256\":null,\"location\":null,\"observed_source_sha256\":\"f2950118a49f7ed3d470b63ecdac9fa812146c47bb1c3e764de53143294409e3\",\"path\":\"alpha/src/lib.rs\",\"reason\":null,\"refresh_verification\":\"verified_unchanged\",\"retained_facts\":true,\"stale\":false},{\"extraction_state\":\"indexed\",\"fact_source_sha256\":\"ad05caeb4adb1ead286165ae42930f500cf1ca50e2bb3a5a8027d30f5e4d8c22\",\"fact_source_sha256s\":[\"ad05caeb4adb1ead286165ae42930f500cf1ca50e2bb3a5a8027d30f5e4d8c22\"],\"failed_source_sha256\":null,\"location\":null,\"observed_source_sha256\":\"ad05caeb4adb1ead286165ae42930f500cf1ca50e2bb3a5a8027d30f5e4d8c22\",\"path\":\"beta/src/lib.rs\",\"reason\":null,\"refresh_verification\":\"verified_unchanged\",\"retained_facts\":true,\"stale\":false}],\"reason\":\"observed_complete\",\"stale_count\":0,\"state\":\"complete\",\"total_count\":3},\"format\":\"atlas-status.v1\",\"generation_id\":\"fd77294ab9f22a22bd2cf6116864ec9e33b5c1a4ceb9b479e72725121126069a\",\"indexed\":{\"capabilities\":{\"format\":\"atlas-capabilities.v3\",\"languages\":[{\"definitions\":[\"function\"],\"extensions\":[\".bash\",\".sh\"],\"extraction\":{\"reason\":\"bounded_structural_queries\",\"state\":\"partial\"},\"language\":\"bash\",\"relations\":[\"call\"],\"semantic_binding\":{\"reason\":\"no_compiler_provider\",\"state\":\"unsupported\"}},{\"definitions\":[],\"extensions\":[\".go\"],\"extraction\":{\"reason\":\"no_extraction_query\",\"state\":\"unsupported\"},\"language\":\"go\",\"relations\":[],\"semantic_binding\":{\"reason\":\"no_compiler_provider\",\"state\":\"unsupported\"}},{\"definitions\":[\"id\"],\"extensions\":[\".htm\",\".html\"],\"extraction\":{\"reason\":\"bounded_structural_queries\",\"state\":\"partial\"},\"language\":\"html\",\"relations\":[],\"semantic_binding\":{\"reason\":\"no_compiler_provider\",\"state\":\"unsupported\"}},{\"definitions\":[],\"extensions\":[\".java\"],\"extraction\":{\"reason\":\"no_extraction_query\",\"state\":\"unsupported\"},\"language\":\"java\",\"relations\":[],\"semantic_binding\":{\"reason\":\"no_compiler_provider\",\"state\":\"unsupported\"}},{\"definitions\":[\"class\",\"function\",\"method\"],\"extensions\":[\".js\",\".jsx\"],\"extraction\":{\"reason\":\"bounded_structural_queries\",\"state\":\"partial\"},\"language\":\"javascript\",\"relations\":[\"call\",\"construct\",\"rationale_for\",\"superclass\"],\"semantic_binding\":{\"reason\":\"no_compiler_provider\",\"state\":\"unsupported\"}},{\"definitions\":[\"heading\"],\"extensions\":[\".markdown\",\".md\"],\"extraction\":{\"reason\":\"bounded_structural_queries\",\"state\":\"partial\"},\"language\":\"markdown\",\"relations\":[],\"semantic_binding\":{\"reason\":\"no_compiler_provider\",\"state\":\"unsupported\"}},{\"definitions\":[\"class\",\"function\"],\"extensions\":[\".py\"],\"extraction\":{\"reason\":\"bounded_structural_queries\",\"state\":\"partial\"},\"language\":\"python\",\"relations\":[\"call\",\"construct\",\"import\",\"rationale_for\",\"superclass\"],\"semantic_binding\":{\"reason\":\"no_compiler_provider\",\"state\":\"unsupported\"}},{\"definitions\":[\"class\",\"method\",\"module\"],\"extensions\":[\".rb\"],\"extraction\":{\"reason\":\"bounded_structural_queries\",\"state\":\"partial\"},\"language\":\"ruby\",\"relations\":[\"call\",\"construct\",\"extend\",\"include\",\"prepend\",\"rationale_for\",\"superclass\"],\"semantic_binding\":{\"reason\":\"no_compiler_provider\",\"state\":\"unsupported\"}},{\"definitions\":[\"enum\",\"function\",\"method\",\"module\",\"struct\",\"trait\"],\"extensions\":[\".rs\"],\"extraction\":{\"reason\":\"bounded_structural_queries\",\"state\":\"partial\"},\"language\":\"rust\",\"relations\":[\"call\"],\"semantic_binding\":{\"reason\":\"no_compiler_provider\",\"state\":\"unsupported\"}},{\"definitions\":[\"function\",\"id\",\"mixin\",\"placeholder\",\"selector\",\"variable\"],\"extensions\":[\".css\",\".scss\"],\"extraction\":{\"reason\":\"bounded_structural_queries\",\"state\":\"partial\"},\"language\":\"scss\",\"relations\":[\"call\"],\"semantic_binding\":{\"reason\":\"no_compiler_provider\",\"state\":\"unsupported\"}},{\"definitions\":[],\"extensions\":[\".tsx\"],\"extraction\":{\"reason\":\"no_extraction_query\",\"state\":\"unsupported\"},\"language\":\"tsx\",\"relations\":[],\"semantic_binding\":{\"reason\":\"no_compiler_provider\",\"state\":\"unsupported\"}},{\"definitions\":[\"class\",\"function\",\"method\"],\"extensions\":[\".ts\"],\"extraction\":{\"reason\":\"bounded_structural_queries\",\"state\":\"partial\"},\"language\":\"typescript\",\"relations\":[\"call\",\"construct\",\"rationale_for\",\"superclass\"],\"semantic_binding\":{\"reason\":\"no_compiler_provider\",\"state\":\"unsupported\"}},{\"definitions\":[\"key\"],\"extensions\":[\".yaml\",\".yml\"],\"extraction\":{\"reason\":\"bounded_structural_queries\",\"state\":\"partial\"},\"language\":\"yaml\",\"relations\":[],\"semantic_binding\":{\"reason\":\"no_compiler_provider\",\"state\":\"unsupported\"}}],\"limitations\":{\"control_flow\":\"unsupported\",\"python_imports\":\"package_local_unaliased_relative_only\",\"rust_cfg\":\"build_configuration_not_evaluated\",\"rust_dispatch\":\"unresolved_without_type_or_trait_inference\",\"rust_generated_code\":\"unmaterialized_outputs_unavailable\",\"rust_macro_expansion\":\"unsupported_including_derive_and_proc_macros\",\"semantic_binding\":\"unsupported\"},\"producer\":{\"codegraph_sha256\":\"4df28b1fcaeb7c5d0051f1c5412e0d06a38ad3d10652d18a82d7b7d16c6bcfe2\",\"modules\":{\"extractors/rust.py\":\"28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a\",\"indexing/extraction_cache.py\":\"08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2\",\"providers/python_imports.py\":\"de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014\",\"resolvers/dependencies.py\":\"0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6\",\"storage/evidence.py\":\"3f14fa87ed9b060cc1d09e7e57cb002275c99b501829412a202d225870f3eb92\",\"storage/snapshots.py\":\"b8aecf567335dda0f2d0162c2eb6a334a4efae7d785755a0d8e862b52d96396f\"},\"packages\":{\"tree-sitter\":\"0.25.2\",\"tree-sitter-language-pack\":\"1.6.0\"},\"queries_sha256\":\"a222468d9bb15cbf5cfccc368bd65ca69de7ed22e91ae85e628228f2f227b944\"},\"producers\":[{\"name\":\"tree-sitter\",\"operation\":\"structural_extraction\",\"semantic_binding\":{\"reason\":\"no_compiler_provider\",\"state\":\"unsupported\"}}]},\"configuration\":{\"languages\":[\"bash\",\"html\",\"javascript\",\"markdown\",\"python\",\"ruby\",\"rust\",\"scss\",\"typescript\",\"yaml\"],\"skip_patterns\":[\"node_modules\",\"vendor/bundle\",\"vendor/cache\",\"tmp\",\"log\",\".git\",\"dist\",\"build\",\"public/assets\",\"public/packs\",\"public/packs-test\",\"coverage\",\".bundle\",\"__pycache__\",\".venv\",\".atlas\",\"storage\",\"_site\",\".jekyll-cache\",\".sass-cache\"]},\"coverage_id\":\"20c7e37fac044955c3c5f6f5b689e9bdfcd614421de6f903e732f7f51640bfda\",\"producer\":{\"codegraph_sha256\":\"4df28b1fcaeb7c5d0051f1c5412e0d06a38ad3d10652d18a82d7b7d16c6bcfe2\",\"modules\":{\"extractors/rust.py\":\"28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a\",\"indexing/extraction_cache.py\":\"08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2\",\"providers/python_imports.py\":\"de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014\",\"resolvers/dependencies.py\":\"0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6\",\"storage/evidence.py\":\"3f14fa87ed9b060cc1d09e7e57cb002275c99b501829412a202d225870f3eb92\",\"storage/snapshots.py\":\"b8aecf567335dda0f2d0162c2eb6a334a4efae7d785755a0d8e862b52d96396f\"},\"packages\":{\"tree-sitter\":\"0.25.2\",\"tree-sitter-language-pack\":\"1.6.0\"},\"queries_sha256\":\"a222468d9bb15cbf5cfccc368bd65ca69de7ed22e91ae85e628228f2f227b944\"}},\"runtime\":{\"format\":\"atlas-capabilities.v3\",\"languages\":[{\"definitions\":[\"function\"],\"extensions\":[\".bash\",\".sh\"],\"extraction\":{\"reason\":\"bounded_structural_queries\",\"state\":\"partial\"},\"language\":\"bash\",\"relations\":[\"call\"],\"semantic_binding\":{\"reason\":\"no_compiler_provider\",\"state\":\"unsupported\"}},{\"definitions\":[],\"extensions\":[\".go\"],\"extraction\":{\"reason\":\"no_extraction_query\",\"state\":\"unsupported\"},\"language\":\"go\",\"relations\":[],\"semantic_binding\":{\"reason\":\"no_compiler_provider\",\"state\":\"unsupported\"}},{\"definitions\":[\"id\"],\"extensions\":[\".htm\",\".html\"],\"extraction\":{\"reason\":\"bounded_structural_queries\",\"state\":\"partial\"},\"language\":\"html\",\"relations\":[],\"semantic_binding\":{\"reason\":\"no_compiler_provider\",\"state\":\"unsupported\"}},{\"definitions\":[],\"extensions\":[\".java\"],\"extraction\":{\"reason\":\"no_extraction_query\",\"state\":\"unsupported\"},\"language\":\"java\",\"relations\":[],\"semantic_binding\":{\"reason\":\"no_compiler_provider\",\"state\":\"unsupported\"}},{\"definitions\":[\"class\",\"function\",\"method\"],\"extensions\":[\".js\",\".jsx\"],\"extraction\":{\"reason\":\"bounded_structural_queries\",\"state\":\"partial\"},\"language\":\"javascript\",\"relations\":[\"call\",\"construct\",\"rationale_for\",\"superclass\"],\"semantic_binding\":{\"reason\":\"no_compiler_provider\",\"state\":\"unsupported\"}},{\"definitions\":[\"heading\"],\"extensions\":[\".markdown\",\".md\"],\"extraction\":{\"reason\":\"bounded_structural_queries\",\"state\":\"partial\"},\"language\":\"markdown\",\"relations\":[],\"semantic_binding\":{\"reason\":\"no_compiler_provider\",\"state\":\"unsupported\"}},{\"definitions\":[\"class\",\"function\"],\"extensions\":[\".py\"],\"extraction\":{\"reason\":\"bounded_structural_queries\",\"state\":\"partial\"},\"language\":\"python\",\"relations\":[\"call\",\"construct\",\"import\",\"rationale_for\",\"superclass\"],\"semantic_binding\":{\"reason\":\"no_compiler_provider\",\"state\":\"unsupported\"}},{\"definitions\":[\"class\",\"method\",\"module\"],\"extensions\":[\".rb\"],\"extraction\":{\"reason\":\"bounded_structural_queries\",\"state\":\"partial\"},\"language\":\"ruby\",\"relations\":[\"call\",\"construct\",\"extend\",\"include\",\"prepend\",\"rationale_for\",\"superclass\"],\"semantic_binding\":{\"reason\":\"no_compiler_provider\",\"state\":\"unsupported\"}},{\"definitions\":[\"enum\",\"function\",\"method\",\"module\",\"struct\",\"trait\"],\"extensions\":[\".rs\"],\"extraction\":{\"reason\":\"bounded_structural_queries\",\"state\":\"partial\"},\"language\":\"rust\",\"relations\":[\"call\"],\"semantic_binding\":{\"reason\":\"no_compiler_provider\",\"state\":\"unsupported\"}},{\"definitions\":[\"function\",\"id\",\"mixin\",\"placeholder\",\"selector\",\"variable\"],\"extensions\":[\".css\",\".scss\"],\"extraction\":{\"reason\":\"bounded_structural_queries\",\"state\":\"partial\"},\"language\":\"scss\",\"relations\":[\"call\"],\"semantic_binding\":{\"reason\":\"no_compiler_provider\",\"state\":\"unsupported\"}},{\"definitions\":[],\"extensions\":[\".tsx\"],\"extraction\":{\"reason\":\"no_extraction_query\",\"state\":\"unsupported\"},\"language\":\"tsx\",\"relations\":[],\"semantic_binding\":{\"reason\":\"no_compiler_provider\",\"state\":\"unsupported\"}},{\"definitions\":[\"class\",\"function\",\"method\"],\"extensions\":[\".ts\"],\"extraction\":{\"reason\":\"bounded_structural_queries\",\"state\":\"partial\"},\"language\":\"typescript\",\"relations\":[\"call\",\"construct\",\"rationale_for\",\"superclass\"],\"semantic_binding\":{\"reason\":\"no_compiler_provider\",\"state\":\"unsupported\"}},{\"definitions\":[\"key\"],\"extensions\":[\".yaml\",\".yml\"],\"extraction\":{\"reason\":\"bounded_structural_queries\",\"state\":\"partial\"},\"language\":\"yaml\",\"relations\":[],\"semantic_binding\":{\"reason\":\"no_compiler_provider\",\"state\":\"unsupported\"}}],\"limitations\":{\"control_flow\":\"unsupported\",\"python_imports\":\"package_local_unaliased_relative_only\",\"rust_cfg\":\"build_configuration_not_evaluated\",\"rust_dispatch\":\"unresolved_without_type_or_trait_inference\",\"rust_generated_code\":\"unmaterialized_outputs_unavailable\",\"rust_macro_expansion\":\"unsupported_including_derive_and_proc_macros\",\"semantic_binding\":\"unsupported\"},\"producer\":{\"codegraph_sha256\":\"4df28b1fcaeb7c5d0051f1c5412e0d06a38ad3d10652d18a82d7b7d16c6bcfe2\",\"modules\":{\"extractors/rust.py\":\"28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a\",\"indexing/extraction_cache.py\":\"08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2\",\"providers/python_imports.py\":\"de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014\",\"resolvers/dependencies.py\":\"0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6\",\"storage/evidence.py\":\"3f14fa87ed9b060cc1d09e7e57cb002275c99b501829412a202d225870f3eb92\",\"storage/snapshots.py\":\"b8aecf567335dda0f2d0162c2eb6a334a4efae7d785755a0d8e862b52d96396f\"},\"packages\":{\"tree-sitter\":\"0.25.2\",\"tree-sitter-language-pack\":\"1.6.0\"},\"queries_sha256\":\"a222468d9bb15cbf5cfccc368bd65ca69de7ed22e91ae85e628228f2f227b944\"},\"producers\":[{\"name\":\"tree-sitter\",\"operation\":\"structural_extraction\",\"semantic_binding\":{\"reason\":\"no_compiler_provider\",\"state\":\"unsupported\"}}]},\"status_id\":\"891f199fa44ad5cb82ac2fac8cc27ae2ca70dcf28355a429ff61646f52dad241\"}\n"
+    },
+    {
+      "argv": [
+        "docker",
+        "run",
+        "--rm",
+        "--read-only",
+        "--network",
+        "none",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-387/test_rust_offline_readonly_std0/source:/repo:ro",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-387/test_rust_offline_readonly_std0/graphs:/graphs:ro",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-387/test_rust_offline_readonly_std0/memex:/memex",
+        "--entrypoint",
+        "python",
+        "sha256:c6d25bcc2cfe94b46e4d51ab3f81c559fd73a145cc7b1c458f4ee980e47b68ee",
+        "-c",
+        "import os,json,hashlib;from pathlib import Path\nassert os.geteuid()==10001\nresult={}\nfor location in ('/repo','/graphs'):\n root=Path(location);files={}\n for p in [root,*sorted(root.rglob('*'))]:\n  s=p.stat(); row={'sha256':hashlib.sha256(p.read_bytes()).hexdigest() if p.is_file() else None,'size':s.st_size,'mode':s.st_mode,'mtime_ns':s.st_mtime_ns,'uid':s.st_uid,'gid':s.st_gid}\n  files[str(p.relative_to(root))]=row\n result[location]=files\nprint(json.dumps(result,sort_keys=True))"
+      ],
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "{\"/graphs\": {\".\": {\"gid\": 10001, \"mode\": 16895, \"mtime_ns\": 1792887206560036616, \"sha256\": null, \"size\": 96, \"uid\": 10001}, \"repos\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792887206560180950, \"sha256\": null, \"size\": 96, \"uid\": 10001}, \"repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792887206633526480, \"sha256\": null, \"size\": 192, \"uid\": 10001}, \"repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/.index.lock\": {\"gid\": 10001, \"mode\": 33188, \"mtime_ns\": 1792887206562209378, \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"size\": 0, \"uid\": 10001}, \"repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792887206598164243, \"sha256\": null, \"size\": 96, \"uid\": 10001}, \"repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache/v1\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792887206614417458, \"sha256\": null, \"size\": 160, \"uid\": 10001}, \"repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache/v1/13\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792887206614937628, \"sha256\": null, \"size\": 96, \"uid\": 10001}, \"repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache/v1/13/13679b41ae6370e0494dd3e7373d6301e3e1cf2dc8243ff3a1265d0757120eb5.json\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792887206614765960, \"sha256\": \"fe51ee5aa81dcb2f38d2da9755d94e6ddac6350ce3cf41c06d543302877f8c01\", \"size\": 10928, \"uid\": 10001}, \"repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache/v1/44\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792887206609275846, \"sha256\": null, \"size\": 96, \"uid\": 10001}, \"repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache/v1/44/44b8ce0a88de14e854bbe1b21e36c69c6ac45db8e21c9703a43adac1c20d7b28.json\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792887206609083804, \"sha256\": \"118f1faa99c0c2de4b7dbd079fc843d3e613db5ccefcc607a9c50295fa83113e\", \"size\": 62536, \"uid\": 10001}, \"repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache/v1/ef\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792887206598765830, \"sha256\": null, \"size\": 96, \"uid\": 10001}, \"repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache/v1/ef/ef441c5ae75ef27aabc215c31bc5f4b1e1b758d00564e0bc14ce8d98f27004c6.json\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792887206598595496, \"sha256\": \"864c10b55876b38f23026e17f1fc1d45f4ec7861958dc78bfafb7cfefde308ec\", \"size\": 7483, \"uid\": 10001}, \"repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/graph.8.db\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792887206630543339, \"sha256\": \"10a6a1c8b0ee2b5d51b81902edf70d0588ceda190a7ca837260fd785e19f19dc\", \"size\": 282624, \"uid\": 10001}, \"repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/source-snapshots\": {\"gid\": 10001, \"mode\": 16832, \"mtime_ns\": 1792887206633011394, \"sha256\": null, \"size\": 160, \"uid\": 10001}, \"repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/source-snapshots/catalog.json\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792887206632860102, \"sha256\": \"a20b9970c740e30c4ceff1c95cec1b8dde852d31c08f364a8745fb1767fef873\", \"size\": 68, \"uid\": 10001}, \"repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/source-snapshots/manifest.3ec97f4267138f3bf61c3fac8dc12914d828bd3d46e516bec749b2b5c1e292a0.json\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792887206627002278, \"sha256\": \"3ec97f4267138f3bf61c3fac8dc12914d828bd3d46e516bec749b2b5c1e292a0\", \"size\": 3067, \"uid\": 10001}, \"repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/source-snapshots/pack.29e0eb381d70949bf49a505515014e4f0842fe08d4360fc7dc534bf90f180e9a.bin\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792887206625837604, \"sha256\": \"29e0eb381d70949bf49a505515014e4f0842fe08d4360fc7dc534bf90f180e9a\", \"size\": 1161, \"uid\": 10001}}, \"/repo\": {\".\": {\"gid\": 0, \"mode\": 16877, \"mtime_ns\": 1792882681224775938, \"sha256\": null, \"size\": 192, \"uid\": 0}, \"Cargo.toml\": {\"gid\": 10001, \"mode\": 33188, \"mtime_ns\": 1792882681224426478, \"sha256\": \"30a3396ad1efc76ac42c63d33f015fe8f453b0b5ce13e099fb18bf8647734626\", \"size\": 55, \"uid\": 10001}, \"alpha\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792882681224514645, \"sha256\": null, \"size\": 128, \"uid\": 10001}, \"alpha/Cargo.toml\": {\"gid\": 10001, \"mode\": 33188, \"mtime_ns\": 1792882681224494645, \"sha256\": \"7952cf92cf174a94fe88092697617552f6f8c3d522e6b6ca13ca846e489d2219\", \"size\": 60, \"uid\": 10001}, \"alpha/src\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792882681224584812, \"sha256\": null, \"size\": 128, \"uid\": 10001}, \"alpha/src/external.rs\": {\"gid\": 10001, \"mode\": 33188, \"mtime_ns\": 1792882681224559979, \"sha256\": \"98a3e19c71703201995c5869501a1725290c1fa913f775a71521347842ca0099\", \"size\": 40, \"uid\": 10001}, \"alpha/src/lib.rs\": {\"gid\": 10001, \"mode\": 33188, \"mtime_ns\": 1792882681224609937, \"sha256\": \"f2950118a49f7ed3d470b63ecdac9fa812146c47bb1c3e764de53143294409e3\", \"size\": 1016, \"uid\": 10001}, \"beta\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792882681224709021, \"sha256\": null, \"size\": 128, \"uid\": 10001}, \"beta/Cargo.toml\": {\"gid\": 10001, \"mode\": 33188, \"mtime_ns\": 1792882681224684771, \"sha256\": \"80554bd1a3fdd1f39ea7ec2a8cfccd0f6322044899308cfe2dc9e8f264151e17\", \"size\": 59, \"uid\": 10001}, \"beta/src\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792882681224736022, \"sha256\": null, \"size\": 96, \"uid\": 10001}, \"beta/src/lib.rs\": {\"gid\": 10001, \"mode\": 33188, \"mtime_ns\": 1792882681224755688, \"sha256\": \"ad05caeb4adb1ead286165ae42930f500cf1ca50e2bb3a5a8027d30f5e4d8c22\", \"size\": 84, \"uid\": 10001}, \"declarations.json\": {\"gid\": 10001, \"mode\": 33188, \"mtime_ns\": 1792882681224796855, \"sha256\": \"8367def1e3661e72a0b5b0b071aa1e555868fe6da6b150c671fc14bd2058161a\", \"size\": 1196, \"uid\": 10001}}}\n"
+    },
+    {
+      "argv": [
+        "docker",
+        "run",
+        "--rm",
+        "--read-only",
+        "--network",
+        "none",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-387/test_rust_offline_readonly_std0/source:/repo:ro",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-387/test_rust_offline_readonly_std0/graphs:/graphs:ro",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-387/test_rust_offline_readonly_std0/memex:/memex",
+        "--entrypoint",
+        "python",
+        "sha256:c6d25bcc2cfe94b46e4d51ab3f81c559fd73a145cc7b1c458f4ee980e47b68ee",
+        "-c",
+        "import os,json,hashlib;from pathlib import Path\nassert os.geteuid()==10001\nresult={}\nfor location in ('/repo','/graphs'):\n root=Path(location);files={}\n for p in [root,*sorted(root.rglob('*'))]:\n  s=p.stat(); row={'sha256':hashlib.sha256(p.read_bytes()).hexdigest() if p.is_file() else None,'size':s.st_size,'mode':s.st_mode,'mtime_ns':s.st_mtime_ns,'uid':s.st_uid,'gid':s.st_gid}\n  files[str(p.relative_to(root))]=row\n result[location]=files\nprint(json.dumps(result,sort_keys=True))"
+      ],
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "{\"/graphs\": {\".\": {\"gid\": 0, \"mode\": 16895, \"mtime_ns\": 1792887206560036616, \"sha256\": null, \"size\": 96, \"uid\": 0}, \"repos\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792887206560180950, \"sha256\": null, \"size\": 96, \"uid\": 10001}, \"repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792887206633526480, \"sha256\": null, \"size\": 192, \"uid\": 10001}, \"repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/.index.lock\": {\"gid\": 10001, \"mode\": 33188, \"mtime_ns\": 1792887206562209378, \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"size\": 0, \"uid\": 10001}, \"repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792887206598164243, \"sha256\": null, \"size\": 96, \"uid\": 10001}, \"repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache/v1\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792887206614417458, \"sha256\": null, \"size\": 160, \"uid\": 10001}, \"repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache/v1/13\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792887206614937628, \"sha256\": null, \"size\": 96, \"uid\": 10001}, \"repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache/v1/13/13679b41ae6370e0494dd3e7373d6301e3e1cf2dc8243ff3a1265d0757120eb5.json\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792887206614765960, \"sha256\": \"fe51ee5aa81dcb2f38d2da9755d94e6ddac6350ce3cf41c06d543302877f8c01\", \"size\": 10928, \"uid\": 10001}, \"repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache/v1/44\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792887206609275846, \"sha256\": null, \"size\": 96, \"uid\": 10001}, \"repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache/v1/44/44b8ce0a88de14e854bbe1b21e36c69c6ac45db8e21c9703a43adac1c20d7b28.json\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792887206609083804, \"sha256\": \"118f1faa99c0c2de4b7dbd079fc843d3e613db5ccefcc607a9c50295fa83113e\", \"size\": 62536, \"uid\": 10001}, \"repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache/v1/ef\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792887206598765830, \"sha256\": null, \"size\": 96, \"uid\": 10001}, \"repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache/v1/ef/ef441c5ae75ef27aabc215c31bc5f4b1e1b758d00564e0bc14ce8d98f27004c6.json\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792887206598595496, \"sha256\": \"864c10b55876b38f23026e17f1fc1d45f4ec7861958dc78bfafb7cfefde308ec\", \"size\": 7483, \"uid\": 10001}, \"repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/graph.8.db\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792887206630543339, \"sha256\": \"10a6a1c8b0ee2b5d51b81902edf70d0588ceda190a7ca837260fd785e19f19dc\", \"size\": 282624, \"uid\": 10001}, \"repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/source-snapshots\": {\"gid\": 10001, \"mode\": 16832, \"mtime_ns\": 1792887206633011394, \"sha256\": null, \"size\": 160, \"uid\": 10001}, \"repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/source-snapshots/catalog.json\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792887206632860102, \"sha256\": \"a20b9970c740e30c4ceff1c95cec1b8dde852d31c08f364a8745fb1767fef873\", \"size\": 68, \"uid\": 10001}, \"repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/source-snapshots/manifest.3ec97f4267138f3bf61c3fac8dc12914d828bd3d46e516bec749b2b5c1e292a0.json\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792887206627002278, \"sha256\": \"3ec97f4267138f3bf61c3fac8dc12914d828bd3d46e516bec749b2b5c1e292a0\", \"size\": 3067, \"uid\": 10001}, \"repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/source-snapshots/pack.29e0eb381d70949bf49a505515014e4f0842fe08d4360fc7dc534bf90f180e9a.bin\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1792887206625837604, \"sha256\": \"29e0eb381d70949bf49a505515014e4f0842fe08d4360fc7dc534bf90f180e9a\", \"size\": 1161, \"uid\": 10001}}, \"/repo\": {\".\": {\"gid\": 0, \"mode\": 16877, \"mtime_ns\": 1792882681224775938, \"sha256\": null, \"size\": 192, \"uid\": 0}, \"Cargo.toml\": {\"gid\": 10001, \"mode\": 33188, \"mtime_ns\": 1792882681224426478, \"sha256\": \"30a3396ad1efc76ac42c63d33f015fe8f453b0b5ce13e099fb18bf8647734626\", \"size\": 55, \"uid\": 10001}, \"alpha\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792882681224514645, \"sha256\": null, \"size\": 128, \"uid\": 10001}, \"alpha/Cargo.toml\": {\"gid\": 10001, \"mode\": 33188, \"mtime_ns\": 1792882681224494645, \"sha256\": \"7952cf92cf174a94fe88092697617552f6f8c3d522e6b6ca13ca846e489d2219\", \"size\": 60, \"uid\": 10001}, \"alpha/src\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792882681224584812, \"sha256\": null, \"size\": 128, \"uid\": 10001}, \"alpha/src/external.rs\": {\"gid\": 10001, \"mode\": 33188, \"mtime_ns\": 1792882681224559979, \"sha256\": \"98a3e19c71703201995c5869501a1725290c1fa913f775a71521347842ca0099\", \"size\": 40, \"uid\": 10001}, \"alpha/src/lib.rs\": {\"gid\": 10001, \"mode\": 33188, \"mtime_ns\": 1792882681224609937, \"sha256\": \"f2950118a49f7ed3d470b63ecdac9fa812146c47bb1c3e764de53143294409e3\", \"size\": 1016, \"uid\": 10001}, \"beta\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792882681224709021, \"sha256\": null, \"size\": 128, \"uid\": 10001}, \"beta/Cargo.toml\": {\"gid\": 10001, \"mode\": 33188, \"mtime_ns\": 1792882681224684771, \"sha256\": \"80554bd1a3fdd1f39ea7ec2a8cfccd0f6322044899308cfe2dc9e8f264151e17\", \"size\": 59, \"uid\": 10001}, \"beta/src\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1792882681224736022, \"sha256\": null, \"size\": 96, \"uid\": 10001}, \"beta/src/lib.rs\": {\"gid\": 10001, \"mode\": 33188, \"mtime_ns\": 1792882681224755688, \"sha256\": \"ad05caeb4adb1ead286165ae42930f500cf1ca50e2bb3a5a8027d30f5e4d8c22\", \"size\": 84, \"uid\": 10001}, \"declarations.json\": {\"gid\": 10001, \"mode\": 33188, \"mtime_ns\": 1792882681224796855, \"sha256\": \"8367def1e3661e72a0b5b0b071aa1e555868fe6da6b150c671fc14bd2058161a\", \"size\": 1196, \"uid\": 10001}}}\n"
+    }
+  ],
+  "default_languages": [
+    "rust",
+    "ruby",
+    "python",
+    "typescript",
+    "javascript",
+    "scss",
+    "html",
+    "yaml",
+    "markdown",
+    "bash"
+  ],
+  "grammar": {
+    "abi": 15,
+    "package": "1.6.0",
+    "platform": "aarch64",
+    "rust_bytes": 1188008,
+    "rust_sha256": "f6bc54faf7be5c341eb09d9ca58d82aa41e73d871d2c8a8f813f066cdb6c25e5",
+    "sdk_sha256": "6a4afb637653349b9aba9da4c78bbc434215314cf4c2231562d70141f01e8da7",
+    "semantic_version": [
+      0,
+      24,
+      1
+    ],
+    "source_errno": 30,
+    "tree": "(source_file (mod_item name: (identifier) body: (declaration_list (function_item (visibility_modifier) name: (identifier) parameters: (parameters) body: (block)))) (struct_item name: (type_identifier)) (impl_item type: (type_identifier) body: (declaration_list (function_item name: (identifier) parameters: (parameters) body: (block)))) (trait_item name: (type_identifier) body: (declaration_list (function_signature_item name: (identifier) parameters: (parameters)))) (macro_definition name: (identifier) (macro_rule left: (token_tree_pattern) right: (token_tree))))",
+    "tree_sitter": "0.25.2",
+    "uid": 10001
+  },
+  "image": "sha256:c6d25bcc2cfe94b46e4d51ab3f81c559fd73a145cc7b1c458f4ee980e47b68ee",
+  "image_id": "sha256:c6d25bcc2cfe94b46e4d51ab3f81c559fd73a145cc7b1c458f4ee980e47b68ee",
+  "mcp": {
+    "Alpha": {
+      "definitions": [
+        {
+          "entity_id": "917c140c251da96bd1663fd9ea8948fde66a2a77e3db99d56722278ce3a97d75",
+          "id": 5,
+          "kind": "struct",
+          "lang": "rust",
+          "line_end": 3,
+          "line_start": 3,
+          "name": "Alpha",
+          "occurrence_id": "c94c5e3248772bfa11126fbb196aabea63c904c4c2a2199661d05b8248fe3aac",
+          "path": "alpha/src/lib.rs"
+        }
+      ],
+      "generation_id": "fd77294ab9f22a22bd2cf6116864ec9e33b5c1a4ceb9b479e72725121126069a",
+      "references": [],
+      "snapshot_id": "3ec97f4267138f3bf61c3fac8dc12914d828bd3d46e516bec749b2b5c1e292a0",
+      "source_available": true
+    },
+    "callers_of:free": {
+      "edges": [],
+      "generation_id": "fd77294ab9f22a22bd2cf6116864ec9e33b5c1a4ceb9b479e72725121126069a",
+      "snapshot_id": "3ec97f4267138f3bf61c3fac8dc12914d828bd3d46e516bec749b2b5c1e292a0",
+      "source_available": true,
+      "unresolved_refs": 3
+    },
+    "definitions_of:execute": {
+      "definitions": [
+        {
+          "entity_id": "4aa55e76288d3cbfdc139fb7b4bd165f9f9c3b6f63edcc6ddc6835f4c6d33913",
+          "id": 10,
+          "kind": "method",
+          "lang": "rust",
+          "line_end": 8,
+          "line_start": 8,
+          "name": "execute",
+          "occurrence_id": "27a13826421878b7301b5c550f64d753d802fcad444d90c43d6a6c6d33382f0a",
+          "path": "alpha/src/lib.rs"
+        },
+        {
+          "entity_id": "82cb5a2f94ed1cc0e792deabff70662f25400d1cd1376ad630166fed1e5ffcc4",
+          "id": 12,
+          "kind": "method",
+          "lang": "rust",
+          "line_end": 12,
+          "line_start": 12,
+          "name": "execute",
+          "occurrence_id": "b3404ceda9cfdd52d1c253d90a86f87044a289a3afce90c823b84bf973830b9a",
+          "path": "alpha/src/lib.rs"
+        },
+        {
+          "entity_id": "998b3904e074f46943383a47e0b4537545a522bf4b89a3c59b12f7e365be21d6",
+          "id": 15,
+          "kind": "method",
+          "lang": "rust",
+          "line_end": 15,
+          "line_start": 15,
+          "name": "execute",
+          "occurrence_id": "28b1813f16fc9557d89c54cd0ecd87bc7a974267fb7290e41cb835ee0411e370",
+          "path": "alpha/src/lib.rs"
+        },
+        {
+          "entity_id": "d6a99f21570983ec56a5980a2d158f1b034b7493ddcff3f19ee9107bb36fe0fd",
+          "id": 16,
+          "kind": "method",
+          "lang": "rust",
+          "line_end": 16,
+          "line_start": 16,
+          "name": "execute",
+          "occurrence_id": "3585c7d877a395d94c3769432ba32ca61c57b359a55731bcc43fe864cec0a79e",
+          "path": "alpha/src/lib.rs"
+        },
+        {
+          "entity_id": "eeabcc8773ec5dd6162803642fa82ac84e39a84a0e1702c80f20ab2479b683b0",
+          "id": 17,
+          "kind": "method",
+          "lang": "rust",
+          "line_end": 17,
+          "line_start": 17,
+          "name": "execute",
+          "occurrence_id": "fa59c29de7eedd56ce68e37e830d60b00ebc6c01a40d6affae374e0c77dc1267",
+          "path": "alpha/src/lib.rs"
+        },
+        {
+          "entity_id": "8fca18bceea9d46d2e73a1447a675ff1d53bb760bb8778c047ee55a5e9e13d20",
+          "id": 28,
+          "kind": "method",
+          "lang": "rust",
+          "line_end": 3,
+          "line_start": 3,
+          "name": "execute",
+          "occurrence_id": "138a7be79c8b64ef2094b356d1f77f78fc6c702673f4a7c7e260637535e13b72",
+          "path": "beta/src/lib.rs"
+        }
+      ],
+      "generation_id": "fd77294ab9f22a22bd2cf6116864ec9e33b5c1a4ceb9b479e72725121126069a",
+      "references": [],
+      "snapshot_id": "3ec97f4267138f3bf61c3fac8dc12914d828bd3d46e516bec749b2b5c1e292a0",
+      "source_available": true
+    }
+  },
+  "mount_root_owners": {
+    "/graphs": [
+      {
+        "gid": 10001,
+        "uid": 10001
+      },
+      {
+        "gid": 0,
+        "uid": 0
+      }
+    ],
+    "/repo": [
+      {
+        "gid": 0,
+        "uid": 0
+      },
+      {
+        "gid": 0,
+        "uid": 0
+      }
+    ]
+  },
+  "status": {
+    "attempt": {
+      "applicability": "none",
+      "attempt_id": null,
+      "observation": null,
+      "observed_failed_count": null,
+      "reason": null
+    },
+    "completeness": {
+      "counts": {
+        "disabled": 0,
+        "failed": 0,
+        "indexed": 3,
+        "unsupported": 0
+      },
+      "enumeration": "complete",
+      "excluded_count": null,
+      "files": [
+        {
+          "extraction_state": "indexed",
+          "fact_source_sha256": "98a3e19c71703201995c5869501a1725290c1fa913f775a71521347842ca0099",
+          "fact_source_sha256s": [
+            "98a3e19c71703201995c5869501a1725290c1fa913f775a71521347842ca0099"
+          ],
+          "failed_source_sha256": null,
+          "location": null,
+          "observed_source_sha256": "98a3e19c71703201995c5869501a1725290c1fa913f775a71521347842ca0099",
+          "path": "alpha/src/external.rs",
+          "reason": null,
+          "refresh_verification": "verified_unchanged",
+          "retained_facts": true,
+          "stale": false
+        },
+        {
+          "extraction_state": "indexed",
+          "fact_source_sha256": "f2950118a49f7ed3d470b63ecdac9fa812146c47bb1c3e764de53143294409e3",
+          "fact_source_sha256s": [
+            "f2950118a49f7ed3d470b63ecdac9fa812146c47bb1c3e764de53143294409e3"
+          ],
+          "failed_source_sha256": null,
+          "location": null,
+          "observed_source_sha256": "f2950118a49f7ed3d470b63ecdac9fa812146c47bb1c3e764de53143294409e3",
+          "path": "alpha/src/lib.rs",
+          "reason": null,
+          "refresh_verification": "verified_unchanged",
+          "retained_facts": true,
+          "stale": false
+        },
+        {
+          "extraction_state": "indexed",
+          "fact_source_sha256": "ad05caeb4adb1ead286165ae42930f500cf1ca50e2bb3a5a8027d30f5e4d8c22",
+          "fact_source_sha256s": [
+            "ad05caeb4adb1ead286165ae42930f500cf1ca50e2bb3a5a8027d30f5e4d8c22"
+          ],
+          "failed_source_sha256": null,
+          "location": null,
+          "observed_source_sha256": "ad05caeb4adb1ead286165ae42930f500cf1ca50e2bb3a5a8027d30f5e4d8c22",
+          "path": "beta/src/lib.rs",
+          "reason": null,
+          "refresh_verification": "verified_unchanged",
+          "retained_facts": true,
+          "stale": false
+        }
+      ],
+      "reason": "observed_complete",
+      "stale_count": 0,
+      "state": "complete",
+      "total_count": 3
+    },
+    "format": "atlas-status.v1",
+    "generation_id": "fd77294ab9f22a22bd2cf6116864ec9e33b5c1a4ceb9b479e72725121126069a",
+    "indexed": {
+      "capabilities": {
+        "format": "atlas-capabilities.v3",
+        "languages": [
+          {
+            "definitions": [
+              "function"
+            ],
+            "extensions": [
+              ".bash",
+              ".sh"
+            ],
+            "extraction": {
+              "reason": "bounded_structural_queries",
+              "state": "partial"
+            },
+            "language": "bash",
+            "relations": [
+              "call"
+            ],
+            "semantic_binding": {
+              "reason": "no_compiler_provider",
+              "state": "unsupported"
+            }
+          },
+          {
+            "definitions": [],
+            "extensions": [
+              ".go"
+            ],
+            "extraction": {
+              "reason": "no_extraction_query",
+              "state": "unsupported"
+            },
+            "language": "go",
+            "relations": [],
+            "semantic_binding": {
+              "reason": "no_compiler_provider",
+              "state": "unsupported"
+            }
+          },
+          {
+            "definitions": [
+              "id"
+            ],
+            "extensions": [
+              ".htm",
+              ".html"
+            ],
+            "extraction": {
+              "reason": "bounded_structural_queries",
+              "state": "partial"
+            },
+            "language": "html",
+            "relations": [],
+            "semantic_binding": {
+              "reason": "no_compiler_provider",
+              "state": "unsupported"
+            }
+          },
+          {
+            "definitions": [],
+            "extensions": [
+              ".java"
+            ],
+            "extraction": {
+              "reason": "no_extraction_query",
+              "state": "unsupported"
+            },
+            "language": "java",
+            "relations": [],
+            "semantic_binding": {
+              "reason": "no_compiler_provider",
+              "state": "unsupported"
+            }
+          },
+          {
+            "definitions": [
+              "class",
+              "function",
+              "method"
+            ],
+            "extensions": [
+              ".js",
+              ".jsx"
+            ],
+            "extraction": {
+              "reason": "bounded_structural_queries",
+              "state": "partial"
+            },
+            "language": "javascript",
+            "relations": [
+              "call",
+              "construct",
+              "rationale_for",
+              "superclass"
+            ],
+            "semantic_binding": {
+              "reason": "no_compiler_provider",
+              "state": "unsupported"
+            }
+          },
+          {
+            "definitions": [
+              "heading"
+            ],
+            "extensions": [
+              ".markdown",
+              ".md"
+            ],
+            "extraction": {
+              "reason": "bounded_structural_queries",
+              "state": "partial"
+            },
+            "language": "markdown",
+            "relations": [],
+            "semantic_binding": {
+              "reason": "no_compiler_provider",
+              "state": "unsupported"
+            }
+          },
+          {
+            "definitions": [
+              "class",
+              "function"
+            ],
+            "extensions": [
+              ".py"
+            ],
+            "extraction": {
+              "reason": "bounded_structural_queries",
+              "state": "partial"
+            },
+            "language": "python",
+            "relations": [
+              "call",
+              "construct",
+              "import",
+              "rationale_for",
+              "superclass"
+            ],
+            "semantic_binding": {
+              "reason": "no_compiler_provider",
+              "state": "unsupported"
+            }
+          },
+          {
+            "definitions": [
+              "class",
+              "method",
+              "module"
+            ],
+            "extensions": [
+              ".rb"
+            ],
+            "extraction": {
+              "reason": "bounded_structural_queries",
+              "state": "partial"
+            },
+            "language": "ruby",
+            "relations": [
+              "call",
+              "construct",
+              "extend",
+              "include",
+              "prepend",
+              "rationale_for",
+              "superclass"
+            ],
+            "semantic_binding": {
+              "reason": "no_compiler_provider",
+              "state": "unsupported"
+            }
+          },
+          {
+            "definitions": [
+              "enum",
+              "function",
+              "method",
+              "module",
+              "struct",
+              "trait"
+            ],
+            "extensions": [
+              ".rs"
+            ],
+            "extraction": {
+              "reason": "bounded_structural_queries",
+              "state": "partial"
+            },
+            "language": "rust",
+            "relations": [
+              "call"
+            ],
+            "semantic_binding": {
+              "reason": "no_compiler_provider",
+              "state": "unsupported"
+            }
+          },
+          {
+            "definitions": [
+              "function",
+              "id",
+              "mixin",
+              "placeholder",
+              "selector",
+              "variable"
+            ],
+            "extensions": [
+              ".css",
+              ".scss"
+            ],
+            "extraction": {
+              "reason": "bounded_structural_queries",
+              "state": "partial"
+            },
+            "language": "scss",
+            "relations": [
+              "call"
+            ],
+            "semantic_binding": {
+              "reason": "no_compiler_provider",
+              "state": "unsupported"
+            }
+          },
+          {
+            "definitions": [],
+            "extensions": [
+              ".tsx"
+            ],
+            "extraction": {
+              "reason": "no_extraction_query",
+              "state": "unsupported"
+            },
+            "language": "tsx",
+            "relations": [],
+            "semantic_binding": {
+              "reason": "no_compiler_provider",
+              "state": "unsupported"
+            }
+          },
+          {
+            "definitions": [
+              "class",
+              "function",
+              "method"
+            ],
+            "extensions": [
+              ".ts"
+            ],
+            "extraction": {
+              "reason": "bounded_structural_queries",
+              "state": "partial"
+            },
+            "language": "typescript",
+            "relations": [
+              "call",
+              "construct",
+              "rationale_for",
+              "superclass"
+            ],
+            "semantic_binding": {
+              "reason": "no_compiler_provider",
+              "state": "unsupported"
+            }
+          },
+          {
+            "definitions": [
+              "key"
+            ],
+            "extensions": [
+              ".yaml",
+              ".yml"
+            ],
+            "extraction": {
+              "reason": "bounded_structural_queries",
+              "state": "partial"
+            },
+            "language": "yaml",
+            "relations": [],
+            "semantic_binding": {
+              "reason": "no_compiler_provider",
+              "state": "unsupported"
+            }
+          }
+        ],
+        "limitations": {
+          "control_flow": "unsupported",
+          "python_imports": "package_local_unaliased_relative_only",
+          "rust_cfg": "build_configuration_not_evaluated",
+          "rust_dispatch": "unresolved_without_type_or_trait_inference",
+          "rust_generated_code": "unmaterialized_outputs_unavailable",
+          "rust_macro_expansion": "unsupported_including_derive_and_proc_macros",
+          "semantic_binding": "unsupported"
+        },
+        "producer": {
+          "codegraph_sha256": "4df28b1fcaeb7c5d0051f1c5412e0d06a38ad3d10652d18a82d7b7d16c6bcfe2",
+          "modules": {
+            "extractors/rust.py": "28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a",
+            "indexing/extraction_cache.py": "08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2",
+            "providers/python_imports.py": "de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014",
+            "resolvers/dependencies.py": "0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6",
+            "storage/evidence.py": "3f14fa87ed9b060cc1d09e7e57cb002275c99b501829412a202d225870f3eb92",
+            "storage/snapshots.py": "b8aecf567335dda0f2d0162c2eb6a334a4efae7d785755a0d8e862b52d96396f"
+          },
+          "packages": {
+            "tree-sitter": "0.25.2",
+            "tree-sitter-language-pack": "1.6.0"
+          },
+          "queries_sha256": "a222468d9bb15cbf5cfccc368bd65ca69de7ed22e91ae85e628228f2f227b944"
+        },
+        "producers": [
+          {
+            "name": "tree-sitter",
+            "operation": "structural_extraction",
+            "semantic_binding": {
+              "reason": "no_compiler_provider",
+              "state": "unsupported"
+            }
+          }
+        ]
+      },
+      "configuration": {
+        "languages": [
+          "bash",
+          "html",
+          "javascript",
+          "markdown",
+          "python",
+          "ruby",
+          "rust",
+          "scss",
+          "typescript",
+          "yaml"
+        ],
+        "skip_patterns": [
+          "node_modules",
+          "vendor/bundle",
+          "vendor/cache",
+          "tmp",
+          "log",
+          ".git",
+          "dist",
+          "build",
+          "public/assets",
+          "public/packs",
+          "public/packs-test",
+          "coverage",
+          ".bundle",
+          "__pycache__",
+          ".venv",
+          ".atlas",
+          "storage",
+          "_site",
+          ".jekyll-cache",
+          ".sass-cache"
+        ]
+      },
+      "coverage_id": "20c7e37fac044955c3c5f6f5b689e9bdfcd614421de6f903e732f7f51640bfda",
+      "producer": {
+        "codegraph_sha256": "4df28b1fcaeb7c5d0051f1c5412e0d06a38ad3d10652d18a82d7b7d16c6bcfe2",
+        "modules": {
+          "extractors/rust.py": "28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a",
+          "indexing/extraction_cache.py": "08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2",
+          "providers/python_imports.py": "de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014",
+          "resolvers/dependencies.py": "0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6",
+          "storage/evidence.py": "3f14fa87ed9b060cc1d09e7e57cb002275c99b501829412a202d225870f3eb92",
+          "storage/snapshots.py": "b8aecf567335dda0f2d0162c2eb6a334a4efae7d785755a0d8e862b52d96396f"
+        },
+        "packages": {
+          "tree-sitter": "0.25.2",
+          "tree-sitter-language-pack": "1.6.0"
+        },
+        "queries_sha256": "a222468d9bb15cbf5cfccc368bd65ca69de7ed22e91ae85e628228f2f227b944"
+      }
+    },
+    "runtime": {
+      "format": "atlas-capabilities.v3",
+      "languages": [
+        {
+          "definitions": [
+            "function"
+          ],
+          "extensions": [
+            ".bash",
+            ".sh"
+          ],
+          "extraction": {
+            "reason": "bounded_structural_queries",
+            "state": "partial"
+          },
+          "language": "bash",
+          "relations": [
+            "call"
+          ],
+          "semantic_binding": {
+            "reason": "no_compiler_provider",
+            "state": "unsupported"
+          }
+        },
+        {
+          "definitions": [],
+          "extensions": [
+            ".go"
+          ],
+          "extraction": {
+            "reason": "no_extraction_query",
+            "state": "unsupported"
+          },
+          "language": "go",
+          "relations": [],
+          "semantic_binding": {
+            "reason": "no_compiler_provider",
+            "state": "unsupported"
+          }
+        },
+        {
+          "definitions": [
+            "id"
+          ],
+          "extensions": [
+            ".htm",
+            ".html"
+          ],
+          "extraction": {
+            "reason": "bounded_structural_queries",
+            "state": "partial"
+          },
+          "language": "html",
+          "relations": [],
+          "semantic_binding": {
+            "reason": "no_compiler_provider",
+            "state": "unsupported"
+          }
+        },
+        {
+          "definitions": [],
+          "extensions": [
+            ".java"
+          ],
+          "extraction": {
+            "reason": "no_extraction_query",
+            "state": "unsupported"
+          },
+          "language": "java",
+          "relations": [],
+          "semantic_binding": {
+            "reason": "no_compiler_provider",
+            "state": "unsupported"
+          }
+        },
+        {
+          "definitions": [
+            "class",
+            "function",
+            "method"
+          ],
+          "extensions": [
+            ".js",
+            ".jsx"
+          ],
+          "extraction": {
+            "reason": "bounded_structural_queries",
+            "state": "partial"
+          },
+          "language": "javascript",
+          "relations": [
+            "call",
+            "construct",
+            "rationale_for",
+            "superclass"
+          ],
+          "semantic_binding": {
+            "reason": "no_compiler_provider",
+            "state": "unsupported"
+          }
+        },
+        {
+          "definitions": [
+            "heading"
+          ],
+          "extensions": [
+            ".markdown",
+            ".md"
+          ],
+          "extraction": {
+            "reason": "bounded_structural_queries",
+            "state": "partial"
+          },
+          "language": "markdown",
+          "relations": [],
+          "semantic_binding": {
+            "reason": "no_compiler_provider",
+            "state": "unsupported"
+          }
+        },
+        {
+          "definitions": [
+            "class",
+            "function"
+          ],
+          "extensions": [
+            ".py"
+          ],
+          "extraction": {
+            "reason": "bounded_structural_queries",
+            "state": "partial"
+          },
+          "language": "python",
+          "relations": [
+            "call",
+            "construct",
+            "import",
+            "rationale_for",
+            "superclass"
+          ],
+          "semantic_binding": {
+            "reason": "no_compiler_provider",
+            "state": "unsupported"
+          }
+        },
+        {
+          "definitions": [
+            "class",
+            "method",
+            "module"
+          ],
+          "extensions": [
+            ".rb"
+          ],
+          "extraction": {
+            "reason": "bounded_structural_queries",
+            "state": "partial"
+          },
+          "language": "ruby",
+          "relations": [
+            "call",
+            "construct",
+            "extend",
+            "include",
+            "prepend",
+            "rationale_for",
+            "superclass"
+          ],
+          "semantic_binding": {
+            "reason": "no_compiler_provider",
+            "state": "unsupported"
+          }
+        },
+        {
+          "definitions": [
+            "enum",
+            "function",
+            "method",
+            "module",
+            "struct",
+            "trait"
+          ],
+          "extensions": [
+            ".rs"
+          ],
+          "extraction": {
+            "reason": "bounded_structural_queries",
+            "state": "partial"
+          },
+          "language": "rust",
+          "relations": [
+            "call"
+          ],
+          "semantic_binding": {
+            "reason": "no_compiler_provider",
+            "state": "unsupported"
+          }
+        },
+        {
+          "definitions": [
+            "function",
+            "id",
+            "mixin",
+            "placeholder",
+            "selector",
+            "variable"
+          ],
+          "extensions": [
+            ".css",
+            ".scss"
+          ],
+          "extraction": {
+            "reason": "bounded_structural_queries",
+            "state": "partial"
+          },
+          "language": "scss",
+          "relations": [
+            "call"
+          ],
+          "semantic_binding": {
+            "reason": "no_compiler_provider",
+            "state": "unsupported"
+          }
+        },
+        {
+          "definitions": [],
+          "extensions": [
+            ".tsx"
+          ],
+          "extraction": {
+            "reason": "no_extraction_query",
+            "state": "unsupported"
+          },
+          "language": "tsx",
+          "relations": [],
+          "semantic_binding": {
+            "reason": "no_compiler_provider",
+            "state": "unsupported"
+          }
+        },
+        {
+          "definitions": [
+            "class",
+            "function",
+            "method"
+          ],
+          "extensions": [
+            ".ts"
+          ],
+          "extraction": {
+            "reason": "bounded_structural_queries",
+            "state": "partial"
+          },
+          "language": "typescript",
+          "relations": [
+            "call",
+            "construct",
+            "rationale_for",
+            "superclass"
+          ],
+          "semantic_binding": {
+            "reason": "no_compiler_provider",
+            "state": "unsupported"
+          }
+        },
+        {
+          "definitions": [
+            "key"
+          ],
+          "extensions": [
+            ".yaml",
+            ".yml"
+          ],
+          "extraction": {
+            "reason": "bounded_structural_queries",
+            "state": "partial"
+          },
+          "language": "yaml",
+          "relations": [],
+          "semantic_binding": {
+            "reason": "no_compiler_provider",
+            "state": "unsupported"
+          }
+        }
+      ],
+      "limitations": {
+        "control_flow": "unsupported",
+        "python_imports": "package_local_unaliased_relative_only",
+        "rust_cfg": "build_configuration_not_evaluated",
+        "rust_dispatch": "unresolved_without_type_or_trait_inference",
+        "rust_generated_code": "unmaterialized_outputs_unavailable",
+        "rust_macro_expansion": "unsupported_including_derive_and_proc_macros",
+        "semantic_binding": "unsupported"
+      },
+      "producer": {
+        "codegraph_sha256": "4df28b1fcaeb7c5d0051f1c5412e0d06a38ad3d10652d18a82d7b7d16c6bcfe2",
+        "modules": {
+          "extractors/rust.py": "28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a",
+          "indexing/extraction_cache.py": "08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2",
+          "providers/python_imports.py": "de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014",
+          "resolvers/dependencies.py": "0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6",
+          "storage/evidence.py": "3f14fa87ed9b060cc1d09e7e57cb002275c99b501829412a202d225870f3eb92",
+          "storage/snapshots.py": "b8aecf567335dda0f2d0162c2eb6a334a4efae7d785755a0d8e862b52d96396f"
+        },
+        "packages": {
+          "tree-sitter": "0.25.2",
+          "tree-sitter-language-pack": "1.6.0"
+        },
+        "queries_sha256": "a222468d9bb15cbf5cfccc368bd65ca69de7ed22e91ae85e628228f2f227b944"
+      },
+      "producers": [
+        {
+          "name": "tree-sitter",
+          "operation": "structural_extraction",
+          "semantic_binding": {
+            "reason": "no_compiler_provider",
+            "state": "unsupported"
+          }
+        }
+      ]
+    },
+    "status_id": "891f199fa44ad5cb82ac2fac8cc27ae2ca70dcf28355a429ff61646f52dad241"
+  },
+  "stdio_argv": [
+    "docker",
+    "run",
+    "--rm",
+    "-i",
+    "--name",
+    "atlas-s15-bcb1e50509d24997b49221d5f5d18573",
+    "--read-only",
+    "--network",
+    "none",
+    "-v",
+    "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-387/test_rust_offline_readonly_std0/source:/repo:ro",
+    "-v",
+    "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-387/test_rust_offline_readonly_std0/graphs:/graphs:ro",
+    "-v",
+    "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-387/test_rust_offline_readonly_std0/memex:/memex",
+    "sha256:c6d25bcc2cfe94b46e4d51ab3f81c559fd73a145cc7b1c458f4ee980e47b68ee",
+    "serve",
+    "--repo",
+    "/repo",
+    "--graph-root",
+    "/graphs",
+    "--memex-root",
+    "/memex"
+  ]
+}
