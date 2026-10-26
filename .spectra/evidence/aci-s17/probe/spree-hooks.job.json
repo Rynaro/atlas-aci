@@ -1,0 +1,17 @@
+{
+  "name": "spree-hooks",
+  "command": [
+    "git",
+    "config",
+    "core.hooksPath",
+    "/dev/null"
+  ],
+  "cwd": "/tmp/aci-s17-probe-inputs/spree",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 0.01176320799277164,
+  "elapsed_total": 184.77043304100516,
+  "peak_rss_bytes": 4341760,
+  "stdout": ".spectra/evidence/aci-s17/probe/spree-hooks.stdout.log",
+  "stderr": ".spectra/evidence/aci-s17/probe/spree-hooks.stderr.log"
+}

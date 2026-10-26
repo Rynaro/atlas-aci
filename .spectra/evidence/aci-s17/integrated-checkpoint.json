@@ -1,0 +1,42 @@
+{
+  "scope": "Corrected integrated source plus actual SDK/lifetime checkpoint before final image/full gates",
+  "hashes": {
+    "codegraph.py": "bfea442d81490e8bc4102ec6196929bf5a938383cb8d0dded098f13e4c0a358e",
+    "indexing/retrieval.py": "a70fd241efea13fc850d72e86389c2c0b41c5a0ac2c32b33044b728f103452a8",
+    "storage/evidence.py": "abd92c6a86d1086c2d3680a519c8f81f62d131dbae52da6b44f4525bfcc0a58d",
+    "storage/snapshots.py": "6e800008cbbbda1b345f199aecbda193eb27c68b15aeb1ff941b5a840ab5be82",
+    "query/indexed.py": "7769e688e5b087e2875f7ab4cdccc305235502b334737a4451f742dfb9f6ec08",
+    "query/retrieval.py": "de2b256240f3caa99a99d985a4501615481f1b0736caf271958150a9087c5325",
+    "query/retrieval_admission.py": "1bb27b7d30892369131c441010cef028c7c020ff4474aec0f180556be1941aad",
+    "protocol/graph.py": "4bf8e639277a3bd81078f72431d19e16ff5081fdc7bd2ba661db65ec3acf3cbb",
+    "protocol/results.py": "de029df9dc177c91db3f38efbb8b0b4db416909583455d13dcb1447f5f039c4e",
+    "server.py": "2234459068854b5f5d05565352e9a61fbc9cdd346df5969f3efd05389c2e2f78",
+    "tools/graph_query.py": "df0f389449093ba4d5f57b0c8dbea032f9fb0014a615984bf78104df35f77993"
+  },
+  "tests": {
+    "log": "integrated-source-corrected.log",
+    "exit_code": 0,
+    "passed": 29
+  },
+  "first_six_named": {
+    "exit_code": 0,
+    "log": "contract-first.log",
+    "passed": 6
+  },
+  "retention_red": "validation-retention-red.log",
+  "linter_exit_code": 0,
+  "mypy_exit_code": 0,
+  "remaining": "Final native image/full/static/protected/freshproof/output/receipt",
+  "native_sdk": {
+    "log": "stdio-corrected-actual.log",
+    "exit_code": 0,
+    "passed": 5,
+    "red": "stdio-first.log",
+    "cause": "test cross-file unimported call correctly unresolved; same-file fixture restored real parallel relations"
+  },
+  "lifetime": {
+    "log": "lifetime-final.log",
+    "exit_code": 0,
+    "passed": 4
+  }
+}

@@ -8,6 +8,7 @@ from typing import Any
 from jsonschema import Draft202012Validator  # type: ignore[import-untyped]
 
 from atlas_aci.enforcement import ToolError
+from atlas_aci.query.retrieval import LIMITS as RETRIEVAL_LIMITS
 from atlas_aci.query.traversal import LIMITS
 from atlas_aci.storage import evidence as ev
 
@@ -102,10 +103,37 @@ CONTINUE_INPUT = obj(
         "query_digest": HASH,
     }
 )
+RETRIEVE_INPUT = obj(
+    {
+        "schema_version": {"const": VERSION},
+        "op": {"const": "retrieve"},
+        "text": {"type": "string", "minLength": 1, "maxLength": 4096},
+        "expected_generation_id": HASH,
+        "repository": {"type": "string", "minLength": 1},
+        "path_prefixes": {
+            "type": "array",
+            "items": {"type": "string", "minLength": 1},
+            "maxItems": 16,
+        },
+        "max_bytes": {"type": "integer", "minimum": 0},
+        **{
+            key: {"type": "integer", "minimum": low, "maximum": high}
+            for key, (_, low, high) in RETRIEVAL_LIMITS.items()
+        },
+    }
+)
+RETRIEVE_INPUT["required"] = ["schema_version", "op", "text"]
 GRAPH_INPUT_SCHEMA = {
     "type": "object",
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "oneOf": [LEGACY_INPUT, STRUCTURED_INPUT, *NAV_INPUTS, PAGE_INPUT, CONTINUE_INPUT],
+    "oneOf": [
+        LEGACY_INPUT,
+        STRUCTURED_INPUT,
+        *NAV_INPUTS,
+        PAGE_INPUT,
+        CONTINUE_INPUT,
+        RETRIEVE_INPUT,
+    ],
 }
 LOCATION = obj({key: COUNT for key in ("line", "column", "end_line", "end_column")})
 STATE_REASON = obj({"state": STRING, "reason": STRING})
@@ -134,6 +162,7 @@ PRODUCER = obj(
                     "resolvers/dependencies.py",
                     "extractors/rust.py",
                     "storage/snapshots.py",
+                    "indexing/retrieval.py",
                 )
             },
             "additionalProperties": False,
@@ -457,17 +486,122 @@ PAGE_DATA_SCHEMA = obj(
         "setup_proof_reads": COUNT,
     }
 )
+RETRIEVAL_ENTITY = obj(
+    {
+        "type": {"const": "entity"},
+        **{k: v for k, v in IDENTITY["properties"].items() if k != "projection"},
+    }
+)
+RETRIEVAL_SOURCE = {
+    "oneOf": [
+        obj(
+            {
+                "state": {"const": "available"},
+                "path": STRING,
+                "source_sha256": HASH,
+                "start_byte": COUNT,
+                "end_byte": COUNT,
+                "source_size": COUNT,
+                "granularity": {"enum": ["file", "occurrence"]},
+            }
+        ),
+        obj({"state": {"const": "unavailable"}, "reason": STRING}),
+    ]
+}
+RETRIEVAL_CANDIDATE = obj(
+    {
+        "candidate_id": HASH,
+        "kind": {"enum": ["entity", "source_file"]},
+        "match_tier": {
+            "enum": [
+                "exact_entity_id",
+                "exact_qualified_label",
+                "exact_path",
+                "exact_name",
+                "lexical",
+            ]
+        },
+        "lexical_score": nullable({"type": "number"}),
+        "path": STRING,
+        "language": STRING,
+        "qualified_label": nullable(STRING),
+        "entity": nullable(RETRIEVAL_ENTITY),
+        "occurrence": nullable(RECORDS["occurrence"]),
+        "evidence": nullable(RECORDS["evidence"]),
+        "source": RETRIEVAL_SOURCE,
+        "repository_id": HASH,
+        "generation_id": HASH,
+        "snapshot_id": nullable(HASH),
+    }
+)
+RETRIEVAL_WORK_KEYS = (
+    "exact_queries",
+    "lexical_queries",
+    "metadata_queries",
+    "hydration_queries",
+    "sql_queries",
+    "key_rows",
+    "hydrated_rows",
+    "vm_operations_reserved",
+    "vm_progress_callbacks",
+    "interrupted_sql_queries",
+)
+RETRIEVAL_DATA_SCHEMA = obj(
+    {
+        "projection": {"const": "retrieval_candidates"},
+        "query_digest": HASH,
+        "query_syntax": {"const": "literal_phrase"},
+        "repository": STRING,
+        "repository_filter_matched": BOOL,
+        "path_prefix_count": {"type": "integer", "minimum": 0, "maximum": 16},
+        "effective_limits": obj(
+            {
+                key: {"type": "integer", "minimum": low, "maximum": high}
+                for key, (_, low, high) in RETRIEVAL_LIMITS.items()
+            }
+        ),
+        "vm_operation_quantum": {"const": 1},
+        "work": obj({key: COUNT for key in RETRIEVAL_WORK_KEYS}),
+        "ranking_statistics_scope": {"const": "generation_global"},
+        "sql_count_scope": {"const": "explicit_driver_statements"},
+        "coverage": obj(
+            {
+                "state": {"enum": ["complete", "partial", "unavailable"]},
+                "source_policy": {"enum": ["available", "import", "import_v1", "legacy_source"]},
+                "source_files": COUNT,
+                "source_bytes": COUNT,
+                "unavailable_count": nullable(COUNT),
+                "excluded_counts": {
+                    "type": "object",
+                    "maxProperties": 4,
+                    "additionalProperties": {"type": "integer", "minimum": 1},
+                },
+            }
+        ),
+        "candidates": array(RETRIEVAL_CANDIDATE),
+        "returned_count": COUNT,
+        "truncated": BOOL,
+        "truncation_reason": nullable({"enum": ["candidate_limit", "byte_limit", "element_limit"]}),
+        "diagnostic_reason": {"enum": ["matched", "no_match", "tokenless", "filtered_repository"]},
+    }
+)
 ERROR_SCHEMA = obj({"code": STRING, "message": STRING, "retry_hint": STRING})
 ENVELOPE_SCHEMA = obj(
     {
         "schema_version": {"const": VERSION},
-        "operation": {"enum": ["status", "neighborhood", "path", "page", "continue"]},
+        "operation": {"enum": ["status", "neighborhood", "path", "page", "continue", "retrieve"]},
         "status": {"enum": ["ok", "error"]},
         "generation_id": nullable(HASH),
         "snapshot_id": nullable(HASH),
         "evidence_status": {"enum": ["available", "partial", "unknown", "unavailable"]},
         "data": {
-            "anyOf": [STATUS_DATA_SCHEMA, *NAV_DATA.values(), PAGE_DATA_SCHEMA, {"type": "null"}]
+            "anyOf": [
+                STATUS_DATA_SCHEMA,
+                *NAV_DATA.values(),
+                PAGE_DATA_SCHEMA,
+                RETRIEVAL_DATA_SCHEMA,
+                {"type": "null"},
+            ]
         },
         "error": nullable(ERROR_SCHEMA),
         "bounds": BOUNDS_SCHEMA,
@@ -487,6 +621,7 @@ ENVELOPE_SCHEMA["oneOf"] = [
         **NAV_DATA,
         "page": PAGE_DATA_SCHEMA,
         "continue": PAGE_DATA_SCHEMA,
+        "retrieve": RETRIEVAL_DATA_SCHEMA,
     }.items()
 ] + [
     {"properties": {"status": {"const": "error"}, "data": {"type": "null"}, "error": ERROR_SCHEMA}}
@@ -519,18 +654,28 @@ def request_mode(arguments: Any) -> str:
         raise ToolError("UNSUPPORTED_SCHEMA_VERSION", "Unsupported graph schema version.")
     if structured and (
         not isinstance(arguments.get("op"), str)
-        or arguments.get("op") not in {"status", "neighborhood", "path", "page", "continue"}
+        or arguments.get("op")
+        not in {"status", "neighborhood", "path", "page", "continue", "retrieve"}
     ):
         raise ToolError("INVALID_OPERATION", "Unsupported graph operation.")
     if structured and any(
         key in arguments and type(arguments[key]) is not int
-        for key in (*LIMITS, "max_bytes", "page_max_bytes")
+        for key in (*LIMITS, *RETRIEVAL_LIMITS, "max_bytes", "page_max_bytes")
     ):
         raise ToolError(
             "INVALID_INPUT", "Traversal limits must be integers, not booleans or floats."
         )
     if not INPUT_VALIDATOR.is_valid(arguments):
         raise ToolError("INVALID_INPUT", "Tool arguments must match the published schema.")
+    if structured and arguments["op"] == "retrieve":
+        from atlas_aci.query.retrieval import normalized
+
+        normalized(
+            arguments["text"],
+            arguments.get("repository"),
+            arguments.get("path_prefixes"),
+            **{key: arguments[key] for key in RETRIEVAL_LIMITS if key in arguments},
+        )
     if structured and arguments["op"] == "page":
         if (
             request_mode(arguments["query"]) != "structured"
@@ -851,3 +996,166 @@ def validate_captured(data, element_limit):
             ev.validate_record(
                 {"type": "entity", **{k: v for k, v in candidate.items() if k != "projection"}}
             )
+
+
+def validate_retrieval(payload, element_limit):
+    """Closed whole candidates with canonical IDs, source and intended operation."""
+    import math
+
+    from atlas_aci.indexing import retrieval as ret
+    from atlas_aci.query.admission import lists
+    from atlas_aci.query.retrieval import TIERS
+
+    if payload.get("operation") != "retrieve" or not STRUCTURED_VALIDATOR.is_valid(payload):
+        raise ValueError("Invalid intended retrieval result")
+    if payload["status"] == "error":
+        return
+    data = payload["data"]
+    candidates = data["candidates"]
+    limits = data["effective_limits"]
+    work = data["work"]
+    ev.require(
+        data["returned_count"] == len(candidates) <= min(limits["max_candidates"], element_limit),
+        "retrieval candidate count",
+    )
+    ev.require(
+        all(len(items) <= element_limit for items in lists(data)), "whole candidate element cap"
+    )
+    ev.require(data["truncated"] == (data["truncation_reason"] is not None), "retrieval truncation")
+    ev.require(
+        work["vm_operations_reserved"] <= limits["max_vm_operations"]
+        and work["vm_progress_callbacks"] <= work["vm_operations_reserved"],
+        "retrieval VM allowance",
+    )
+    ev.require(
+        work["sql_queries"]
+        == sum(
+            work[k]
+            for k in ("exact_queries", "lexical_queries", "metadata_queries", "hydration_queries")
+        )
+        and work["exact_queries"] <= 4
+        and work["lexical_queries"] <= 1
+        and work["metadata_queries"] == 1,
+        "retrieval driver SQL counts",
+    )
+    ev.require(
+        work["key_rows"] <= limits["max_candidates"] + 1
+        and work["hydrated_rows"] <= work["hydration_queries"] <= 3 * limits["max_candidates"]
+        and work["interrupted_sql_queries"] == 0,
+        "retrieval hydration bounds",
+    )
+    if not data["repository_filter_matched"]:
+        ev.require(
+            not candidates and data["diagnostic_reason"] == "filtered_repository",
+            "retrieval repository isolation",
+        )
+    seen = set()
+    previous = None
+    for candidate in candidates:
+        identifier = candidate["candidate_id"]
+        ev.require(identifier not in seen, "duplicate candidate")
+        seen.add(identifier)
+        ev.require(
+            candidate["generation_id"] == payload["generation_id"]
+            and candidate["snapshot_id"] == payload["snapshot_id"]
+            and candidate["repository_id"] == ret.digest(data["repository"]),
+            "retrieval generation/scope",
+        )
+        ev.require(ev.relative_path(candidate["path"]), "retrieval path")
+        tier = candidate["match_tier"]
+        score = candidate["lexical_score"]
+        ev.require(
+            (score is None) == (tier != "lexical")
+            and (score is None or (type(score) in {float, int} and math.isfinite(score))),
+            "retrieval relevance",
+        )
+        order = (TIERS.index(tier), score if score is not None else 0, identifier)
+        ev.require(previous is None or previous < order, "retrieval stable ordering")
+        previous = order
+        entity = candidate["entity"]
+        occurrence = candidate["occurrence"]
+        evidence = candidate["evidence"]
+        source = candidate["source"]
+        if candidate["kind"] == "entity":
+            ev.require(
+                source["state"] != "available" or source["granularity"] == "occurrence",
+                "entity source granularity",
+            )
+            ev.require(
+                entity is not None
+                and identifier == entity["id"]
+                and candidate["qualified_label"] == ret.qualified_label(entity),
+                "retrieval entity identity",
+            )
+            ev.validate_record(entity)
+            ev.require(
+                entity["path"] == candidate["path"] and entity["language"] == candidate["language"],
+                "retrieval entity location",
+            )
+            if occurrence is not None:
+                ev.validate_record(occurrence)
+                ev.require(
+                    occurrence["entity_id"] == identifier
+                    and occurrence["path"] == candidate["path"]
+                    and occurrence["language"] == candidate["language"],
+                    "retrieval occurrence ownership",
+                )
+            if evidence is not None:
+                ev.validate_record(evidence)
+                ev.require(
+                    occurrence is not None and evidence["occurrence_id"] == occurrence["id"],
+                    "retrieval evidence link",
+                )
+                ev.require(
+                    all(evidence[k] == occurrence[k] for k in SOURCE_SPAN),
+                    "retrieval evidence span",
+                )
+        else:
+            ev.require(
+                entity is None
+                and occurrence is None
+                and evidence is None
+                and candidate["qualified_label"] is None,
+                "file candidate has no invented proof",
+            )
+            ev.require(
+                source["state"] == "available"
+                and source["granularity"] == "file"
+                and source["start_byte"] == 0,
+                "whole-file lexical span",
+            )
+            key = {
+                "format": ret.FORMAT,
+                "kind": "source_file",
+                "path": candidate["path"],
+                "language": candidate["language"],
+                "source_sha256": source["source_sha256"],
+                "start_byte": 0,
+                "end_byte": source["end_byte"],
+                "granularity": "file",
+                "availability": "available",
+            }
+            ev.require(ret.digest(key) == identifier, "source-file candidate identity")
+        if source["state"] == "available":
+            ev.require(
+                payload["snapshot_id"] is not None
+                and source["path"] == candidate["path"]
+                and 0 <= source["start_byte"] <= source["end_byte"] <= source["source_size"],
+                "retrieval source bounds",
+            )
+            if source["granularity"] == "file":
+                ev.require(source["end_byte"] == source["source_size"], "whole-file size")
+            else:
+                ev.require(
+                    occurrence is not None
+                    and evidence is not None
+                    and occurrence["provenance_state"] == "source",
+                    "available occurrence source",
+                )
+                ev.require(
+                    all(
+                        source[k] == occurrence[k]
+                        for k in ("source_sha256", "start_byte", "end_byte", "source_size")
+                    ),
+                    "source occurrence reference",
+                )

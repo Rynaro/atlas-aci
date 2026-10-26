@@ -1,0 +1,48 @@
+{
+  "checks": [
+    {
+      "path": ".github/workflows/harden-gate.yml",
+      "check": "exact fullfile reverse baseline",
+      "exit_code": 0,
+      "replacements": 3,
+      "sha256": "143a4a1558d62082d32efe915b7db3e2f1e751b257d3cf7388c042b86d6d687a"
+    },
+    {
+      "path": "scripts/test-verify-probe-verdict.sh",
+      "check": "exact fullfile reverse baseline",
+      "exit_code": 0,
+      "replacements": 1,
+      "sha256": "9451857e37406de6cf2eab569b2faab77d0b515fa4df6670e55cc84ef572c034"
+    },
+    {
+      "argv": [
+        "scripts/resolve-probe-artifact.sh",
+        "aci-s17-probe-lpa-vs-louvain.md"
+      ],
+      "exit_code": 0,
+      "stdout": ".spectra/changes/aci-s17/probe/aci-s17-probe-lpa-vs-louvain.md\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "scripts/resolve-probe-artifact.sh",
+        "aci-s17-probe-lpa-vs-louvain.json"
+      ],
+      "exit_code": 0,
+      "stdout": ".spectra/changes/aci-s17/probe/aci-s17-probe-lpa-vs-louvain.json\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/private/tmp/atlas-aci-aci-s17/mcp-server/.venv/bin/python",
+        "scripts/verify-probe-verdict.py",
+        ".spectra/changes/aci-s17/probe/aci-s17-probe-lpa-vs-louvain.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.2193269169947598,
+      "log": "verifier-final.log"
+    }
+  ],
+  "all_zero": true,
+  "immutable_verifier_sha256": "f1cf558fb41e2d04cd33039070e82ce922797f954a4e9793f98aa9eab3f736c6"
+}

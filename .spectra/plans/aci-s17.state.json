@@ -1,0 +1,173 @@
+{
+  "schema": "ramza/plan-state.v1",
+  "plan": "aci-s17",
+  "created_at": "2026-10-26T04:57:46Z",
+  "tier": "full",
+  "phase": "DONE",
+  "phases_done": [
+    "RS",
+    "S",
+    "P",
+    "E",
+    "C",
+    "T",
+    "A",
+    "DONE"
+  ],
+  "rightsize": {
+    "score": 6,
+    "computed_tier": "full",
+    "inputs": {
+      "files_est": 16,
+      "new_dep": false,
+      "public_api": true,
+      "migration": true,
+      "security": false,
+      "novel": true,
+      "stakes": "med"
+    }
+  },
+  "refine_cycles": 0,
+  "skips": [],
+  "gates": [
+    {
+      "rubric": "complexity",
+      "total": 9,
+      "dims": {
+        "scope": 2,
+        "ambiguity": 2,
+        "dependencies": 2,
+        "risk": 3
+      },
+      "verdict": "extended",
+      "at": "2026-10-26T04:57:47Z",
+      "label": "generation-owned-fts-compatibility"
+    },
+    {
+      "rubric": "explore",
+      "total": 72.5,
+      "dims": {
+        "alignment": 9,
+        "correctness": 8,
+        "maintainability": 6,
+        "performance": 8,
+        "simplicity": 5,
+        "risk": 5,
+        "innovation": 6
+      },
+      "verdict": "solid",
+      "at": "2026-10-26T04:58:29Z",
+      "label": "generation-sidecar-fts-catalog"
+    },
+    {
+      "rubric": "explore",
+      "total": 78.5,
+      "dims": {
+        "alignment": 8,
+        "correctness": 8,
+        "maintainability": 8,
+        "performance": 9,
+        "simplicity": 7,
+        "risk": 7,
+        "innovation": 6
+      },
+      "verdict": "solid",
+      "at": "2026-10-26T04:58:29Z",
+      "label": "native-occurrence-only-fts"
+    },
+    {
+      "rubric": "explore",
+      "total": 85,
+      "dims": {
+        "alignment": 9,
+        "correctness": 9,
+        "maintainability": 9,
+        "performance": 8,
+        "simplicity": 8,
+        "risk": 8,
+        "innovation": 6
+      },
+      "verdict": "elite",
+      "at": "2026-10-26T04:58:29Z",
+      "label": "native-current-file-fts-plus-exact-entity-indexes"
+    },
+    {
+      "rubric": "refine",
+      "cycle": 1,
+      "total": 4.2,
+      "min": 4,
+      "dims": {
+        "clarity": 4,
+        "completeness": 4,
+        "actionability": 4,
+        "efficiency": 4,
+        "testability": 5
+      },
+      "verdict": "pass",
+      "at": "2026-10-26T05:07:07Z",
+      "label": "independent-atlas-s17-plan-checker"
+    },
+    {
+      "rubric": "confidence",
+      "total": 86,
+      "dims": {
+        "pattern_match": 88,
+        "requirement_clarity": 92,
+        "decomposition_stability": 84,
+        "constraint_compliance": 80
+      },
+      "verdict": "AUTO_PROCEED",
+      "at": "2026-10-26T05:07:08Z",
+      "label": "native-fts-with-qualified-readonly-integrity-checkpoint"
+    }
+  ],
+  "amendments": [],
+  "declared_scope": [
+    "mcp-server/src/atlas_aci/query/*",
+    "mcp-server/src/atlas_aci/indexing/*",
+    "mcp-server/src/atlas_aci/storage/*",
+    "mcp-server/tests/slices/test_s17_*.py",
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/src/atlas_aci/protocol/graph.py",
+    "mcp-server/src/atlas_aci/protocol/results.py",
+    "mcp-server/src/atlas_aci/server.py",
+    "mcp-server/src/atlas_aci/tools/graph_query.py",
+    "mcp-server/tests/test_schema_epoch.py",
+    "mcp-server/tests/test_export.py",
+    "mcp-server/tests/test_cli_export_import.py",
+    "mcp-server/tests/test_codegraph.py",
+    "mcp-server/tests/test_server.py",
+    "mcp-server/tests/slices/test_s07_contract.py",
+    "mcp-server/tests/slices/test_s08_contract.py",
+    "mcp-server/tests/slices/test_s08_integration.py",
+    "mcp-server/tests/slices/test_s12_contract.py",
+    "mcp-server/tests/slices/test_s13_contract.py",
+    "mcp-server/tests/fixtures/s17/*",
+    "atlas/docs/*",
+    ".github/workflows/harden-gate.yml",
+    "scripts/test-verify-probe-verdict.sh",
+    ".spectra/plans/aci-s17.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/changes/aci-s17/*",
+    ".spectra/evidence/aci-s17/*",
+    ".spectra/state/aci-s17.execution.json",
+    ".spectra/backlog/execution.json",
+    ".spectra/backlog/order.md"
+  ],
+  "criteria_sha256": "e0fdcf05dfa37bc19b9429887298468fde18473526f0fb29e3edc317b76969b3",
+  "critic": {
+    "author": "ramza-backlog-order-s17",
+    "checker": "atlas-s17-plan-checker",
+    "at": "2026-10-26T05:07:08Z"
+  },
+  "scope_declared_at": "2026-10-26T05:07:08Z",
+  "criteria_frozen_at": "2026-10-26T05:07:08Z",
+  "drift_reports": [
+    {
+      "at": "2026-10-26T05:07:46Z",
+      "range": "worktree-vs-HEAD",
+      "files_changed": 27,
+      "uncovered": []
+    }
+  ]
+}

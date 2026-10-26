@@ -1,0 +1,38 @@
+{
+  "at": "2026-10-26T05:08:01.904182+00:00",
+  "phase": "DONE",
+  "confidence": 86,
+  "verdict": "AUTO_PROCEED",
+  "checks": [
+    {
+      "file": "aci-s17.envelope.json",
+      "schema": "ecl-envelope.v2.json",
+      "validator": "Draft202012Validator",
+      "format_check": true,
+      "valid": true
+    },
+    {
+      "file": "aci-s17.state.json",
+      "schema": "plan-state.v1.json",
+      "validator": "Draft7Validator",
+      "format_check": true,
+      "valid": true
+    }
+  ],
+  "product_files_unchanged": 96,
+  "product_diff_empty": true,
+  "ledger_counts": {
+    "merged": 14,
+    "remaining": 28
+  },
+  "spec_sha256": "b1336ee0ef378efc9fcd1e1d2fb02337a3a871c8a6a3b9378fc4731c46f488be",
+  "criteria_sha256": "e0fdcf05dfa37bc19b9429887298468fde18473526f0fb29e3edc317b76969b3",
+  "envelope_sha256": "37e5e45d0c343231a68a63763fa46ca4fb8249e11c481b302d6f64baa719ab61",
+  "state_sha256": "77ffbee95a89cd25489edf840175838116379a2fa6856280a98eb6ce01ff128e",
+  "message_id": "0a04056f-6b5a-4d48-a4fa-633d392a58ee",
+  "thread_id": "036c7c79-15d4-4485-a5d9-ad1924bc6371",
+  "scope_amendment": ".spectra/changes/aci-s17/scope-amendment.json",
+  "bookkeeping_amendment": ".spectra/changes/aci-s17/bookkeeping-amendment.json",
+  "schema_validation": "Original mcp-server/.venv/bin/python; jsonschema.validators.validator_for/check_schema/validate with FormatChecker, canonical .eidolons/ramza/schemas",
+  "note": "Approved draft unchanged. Genuine independent05:06:23Z retained separately from state05:07:07Z. Original host/Linux fixtures lossless; failed Linux harness retained. Swapped-ID transcript is explicitly newly archived inline source, not original file. Root ECL block/correlated trace precedes single writer. No integrated native9/product assurance."
+}

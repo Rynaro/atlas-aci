@@ -1,0 +1,22 @@
+{
+  "scope": "Native9 derivative/closedv5/oldreaders before API",
+  "hashes": {
+    "codegraph.py": "e848d388e79c2bb4fd734fdf57ab93c731543a47dc6624853c5535c4833f02f1",
+    "indexing/retrieval.py": "a70fd241efea13fc850d72e86389c2c0b41c5a0ac2c32b33044b728f103452a8",
+    "storage/evidence.py": "abd92c6a86d1086c2d3680a519c8f81f62d131dbae52da6b44f4525bfcc0a58d",
+    "storage/snapshots.py": "6e800008cbbbda1b345f199aecbda193eb27c68b15aeb1ff941b5a840ab5be82",
+    "query/indexed.py": "7769e688e5b087e2875f7ab4cdccc305235502b334737a4451f742dfb9f6ec08"
+  },
+  "actual_tests": {
+    "exit_code": 0,
+    "passed": 48,
+    "stdout": "native-storage-stable.log"
+  },
+  "linux": {
+    "exit_code": 0,
+    "evidence": "linux-native-checkpoint.json"
+  },
+  "old_formats_red": "old-portable-format-red.log",
+  "legacy_twofile_amendment": ".spectra/changes/aci-s17/path-amendment-01.json",
+  "api_implemented": false
+}

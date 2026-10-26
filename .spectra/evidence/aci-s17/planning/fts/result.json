@@ -1,0 +1,118 @@
+{
+  "sqlite_version": "3.53.1",
+  "scratch": "/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/aci-s17-fts-integrity-qwjq1wed",
+  "results": [
+    {
+      "kind": "internal",
+      "state": "healthy",
+      "checks": {
+        "PRAGMA integrity_check": [
+          [
+            "ok"
+          ]
+        ],
+        "PRAGMA integrity_check(docs)": [
+          [
+            "ok"
+          ]
+        ],
+        "PRAGMA quick_check": [
+          [
+            "ok"
+          ]
+        ],
+        "insert_integrity": {
+          "error": "attempt to write a readonly database",
+          "code": 8
+        }
+      },
+      "original_unchanged": true
+    },
+    {
+      "kind": "internal",
+      "state": "corrupt",
+      "checks": {
+        "PRAGMA integrity_check": [
+          [
+            "fts5: checksum mismatch for table \"docs\""
+          ]
+        ],
+        "PRAGMA integrity_check(docs)": [
+          [
+            "fts5: checksum mismatch for table \"docs\""
+          ]
+        ],
+        "PRAGMA quick_check": [
+          [
+            "fts5: checksum mismatch for table \"docs\""
+          ]
+        ],
+        "insert_integrity": {
+          "error": "attempt to write a readonly database",
+          "code": 8
+        },
+        "private_memory_check": {
+          "error": "fts5: checksum mismatch for table \"docs\"",
+          "code": 267
+        }
+      },
+      "original_unchanged": true
+    },
+    {
+      "kind": "external",
+      "state": "healthy",
+      "checks": {
+        "PRAGMA integrity_check": [
+          [
+            "ok"
+          ]
+        ],
+        "PRAGMA integrity_check(docs)": [
+          [
+            "ok"
+          ]
+        ],
+        "PRAGMA quick_check": [
+          [
+            "ok"
+          ]
+        ],
+        "insert_integrity": {
+          "error": "attempt to write a readonly database",
+          "code": 8
+        }
+      },
+      "original_unchanged": true
+    },
+    {
+      "kind": "external",
+      "state": "corrupt",
+      "checks": {
+        "PRAGMA integrity_check": [
+          [
+            "ok"
+          ]
+        ],
+        "PRAGMA integrity_check(docs)": [
+          [
+            "ok"
+          ]
+        ],
+        "PRAGMA quick_check": [
+          [
+            "ok"
+          ]
+        ],
+        "insert_integrity": {
+          "error": "attempt to write a readonly database",
+          "code": 8
+        },
+        "private_memory_check": {
+          "error": "fts5: checksum mismatch for table \"docs\"",
+          "code": 267
+        }
+      },
+      "original_unchanged": true
+    }
+  ]
+}

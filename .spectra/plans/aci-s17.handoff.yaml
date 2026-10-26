@@ -1,0 +1,65 @@
+{
+  "slice_id": "ACI-S17",
+  "issue": 38,
+  "worktree": "/private/tmp/atlas-aci-aci-s17",
+  "branch": "aci-s17",
+  "base_commit": "73792406d65c81c6a5825ddd3b9cb1e26b195309",
+  "spec": ".spectra/plans/aci-s17.md",
+  "envelope": ".spectra/plans/aci-s17.envelope.json",
+  "criteria_sha256": "e0fdcf05dfa37bc19b9429887298468fde18473526f0fb29e3edc317b76969b3",
+  "actual_confidence": {
+    "rubric": "confidence",
+    "total": 86,
+    "dims": {
+      "pattern_match": 88,
+      "requirement_clarity": 92,
+      "decomposition_stability": 84,
+      "constraint_compliance": 80
+    },
+    "verdict": "AUTO_PROCEED",
+    "at": "2026-10-26T05:07:08Z",
+    "label": "native-fts-with-qualified-readonly-integrity-checkpoint"
+  },
+  "confidence_basis": {
+    "pattern_match": "Reuses staged native generation migration, exact canonical identities, source packs and validated structured adapter. Actual internal FTS read-only semantic integrity qualified on host3.53.1/Linux3.46.1; no new runtime dependency.",
+    "requirement_clarity": "Six exact criteria; independently reviewed whole-file source-span granularity, literal qualified keys, exact-first ordering and explicit import/failed-source limitations.",
+    "decomposition_stability": "One native derivative rebuilt per stage, closed v5 metadata, real old8/sourcefree checkpoint and both-store document bijection; integrated migration still needs execution evidence.",
+    "constraint_compliance": "Three days is tight for native/protocol/compatibility and fresh corpus gates; first checkpoint and explicit stop bound the work, without a new provider, snippet engine or backend."
+  },
+  "checker_evidence": ".spectra/plans/aci-s17.review.json",
+  "execution_prescriptions": [
+    "Qualified label serialization includes leaf entity name/kind/ordinal plus owners/path/language; no compiler namespace or term-offset claim.",
+    "Validate a bijection of BOTH ordinary keyed documents and actual internal FTS content candidate_id to exact text/provenance. Swapped UNINDEXED IDs with same ID set and healthy PRAGMA must reject.",
+    "First checkpoint executes native9 full/incremental/import, held genuine old8 lease, failing publication and closed v5/sourcefree/legacy variants; no native9 v4 fallback or live reread for historical source.",
+    "Preserve filter-before-cap and deterministic rank; interrupted ranking is an error, not timing-partial candidates. Global integrity is outside query counters; qualify temp-sort readonly memory cost and retain three-day limit.",
+    "Real parser/SQLite/SDK/Linux corruption, literal phrase escaping/tokenless no-match, whole-atom bytes, old S13 leases/resources and fresh same-pin evidence remain mandatory."
+  ],
+  "scope_amendments": [
+    ".spectra/changes/aci-s17/scope-amendment.json",
+    ".spectra/changes/aci-s17/bookkeeping-amendment.json"
+  ],
+  "output_digest_exclusions": [
+    ".spectra/state/aci-s17.execution.json",
+    ".spectra/evidence/aci-s17/final-reentry-before.json",
+    ".spectra/evidence/aci-s17/final-reentry-after.json",
+    ".spectra/evidence/aci-s17/final-reentry-summary.json",
+    ".spectra/evidence/aci-s17/final-resume-identity.json",
+    ".spectra/evidence/aci-s17/output-check-tests.log"
+  ],
+  "authoritative_receipt": ".spectra/state/aci-s17.execution.json",
+  "first_checkpoint": "Before broad API: actual production-table healthy/corrupt host+Linux RO integrity, FTS candidate-ID/text bijection attack, native9 full/incremental/import, genuine held old8 lease and failed publication preserving G1/source; no unsupported runtime fallback.",
+  "helpers_root": "/Users/henrique/workspace/oss/agents/atlas-aci/.eidolons/ramza/bin",
+  "schemas_root": "/Users/henrique/workspace/oss/agents/atlas-aci/.eidolons/ramza/schemas",
+  "uv": "/tmp/aci-s01-tools/bin/uv",
+  "uv_cache": "/tmp/aci-s01-uv-cache",
+  "root_gate": "Root verify-envelope --block plus exact message/thread/spec correlated verify_pass before one Vivi writer.",
+  "publication": "Root owns green-CI validated merge/sync; executor never self-merges/deploys.",
+  "backlog": {
+    "merged": 14,
+    "remaining": 28,
+    "current_issue": 38,
+    "next_issue": 39
+  },
+  "probe": "Any producer change requires new exact-pin DEFAULT_LANGS proof; native9 changes fingerprint.600s/job2700s cumulative incl failures, immutable bar/verifier; only two selectors after independent audit.",
+  "primitive_evidence": ".spectra/evidence/aci-s17/planning/fts/provenance.json"
+}

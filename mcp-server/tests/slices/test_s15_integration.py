@@ -338,6 +338,7 @@ def test_current_and_historical_producer_module_sets(tmp_path):
         "resolvers/dependencies.py",
         "extractors/rust.py",
         "storage/snapshots.py",
+        "indexing/retrieval.py",
     }
     for count in (2, 3, 4, 5, 6):
         old = copy.deepcopy(current)

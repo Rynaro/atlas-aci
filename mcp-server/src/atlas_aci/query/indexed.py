@@ -49,10 +49,10 @@ class IndexedReader:
     def __init__(self, reader: Any, *, max_examined_edges: int, deadline_ms: int):
         if reader._closed or not reader._validated_lease:
             raise RuntimeError("Navigation requires an acquired graph lease")
-        if reader._lease_schema_epoch != 8:
+        if reader._lease_schema_epoch not in {8, 9}:
             raise ToolError(
                 "INDEX_UPGRADE_REQUIRED",
-                "Navigation needs native epoch8 indexes. Run atlas-aci index --repo <repo>, "
+                "Navigation needs native epoch8 or9 indexes. Run atlas-aci index --repo <repo>, "
                 "or export the old graph and import it with this version.",
                 "different_tool",
             )

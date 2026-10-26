@@ -303,6 +303,15 @@ def _validate_record(item: Any) -> None:
                             "extractors/rust.py",
                             "storage/snapshots.py",
                         },
+                        {
+                            "storage/evidence.py",
+                            "providers/python_imports.py",
+                            "indexing/extraction_cache.py",
+                            "resolvers/dependencies.py",
+                            "extractors/rust.py",
+                            "storage/snapshots.py",
+                            "indexing/retrieval.py",
+                        },
                     ),
                     "module set",
                 )

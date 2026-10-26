@@ -1,0 +1,8 @@
+{
+  "argv": [
+    "/private/tmp/atlas-aci-aci-s17/mcp-server/.venv/bin/python",
+    "/private/tmp/atlas-aci-aci-s17/.spectra/evidence/aci-s17/probe/run.py"
+  ],
+  "exit_code": 0,
+  "elapsed_wall_seconds": 445.54359383299015
+}

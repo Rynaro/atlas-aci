@@ -1,0 +1,629 @@
+{
+  "schema_epoch": 8,
+  "repository": "/private/tmp/aci-s17-native8-source-corrected",
+  "g1": {
+    "snapshot_id": "8978475253e8c3462b98ceba59f58f7aa0240b11d06dfc67806217b7fa3da0d0",
+    "binding_resolution": {
+      "mode": "full",
+      "reason": "full_requested_or_incompatible_inputs",
+      "affected_units": 3,
+      "reused_units": 0,
+      "removed_units": 0,
+      "affected_paths": [
+        "a.py",
+        "b.py",
+        "history.py"
+      ],
+      "reused_paths": [],
+      "removed_paths": []
+    },
+    "extraction_cache": {
+      "disk_hits": 0,
+      "misses": 3,
+      "miss_reasons": {
+        "missing": 3
+      },
+      "write_failures": 0,
+      "predecessor_reused": 0,
+      "parser_invocations": 3
+    },
+    "files_indexed": 3,
+    "symbols": 3,
+    "refs": 1,
+    "edges": 0,
+    "rationale": 0,
+    "files_skipped": 0,
+    "files_removed": 0,
+    "unsupported_skipped": {},
+    "extraction_state": "complete",
+    "files_failed": 0,
+    "schema_epoch": 8
+  },
+  "g2": {
+    "snapshot_id": "ee98fc5ef22e7fca5f433e900d710917ca21169a49faefc81bd02e196056d7cf",
+    "binding_resolution": {
+      "mode": "full",
+      "reason": "full_requested_or_incompatible_inputs",
+      "affected_units": 2,
+      "reused_units": 0,
+      "removed_units": 0,
+      "affected_paths": [
+        "a.py",
+        "b.py"
+      ],
+      "reused_paths": [],
+      "removed_paths": []
+    },
+    "extraction_cache": {
+      "disk_hits": 2,
+      "misses": 1,
+      "miss_reasons": {
+        "missing": 1
+      },
+      "write_failures": 0,
+      "predecessor_reused": 0,
+      "parser_invocations": 1
+    },
+    "files_indexed": 2,
+    "symbols": 2,
+    "refs": 1,
+    "edges": 0,
+    "rationale": 0,
+    "files_skipped": 0,
+    "files_removed": 0,
+    "unsupported_skipped": {},
+    "extraction_state": "partial",
+    "files_failed": 1,
+    "schema_epoch": 8
+  },
+  "generation_id": "d1f2669f2012e24df792df05c0165216aa313fd7b456d3bd17ae1b0e23d08f9b",
+  "snapshot_id": "ee98fc5ef22e7fca5f433e900d710917ca21169a49faefc81bd02e196056d7cf",
+  "held_old_generation": "2c2c79669fc8e9d8d3017d962885e1e125e9544cc6b5c26c2e135b12a0add9cb",
+  "held_old_snapshot": "8978475253e8c3462b98ceba59f58f7aa0240b11d06dfc67806217b7fa3da0d0",
+  "held_source_bytes_after_publication": true,
+  "held_pack_closed": true,
+  "history_bundles": 1,
+  "status": {
+    "coverage_basis": "published_generation",
+    "live_source_verification": "not_performed",
+    "latest_attempt_included": false,
+    "runtime_capabilities_included": false,
+    "indexed": {
+      "representation": "bounded_projection",
+      "configuration": {
+        "languages": [
+          "bash",
+          "html",
+          "javascript",
+          "markdown",
+          "python",
+          "ruby",
+          "rust",
+          "scss",
+          "typescript",
+          "yaml"
+        ],
+        "skip_patterns": [
+          "node_modules",
+          "vendor/bundle",
+          "vendor/cache",
+          "tmp",
+          "log",
+          ".git",
+          "dist",
+          "build",
+          "public/assets",
+          "public/packs",
+          "public/packs-test",
+          "coverage",
+          ".bundle",
+          "__pycache__",
+          ".venv",
+          ".atlas",
+          "storage",
+          "_site",
+          ".jekyll-cache",
+          ".sass-cache"
+        ]
+      },
+      "producer": {
+        "codegraph_sha256": "3853cf9f98fc683dc1309aaceed8ad75fbe6ab16db9767551ed30ab225c92cd3",
+        "modules": {
+          "extractors/rust.py": "28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a",
+          "indexing/extraction_cache.py": "08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2",
+          "providers/python_imports.py": "de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014",
+          "resolvers/dependencies.py": "0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6",
+          "storage/evidence.py": "3f14fa87ed9b060cc1d09e7e57cb002275c99b501829412a202d225870f3eb92",
+          "storage/snapshots.py": "8c7a6f3bc1d8756c8960b71b37dbb58a55fa27ae724b823baeb5fba43d87d45f"
+        },
+        "packages": {
+          "tree-sitter": "0.25.2",
+          "tree-sitter-language-pack": "1.6.0"
+        },
+        "queries_sha256": "a222468d9bb15cbf5cfccc368bd65ca69de7ed22e91ae85e628228f2f227b944"
+      },
+      "capabilities": {
+        "representation": "bounded_projection",
+        "stored_format": "atlas-capabilities.v3",
+        "languages": [
+          {
+            "definitions": [
+              "function"
+            ],
+            "extensions": [
+              ".bash",
+              ".sh"
+            ],
+            "extraction": {
+              "reason": "bounded_structural_queries",
+              "state": "partial"
+            },
+            "language": "bash",
+            "relations": [
+              "call"
+            ],
+            "semantic_binding": {
+              "reason": "no_compiler_provider",
+              "state": "unsupported"
+            }
+          },
+          {
+            "definitions": [],
+            "extensions": [
+              ".go"
+            ],
+            "extraction": {
+              "reason": "no_extraction_query",
+              "state": "unsupported"
+            },
+            "language": "go",
+            "relations": [],
+            "semantic_binding": {
+              "reason": "no_compiler_provider",
+              "state": "unsupported"
+            }
+          },
+          {
+            "definitions": [
+              "id"
+            ],
+            "extensions": [
+              ".htm",
+              ".html"
+            ],
+            "extraction": {
+              "reason": "bounded_structural_queries",
+              "state": "partial"
+            },
+            "language": "html",
+            "relations": [],
+            "semantic_binding": {
+              "reason": "no_compiler_provider",
+              "state": "unsupported"
+            }
+          },
+          {
+            "definitions": [],
+            "extensions": [
+              ".java"
+            ],
+            "extraction": {
+              "reason": "no_extraction_query",
+              "state": "unsupported"
+            },
+            "language": "java",
+            "relations": [],
+            "semantic_binding": {
+              "reason": "no_compiler_provider",
+              "state": "unsupported"
+            }
+          },
+          {
+            "definitions": [
+              "class",
+              "function",
+              "method"
+            ],
+            "extensions": [
+              ".js",
+              ".jsx"
+            ],
+            "extraction": {
+              "reason": "bounded_structural_queries",
+              "state": "partial"
+            },
+            "language": "javascript",
+            "relations": [
+              "call",
+              "construct",
+              "rationale_for",
+              "superclass"
+            ],
+            "semantic_binding": {
+              "reason": "no_compiler_provider",
+              "state": "unsupported"
+            }
+          },
+          {
+            "definitions": [
+              "heading"
+            ],
+            "extensions": [
+              ".markdown",
+              ".md"
+            ],
+            "extraction": {
+              "reason": "bounded_structural_queries",
+              "state": "partial"
+            },
+            "language": "markdown",
+            "relations": [],
+            "semantic_binding": {
+              "reason": "no_compiler_provider",
+              "state": "unsupported"
+            }
+          },
+          {
+            "definitions": [
+              "class",
+              "function"
+            ],
+            "extensions": [
+              ".py"
+            ],
+            "extraction": {
+              "reason": "bounded_structural_queries",
+              "state": "partial"
+            },
+            "language": "python",
+            "relations": [
+              "call",
+              "construct",
+              "import",
+              "rationale_for",
+              "superclass"
+            ],
+            "semantic_binding": {
+              "reason": "no_compiler_provider",
+              "state": "unsupported"
+            }
+          },
+          {
+            "definitions": [
+              "class",
+              "method",
+              "module"
+            ],
+            "extensions": [
+              ".rb"
+            ],
+            "extraction": {
+              "reason": "bounded_structural_queries",
+              "state": "partial"
+            },
+            "language": "ruby",
+            "relations": [
+              "call",
+              "construct",
+              "extend",
+              "include",
+              "prepend",
+              "rationale_for",
+              "superclass"
+            ],
+            "semantic_binding": {
+              "reason": "no_compiler_provider",
+              "state": "unsupported"
+            }
+          },
+          {
+            "definitions": [
+              "enum",
+              "function",
+              "method",
+              "module",
+              "struct",
+              "trait"
+            ],
+            "extensions": [
+              ".rs"
+            ],
+            "extraction": {
+              "reason": "bounded_structural_queries",
+              "state": "partial"
+            },
+            "language": "rust",
+            "relations": [
+              "call"
+            ],
+            "semantic_binding": {
+              "reason": "no_compiler_provider",
+              "state": "unsupported"
+            }
+          },
+          {
+            "definitions": [
+              "function",
+              "id",
+              "mixin",
+              "placeholder",
+              "selector",
+              "variable"
+            ],
+            "extensions": [
+              ".css",
+              ".scss"
+            ],
+            "extraction": {
+              "reason": "bounded_structural_queries",
+              "state": "partial"
+            },
+            "language": "scss",
+            "relations": [
+              "call"
+            ],
+            "semantic_binding": {
+              "reason": "no_compiler_provider",
+              "state": "unsupported"
+            }
+          },
+          {
+            "definitions": [],
+            "extensions": [
+              ".tsx"
+            ],
+            "extraction": {
+              "reason": "no_extraction_query",
+              "state": "unsupported"
+            },
+            "language": "tsx",
+            "relations": [],
+            "semantic_binding": {
+              "reason": "no_compiler_provider",
+              "state": "unsupported"
+            }
+          },
+          {
+            "definitions": [
+              "class",
+              "function",
+              "method"
+            ],
+            "extensions": [
+              ".ts"
+            ],
+            "extraction": {
+              "reason": "bounded_structural_queries",
+              "state": "partial"
+            },
+            "language": "typescript",
+            "relations": [
+              "call",
+              "construct",
+              "rationale_for",
+              "superclass"
+            ],
+            "semantic_binding": {
+              "reason": "no_compiler_provider",
+              "state": "unsupported"
+            }
+          },
+          {
+            "definitions": [
+              "key"
+            ],
+            "extensions": [
+              ".yaml",
+              ".yml"
+            ],
+            "extraction": {
+              "reason": "bounded_structural_queries",
+              "state": "partial"
+            },
+            "language": "yaml",
+            "relations": [],
+            "semantic_binding": {
+              "reason": "no_compiler_provider",
+              "state": "unsupported"
+            }
+          }
+        ],
+        "producers": [
+          {
+            "name": "tree-sitter",
+            "operation": "structural_extraction",
+            "semantic_binding": {
+              "reason": "no_compiler_provider",
+              "state": "unsupported"
+            }
+          }
+        ],
+        "limitations": [
+          {
+            "name": "control_flow",
+            "reason": "unsupported"
+          },
+          {
+            "name": "python_imports",
+            "reason": "package_local_unaliased_relative_only"
+          },
+          {
+            "name": "rust_cfg",
+            "reason": "build_configuration_not_evaluated"
+          },
+          {
+            "name": "rust_dispatch",
+            "reason": "unresolved_without_type_or_trait_inference"
+          },
+          {
+            "name": "rust_generated_code",
+            "reason": "unmaterialized_outputs_unavailable"
+          },
+          {
+            "name": "rust_macro_expansion",
+            "reason": "unsupported_including_derive_and_proc_macros"
+          },
+          {
+            "name": "semantic_binding",
+            "reason": "unsupported"
+          }
+        ]
+      }
+    },
+    "completeness": {
+      "state": "partial",
+      "reason": "published_extraction_partial",
+      "enumeration": "complete",
+      "counts": {
+        "indexed": 2,
+        "failed": 1,
+        "disabled": 0,
+        "unsupported": 0
+      },
+      "total_count": 3,
+      "stale_count": 1,
+      "files": [
+        {
+          "path": "a.py",
+          "language": "python",
+          "state": "indexed",
+          "observation_id": "533750f70d13bccf058a677740e983803d93375b18277d42266ca56f2a29085d",
+          "history_id": null,
+          "observed_source_sha256": "7404d78928eb99fa93b7b47c9cd3a61700b386bcbf61a651512cc923f7f90ae6",
+          "fact_source_sha256s": [
+            "7404d78928eb99fa93b7b47c9cd3a61700b386bcbf61a651512cc923f7f90ae6"
+          ],
+          "retained_facts": true,
+          "stale": false,
+          "reason": null,
+          "location": null
+        },
+        {
+          "path": "b.py",
+          "language": "python",
+          "state": "indexed",
+          "observation_id": "3ad0869d46b24658eeaa8eb90734cc3f1739aa1184bff29476593834b3afcd9a",
+          "history_id": null,
+          "observed_source_sha256": "dd123244521830178af8c2e4686722d05d70c4ffa2ba16fcff9997d66acdeb34",
+          "fact_source_sha256s": [
+            "dd123244521830178af8c2e4686722d05d70c4ffa2ba16fcff9997d66acdeb34"
+          ],
+          "retained_facts": true,
+          "stale": false,
+          "reason": null,
+          "location": null
+        },
+        {
+          "path": "history.py",
+          "language": "python",
+          "state": "failed",
+          "observation_id": "b596980ce55dd72c52138e8c5f9913ce0f7541716c7adf6aae5e68bf138207cc",
+          "history_id": "1cf6d84eb702331411f601a8255905daa78474af6ef536c8833dc916166489ec",
+          "observed_source_sha256": "e05a700c6db5c9f8431cdfe4911ce9b480a751ff71963706735bef952034c70f",
+          "fact_source_sha256s": [
+            "bef72fcdbe578f5ae28d2566920f8da773037c4e71210ca2dce3d5ff2cda3d09"
+          ],
+          "retained_facts": true,
+          "stale": true,
+          "reason": "parse_error",
+          "location": {
+            "column": 11,
+            "end_column": 11,
+            "end_line": 1,
+            "line": 1
+          }
+        }
+      ]
+    },
+    "source": {
+      "state": "available",
+      "reason": null,
+      "total_count": 4,
+      "references": [
+        {
+          "path": "a.py",
+          "source_sha256": "7404d78928eb99fa93b7b47c9cd3a61700b386bcbf61a651512cc923f7f90ae6",
+          "provenance": "observed_source",
+          "extraction_state": "indexed",
+          "stale": false,
+          "available": true
+        },
+        {
+          "path": "b.py",
+          "source_sha256": "dd123244521830178af8c2e4686722d05d70c4ffa2ba16fcff9997d66acdeb34",
+          "provenance": "observed_source",
+          "extraction_state": "indexed",
+          "stale": false,
+          "available": true
+        },
+        {
+          "path": "history.py",
+          "source_sha256": "bef72fcdbe578f5ae28d2566920f8da773037c4e71210ca2dce3d5ff2cda3d09",
+          "provenance": "historical_indexed",
+          "extraction_state": "retained",
+          "stale": true,
+          "available": true
+        },
+        {
+          "path": "history.py",
+          "source_sha256": "e05a700c6db5c9f8431cdfe4911ce9b480a751ff71963706735bef952034c70f",
+          "provenance": "observed_source",
+          "extraction_state": "failed",
+          "stale": null,
+          "available": true
+        }
+      ]
+    },
+    "facts": {
+      "definitions": 2,
+      "references": 1,
+      "edges": 0,
+      "rationale": 0,
+      "historical_bundles": 1
+    }
+  },
+  "unsupported_retrieve": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"bounds\":{\"element_limit\":0,\"lists\":{},\"truncated\":false},\"data\":null,\"error\":{\"code\":\"INVALID_OPERATION\",\"message\":\"Unsupported graph operation.\",\"retry_hint\":\"none\"},\"evidence_status\":\"unavailable\",\"generation_id\":null,\"operation\":\"status\",\"schema_version\":\"atlas.graph.v1\",\"snapshot_id\":null,\"status\":\"error\"}"
+      }
+    ],
+    "structuredContent": {
+      "schema_version": "atlas.graph.v1",
+      "operation": "status",
+      "status": "error",
+      "generation_id": null,
+      "snapshot_id": null,
+      "evidence_status": "unavailable",
+      "data": null,
+      "error": {
+        "code": "INVALID_OPERATION",
+        "message": "Unsupported graph operation.",
+        "retry_hint": "none"
+      },
+      "bounds": {
+        "element_limit": 0,
+        "truncated": false,
+        "lists": {}
+      }
+    },
+    "isError": true
+  },
+  "fixture": {
+    "path": "mcp-server/tests/fixtures/s17/native8.json.gz",
+    "uncompressed_bytes": 267221,
+    "uncompressed_sha256": "1c1dad4c9b87adb3c009eed4979ad4885fc8ce22b3b3b44045153f7a9dc369d7",
+    "compressed_bytes": 26121,
+    "compressed_sha256": "8b3fb165db71a9d850cef7df9692b1cca9eb17591099543ec906162bf5fbcc73",
+    "gzip_mtime": 0
+  },
+  "source_archive_count": 36,
+  "source_archive_sha256": "da834ad6987ae846ec65af0bc5d2cba738219b77efdbb86c26a5eeb29cf160cb",
+  "portable": {
+    "path": ".spectra/evidence/aci-s17/native8-portable.jsonl",
+    "bytes": 15574,
+    "sha256": "ac87cac3606f81c4db620ef47eeed2a90eaf47f6e72d2b3ed3ab692f715e9c4b"
+  },
+  "actual_import": "/private/tmp/atlas-aci-aci-s17/mcp-server/src/atlas_aci/__init__.py"
+}
