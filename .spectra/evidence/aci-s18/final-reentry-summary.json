@@ -1,11 +1,11 @@
 {
-  "output_commit": "5d80631d63ed55ecdc521dcef2c01ae115509689",
-  "detached_checkout": "/private/tmp/aci-s18-output-check",
+  "output_commit": "a44693ef40dc5d09818a9a033058ad0e7ba397f4",
+  "detached_checkout": "/private/tmp/aci-s18-ci-output-check",
   "command": [
-    "/private/tmp/aci-s18-output-check/mcp-server/.venv/bin/python",
-    "/private/tmp/aci-s18-output-check/.spectra/evidence/aci-s18/verify_execution.py",
+    "/private/tmp/aci-s18-ci-output-check/mcp-server/.venv/bin/python",
+    "/private/tmp/aci-s18-ci-output-check/.spectra/evidence/aci-s18/verify_execution.py",
     "--root",
-    "/private/tmp/aci-s18-output-check",
+    "/private/tmp/aci-s18-ci-output-check",
     "--receipt",
     "/private/tmp/atlas-aci-aci-s18/.spectra/state/aci-s18.execution.json"
   ],
@@ -13,22 +13,27 @@
   "initial_status": "PRODUCTS_VERIFIED",
   "final_exit_code": 0,
   "status": "ALREADY_SATISFIED",
-  "digest_count": 303,
+  "digest_count": 330,
   "before_equals_after_equals_receipt": true,
   "helper_sha256": "c5f4f125c0ac2bbb1eaf7376ebe094141c59d4e257ccd7e71f922a5a74918e93",
-  "exact_head": "5d80631d63ed55ecdc521dcef2c01ae115509689",
+  "exact_head": "a44693ef40dc5d09818a9a033058ad0e7ba397f4",
   "detached_clean": true,
   "source_import_count": 47,
   "frozen_environment_exit_code": 0,
   "source_import_exit_code": 0,
   "output_test_exit_code": 0,
   "output_test_count": 44,
-  "output_test_elapsed_seconds": 21.14,
+  "output_test_elapsed_seconds": 23.446314583,
+  "output_test_marker": "44 passed in 22.86s",
+  "selected_python": "3.14.6",
+  "native_image": "sha256:8532a339a6b745b539e6b1212e4de67f821e581330cafe7190e76ea28c731b99",
   "output_test_log": ".spectra/evidence/aci-s18/output-check-tests.log",
   "resume_command": [
-    "/private/tmp/aci-s18-output-check/mcp-server/.venv/bin/python",
-    "/private/tmp/aci-s18-output-check/.spectra/evidence/aci-s18/verify_resume.py"
+    "/private/tmp/aci-s18-ci-output-check/mcp-server/.venv/bin/python",
+    "/private/tmp/aci-s18-ci-output-check/.spectra/evidence/aci-s18/verify_resume.py"
   ],
+  "resume_cwd": "/private/tmp/atlas-aci-aci-s18",
   "resume_exit_code": 0,
-  "git_diff_exit_code": 0
+  "git_diff_exit_code": 0,
+  "published_ci_gate": "Root must require all jobs green at successor published head"
 }

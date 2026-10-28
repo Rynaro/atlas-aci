@@ -4,7 +4,7 @@
   "criteria_sha256": "e4e84bc226ea5437c3f6931cd25acc7951f92ca7f701439a5b0baeea15ff88f6",
   "frozen_spec_sha256": "0a0ea3e005685affb5bf506ee159ebd89f891a0c3ad663c471656a8c753b3918",
   "base_commit": "ae307760ec928572da406e174bfe922848faabaf",
-  "output_commit": "5d80631d63ed55ecdc521dcef2c01ae115509689",
+  "output_commit": "a44693ef40dc5d09818a9a033058ad0e7ba397f4",
   "declared_paths": [
     "mcp-server/src/atlas_aci/query/*",
     "mcp-server/src/atlas_aci/protocol/*",
@@ -24,10 +24,12 @@
     ".spectra/evidence/aci-s18/*",
     ".spectra/state/aci-s18.execution.json",
     ".spectra/backlog/execution.json",
-    ".spectra/backlog/order.md"
+    ".spectra/backlog/order.md",
+    ".github/workflows/ci.yml"
   ],
   "scope_amendments": [
-    ".spectra/changes/aci-s18/scope-amendment.json"
+    ".spectra/changes/aci-s18/scope-amendment.json",
+    ".spectra/changes/aci-s18/execution-runtime-amendment.json"
   ],
   "output_digest_exclusions": [
     ".spectra/state/aci-s18.execution.json",
@@ -195,7 +197,16 @@
     },
     "fact_producer": ".spectra/evidence/aci-s18/producer-applicability.json",
     "local_yield": ".spectra/evidence/aci-s18/local-yield.json",
-    "raw_preservation": ".spectra/evidence/aci-s18/raw-manifest.json"
+    "raw_preservation": ".spectra/evidence/aci-s18/raw-manifest.json",
+    "ci_runtime_qualification": {
+      "exit_code": 0,
+      "context_sdk_test_passed": 20,
+      "python": "3.14.6",
+      "evidence": ".spectra/evidence/aci-s18/ci-remediation/python314-qualification.json",
+      "native_imports_evidence": ".spectra/evidence/aci-s18/ci-remediation/python314-runtime.json",
+      "workflow_structure_evidence": ".spectra/evidence/aci-s18/ci-remediation/workflow-structure.json",
+      "unchanged_inputs_evidence": ".spectra/evidence/aci-s18/ci-remediation/unchanged-applicability.json"
+    }
   },
   "limitations": [
     "Complete proof/context metadata can reduce useful reference coverage under tight or dual-output byte budgets; no general savings/relevance claim.",
@@ -206,17 +217,19 @@
   ],
   "effort_accounting": {
     "original_started_epoch": 1793000814.351153,
-    "checkpoint_epoch": 1793007212.281993,
-    "conservative_elapsed_wall_upper_bound_seconds": 6397.930840015411,
+    "checkpoint_epoch": 1793230064.8745222,
+    "conservative_elapsed_wall_upper_bound_seconds": 229250.5233693123,
     "engineering_budget_seconds": 432000,
     "clock_reset": false,
     "scope": "Conservative upper bound includes tool/review waiting; all failed/intermediate work retained."
   },
   "output_digests": {
-    ".github/workflows/harden-gate.yml": "143a4a1558d62082d32efe915b7db3e2f1e751b257d3cf7388c042b86d6d687a",
+    ".github/workflows/ci.yml": "ae5b60a0628226e5caf7337640c022707c9eaa405f3ed03be68f8461c281ff55",
+    ".github/workflows/harden-gate.yml": "ca4fc33df66d4bfb1809118cf188338a6abac44b40ba99af4ec0f552b702d759",
     ".spectra/backlog/execution.json": "ea68840456c65ff355adfcdac85000fa39b8ae3c699a3565d25b6332541a592a",
     ".spectra/backlog/order.md": "ec05e38e09281e3dd04276c157f9c45e4a0d6c6c7a15305c27286146194d4bfe",
     ".spectra/changes/aci-s18/bookkeeping-amendment.json": "01be2bd15e1eae87cc472921635e5bd2636d2610afa60bfab285846d245af48a",
+    ".spectra/changes/aci-s18/execution-runtime-amendment.json": "95b1e468a6f7c68f156dddc432f558c2c1ce6b1e81af133b05629048569339b2",
     ".spectra/changes/aci-s18/scope-amendment.json": "86a38e64d14576fe7f1cca92b26168c234dacc749bc2495ccaaa62d2889af60e",
     ".spectra/evidence/aci-s18/README.md": "31fd61ab1bb79e1f56147b7edf891dc1cb747d932b581667e5924a4592c18dd1",
     ".spectra/evidence/aci-s18/amended-runner-format.log.gz": "caaf52f9f0867cee9ced6a8ffc7949563636deaad973bf6dcabaabb01722c01b",
@@ -227,6 +240,31 @@
     ".spectra/evidence/aci-s18/checks-before-import-correction.json": "f2603005d53a56059c9fc6b2d4a8d746ac89a8323df946873f58d2a28d093d86",
     ".spectra/evidence/aci-s18/checks.json": "f1322760e1de9fc9ecef5467021e566d39a69ff13f748e8e025c8a1707a1aa03",
     ".spectra/evidence/aci-s18/ci-cwd-import-fix.log.gz": "1437c4d3c9b6ce6ddde010a6fc89a9355e3066624dc6a403ca7fa1adc019ac1f",
+    ".spectra/evidence/aci-s18/ci-remediation/README.md": "6a89d02c66fc2fa8153fcbcdecf1ea361d0ebdda440f9fbe6bedab5458023eb3",
+    ".spectra/evidence/aci-s18/ci-remediation/amendment-qualification-review.json": "477a3c410ddd835eab54ecf36bf10f0ebde623c6879e36d6d7b785887849cac0",
+    ".spectra/evidence/aci-s18/ci-remediation/failed-ci-provenance.json": "b4873e62708be5ae3c1a82b988ae27e5a7d97e27fd5ed48fcc18398eb7426253",
+    ".spectra/evidence/aci-s18/ci-remediation/job-123160633742.log.gz": "b973cb59100016649474f370be406a7acb2f833ec723db9d067f3d97e4d76d09",
+    ".spectra/evidence/aci-s18/ci-remediation/job-123160633940.log.gz": "29a5d0beb3cff29c1fbd3e2ca7a73128fc8dc90071129eb85b46c5279827e19a",
+    ".spectra/evidence/aci-s18/ci-remediation/job-123160634199.log.gz": "390beb1a74fd66e3d8674addbbf4960fb2562c5f8261b7ab5742b9e2c5e41d36",
+    ".spectra/evidence/aci-s18/ci-remediation/job-123160634207.log.gz": "a9585be533925f72d2a0f00516533bb873a353563896672bd0da503415db22b1",
+    ".spectra/evidence/aci-s18/ci-remediation/published-complete-receipt.json": "494c039f02c74cb233d504411d0e5da1606bb3932ec8091345a8486b760cecbb",
+    ".spectra/evidence/aci-s18/ci-remediation/published-final-reentry-after.json": "f3f13913d117ac369f035efccb96f00a820d53915bf57603adba01344e7f768d",
+    ".spectra/evidence/aci-s18/ci-remediation/published-final-reentry-before.json": "e60b432796df2469f84d3e8aa73fce743e7ef19e0488cb1d4ce8bbf397e16f17",
+    ".spectra/evidence/aci-s18/ci-remediation/published-final-reentry-summary.json": "5e1015568e1a75c4d4bff1f7554e2f1aa23920cba70d437f3353f573cac16181",
+    ".spectra/evidence/aci-s18/ci-remediation/published-final-resume-identity.json": "40c1030f25dd8efbfd6c18298510437e853c9d1d18972c29d3eccba74f693b7a",
+    ".spectra/evidence/aci-s18/ci-remediation/published-metadata-preservation.json": "1595119e43adb0fe35e6a5aab0ffa82b6b6d4e58360cffd7f39442e2085d77dc",
+    ".spectra/evidence/aci-s18/ci-remediation/published-output-check-tests.log.gz": "e141ba1b4ec106a028deb80996401bd8e0a084f3ade7eef52cb1962fec1ded8e",
+    ".spectra/evidence/aci-s18/ci-remediation/python314-context-sdk.log.gz": "d9ff9f8e1b0fc4dfdd852cfc4bc0d30cd3988ba84f5d05c4e08a2d1871d6c12f",
+    ".spectra/evidence/aci-s18/ci-remediation/python314-frozen-sync-network-blocked.json": "a9b80ab3f94c894dcfc5e7074a27f5ee6c26b27c0b608a43f6f47c350fdca0ce",
+    ".spectra/evidence/aci-s18/ci-remediation/python314-frozen-sync-network-blocked.log.gz": "efd91dc25b2469fc2ad84a7471d162d270011411640c8365fc2484ca01ff4c59",
+    ".spectra/evidence/aci-s18/ci-remediation/python314-frozen-sync.log.gz": "137881ffa115fe7f4b0705300b10460d3038cdb53ef4de5001b25d505dbbe6f1",
+    ".spectra/evidence/aci-s18/ci-remediation/python314-imports.log.gz": "e0d1a66d58722845dceda06cd18f40774e1bd91de737978dd61914a407204fd2",
+    ".spectra/evidence/aci-s18/ci-remediation/python314-lock.log.gz": "7c22b7ca69fec1facda9a6c63f82a0ba40e7c8cc36a53c51e89261a09899a5fa",
+    ".spectra/evidence/aci-s18/ci-remediation/python314-qualification.json": "7c709cc967f856c20fc0b518c9bec2525c3997a919f90516c6bd3396bdfd2293",
+    ".spectra/evidence/aci-s18/ci-remediation/python314-runtime.json": "88b7df824fbc3ac868b66a812cb112a968a263382c77dd9c11440fd4b428e101",
+    ".spectra/evidence/aci-s18/ci-remediation/qualify_python314.py": "ff70bcd8ebeec0aabaac0ae30de313b7537e67ca5b7ea80445a1804ece8dccfc",
+    ".spectra/evidence/aci-s18/ci-remediation/unchanged-applicability.json": "74ca69aea26cb23e982b9e66651f35dccea59b10b357429f58b602af5068a58e",
+    ".spectra/evidence/aci-s18/ci-remediation/workflow-structure.json": "0a45247243555f77a55b2093b7bd71eb48e0309febc3cc67a5b8121853515661",
     ".spectra/evidence/aci-s18/classify.log.gz": "df16a4127c83de4ee0d163b956c4e1853f72534c12d392a06d181f6a10f18941",
     ".spectra/evidence/aci-s18/collection-current.log.gz": "518d5e501c414f49512d3565478d0cff9b089e162bee5aeac2d9721c5cf64370",
     ".spectra/evidence/aci-s18/context-wiring-lint-first.log.gz": "4f2cc77032aa4e980c9a237430317c971de564d3f53d2cd73bcbfe62f4d91167",
@@ -517,5 +555,28 @@
     "mcp-server/tests/test_server.py": "669370729d0b82a7c2b0485282690987705abf52ff5b20b50bf5704daee68573",
     "scripts/test-verify-probe-verdict.sh": "9451857e37406de6cf2eab569b2faab77d0b515fa4df6670e55cc84ef572c034"
   },
-  "completed_epoch": 1793007212.281992
+  "completed_epoch": 1793230064.8745222,
+  "ci_remediation": {
+    "reason": "Published CI failed dependency sync under unqualified Python 3.15; scope/root-cause review pending.",
+    "published_commit": "cd709b7673e2d9ff8a9cda3e8bd2a20ca1d1d0d2",
+    "preserved_receipt": ".spectra/evidence/aci-s18/ci-remediation/published-complete-receipt.json",
+    "failed_ci_provenance": ".spectra/evidence/aci-s18/ci-remediation/failed-ci-provenance.json",
+    "original_output_commit": "5d80631d63ed55ecdc521dcef2c01ae115509689",
+    "reopened_at": "2026-10-28T23:22:40.211760+00:00",
+    "output_commit": "a44693ef40dc5d09818a9a033058ad0e7ba397f4",
+    "amendment": ".spectra/changes/aci-s18/execution-runtime-amendment.json",
+    "qualification": ".spectra/evidence/aci-s18/ci-remediation/python314-qualification.json",
+    "qualification_checker": "/root/s18_checker (ATLAS)",
+    "qualification_verdict": "APPROVE",
+    "selected_ci_python": "3.14",
+    "qualification_host_python": "3.14.6",
+    "product_runtime_files_unchanged": 47,
+    "producer_paths_unchanged": 13,
+    "status": "COMPLETE",
+    "fresh_output_test_count": 44,
+    "fresh_output_python": "3.14.6",
+    "fresh_source_import_count": 47,
+    "fresh_output_test_exit_code": 0,
+    "published_head_linux_ci": "ROOT RELEASE GATE PENDING"
+  }
 }

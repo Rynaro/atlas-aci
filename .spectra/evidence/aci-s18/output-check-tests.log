@@ -1,13 +1,13 @@
-{"argv": ["/tmp/aci-s01-tools/bin/uv", "sync", "--frozen", "--extra", "dev", "--python", "3.12", "--project", "/private/tmp/aci-s18-output-check/mcp-server"], "cwd": "/private/tmp/aci-s18-output-check"}
-Using CPython 3.12.13
+{"name": "frozen_environment", "argv": ["/tmp/aci-s01-tools/bin/uv", "sync", "--frozen", "--extra", "dev", "--python", "/opt/homebrew/bin/python3.14", "--project", "/private/tmp/aci-s18-ci-output-check/mcp-server"], "cwd": "/private/tmp/aci-s18-ci-output-check", "environment": {"UV_CACHE_DIR": "/tmp/aci-s01-uv-cache", "PYTHONDONTWRITEBYTECODE": "1", "ATLAS_ACI_S18_DOCKER_IMAGE": "sha256:8532a339a6b745b539e6b1212e4de67f821e581330cafe7190e76ea28c731b99"}}
+Using CPython 3.14.6 interpreter at: /opt/homebrew/opt/python@3.14/bin/python3.14
 Creating virtual environment at: mcp-server/.venv
-   Building atlas-aci @ file:///private/tmp/aci-s18-output-check/mcp-server
-      Built atlas-aci @ file:///private/tmp/aci-s18-output-check/mcp-server
-Prepared 1 package in 197ms
-Installed 44 packages in 55ms
+   Building atlas-aci @ file:///private/tmp/aci-s18-ci-output-check/mcp-server
+      Built atlas-aci @ file:///private/tmp/aci-s18-ci-output-check/mcp-server
+Prepared 1 package in 470ms
+Installed 44 packages in 31ms
  + annotated-types==0.7.0
  + anyio==4.13.0
- + atlas-aci==2.0.0 (from file:///private/tmp/aci-s18-output-check/mcp-server)
+ + atlas-aci==2.0.0 (from file:///private/tmp/aci-s18-ci-output-check/mcp-server)
  + attrs==26.1.0
  + certifi==2026.2.25
  + cffi==2.0.0
@@ -49,11 +49,11 @@ Installed 44 packages in 55ms
  + typing-extensions==4.15.0
  + typing-inspection==0.4.2
  + uvicorn==0.44.0
-{"exit_code": 0, "elapsed_seconds": 0.36983800001326017}
-{"argv": ["/private/tmp/aci-s18-output-check/mcp-server/.venv/bin/python", "-c", "import atlas_aci,hashlib,json;from pathlib import Path;r=Path(atlas_aci.__file__).resolve().parent;expected=Path.cwd()/'mcp-server/src/atlas_aci';assert r==expected.resolve();h={str(p.relative_to(r)):hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(r.rglob('*.py'))};assert h==json.loads(Path('.spectra/evidence/aci-s18/source-final.json').read_text())['runtime_hashes'];print(json.dumps({'actual_import':str(r),'own_source_count':len(h),'own_hashes_verified':True}))"], "cwd": "/private/tmp/aci-s18-output-check"}
-{"actual_import": "/private/tmp/aci-s18-output-check/mcp-server/src/atlas_aci", "own_source_count": 47, "own_hashes_verified": true}
-{"exit_code": 0, "elapsed_seconds": 0.018528542015701532}
-{"argv": ["/private/tmp/aci-s18-output-check/mcp-server/.venv/bin/python", "-m", "pytest", "-q", "-p", "no:cacheprovider", "mcp-server/tests/slices/test_s18_atoms.py", "mcp-server/tests/slices/test_s18_contract.py", "mcp-server/tests/slices/test_s18_pages.py", "mcp-server/tests/slices/test_s18_work.py", "mcp-server/tests/slices/test_s18_stdio.py", "mcp-server/tests/slices/test_s18_docker.py"], "cwd": "/private/tmp/aci-s18-output-check"}
+{"exit_code": 0, "elapsed_seconds": 0.625643042}
+{"name": "source_import", "argv": ["/private/tmp/aci-s18-ci-output-check/mcp-server/.venv/bin/python", "-c", "import sys,atlas_aci,hashlib,json;from pathlib import Path;assert sys.version_info[:2]==(3,14);r=Path(atlas_aci.__file__).resolve().parent;expected=Path.cwd()/'mcp-server/src/atlas_aci';assert r==expected.resolve();h={str(p.relative_to(r)):hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(r.rglob('*.py'))};assert h==json.loads(Path('.spectra/evidence/aci-s18/source-final.json').read_text())['runtime_hashes'];print(json.dumps({'python':sys.version,'actual_import':str(r),'own_source_count':len(h),'own_hashes_verified':True}))"], "cwd": "/private/tmp/aci-s18-ci-output-check", "environment": {"UV_CACHE_DIR": "/tmp/aci-s01-uv-cache", "PYTHONDONTWRITEBYTECODE": "1", "ATLAS_ACI_S18_DOCKER_IMAGE": "sha256:8532a339a6b745b539e6b1212e4de67f821e581330cafe7190e76ea28c731b99"}}
+{"python": "3.14.6 (main, Jun 10 2026, 10:03:53) [Clang 21.0.0 (clang-2100.0.123.102)]", "actual_import": "/private/tmp/aci-s18-ci-output-check/mcp-server/src/atlas_aci", "own_source_count": 47, "own_hashes_verified": true}
+{"exit_code": 0, "elapsed_seconds": 0.03277633400000002}
+{"name": "output_test", "argv": ["/private/tmp/aci-s18-ci-output-check/mcp-server/.venv/bin/python", "-m", "pytest", "-q", "-p", "no:cacheprovider", "mcp-server/tests/slices/test_s18_atoms.py", "mcp-server/tests/slices/test_s18_contract.py", "mcp-server/tests/slices/test_s18_docker.py", "mcp-server/tests/slices/test_s18_pages.py", "mcp-server/tests/slices/test_s18_stdio.py", "mcp-server/tests/slices/test_s18_work.py"], "cwd": "/private/tmp/aci-s18-ci-output-check", "environment": {"UV_CACHE_DIR": "/tmp/aci-s01-uv-cache", "PYTHONDONTWRITEBYTECODE": "1", "ATLAS_ACI_S18_DOCKER_IMAGE": "sha256:8532a339a6b745b539e6b1212e4de67f821e581330cafe7190e76ea28c731b99"}}
 ............................................                             [100%]
-44 passed in 21.14s
-{"exit_code": 0, "elapsed_seconds": 23.647803083993495}
+44 passed in 22.86s
+{"exit_code": 0, "elapsed_seconds": 23.446314583}
