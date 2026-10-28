@@ -1,0 +1,46 @@
+{
+  "source_commit": "cd709b7673e2d9ff8a9cda3e8bd2a20ca1d1d0d2",
+  "receipt_sha256": "494c039f02c74cb233d504411d0e5da1606bb3932ec8091345a8486b760cecbb",
+  "logs": {
+    "123160633742": {
+      "path": "job-123160633742.log.gz",
+      "source": "GitHub github_fetch_workflow_job_logs structuredContent.content decoded UTF-8",
+      "url": "https://api.github.com/repos/Rynaro/atlas-aci/actions/jobs/123160633742/logs",
+      "raw_bytes": 27160,
+      "raw_sha256": "30aea90f9cf98c29b6b8f89d636cf9dcd4cba1a9c19d9ab8460b3f46d84800da",
+      "gzip_bytes": 7561,
+      "gzip_sha256": "b973cb59100016649474f370be406a7acb2f833ec723db9d067f3d97e4d76d09",
+      "gzip_mtime": 0
+    },
+    "123160634207": {
+      "path": "job-123160634207.log.gz",
+      "source": "GitHub github_fetch_workflow_job_logs structuredContent.content decoded UTF-8",
+      "url": "https://api.github.com/repos/Rynaro/atlas-aci/actions/jobs/123160634207/logs",
+      "raw_bytes": 33684,
+      "raw_sha256": "066803c0cddef22b19ee91c68e216a9e2d5d556308354128653a88bfa34c0dbe",
+      "gzip_bytes": 8877,
+      "gzip_sha256": "a9585be533925f72d2a0f00516533bb873a353563896672bd0da503415db22b1",
+      "gzip_mtime": 0
+    },
+    "123160634199": {
+      "path": "job-123160634199.log.gz",
+      "source": "GitHub github_fetch_workflow_job_logs structuredContent.content decoded UTF-8",
+      "url": "https://api.github.com/repos/Rynaro/atlas-aci/actions/jobs/123160634199/logs",
+      "raw_bytes": 143723,
+      "raw_sha256": "e5369ab4c3b7898456da417e73ae55deaea7a2da4ef93cea643fcffdb0de9615",
+      "gzip_bytes": 41981,
+      "gzip_sha256": "390beb1a74fd66e3d8674addbbf4960fb2562c5f8261b7ab5742b9e2c5e41d36",
+      "gzip_mtime": 0
+    },
+    "123160633940": {
+      "path": "job-123160633940.log.gz",
+      "source": "GitHub github_fetch_workflow_job_logs structuredContent.content decoded UTF-8",
+      "url": "https://api.github.com/repos/Rynaro/atlas-aci/actions/jobs/123160633940/logs",
+      "raw_bytes": 44672,
+      "raw_sha256": "a44988ac41245924cc888bdf5cae864d3ca2a422ea90b35e5dfa0858f6d54701",
+      "gzip_bytes": 12080,
+      "gzip_sha256": "29a5d0beb3cff29c1fbd3e2ca7a73128fc8dc90071129eb85b46c5279827e19a",
+      "gzip_mtime": 0
+    }
+  }
+}

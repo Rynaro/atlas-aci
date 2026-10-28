@@ -1,0 +1,19 @@
+{
+  "slice_id": "ACI-S18",
+  "criteria_changed": false,
+  "frozen_planning_changed": false,
+  "additional_paths": [
+    ".github/workflows/ci.yml"
+  ],
+  "authority": "ROOTAUTHORITY received before edit: four setup-python inputs only; no UV_PYTHON/dependency/product/Docker/matrix/job/condition/command/permission changes.",
+  "reason": "Four Linux jobs selected CPython3.15.1 from open >=3.11; frozen rpds-py0.30.0/PyO30.27.2 supports through3.14. Pin qualified CI runtime3.14.",
+  "implementation_changes": {
+    ".github/workflows/ci.yml": 3,
+    ".github/workflows/harden-gate.yml": 1
+  },
+  "replacement": {
+    "before": "python-version-file: \"mcp-server/pyproject.toml\"",
+    "after": "python-version: \"3.14\""
+  },
+  "created_at": "2026-10-28T23:23:52.516345+00:00"
+}

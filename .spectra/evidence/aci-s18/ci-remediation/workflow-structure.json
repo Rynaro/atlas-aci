@@ -1,0 +1,19 @@
+{
+  "parser": "Ruby2.6.10 stdlib YAML/Psych",
+  "workflows": {
+    ".github/workflows/ci.yml": {
+      "substitutions": 3,
+      "only_exact_substitutions": true,
+      "decoded_structure_matches_expected": true,
+      "before_sha256": "8889a7e4ed17bd2908d7ac18ca130b82c4ee12668e0a0c78cf7e8923942c1417",
+      "after_sha256": "ae5b60a0628226e5caf7337640c022707c9eaa405f3ed03be68f8461c281ff55"
+    },
+    ".github/workflows/harden-gate.yml": {
+      "substitutions": 1,
+      "only_exact_substitutions": true,
+      "decoded_structure_matches_expected": true,
+      "before_sha256": "143a4a1558d62082d32efe915b7db3e2f1e751b257d3cf7388c042b86d6d687a",
+      "after_sha256": "ca4fc33df66d4bfb1809118cf188338a6abac44b40ba99af4ec0f552b702d759"
+    }
+  }
+}

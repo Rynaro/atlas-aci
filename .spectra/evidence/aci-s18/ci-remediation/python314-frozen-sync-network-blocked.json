@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "/tmp/aci-s01-tools/bin/uv",
+    "sync",
+    "--frozen",
+    "--extra",
+    "dev",
+    "--python",
+    "/opt/homebrew/bin/python3.14"
+  ],
+  "cwd": "/tmp/atlas-aci-aci-s18/mcp-server",
+  "environment": {
+    "UV_CACHE_DIR": "/tmp/aci-s01-uv-cache",
+    "UV_PROJECT_ENVIRONMENT": "/tmp/aci-s18-ci-python314"
+  },
+  "exit_code": 2,
+  "elapsed_seconds": 4.296420375,
+  "raw_sha256": "3f91c413c0bbf696f46c6d510d4077348e4b0e20a9e2c29f9bb1d5583e8b465a",
+  "raw_bytes": 791
+}
