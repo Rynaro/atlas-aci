@@ -1,0 +1,34 @@
+[
+  {
+    "frontier": 0,
+    "field": "effective_limits",
+    "left": {
+      "deadline_ms": 1999,
+      "max_depth": 2,
+      "max_examined_edges": 256,
+      "max_visited_nodes": 257
+    },
+    "right": {
+      "deadline_ms": 1972,
+      "max_depth": 2,
+      "max_examined_edges": 256,
+      "max_visited_nodes": 257
+    }
+  },
+  {
+    "frontier": 1,
+    "field": "effective_limits",
+    "left": {
+      "deadline_ms": 1998,
+      "max_depth": 2,
+      "max_examined_edges": 253,
+      "max_visited_nodes": 257
+    },
+    "right": {
+      "deadline_ms": 1970,
+      "max_depth": 2,
+      "max_examined_edges": 253,
+      "max_visited_nodes": 257
+    }
+  }
+]

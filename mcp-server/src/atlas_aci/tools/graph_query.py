@@ -21,9 +21,15 @@ async def graph_query(
     config: Config,
     enforcement: Enforcement,
     code_graph: CodeGraph,
+    *,
+    structured: bool = True,
 ) -> dict[str, Any]:
     start_t = time.monotonic()
     mode = request_mode(args)
+    if mode == "structured" and args["op"] == "context":
+        from atlas_aci.query.context import context
+
+        return await context(code_graph, args, config, structured=structured)
 
     # H3: see search_symbol.py — ask the CodeGraph instance for the
     # epoch-namespaced path rather than hardcoding ".atlas/graph.db".

@@ -1,0 +1,38 @@
+[
+  {
+    "producer_output_path": "/tmp/aci-s18-pass2-replay-fix/feedback.json",
+    "stable_path": ".spectra/evidence/aci-s18/protected-loop/feedback.json",
+    "sha256": "beb491b9036c95d9e6cb6bc12cbf7384cde52d34aa659d5796a1b7d7a11526f2",
+    "bytes": 293
+  },
+  {
+    "producer_output_path": "/tmp/aci-s18-pass2-replay-fix/loop.json",
+    "stable_path": ".spectra/evidence/aci-s18/protected-loop/loop.json",
+    "sha256": "aa5c8580c459deb414456a1a5aad1e5c80e5bf90760b4b005ca395f2b596d828",
+    "bytes": 796
+  },
+  {
+    "producer_output_path": "/tmp/aci-s18-pass2-replay-fix/loop.json.envelope.json",
+    "stable_path": ".spectra/evidence/aci-s18/protected-loop/loop.json.envelope.json",
+    "sha256": "f3b9a4364fea79c4e27babb8dbbaa10df7561a44ac96a163f135c58af450fcf0",
+    "bytes": 403
+  },
+  {
+    "producer_output_path": "/tmp/aci-s18-pass2-final/feedback.json",
+    "stable_path": ".spectra/evidence/aci-s18/prior-s17-protected-loop/loop-output/feedback.json",
+    "sha256": "51ec98f2bd94b7fcdec42ffda78efc9ed2140849b5d5efa8a27a6944924f5a5b",
+    "bytes": 304
+  },
+  {
+    "producer_output_path": "/tmp/aci-s18-pass2-final/loop.json",
+    "stable_path": ".spectra/evidence/aci-s18/prior-s17-protected-loop/loop-output/loop.json",
+    "sha256": "50588ed5791a6a6d00a524b456c8e9e5e43cc3493b0e9ab3085f589b18a73eae",
+    "bytes": 781
+  },
+  {
+    "producer_output_path": "/tmp/aci-s18-pass2-final/loop.json.envelope.json",
+    "stable_path": ".spectra/evidence/aci-s18/prior-s17-protected-loop/loop-output/loop.json.envelope.json",
+    "sha256": "da543bb1e8716cd4bfbe788b152d710a81f1eb2b2b8c546e3e96f31b5bbf74df",
+    "bytes": 398
+  }
+]

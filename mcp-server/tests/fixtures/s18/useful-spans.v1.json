@@ -1,0 +1,132 @@
+{
+  "format": "atlas-context-local-eval.v1",
+  "captured_utc": "2026-10-26T07:48:33Z",
+  "base_commit": "ae307760ec928572da406e174bfe922848faabaf",
+  "source_files": {
+    "app/payments.py": "def process_payment(amount):\n    validate_payment(amount)\n    write_ledger(amount)\n    return amount\n\ndef validate_payment(amount):\n    if amount < 0:\n        raise ValueError(\"negative payment\")\n    return amount\n\ndef write_ledger(amount):\n    return {\"payment\": amount}\n",
+    "app/client.py": "def send_request(payload):\n    retry_request(payload)\n    return payload\n\ndef retry_request(payload):\n    # retry transport timeout with a bounded local attempt\n    return {\"attempt\": 1, \"payload\": payload}\n",
+    "app/render.py": "def render_text(value):\n    return escape_text(value) + \" café ☃\"\n\ndef escape_text(value):\n    return value.replace(\"<\", \"&lt;\")\n",
+    "other/payments.py": "def process_payment(amount):\n    # unrelated reporting-only homonym; no ledger mutation\n    return str(amount)\n",
+    "noise/task.py": "def unrelated():\n    return 0\n# process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout \n",
+    "app/summary.py": "def summary(value):\n    return {\"summary\": value}\n",
+    "app/incomplete.py": "def broken(:\n    pass\n"
+  },
+  "source_hashes": {
+    "app/payments.py": "782c869ba1b534f3d12e727acc3cd703a3eb1742ab2ed897898b79c49298f81c",
+    "app/client.py": "b730002ccc3c34593e02dcceb1af2b4a0fb3a1f1b0667cd8f07955ca189814ac",
+    "app/render.py": "286627467dd53f67b1f246638767b213fd08f58f6543f0360e2ec6df3488ff59",
+    "other/payments.py": "746954ef4f33bce466edd4e4c5fe1d74201b77b34d3dc894a02b3cbe0f0d1368",
+    "noise/task.py": "27de5ed39168722cce50d06270b48994e041ac059986f0c4f3a973f595da3d9f",
+    "app/summary.py": "4e43a2576d0960958b1e1c16d97d77dd45b0a9829831cec7b8b258da8852ecee",
+    "app/incomplete.py": "6b8c8a725c23dc076d9a2c185ce4e02435746bc3b4f99906d13de360e56898c7"
+  },
+  "tasks": [
+    {
+      "id": "payment",
+      "text": "process_payment",
+      "useful_spans": [
+        {
+          "path": "app/payments.py",
+          "source_sha256": "782c869ba1b534f3d12e727acc3cd703a3eb1742ab2ed897898b79c49298f81c",
+          "start_byte": 0,
+          "end_byte": 101
+        },
+        {
+          "path": "app/payments.py",
+          "source_sha256": "782c869ba1b534f3d12e727acc3cd703a3eb1742ab2ed897898b79c49298f81c",
+          "start_byte": 102,
+          "end_byte": 214
+        },
+        {
+          "path": "app/payments.py",
+          "source_sha256": "782c869ba1b534f3d12e727acc3cd703a3eb1742ab2ed897898b79c49298f81c",
+          "start_byte": 215,
+          "end_byte": 272
+        }
+      ],
+      "label_basis": "Hand-selected source definitions/functions before packer implementation; offsets calculated from these exact UTF8 buffers."
+    },
+    {
+      "id": "request",
+      "text": "send_request",
+      "useful_spans": [
+        {
+          "path": "app/client.py",
+          "source_sha256": "b730002ccc3c34593e02dcceb1af2b4a0fb3a1f1b0667cd8f07955ca189814ac",
+          "start_byte": 0,
+          "end_byte": 207
+        }
+      ],
+      "label_basis": "Hand-selected source definitions/functions before packer implementation; offsets calculated from these exact UTF8 buffers."
+    },
+    {
+      "id": "unicode",
+      "text": "render_text",
+      "useful_spans": [
+        {
+          "path": "app/render.py",
+          "source_sha256": "286627467dd53f67b1f246638767b213fd08f58f6543f0360e2ec6df3488ff59",
+          "start_byte": 0,
+          "end_byte": 132
+        }
+      ],
+      "label_basis": "Hand-selected source definitions/functions before packer implementation; offsets calculated from these exact UTF8 buffers."
+    },
+    {
+      "id": "phrase",
+      "text": "retry transport timeout",
+      "useful_spans": [
+        {
+          "path": "app/client.py",
+          "source_sha256": "b730002ccc3c34593e02dcceb1af2b4a0fb3a1f1b0667cd8f07955ca189814ac",
+          "start_byte": 74,
+          "end_byte": 207
+        }
+      ],
+      "label_basis": "Hand-selected source definitions/functions before packer implementation; offsets calculated from these exact UTF8 buffers."
+    }
+  ],
+  "sdk_result_byte_budgets": [
+    4000,
+    12000,
+    32000
+  ],
+  "protocol_versions": [
+    "2024-11-05",
+    "2025-11-25"
+  ],
+  "source_policies": [
+    "inline_if_complete",
+    "references"
+  ],
+  "max_inline_source_bytes": 8192,
+  "retrieval_max_candidates": 32,
+  "ranker": {
+    "id": "atlas-context-diversity.v1",
+    "highest_exact_anchor_first": true,
+    "tier_order": [
+      "exact_entity_id",
+      "exact_qualified_label",
+      "exact_path",
+      "exact_name",
+      "lexical"
+    ],
+    "bundle_kind_order": [
+      "definition",
+      "path",
+      "relationship",
+      "lexical_file"
+    ],
+    "within_queue_order": [
+      "tier_rank",
+      "seed_rank",
+      "hop_distance",
+      "source_unavailable",
+      "bundle_kind_rank",
+      "stable_bundle_id"
+    ],
+    "diversity": "After highest exact definition anchor: deterministic rounds over files ordered by their best queue front; emit at most one per file per round, rotating owner queues ordered by their best front. Primary source path/owner identifies the queue; no degree scans.",
+    "no_posthoc_weight_or_budget_tuning": true
+  },
+  "quality_gate": "Report useful inline/reference coverage, redundancy, selected files/bundles, errors/truncations/costs. No superiority threshold, fixed saving claim or paid model score."
+}

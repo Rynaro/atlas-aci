@@ -1,0 +1,11 @@
+{
+  "slice_id": "ACI-S18",
+  "before_packer_implementation": true,
+  "frozen_fixture_sha256": "07553bd3d51be01a1d522fc59c240bf41ecf312a051c413c609585c60999b507",
+  "baseline_actual_runs": 24,
+  "baseline_source_policy": "S17 raw retrieve references only; no source-policy input or inline bytes emitted",
+  "matched_comparison": "Context references policy versus raw lexical reference-only baseline at same exact SDK byte budgets/representation; report attributed reference coverage and errors/truncations.",
+  "inline_results": "Context inline_if_complete measured separately; do not describe zero-inline reference-only baseline as a matched inline baseline or claim like-for-like inline improvement. No outside-budget baseline hydration.",
+  "baseline_4000_byte_cases": "All8 valid empty/truncated; retain unchanged and report honestly.",
+  "labels_budgets_ranker_unchanged": true
+}

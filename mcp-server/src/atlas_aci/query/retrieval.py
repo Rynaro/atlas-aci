@@ -11,6 +11,7 @@ import unicodedata
 
 from atlas_aci.enforcement import ToolError
 from atlas_aci.indexing import retrieval as docs
+from atlas_aci.query.indexed import QueryStopped
 from atlas_aci.storage import evidence as ev
 
 LIMITS = {
@@ -71,7 +72,7 @@ class Work:
     remain cooperative; this is not synchronous preemption or a latency bound.
     """
 
-    def __init__(self, reader, effective):
+    def __init__(self, reader, effective, accounting=None):
         if reader._closed or not reader._validated_lease:
             raise RuntimeError("Retrieval needs an acquired lease")
         if reader._lease_schema_epoch != 9:
@@ -80,6 +81,7 @@ class Work:
                 "Retrieval needs native epoch9. Run atlas-aci index --repo <repo>.",
                 "different_tool",
             )
+        self.accounting = accounting
         self.conn = reader.db
         self.limit = effective["max_vm_operations"]
         self.deadline = time.monotonic_ns() + effective["deadline_ms"] * 1000000
@@ -121,6 +123,11 @@ class Work:
         )
 
     def check(self):
+        if self.accounting is not None:
+            try:
+                self.accounting.check()
+            except QueryStopped:
+                self.stop()
         if time.monotonic_ns() >= self.deadline:
             self.stop()
 
@@ -132,6 +139,12 @@ class Work:
 
     def progress(self):
         self.counts["vm_progress_callbacks"] += 1
+        if self.accounting is not None:
+            try:
+                self.accounting.progress(VM_QUANTUM)
+            except QueryStopped:
+                self.interrupted = True
+                return 1
         if (
             time.monotonic_ns() >= self.deadline
             or self.counts["vm_operations_reserved"] + VM_QUANTUM > self.limit
@@ -143,6 +156,11 @@ class Work:
 
     def rows(self, sql, parameters, family, limit):
         self.reserve()
+        if self.accounting is not None:
+            try:
+                self.accounting.before_sql(family)
+            except QueryStopped:
+                self.stop()
         self.counts[family + "_queries"] += 1
         self.counts["sql_queries"] += 1
         try:
@@ -297,9 +315,11 @@ def hydrate(work, key, tier, score, reader):
     }
 
 
-async def retrieve(reader, *, text, repository=None, path_prefixes=None, admit=None, **limits):
+async def retrieve(
+    reader, *, text, repository=None, path_prefixes=None, admit=None, accounting=None, **limits
+):
     query = normalized(text, repository, path_prefixes, **limits)
-    with Work(reader, query) as work:
+    with Work(reader, query, accounting=accounting) as work:
         descriptor = json.loads(
             work.one(
                 "SELECT json_extract(value,'$.retrieval') FROM manifest "

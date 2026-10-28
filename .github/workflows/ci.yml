@@ -105,7 +105,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version-file: "mcp-server/pyproject.toml"
+          python-version: "3.14"
 
       - name: Lock is current (AC-REL-3 — fails fast on drift, never silently)
         run: uv lock --check
@@ -180,7 +180,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version-file: "mcp-server/pyproject.toml"
+          python-version: "3.14"
 
       - name: Sync dependencies (frozen — never silently re-locks)
         run: uv sync --frozen --extra dev
@@ -421,7 +421,7 @@ jobs:
       - name: Set up host Python for real MCP client
         uses: actions/setup-python@v5
         with:
-          python-version-file: "mcp-server/pyproject.toml"
+          python-version: "3.14"
 
       - name: Read-only external-root and pinned-source MCP integration (S06+S08)
         working-directory: mcp-server

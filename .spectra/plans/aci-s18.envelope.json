@@ -1,0 +1,50 @@
+{
+  "envelope_version": "2.0",
+  "message_id": "ca05d427-f652-4b26-9a72-7f2e47e5a7e2",
+  "thread_id": "6b799fb1-4cf4-43b2-9f8e-3c4f07c010e0",
+  "parent_id": null,
+  "from": {
+    "eidolon": "ramza",
+    "version": "1.1.0"
+  },
+  "to": {
+    "eidolon": "vivi",
+    "version": "n/a"
+  },
+  "performative": "PROPOSE",
+  "edge_origin": "roster",
+  "objective": "Implement ACI-S18 one-snapshot task context from complete attributed bundles, deterministic diversity and retrieval identity, actual full SDK byte/token accounting and owned continuation with truthful local evaluation.",
+  "artifact": {
+    "kind": "spec",
+    "schema_version": "1.0",
+    "path": "aci-s18.md",
+    "sha256": "0a0ea3e005685affb5bf506ee159ebd89f891a0c3ad663c471656a8c753b3918",
+    "size_bytes": 25836
+  },
+  "integrity": {
+    "method": "sha256",
+    "value": "0a0ea3e005685affb5bf506ee159ebd89f891a0c3ad663c471656a8c753b3918"
+  },
+  "trace": {
+    "ts": "2026-10-26T07:42:38.898422+00:00",
+    "host": "codex",
+    "model": "gpt-6-astra",
+    "tier": "standard"
+  },
+  "ise": {
+    "assertion_grade": "validated",
+    "provenance": {
+      "methodology_version": "ramza-1.1.0"
+    },
+    "receiver_authorization": {
+      "auto_route": true,
+      "auto_merge": false,
+      "auto_deploy": false
+    }
+  },
+  "confidence": 0.8625,
+  "x_ramza_acceptance_criteria": {
+    "path": "aci-s18.criteria.md",
+    "sha256": "e4e84bc226ea5437c3f6931cd25acc7951f92ca7f701439a5b0baeea15ff88f6"
+  }
+}

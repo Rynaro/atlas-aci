@@ -1,0 +1,44 @@
+{
+  "checker": "atlas-s18-plan-checker",
+  "author": "ramza-backlog-order-s18",
+  "verdict": "APPROVE",
+  "reviewed_spec_sha256": "0a0ea3e005685affb5bf506ee159ebd89f891a0c3ad663c471656a8c753b3918",
+  "reviewed_state_sha256": "91424945ca1680a3d4680dc0111cfc757c61a0d7f7d7b1cc69ab1ed05c8799d4",
+  "base_commit": "ae307760ec928572da406e174bfe922848faabaf",
+  "criteria_sha256": "e4e84bc226ea5437c3f6931cd25acc7951f92ca7f701439a5b0baeea15ff88f6",
+  "original_review_at": "2026-10-26T07:40:47Z",
+  "recorded_at": "2026-10-26T07:41:48.396946+00:00",
+  "original_score": {
+    "rubric": "refine",
+    "cycle": 1,
+    "total": 4.2,
+    "min": 4,
+    "dims": {
+      "clarity": 4,
+      "completeness": 4,
+      "actionability": 4,
+      "efficiency": 4,
+      "testability": 5
+    },
+    "verdict": "pass",
+    "at": "2026-10-26T07:40:47Z"
+  },
+  "mechanical_checks": {
+    "structural_full": 0,
+    "ears": 0,
+    "criteria_count": 9,
+    "criteria_digest": true,
+    "state_digest": true,
+    "base": true
+  },
+  "execution_prescriptions": [
+    "First checkpoint actual multiseed SQL trace proves single connection and global cumulative allowances including additional hydration, source and token work; no per-seed renewal.",
+    "Under byte/list boundary omit whole definition/path; verify EVERY resource against returned typed own-G1 records. File variant must not invent evidence.",
+    "Count after all URI/cursor/representation strings are fixed. Independently tokenize actual wire result bytes for old text-only/dual SDK; cycle/exception yields bounded error, then bytes rechecked.",
+    "Freeze quality labels/budgets/ranker before packer implementation; report reference versus inline yield and regressions without a posthoc quality bar.",
+    "Canonical fingerprints exclude only enumerated lease/usage operational fields, preserving stable proofs/spans/config/frontiers; cached same-cursor bytes and real G1/G2/G3/expiry/capacity tests remain mandatory.",
+    "Add OPTIONAL context-owned accounting/callback integration to query/indexed.py and traversal.py: conservative per-statement tail reservation, actual progress charges and shared absolute deadline; preserve old S12 behavior when absent. Real multiseed trace must exhaust one allowance across retrieval/navigation/PK hydration and prove owned-hook cleanup. No nonexistent VM arguments/counters."
+  ],
+  "implementation_seam": "Existing S17 Work exposes quantum1 VM counters; S12 IndexedReader has deadline-only quantum100. Shared context accounting needs explicit optional integration in declared query/indexed.py/navigation while preserving old defaults; do not pass unsupported arguments or sum nonexistent counters.",
+  "limitations": "Plan approval/criterion fit only, not actual integrated tokenizer/native context assurance."
+}

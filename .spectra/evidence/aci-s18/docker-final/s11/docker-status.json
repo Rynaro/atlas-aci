@@ -1,0 +1,1156 @@
+{
+  "image": "sha256:8532a339a6b745b539e6b1212e4de67f821e581330cafe7190e76ea28c731b99",
+  "commands": [
+    {
+      "argv": [
+        "docker",
+        "run",
+        "--rm",
+        "--read-only",
+        "--network",
+        "none",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-544/test_offline_readonly_status_a0/repo:/repo:ro",
+        "--entrypoint",
+        "python",
+        "sha256:8532a339a6b745b539e6b1212e4de67f821e581330cafe7190e76ea28c731b99",
+        "-c",
+        "import hashlib,json,atlas_aci;from pathlib import Path;root=Path(atlas_aci.__file__).parent;names=['codegraph.py', 'storage/evidence.py', 'providers/python_imports.py', 'indexing/extraction_cache.py', 'resolvers/dependencies.py', 'extractors/rust.py', 'storage/snapshots.py', 'server.py', 'tools/view_file.py', 'tools/graph_query.py', 'protocol/__init__.py', 'protocol/graph.py', 'protocol/results.py'];print(json.dumps({name:hashlib.sha256((root/name).read_bytes()).hexdigest() for name in names},sort_keys=True))"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"codegraph.py\": \"bfea442d81490e8bc4102ec6196929bf5a938383cb8d0dded098f13e4c0a358e\", \"extractors/rust.py\": \"28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a\", \"indexing/extraction_cache.py\": \"08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2\", \"protocol/__init__.py\": \"c2c58dae1889144d01a1c3ef229a60047b9e1df757c5a6ef9f79f17dd07dcae4\", \"protocol/graph.py\": \"a0c48f85062b9e997212888c6690dc288cb1eb63fba3f6f1bcd1c0b4b6e976c4\", \"protocol/results.py\": \"e1a21ed5b3b4aaab2bdd5e1fb76b6edee573ceccfc8503138ecc21b61368e066\", \"providers/python_imports.py\": \"de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014\", \"resolvers/dependencies.py\": \"0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6\", \"server.py\": \"fa9a9b89bade200fa2c661e5d0b9736eaa6dc177c46ed86ffa9e9d27b0ccf56b\", \"storage/evidence.py\": \"abd92c6a86d1086c2d3680a519c8f81f62d131dbae52da6b44f4525bfcc0a58d\", \"storage/snapshots.py\": \"6e800008cbbbda1b345f199aecbda193eb27c68b15aeb1ff941b5a840ab5be82\", \"tools/graph_query.py\": \"a6faddc2c0d9a5aeea55787b71959bb3e8dcdea4ca42652bd8dcc91f115fa5ce\", \"tools/view_file.py\": \"31871a9d7594091a52790feac3a5746039cc8c939c7c3f7116e99a9f1f5e48e3\"}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "run",
+        "--rm",
+        "--read-only",
+        "--network",
+        "none",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-544/test_offline_readonly_status_a0/repo:/repo:ro",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-544/test_offline_readonly_status_a0/graphs:/graphs",
+        "sha256:8532a339a6b745b539e6b1212e4de67f821e581330cafe7190e76ea28c731b99",
+        "index",
+        "--repo",
+        "/repo",
+        "--graph-root",
+        "/graphs"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "2026-10-26T09:17:49.514710Z [info     ] index_start                    langs=['rust', 'ruby', 'python', 'typescript', 'javascript', 'scss', 'html', 'yaml', 'markdown', 'bash'] repo=/repo since=None\n2026-10-26T09:17:49.579132Z [info     ] index_done                     binding_resolution={'mode': 'full', 'reason': 'full_requested_or_incompatible_inputs', 'affected_units': 1, 'reused_units': 0, 'removed_units': 0, 'affected_paths': ['a.py'], 'reused_paths': [], 'removed_paths': []} edges=1 extraction_cache={'disk_hits': 0, 'misses': 1, 'miss_reasons': {'missing': 1}, 'write_failures': 0, 'predecessor_reused': 0, 'parser_invocations': 1} extraction_state=complete files_failed=0 files_indexed=1 files_removed=0 files_skipped=0 rationale=0 refs=1 schema_epoch=9 snapshot_id=1de8349dd271b0d397df815e0bce19fc62fcb818a02650bafc9735092d8c7469 symbols=2 unsupported_skipped={}\n"
+    },
+    {
+      "argv": [
+        "docker",
+        "run",
+        "--rm",
+        "--read-only",
+        "--network",
+        "none",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-544/test_offline_readonly_status_a0/repo:/repo:ro",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-544/test_offline_readonly_status_a0/graphs:/graphs:ro",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-544/test_offline_readonly_status_a0/memex:/memex",
+        "--entrypoint",
+        "python",
+        "sha256:8532a339a6b745b539e6b1212e4de67f821e581330cafe7190e76ea28c731b99",
+        "-c",
+        "import errno,hashlib,json,os,stat\nfrom pathlib import Path\nassert os.geteuid()==10001\ntry:Path('/repo/negative-write').write_text('forbidden')\nexcept OSError as e:assert e.errno==errno.EROFS\nelse:raise AssertionError('source writable')\nr={}\nfor base in ['/repo','/graphs']:\n root=Path(base)\n for p in [root,*sorted(root.rglob('*'))]:\n  s=p.lstat();assert stat.S_ISDIR(s.st_mode) or stat.S_ISREG(s.st_mode)\n  row={'mode':s.st_mode,'size':s.st_size,'mtime_ns':s.st_mtime_ns,\n       'uid':s.st_uid,'gid':s.st_gid,\n       'sha256':hashlib.sha256(p.read_bytes()).hexdigest() if p.is_file() else None}\n  r[str(p)]=row\nprint(json.dumps({'uid':os.geteuid(),'negative_errno':errno.EROFS,'entries':r},sort_keys=True))\n"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"entries\": {\"/graphs\": {\"gid\": 10001, \"mode\": 16895, \"mtime_ns\": 1793006269516216277, \"sha256\": null, \"size\": 96, \"uid\": 10001}, \"/graphs/repos\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1793006269516373069, \"sha256\": null, \"size\": 96, \"uid\": 10001}, \"/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1793006269579693165, \"sha256\": null, \"size\": 192, \"uid\": 10001}, \"/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/.index.lock\": {\"gid\": 10001, \"mode\": 33188, \"mtime_ns\": 1793006269517123199, \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"size\": 0, \"uid\": 10001}, \"/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1793006269565353452, \"sha256\": null, \"size\": 96, \"uid\": 10001}, \"/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache/v1\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1793006269565449620, \"sha256\": null, \"size\": 96, \"uid\": 10001}, \"/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache/v1/cc\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1793006269566025998, \"sha256\": null, \"size\": 96, \"uid\": 10001}, \"/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache/v1/cc/cc16691f1a5d37acca929f593c87abd0f3212fbc67db1abc20ebbd2f179d82b0.json\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1793006269565812955, \"sha256\": \"1ec0c7f45ccdddd5757a8a29aa7fc529aa2ccf537440c2789796ab635efdafdf\", \"size\": 9394, \"uid\": 10001}, \"/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/graph.9.db\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1793006269576890773, \"sha256\": \"8c208809e27d832aa551bc90abeb6f9e98a6f562d45577cedc04ac067ea8e4ee\", \"size\": 233472, \"uid\": 10001}, \"/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/source-snapshots\": {\"gid\": 10001, \"mode\": 16832, \"mtime_ns\": 1793006269579243329, \"sha256\": null, \"size\": 160, \"uid\": 10001}, \"/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/source-snapshots/catalog.json\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1793006269579087370, \"sha256\": \"b81e189c9824915036f15ce9f98a37fff9961edd0ae8b91d0af7981ea0d58171\", \"size\": 68, \"uid\": 10001}, \"/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/source-snapshots/manifest.1de8349dd271b0d397df815e0bce19fc62fcb818a02650bafc9735092d8c7469.json\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1793006269570811653, \"sha256\": \"1de8349dd271b0d397df815e0bce19fc62fcb818a02650bafc9735092d8c7469\", \"size\": 2352, \"uid\": 10001}, \"/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/source-snapshots/pack.8469136d88c1c54dddf11ff4e1c5306d82979a7dbefbf1476cd80f60f3a97aae.bin\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1793006269569685562, \"sha256\": \"8469136d88c1c54dddf11ff4e1c5306d82979a7dbefbf1476cd80f60f3a97aae\", \"size\": 69, \"uid\": 10001}, \"/repo\": {\"gid\": 0, \"mode\": 16877, \"mtime_ns\": 1793006269241602513, \"sha256\": null, \"size\": 96, \"uid\": 0}, \"/repo/a.py\": {\"gid\": 10001, \"mode\": 33188, \"mtime_ns\": 1793006269241627513, \"sha256\": \"2d8dc49249e13bf4e3ef5afd052c3ca0da9ad4692517dd74ceaa23a67fa22041\", \"size\": 48, \"uid\": 10001}}, \"negative_errno\": 30, \"uid\": 10001}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "run",
+        "--rm",
+        "--read-only",
+        "--network",
+        "none",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-544/test_offline_readonly_status_a0/repo:/repo:ro",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-544/test_offline_readonly_status_a0/graphs:/graphs:ro",
+        "-v",
+        "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-544/test_offline_readonly_status_a0/memex:/memex",
+        "--entrypoint",
+        "python",
+        "sha256:8532a339a6b745b539e6b1212e4de67f821e581330cafe7190e76ea28c731b99",
+        "-c",
+        "import errno,hashlib,json,os,stat\nfrom pathlib import Path\nassert os.geteuid()==10001\ntry:Path('/repo/negative-write').write_text('forbidden')\nexcept OSError as e:assert e.errno==errno.EROFS\nelse:raise AssertionError('source writable')\nr={}\nfor base in ['/repo','/graphs']:\n root=Path(base)\n for p in [root,*sorted(root.rglob('*'))]:\n  s=p.lstat();assert stat.S_ISDIR(s.st_mode) or stat.S_ISREG(s.st_mode)\n  row={'mode':s.st_mode,'size':s.st_size,'mtime_ns':s.st_mtime_ns,\n       'uid':s.st_uid,'gid':s.st_gid,\n       'sha256':hashlib.sha256(p.read_bytes()).hexdigest() if p.is_file() else None}\n  r[str(p)]=row\nprint(json.dumps({'uid':os.geteuid(),'negative_errno':errno.EROFS,'entries':r},sort_keys=True))\n"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"entries\": {\"/graphs\": {\"gid\": 0, \"mode\": 16895, \"mtime_ns\": 1793006269516216277, \"sha256\": null, \"size\": 96, \"uid\": 0}, \"/graphs/repos\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1793006269516373069, \"sha256\": null, \"size\": 96, \"uid\": 10001}, \"/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1793006269579693165, \"sha256\": null, \"size\": 192, \"uid\": 10001}, \"/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/.index.lock\": {\"gid\": 10001, \"mode\": 33188, \"mtime_ns\": 1793006269517123199, \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"size\": 0, \"uid\": 10001}, \"/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1793006269565353452, \"sha256\": null, \"size\": 96, \"uid\": 10001}, \"/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache/v1\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1793006269565449620, \"sha256\": null, \"size\": 96, \"uid\": 10001}, \"/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache/v1/cc\": {\"gid\": 10001, \"mode\": 16877, \"mtime_ns\": 1793006269566025998, \"sha256\": null, \"size\": 96, \"uid\": 10001}, \"/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache/v1/cc/cc16691f1a5d37acca929f593c87abd0f3212fbc67db1abc20ebbd2f179d82b0.json\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1793006269565812955, \"sha256\": \"1ec0c7f45ccdddd5757a8a29aa7fc529aa2ccf537440c2789796ab635efdafdf\", \"size\": 9394, \"uid\": 10001}, \"/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/graph.9.db\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1793006269576890773, \"sha256\": \"8c208809e27d832aa551bc90abeb6f9e98a6f562d45577cedc04ac067ea8e4ee\", \"size\": 233472, \"uid\": 10001}, \"/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/source-snapshots\": {\"gid\": 10001, \"mode\": 16832, \"mtime_ns\": 1793006269579243329, \"sha256\": null, \"size\": 160, \"uid\": 10001}, \"/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/source-snapshots/catalog.json\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1793006269579087370, \"sha256\": \"b81e189c9824915036f15ce9f98a37fff9961edd0ae8b91d0af7981ea0d58171\", \"size\": 68, \"uid\": 10001}, \"/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/source-snapshots/manifest.1de8349dd271b0d397df815e0bce19fc62fcb818a02650bafc9735092d8c7469.json\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1793006269570811653, \"sha256\": \"1de8349dd271b0d397df815e0bce19fc62fcb818a02650bafc9735092d8c7469\", \"size\": 2352, \"uid\": 10001}, \"/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/source-snapshots/pack.8469136d88c1c54dddf11ff4e1c5306d82979a7dbefbf1476cd80f60f3a97aae.bin\": {\"gid\": 10001, \"mode\": 33152, \"mtime_ns\": 1793006269569685562, \"sha256\": \"8469136d88c1c54dddf11ff4e1c5306d82979a7dbefbf1476cd80f60f3a97aae\", \"size\": 69, \"uid\": 10001}, \"/repo\": {\"gid\": 0, \"mode\": 16877, \"mtime_ns\": 1793006269241602513, \"sha256\": null, \"size\": 96, \"uid\": 0}, \"/repo/a.py\": {\"gid\": 10001, \"mode\": 33188, \"mtime_ns\": 1793006269241627513, \"sha256\": \"2d8dc49249e13bf4e3ef5afd052c3ca0da9ad4692517dd74ceaa23a67fa22041\", \"size\": 48, \"uid\": 10001}}, \"negative_errno\": 30, \"uid\": 10001}\n",
+      "stderr": ""
+    }
+  ],
+  "runtime_hashes": {
+    "codegraph.py": "bfea442d81490e8bc4102ec6196929bf5a938383cb8d0dded098f13e4c0a358e",
+    "extractors/rust.py": "28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a",
+    "indexing/extraction_cache.py": "08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2",
+    "protocol/__init__.py": "c2c58dae1889144d01a1c3ef229a60047b9e1df757c5a6ef9f79f17dd07dcae4",
+    "protocol/graph.py": "a0c48f85062b9e997212888c6690dc288cb1eb63fba3f6f1bcd1c0b4b6e976c4",
+    "protocol/results.py": "e1a21ed5b3b4aaab2bdd5e1fb76b6edee573ceccfc8503138ecc21b61368e066",
+    "providers/python_imports.py": "de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014",
+    "resolvers/dependencies.py": "0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6",
+    "server.py": "fa9a9b89bade200fa2c661e5d0b9736eaa6dc177c46ed86ffa9e9d27b0ccf56b",
+    "storage/evidence.py": "abd92c6a86d1086c2d3680a519c8f81f62d131dbae52da6b44f4525bfcc0a58d",
+    "storage/snapshots.py": "6e800008cbbbda1b345f199aecbda193eb27c68b15aeb1ff941b5a840ab5be82",
+    "tools/graph_query.py": "a6faddc2c0d9a5aeea55787b71959bb3e8dcdea4ca42652bd8dcc91f115fa5ce",
+    "tools/view_file.py": "31871a9d7594091a52790feac3a5746039cc8c939c7c3f7116e99a9f1f5e48e3"
+  },
+  "stdio_argv": [
+    "docker",
+    "run",
+    "--rm",
+    "-i",
+    "--name",
+    "aci-s11-mcp-5cbe04f4fe0b4a5faace85b993801975",
+    "--read-only",
+    "--network",
+    "none",
+    "-v",
+    "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-544/test_offline_readonly_status_a0/repo:/repo:ro",
+    "-v",
+    "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-544/test_offline_readonly_status_a0/graphs:/graphs:ro",
+    "-v",
+    "/private/var/folders/gz/f7rj_2px5mv0pvv4sr5j13k00000gn/T/pytest-of-henrique/pytest-544/test_offline_readonly_status_a0/memex:/memex",
+    "sha256:8532a339a6b745b539e6b1212e4de67f821e581330cafe7190e76ea28c731b99",
+    "serve",
+    "--repo",
+    "/repo",
+    "--graph-root",
+    "/graphs",
+    "--memex-root",
+    "/memex"
+  ],
+  "negotiated_version": "2025-11-25",
+  "results": [
+    {
+      "content": [
+        {
+          "type": "text",
+          "text": "{\"bounds\":{\"element_limit\":200,\"lists\":{\"/data/completeness/files\":{\"returned_count\":1,\"total_count\":1,\"truncated\":false},\"/data/completeness/files/0/fact_source_sha256s\":{\"returned_count\":1,\"total_count\":1,\"truncated\":false},\"/data/indexed/capabilities/languages\":{\"returned_count\":13,\"total_count\":13,\"truncated\":false},\"/data/indexed/capabilities/languages/0/definitions\":{\"returned_count\":1,\"total_count\":1,\"truncated\":false},\"/data/indexed/capabilities/languages/0/extensions\":{\"returned_count\":2,\"total_count\":2,\"truncated\":false},\"/data/indexed/capabilities/languages/0/relations\":{\"returned_count\":1,\"total_count\":1,\"truncated\":false},\"/data/indexed/capabilities/languages/1/definitions\":{\"returned_count\":0,\"total_count\":0,\"truncated\":false},\"/data/indexed/capabilities/languages/1/extensions\":{\"returned_count\":1,\"total_count\":1,\"truncated\":false},\"/data/indexed/capabilities/languages/1/relations\":{\"returned_count\":0,\"total_count\":0,\"truncated\":false},\"/data/indexed/capabilities/languages/10/definitions\":{\"returned_count\":0,\"total_count\":0,\"truncated\":false},\"/data/indexed/capabilities/languages/10/extensions\":{\"returned_count\":1,\"total_count\":1,\"truncated\":false},\"/data/indexed/capabilities/languages/10/relations\":{\"returned_count\":0,\"total_count\":0,\"truncated\":false},\"/data/indexed/capabilities/languages/11/definitions\":{\"returned_count\":3,\"total_count\":3,\"truncated\":false},\"/data/indexed/capabilities/languages/11/extensions\":{\"returned_count\":1,\"total_count\":1,\"truncated\":false},\"/data/indexed/capabilities/languages/11/relations\":{\"returned_count\":4,\"total_count\":4,\"truncated\":false},\"/data/indexed/capabilities/languages/12/definitions\":{\"returned_count\":1,\"total_count\":1,\"truncated\":false},\"/data/indexed/capabilities/languages/12/extensions\":{\"returned_count\":2,\"total_count\":2,\"truncated\":false},\"/data/indexed/capabilities/languages/12/relations\":{\"returned_count\":0,\"total_count\":0,\"truncated\":false},\"/data/indexed/capabilities/languages/2/definitions\":{\"returned_count\":1,\"total_count\":1,\"truncated\":false},\"/data/indexed/capabilities/languages/2/extensions\":{\"returned_count\":2,\"total_count\":2,\"truncated\":false},\"/data/indexed/capabilities/languages/2/relations\":{\"returned_count\":0,\"total_count\":0,\"truncated\":false},\"/data/indexed/capabilities/languages/3/definitions\":{\"returned_count\":0,\"total_count\":0,\"truncated\":false},\"/data/indexed/capabilities/languages/3/extensions\":{\"returned_count\":1,\"total_count\":1,\"truncated\":false},\"/data/indexed/capabilities/languages/3/relations\":{\"returned_count\":0,\"total_count\":0,\"truncated\":false},\"/data/indexed/capabilities/languages/4/definitions\":{\"returned_count\":3,\"total_count\":3,\"truncated\":false},\"/data/indexed/capabilities/languages/4/extensions\":{\"returned_count\":2,\"total_count\":2,\"truncated\":false},\"/data/indexed/capabilities/languages/4/relations\":{\"returned_count\":4,\"total_count\":4,\"truncated\":false},\"/data/indexed/capabilities/languages/5/definitions\":{\"returned_count\":1,\"total_count\":1,\"truncated\":false},\"/data/indexed/capabilities/languages/5/extensions\":{\"returned_count\":2,\"total_count\":2,\"truncated\":false},\"/data/indexed/capabilities/languages/5/relations\":{\"returned_count\":0,\"total_count\":0,\"truncated\":false},\"/data/indexed/capabilities/languages/6/definitions\":{\"returned_count\":2,\"total_count\":2,\"truncated\":false},\"/data/indexed/capabilities/languages/6/extensions\":{\"returned_count\":1,\"total_count\":1,\"truncated\":false},\"/data/indexed/capabilities/languages/6/relations\":{\"returned_count\":5,\"total_count\":5,\"truncated\":false},\"/data/indexed/capabilities/languages/7/definitions\":{\"returned_count\":3,\"total_count\":3,\"truncated\":false},\"/data/indexed/capabilities/languages/7/extensions\":{\"returned_count\":1,\"total_count\":1,\"truncated\":false},\"/data/indexed/capabilities/languages/7/relations\":{\"returned_count\":7,\"total_count\":7,\"truncated\":false},\"/data/indexed/capabilities/languages/8/definitions\":{\"returned_count\":6,\"total_count\":6,\"truncated\":false},\"/data/indexed/capabilities/languages/8/extensions\":{\"returned_count\":1,\"total_count\":1,\"truncated\":false},\"/data/indexed/capabilities/languages/8/relations\":{\"returned_count\":1,\"total_count\":1,\"truncated\":false},\"/data/indexed/capabilities/languages/9/definitions\":{\"returned_count\":6,\"total_count\":6,\"truncated\":false},\"/data/indexed/capabilities/languages/9/extensions\":{\"returned_count\":2,\"total_count\":2,\"truncated\":false},\"/data/indexed/capabilities/languages/9/relations\":{\"returned_count\":1,\"total_count\":1,\"truncated\":false},\"/data/indexed/capabilities/limitations\":{\"returned_count\":7,\"total_count\":7,\"truncated\":false},\"/data/indexed/capabilities/producers\":{\"returned_count\":1,\"total_count\":1,\"truncated\":false},\"/data/indexed/configuration/languages\":{\"returned_count\":10,\"total_count\":10,\"truncated\":false},\"/data/indexed/configuration/skip_patterns\":{\"returned_count\":20,\"total_count\":20,\"truncated\":false},\"/data/source/references\":{\"returned_count\":1,\"total_count\":1,\"truncated\":false}},\"truncated\":false},\"data\":{\"completeness\":{\"counts\":{\"disabled\":0,\"failed\":0,\"indexed\":1,\"unsupported\":0},\"enumeration\":\"complete\",\"files\":[{\"fact_source_sha256s\":[\"2d8dc49249e13bf4e3ef5afd052c3ca0da9ad4692517dd74ceaa23a67fa22041\"],\"history_id\":null,\"language\":\"python\",\"location\":null,\"observation_id\":\"5f33782475dee6d3c5f2990fd7277683387eb4dfb9baa66db05455e94cb6d4fe\",\"observed_source_sha256\":\"2d8dc49249e13bf4e3ef5afd052c3ca0da9ad4692517dd74ceaa23a67fa22041\",\"path\":\"a.py\",\"reason\":null,\"retained_facts\":true,\"stale\":false,\"state\":\"indexed\"}],\"reason\":\"published_coverage_complete\",\"stale_count\":0,\"state\":\"complete\",\"total_count\":1},\"coverage_basis\":\"published_generation\",\"facts\":{\"definitions\":2,\"edges\":1,\"historical_bundles\":0,\"rationale\":0,\"references\":1},\"indexed\":{\"capabilities\":{\"languages\":[{\"definitions\":[\"function\"],\"extensions\":[\".bash\",\".sh\"],\"extraction\":{\"reason\":\"bounded_structural_queries\",\"state\":\"partial\"},\"language\":\"bash\",\"relations\":[\"call\"],\"semantic_binding\":{\"reason\":\"no_compiler_provider\",\"state\":\"unsupported\"}},{\"definitions\":[],\"extensions\":[\".go\"],\"extraction\":{\"reason\":\"no_extraction_query\",\"state\":\"unsupported\"},\"language\":\"go\",\"relations\":[],\"semantic_binding\":{\"reason\":\"no_compiler_provider\",\"state\":\"unsupported\"}},{\"definitions\":[\"id\"],\"extensions\":[\".htm\",\".html\"],\"extraction\":{\"reason\":\"bounded_structural_queries\",\"state\":\"partial\"},\"language\":\"html\",\"relations\":[],\"semantic_binding\":{\"reason\":\"no_compiler_provider\",\"state\":\"unsupported\"}},{\"definitions\":[],\"extensions\":[\".java\"],\"extraction\":{\"reason\":\"no_extraction_query\",\"state\":\"unsupported\"},\"language\":\"java\",\"relations\":[],\"semantic_binding\":{\"reason\":\"no_compiler_provider\",\"state\":\"unsupported\"}},{\"definitions\":[\"class\",\"function\",\"method\"],\"extensions\":[\".js\",\".jsx\"],\"extraction\":{\"reason\":\"bounded_structural_queries\",\"state\":\"partial\"},\"language\":\"javascript\",\"relations\":[\"call\",\"construct\",\"rationale_for\",\"superclass\"],\"semantic_binding\":{\"reason\":\"no_compiler_provider\",\"state\":\"unsupported\"}},{\"definitions\":[\"heading\"],\"extensions\":[\".markdown\",\".md\"],\"extraction\":{\"reason\":\"bounded_structural_queries\",\"state\":\"partial\"},\"language\":\"markdown\",\"relations\":[],\"semantic_binding\":{\"reason\":\"no_compiler_provider\",\"state\":\"unsupported\"}},{\"definitions\":[\"class\",\"function\"],\"extensions\":[\".py\"],\"extraction\":{\"reason\":\"bounded_structural_queries\",\"state\":\"partial\"},\"language\":\"python\",\"relations\":[\"call\",\"construct\",\"import\",\"rationale_for\",\"superclass\"],\"semantic_binding\":{\"reason\":\"no_compiler_provider\",\"state\":\"unsupported\"}},{\"definitions\":[\"class\",\"method\",\"module\"],\"extensions\":[\".rb\"],\"extraction\":{\"reason\":\"bounded_structural_queries\",\"state\":\"partial\"},\"language\":\"ruby\",\"relations\":[\"call\",\"construct\",\"extend\",\"include\",\"prepend\",\"rationale_for\",\"superclass\"],\"semantic_binding\":{\"reason\":\"no_compiler_provider\",\"state\":\"unsupported\"}},{\"definitions\":[\"enum\",\"function\",\"method\",\"module\",\"struct\",\"trait\"],\"extensions\":[\".rs\"],\"extraction\":{\"reason\":\"bounded_structural_queries\",\"state\":\"partial\"},\"language\":\"rust\",\"relations\":[\"call\"],\"semantic_binding\":{\"reason\":\"no_compiler_provider\",\"state\":\"unsupported\"}},{\"definitions\":[\"function\",\"id\",\"mixin\",\"placeholder\",\"selector\",\"variable\"],\"extensions\":[\".css\",\".scss\"],\"extraction\":{\"reason\":\"bounded_structural_queries\",\"state\":\"partial\"},\"language\":\"scss\",\"relations\":[\"call\"],\"semantic_binding\":{\"reason\":\"no_compiler_provider\",\"state\":\"unsupported\"}},{\"definitions\":[],\"extensions\":[\".tsx\"],\"extraction\":{\"reason\":\"no_extraction_query\",\"state\":\"unsupported\"},\"language\":\"tsx\",\"relations\":[],\"semantic_binding\":{\"reason\":\"no_compiler_provider\",\"state\":\"unsupported\"}},{\"definitions\":[\"class\",\"function\",\"method\"],\"extensions\":[\".ts\"],\"extraction\":{\"reason\":\"bounded_structural_queries\",\"state\":\"partial\"},\"language\":\"typescript\",\"relations\":[\"call\",\"construct\",\"rationale_for\",\"superclass\"],\"semantic_binding\":{\"reason\":\"no_compiler_provider\",\"state\":\"unsupported\"}},{\"definitions\":[\"key\"],\"extensions\":[\".yaml\",\".yml\"],\"extraction\":{\"reason\":\"bounded_structural_queries\",\"state\":\"partial\"},\"language\":\"yaml\",\"relations\":[],\"semantic_binding\":{\"reason\":\"no_compiler_provider\",\"state\":\"unsupported\"}}],\"limitations\":[{\"name\":\"control_flow\",\"reason\":\"unsupported\"},{\"name\":\"python_imports\",\"reason\":\"package_local_unaliased_relative_only\"},{\"name\":\"rust_cfg\",\"reason\":\"build_configuration_not_evaluated\"},{\"name\":\"rust_dispatch\",\"reason\":\"unresolved_without_type_or_trait_inference\"},{\"name\":\"rust_generated_code\",\"reason\":\"unmaterialized_outputs_unavailable\"},{\"name\":\"rust_macro_expansion\",\"reason\":\"unsupported_including_derive_and_proc_macros\"},{\"name\":\"semantic_binding\",\"reason\":\"unsupported\"}],\"producers\":[{\"name\":\"tree-sitter\",\"operation\":\"structural_extraction\",\"semantic_binding\":{\"reason\":\"no_compiler_provider\",\"state\":\"unsupported\"}}],\"representation\":\"bounded_projection\",\"stored_format\":\"atlas-capabilities.v3\"},\"configuration\":{\"languages\":[\"bash\",\"html\",\"javascript\",\"markdown\",\"python\",\"ruby\",\"rust\",\"scss\",\"typescript\",\"yaml\"],\"skip_patterns\":[\"node_modules\",\"vendor/bundle\",\"vendor/cache\",\"tmp\",\"log\",\".git\",\"dist\",\"build\",\"public/assets\",\"public/packs\",\"public/packs-test\",\"coverage\",\".bundle\",\"__pycache__\",\".venv\",\".atlas\",\"storage\",\"_site\",\".jekyll-cache\",\".sass-cache\"]},\"producer\":{\"codegraph_sha256\":\"bfea442d81490e8bc4102ec6196929bf5a938383cb8d0dded098f13e4c0a358e\",\"modules\":{\"extractors/rust.py\":\"28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a\",\"indexing/extraction_cache.py\":\"08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2\",\"indexing/retrieval.py\":\"a70fd241efea13fc850d72e86389c2c0b41c5a0ac2c32b33044b728f103452a8\",\"providers/python_imports.py\":\"de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014\",\"resolvers/dependencies.py\":\"0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6\",\"storage/evidence.py\":\"abd92c6a86d1086c2d3680a519c8f81f62d131dbae52da6b44f4525bfcc0a58d\",\"storage/snapshots.py\":\"6e800008cbbbda1b345f199aecbda193eb27c68b15aeb1ff941b5a840ab5be82\"},\"packages\":{\"tree-sitter\":\"0.25.2\",\"tree-sitter-language-pack\":\"1.6.0\"},\"queries_sha256\":\"a222468d9bb15cbf5cfccc368bd65ca69de7ed22e91ae85e628228f2f227b944\"},\"representation\":\"bounded_projection\"},\"latest_attempt_included\":false,\"live_source_verification\":\"not_performed\",\"runtime_capabilities_included\":false,\"source\":{\"reason\":null,\"references\":[{\"available\":true,\"extraction_state\":\"indexed\",\"path\":\"a.py\",\"provenance\":\"observed_source\",\"source_sha256\":\"2d8dc49249e13bf4e3ef5afd052c3ca0da9ad4692517dd74ceaa23a67fa22041\",\"stale\":false}],\"state\":\"available\",\"total_count\":1}},\"error\":null,\"evidence_status\":\"available\",\"generation_id\":\"b5bf1f1750874102658e7ec7e968dbe622098b96dc72b9e774f498b172e2d3e4\",\"operation\":\"status\",\"schema_version\":\"atlas.graph.v1\",\"snapshot_id\":\"1de8349dd271b0d397df815e0bce19fc62fcb818a02650bafc9735092d8c7469\",\"status\":\"ok\"}"
+        }
+      ],
+      "structuredContent": {
+        "schema_version": "atlas.graph.v1",
+        "operation": "status",
+        "status": "ok",
+        "generation_id": "b5bf1f1750874102658e7ec7e968dbe622098b96dc72b9e774f498b172e2d3e4",
+        "snapshot_id": "1de8349dd271b0d397df815e0bce19fc62fcb818a02650bafc9735092d8c7469",
+        "evidence_status": "available",
+        "data": {
+          "coverage_basis": "published_generation",
+          "live_source_verification": "not_performed",
+          "latest_attempt_included": false,
+          "runtime_capabilities_included": false,
+          "indexed": {
+            "representation": "bounded_projection",
+            "configuration": {
+              "languages": [
+                "bash",
+                "html",
+                "javascript",
+                "markdown",
+                "python",
+                "ruby",
+                "rust",
+                "scss",
+                "typescript",
+                "yaml"
+              ],
+              "skip_patterns": [
+                "node_modules",
+                "vendor/bundle",
+                "vendor/cache",
+                "tmp",
+                "log",
+                ".git",
+                "dist",
+                "build",
+                "public/assets",
+                "public/packs",
+                "public/packs-test",
+                "coverage",
+                ".bundle",
+                "__pycache__",
+                ".venv",
+                ".atlas",
+                "storage",
+                "_site",
+                ".jekyll-cache",
+                ".sass-cache"
+              ]
+            },
+            "producer": {
+              "codegraph_sha256": "bfea442d81490e8bc4102ec6196929bf5a938383cb8d0dded098f13e4c0a358e",
+              "modules": {
+                "extractors/rust.py": "28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a",
+                "indexing/extraction_cache.py": "08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2",
+                "indexing/retrieval.py": "a70fd241efea13fc850d72e86389c2c0b41c5a0ac2c32b33044b728f103452a8",
+                "providers/python_imports.py": "de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014",
+                "resolvers/dependencies.py": "0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6",
+                "storage/evidence.py": "abd92c6a86d1086c2d3680a519c8f81f62d131dbae52da6b44f4525bfcc0a58d",
+                "storage/snapshots.py": "6e800008cbbbda1b345f199aecbda193eb27c68b15aeb1ff941b5a840ab5be82"
+              },
+              "packages": {
+                "tree-sitter": "0.25.2",
+                "tree-sitter-language-pack": "1.6.0"
+              },
+              "queries_sha256": "a222468d9bb15cbf5cfccc368bd65ca69de7ed22e91ae85e628228f2f227b944"
+            },
+            "capabilities": {
+              "representation": "bounded_projection",
+              "stored_format": "atlas-capabilities.v3",
+              "languages": [
+                {
+                  "definitions": [
+                    "function"
+                  ],
+                  "extensions": [
+                    ".bash",
+                    ".sh"
+                  ],
+                  "extraction": {
+                    "reason": "bounded_structural_queries",
+                    "state": "partial"
+                  },
+                  "language": "bash",
+                  "relations": [
+                    "call"
+                  ],
+                  "semantic_binding": {
+                    "reason": "no_compiler_provider",
+                    "state": "unsupported"
+                  }
+                },
+                {
+                  "definitions": [],
+                  "extensions": [
+                    ".go"
+                  ],
+                  "extraction": {
+                    "reason": "no_extraction_query",
+                    "state": "unsupported"
+                  },
+                  "language": "go",
+                  "relations": [],
+                  "semantic_binding": {
+                    "reason": "no_compiler_provider",
+                    "state": "unsupported"
+                  }
+                },
+                {
+                  "definitions": [
+                    "id"
+                  ],
+                  "extensions": [
+                    ".htm",
+                    ".html"
+                  ],
+                  "extraction": {
+                    "reason": "bounded_structural_queries",
+                    "state": "partial"
+                  },
+                  "language": "html",
+                  "relations": [],
+                  "semantic_binding": {
+                    "reason": "no_compiler_provider",
+                    "state": "unsupported"
+                  }
+                },
+                {
+                  "definitions": [],
+                  "extensions": [
+                    ".java"
+                  ],
+                  "extraction": {
+                    "reason": "no_extraction_query",
+                    "state": "unsupported"
+                  },
+                  "language": "java",
+                  "relations": [],
+                  "semantic_binding": {
+                    "reason": "no_compiler_provider",
+                    "state": "unsupported"
+                  }
+                },
+                {
+                  "definitions": [
+                    "class",
+                    "function",
+                    "method"
+                  ],
+                  "extensions": [
+                    ".js",
+                    ".jsx"
+                  ],
+                  "extraction": {
+                    "reason": "bounded_structural_queries",
+                    "state": "partial"
+                  },
+                  "language": "javascript",
+                  "relations": [
+                    "call",
+                    "construct",
+                    "rationale_for",
+                    "superclass"
+                  ],
+                  "semantic_binding": {
+                    "reason": "no_compiler_provider",
+                    "state": "unsupported"
+                  }
+                },
+                {
+                  "definitions": [
+                    "heading"
+                  ],
+                  "extensions": [
+                    ".markdown",
+                    ".md"
+                  ],
+                  "extraction": {
+                    "reason": "bounded_structural_queries",
+                    "state": "partial"
+                  },
+                  "language": "markdown",
+                  "relations": [],
+                  "semantic_binding": {
+                    "reason": "no_compiler_provider",
+                    "state": "unsupported"
+                  }
+                },
+                {
+                  "definitions": [
+                    "class",
+                    "function"
+                  ],
+                  "extensions": [
+                    ".py"
+                  ],
+                  "extraction": {
+                    "reason": "bounded_structural_queries",
+                    "state": "partial"
+                  },
+                  "language": "python",
+                  "relations": [
+                    "call",
+                    "construct",
+                    "import",
+                    "rationale_for",
+                    "superclass"
+                  ],
+                  "semantic_binding": {
+                    "reason": "no_compiler_provider",
+                    "state": "unsupported"
+                  }
+                },
+                {
+                  "definitions": [
+                    "class",
+                    "method",
+                    "module"
+                  ],
+                  "extensions": [
+                    ".rb"
+                  ],
+                  "extraction": {
+                    "reason": "bounded_structural_queries",
+                    "state": "partial"
+                  },
+                  "language": "ruby",
+                  "relations": [
+                    "call",
+                    "construct",
+                    "extend",
+                    "include",
+                    "prepend",
+                    "rationale_for",
+                    "superclass"
+                  ],
+                  "semantic_binding": {
+                    "reason": "no_compiler_provider",
+                    "state": "unsupported"
+                  }
+                },
+                {
+                  "definitions": [
+                    "enum",
+                    "function",
+                    "method",
+                    "module",
+                    "struct",
+                    "trait"
+                  ],
+                  "extensions": [
+                    ".rs"
+                  ],
+                  "extraction": {
+                    "reason": "bounded_structural_queries",
+                    "state": "partial"
+                  },
+                  "language": "rust",
+                  "relations": [
+                    "call"
+                  ],
+                  "semantic_binding": {
+                    "reason": "no_compiler_provider",
+                    "state": "unsupported"
+                  }
+                },
+                {
+                  "definitions": [
+                    "function",
+                    "id",
+                    "mixin",
+                    "placeholder",
+                    "selector",
+                    "variable"
+                  ],
+                  "extensions": [
+                    ".css",
+                    ".scss"
+                  ],
+                  "extraction": {
+                    "reason": "bounded_structural_queries",
+                    "state": "partial"
+                  },
+                  "language": "scss",
+                  "relations": [
+                    "call"
+                  ],
+                  "semantic_binding": {
+                    "reason": "no_compiler_provider",
+                    "state": "unsupported"
+                  }
+                },
+                {
+                  "definitions": [],
+                  "extensions": [
+                    ".tsx"
+                  ],
+                  "extraction": {
+                    "reason": "no_extraction_query",
+                    "state": "unsupported"
+                  },
+                  "language": "tsx",
+                  "relations": [],
+                  "semantic_binding": {
+                    "reason": "no_compiler_provider",
+                    "state": "unsupported"
+                  }
+                },
+                {
+                  "definitions": [
+                    "class",
+                    "function",
+                    "method"
+                  ],
+                  "extensions": [
+                    ".ts"
+                  ],
+                  "extraction": {
+                    "reason": "bounded_structural_queries",
+                    "state": "partial"
+                  },
+                  "language": "typescript",
+                  "relations": [
+                    "call",
+                    "construct",
+                    "rationale_for",
+                    "superclass"
+                  ],
+                  "semantic_binding": {
+                    "reason": "no_compiler_provider",
+                    "state": "unsupported"
+                  }
+                },
+                {
+                  "definitions": [
+                    "key"
+                  ],
+                  "extensions": [
+                    ".yaml",
+                    ".yml"
+                  ],
+                  "extraction": {
+                    "reason": "bounded_structural_queries",
+                    "state": "partial"
+                  },
+                  "language": "yaml",
+                  "relations": [],
+                  "semantic_binding": {
+                    "reason": "no_compiler_provider",
+                    "state": "unsupported"
+                  }
+                }
+              ],
+              "producers": [
+                {
+                  "name": "tree-sitter",
+                  "operation": "structural_extraction",
+                  "semantic_binding": {
+                    "reason": "no_compiler_provider",
+                    "state": "unsupported"
+                  }
+                }
+              ],
+              "limitations": [
+                {
+                  "name": "control_flow",
+                  "reason": "unsupported"
+                },
+                {
+                  "name": "python_imports",
+                  "reason": "package_local_unaliased_relative_only"
+                },
+                {
+                  "name": "rust_cfg",
+                  "reason": "build_configuration_not_evaluated"
+                },
+                {
+                  "name": "rust_dispatch",
+                  "reason": "unresolved_without_type_or_trait_inference"
+                },
+                {
+                  "name": "rust_generated_code",
+                  "reason": "unmaterialized_outputs_unavailable"
+                },
+                {
+                  "name": "rust_macro_expansion",
+                  "reason": "unsupported_including_derive_and_proc_macros"
+                },
+                {
+                  "name": "semantic_binding",
+                  "reason": "unsupported"
+                }
+              ]
+            }
+          },
+          "completeness": {
+            "state": "complete",
+            "reason": "published_coverage_complete",
+            "enumeration": "complete",
+            "counts": {
+              "indexed": 1,
+              "failed": 0,
+              "disabled": 0,
+              "unsupported": 0
+            },
+            "total_count": 1,
+            "stale_count": 0,
+            "files": [
+              {
+                "path": "a.py",
+                "language": "python",
+                "state": "indexed",
+                "observation_id": "5f33782475dee6d3c5f2990fd7277683387eb4dfb9baa66db05455e94cb6d4fe",
+                "history_id": null,
+                "observed_source_sha256": "2d8dc49249e13bf4e3ef5afd052c3ca0da9ad4692517dd74ceaa23a67fa22041",
+                "fact_source_sha256s": [
+                  "2d8dc49249e13bf4e3ef5afd052c3ca0da9ad4692517dd74ceaa23a67fa22041"
+                ],
+                "retained_facts": true,
+                "stale": false,
+                "reason": null,
+                "location": null
+              }
+            ]
+          },
+          "source": {
+            "state": "available",
+            "reason": null,
+            "total_count": 1,
+            "references": [
+              {
+                "path": "a.py",
+                "source_sha256": "2d8dc49249e13bf4e3ef5afd052c3ca0da9ad4692517dd74ceaa23a67fa22041",
+                "provenance": "observed_source",
+                "extraction_state": "indexed",
+                "stale": false,
+                "available": true
+              }
+            ]
+          },
+          "facts": {
+            "definitions": 2,
+            "references": 1,
+            "edges": 1,
+            "rationale": 0,
+            "historical_bundles": 0
+          }
+        },
+        "error": null,
+        "bounds": {
+          "element_limit": 200,
+          "truncated": false,
+          "lists": {
+            "/data/indexed/configuration/languages": {
+              "total_count": 10,
+              "returned_count": 10,
+              "truncated": false
+            },
+            "/data/indexed/configuration/skip_patterns": {
+              "total_count": 20,
+              "returned_count": 20,
+              "truncated": false
+            },
+            "/data/indexed/capabilities/languages": {
+              "total_count": 13,
+              "returned_count": 13,
+              "truncated": false
+            },
+            "/data/indexed/capabilities/languages/0/definitions": {
+              "total_count": 1,
+              "returned_count": 1,
+              "truncated": false
+            },
+            "/data/indexed/capabilities/languages/0/extensions": {
+              "total_count": 2,
+              "returned_count": 2,
+              "truncated": false
+            },
+            "/data/indexed/capabilities/languages/0/relations": {
+              "total_count": 1,
+              "returned_count": 1,
+              "truncated": false
+            },
+            "/data/indexed/capabilities/languages/1/definitions": {
+              "total_count": 0,
+              "returned_count": 0,
+              "truncated": false
+            },
+            "/data/indexed/capabilities/languages/1/extensions": {
+              "total_count": 1,
+              "returned_count": 1,
+              "truncated": false
+            },
+            "/data/indexed/capabilities/languages/1/relations": {
+              "total_count": 0,
+              "returned_count": 0,
+              "truncated": false
+            },
+            "/data/indexed/capabilities/languages/2/definitions": {
+              "total_count": 1,
+              "returned_count": 1,
+              "truncated": false
+            },
+            "/data/indexed/capabilities/languages/2/extensions": {
+              "total_count": 2,
+              "returned_count": 2,
+              "truncated": false
+            },
+            "/data/indexed/capabilities/languages/2/relations": {
+              "total_count": 0,
+              "returned_count": 0,
+              "truncated": false
+            },
+            "/data/indexed/capabilities/languages/3/definitions": {
+              "total_count": 0,
+              "returned_count": 0,
+              "truncated": false
+            },
+            "/data/indexed/capabilities/languages/3/extensions": {
+              "total_count": 1,
+              "returned_count": 1,
+              "truncated": false
+            },
+            "/data/indexed/capabilities/languages/3/relations": {
+              "total_count": 0,
+              "returned_count": 0,
+              "truncated": false
+            },
+            "/data/indexed/capabilities/languages/4/definitions": {
+              "total_count": 3,
+              "returned_count": 3,
+              "truncated": false
+            },
+            "/data/indexed/capabilities/languages/4/extensions": {
+              "total_count": 2,
+              "returned_count": 2,
+              "truncated": false
+            },
+            "/data/indexed/capabilities/languages/4/relations": {
+              "total_count": 4,
+              "returned_count": 4,
+              "truncated": false
+            },
+            "/data/indexed/capabilities/languages/5/definitions": {
+              "total_count": 1,
+              "returned_count": 1,
+              "truncated": false
+            },
+            "/data/indexed/capabilities/languages/5/extensions": {
+              "total_count": 2,
+              "returned_count": 2,
+              "truncated": false
+            },
+            "/data/indexed/capabilities/languages/5/relations": {
+              "total_count": 0,
+              "returned_count": 0,
+              "truncated": false
+            },
+            "/data/indexed/capabilities/languages/6/definitions": {
+              "total_count": 2,
+              "returned_count": 2,
+              "truncated": false
+            },
+            "/data/indexed/capabilities/languages/6/extensions": {
+              "total_count": 1,
+              "returned_count": 1,
+              "truncated": false
+            },
+            "/data/indexed/capabilities/languages/6/relations": {
+              "total_count": 5,
+              "returned_count": 5,
+              "truncated": false
+            },
+            "/data/indexed/capabilities/languages/7/definitions": {
+              "total_count": 3,
+              "returned_count": 3,
+              "truncated": false
+            },
+            "/data/indexed/capabilities/languages/7/extensions": {
+              "total_count": 1,
+              "returned_count": 1,
+              "truncated": false
+            },
+            "/data/indexed/capabilities/languages/7/relations": {
+              "total_count": 7,
+              "returned_count": 7,
+              "truncated": false
+            },
+            "/data/indexed/capabilities/languages/8/definitions": {
+              "total_count": 6,
+              "returned_count": 6,
+              "truncated": false
+            },
+            "/data/indexed/capabilities/languages/8/extensions": {
+              "total_count": 1,
+              "returned_count": 1,
+              "truncated": false
+            },
+            "/data/indexed/capabilities/languages/8/relations": {
+              "total_count": 1,
+              "returned_count": 1,
+              "truncated": false
+            },
+            "/data/indexed/capabilities/languages/9/definitions": {
+              "total_count": 6,
+              "returned_count": 6,
+              "truncated": false
+            },
+            "/data/indexed/capabilities/languages/9/extensions": {
+              "total_count": 2,
+              "returned_count": 2,
+              "truncated": false
+            },
+            "/data/indexed/capabilities/languages/9/relations": {
+              "total_count": 1,
+              "returned_count": 1,
+              "truncated": false
+            },
+            "/data/indexed/capabilities/languages/10/definitions": {
+              "total_count": 0,
+              "returned_count": 0,
+              "truncated": false
+            },
+            "/data/indexed/capabilities/languages/10/extensions": {
+              "total_count": 1,
+              "returned_count": 1,
+              "truncated": false
+            },
+            "/data/indexed/capabilities/languages/10/relations": {
+              "total_count": 0,
+              "returned_count": 0,
+              "truncated": false
+            },
+            "/data/indexed/capabilities/languages/11/definitions": {
+              "total_count": 3,
+              "returned_count": 3,
+              "truncated": false
+            },
+            "/data/indexed/capabilities/languages/11/extensions": {
+              "total_count": 1,
+              "returned_count": 1,
+              "truncated": false
+            },
+            "/data/indexed/capabilities/languages/11/relations": {
+              "total_count": 4,
+              "returned_count": 4,
+              "truncated": false
+            },
+            "/data/indexed/capabilities/languages/12/definitions": {
+              "total_count": 1,
+              "returned_count": 1,
+              "truncated": false
+            },
+            "/data/indexed/capabilities/languages/12/extensions": {
+              "total_count": 2,
+              "returned_count": 2,
+              "truncated": false
+            },
+            "/data/indexed/capabilities/languages/12/relations": {
+              "total_count": 0,
+              "returned_count": 0,
+              "truncated": false
+            },
+            "/data/indexed/capabilities/producers": {
+              "total_count": 1,
+              "returned_count": 1,
+              "truncated": false
+            },
+            "/data/indexed/capabilities/limitations": {
+              "total_count": 7,
+              "returned_count": 7,
+              "truncated": false
+            },
+            "/data/completeness/files": {
+              "total_count": 1,
+              "returned_count": 1,
+              "truncated": false
+            },
+            "/data/completeness/files/0/fact_source_sha256s": {
+              "total_count": 1,
+              "returned_count": 1,
+              "truncated": false
+            },
+            "/data/source/references": {
+              "total_count": 1,
+              "returned_count": 1,
+              "truncated": false
+            }
+          }
+        }
+      },
+      "isError": false
+    },
+    {
+      "content": [
+        {
+          "type": "text",
+          "text": "{\"end_line\":4,\"lines\":[\"def target():\\n\",\" return 1\\n\",\"def caller():\\n\",\" target()\\n\"],\"path\":\"a.py\",\"snapshot_id\":\"1de8349dd271b0d397df815e0bce19fc62fcb818a02650bafc9735092d8c7469\",\"source_mode\":\"snapshot\",\"source_sha256\":\"2d8dc49249e13bf4e3ef5afd052c3ca0da9ad4692517dd74ceaa23a67fa22041\",\"start_line\":1}"
+        }
+      ],
+      "isError": false
+    },
+    {
+      "content": [
+        {
+          "type": "text",
+          "text": "{\"edges\":[{\"candidates\":null,\"confidence\":\"INFERRED\",\"relation\":\"call\",\"source\":{\"kind\":\"function\",\"line\":4,\"name\":\"caller\",\"path\":\"a.py\"},\"target\":{\"line\":1,\"name\":\"target\",\"path\":\"a.py\"}}],\"generation_id\":\"b5bf1f1750874102658e7ec7e968dbe622098b96dc72b9e774f498b172e2d3e4\",\"snapshot_id\":\"1de8349dd271b0d397df815e0bce19fc62fcb818a02650bafc9735092d8c7469\",\"source_available\":true,\"unresolved_refs\":0}"
+        }
+      ],
+      "structuredContent": {
+        "edges": [
+          {
+            "relation": "call",
+            "confidence": "INFERRED",
+            "source": {
+              "path": "a.py",
+              "line": 4,
+              "name": "caller",
+              "kind": "function"
+            },
+            "target": {
+              "path": "a.py",
+              "line": 1,
+              "name": "target"
+            },
+            "candidates": null
+          }
+        ],
+        "unresolved_refs": 0,
+        "generation_id": "b5bf1f1750874102658e7ec7e968dbe622098b96dc72b9e774f498b172e2d3e4",
+        "snapshot_id": "1de8349dd271b0d397df815e0bce19fc62fcb818a02650bafc9735092d8c7469",
+        "source_available": true
+      },
+      "isError": false
+    },
+    {
+      "content": [
+        {
+          "type": "text",
+          "text": "{\"error\":\"INVALID_QUERY\",\"generation_id\":\"b5bf1f1750874102658e7ec7e968dbe622098b96dc72b9e774f498b172e2d3e4\",\"message\":\"Expected 'verb:argument' form.\",\"snapshot_id\":\"1de8349dd271b0d397df815e0bce19fc62fcb818a02650bafc9735092d8c7469\",\"source_available\":true}"
+        }
+      ],
+      "structuredContent": {
+        "error": "INVALID_QUERY",
+        "message": "Expected 'verb:argument' form.",
+        "generation_id": "b5bf1f1750874102658e7ec7e968dbe622098b96dc72b9e774f498b172e2d3e4",
+        "snapshot_id": "1de8349dd271b0d397df815e0bce19fc62fcb818a02650bafc9735092d8c7469",
+        "source_available": true
+      },
+      "isError": true
+    }
+  ],
+  "result_byte_lengths": [
+    25096,
+    395,
+    926,
+    605
+  ],
+  "before": {
+    "entries": {
+      "/graphs": {
+        "gid": 10001,
+        "mode": 16895,
+        "mtime_ns": 1793006269516216277,
+        "sha256": null,
+        "size": 96,
+        "uid": 10001
+      },
+      "/graphs/repos": {
+        "gid": 10001,
+        "mode": 16877,
+        "mtime_ns": 1793006269516373069,
+        "sha256": null,
+        "size": 96,
+        "uid": 10001
+      },
+      "/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd": {
+        "gid": 10001,
+        "mode": 16877,
+        "mtime_ns": 1793006269579693165,
+        "sha256": null,
+        "size": 192,
+        "uid": 10001
+      },
+      "/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/.index.lock": {
+        "gid": 10001,
+        "mode": 33188,
+        "mtime_ns": 1793006269517123199,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0,
+        "uid": 10001
+      },
+      "/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache": {
+        "gid": 10001,
+        "mode": 16877,
+        "mtime_ns": 1793006269565353452,
+        "sha256": null,
+        "size": 96,
+        "uid": 10001
+      },
+      "/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache/v1": {
+        "gid": 10001,
+        "mode": 16877,
+        "mtime_ns": 1793006269565449620,
+        "sha256": null,
+        "size": 96,
+        "uid": 10001
+      },
+      "/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache/v1/cc": {
+        "gid": 10001,
+        "mode": 16877,
+        "mtime_ns": 1793006269566025998,
+        "sha256": null,
+        "size": 96,
+        "uid": 10001
+      },
+      "/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache/v1/cc/cc16691f1a5d37acca929f593c87abd0f3212fbc67db1abc20ebbd2f179d82b0.json": {
+        "gid": 10001,
+        "mode": 33152,
+        "mtime_ns": 1793006269565812955,
+        "sha256": "1ec0c7f45ccdddd5757a8a29aa7fc529aa2ccf537440c2789796ab635efdafdf",
+        "size": 9394,
+        "uid": 10001
+      },
+      "/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/graph.9.db": {
+        "gid": 10001,
+        "mode": 33152,
+        "mtime_ns": 1793006269576890773,
+        "sha256": "8c208809e27d832aa551bc90abeb6f9e98a6f562d45577cedc04ac067ea8e4ee",
+        "size": 233472,
+        "uid": 10001
+      },
+      "/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/source-snapshots": {
+        "gid": 10001,
+        "mode": 16832,
+        "mtime_ns": 1793006269579243329,
+        "sha256": null,
+        "size": 160,
+        "uid": 10001
+      },
+      "/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/source-snapshots/catalog.json": {
+        "gid": 10001,
+        "mode": 33152,
+        "mtime_ns": 1793006269579087370,
+        "sha256": "b81e189c9824915036f15ce9f98a37fff9961edd0ae8b91d0af7981ea0d58171",
+        "size": 68,
+        "uid": 10001
+      },
+      "/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/source-snapshots/manifest.1de8349dd271b0d397df815e0bce19fc62fcb818a02650bafc9735092d8c7469.json": {
+        "gid": 10001,
+        "mode": 33152,
+        "mtime_ns": 1793006269570811653,
+        "sha256": "1de8349dd271b0d397df815e0bce19fc62fcb818a02650bafc9735092d8c7469",
+        "size": 2352,
+        "uid": 10001
+      },
+      "/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/source-snapshots/pack.8469136d88c1c54dddf11ff4e1c5306d82979a7dbefbf1476cd80f60f3a97aae.bin": {
+        "gid": 10001,
+        "mode": 33152,
+        "mtime_ns": 1793006269569685562,
+        "sha256": "8469136d88c1c54dddf11ff4e1c5306d82979a7dbefbf1476cd80f60f3a97aae",
+        "size": 69,
+        "uid": 10001
+      },
+      "/repo": {
+        "gid": 0,
+        "mode": 16877,
+        "mtime_ns": 1793006269241602513,
+        "sha256": null,
+        "size": 96,
+        "uid": 0
+      },
+      "/repo/a.py": {
+        "gid": 10001,
+        "mode": 33188,
+        "mtime_ns": 1793006269241627513,
+        "sha256": "2d8dc49249e13bf4e3ef5afd052c3ca0da9ad4692517dd74ceaa23a67fa22041",
+        "size": 48,
+        "uid": 10001
+      }
+    },
+    "negative_errno": 30,
+    "uid": 10001
+  },
+  "after": {
+    "entries": {
+      "/graphs": {
+        "gid": 0,
+        "mode": 16895,
+        "mtime_ns": 1793006269516216277,
+        "sha256": null,
+        "size": 96,
+        "uid": 0
+      },
+      "/graphs/repos": {
+        "gid": 10001,
+        "mode": 16877,
+        "mtime_ns": 1793006269516373069,
+        "sha256": null,
+        "size": 96,
+        "uid": 10001
+      },
+      "/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd": {
+        "gid": 10001,
+        "mode": 16877,
+        "mtime_ns": 1793006269579693165,
+        "sha256": null,
+        "size": 192,
+        "uid": 10001
+      },
+      "/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/.index.lock": {
+        "gid": 10001,
+        "mode": 33188,
+        "mtime_ns": 1793006269517123199,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0,
+        "uid": 10001
+      },
+      "/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache": {
+        "gid": 10001,
+        "mode": 16877,
+        "mtime_ns": 1793006269565353452,
+        "sha256": null,
+        "size": 96,
+        "uid": 10001
+      },
+      "/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache/v1": {
+        "gid": 10001,
+        "mode": 16877,
+        "mtime_ns": 1793006269565449620,
+        "sha256": null,
+        "size": 96,
+        "uid": 10001
+      },
+      "/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache/v1/cc": {
+        "gid": 10001,
+        "mode": 16877,
+        "mtime_ns": 1793006269566025998,
+        "sha256": null,
+        "size": 96,
+        "uid": 10001
+      },
+      "/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/extraction-cache/v1/cc/cc16691f1a5d37acca929f593c87abd0f3212fbc67db1abc20ebbd2f179d82b0.json": {
+        "gid": 10001,
+        "mode": 33152,
+        "mtime_ns": 1793006269565812955,
+        "sha256": "1ec0c7f45ccdddd5757a8a29aa7fc529aa2ccf537440c2789796ab635efdafdf",
+        "size": 9394,
+        "uid": 10001
+      },
+      "/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/graph.9.db": {
+        "gid": 10001,
+        "mode": 33152,
+        "mtime_ns": 1793006269576890773,
+        "sha256": "8c208809e27d832aa551bc90abeb6f9e98a6f562d45577cedc04ac067ea8e4ee",
+        "size": 233472,
+        "uid": 10001
+      },
+      "/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/source-snapshots": {
+        "gid": 10001,
+        "mode": 16832,
+        "mtime_ns": 1793006269579243329,
+        "sha256": null,
+        "size": 160,
+        "uid": 10001
+      },
+      "/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/source-snapshots/catalog.json": {
+        "gid": 10001,
+        "mode": 33152,
+        "mtime_ns": 1793006269579087370,
+        "sha256": "b81e189c9824915036f15ce9f98a37fff9961edd0ae8b91d0af7981ea0d58171",
+        "size": 68,
+        "uid": 10001
+      },
+      "/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/source-snapshots/manifest.1de8349dd271b0d397df815e0bce19fc62fcb818a02650bafc9735092d8c7469.json": {
+        "gid": 10001,
+        "mode": 33152,
+        "mtime_ns": 1793006269570811653,
+        "sha256": "1de8349dd271b0d397df815e0bce19fc62fcb818a02650bafc9735092d8c7469",
+        "size": 2352,
+        "uid": 10001
+      },
+      "/graphs/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/source-snapshots/pack.8469136d88c1c54dddf11ff4e1c5306d82979a7dbefbf1476cd80f60f3a97aae.bin": {
+        "gid": 10001,
+        "mode": 33152,
+        "mtime_ns": 1793006269569685562,
+        "sha256": "8469136d88c1c54dddf11ff4e1c5306d82979a7dbefbf1476cd80f60f3a97aae",
+        "size": 69,
+        "uid": 10001
+      },
+      "/repo": {
+        "gid": 0,
+        "mode": 16877,
+        "mtime_ns": 1793006269241602513,
+        "sha256": null,
+        "size": 96,
+        "uid": 0
+      },
+      "/repo/a.py": {
+        "gid": 10001,
+        "mode": 33188,
+        "mtime_ns": 1793006269241627513,
+        "sha256": "2d8dc49249e13bf4e3ef5afd052c3ca0da9ad4692517dd74ceaa23a67fa22041",
+        "size": 48,
+        "uid": 10001
+      }
+    },
+    "negative_errno": 30,
+    "uid": 10001
+  },
+  "source_sha256": "2d8dc49249e13bf4e3ef5afd052c3ca0da9ad4692517dd74ceaa23a67fa22041"
+}

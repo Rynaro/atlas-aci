@@ -331,7 +331,15 @@ def apply_central_bounds(
             from atlas_aci.protocol.graph import validate_navigation
 
             try:
-                if arguments["op"] == "retrieve":
+                if arguments["op"] == "context" or (
+                    (result.get("data") or {}).get("projection") == "task_context"
+                ):
+                    from atlas_aci.protocol.graph import validate_context
+
+                    validate_context(
+                        result, arguments["op"], enforcement.config.max_bound_field_elements
+                    )
+                elif arguments["op"] == "retrieve":
                     from atlas_aci.protocol.graph import validate_retrieval
 
                     validate_retrieval(result, enforcement.config.max_bound_field_elements)
@@ -435,6 +443,8 @@ async def dispatch_tool_call(
     enforcement: Enforcement,
     memex: Memex,
     code_graph: CodeGraph,
+    *,
+    structured: bool = True,
 ) -> dict[str, Any]:
     """The tool dispatch table plus the D2 central bounds chokepoint.
 
@@ -446,6 +456,19 @@ async def dispatch_tool_call(
     enforcement.assert_read_only(name)
     enforcement.assert_rate_limit()
 
+    if name == "graph_query" and mode == "structured" and arguments["op"] == "context":
+        from atlas_aci.query.context_limits import normalize
+
+        query = normalize(arguments, config)
+        if query["continuation"]:
+            from atlas_aci.query.context_pages import issue_context
+
+            registry = getattr(code_graph, "_lease_registry", None)
+            if registry is None:
+                registry = code_graph._lease_registry = LeaseRegistry(config, code_graph)
+            result = await issue_context(registry, code_graph, arguments, structured=structured)
+            return apply_central_bounds(name, arguments, result, enforcement)
+
     if name == "graph_query" and mode == "structured" and arguments["op"] in {"page", "continue"}:
         registry = getattr(code_graph, "_lease_registry", None)
         if registry is None:
@@ -453,7 +476,11 @@ async def dispatch_tool_call(
         if arguments["op"] == "page":
             result = await issue_pages(registry, code_graph, arguments)
         else:
-            result = json.loads(await registry.page(arguments["cursor"], arguments["query_digest"]))
+            result = json.loads(
+                await registry.page(
+                    arguments["cursor"], arguments["query_digest"], structured=structured
+                )
+            )
         return apply_central_bounds(name, arguments, result, enforcement)
 
     if name in {"search_symbol", "graph_query"}:
@@ -479,11 +506,14 @@ async def dispatch_tool_call(
                 != reader.generation_id
             ):
                 raise ToolError("SNAPSHOT_MISMATCH", "Requested generation does not match.")
-            result = (
-                await search_symbol(arguments, config, enforcement, reader)
-                if name == "search_symbol"
-                else await graph_query(arguments, config, enforcement, reader)
-            )
+            if name == "search_symbol":
+                result = await search_symbol(arguments, config, enforcement, reader)
+            elif mode == "structured" and arguments["op"] == "context":
+                result = await graph_query(
+                    arguments, config, enforcement, reader, structured=structured
+                )
+            else:
+                result = await graph_query(arguments, config, enforcement, reader)
             if mode != "structured":
                 result["generation_id"] = reader.generation_id
                 result["snapshot_id"] = reader.snapshot_id
@@ -579,7 +609,7 @@ async def call_tool_result(
         if isinstance(arguments, dict)
         and isinstance(arguments.get("op"), str)
         and arguments.get("op")
-        in {"status", "neighborhood", "path", "page", "continue", "retrieve"}
+        in {"status", "neighborhood", "path", "page", "continue", "retrieve", "context"}
         else "status"
     )
     budget = config.max_response_bytes
@@ -595,7 +625,9 @@ async def call_tool_result(
             mode = request_mode(arguments)
         if not Draft202012Validator(descriptors[name]["inputSchema"]).is_valid(arguments):
             raise ToolError("INVALID_INPUT", "Tool arguments do not match the published schema.")
-        payload = await dispatch_tool_call(name, arguments, config, enforcement, memex, code_graph)
+        payload = await dispatch_tool_call(
+            name, arguments, config, enforcement, memex, code_graph, structured=structured
+        )
         error = (
             name == "graph_query"
             and mode == "legacy"

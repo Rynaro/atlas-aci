@@ -1,0 +1,10 @@
+{
+  "source": "ATLAS read-only source/criterion-fit message, not executed native tokenizer proof",
+  "findings": [
+    "No particular model tokenizer/library required by AC003. Operator-local declared encode algorithm is faithful, no model-token claim for byte tokenizer.",
+    "Bounded fixed-point with cycle/nonconvergence/error rejection is truthful for final negotiated payload including its count; representation must be fixed and no mutation after count.",
+    "Registry install accepts canonical prebuilt pages and transfers one owner atomically, but context must semantically validate pages itself.",
+    "Definition resources need own entity/occurrence/evidence/producer linkage; whole-file resources need distinct native9 doc/source observation proof. Existing assertion variant must remain exact."
+  ],
+  "native_execution_required": true
+}

@@ -1,0 +1,27 @@
+{
+  "slice_id": "ACI-S18",
+  "before_implementation": true,
+  "criteria_sha256": "e4e84bc226ea5437c3f6931cd25acc7951f92ca7f701439a5b0baeea15ff88f6",
+  "paths": [
+    "mcp-server/src/atlas_aci/query/*",
+    "mcp-server/src/atlas_aci/protocol/*",
+    "mcp-server/src/atlas_aci/tools/graph_query.py",
+    "mcp-server/tests/slices/test_s18_*.py",
+    "atlas/evals/*",
+    "mcp-server/src/atlas_aci/server.py",
+    "mcp-server/src/atlas_aci/config.py",
+    "mcp-server/tests/test_server.py",
+    "mcp-server/tests/fixtures/s18/*",
+    "atlas/docs/*",
+    ".github/workflows/harden-gate.yml",
+    "scripts/test-verify-probe-verdict.sh",
+    ".spectra/plans/aci-s18.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/changes/aci-s18/*",
+    ".spectra/evidence/aci-s18/*",
+    ".spectra/state/aci-s18.execution.json",
+    ".spectra/backlog/execution.json",
+    ".spectra/backlog/order.md"
+  ],
+  "reason": "Existing server must route context with actual negotiated representation and one ownership context. Config adds optional operator-local tokenizer declaration only. Direct server tests/docs/self-contained labeled fixtures needed. No native schema/storage/codegraph edits assumed; probe selectors only if actual producer closure changes and fresh proof approved."
+}

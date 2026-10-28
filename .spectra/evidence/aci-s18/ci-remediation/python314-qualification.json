@@ -1,0 +1,83 @@
+{
+  "python314-frozen-sync": {
+    "argv": [
+      "/tmp/aci-s01-tools/bin/uv",
+      "sync",
+      "--frozen",
+      "--extra",
+      "dev",
+      "--python",
+      "/opt/homebrew/bin/python3.14"
+    ],
+    "cwd": "/private/tmp/atlas-aci-aci-s18/mcp-server",
+    "exit_code": 0,
+    "elapsed_seconds": 0.041772832999999995,
+    "raw_bytes": 1170,
+    "raw_sha256": "b99e40fb1d8a83d97aeef43d31a1af45ec380128adcb97e1ec467a6ce0427845",
+    "gzip_sha256": "137881ffa115fe7f4b0705300b10460d3038cdb53ef4de5001b25d505dbbe6f1",
+    "environment": {
+      "UV_CACHE_DIR": "/tmp/aci-s01-uv-cache",
+      "UV_PROJECT_ENVIRONMENT": "/tmp/aci-s18-ci-python314-qualified",
+      "PYTHONDONTWRITEBYTECODE": "1"
+    }
+  },
+  "python314-lock": {
+    "argv": [
+      "/tmp/aci-s01-tools/bin/uv",
+      "lock",
+      "--check"
+    ],
+    "cwd": "/private/tmp/atlas-aci-aci-s18/mcp-server",
+    "exit_code": 0,
+    "elapsed_seconds": 0.065338542,
+    "raw_bytes": 29,
+    "raw_sha256": "9148c230e3bd4517e4ae75ad2349cd71d1fca829b93e6497075638f9217d51ac",
+    "gzip_sha256": "7c22b7ca69fec1facda9a6c63f82a0ba40e7c8cc36a53c51e89261a09899a5fa",
+    "environment": {
+      "UV_CACHE_DIR": "/tmp/aci-s01-uv-cache",
+      "UV_PROJECT_ENVIRONMENT": "/tmp/aci-s18-ci-python314-qualified",
+      "PYTHONDONTWRITEBYTECODE": "1"
+    }
+  },
+  "python314-imports": {
+    "argv": [
+      "/tmp/aci-s18-ci-python314-qualified/bin/python",
+      "-c",
+      "\nimport sys, json, platform, importlib.metadata as m\nimport rpds, pydantic_core, tree_sitter, tree_sitter_language_pack, atlas_aci\nfrom pathlib import Path\nassert sys.version_info[:2] == (3, 14)\nassert Path(atlas_aci.__file__).resolve().is_relative_to(Path.cwd() / 'src')\nprint(json.dumps({'executable':sys.executable,'version':sys.version,'platform':platform.platform(),\n 'source_import':atlas_aci.__file__, 'versions':{n:m.version(n) for n in\n ['atlas-aci','mcp','rpds-py','pydantic-core','tree-sitter','tree-sitter-language-pack','pytest']},\n 'native_imports':['rpds','pydantic_core','tree_sitter','tree_sitter_language_pack']}))\n"
+    ],
+    "cwd": "/private/tmp/atlas-aci-aci-s18/mcp-server",
+    "exit_code": 0,
+    "elapsed_seconds": 0.9848264579999999,
+    "raw_bytes": 573,
+    "raw_sha256": "88b7df824fbc3ac868b66a812cb112a968a263382c77dd9c11440fd4b428e101",
+    "gzip_sha256": "e0d1a66d58722845dceda06cd18f40774e1bd91de737978dd61914a407204fd2",
+    "environment": {
+      "UV_CACHE_DIR": "/tmp/aci-s01-uv-cache",
+      "UV_PROJECT_ENVIRONMENT": "/tmp/aci-s18-ci-python314-qualified",
+      "PYTHONDONTWRITEBYTECODE": "1"
+    }
+  },
+  "python314-context-sdk": {
+    "argv": [
+      "/tmp/aci-s18-ci-python314-qualified/bin/python",
+      "-m",
+      "pytest",
+      "-q",
+      "-p",
+      "no:cacheprovider",
+      "tests/slices/test_s18_contract.py",
+      "tests/slices/test_s18_stdio.py"
+    ],
+    "cwd": "/private/tmp/atlas-aci-aci-s18/mcp-server",
+    "exit_code": 0,
+    "elapsed_seconds": 15.016211,
+    "raw_bytes": 100,
+    "raw_sha256": "de69a74ba2b65b8510623c9d2978b6ae31bce415211bbdd1f432805d56ef6a13",
+    "gzip_sha256": "d9ff9f8e1b0fc4dfdd852cfc4bc0d30cd3988ba84f5d05c4e08a2d1871d6c12f",
+    "environment": {
+      "UV_CACHE_DIR": "/tmp/aci-s01-uv-cache",
+      "UV_PROJECT_ENVIRONMENT": "/tmp/aci-s18-ci-python314-qualified",
+      "PYTHONDONTWRITEBYTECODE": "1"
+    }
+  }
+}

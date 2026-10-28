@@ -114,6 +114,9 @@ class Config:
     max_lease_resources: int = 4096
     lease_setup_ms: int = 2000
 
+    # Explicit trusted local tokenizer object; never loaded from requests/environment.
+    context_tokenizer: object | None = None
+
     # Rate limiting (set to 0 to disable)
     max_calls_per_minute: int = 200
 
@@ -123,6 +126,10 @@ class Config:
     graph_root: Path | None = None
 
     def __post_init__(self) -> None:
+        if self.context_tokenizer is not None:
+            from atlas_aci.query.context_tokens import declaration
+
+            declaration(self.context_tokenizer)
         for name in (
             "max_graph_leases",
             "graph_lease_seconds",

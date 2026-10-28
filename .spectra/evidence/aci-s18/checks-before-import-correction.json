@@ -1,0 +1,178 @@
+{
+  "ruff": {
+    "argv": [
+      ".venv/bin/ruff",
+      "check",
+      "src/",
+      "tests/"
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 1,
+    "elapsed_seconds": 0.011178166983881965,
+    "log": "ruff.log"
+  },
+  "format": {
+    "argv": [
+      ".venv/bin/ruff",
+      "format",
+      "--check",
+      "src/",
+      "tests/"
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0,
+    "elapsed_seconds": 0.012325791001785547,
+    "log": "format.log"
+  },
+  "mypy": {
+    "argv": [
+      ".venv/bin/mypy",
+      "src/"
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0,
+    "elapsed_seconds": 0.2576895839883946,
+    "log": "mypy.log"
+  },
+  "scripts-ruff": {
+    "argv": [
+      ".venv/bin/ruff",
+      "check",
+      "../scripts/",
+      "--exclude",
+      "fingerprint-fixture"
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0,
+    "elapsed_seconds": 0.010195625014603138,
+    "log": "scripts-ruff.log"
+  },
+  "scripts-format": {
+    "argv": [
+      ".venv/bin/ruff",
+      "format",
+      "--check",
+      "../scripts/",
+      "--exclude",
+      "fingerprint-fixture"
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0,
+    "elapsed_seconds": 0.008945457986555994,
+    "log": "scripts-format.log"
+  },
+  "scripts-mypy": {
+    "argv": [
+      ".venv/bin/mypy",
+      "../scripts/"
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0,
+    "elapsed_seconds": 0.062457207997795194,
+    "log": "scripts-mypy.log"
+  },
+  "lock": {
+    "argv": [
+      "/tmp/aci-s01-tools/bin/uv",
+      "lock",
+      "--check"
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0,
+    "elapsed_seconds": 0.11241266701836139,
+    "log": "lock.log"
+  },
+  "size-guard": {
+    "argv": [
+      "/bin/bash",
+      "scripts/test-verify-export-size.sh"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "elapsed_seconds": 0.2206162910151761,
+    "log": "size-guard.log"
+  },
+  "classify": {
+    "argv": [
+      "/bin/bash",
+      "scripts/test-harden-gate-classify.sh"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "elapsed_seconds": 0.5986439170083031,
+    "log": "classify.log"
+  },
+  "amended-runner-ruff": {
+    "argv": [
+      ".venv/bin/ruff",
+      "check",
+      "../atlas/evals/stdio_runner.py"
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0,
+    "elapsed_seconds": 0.009222458000294864,
+    "log": "amended-runner-ruff.log"
+  },
+  "amended-runner-format": {
+    "argv": [
+      "mcp-server/.venv/bin/ruff",
+      "format",
+      "--config",
+      "mcp-server/pyproject.toml",
+      "--check",
+      "atlas/evals/stdio_runner.py"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "elapsed_seconds": 0.008779291005339473,
+    "log": "amended-runner-format.log"
+  },
+  "guard": {
+    "argv": [
+      "/bin/bash",
+      "scripts/test-verify-probe-verdict.sh"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "elapsed_seconds": 6.503614874993218,
+    "log": "guard.log"
+  },
+  "verifier": {
+    "argv": [
+      "mcp-server/.venv/bin/python",
+      "scripts/verify-probe-verdict.py",
+      ".spectra/changes/aci-s17/probe/aci-s17-probe-lpa-vs-louvain.json"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "elapsed_seconds": 0.22199404099956155,
+    "log": "verifier.log"
+  },
+  "eval-ruff": {
+    "argv": [
+      ".venv/bin/ruff",
+      "check",
+      "../atlas/evals/capture_context_baseline.py",
+      "../atlas/evals/measure_context_yield.py"
+    ],
+    "cwd": "mcp-server",
+    "exit_code": 0,
+    "elapsed_seconds": 0.009955709014320746,
+    "log": "eval-ruff.log"
+  },
+  "eval-format": {
+    "argv": [
+      "mcp-server/.venv/bin/ruff",
+      "format",
+      "--check",
+      "--config",
+      "mcp-server/pyproject.toml",
+      "atlas/evals/capture_context_baseline.py",
+      "atlas/evals/measure_context_yield.py"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "elapsed_seconds": 0.008311707992106676,
+    "log": "eval-format.log"
+  }
+}

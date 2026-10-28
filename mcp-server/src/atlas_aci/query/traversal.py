@@ -110,6 +110,7 @@ async def navigate(
     relations=None,
     confidence=None,
     admit: Callable[[dict], bool] | None = None,
+    accounting=None,
     **options,
 ):
     """Traverse with fixed indexed steps; cancellation releases the owned hook.
@@ -160,6 +161,7 @@ async def navigate(
         reader,
         max_examined_edges=effective["max_examined_edges"],
         deadline_ms=effective["deadline_ms"],
+        accounting=accounting,
     ) as query:
 
         def payload():

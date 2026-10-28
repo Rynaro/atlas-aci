@@ -1,0 +1,71 @@
+{
+  "reason": "Preserve interrupted352-pass/exit2 full run and pre-dispatch-fix image evidence without overwrites. All files retain exact original bytes.",
+  "files": [
+    {
+      "logical_path": ".spectra/evidence/aci-s18/source-final.json",
+      "preserved_path": ".spectra/evidence/aci-s18/prior-first-image/source-final.json",
+      "bytes": 4579,
+      "sha256": "b193687eae9a20f42ce5eb08c2d08d7134e1240da0b8c62cf630238e93a60b1d"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/docker-build.log",
+      "preserved_path": ".spectra/evidence/aci-s18/prior-first-image/docker-build.log",
+      "bytes": 52906,
+      "sha256": "9cd0015fdb2dbc1989e25abde7481b718e445af55ccb26767164098da84129fe"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/docker-build.job.json",
+      "preserved_path": ".spectra/evidence/aci-s18/prior-first-image/docker-build.job.json",
+      "bytes": 243,
+      "sha256": "67b2fe6928f1630cea0867c10342008058ad352a0ab174e00e1c6e8a724be57e"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/docker-image-id.txt",
+      "preserved_path": ".spectra/evidence/aci-s18/prior-first-image/docker-image-id.txt",
+      "bytes": 72,
+      "sha256": "00f467a6027580cda2d92c3b517e143b6f8fcb5ca78bf21c194b5d555f967e59"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/native-final.log",
+      "preserved_path": ".spectra/evidence/aci-s18/prior-first-image/native-final.log",
+      "bytes": 98,
+      "sha256": "3f8d1ac561d7889925d318e7f7ebc6dddcd82c615df7812eeda141eea6cfda3c"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/native-final.json",
+      "preserved_path": ".spectra/evidence/aci-s18/prior-first-image/native-final.json",
+      "bytes": 80760,
+      "sha256": "9a9427266cb4360229dca6803a140280cbd41d40756ad3cde9f2092591f9f0e6"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/native-final.job.json",
+      "preserved_path": ".spectra/evidence/aci-s18/prior-first-image/native-final.job.json",
+      "bytes": 286,
+      "sha256": "226402459827ba19179476f36db2fde36b7b5387f0d7c477ea5059a5a5bd5946"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/full-suite.log",
+      "preserved_path": ".spectra/evidence/aci-s18/prior-first-image/full-suite.log",
+      "bytes": 694,
+      "sha256": "e30a54adee10edec30b30e3b1be6787e0e61e703c4bf74e04616b0db8b95a96b"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/full-suite.job.json",
+      "preserved_path": ".spectra/evidence/aci-s18/prior-first-image/full-suite.job.json",
+      "bytes": 2345,
+      "sha256": "238991c57658a67a26ba969dc32ea8ad670de019f3594fd077aa3ff776d234c8"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/docker-final/s06/docker-integration.json",
+      "preserved_path": ".spectra/evidence/aci-s18/prior-first-image/docker-final/s06/docker-integration.json",
+      "bytes": 24979,
+      "sha256": "c927ca316cc70dcce392dbd7d8c9a71773dc8b9d90657398eee25ca7a135f208"
+    },
+    {
+      "logical_path": ".spectra/evidence/aci-s18/docker-final/s08/native-docker-stdio.json",
+      "preserved_path": ".spectra/evidence/aci-s18/prior-first-image/docker-final/s08/native-docker-stdio.json",
+      "bytes": 43433,
+      "sha256": "747c482cd61f05bde146c08b5253c3e4ec3b54614b3b094194b82f11295f5528"
+    }
+  ]
+}

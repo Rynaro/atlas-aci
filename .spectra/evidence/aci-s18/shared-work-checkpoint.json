@@ -1,0 +1,17 @@
+{
+  "scope": "Optional shared accounting earlyunit, not publiccontext integration",
+  "hashes": {
+    "query/context_work.py": "8f37a5c99c458f4d4fbe03322c9471b4bf7a172b10e8d240f9f056c7a6b2bf02",
+    "query/indexed.py": "f0202385a3782ab438ab2b8b39c6c2759bf1f606c96ff4f21b86672c4c50a8df",
+    "query/traversal.py": "a350bb6f967d37f8eaaa2bb416896ad3cebc25db3d1a891507d6e7f2526e1fcd",
+    "query/retrieval.py": "4b8d77c4db886cfe3501e21da2439e5cd3bc963a3e86c3cd9412fb0cf6fdbaa7"
+  },
+  "tests": {
+    "exit_code": 0,
+    "passed": 28,
+    "log": ".spectra/evidence/aci-s18/shared-work-final.log"
+  },
+  "lint_exit_code": 0,
+  "mypy_exit_code": 0,
+  "baseline_unchanged": "07553bd3d51be01a1d522fc59c240bf41ecf312a051c413c609585c60999b507"
+}

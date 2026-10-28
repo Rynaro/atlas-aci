@@ -1,0 +1,68 @@
+{
+  "plan": "aci-s18",
+  "slice_id": "ACI-S18",
+  "spec": ".spectra/plans/aci-s18.md",
+  "criteria": ".spectra/plans/aci-s18.criteria.md",
+  "state": ".spectra/plans/aci-s18.state.json",
+  "scope": [
+    "mcp-server/src/atlas_aci/query/*",
+    "mcp-server/src/atlas_aci/protocol/*",
+    "mcp-server/src/atlas_aci/tools/graph_query.py",
+    "mcp-server/tests/slices/test_s18_*.py",
+    "atlas/evals/*",
+    "mcp-server/src/atlas_aci/server.py",
+    "mcp-server/src/atlas_aci/config.py",
+    "mcp-server/tests/test_server.py",
+    "mcp-server/tests/fixtures/s18/*",
+    "atlas/docs/*",
+    ".github/workflows/harden-gate.yml",
+    "scripts/test-verify-probe-verdict.sh",
+    ".spectra/plans/aci-s18.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/changes/aci-s18/*",
+    ".spectra/evidence/aci-s18/*",
+    ".spectra/state/aci-s18.execution.json",
+    ".spectra/backlog/execution.json",
+    ".spectra/backlog/order.md"
+  ],
+  "output_digest_exclusions": [
+    ".spectra/state/aci-s18.execution.json",
+    ".spectra/evidence/aci-s18/final-reentry-before.json",
+    ".spectra/evidence/aci-s18/final-reentry-after.json",
+    ".spectra/evidence/aci-s18/final-reentry-summary.json",
+    ".spectra/evidence/aci-s18/final-resume-identity.json",
+    ".spectra/evidence/aci-s18/output-check-tests.log"
+  ],
+  "stories": [
+    {
+      "name": "Frozen baseline and coherent context composition",
+      "timebox_engineering_days": 2,
+      "executor": "Vivi",
+      "first_checkpoint": "Freeze/hash labeled local corpus, task spans, budgets/ranker and actual lexical baseline BEFORE packer; then prove one G1 multi-seed cumulative budget, complete bundle, actual text-only/dual wire token counts and retained G1 page/source across G2/G3."
+    },
+    {
+      "name": "Owned continuation and typed evidence resources",
+      "timebox_engineering_days": 1,
+      "executor": "Vivi"
+    },
+    {
+      "name": "Budget/tokenizer/native/yield verification",
+      "timebox_engineering_days": 2,
+      "executor": "Vivi"
+    }
+  ],
+  "confidence": {
+    "rubric": "confidence",
+    "total": 86.25,
+    "dims": {
+      "pattern_match": 88,
+      "requirement_clarity": 90,
+      "decomposition_stability": 85,
+      "constraint_compliance": 82
+    },
+    "verdict": "AUTO_PROCEED",
+    "at": "2026-10-26T07:41:48Z",
+    "label": "one-reader-context-with-wire-tokenizer-checkpoint"
+  },
+  "status": "READY"
+}

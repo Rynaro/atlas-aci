@@ -193,7 +193,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version-file: "mcp-server/pyproject.toml"
+          python-version: "3.14"
 
       - name: Verify the P0 gate criteria are green (AC-NEG-6)
         if: steps.classify.outputs.augmented == 'true'
