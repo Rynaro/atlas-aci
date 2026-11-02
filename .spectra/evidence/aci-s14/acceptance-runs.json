@@ -1,0 +1,38 @@
+[
+  {
+    "ac_id": "AC-S14-001",
+    "test": "mcp-server/tests/slices/test_s14_contract.py::test_tsx_definitions",
+    "exit_code": 0,
+    "tail": "1 passed in 0.45s"
+  },
+  {
+    "ac_id": "AC-S14-002",
+    "test": "mcp-server/tests/slices/test_s14_contract.py::test_tsx_imports",
+    "exit_code": 0,
+    "tail": "1 passed in 0.42s"
+  },
+  {
+    "ac_id": "AC-S14-003",
+    "test": "mcp-server/tests/slices/test_s14_contract.py::test_jsx_not_fabricated_call",
+    "exit_code": 0,
+    "tail": "1 passed in 0.45s"
+  },
+  {
+    "ac_id": "AC-S14-004",
+    "test": "mcp-server/tests/slices/test_s14_contract.py::test_tsx_diagnostic",
+    "exit_code": 0,
+    "tail": "1 passed in 0.45s"
+  },
+  {
+    "ac_id": "AC-S14-005",
+    "test": "mcp-server/tests/slices/test_s14_contract.py::test_tsx_incremental",
+    "exit_code": 0,
+    "tail": "1 passed in 0.81s"
+  },
+  {
+    "ac_id": "AC-S14-006",
+    "test": "mcp-server/tests/slices/test_s14_contract.py::test_tsx_replay",
+    "exit_code": 0,
+    "tail": "1 passed in 1.02s"
+  }
+]
