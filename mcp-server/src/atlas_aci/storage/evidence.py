@@ -45,6 +45,10 @@ DDL += "\n" + "\n".join(NAVIGATION_INDEXES.values())
 RELATIONS = frozenset(
     {"call", "construct", "import", "superclass", "include", "extend", "prepend", "rationale_for"}
 )
+# Raw references, unresolved assertions and cached reference rows may also carry
+# `jsx`. It is deliberately not in RELATIONS: that closed set feeds traversal
+# enums, and a `jsx` assertion can never be resolved into an edge.
+REFERENCE_RELATIONS = RELATIONS | {"jsx"}
 FIELDS = {
     "entity": {
         "type",
@@ -312,6 +316,16 @@ def _validate_record(item: Any) -> None:
                             "storage/snapshots.py",
                             "indexing/retrieval.py",
                         },
+                        {
+                            "storage/evidence.py",
+                            "providers/python_imports.py",
+                            "indexing/extraction_cache.py",
+                            "resolvers/dependencies.py",
+                            "extractors/rust.py",
+                            "storage/snapshots.py",
+                            "indexing/retrieval.py",
+                            "extractors/tsx.py",
+                        },
                     ),
                     "module set",
                 )
@@ -380,7 +394,11 @@ def _validate_record(item: Any) -> None:
             item["target_entity_id"] is None or hash_value(item["target_entity_id"]),
             "assertion target",
         )
-        require(item["relation"] in RELATIONS, "relation")
+        require(item["relation"] in REFERENCE_RELATIONS, "relation")
+        require(
+            item["relation"] != "jsx" or item["resolution"] == "UNRESOLVED",
+            "jsx assertion must be unresolved",
+        )
         require(
             item["resolution"]
             in {"EXTRACTED", "INFERRED", "AMBIGUOUS", "UNRESOLVED", "LEGACY_UNAVAILABLE"},
@@ -474,7 +492,9 @@ def _validate_record(item: Any) -> None:
         if table in {"symbols", "refs"}:
             require(isinstance(json.loads(row["binding"]), dict), "binding object")
         if table == "refs":
-            require(row["relation"] in RELATIONS - {"rationale_for"}, "reference relation")
+            require(
+                row["relation"] in REFERENCE_RELATIONS - {"rationale_for"}, "reference relation"
+            )
             require(type(row["qualified"]) is int and row["qualified"] in {0, 1}, "qualified flag")
             require(
                 all(

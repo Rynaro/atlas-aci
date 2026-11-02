@@ -31,7 +31,7 @@ from typing import TYPE_CHECKING, Any, cast
 import structlog
 
 from atlas_aci.config import DEFAULT_MAX_BOUND_FIELD_ELEMENTS, path_is_within
-from atlas_aci.extractors import rust
+from atlas_aci.extractors import rust, tsx
 from atlas_aci.indexing import extraction_cache as xc
 from atlas_aci.indexing import retrieval as ret
 from atlas_aci.label_propagation import label_propagation
@@ -162,6 +162,7 @@ LANG_BY_EXT: dict[str, str] = {
 # as `@name` — the correct, conventional Ruby name for these definitions.
 QUERIES: dict[str, str] = {
     "rust": rust.QUERY,
+    "tsx": tsx.QUERY,
     "ruby": """
         (class name: (constant) @name) @def.class
         (class name: (scope_resolution) @name
@@ -307,13 +308,19 @@ PRODUCED_KINDS: tuple[str, ...] = tuple(
 # indexing to nothing (D5-Q2). This is an *honesty* fix, not a coverage
 # commitment: promoting one of these to real support means writing a real
 # QUERIES entry, at which point it comes out of this set.
-UNSUPPORTED_LANGS: frozenset[str] = frozenset({"tsx", "go", "java"})
+UNSUPPORTED_LANGS: frozenset[str] = frozenset({"go", "java"})
 
 assert set(LANG_BY_EXT.values()) <= set(QUERIES) | UNSUPPORTED_LANGS, (
     "LANG_BY_EXT declares a language with neither a QUERIES entry nor an "
     "UNSUPPORTED_LANGS acknowledgment — the silent dead-language bug D5-Q2 "
     "exists specifically to prevent."
 )
+
+
+# The JS-family languages share one scoped structural binding model (no global
+# name fallback). Every language-family test must use this one constant.
+_JS_FAMILY: frozenset[str] = frozenset({"javascript", "typescript", "tsx"})
+_SCOPED_LANGS: frozenset[str] = frozenset({"python", "ruby"}) | _JS_FAMILY
 
 
 # ---- Schema-epoch DB substrate (D1/H3) ----
@@ -803,7 +810,7 @@ def _match_rationale_comment(lang: str, raw_text: str) -> tuple[int, str, str | 
                 return offset, stripped, None
         return None
 
-    if lang in ("javascript", "typescript"):
+    if lang in _JS_FAMILY:
         label = _canonical_adr_rfc_label(raw_text)
         for offset, line in enumerate(lines):
             stripped = line.strip()
@@ -1413,6 +1420,7 @@ class CodeGraph:
                     "extractors/rust.py",
                     "storage/snapshots.py",
                     "indexing/retrieval.py",
+                    "extractors/tsx.py",
                 )
             },
             "packages": {
@@ -1433,6 +1441,8 @@ class CodeGraph:
             definitions = (
                 list(rust.KINDS)
                 if lang == "rust"
+                else list(tsx.KINDS)
+                if lang == "tsx"
                 else sorted(set(re.findall(r"@def\.(\w+)", query)))
             )
             # _extract persists any @callee as call, including SCSS @ref.include.
@@ -1446,6 +1456,8 @@ class CodeGraph:
                 relations.add("import")
             if "@comment.rationale" in query:
                 relations.add("rationale_for")
+            if lang == "tsx":
+                relations = set(tsx.RELATIONS)
             reason = "bounded_structural_queries" if query else "no_extraction_query"
             state = "partial" if query else "unsupported"
             if enabled is not None and lang not in enabled and query:
@@ -1463,12 +1475,13 @@ class CodeGraph:
                 }
             )
         return {
-            "format": "atlas-capabilities.v3",
+            "format": "atlas-capabilities.v4",
             "limitations": {
                 "python_imports": "package_local_unaliased_relative_only",
                 "control_flow": "unsupported",
                 "semantic_binding": "unsupported",
                 **rust.LIMITATIONS,
+                **tsx.LIMITATIONS,
             },
             "producer": self._producer_inputs(),
             "producers": [
@@ -1547,31 +1560,37 @@ class CodeGraph:
     def _valid_capabilities(
         caps: Any, producer: dict[str, Any], configuration: dict[str, Any]
     ) -> bool:
+        # The capability format is fully determined by the producer module set:
+        # tsx.py present -> v4; else rust.py present -> v3; else modules -> v2; else v1.
+        modules = producer.get("modules", {})
+        expected_format = (
+            "atlas-capabilities.v4"
+            if "extractors/tsx.py" in modules
+            else "atlas-capabilities.v3"
+            if "extractors/rust.py" in modules
+            else "atlas-capabilities.v2"
+            if "modules" in producer
+            else "atlas-capabilities.v1"
+        )
         if (
             not isinstance(caps, dict)
-            or caps.get("format")
-            not in {"atlas-capabilities.v1", "atlas-capabilities.v2", "atlas-capabilities.v3"}
+            or caps.get("format") != expected_format
             or set(caps)
             != {"format", "producer", "producers", "languages"}
-            | (
-                {"limitations"}
-                if caps.get("format") in {"atlas-capabilities.v2", "atlas-capabilities.v3"}
-                else set()
-            )
-            or (caps.get("format") in {"atlas-capabilities.v2", "atlas-capabilities.v3"})
-            != ("modules" in producer)
-            or (caps.get("format") == "atlas-capabilities.v3")
-            != ("extractors/rust.py" in producer.get("modules", {}))
+            | ({"limitations"} if expected_format != "atlas-capabilities.v1" else set())
             or caps["producer"] != producer
         ):
             return False
-        if caps["format"] in {"atlas-capabilities.v2", "atlas-capabilities.v3"} and caps[
-            "limitations"
-        ] != {
+        if expected_format != "atlas-capabilities.v1" and caps["limitations"] != {
             "python_imports": "package_local_unaliased_relative_only",
             "control_flow": "unsupported",
             "semantic_binding": "unsupported",
-            **(rust.LIMITATIONS if caps["format"] == "atlas-capabilities.v3" else {}),
+            **(
+                rust.LIMITATIONS
+                if expected_format in {"atlas-capabilities.v3", "atlas-capabilities.v4"}
+                else {}
+            ),
+            **(tsx.LIMITATIONS if expected_format == "atlas-capabilities.v4" else {}),
         }:
             return False
         unsupported = {"state": "unsupported", "reason": "no_compiler_provider"}
@@ -1600,7 +1619,7 @@ class CodeGraph:
                 return False
             names.append(item["language"])
             if (
-                caps["format"] == "atlas-capabilities.v3"
+                expected_format in {"atlas-capabilities.v3", "atlas-capabilities.v4"}
                 and item["language"] == "rust"
                 and (
                     item["extensions"] != [".rs"]
@@ -1609,6 +1628,19 @@ class CodeGraph:
                 )
             ):
                 return False
+            if item["language"] == "tsx":
+                if expected_format == "atlas-capabilities.v4":
+                    if (
+                        item["extensions"] != [".tsx"]
+                        or item["definitions"] != list(tsx.KINDS)
+                        or item["relations"] != list(tsx.RELATIONS)
+                    ):
+                        return False
+                elif item["extraction"] != {
+                    "state": "unsupported",
+                    "reason": "no_extraction_query",
+                }:
+                    return False
             if (
                 not isinstance(item["extraction"], dict)
                 or set(item["extraction"]) != {"state", "reason"}
@@ -3345,6 +3377,33 @@ class CodeGraph:
                             else None,
                         )
                     )
+            elif "jsx_tag" in caps:
+                # JSX value tags are markup references, never executable calls.
+                for node in caps["jsx_tag"]:
+                    reference = tsx.component_tag(node, source)
+                    if reference is None:
+                        continue  # intrinsic host element: not a code reference
+                    occurrence_id, proof_id = observe(
+                        node, "reference", "reference:jsx", owner(node)
+                    )
+                    refs.append(
+                        Reference(
+                            callee_name=reference[0],
+                            path=rel_path,
+                            line=node.start_point[0] + 1,
+                            lang=lang,
+                            col=node.start_point[1],
+                            relation="jsx",
+                            source_entity_id=owner(node),
+                            occurrence_id=occurrence_id,
+                            evidence_id=proof_id,
+                            qualified=False,
+                            qualifier_name=reference[1],
+                            binding=json.dumps(
+                                {**reference_context(node), "receiver": None}, sort_keys=True
+                            ),
+                        )
+                    )
             elif "callee" in caps:
                 qualified, qualifier_name = self._call_qualification(lang, source, caps)
                 for node in caps["callee"]:
@@ -3381,8 +3440,13 @@ class CodeGraph:
                         )
                     )
 
-        if lang == "python":
-            for import_node, target_node, description in python_imports.extract(tree, source):
+        if lang == "python" or lang == "tsx":
+            extracted = (
+                python_imports.extract(tree, source)
+                if lang == "python"
+                else tsx.imports(tree, source)
+            )
+            for import_node, target_node, description in extracted:
                 context = self._binding_context(lang, source, import_node, rel_path)
                 occurrence_id, proof_id = observe(
                     target_node, "reference", "import:" + description["name"], owner(import_node)
@@ -3438,29 +3502,19 @@ class CodeGraph:
                 "block",
                 "do_block",
             },
-            "javascript": {
-                "function_declaration",
-                "function_expression",
-                "arrow_function",
-                "method_definition",
-                "class_declaration",
-                "statement_block",
-                "catch_clause",
-                "for_statement",
-                "for_in_statement",
-            },
-            "typescript": {
-                "function_declaration",
-                "function_expression",
-                "arrow_function",
-                "method_definition",
-                "class_declaration",
-                "statement_block",
-                "catch_clause",
-                "for_statement",
-                "for_in_statement",
-            },
         }.get(lang, set())
+        if lang in _JS_FAMILY:
+            kinds = {
+                "function_declaration",
+                "function_expression",
+                "arrow_function",
+                "method_definition",
+                "class_declaration",
+                "statement_block",
+                "catch_clause",
+                "for_statement",
+                "for_in_statement",
+            }
         result = []
         function_seen = False
         for ancestor in CodeGraph._ancestors(node):
@@ -3552,7 +3606,7 @@ class CodeGraph:
                     if not classes or n.start_byte >= classes[0].start_byte
                 ):
                     category = "static"
-            elif lang in {"javascript", "typescript"}:
+            elif lang in _JS_FAMILY:
                 if any(c.type == "static" for c in method.children):
                     category = "static"
                 if any(c.type in {"get", "set"} for c in method.children):
@@ -3592,6 +3646,8 @@ class CodeGraph:
                     "method",
                     "singleton_method",
                 }
+                # A TSX arrow/function-expression declarator is a `function` entity.
+                or (lang == "tsx" and tsx.is_function_declarator(n))
             ),
             None,
         )
@@ -3664,7 +3720,13 @@ class CodeGraph:
                     ],
                 )
             )
-        if node.type in {"function_definition", "function_declaration", "function_expression"}:
+        if lang == "tsx":
+            result["export_status"] = tsx.export_status(node)
+        if node.type in {
+            "function_definition",
+            "function_declaration",
+            "function_expression",
+        } or (lang == "tsx" and tsx.is_function_declarator(node)):
             container = next(
                 (
                     n
@@ -3703,7 +3765,7 @@ class CodeGraph:
         root, source: bytes, lang: str, rel_path: str, capture=None
     ) -> list[tuple[str, str, str, int]]:
         """Small structural blocker set, never a type or import resolver."""
-        if lang not in {"python", "ruby", "javascript", "typescript"}:
+        if lang not in _SCOPED_LANGS:
             return []
         result = []
 
@@ -3748,7 +3810,7 @@ class CodeGraph:
             elif lang == "python" and node.type == "delete_statement":
                 kind = "unsupported"
                 targets = list(node.named_children)
-            elif lang in {"javascript", "typescript"} and node.type == "for_in_statement":
+            elif lang in _JS_FAMILY and node.type == "for_in_statement":
                 kind = "assignment"
                 target = node.child_by_field_name("left")
                 targets = [target] if target is not None else []
@@ -4000,6 +4062,10 @@ class CodeGraph:
         all_symbols = [item for group in symbols.values() for item in group]
 
         def import_target(binding):
+            if binding["lang"] == "tsx":
+                # Module resolution is unavailable: never guess a target, and never
+                # let shadow/ambiguity checks or the Python resolver see a TSX row.
+                return [], tsx.MODULE_RESOLUTION_REASON
             description = json.loads(binding["description"])
             hits = blockers.get((binding["path"], binding["scope"], binding["local_name"]), [])
             if any(kind != "import" for kind in hits):
@@ -4025,6 +4091,8 @@ class CodeGraph:
                 if hits:
                     if hits == ["import"]:
                         known = import_bindings.get((ref["path"], scope, name), [])
+                        if ref["lang"] == "tsx" and known:
+                            return import_target(known[0])
                         if (
                             len(known) == 1
                             and json.loads(known[0]["description"])["reason"] is None
@@ -4045,12 +4113,12 @@ class CodeGraph:
                     for c in symbols.get((ref["lang"], name), [])
                     if c["path"] == ref["path"]
                     and c["context"].get("scope") == scope
-                    and not (ref["lang"] in {"javascript", "typescript"} and c["kind"] == "method")
+                    and not (ref["lang"] in _JS_FAMILY and c["kind"] == "method")
                 ]
                 if found:
                     if any(c["context"].get("category") == "unknown" for c in found):
                         return [], "unsupported_scope"
-                    if ref["lang"] in {"javascript", "typescript"} and any(
+                    if ref["lang"] in _JS_FAMILY and any(
                         c["kind"] == "class"
                         and c["context"].get("byte", 0) > context.get("byte", 0)
                         for c in found
@@ -4085,11 +4153,14 @@ class CodeGraph:
             qualified = False
             reason = None
             lang = ref["lang"]
-            if lang == "rust":
+            if relation == "jsx":
+                # A JSX tag has no semantic producer evidence: never an edge.
+                candidates, reason = [], tsx.JSX_REASON
+            elif lang == "rust":
                 candidates, reason = [], "rust_semantic_binding_unavailable"
             elif context.get("unsupported_source_owner"):
                 candidates, reason = [], "unsupported_source_owner"
-            elif lang not in {"python", "ruby", "javascript", "typescript"}:
+            elif lang not in _SCOPED_LANGS:
                 candidates = symbols.get((lang, ref["callee_name"]), [])
             elif context.get("unsupported"):
                 candidates, reason = [], "unsupported_scope"
@@ -4108,7 +4179,7 @@ class CodeGraph:
                 category = None
                 if (
                     (lang == "ruby" and receiver in {None, "self"})
-                    or (lang in {"javascript", "typescript"} and receiver == "this")
+                    or (lang in _JS_FAMILY and receiver == "this")
                     or (lang == "python" and receiver and receiver == context.get("self_name"))
                 ):
                     owner = context.get("owner")
@@ -4125,7 +4196,7 @@ class CodeGraph:
                                 ]
                                 break
                         allowed = allowed and found_parameter
-                    elif lang in {"javascript", "typescript"}:
+                    elif lang in _JS_FAMILY:
                         allowed = allowed and context.get("this_allowed", False)
                     owners = [owner] if allowed else []
                     reason = "unknown_receiver" if not allowed else None
@@ -4142,7 +4213,7 @@ class CodeGraph:
                         else c["context"]["identity"]
                         for c in known
                     ]
-                    category = "static" if lang in {"ruby", "javascript", "typescript"} else None
+                    category = "static" if lang == "ruby" or lang in _JS_FAMILY else None
                     qualified = bool(owners)
                     if not owners and reason in {None, "no_visible_target"}:
                         reason = "unknown_receiver"
@@ -4211,7 +4282,7 @@ class CodeGraph:
                     ]
                 )
             source_name, source_kind = context.get("source_name"), context.get("source_kind")
-            if lang not in {"python", "ruby", "javascript", "typescript"}:
+            if lang not in _SCOPED_LANGS:
                 if ref["source_entity_id"]:
                     # The actual captured AST owner is authoritative. Same-line
                     # sibling declarations are not enclosing scopes.
@@ -5708,29 +5779,35 @@ class CodeGraph:
             else:
                 occurrence = occurrence_links(item)
                 description = json.loads(row["description"])
-                ev.require(
-                    set(description) == {"level", "module", "name", "local_name", "reason"},
-                    "import description fields",
-                )
-                ev.require(
-                    ev.integer(description["level"])
-                    and isinstance(description["module"], list)
-                    and all(
-                        isinstance(part, str) and part.isidentifier()
-                        for part in description["module"]
-                    ),
-                    "import module description",
-                )
-                ev.require(
-                    description["local_name"] == row["local_name"]
-                    and isinstance(description["name"], str)
-                    and bool(description["name"]),
-                    "import binding name",
-                )
-                ev.require(
-                    description["reason"] is None or isinstance(description["reason"], str),
-                    "import reason",
-                )
+                if row["lang"] == "tsx":
+                    ev.require(
+                        tsx.valid_import_description(description, row["local_name"]),
+                        "tsx import description",
+                    )
+                else:
+                    ev.require(
+                        set(description) == {"level", "module", "name", "local_name", "reason"},
+                        "import description fields",
+                    )
+                    ev.require(
+                        ev.integer(description["level"])
+                        and isinstance(description["module"], list)
+                        and all(
+                            isinstance(part, str) and part.isidentifier()
+                            for part in description["module"]
+                        ),
+                        "import module description",
+                    )
+                    ev.require(
+                        description["local_name"] == row["local_name"]
+                        and isinstance(description["name"], str)
+                        and bool(description["name"]),
+                        "import binding name",
+                    )
+                    ev.require(
+                        description["reason"] is None or isinstance(description["reason"], str),
+                        "import reason",
+                    )
                 if occurrence["provenance_state"] == "source":
                     ev.require(
                         row["byte_start"] <= occurrence["start_byte"]

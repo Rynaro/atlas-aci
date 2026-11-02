@@ -1,0 +1,43 @@
+{
+  "schema": "atlas-aci/slice-execution.v1",
+  "slice_id": "ACI-S14",
+  "issue_url": "https://github.com/Rynaro/atlas-aci/issues/36",
+  "criteria_sha256": "b9e4c691fd54910b1ff62b140f737fe197fe02e13313e6031eee2fcdf04bbddf",
+  "base_commit": "738358de3863428786eec3066dda3078ca4d95d3",
+  "output_commit": null,
+  "declared_paths": [
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/src/atlas_aci/extractors/tsx.py",
+    "mcp-server/tests/slices/test_s14_*.py",
+    "mcp-server/tests/fixtures/s14/*",
+    "README.md",
+    "mcp-server/src/atlas_aci/storage/evidence.py",
+    "mcp-server/src/atlas_aci/indexing/extraction_cache.py",
+    "mcp-server/src/atlas_aci/resolvers/dependencies.py",
+    "mcp-server/src/atlas_aci/protocol/graph.py",
+    "mcp-server/tests/test_codegraph.py",
+    "mcp-server/tests/slices/test_s15_contract.py",
+    "mcp-server/tests/slices/test_s15_integration.py",
+    "INTEGRATION.md",
+    "CHANGELOG.md",
+    ".spectra/plans/aci-s14.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/changes/aci-s14/*",
+    ".spectra/evidence/aci-s14/*",
+    ".spectra/state/aci-s14.execution.json",
+    ".spectra/backlog/execution.json",
+    ".spectra/backlog/order.md"
+  ],
+  "output_digests": {},
+  "status": "IN_PROGRESS",
+  "started_at": "2026-11-02T22:26:01Z",
+  "planning_state": ".spectra/plans/aci-s14.state.json",
+  "plan": ".spectra/plans/aci-s14.md",
+  "environment": {
+    "runner": "docker image atlas-aci-dev-locked (Dockerfile.dev + uv sync --frozen --extra dev)",
+    "user": "1000:1000",
+    "tree-sitter": "0.25.2",
+    "tree-sitter-language-pack": "1.6.0"
+  },
+  "results": []
+}

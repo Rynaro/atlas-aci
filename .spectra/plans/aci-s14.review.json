@@ -1,0 +1,76 @@
+{
+  "slice_id": "ACI-S14",
+  "plan": ".spectra/plans/aci-s14.md",
+  "author": "orchestrator-ramza-plan-s14",
+  "checker": "atlas-s14-plan-checker",
+  "verdict": "APPROVE_WITH_CONDITIONS",
+  "method": "independent read-only code review; no commands executed by checker",
+  "findings": [
+    {
+      "n": 1,
+      "severity": "BLOCKER",
+      "summary": "protocol/graph.py PRODUCER modules schema closed; extractors/tsx.py must be added",
+      "disposition": "accepted: amendment + condition 1"
+    },
+    {
+      "n": 2,
+      "severity": "BLOCKER",
+      "summary": "arrow-component declarator owner vs _binding_context source_node breaks edge-owner projection invariant",
+      "disposition": "accepted: condition 2"
+    },
+    {
+      "n": 3,
+      "severity": "MAJOR",
+      "summary": "jsx in ev.RELATIONS changes published enums and measured minimum envelope",
+      "disposition": "accepted: separate reference-only relation set; RELATIONS unchanged"
+    },
+    {
+      "n": 4,
+      "severity": "MAJOR",
+      "summary": "export occurrences only half covered; gaps silent",
+      "disposition": "accepted: explicit limitations + fixture tests"
+    },
+    {
+      "n": 5,
+      "severity": "MAJOR",
+      "summary": "rationale_for advertised but _match_rationale_comment lacks tsx",
+      "disposition": "accepted: add tsx"
+    },
+    {
+      "n": 6,
+      "severity": "MAJOR",
+      "summary": "hardcoded javascript/typescript sites; global-name fallback risk",
+      "disposition": "accepted: shared constant"
+    },
+    {
+      "n": 7,
+      "severity": "MAJOR",
+      "summary": "import_target shadow/ambiguity checks and Python-only validators",
+      "disposition": "accepted: short-circuit + validator branches + cache/roundtrip tests"
+    },
+    {
+      "n": 8,
+      "severity": "MAJOR",
+      "summary": "historical v3 readability unproven",
+      "disposition": "accepted: genuine v3 snapshot captured from base"
+    },
+    {
+      "n": 9,
+      "severity": "MINOR",
+      "summary": "append tsx module last",
+      "disposition": "accepted"
+    },
+    {
+      "n": 10,
+      "severity": "MINOR",
+      "summary": "non-vacuous AC tests",
+      "disposition": "accepted"
+    },
+    {
+      "n": 11,
+      "severity": "MINOR",
+      "summary": "JSX rule precision; README/INTEGRATION/CHANGELOG drift",
+      "disposition": "accepted"
+    }
+  ]
+}

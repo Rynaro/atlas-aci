@@ -18,6 +18,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from atlas_aci.extractors import tsx
 from atlas_aci.storage import evidence as ev
 
 FORMAT = "atlas-extraction-cache.v1"
@@ -128,8 +129,18 @@ def binding(value: Any, expected: dict[str, Any], occurrence: dict[str, Any]) ->
     }
     require(
         isinstance(obj, dict)
-        and base <= obj.keys() <= base | {"import_export_safe", "unsupported_source_owner"},
+        and base
+        <= obj.keys()
+        <= base | {"import_export_safe", "unsupported_source_owner", "export_status"},
         "binding fields",
+    )
+    require(
+        "export_status" not in obj
+        or (
+            expected["language"] == "tsx"
+            and (obj["export_status"] is None or obj["export_status"] in tsx.EXPORT_STATUSES)
+        ),
+        "binding export status",
     )
     require(
         all(isinstance(obj[k], str) for k in ("scope", "identity", "namespace", "category")),
@@ -292,7 +303,7 @@ class ExtractionPacket:
             require(
                 isinstance(row["callee_name"], str)
                 and bool(row["callee_name"])
-                and row["relation"] in ev.RELATIONS
+                and row["relation"] in ev.REFERENCE_RELATIONS
                 and type(row["qualified"]) is bool,
                 "raw reference",
             )
@@ -338,7 +349,9 @@ class ExtractionPacket:
         for row in p["imports"]:
             require(isinstance(row, dict) and set(row) == IMPORT_FIELDS, "import fields")
             require(
-                row["assertion_id"] is None and lang == "python" and integer(row["byte_start"]),
+                row["assertion_id"] is None
+                and lang in {"python", "tsx"}
+                and integer(row["byte_start"]),
                 "raw import",
             )
             require(
@@ -346,21 +359,27 @@ class ExtractionPacket:
                 "import strings",
             )
             description = json.loads(row["description"])
-            require(
-                isinstance(description, dict)
-                and set(description) == {"level", "module", "name", "local_name", "reason"},
-                "import description",
-            )
-            require(
-                integer(description["level"])
-                and isinstance(description["module"], list)
-                and all(isinstance(v, str) and v.isidentifier() for v in description["module"])
-                and isinstance(description["name"], str)
-                and bool(description["name"])
-                and description["local_name"] == row["local_name"]
-                and (description["reason"] is None or isinstance(description["reason"], str)),
-                "import description types",
-            )
+            if lang == "tsx":
+                require(
+                    tsx.valid_import_description(description, row["local_name"]),
+                    "tsx import description",
+                )
+            else:
+                require(
+                    isinstance(description, dict)
+                    and set(description) == {"level", "module", "name", "local_name", "reason"},
+                    "import description",
+                )
+                require(
+                    integer(description["level"])
+                    and isinstance(description["module"], list)
+                    and all(isinstance(v, str) and v.isidentifier() for v in description["module"])
+                    and isinstance(description["name"], str)
+                    and bool(description["name"])
+                    and description["local_name"] == row["local_name"]
+                    and (description["reason"] is None or isinstance(description["reason"], str)),
+                    "import description types",
+                )
             occurrence = linked(
                 row["occurrence_id"],
                 row["evidence_id"],
