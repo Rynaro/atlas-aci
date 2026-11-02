@@ -414,8 +414,8 @@ exact consumed source hash and byte spans.
 Calls retain their raw spelling and syntactic qualifier. All Rust calls remain
 unresolved with `rust_semantic_binding_unavailable`; matching a basename does not
 establish a function, associated-method, trait, or dispatch target. Capability
-snapshot `atlas-capabilities.v3` reports this boundary explicitly. Older v1/v2
-snapshots remain readable with their original Rust-unsupported declarations.
+snapshots from `atlas-capabilities.v3` onward report this boundary explicitly. Older
+v1/v2 snapshots remain readable with their original Rust-unsupported declarations.
 
 Macro bodies, derive/procedural-macro expansion, and unmaterialized generated
 output are unavailable. Already materialized `.rs` files are ordinary input.
@@ -424,6 +424,67 @@ evaluated for a build configuration, so indexed declarations do not prove
 inclusion in a binary. The
 SDK may download its locked grammar asset on first use; the production Docker
 image prefetches it so read-only, offline indexing needs no runtime download.
+
+### TSX structural navigation
+
+`.tsx` source is indexed by the locked Tree-sitter `tsx` grammar, without running
+`tsc`, a bundler, module resolution, or any JSX runtime. The producer records
+class declarations (including class components), function declarations,
+`const`/`let` declarators whose value is an arrow function or function expression
+(the common component form), and methods, once per source occurrence. Every
+occurrence keeps the exact consumed source hash and byte span. A declaration's
+syntactic export status (`named`, `default`, or none) is stored in the symbol's
+binding context; a declarator component owns the calls inside its body.
+
+Imports (default, named, aliased, namespace `* as X`, and `import type`) are
+recorded as `import` occurrences on the imported name, with the preserved local
+alias, the module source string, the specifier kind, and a type-only flag. Every
+import stays unresolved with `tsx_module_resolution_unavailable`; a basename match
+never binds an imported name to a file. Calls, `new`, and `extends` use the same
+scoped structural binding as TypeScript, with no global name fallback.
+
+JSX tags that reference a value (an identifier whose first character is not a
+lowercase ASCII letter, or a member expression such as `<Icons.Logo />`) are
+recorded with relation `jsx`. They are **never** a `call`: each is unresolved with
+`jsx_semantic_binding_unavailable`, creates no edge, and does not appear in
+`callers_of`. Intrinsic tags (`<div />`, `<my-el />`), namespaced names
+(`<svg:rect />`), closing tags and fragments are host markup and are not recorded.
+`jsx` is a raw-reference and unresolved-assertion relation only; it is not a
+protocol traversal relation. A file the parser cannot recover is reported as
+`failed`/`parse_error` with its source location in `status` completeness, and none
+of its symbols are indexed.
+
+Capability snapshot `atlas-capabilities.v4` reports this boundary explicitly,
+including the limitations below. Older v1, v2, and v3 snapshots remain readable
+with TSX unsupported (`no_extraction_query`).
+
+| Relation | Support | Boundary | Backing test |
+| --- | --- | --- | --- |
+| `definition: class` | structural | class declarations and class components | `test_s14_contract.py::test_tsx_definitions` |
+| `definition: function` | structural | function declarations and arrow/function-expression declarators | `test_s14_contract.py::test_tsx_definitions` |
+| `definition: method` | structural | `method_definition` in classes and object literals | `test_s14_contract.py::test_tsx_definitions` |
+| `call` | scoped structural | same-file only; imported callees are unresolved | `test_s14_roundtrip.py::test_arrow_component_edge_owner_through_since_and_round_trip` |
+| `construct` | scoped structural | `new X()` or `X()` resolving to a same-file class | `test_s14_contract.py::test_jsx_not_fabricated_call` |
+| `superclass` | scoped structural | `extends <identifier>` to a same-file class | `test_s14_contract.py::test_jsx_not_fabricated_call` |
+| `import` | unresolved occurrence | alias, source, kind and type-only kept; never resolved | `test_s14_contract.py::test_tsx_imports` |
+| `jsx` | unresolved occurrence | value tags only; never a call or an edge | `test_s14_contract.py::test_jsx_not_fabricated_call` |
+| `rationale_for` | comment-derived | same rules as TypeScript | `test_s14_roundtrip.py::test_rationale_comments_on_tsx` |
+| parse failure | diagnostic | `failed`/`parse_error` with location; no leaked facts | `test_s14_contract.py::test_tsx_diagnostic` |
+| incremental | equals clean rebuild | rename plus `--since` | `test_s14_contract.py::test_tsx_incremental` |
+| replay | warm equals cold | unchanged source, cache hit and miss | `test_s14_contract.py::test_tsx_replay` |
+| `limitation: tsx_module_resolution` | `unavailable_all_imports_unresolved` | no tsconfig paths, index files, or package exports | `test_s14_contract.py::test_tsx_imports` |
+| `limitation: tsx_jsx_binding` | `value_tags_recorded_unresolved_without_semantic_binding` | no JSX runtime or component binding | `test_s14_contract.py::test_jsx_not_fabricated_call` |
+| `limitation: tsx_intrinsic_jsx` | `lowercase_and_namespaced_tags_not_recorded` | host elements are not code references | `test_s14_limitations.py::test_reported_gap_is_real_and_not_silently_fabricated` |
+| `limitation: tsx_export_specifiers` | `export_lists_and_reexports_not_recorded` | `export { X }` and `export { X } from` | `test_s14_limitations.py::test_reported_gap_is_real_and_not_silently_fabricated` |
+| `limitation: tsx_default_export_identifier` | `export_default_identifier_not_recorded` | `export default Name;` | `test_s14_limitations.py::test_reported_gap_is_real_and_not_silently_fabricated` |
+| `limitation: tsx_anonymous_default_export` | `unnamed_declarations_not_recorded` | `export default function () {}` | `test_s14_limitations.py::test_reported_gap_is_real_and_not_silently_fabricated` |
+| `limitation: tsx_dynamic_binding` | `import_call_require_and_computed_member_unbound` | `import()`, `require`, `obj[key]()` | `test_s14_limitations.py::test_reported_gap_is_real_and_not_silently_fabricated` |
+
+Out of scope: React-specific flow (hooks, props, context, higher-order
+components), type inference, and interface, type-alias, or enum declarations.
+Side-effect-only imports (`import './x'`) introduce no binding and are not
+recorded. The matrix is cross-checked against the runtime capabilities by
+`test_s14_capabilities.py::test_readme_matrix_matches_capabilities_and_names_real_tests`.
 
 ### `status` — operator capabilities and completeness
 
@@ -442,7 +503,7 @@ The command is not exposed as an MCP tool.
 the capabilities, language selection, producer fingerprint, and `coverage_id`
 persisted by the indexed generation. Registered languages disabled by `--langs`
 are unsupported for that generation even when currently available at runtime.
-Recognized Go, Java, and TSX extensions have no extraction query. Definitions
+Recognized Go and Java extensions have no extraction query. Definitions
 and relations reflect actual persistence: for example, SCSS `@include` produces a
 `call` reference; HTML IDs, YAML keys, and Markdown headings provide symbols only.
 `partial` means bounded Tree-sitter syntax/lookup support; `unsupported` means no

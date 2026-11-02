@@ -105,7 +105,7 @@ two reasons:
 ## Step 3 — Pick your language set
 
 The `--langs` flag defaults to every grammar the indexer ships with:
-`ruby,python,typescript,javascript,scss,html,yaml,markdown,bash`.
+`rust,tsx,ruby,python,typescript,javascript,scss,html,yaml,markdown,bash`.
 Pass a comma-separated list to index only a subset.
 
 | Language | Notes |
@@ -113,14 +113,15 @@ Pass a comma-separated list to index only a subset.
 | `ruby` | Uses `tree-sitter-ruby` out of the box. There is no separate Ruby specialist mode shipped today — this is the only Ruby support. |
 | `python` | Supported via `tree-sitter-language-pack`. |
 | `javascript` | Supported via `tree-sitter-language-pack`, including `.jsx`. |
-| `typescript` | Supported via `tree-sitter-language-pack` for `.ts`. **`.tsx` is recognized but not yet queried** — files are skipped with a visible `unsupported extension skipped` report, not silently indexed to nothing. |
+| `typescript` | Supported via `tree-sitter-language-pack` for `.ts`. |
+| `tsx` | Supported for `.tsx`: classes, function and arrow-component declarations, methods, imports (aliases preserved), and JSX value tags. Imports and JSX tags are always unresolved (`tsx_module_resolution_unavailable`, `jsx_semantic_binding_unavailable`) — a JSX tag is never a call edge. See [TSX structural navigation](README.md#tsx-structural-navigation). |
 | `scss` | Mixins, functions, placeholders, `$variables`, and class/id selectors become defs; `@include` sites become refs. The SCSS grammar also parses plain `.css`. |
 | `html` | Elements carrying an `id` are indexed as anchor / JS-hook targets. |
 | `yaml` | Every mapping key (incl. nested) is a lookup target — covers `_config.yml`, `_data/*`, and front matter files. |
 | `markdown` | ATX and setext headings index the document outline (`.md` / `.markdown`). |
 | `bash` | Function definitions are defs; command invocations are refs, so `callers_of:<fn>` resolves call sites (`.sh` / `.bash`). |
 
-`.go`, `.rs`, and `.java` are likewise recognized extensions with no query
+`.go` and `.java` are recognized extensions with no query
 support yet — same visible skip behavior, not a coverage commitment.
 
 > The `scss`/`html`/`yaml`/`markdown`/`bash` grammars make ATLAS useful on

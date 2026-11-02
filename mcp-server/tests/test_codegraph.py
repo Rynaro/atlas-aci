@@ -408,13 +408,14 @@ def test_lang_by_ext_consistent_with_queries() -> None:
     # edit that silently drops the acknowledgment (rather than adding a real
     # QUERIES entry) is caught.
     for ext, lang in (
-        (".tsx", "tsx"),
         (".go", "go"),
         (".java", "java"),
     ):
         assert LANG_BY_EXT[ext] == lang
         assert lang in UNSUPPORTED_LANGS
         assert lang not in QUERIES
+    assert LANG_BY_EXT[".tsx"] == "tsx"
+    assert "tsx" in QUERIES and "tsx" not in UNSUPPORTED_LANGS
     assert LANG_BY_EXT[".rs"] == "rust"
     assert "rust" in QUERIES and "rust" not in UNSUPPORTED_LANGS
 

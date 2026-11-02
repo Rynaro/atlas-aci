@@ -23,6 +23,7 @@ LANGUAGES = frozenset(
         "ruby",
         "javascript",
         "typescript",
+        "tsx",
         "bash",
         "scss",
         "html",

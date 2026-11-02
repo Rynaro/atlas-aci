@@ -1,0 +1,24 @@
+{
+  "image": "atlas-aci:s14 built from mcp-server/Dockerfile",
+  "image_id": "sha256:465123e7d9914c7ec554b34f39b68fa69339dc21ca57110be23c7a4a559e5075",
+  "build_exit": 0,
+  "build_log": "docker-build.log.gz",
+  "index": {
+    "command": "docker run --rm --read-only --network none --user 10001 -v repo:/repo:ro -v graphs:/graphs atlas-aci:s14 index --repo /repo --graph-root /graphs",
+    "exit_code": 0,
+    "log": "docker-index.log.gz",
+    "observed": "files_indexed=5 files_failed=1 (broken.tsx parse_error) symbols=13 refs=13 edges=4 parser_invocations=6, no grammar download (network none)"
+  },
+  "status": {
+    "command": "docker run --rm --read-only --network none --user 10001 ... status --repo /repo --graph-root /graphs",
+    "exit_code": 0,
+    "output": "docker-status.json.gz",
+    "observed": "atlas-capabilities.v4; tsx partial bounded_structural_queries; relations call,construct,import,jsx,rationale_for,superclass"
+  },
+  "mcp_stdio": {
+    "command": "docker run --rm -i --read-only --network none --user 10001 ... serve --repo /repo --graph-root /graphs:ro --memex-root /memex",
+    "exit_code": 0,
+    "transcript": "docker-mcp.jsonl.gz",
+    "observed": "search_symbol Badge -> components.tsx function 29-37; Header -> 8-16; references only relation jsx (jsx_semantic_binding_unavailable); graph_query callers_of:Header -> edges [] unresolved_refs 0"
+  }
+}

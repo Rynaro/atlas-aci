@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Measured TSX structural extraction (ACI-S14).** `.tsx` files are now indexed
+  instead of skipped: class and function declarations, arrow/function-expression
+  component declarators, methods, import occurrences (default, named, aliased,
+  namespace, `import type`, each preserving the local alias, module source and
+  kind), and call/construct/superclass relations with the same scoped structural
+  binding as TypeScript. JSX value tags are recorded with the new `jsx` raw
+  reference relation and are always unresolved
+  (`jsx_semantic_binding_unavailable`): a JSX tag is never a call or an edge.
+  Imports stay unresolved (`tsx_module_resolution_unavailable`). Export status
+  (`named`/`default`) is stored in symbol binding context.
+- Capability snapshot `atlas-capabilities.v4` with explicit TSX definitions,
+  relations and limitations (`tsx_*`: module resolution, JSX binding, intrinsic
+  JSX, export specifiers, default-export identifiers, anonymous default exports,
+  dynamic binding). v1, v2 and v3 snapshots remain readable and keep TSX
+  unsupported. The producer fingerprint now includes `extractors/tsx.py`, so
+  the next `index` run re-extracts every file.
+
+### Changed
+
+- `.tsx` is no longer reported under `unsupported_skipped`; only `.go` and
+  `.java` remain recognized without an extraction query.
+
 ## [2.0.0] - 2026-07-10
 
 A code-exploration server that was previously silently over-promising —

@@ -163,6 +163,7 @@ PRODUCER = obj(
                     "extractors/rust.py",
                     "storage/snapshots.py",
                     "indexing/retrieval.py",
+                    "extractors/tsx.py",
                 )
             },
             "additionalProperties": False,

@@ -1,0 +1,397 @@
+{
+  "base_commit": "738358de3863428786eec3066dda3078ca4d95d3",
+  "capabilities": {
+    "format": "atlas-capabilities.v3",
+    "languages": [
+      {
+        "definitions": [
+          "function"
+        ],
+        "extensions": [
+          ".bash",
+          ".sh"
+        ],
+        "extraction": {
+          "reason": "bounded_structural_queries",
+          "state": "partial"
+        },
+        "language": "bash",
+        "relations": [
+          "call"
+        ],
+        "semantic_binding": {
+          "reason": "no_compiler_provider",
+          "state": "unsupported"
+        }
+      },
+      {
+        "definitions": [],
+        "extensions": [
+          ".go"
+        ],
+        "extraction": {
+          "reason": "no_extraction_query",
+          "state": "unsupported"
+        },
+        "language": "go",
+        "relations": [],
+        "semantic_binding": {
+          "reason": "no_compiler_provider",
+          "state": "unsupported"
+        }
+      },
+      {
+        "definitions": [
+          "id"
+        ],
+        "extensions": [
+          ".htm",
+          ".html"
+        ],
+        "extraction": {
+          "reason": "bounded_structural_queries",
+          "state": "partial"
+        },
+        "language": "html",
+        "relations": [],
+        "semantic_binding": {
+          "reason": "no_compiler_provider",
+          "state": "unsupported"
+        }
+      },
+      {
+        "definitions": [],
+        "extensions": [
+          ".java"
+        ],
+        "extraction": {
+          "reason": "no_extraction_query",
+          "state": "unsupported"
+        },
+        "language": "java",
+        "relations": [],
+        "semantic_binding": {
+          "reason": "no_compiler_provider",
+          "state": "unsupported"
+        }
+      },
+      {
+        "definitions": [
+          "class",
+          "function",
+          "method"
+        ],
+        "extensions": [
+          ".js",
+          ".jsx"
+        ],
+        "extraction": {
+          "reason": "bounded_structural_queries",
+          "state": "partial"
+        },
+        "language": "javascript",
+        "relations": [
+          "call",
+          "construct",
+          "rationale_for",
+          "superclass"
+        ],
+        "semantic_binding": {
+          "reason": "no_compiler_provider",
+          "state": "unsupported"
+        }
+      },
+      {
+        "definitions": [
+          "heading"
+        ],
+        "extensions": [
+          ".markdown",
+          ".md"
+        ],
+        "extraction": {
+          "reason": "bounded_structural_queries",
+          "state": "partial"
+        },
+        "language": "markdown",
+        "relations": [],
+        "semantic_binding": {
+          "reason": "no_compiler_provider",
+          "state": "unsupported"
+        }
+      },
+      {
+        "definitions": [
+          "class",
+          "function"
+        ],
+        "extensions": [
+          ".py"
+        ],
+        "extraction": {
+          "reason": "bounded_structural_queries",
+          "state": "partial"
+        },
+        "language": "python",
+        "relations": [
+          "call",
+          "construct",
+          "import",
+          "rationale_for",
+          "superclass"
+        ],
+        "semantic_binding": {
+          "reason": "no_compiler_provider",
+          "state": "unsupported"
+        }
+      },
+      {
+        "definitions": [
+          "class",
+          "method",
+          "module"
+        ],
+        "extensions": [
+          ".rb"
+        ],
+        "extraction": {
+          "reason": "bounded_structural_queries",
+          "state": "partial"
+        },
+        "language": "ruby",
+        "relations": [
+          "call",
+          "construct",
+          "extend",
+          "include",
+          "prepend",
+          "rationale_for",
+          "superclass"
+        ],
+        "semantic_binding": {
+          "reason": "no_compiler_provider",
+          "state": "unsupported"
+        }
+      },
+      {
+        "definitions": [
+          "enum",
+          "function",
+          "method",
+          "module",
+          "struct",
+          "trait"
+        ],
+        "extensions": [
+          ".rs"
+        ],
+        "extraction": {
+          "reason": "bounded_structural_queries",
+          "state": "partial"
+        },
+        "language": "rust",
+        "relations": [
+          "call"
+        ],
+        "semantic_binding": {
+          "reason": "no_compiler_provider",
+          "state": "unsupported"
+        }
+      },
+      {
+        "definitions": [
+          "function",
+          "id",
+          "mixin",
+          "placeholder",
+          "selector",
+          "variable"
+        ],
+        "extensions": [
+          ".css",
+          ".scss"
+        ],
+        "extraction": {
+          "reason": "bounded_structural_queries",
+          "state": "partial"
+        },
+        "language": "scss",
+        "relations": [
+          "call"
+        ],
+        "semantic_binding": {
+          "reason": "no_compiler_provider",
+          "state": "unsupported"
+        }
+      },
+      {
+        "definitions": [],
+        "extensions": [
+          ".tsx"
+        ],
+        "extraction": {
+          "reason": "no_extraction_query",
+          "state": "unsupported"
+        },
+        "language": "tsx",
+        "relations": [],
+        "semantic_binding": {
+          "reason": "no_compiler_provider",
+          "state": "unsupported"
+        }
+      },
+      {
+        "definitions": [
+          "class",
+          "function",
+          "method"
+        ],
+        "extensions": [
+          ".ts"
+        ],
+        "extraction": {
+          "reason": "bounded_structural_queries",
+          "state": "partial"
+        },
+        "language": "typescript",
+        "relations": [
+          "call",
+          "construct",
+          "rationale_for",
+          "superclass"
+        ],
+        "semantic_binding": {
+          "reason": "no_compiler_provider",
+          "state": "unsupported"
+        }
+      },
+      {
+        "definitions": [
+          "key"
+        ],
+        "extensions": [
+          ".yaml",
+          ".yml"
+        ],
+        "extraction": {
+          "reason": "bounded_structural_queries",
+          "state": "partial"
+        },
+        "language": "yaml",
+        "relations": [],
+        "semantic_binding": {
+          "reason": "no_compiler_provider",
+          "state": "unsupported"
+        }
+      }
+    ],
+    "limitations": {
+      "control_flow": "unsupported",
+      "python_imports": "package_local_unaliased_relative_only",
+      "rust_cfg": "build_configuration_not_evaluated",
+      "rust_dispatch": "unresolved_without_type_or_trait_inference",
+      "rust_generated_code": "unmaterialized_outputs_unavailable",
+      "rust_macro_expansion": "unsupported_including_derive_and_proc_macros",
+      "semantic_binding": "unsupported"
+    },
+    "producer": {
+      "codegraph_sha256": "bfea442d81490e8bc4102ec6196929bf5a938383cb8d0dded098f13e4c0a358e",
+      "modules": {
+        "extractors/rust.py": "28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a",
+        "indexing/extraction_cache.py": "08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2",
+        "indexing/retrieval.py": "a70fd241efea13fc850d72e86389c2c0b41c5a0ac2c32b33044b728f103452a8",
+        "providers/python_imports.py": "de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014",
+        "resolvers/dependencies.py": "0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6",
+        "storage/evidence.py": "abd92c6a86d1086c2d3680a519c8f81f62d131dbae52da6b44f4525bfcc0a58d",
+        "storage/snapshots.py": "6e800008cbbbda1b345f199aecbda193eb27c68b15aeb1ff941b5a840ab5be82"
+      },
+      "packages": {
+        "tree-sitter": "0.25.2",
+        "tree-sitter-language-pack": "1.6.0"
+      },
+      "queries_sha256": "a222468d9bb15cbf5cfccc368bd65ca69de7ed22e91ae85e628228f2f227b944"
+    },
+    "producers": [
+      {
+        "name": "tree-sitter",
+        "operation": "structural_extraction",
+        "semantic_binding": {
+          "reason": "no_compiler_provider",
+          "state": "unsupported"
+        }
+      }
+    ]
+  },
+  "configuration": {
+    "languages": [
+      "bash",
+      "html",
+      "javascript",
+      "markdown",
+      "python",
+      "ruby",
+      "rust",
+      "scss",
+      "typescript",
+      "yaml"
+    ],
+    "skip_patterns": [
+      "node_modules",
+      "vendor/bundle",
+      "vendor/cache",
+      "tmp",
+      "log",
+      ".git",
+      "dist",
+      "build",
+      "public/assets",
+      "public/packs",
+      "public/packs-test",
+      "coverage",
+      ".bundle",
+      "__pycache__",
+      ".venv",
+      ".atlas",
+      "storage",
+      "_site",
+      ".jekyll-cache",
+      ".sass-cache"
+    ]
+  },
+  "description": "Genuine atlas-capabilities.v3 snapshot produced by base 738358de3863428786eec3066dda3078ca4d95d3 (pre-S14): TSX recognized but unsupported.",
+  "generation_inputs_keys": [
+    "configuration",
+    "format",
+    "kind",
+    "observation_digest",
+    "producer",
+    "repository",
+    "retrieval",
+    "schema",
+    "snapshot",
+    "source_hashes"
+  ],
+  "producer": {
+    "codegraph_sha256": "bfea442d81490e8bc4102ec6196929bf5a938383cb8d0dded098f13e4c0a358e",
+    "modules": {
+      "extractors/rust.py": "28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a",
+      "indexing/extraction_cache.py": "08f323ac8e6c3c9a4151fc42f8ff362aa359b3a49fb2c0f86dba06bff0b63bd2",
+      "indexing/retrieval.py": "a70fd241efea13fc850d72e86389c2c0b41c5a0ac2c32b33044b728f103452a8",
+      "providers/python_imports.py": "de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014",
+      "resolvers/dependencies.py": "0f9fcdd8376caa862e40ecf999fd4874893c24a014363c8fc6c5070b132e6bd6",
+      "storage/evidence.py": "abd92c6a86d1086c2d3680a519c8f81f62d131dbae52da6b44f4525bfcc0a58d",
+      "storage/snapshots.py": "6e800008cbbbda1b345f199aecbda193eb27c68b15aeb1ff941b5a840ab5be82"
+    },
+    "packages": {
+      "tree-sitter": "0.25.2",
+      "tree-sitter-language-pack": "1.6.0"
+    },
+    "queries_sha256": "a222468d9bb15cbf5cfccc368bd65ca69de7ed22e91ae85e628228f2f227b944"
+  },
+  "status_indexed_keys": [
+    "capabilities",
+    "configuration",
+    "coverage_id",
+    "producer"
+  ]
+}

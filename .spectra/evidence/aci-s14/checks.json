@@ -1,0 +1,40 @@
+{
+  "s14_contract": {
+    "command": "docker run --rm --user 1000:1000 -e HOME=/hc -e PYTHONPATH=/ws/mcp-server/src -v <scratch>/home:/hc -v <repo>:/ws -w /ws/mcp-server atlas-aci-dev-locked /opt/venv/bin/python -m pytest -q -p no:cacheprovider tests/slices/test_s14_contract.py",
+    "exit_code": 0,
+    "summary": "6 passed",
+    "log": "s14-contract.log.gz"
+  },
+  "s14_supporting": {
+    "command": "docker run --rm --user 1000:1000 -e HOME=/hc -e PYTHONPATH=/ws/mcp-server/src -v <scratch>/home:/hc -v <repo>:/ws -w /ws/mcp-server atlas-aci-dev-locked /opt/venv/bin/python -m pytest -q -p no:cacheprovider tests/slices/test_s14_capabilities.py tests/slices/test_s14_limitations.py tests/slices/test_s14_roundtrip.py",
+    "exit_code": 0,
+    "summary": "66 passed",
+    "log": "s14-extra.log.gz"
+  },
+  "ruff": {
+    "command": "docker run --rm --user 1000:1000 -e HOME=/hc -e PYTHONPATH=/ws/mcp-server/src -v <scratch>/home:/hc -v <repo>:/ws -w /ws/mcp-server atlas-aci-dev-locked /opt/venv/bin/ruff check src/ tests/",
+    "exit_code": 0,
+    "log": "ruff.log.gz"
+  },
+  "format": {
+    "command": "docker run --rm --user 1000:1000 -e HOME=/hc -e PYTHONPATH=/ws/mcp-server/src -v <scratch>/home:/hc -v <repo>:/ws -w /ws/mcp-server atlas-aci-dev-locked /opt/venv/bin/ruff format --check src/ tests/",
+    "exit_code": 0,
+    "log": "format.log.gz"
+  },
+  "mypy": {
+    "command": "docker run --rm --user 1000:1000 -e HOME=/hc -e PYTHONPATH=/ws/mcp-server/src -v <scratch>/home:/hc -v <repo>:/ws -w /ws/mcp-server atlas-aci-dev-locked /opt/venv/bin/mypy src/",
+    "exit_code": 0,
+    "log": "mypy.log.gz"
+  },
+  "full_suite": {
+    "command": "docker run --rm --user 1000:1000 -e HOME=/hc -e PYTHONPATH=/ws/mcp-server/src -v <scratch>/home:/hc -v <repo>:/ws -w /ws/mcp-server atlas-aci-dev-locked /opt/venv/bin/python -m pytest -q -p no:cacheprovider",
+    "exit_code": 1,
+    "summary": "1 failed, 888 passed, 10 skipped",
+    "failed": [
+      "tests/slices/test_s01_contract.py::test_call_deadline_after_initialization"
+    ],
+    "classification": "pre-existing baseline failure (baseline.json: same test fails on untouched base under 1000:1000); 888-816 = 72 new S14 tests",
+    "log": "full-suite.log.gz"
+  },
+  "harness_correction": "The first baseline harness omitted PYTHONPATH; it imported the image's baked /work/src, which is byte-identical base source, so baseline evidence remains base evidence. All post-change runs set PYTHONPATH=/ws/mcp-server/src (import path verified: /ws/mcp-server/src/atlas_aci/__init__.py)."
+}

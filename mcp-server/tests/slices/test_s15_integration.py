@@ -339,8 +339,9 @@ def test_current_and_historical_producer_module_sets(tmp_path):
         "extractors/rust.py",
         "storage/snapshots.py",
         "indexing/retrieval.py",
+        "extractors/tsx.py",
     }
-    for count in (2, 3, 4, 5, 6):
+    for count in (2, 3, 4, 5, 6, 7):
         old = copy.deepcopy(current)
         old["modules"] = {key: current["modules"][key] for key in list(current["modules"])[:count]}
         ev.validate_record(ev.producer(old))

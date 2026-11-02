@@ -142,7 +142,7 @@ def test_macro_gap(tmp_path):
     graph.build()
     payload = graph.status()
     runtime = payload["runtime"]
-    assert runtime["format"] == "atlas-capabilities.v3"
+    assert runtime["format"] == "atlas-capabilities.v4"
     assert (
         runtime["limitations"]["rust_macro_expansion"]
         == "unsupported_including_derive_and_proc_macros"

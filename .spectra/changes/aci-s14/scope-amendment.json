@@ -1,0 +1,34 @@
+{
+  "slice_id": "ACI-S14",
+  "criteria_changed": false,
+  "base_commit": "738358de3863428786eec3066dda3078ca4d95d3",
+  "additional_paths": [
+    "mcp-server/src/atlas_aci/storage/evidence.py",
+    "mcp-server/src/atlas_aci/indexing/extraction_cache.py",
+    "mcp-server/src/atlas_aci/resolvers/dependencies.py",
+    "mcp-server/tests/test_codegraph.py",
+    "mcp-server/tests/slices/test_s15_contract.py",
+    "mcp-server/tests/slices/test_s15_integration.py",
+    "mcp-server/src/atlas_aci/protocol/graph.py",
+    "INTEGRATION.md",
+    "CHANGELOG.md"
+  ],
+  "reasons": {
+    "storage/evidence.py": "Add the non-call `jsx` reference relation to the closed relation set and the exact extended producer module set; every historical module set stays valid.",
+    "indexing/extraction_cache.py": "Cache packet validation accepts only Python raw import rows; accept the TSX import description shape so warm and cold extraction restore identical packets.",
+    "resolvers/dependencies.py": "Register tsx in complete language buckets once its raw-input/unresolved-output contract exists.",
+    "test_codegraph.py": "Replace the obsolete TSX-unsupported pin; keep Go/Java negative controls.",
+    "test_s15_contract.py": "The current runtime capability format becomes atlas-capabilities.v4; Rust assertions are unchanged.",
+    "test_s15_integration.py": "The current producer module set gains extractors/tsx.py; historical prefixes remain validated.",
+    "protocol/graph.py": "Closed PRODUCER modules schema must admit the new fingerprinted extractors/tsx.py module (checker finding 1).",
+    "INTEGRATION.md": "TSX language row states .tsx is not yet queried; becomes false (checker finding 11).",
+    "CHANGELOG.md": "Manually maintained [Unreleased] entry for the new TSX capability."
+  },
+  "no_speculative_docker_ci_lock_change": true,
+  "declared_fixture_path": "mcp-server/tests/fixtures/s14/*",
+  "not_amended": {
+    "atlas/docs/graph-leases.md": "jsx kept out of ev.RELATIONS; envelopes unchanged",
+    "atlas/docs/graph-navigation.md": "same"
+  },
+  "review": ".spectra/plans/aci-s14.review.json"
+}
