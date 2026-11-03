@@ -1,4 +1,4 @@
-"""CLI entry point: `atlas-aci serve | index | export | import | import-scip | status | ...`."""
+"""CLI entry point: `atlas-aci serve | index | export | import | import-scip | diff | ...`."""
 
 from __future__ import annotations
 
@@ -344,6 +344,73 @@ def import_scip(
         graph.close()
     click.echo(json.dumps(stats, sort_keys=True, separators=(",", ":")))
     log.info("import_scip_done", **stats)
+
+
+def _graph_root_option(name: str, help_text: str):
+    return click.option(
+        name, default=None, type=click.Path(file_okay=False, path_type=Path), help=help_text
+    )
+
+
+@cli.command()
+@click.option(
+    "--repo",
+    default=None,
+    type=click.Path(exists=True, file_okay=False, path_type=Path),
+    help="Repository for both sides (overridden per side by --before-repo/--after-repo)",
+)
+@click.option(
+    "--before-repo",
+    default=None,
+    type=click.Path(exists=True, file_okay=False, path_type=Path),
+    help="Repository of the before snapshot",
+)
+@click.option(
+    "--after-repo",
+    default=None,
+    type=click.Path(exists=True, file_okay=False, path_type=Path),
+    help="Repository of the after snapshot",
+)
+@_graph_root_option(
+    "--graph-root", "External graph root for both sides (default: <repo>/.atlas per side)"
+)
+@_graph_root_option("--before-graph-root", "Graph root of the before snapshot")
+@_graph_root_option("--after-graph-root", "Graph root of the after snapshot")
+def diff(
+    repo: Path | None,
+    before_repo: Path | None,
+    after_repo: Path | None,
+    graph_root: Path | None,
+    before_graph_root: Path | None,
+    after_graph_root: Path | None,
+) -> None:
+    """Compare two indexed snapshots at symbol and contract boundaries.
+
+    Each side is a complete, already-built graph namespace. Prints the canonical
+    `atlas-symbol-diff.v1` change set (JSON) on stdout. READ-ONLY: nothing is
+    written under either graph root or repository, and nothing is printed on
+    rejection (exit 1) or invalid usage (exit 2).
+    """
+    from atlas_aci.query import diff as symbol_diff
+
+    first = before_repo or repo
+    second = after_repo or repo
+    if first is None or second is None:
+        raise click.UsageError("Give --repo, or both --before-repo and --after-repo.")
+    try:
+        change_set = symbol_diff.compare(
+            symbol_diff.Side(first.resolve(), before_graph_root or graph_root),
+            symbol_diff.Side(second.resolve(), after_graph_root or graph_root),
+        )
+    except symbol_diff.DiffUsageError as exc:
+        raise click.UsageError(str(exc)) from exc
+    except symbol_diff.DiffRejected as exc:
+        raise click.ClickException(f"Snapshot diff rejected: {exc.reason}") from exc
+    except (ValueError, OSError) as exc:
+        raise click.ClickException(str(exc)) from exc
+    stream = click.get_binary_stream("stdout")
+    stream.write(symbol_diff.canonical_bytes(change_set))
+    stream.flush()
 
 
 @cli.command()

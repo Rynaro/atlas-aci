@@ -1,0 +1,70 @@
+{
+ "slice_id": "ACI-S19",
+ "plan": ".spectra/plans/aci-s19.md",
+ "author": "orchestrator-ramza-plan-s19",
+ "checker": "atlas-s19-plan-checker",
+ "verdict": "APPROVE_WITH_CONDITIONS",
+ "method": "independent read-only code review; no commands executed",
+ "findings": [
+  {
+   "n": 1,
+   "severity": "MAJOR",
+   "summary": "failed-extraction semantics: failed paths' rows are deleted, not retained; one-sided record shape undefined",
+   "disposition": "accepted as plan condition 1"
+  },
+  {
+   "n": 2,
+   "severity": "MAJOR",
+   "summary": "candidate false positives on trivial bodies (pass, {}, unit structs) since name is a placeholder",
+   "disposition": "accepted as plan condition 2"
+  },
+  {
+   "n": 3,
+   "severity": "MAJOR",
+   "summary": "reader_lease ToolError/None-snapshot/constructor ValueError mapping and lease cleanup unspecified",
+   "disposition": "accepted as plan condition 3"
+  },
+  {
+   "n": 4,
+   "severity": "MINOR",
+   "summary": "evidence tables are (id,path,payload); SQL description inaccurate",
+   "disposition": "accepted as plan condition 4"
+  },
+  {
+   "n": 5,
+   "severity": "MAJOR",
+   "summary": "generation/snapshot ids embed absolute repo path; rebuild replay only equal at same path; stdout encoding",
+   "disposition": "accepted as plan condition 5"
+  },
+  {
+   "n": 6,
+   "severity": "MINOR",
+   "summary": "producer/configuration/schema rejection reasons need real-input tests or defensive classification",
+   "disposition": "accepted as plan condition 6"
+  },
+  {
+   "n": 7,
+   "severity": "MINOR",
+   "summary": "AC-003 'no other record for that file' false for multi-entity files",
+   "disposition": "accepted as plan condition 7"
+  },
+  {
+   "n": 8,
+   "severity": "MINOR",
+   "summary": "gap check must cover omitted comments; node lookup rule; document format/whitespace-leaf limits",
+   "disposition": "accepted as plan condition 8"
+  },
+  {
+   "n": 9,
+   "severity": "MINOR",
+   "summary": "both sides resolving to the same namespace must be rejected",
+   "disposition": "accepted as plan condition 9"
+  },
+  {
+   "n": 10,
+   "severity": "MINOR",
+   "summary": "test/doc hygiene: non-vacuous all(), README TSX table guard, 'alter table' negative, public reader attrs",
+   "disposition": "accepted as plan condition 10"
+  }
+ ]
+}

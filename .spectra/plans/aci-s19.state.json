@@ -1,0 +1,196 @@
+{
+  "schema": "ramza/plan-state.v1",
+  "plan": "aci-s19",
+  "created_at": "2026-11-03T16:21:50Z",
+  "tier": "full",
+  "phase": "DONE",
+  "phases_done": [
+    "RS",
+    "S",
+    "P",
+    "E",
+    "C",
+    "T",
+    "A",
+    "DONE"
+  ],
+  "rightsize": {
+    "score": 5,
+    "computed_tier": "full",
+    "inputs": {
+      "files_est": 12,
+      "new_dep": false,
+      "public_api": true,
+      "migration": false,
+      "security": false,
+      "novel": true,
+      "stakes": "med"
+    }
+  },
+  "refine_cycles": 0,
+  "skips": [],
+  "gates": [
+    {
+      "rubric": "complexity",
+      "total": 8,
+      "dims": {
+        "scope": 2,
+        "ambiguity": 2,
+        "dependencies": 2,
+        "risk": 2
+      },
+      "verdict": "extended",
+      "at": "2026-11-03T16:33:18Z",
+      "label": "symbol-diff"
+    },
+    {
+      "rubric": "explore",
+      "total": 79,
+      "dims": {
+        "alignment": 9,
+        "correctness": 8,
+        "maintainability": 8,
+        "performance": 7,
+        "simplicity": 7,
+        "risk": 8,
+        "innovation": 6
+      },
+      "verdict": "solid",
+      "at": "2026-11-03T16:33:18Z",
+      "label": "offline-reparse-library-cli"
+    },
+    {
+      "rubric": "explore",
+      "total": 67,
+      "dims": {
+        "alignment": 7,
+        "correctness": 8,
+        "maintainability": 6,
+        "performance": 9,
+        "simplicity": 5,
+        "risk": 3,
+        "innovation": 6
+      },
+      "verdict": "weak",
+      "at": "2026-11-03T16:33:18Z",
+      "label": "persist-fingerprints-at-index"
+    },
+    {
+      "rubric": "explore",
+      "total": 56,
+      "dims": {
+        "alignment": 6,
+        "correctness": 7,
+        "maintainability": 5,
+        "performance": 6,
+        "simplicity": 4,
+        "risk": 3,
+        "innovation": 7
+      },
+      "verdict": "weak",
+      "at": "2026-11-03T16:33:18Z",
+      "label": "graph-query-diff-op"
+    },
+    {
+      "rubric": "explore",
+      "total": 57,
+      "dims": {
+        "alignment": 5,
+        "correctness": 4,
+        "maintainability": 7,
+        "performance": 8,
+        "simplicity": 8,
+        "risk": 5,
+        "innovation": 2
+      },
+      "verdict": "weak",
+      "at": "2026-11-03T16:33:19Z",
+      "label": "raw-text-declaration-diff"
+    },
+    {
+      "rubric": "confidence",
+      "total": 80,
+      "dims": {
+        "pattern_match": 75,
+        "requirement_clarity": 82,
+        "decomposition_stability": 75,
+        "constraint_compliance": 88
+      },
+      "verdict": "VALIDATE",
+      "at": "2026-11-03T16:33:19Z",
+      "label": "symbol-diff-plan"
+    },
+    {
+      "rubric": "refine",
+      "cycle": 1,
+      "total": 4,
+      "min": 3,
+      "dims": {
+        "clarity": 4,
+        "completeness": 4,
+        "actionability": 4,
+        "efficiency": 3,
+        "testability": 5
+      },
+      "verdict": "pass",
+      "at": "2026-11-03T16:33:19Z",
+      "label": "pre-checker"
+    },
+    {
+      "rubric": "refine",
+      "cycle": 1,
+      "total": 4.2,
+      "min": 4,
+      "dims": {
+        "clarity": 4,
+        "completeness": 4,
+        "actionability": 4,
+        "efficiency": 4,
+        "testability": 5
+      },
+      "verdict": "pass",
+      "at": "2026-11-03T16:40:11Z",
+      "label": "post-checker"
+    }
+  ],
+  "amendments": [],
+  "declared_scope": [
+    "mcp-server/src/atlas_aci/query/diff*",
+    "mcp-server/tests/slices/test_s19_*.py",
+    "mcp-server/src/atlas_aci/__main__.py",
+    "mcp-server/tests/fixtures/s19/*",
+    "atlas/docs/symbol-diff.md",
+    "README.md",
+    "INTEGRATION.md",
+    "CHANGELOG.md",
+    ".spectra/plans/aci-s19.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/changes/aci-s19/*",
+    ".spectra/evidence/aci-s19/*",
+    ".spectra/state/aci-s19.execution.json",
+    ".spectra/backlog/execution.json",
+    ".spectra/backlog/order.md"
+  ],
+  "criteria_sha256": "fea6cab2657356748b092b5824a29723886e1c296d24d2ac080035b203ef64e3",
+  "critic": {
+    "author": "orchestrator-ramza-plan-s19",
+    "checker": "atlas-s19-plan-checker",
+    "at": "2026-11-03T16:40:10Z"
+  },
+  "criteria_frozen_at": "2026-11-03T16:40:11Z",
+  "scope_declared_at": "2026-11-03T16:40:11Z",
+  "drift_reports": [
+    {
+      "at": "2026-11-03T20:02:33Z",
+      "range": "worktree-vs-HEAD",
+      "files_changed": 44,
+      "uncovered": []
+    },
+    {
+      "at": "2026-11-03T20:31:06Z",
+      "range": "staged",
+      "files_changed": 46,
+      "uncovered": []
+    }
+  ]
+}
