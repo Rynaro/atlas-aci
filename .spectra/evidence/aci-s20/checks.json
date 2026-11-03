@@ -1,0 +1,118 @@
+{
+ "harness": {
+  "wrapper": "dk20.sh = docker run --rm --user 1000:1000 -e HOME=/hc -e PYTHONPATH=/ws/mcp-server/src -v <scratch>/home:/hc -v <repo>:/ws -w /ws/mcp-server atlas-aci-dev-s16",
+  "dev_image": "atlas-aci-dev-s16 sha256:783f2210c3d12ae25c567c76366b6b6dd09d4aa0c93ea1aee4fb03d8f17e859a (lock unchanged since base)"
+ },
+ "s20_contract": {
+  "exit_code": 0,
+  "summary": "7 passed",
+  "log": "s20-contract.log.gz"
+ },
+ "s20_supporting": {
+  "exit_code": 0,
+  "summary": "48 passed",
+  "log": "s20-supporting.log.gz"
+ },
+ "regression": {
+  "exit_code": 0,
+  "summary": "325 passed, 1 skipped (s19, s18 contract, s12, s11 protocol, s14 capabilities, test_server)",
+  "log": "regression.log.gz"
+ },
+ "orchestrator_rerun": {
+  "command": "dk20.sh ... test_s20_contract.py test_s20_mcp.py",
+  "exit_code": 0,
+  "summary": "35 passed"
+ },
+ "ruff": {
+  "exit_code": 0
+ },
+ "format": {
+  "exit_code": 0
+ },
+ "mypy": {
+  "exit_code": 0,
+  "summary": "no issues in 57 files"
+ },
+ "full_suite": {
+  "exit_code": 1,
+  "summary": "1 failed, 1148 passed, 10 skipped",
+  "failed": [
+   "tests/slices/test_s01_contract.py::test_call_deadline_after_initialization"
+  ],
+  "classification": "pre-existing under uid 1000 (baseline.json)",
+  "log": "full-suite.log.gz"
+ },
+ "g_producer": {
+  "exit_code": 0
+ },
+ "g_engine": {
+  "exit_code": 0
+ },
+ "g_envelope": {
+  "MINIMUM_BUDGET": 3436,
+  "COLLECTION_MINIMUM_BUDGET": 3448,
+  "FIXED_ERROR_ENVELOPE_CAP": 797,
+  "RELATIONS": [
+   "call",
+   "construct",
+   "extend",
+   "import",
+   "include",
+   "prepend",
+   "rationale_for",
+   "superclass"
+  ],
+  "source": "orchestrator check against working tree; equals base-invariants.json"
+ },
+ "production_image": {
+  "build": "docker build -t atlas-aci:s20 mcp-server",
+  "image_id": "sha256:ff50ffed9e84e39000d1241efea9f2ffd4661bf093be18253574db345bb9393a",
+  "flags": "--read-only --network none; repo and both graph roots :ro for serve/impact",
+  "scenario": "git repo pkg/ (geometry.area, geometry.legacy; shapes.Rect.size -> area; cli.main -> legacy) indexed into /a; v2 area gains scale=1 and legacy removed, indexed into /b",
+  "mcp_impact": {
+   "command": "serve --repo /repo --graph-root /b --before-graph-root /a; graph_query op=impact",
+   "is_error": false,
+   "status": "potential_impact",
+   "basis": "static_reachability",
+   "coverage": "complete",
+   "seeds": [
+    [
+     "legacy",
+     "removed",
+     "before"
+    ],
+    [
+     "area",
+     "signature",
+     "after"
+    ]
+   ],
+   "impacted": [
+    [
+     "main",
+     "before",
+     "removed",
+     1
+    ],
+    [
+     "size",
+     "after",
+     "signature",
+     1
+    ]
+   ],
+   "log": "docker-mcp-impact.jsonl.gz"
+  },
+  "client_path_key": {
+   "argument": "before_graph_root",
+   "result": "INVALID_INPUT"
+  },
+  "unconfigured": {
+   "result": "IMPACT_UNCONFIGURED",
+   "log": "docker-mcp-unconfigured.jsonl.gz"
+  },
+  "cli_parity": "atlas-aci impact exit 0; impact_id equals MCP impact_id",
+  "cli_log": "docker-cli-impact.json.gz",
+  "read_only": "sha256 inventory of both graph roots and repo identical before/after"
+ }
+}

@@ -18,6 +18,10 @@ log = structlog.get_logger()
 # exactly the class of bug a second hardcoded 200 caused).
 DEFAULT_MAX_BOUND_FIELD_ELEMENTS: int = 200
 
+# The default for Config.max_response_bytes; named so the offline `impact` CLI and the
+# server share one number (an impact envelope must be identical on both surfaces).
+DEFAULT_MAX_RESPONSE_BYTES: int = 1024 * 1024
+
 # Hardcoded skip list — overridable in instance config.
 DEFAULT_SKIP_PATTERNS: tuple[str, ...] = (
     "node_modules",
@@ -102,7 +106,7 @@ class Config:
     # for a genuinely degenerate one, as AC-H-6 requires. This is the true
     # backstop: comfortably above any well-behaved tool's worst case, so it
     # only fires when element-capping couldn't rescue the response.
-    max_response_bytes: int = 1024 * 1024
+    max_response_bytes: int = DEFAULT_MAX_RESPONSE_BYTES
 
     # Process-owned graph references; no environment/CLI precedence or durable service.
     max_graph_leases: int = 4
@@ -125,6 +129,18 @@ class Config:
     # Explicit graph storage override; independent of the writable memex.
     graph_root: Path | None = None
 
+    # ACI-S20 `graph_query op=impact`: the BEFORE snapshot is operator configuration,
+    # never a request argument (enforcement has no path rule for graph_query, and a
+    # request-supplied path would expose arbitrary repositories). Both None = impact is
+    # unconfigured. `before_repo` alone selects that repository's default namespace.
+    before_repo: Path | None = None
+    before_graph_root: Path | None = None
+    # Operator bounds on the unmetered change-set phase (entities / occurrences per side,
+    # distinct files parsed). Measured defaults: see atlas/docs/change-impact.md.
+    impact_max_diff_entities: int = 50_000
+    impact_max_diff_occurrences: int = 250_000
+    impact_max_changed_files: int = 200
+
     def __post_init__(self) -> None:
         if self.context_tokenizer is not None:
             from atlas_aci.query.context_tokens import declaration
@@ -142,7 +158,18 @@ class Config:
         ):
             if type(getattr(self, name)) is not int or getattr(self, name) <= 0:
                 raise ValueError("Retention policy must be finite positive integers: " + name)
+        for name in (
+            "impact_max_diff_entities",
+            "impact_max_diff_occurrences",
+            "impact_max_changed_files",
+        ):
+            if type(getattr(self, name)) is not int or getattr(self, name) < 0:
+                raise ValueError("Impact diff limits must be finite nonnegative integers: " + name)
         self.graph_root = self.graph_root.resolve() if self.graph_root is not None else None
+        self.before_repo = self.before_repo.resolve() if self.before_repo is not None else None
+        self.before_graph_root = (
+            self.before_graph_root.resolve() if self.before_graph_root is not None else None
+        )
         self.repo = self.repo.resolve()
         self.memex_root = self.memex_root.resolve()
         # Best-effort only (AC-H-16 finding): `serve`'s default --memex-root

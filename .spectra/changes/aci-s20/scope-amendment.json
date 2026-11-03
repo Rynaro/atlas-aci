@@ -1,0 +1,51 @@
+{
+  "slice_id": "ACI-S20",
+  "criteria_changed": false,
+  "base_commit": "59a4819b444c129832d75943bff2a5020534ee80",
+  "additional_paths": [
+    "mcp-server/src/atlas_aci/protocol/graph.py",
+    "mcp-server/src/atlas_aci/protocol/impact.py",
+    "mcp-server/src/atlas_aci/protocol/results.py",
+    "mcp-server/src/atlas_aci/server.py",
+    "mcp-server/src/atlas_aci/config.py",
+    "mcp-server/src/atlas_aci/__main__.py",
+    "mcp-server/tests/fixtures/s20/*",
+    "atlas/docs/change-impact.md",
+    "README.md",
+    "INTEGRATION.md",
+    "CHANGELOG.md"
+  ],
+  "narrowed_paths": {},
+  "reasons": {
+    "protocol/graph.py": "graph_query ops are closed: add 'impact' to request_mode op set (:676) and IMPACT_LIMITS to the integer-key check (:681); _register_impact_schemas() appends input oneOf member, operation enum value, data.anyOf member and one envelope oneOf member after _register_context_schemas() (S18 precedent). Existing members untouched (G-SCHEMA-ADDITIVE).",
+    "protocol/impact.py": "Closed IMPACT_INPUT/IMPACT_DATA schemas and validate_impact (reuses graph.validate_hop), mirroring S18 protocol/context.py.",
+    "protocol/results.py": "Add 'impact' to the FIXED_ERROR_ENVELOPE_CAP operation loop (:88; max unchanged) and an impact branch in the bounded_result validation chain (:126-139).",
+    "server.py": "Add 'impact' to the operation set (:612), IMPACT_MINIMUM_BUDGET for impact at :659, and an impact -> validate_impact branch in apply_central_bounds (:334-357). Dispatch otherwise unchanged.",
+    "config.py": "Operator-only before_repo/before_graph_root (resolved; never request-supplied) and impact_max_diff_entities/impact_max_changed_files diff-admission limits.",
+    "__main__.py": "serve --before-graph-root/--before-repo with startup same-namespace rejection; operator CLI `atlas-aci impact` sharing the library function. Not fingerprinted.",
+    "tests/fixtures/s20/*": "Only if inline fixture sources in test_s20_*.py become unreadable; otherwise unused.",
+    "atlas/docs/change-impact.md": "Operator setup, seed table, propagation relations, boundary definition and imprecision, ranking key, limits/diff admission, minimum budget, typed errors, limitations.",
+    "README.md/INTEGRATION.md/CHANGELOG.md": "Operator pointers and [Unreleased] entry; no 4-column table inside '### TSX structural navigation'."
+  },
+  "operator_decisions": {
+    "surface": "graph_query op=impact + CLI `atlas-aci impact`; before side set by operator (serve --before-graph-root [--before-repo]); request carries no paths (user decision 2026-11-03)",
+    "unconfigured": "typed error IMPACT_UNCONFIGURED",
+    "seeds": "removed(before), signature/body/unknown/added(after; one-sided unknown on its side); format/location never seed",
+    "relations": "default call,construct,superclass,include,extend,prepend; import opt-in; rationale_for excluded; direction fixed incoming",
+    "boundaries": "name-based unresolved (unresolved_ref_count semantics incl. jsx) + ambiguous counts per probed entity; coverage complete iff no reason",
+    "result": "status potential_impact, basis static_reachability, ranked impacted[] with per-path snapshot_side/snapshot_id/generation_id/changed_entity_id; envelope ids = after; content-addressed impact_id",
+    "work": "shared ImpactWork totals (no per-seed reset) + operator diff admission before load; no pagination; no cache"
+  },
+  "invariance_gates": [
+    "G-PRODUCER",
+    "G-ENGINE",
+    "G-ENVELOPE",
+    "G-SCHEMA-ADDITIVE",
+    "G-MCP",
+    "G-RO",
+    "G-DIFF",
+    "G-NOPATH"
+  ],
+  "no_speculative_docker_ci_change": true,
+  "review": ".spectra/plans/aci-s20.review.json"
+}

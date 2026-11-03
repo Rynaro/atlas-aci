@@ -41,7 +41,13 @@ async def graph_query(
             "different_tool",
         )
 
-    if mode == "structured" and args["op"] == "retrieve":
+    if mode == "structured" and args["op"] == "impact":
+        # ACI-S20: `code_graph` is the leased AFTER reader owned by dispatch; the before
+        # side is operator configuration opened (and closed) inside `serve`.
+        from atlas_aci.query.impact import serve
+
+        result = await serve(code_graph, args, config)
+    elif mode == "structured" and args["op"] == "retrieve":
         budget = args.get("max_bytes", config.max_response_bytes)
         if type(budget) is not int or not 0 <= budget <= config.max_response_bytes:
             raise ToolError("INVALID_BUDGET", "Invalid retrieval result budget.")

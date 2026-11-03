@@ -280,6 +280,17 @@ declarations were added, removed, or changed in signature or body versus only
 moved. It is read-only, never an MCP tool, and rejects unrelated or unverifiable
 snapshots. See [`atlas/docs/symbol-diff.md`](atlas/docs/symbol-diff.md).
 
+### F — Optional: explain potential change impact
+
+With the same two snapshots, `atlas-aci impact --repo R --before-graph-root B
+--after-graph-root A` (or `graph_query op=impact` on a server started with
+`serve --graph-root A --before-graph-root B`) lists the entities *potentially*
+affected by each change with a typed evidence path back to the changed symbol,
+including callers of a removed symbol from the before snapshot. It is static
+reachability only, never a breakage claim, and unresolved or ambiguous references
+are reported as incomplete coverage. The before snapshot is operator configuration;
+requests carry no paths. See [`atlas/docs/change-impact.md`](atlas/docs/change-impact.md).
+
 ---
 
 ## Step 7 — Wire your editor

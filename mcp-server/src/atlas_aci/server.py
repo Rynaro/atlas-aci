@@ -41,6 +41,7 @@ from atlas_aci.protocol.results import (
     negotiated_version,
 )
 from atlas_aci.query.admission import MINIMUM_BUDGET
+from atlas_aci.query.impact_admission import IMPACT_MINIMUM_BUDGET
 from atlas_aci.query.leases import LeaseRegistry
 from atlas_aci.query.paging import issue_pages
 from atlas_aci.tools.graph_query import graph_query
@@ -331,7 +332,13 @@ def apply_central_bounds(
             from atlas_aci.protocol.graph import validate_navigation
 
             try:
-                if arguments["op"] == "context" or (
+                if arguments["op"] == "impact":
+                    from atlas_aci.protocol.graph import validate_impact
+
+                    validate_impact(
+                        result, arguments["op"], enforcement.config.max_bound_field_elements
+                    )
+                elif arguments["op"] == "context" or (
                     (result.get("data") or {}).get("projection") == "task_context"
                 ):
                     from atlas_aci.protocol.graph import validate_context
@@ -456,6 +463,12 @@ async def dispatch_tool_call(
     enforcement.assert_read_only(name)
     enforcement.assert_rate_limit()
 
+    if name == "graph_query" and mode == "structured" and arguments["op"] == "impact":
+        # Deterministic and before any lease: no before side configured -> typed error.
+        from atlas_aci.query.impact import before_side
+
+        before_side(config)
+
     if name == "graph_query" and mode == "structured" and arguments["op"] == "context":
         from atlas_aci.query.context_limits import normalize
 
@@ -508,7 +521,8 @@ async def dispatch_tool_call(
                 raise ToolError("SNAPSHOT_MISMATCH", "Requested generation does not match.")
             if name == "search_symbol":
                 result = await search_symbol(arguments, config, enforcement, reader)
-            elif mode == "structured" and arguments["op"] == "context":
+            elif mode == "structured" and arguments["op"] in {"context", "impact"}:
+                # The dispatch ExitStack owns (and closes) the served reader.
                 result = await graph_query(
                     arguments, config, enforcement, reader, structured=structured
                 )
@@ -609,7 +623,7 @@ async def call_tool_result(
         if isinstance(arguments, dict)
         and isinstance(arguments.get("op"), str)
         and arguments.get("op")
-        in {"status", "neighborhood", "path", "page", "continue", "retrieve", "context"}
+        in {"status", "neighborhood", "path", "page", "continue", "retrieve", "context", "impact"}
         else "status"
     )
     budget = config.max_response_bytes
@@ -656,7 +670,13 @@ async def call_tool_result(
         structured=structured,
         budget=budget,
         operation=operation,
-        minimum_budget=(MINIMUM_BUDGET if operation in {"neighborhood", "path"} else 0),
+        minimum_budget=(
+            MINIMUM_BUDGET
+            if operation in {"neighborhood", "path"}
+            else IMPACT_MINIMUM_BUDGET
+            if operation == "impact"
+            else 0
+        ),
     )
 
 
