@@ -1,0 +1,22 @@
+{
+ "build_seconds": 2.2,
+ "changed_files": 500,
+ "changes": 10000,
+ "entities_per_side": 21000,
+ "files": 1000,
+ "funcs_per_file": 20,
+ "index_both_sides_seconds": 80.05,
+ "load_seconds_both": 0.487,
+ "occurrences_per_side": 41000,
+ "summary": {
+  "added": 0,
+  "body": 500,
+  "candidates": 0,
+  "format": 0,
+  "location": 9500,
+  "removed": 0,
+  "signature": 0,
+  "unchanged": 10000,
+  "unknown": 0
+ }
+}

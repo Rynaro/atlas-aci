@@ -13,6 +13,7 @@ from atlas_aci.protocol.graph import (
     STRUCTURED_VALIDATOR,
     envelope,
     validate_context,
+    validate_impact,
     validate_navigation,
     validate_page,
     validate_retrieval,
@@ -85,7 +86,16 @@ FIXED_ERROR_ENVELOPE_CAP = max(
             fixed_result("INVALID_BUDGET", mode=mode, structured=structured, operation=operation)
         )
     )
-    for operation in ("status", "neighborhood", "path", "page", "continue", "retrieve", "context")
+    for operation in (
+        "status",
+        "neighborhood",
+        "path",
+        "page",
+        "continue",
+        "retrieve",
+        "context",
+        "impact",
+    )
     for mode in ("legacy", "structured")
     for structured in (False, True)
 )
@@ -131,6 +141,8 @@ def bounded_result(
                 )
             ):
                 validate_context(payload, operation, payload["bounds"]["element_limit"])
+            elif mode == "structured" and operation == "impact":
+                validate_impact(payload, operation, payload["bounds"]["element_limit"])
             elif mode == "structured" and operation in {"neighborhood", "path"}:
                 validate_navigation(payload, operation, payload["bounds"]["element_limit"])
             elif mode == "structured" and operation in {"page", "continue"}:

@@ -1,0 +1,44 @@
+[
+  {
+    "ac_id": "AC-S20-001",
+    "test": "mcp-server/tests/slices/test_s20_contract.py::test_reverse_caller_impact",
+    "exit_code": 0,
+    "tail": "1 passed in 1.25s"
+  },
+  {
+    "ac_id": "AC-S20-002",
+    "test": "mcp-server/tests/slices/test_s20_contract.py::test_impact_reason_path",
+    "exit_code": 0,
+    "tail": "1 passed in 1.19s"
+  },
+  {
+    "ac_id": "AC-S20-003",
+    "test": "mcp-server/tests/slices/test_s20_contract.py::test_no_breakage_claim",
+    "exit_code": 0,
+    "tail": "1 passed in 1.17s"
+  },
+  {
+    "ac_id": "AC-S20-004",
+    "test": "mcp-server/tests/slices/test_s20_contract.py::test_unresolved_boundary",
+    "exit_code": 0,
+    "tail": "1 passed in 2.13s"
+  },
+  {
+    "ac_id": "AC-S20-005",
+    "test": "mcp-server/tests/slices/test_s20_contract.py::test_impact_budget",
+    "exit_code": 0,
+    "tail": "1 passed in 5.14s"
+  },
+  {
+    "ac_id": "AC-S20-006",
+    "test": "mcp-server/tests/slices/test_s20_contract.py::test_impact_replay",
+    "exit_code": 0,
+    "tail": "1 passed in 2.77s"
+  },
+  {
+    "ac_id": "AC-S20-007",
+    "test": "mcp-server/tests/slices/test_s20_contract.py::test_removed_symbol_impact",
+    "exit_code": 0,
+    "tail": "1 passed in 1.15s"
+  }
+]

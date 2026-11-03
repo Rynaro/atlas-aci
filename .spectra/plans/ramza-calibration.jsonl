@@ -89,3 +89,11 @@
 {"rubric":"confidence","total":80,"dims":{"pattern_match":75,"requirement_clarity":82,"decomposition_stability":75,"constraint_compliance":88},"verdict":"VALIDATE","at":"2026-11-03T16:33:19Z","label":"symbol-diff-plan"}
 {"rubric":"refine","cycle":1,"total":4,"min":3,"dims":{"clarity":4,"completeness":4,"actionability":4,"efficiency":3,"testability":5},"verdict":"pass","at":"2026-11-03T16:33:19Z","label":"pre-checker"}
 {"rubric":"refine","cycle":1,"total":4.2,"min":4,"dims":{"clarity":4,"completeness":4,"actionability":4,"efficiency":4,"testability":5},"verdict":"pass","at":"2026-11-03T16:40:11Z","label":"post-checker"}
+{"rubric":"complexity","total":10,"dims":{"scope":3,"ambiguity":2,"dependencies":3,"risk":2},"verdict":"human_loop","at":"2026-11-03T20:57:23Z","label":"change-impact"}
+{"rubric":"explore","total":78,"dims":{"alignment":9,"correctness":8,"maintainability":8,"performance":7,"simplicity":7,"risk":7,"innovation":6},"verdict":"solid","at":"2026-11-03T20:57:23Z","label":"mcp-op-per-seed-navigate-shared-work"}
+{"rubric":"explore","total":70,"dims":{"alignment":8,"correctness":7,"maintainability":6,"performance":9,"simplicity":5,"risk":5,"innovation":7},"verdict":"solid","at":"2026-11-03T20:57:23Z","label":"multi-source-bfs-engine"}
+{"rubric":"explore","total":68,"dims":{"alignment":4,"correctness":8,"maintainability":8,"performance":7,"simplicity":9,"risk":9,"innovation":3},"verdict":"weak","at":"2026-11-03T20:57:23Z","label":"cli-only-offline-impact"}
+{"rubric":"explore","total":52.5,"dims":{"alignment":3,"correctness":7,"maintainability":6,"performance":7,"simplicity":7,"risk":2,"innovation":5},"verdict":"weak","at":"2026-11-03T20:57:23Z","label":"client-supplied-before-paths"}
+{"rubric":"confidence","total":80,"dims":{"pattern_match":80,"requirement_clarity":80,"decomposition_stability":74,"constraint_compliance":86},"verdict":"VALIDATE","at":"2026-11-03T20:57:23Z","label":"change-impact-plan"}
+{"rubric":"refine","cycle":1,"total":4,"min":3,"dims":{"clarity":4,"completeness":4,"actionability":4,"efficiency":3,"testability":5},"verdict":"pass","at":"2026-11-03T20:57:23Z","label":"pre-checker"}
+{"rubric":"refine","cycle":1,"total":4.2,"min":4,"dims":{"clarity":4,"completeness":4,"actionability":4,"efficiency":4,"testability":5},"verdict":"pass","at":"2026-11-03T21:06:19Z","label":"post-checker"}

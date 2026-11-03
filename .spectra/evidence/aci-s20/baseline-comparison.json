@@ -1,0 +1,70 @@
+{
+ "baselines": {
+  "B0_changed_file": {
+   "explained_fraction": 0.0,
+   "false_negatives": [
+    "pkg/cli.py::main",
+    "pkg/report.py::summary",
+    "pkg/shapes.py::Rect.size"
+   ],
+   "false_positives": [
+    "pkg/geometry.py::perimeter"
+   ],
+   "precision": 0.5,
+   "predicted": [
+    "pkg/geometry.py::doubled",
+    "pkg/geometry.py::perimeter"
+   ],
+   "predicted_count": 2,
+   "recall": 0.25,
+   "true_positives": [
+    "pkg/geometry.py::doubled"
+   ],
+   "universe_size": 10
+  },
+  "B1_reverse_path": {
+   "explained_fraction": 1.0,
+   "false_negatives": [
+    "pkg/report.py::summary"
+   ],
+   "false_negatives_covered_by_boundary": {
+    "pkg/report.py::summary": [
+     "size"
+    ]
+   },
+   "false_positives": [],
+   "precision": 1.0,
+   "predicted": [
+    "pkg/cli.py::main",
+    "pkg/geometry.py::doubled",
+    "pkg/shapes.py::Rect.size"
+   ],
+   "predicted_count": 3,
+   "recall": 0.75,
+   "true_positives": [
+    "pkg/cli.py::main",
+    "pkg/geometry.py::doubled",
+    "pkg/shapes.py::Rect.size"
+   ],
+   "universe_size": 10
+  }
+ },
+ "caveats": [
+  "single hand-constructed fixture: shows mechanisms, not a population estimate",
+  "no superiority threshold is claimed; B1 recall < 1 is reported, not hidden",
+  "B1 false negatives are only 'covered' when a same-name unresolved boundary exists"
+ ],
+ "fixture_sha256": "cb0bd5f322da222e7339b17726f7d44cb6a9f73e7899c3dc07c182790cfd1ce1",
+ "labeled_unaffected": [
+  "pkg/geometry.py::perimeter",
+  "pkg/util.py::unrelated"
+ ],
+ "labels": "frozen before implementation; .spectra/evidence/aci-s20/labels.json",
+ "positives": [
+  "pkg/cli.py::main",
+  "pkg/geometry.py::doubled",
+  "pkg/report.py::summary",
+  "pkg/shapes.py::Rect.size"
+ ],
+ "slice": "ACI-S20"
+}

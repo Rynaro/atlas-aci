@@ -1,0 +1,62 @@
+{
+ "baselines": {
+  "B0": "every non-file entity (after side, plus removed before side) in a path whose bytes differ between snapshots, excluding the changed seeds",
+  "B1": "impacted[] of op=impact with default propagation"
+ },
+ "changed_seeds": {
+  "pkg/geometry.py::area": "signature",
+  "pkg/geometry.py::helper": "body",
+  "pkg/geometry.py::legacy": "removed"
+ },
+ "entity_key": "<path>::<owner chain>.<name>",
+ "expected_b0_predicted": [
+  "pkg/geometry.py::doubled",
+  "pkg/geometry.py::perimeter"
+ ],
+ "expected_b1_false_negatives_covered_by_boundary": {
+  "pkg/report.py::summary": "pkg/shapes.py::Rect.size"
+ },
+ "expected_b1_predicted": [
+  "pkg/cli.py::main",
+  "pkg/geometry.py::doubled",
+  "pkg/shapes.py::Rect.size"
+ ],
+ "fixture": {
+  "v1": {
+   "pkg/__init__.py": "",
+   "pkg/cli.py": "from .geometry import legacy\n\n\ndef main():\n    return legacy()\n",
+   "pkg/geometry.py": "def area(w, h):\n    return w * h\n\n\ndef perimeter(w, h):\n    return 2 * (w + h)\n\n\ndef helper():\n    return 1\n\n\ndef legacy():\n    return 0\n\n\ndef doubled(w, h):\n    return area(w, h) * 2\n",
+   "pkg/report.py": "def summary(r):\n    return r.size()\n",
+   "pkg/shapes.py": "from .geometry import area\n\n\nclass Rect:\n    def size(self):\n        return area(1, 2)\n",
+   "pkg/util.py": "from .geometry import perimeter\n\n\ndef unrelated():\n    return perimeter(1, 2)\n"
+  },
+  "v2": {
+   "pkg/__init__.py": "",
+   "pkg/cli.py": "from .geometry import legacy\n\n\ndef main():\n    return legacy()\n",
+   "pkg/geometry.py": "def area(w, h, scale=1):\n    return w * h * scale\n\n\ndef perimeter(w, h):\n    return 2 * (w + h)\n\n\ndef helper():\n    return 2\n\n\ndef doubled(w, h):\n    return area(w, h) * 2\n",
+   "pkg/report.py": "def summary(r):\n    return r.size()\n",
+   "pkg/shapes.py": "from .geometry import area\n\n\nclass Rect:\n    def size(self):\n        return area(1, 2)\n",
+   "pkg/util.py": "from .geometry import perimeter\n\n\ndef unrelated():\n    return perimeter(1, 2)\n"
+  }
+ },
+ "fixture_sha256": "cb0bd5f322da222e7339b17726f7d44cb6a9f73e7899c3dc07c182790cfd1ce1",
+ "frozen_before_implementation": true,
+ "label_rationale": {
+  "pkg/cli.py::main": "called legacy, which was removed (before-side evidence)",
+  "pkg/geometry.py::doubled": "same-file resolved caller of area (signature changed)",
+  "pkg/geometry.py::perimeter": "unchanged and not a caller of any changed symbol",
+  "pkg/report.py::summary": "calls r.size() on an untyped receiver: transitively depends on Rect.size; the static graph cannot resolve the receiver",
+  "pkg/shapes.py::Rect.size": "cross-file caller of area via relative import",
+  "pkg/util.py::unrelated": "calls only unchanged perimeter"
+ },
+ "truly_potentially_affected": [
+  "pkg/geometry.py::doubled",
+  "pkg/shapes.py::Rect.size",
+  "pkg/cli.py::main",
+  "pkg/report.py::summary"
+ ],
+ "unaffected": [
+  "pkg/geometry.py::perimeter",
+  "pkg/util.py::unrelated"
+ ]
+}

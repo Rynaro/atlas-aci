@@ -1,0 +1,100 @@
+{
+ "slice_id": "ACI-S20",
+ "plan": ".spectra/plans/aci-s20.md",
+ "author": "orchestrator-ramza-plan-s20",
+ "checker": "atlas-s20-plan-checker",
+ "verdict": "APPROVE_WITH_CONDITIONS",
+ "method": "independent read-only code review; no commands executed",
+ "findings": [
+  {
+   "n": 1,
+   "severity": "BLOCKER",
+   "summary": "fixture cross-file call cannot resolve: absolute imports unsupported, top-level relative imports have no package",
+   "disposition": "accepted as plan condition 1"
+  },
+  {
+   "n": 2,
+   "severity": "MAJOR",
+   "summary": "visited-node cap exceedable via per-seed min-1 and seed always counted; QueryStopped outside navigate",
+   "disposition": "accepted as plan condition 2"
+  },
+  {
+   "n": 3,
+   "severity": "MAJOR",
+   "summary": "boundary probes run raw SQL outside metering; interrupts surface as OperationalError",
+   "disposition": "accepted as plan condition 3"
+  },
+  {
+   "n": 4,
+   "severity": "MAJOR",
+   "summary": "'never under-reports' false: aliased imports recorded under local alias",
+   "disposition": "accepted as plan condition 4"
+  },
+  {
+   "n": 5,
+   "severity": "MAJOR",
+   "summary": "diff-phase bound incomplete: occurrence scan, defaults too high, deadline consumed by diff",
+   "disposition": "accepted as plan condition 5"
+  },
+  {
+   "n": 6,
+   "severity": "MAJOR",
+   "summary": "seed side undefined when both refs are null (ambiguous definition, removed without ref)",
+   "disposition": "accepted as plan condition 6"
+  },
+  {
+   "n": 7,
+   "severity": "MAJOR",
+   "summary": "IMPACT_UNCONFIGURED ordering vs after-lease acquisition; structured args only passed for context",
+   "disposition": "accepted as plan condition 7"
+  },
+  {
+   "n": 8,
+   "severity": "MAJOR",
+   "summary": "absolute path leakage via DiffUsageError/ToolError messages from before side",
+   "disposition": "accepted as plan condition 8"
+  },
+  {
+   "n": 9,
+   "severity": "MINOR",
+   "summary": "parent reconstruction edge cases; navigate is async",
+   "disposition": "accepted as plan condition 9"
+  },
+  {
+   "n": 10,
+   "severity": "MINOR",
+   "summary": "determinism: wall-clock effective_limits; probe phase lacks stop record",
+   "disposition": "accepted as plan condition 10"
+  },
+  {
+   "n": 11,
+   "severity": "MINOR",
+   "summary": "prefix admission monotonicity; minimum budget with seeds",
+   "disposition": "accepted as plan condition 11"
+  },
+  {
+   "n": 12,
+   "severity": "MINOR",
+   "summary": "AC-003 word scan must be scoped (confirmed_edge_eof exists in NAV work)",
+   "disposition": "accepted as plan condition 12"
+  },
+  {
+   "n": 13,
+   "severity": "MINOR",
+   "summary": "AC-007 partly vacuous; strengthen with before/after assertion checks",
+   "disposition": "accepted as plan condition 13"
+  },
+  {
+   "n": 14,
+   "severity": "MINOR",
+   "summary": "G-DIFF must cover dispatch-acquired after lease; append-only registration pinned by hash",
+   "disposition": "accepted as plan condition 14"
+  },
+  {
+   "n": 15,
+   "severity": "MINOR",
+   "summary": "timebox tight; cut order defined",
+   "disposition": "accepted as plan condition 15"
+  }
+ ]
+}

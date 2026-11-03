@@ -1,0 +1,73 @@
+{
+ "a_after_unresolved_main_refs": [
+  [
+   "legacy",
+   "relative_import_missing_target"
+  ]
+ ],
+ "a_relative_import_cross_file": {
+  "callers": [
+   [
+    "doubled",
+    "INFERRED"
+   ],
+   [
+    "size",
+    "INFERRED"
+   ]
+  ],
+  "outcome": "complete",
+  "stop": null
+ },
+ "b_size_refs_rows": [
+  [
+   "size",
+   "owner_has_no_member",
+   "pkg/report.py",
+   "call"
+  ]
+ ],
+ "c_ruby_ambiguous_edges": [
+  [
+   "call",
+   "AMBIGUOUS",
+   "dup_name",
+   "call"
+  ]
+ ],
+ "c_ruby_refs": [
+  [
+   "dup_name",
+   "call",
+   null
+  ]
+ ],
+ "c_ruby_unresolved_ref_count_go": 0,
+ "d_after_legacy_navigate": {
+  "nodes": 0,
+  "outcome": "no_evidence"
+ },
+ "d_after_main_assertions": [
+  {
+   "raw_target": "legacy",
+   "relation": "call",
+   "resolution": "UNRESOLVED",
+   "target_entity_id": null
+  }
+ ],
+ "d_before_legacy": {
+  "callers": [
+   "legacy",
+   "main"
+  ],
+  "hop_resolutions": [
+   "INFERRED"
+  ],
+  "outcome": "complete"
+ },
+ "diff_measure_py_fixture": {
+  "entities": 15,
+  "load_seconds": 0.0002,
+  "occurrences": 35
+ }
+}

@@ -6,6 +6,7 @@ import asyncio
 import json
 import sys
 from pathlib import Path
+from typing import Any
 
 import click
 import structlog
@@ -70,18 +71,61 @@ def cli(ctx: click.Context, log_level: str) -> None:
 )
 @click.option("--memex-root", default=None, type=click.Path(path_type=Path))
 @click.option("--max-bytes-per-call", default=8 * 1024, type=int)
+@click.option(
+    "--before-graph-root",
+    default=None,
+    type=click.Path(file_okay=False, path_type=Path),
+    help=(
+        "Graph root of the BEFORE snapshot for `graph_query op=impact` (operator-only; "
+        "never a request argument). The before repository defaults to --repo."
+    ),
+)
+@click.option(
+    "--before-repo",
+    default=None,
+    type=click.Path(exists=True, file_okay=False, path_type=Path),
+    help="Repository of the before snapshot (default: --repo); alone = its default namespace",
+)
+@click.option("--impact-max-diff-entities", default=None, type=click.IntRange(min=0))
+@click.option("--impact-max-diff-occurrences", default=None, type=click.IntRange(min=0))
+@click.option("--impact-max-changed-files", default=None, type=click.IntRange(min=0))
 def serve(
-    repo: Path, memex_root: Path | None, max_bytes_per_call: int, graph_root: Path | None = None
+    repo: Path,
+    memex_root: Path | None,
+    max_bytes_per_call: int,
+    graph_root: Path | None = None,
+    before_graph_root: Path | None = None,
+    before_repo: Path | None = None,
+    impact_max_diff_entities: int | None = None,
+    impact_max_diff_occurrences: int | None = None,
+    impact_max_changed_files: int | None = None,
 ) -> None:
     """Start the MCP server over stdio."""
+    from atlas_aci.query.impact import validate_configuration
     from atlas_aci.server import run_stdio
 
+    diff_options: dict[str, Any] = {
+        name: value
+        for name, value in (
+            ("impact_max_diff_entities", impact_max_diff_entities),
+            ("impact_max_diff_occurrences", impact_max_diff_occurrences),
+            ("impact_max_changed_files", impact_max_changed_files),
+        )
+        if value is not None
+    }
     config = Config(
         repo=repo.resolve(),
         memex_root=(memex_root or repo / ".atlas" / "memex").resolve(),
         max_bytes_per_call=max_bytes_per_call,
         graph_root=graph_root,
+        before_repo=before_repo,
+        before_graph_root=before_graph_root,
+        **diff_options,
     )
+    try:
+        validate_configuration(config)
+    except (ValueError, OSError) as exc:
+        raise click.ClickException(str(exc)) from exc
     try:
         asyncio.run(run_stdio(config))
     except (ValueError, OSError) as exc:
@@ -410,6 +454,127 @@ def diff(
         raise click.ClickException(str(exc)) from exc
     stream = click.get_binary_stream("stdout")
     stream.write(symbol_diff.canonical_bytes(change_set))
+    stream.flush()
+
+
+def _csv(value: str | None) -> list[str] | None:
+    return None if value is None else [v.strip() for v in value.split(",") if v.strip()]
+
+
+@cli.command()
+@click.option(
+    "--repo",
+    default=None,
+    type=click.Path(exists=True, file_okay=False, path_type=Path),
+    help="Repository for both sides (overridden per side by --before-repo/--after-repo)",
+)
+@click.option(
+    "--before-repo",
+    default=None,
+    type=click.Path(exists=True, file_okay=False, path_type=Path),
+    help="Repository of the before snapshot",
+)
+@click.option(
+    "--after-repo",
+    default=None,
+    type=click.Path(exists=True, file_okay=False, path_type=Path),
+    help="Repository of the after snapshot",
+)
+@_graph_root_option(
+    "--graph-root", "External graph root for both sides (default: <repo>/.atlas per side)"
+)
+@_graph_root_option("--before-graph-root", "Graph root of the before snapshot")
+@_graph_root_option("--after-graph-root", "Graph root of the after snapshot")
+@click.option("--relations", default=None, help="Comma-separated propagation relations")
+@click.option("--confidence", default=None, help="Comma-separated: EXTRACTED,INFERRED")
+@click.option("--max-bytes", default=None, type=click.IntRange(min=0))
+@click.option("--max-seeds", default=None, type=int)
+@click.option("--max-depth", default=None, type=int)
+@click.option("--max-visited-nodes", default=None, type=int)
+@click.option("--max-examined-edges", default=None, type=int)
+@click.option("--max-boundary-probes", default=None, type=int)
+@click.option("--max-vm-operations", default=None, type=int)
+@click.option("--deadline-ms", default=None, type=int)
+@click.option("--max-diff-entities", default=None, type=click.IntRange(min=0))
+@click.option("--max-diff-occurrences", default=None, type=click.IntRange(min=0))
+@click.option("--max-changed-files", default=None, type=click.IntRange(min=0))
+def impact(
+    repo: Path | None,
+    before_repo: Path | None,
+    after_repo: Path | None,
+    graph_root: Path | None,
+    before_graph_root: Path | None,
+    after_graph_root: Path | None,
+    relations: str | None,
+    confidence: str | None,
+    max_bytes: int | None,
+    max_seeds: int | None,
+    max_depth: int | None,
+    max_visited_nodes: int | None,
+    max_examined_edges: int | None,
+    max_boundary_probes: int | None,
+    max_vm_operations: int | None,
+    deadline_ms: int | None,
+    max_diff_entities: int | None,
+    max_diff_occurrences: int | None,
+    max_changed_files: int | None,
+) -> None:
+    """Explain POTENTIAL change impact of two indexed snapshots by typed reverse paths.
+
+    Same library function as `graph_query op=impact`; same canonical envelope. Static
+    reachability only: never a breakage claim. READ-ONLY: nothing is written under
+    either graph root or repository; nothing is printed on rejection (exit 1) or
+    invalid usage (exit 2).
+    """
+    from atlas_aci.query import diff as symbol_diff
+    from atlas_aci.query import impact as change_impact
+    from atlas_aci.query.impact_limits import DEFAULT_DIFF_LIMITS
+
+    first = before_repo or repo
+    second = after_repo or repo
+    if first is None or second is None:
+        raise click.UsageError("Give --repo, or both --before-repo and --after-repo.")
+    chosen = {
+        "relations": _csv(relations),
+        "confidence": _csv(confidence),
+        "max_bytes": max_bytes,
+        "max_seeds": max_seeds,
+        "max_depth": max_depth,
+        "max_visited_nodes": max_visited_nodes,
+        "max_examined_edges": max_examined_edges,
+        "max_boundary_probes": max_boundary_probes,
+        "max_vm_operations": max_vm_operations,
+        "deadline_ms": deadline_ms,
+    }
+    arguments = {k: v for k, v in chosen.items() if v is not None}
+    limits = {
+        "max_entities": max_diff_entities,
+        "max_occurrences": max_diff_occurrences,
+        "max_changed_files": max_changed_files,
+    }
+    settings = change_impact.Settings(
+        diff_limits={**DEFAULT_DIFF_LIMITS, **{k: v for k, v in limits.items() if v is not None}}
+    )
+    try:
+        envelope = change_impact.run(
+            symbol_diff.Side(first.resolve(), before_graph_root or graph_root),
+            symbol_diff.Side(second.resolve(), after_graph_root or graph_root),
+            arguments,
+            settings,
+        )
+    except symbol_diff.DiffUsageError as exc:
+        raise click.UsageError(str(exc)) from exc
+    except change_impact.ToolError as exc:
+        if exc.code in {"INVALID_INPUT", "INVALID_BUDGET"}:
+            raise click.UsageError(f"{exc.code}: {exc.message}") from exc
+        reason = getattr(exc, "reason", None)
+        raise click.ClickException(
+            f"Impact rejected: {exc.code}" + (f": {reason}" if reason else "")
+        ) from exc
+    except (ValueError, OSError) as exc:
+        raise click.ClickException(str(exc)) from exc
+    stream = click.get_binary_stream("stdout")
+    stream.write(change_impact.canonical_bytes(envelope))
     stream.flush()
 
 

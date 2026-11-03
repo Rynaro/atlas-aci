@@ -9,6 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Potential change impact through typed reverse paths (ACI-S20).** New
+  `graph_query op=impact` (closed, additive `atlas.graph.v1` operation; still
+  exactly seven MCP tools) and operator command `atlas-aci impact` share one
+  library function (`atlas_aci.query.impact`). Over two held snapshots it builds
+  the S19 change set, propagates each changed entity (removed from the before
+  graph; signature, body, added and unknown from the after graph) through bounded
+  reverse traversal under one shared work allowance, and returns ranked entities
+  that are *potentially affected* with canonical assertion-proof paths, same-name
+  unresolved/ambiguous boundaries and honest incomplete-coverage reasons. Static
+  reachability only: never a breakage claim. The before snapshot is operator
+  configuration (`serve --before-graph-root [--before-repo]`); requests carry no
+  paths. New typed errors `IMPACT_UNCONFIGURED`, `SNAPSHOT_DIFF_REJECTED`,
+  `IMPACT_DIFF_TOO_LARGE`. The indexer, generation ids and every earlier schema
+  member, envelope minimum and traversal bound are unchanged. See
+  `atlas/docs/change-impact.md`.
+
 - **Symbol and contract snapshot diff (ACI-S19).** New operator command
   `atlas-aci diff` and read-only library `atlas_aci.query.diff` compare two
   explicit, already-built snapshots (same checkout with two graph roots, or
