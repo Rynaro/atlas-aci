@@ -1,0 +1,94 @@
+{
+  "slice_id": "ACI-S16",
+  "plan": ".spectra/plans/aci-s16.md",
+  "author": "orchestrator-ramza-plan-s16",
+  "checker": "atlas-s16-plan-checker",
+  "verdict": "APPROVE_WITH_CONDITIONS",
+  "method": "independent read-only code review; no commands executed",
+  "findings": [
+    {
+      "n": 1,
+      "severity": "BLOCKER",
+      "summary": "protocol producer schema rejects SCIP fingerprint via retrieval/context bundles",
+      "disposition": "accepted as plan condition 1"
+    },
+    {
+      "n": 2,
+      "severity": "BLOCKER",
+      "summary": "all generation kind-switch sites must accept scip_import",
+      "disposition": "accepted as plan condition 2"
+    },
+    {
+      "n": 3,
+      "severity": "MAJOR",
+      "summary": "entity identity collisions for same-name symbols / multi-range definitions",
+      "disposition": "accepted as plan condition 3"
+    },
+    {
+      "n": 4,
+      "severity": "MAJOR",
+      "summary": "duplicate same-range references vs validate_outputs",
+      "disposition": "accepted as plan condition 4"
+    },
+    {
+      "n": 5,
+      "severity": "MAJOR",
+      "summary": "navigation seed ambiguity and analytics leakage",
+      "disposition": "accepted as plan condition 5"
+    },
+    {
+      "n": 6,
+      "severity": "MAJOR",
+      "summary": "declared encoding must not be a free assertion",
+      "disposition": "accepted as plan condition 6"
+    },
+    {
+      "n": 7,
+      "severity": "MAJOR",
+      "summary": "TOCTOU between validation and lock",
+      "disposition": "accepted as plan condition 7"
+    },
+    {
+      "n": 8,
+      "severity": "MAJOR",
+      "summary": "lifecycle residue: manifest keys, retained history, dependency witness",
+      "disposition": "accepted as plan condition 8"
+    },
+    {
+      "n": 9,
+      "severity": "MAJOR",
+      "summary": "producer fingerprint validator branch, importer hash, edge relation widening",
+      "disposition": "accepted as plan condition 9"
+    },
+    {
+      "n": 10,
+      "severity": "MINOR",
+      "summary": "export/import round trip",
+      "disposition": "accepted as plan condition 10"
+    },
+    {
+      "n": 11,
+      "severity": "MINOR",
+      "summary": "re-import same repo path",
+      "disposition": "accepted as plan condition 11"
+    },
+    {
+      "n": 12,
+      "severity": "MINOR",
+      "summary": "label independence",
+      "disposition": "accepted as plan condition 12"
+    },
+    {
+      "n": 13,
+      "severity": "MAJOR",
+      "summary": "decoder edge cases, bounds, lock, ruff exclude",
+      "disposition": "accepted as plan condition 13"
+    },
+    {
+      "n": 14,
+      "severity": "MINOR",
+      "summary": "capability reporting surface and all-or-nothing rejection documented",
+      "disposition": "accepted as plan condition 14"
+    }
+  ]
+}

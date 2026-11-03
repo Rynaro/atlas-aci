@@ -35,7 +35,7 @@ from atlas_aci.extractors import rust, tsx
 from atlas_aci.indexing import extraction_cache as xc
 from atlas_aci.indexing import retrieval as ret
 from atlas_aci.label_propagation import label_propagation
-from atlas_aci.providers import python_imports
+from atlas_aci.providers import python_imports, scip
 from atlas_aci.resolvers import dependencies as dep
 from atlas_aci.storage import evidence as ev
 from atlas_aci.storage import snapshots as snap
@@ -1034,7 +1034,12 @@ class CodeGraph:
                     else {"atlas-generation.v2", "atlas-generation.v3", "atlas-generation.v4"}
                 )
                 or inputs.get("kind")
-                not in ({"build", "import"} if legacy else {"build", "import", "legacy_conversion"})
+                not in (
+                    {"build", "import"}
+                    if legacy
+                    else {"build", "import", "legacy_conversion"}
+                    | ({"scip_import"} if epoch == "9" else set())
+                )
                 or inputs.get("repository") != str(self.repo)
                 or inputs.get("schema") != expected_schema
                 or type(inputs["schema"]["epoch"]) is not int
@@ -1066,7 +1071,7 @@ class CodeGraph:
                 common.add("observation_digest")
                 observations = self._observation_records(
                     conn,
-                    require_current=inputs["kind"] == "build"
+                    require_current=inputs["kind"] in {"build", "scip_import"}
                     or inputs["format"] != "atlas-generation.v5"
                     or inputs["retrieval"]["coverage"]["source_policy"] == "import",
                 )
@@ -1077,7 +1082,7 @@ class CodeGraph:
                 source = inputs.get("snapshot")
                 if not isinstance(source, dict):
                     return None
-                if inputs["kind"] == "build":
+                if inputs["kind"] in {"build", "scip_import"}:
                     if (
                         set(source) != {"state", "id", "manifest_sha256"}
                         or source["state"] != "available"
@@ -1100,7 +1105,7 @@ class CodeGraph:
                 common.add("retrieval")
                 policy = (
                     "available"
-                    if inputs["kind"] == "build"
+                    if inputs["kind"] in {"build", "scip_import"}
                     else "import"
                     if inputs["kind"] == "import"
                     else "legacy_source"
@@ -1116,9 +1121,24 @@ class CodeGraph:
                     retrieval_documents = ret.stores(conn, inputs["retrieval"])
                     if retain_observations:
                         self._acquisition_retrieval_documents = retrieval_documents
-            if inputs["kind"] == "build":
-                if set(inputs) != common | {"source_hashes", "configuration", "producer"}:
+            if inputs["kind"] in {"build", "scip_import"}:
+                scip_import = inputs["kind"] == "scip_import"
+                if inputs["format"] != "atlas-generation.v5" and scip_import:
                     return None
+                if set(inputs) != common | {"source_hashes", "configuration", "producer"} | (
+                    {"scip"} if scip_import else set()
+                ):
+                    return None
+                if scip_import:
+                    block = scip.validate_block(inputs["scip"])
+                    if (
+                        conn.execute(
+                            "SELECT 1 FROM producers WHERE id=?",
+                            (ev.producer(scip.block_fingerprint(block))["id"],),
+                        ).fetchone()
+                        is None
+                    ):
+                        return None
                 config = inputs["configuration"]
                 if (
                     not valid_producer(inputs["producer"])
@@ -1876,7 +1896,11 @@ class CodeGraph:
             ]
         )
         published = self._observation_records(self.db, validate=False)
-        coverage = self._read_coverage(self, inputs) if inputs["kind"] == "build" else None
+        coverage = (
+            self._read_coverage(self, inputs)
+            if inputs["kind"] in {"build", "scip_import"}
+            else None
+        )
         histories = {r["id"]: r for r in published if r["type"] == "history"}
         observations = {r["path"]: r for r in published if r["type"] == "observation"}
         fact_paths = {
@@ -2050,6 +2074,47 @@ class CodeGraph:
             },
         }
 
+    @staticmethod
+    def _scip_status(conn: sqlite3.Connection, block: dict[str, Any]) -> dict[str, Any]:
+        """Operator-visible SCIP import provenance. Counts are derived from published rows."""
+
+        def count(sql: str) -> int:
+            return cast("int", conn.execute(sql).fetchone()[0])
+
+        scip_symbols = "FROM symbols WHERE kind LIKE 'scip\\_%' ESCAPE '\\'"
+        references = "FROM refs WHERE relation='reference'"
+        edges = "FROM edges WHERE relation='reference'"
+        return {
+            "format": scip.STATUS_FORMAT,
+            "kind": "scip",
+            "producer": dict(block["tool"]),
+            "base_generation_id": block["base_generation_id"],
+            "schema_sha256": block["schema_sha256"],
+            "index_sha256": block["index_sha256"],
+            "manifest_sha256": block["manifest_sha256"],
+            "importer_sha256": block["importer_sha256"],
+            "position_encoding": block["position_encoding"],
+            "counts": {
+                "documents": count(
+                    f"SELECT COUNT(*) FROM (SELECT path {scip_symbols} "
+                    f"UNION SELECT path {references})"
+                ),
+                "definitions": count(f"SELECT COUNT(*) {scip_symbols}"),
+                "references": count(f"SELECT COUNT(*) {references}"),
+                "resolved_references": count(f"SELECT COUNT(*) {edges} AND confidence='EXTRACTED'"),
+                "ambiguous_references": count(
+                    f"SELECT COUNT(*) {edges} AND confidence='AMBIGUOUS'"
+                ),
+                "unresolved_references": count(
+                    f"SELECT COUNT(*) {references} AND unresolved_reason IS NOT NULL"
+                ),
+            },
+            "limitations": [
+                {"name": name, "reason": reason}
+                for name, reason in sorted(scip.LIMITATIONS.items())
+            ],
+        }
+
     def status(self) -> dict[str, Any]:
         """Canonical operator snapshot: one read-only lease and one sidecar read."""
         from atlas_aci.enforcement import ToolError
@@ -2061,6 +2126,7 @@ class CodeGraph:
         coverage = None
         fact_paths: set[str] = set()
         published = []
+        semantic_imports: list[dict[str, Any]] = []
         try:
             with self.reader_lease() as reader:
                 generation = reader.generation_id
@@ -2077,7 +2143,9 @@ class CodeGraph:
                 ).fetchone()
                 token = row[0] if row and re.fullmatch(r"[0-9a-f]{64}", row[0]) else None
                 published = reader._observation_records(reader.db)
-                if inputs["kind"] == "build" and token is not None:
+                if inputs["kind"] == "scip_import":
+                    semantic_imports.append(self._scip_status(reader.db, inputs["scip"]))
+                if inputs["kind"] in {"build", "scip_import"} and token is not None:
                     coverage = self._read_coverage(reader, inputs)
                 attempt, problem = self._read_attempt()
         except ToolError:
@@ -2211,6 +2279,7 @@ class CodeGraph:
             "format": "atlas-status.v1",
             "generation_id": generation,
             "runtime": runtime,
+            "semantic_imports": semantic_imports,
             "indexed": {
                 "configuration": inputs.get("configuration"),
                 "capabilities": coverage["capabilities"] if coverage else None,
@@ -2270,7 +2339,7 @@ class CodeGraph:
         original_format = inputs["format"]
         inputs = {**inputs, "format": "atlas-generation.v5"}
         inputs["observation_digest"] = self._status_hash(self._observation_records(conn))
-        if inputs["kind"] == "build":
+        if inputs["kind"] in {"build", "scip_import"}:
             pointer = inputs.get("snapshot")
             ev.require(
                 isinstance(pointer, dict) and pointer.get("state") == "available",
@@ -2477,9 +2546,13 @@ class CodeGraph:
                             self._untrusted_modern_predecessor = predecessor_data[0].get(
                                 "format"
                             ) in {"atlas-generation.v4", "atlas-generation.v5"}
-                        self._proof_predecessor_records = list(
-                            ev.records(previous)
-                        ) + self._projection_records(previous)
+                        # SCIP facts (ACI-S16) are derived from an external artifact: a later
+                        # parse failure must never retain them as stale tree-sitter history.
+                        full = list(ev.records(previous)) + self._projection_records(previous)
+                        dropped = scip.scip_record_ids(full)
+                        self._proof_predecessor_records = [
+                            r for r in full if r["id"] not in dropped
+                        ]
                         self._proof_predecessor_observations = {
                             r["path"]: r
                             for r in self._observation_records(previous)
@@ -2566,6 +2639,214 @@ class CodeGraph:
                 conn.close()
             for path in (tmp_path, Path(str(tmp_path) + "-journal")):
                 path.unlink(missing_ok=True)
+
+    # ---- Official SCIP import (operator CLI only; never an MCP tool) ----
+
+    def import_scip(self, index_path: Path, manifest_path: Path) -> dict[str, Any]:
+        """Publish a derived ``scip_import`` generation from the current ``build`` generation.
+
+        Every check that can reject the submission (decode bounds, producer allow-list,
+        manifest, hashes, document set, snapshot identity, positions) completes before
+        the writer lock is taken and before any staging file exists. The base generation
+        is then re-verified under the lock, so a rejection leaves the published graph
+        byte-identical and a concurrent publication aborts the import instead of being
+        silently overwritten. Nothing runs a compiler.
+        """
+        from atlas_aci.enforcement import ToolError
+
+        if self.read_only:
+            raise RuntimeError("SCIP import requires a writable graph")
+        submission = scip.load_submission(index_path, manifest_path)
+        try:
+            with self.reader_lease() as reader:
+                data = reader._generation_data(reader.db, _check_retrieval=False)
+                if data is None:
+                    raise ValueError("The published graph is not a complete generation")
+                inputs, base_id = data
+                if inputs.get("format") != "atlas-generation.v5" or inputs["schema"]["epoch"] != 9:
+                    raise ValueError(
+                        "SCIP import needs a native epoch-9 generation; run "
+                        f"`atlas-aci index --repo {self.repo}` first"
+                    )
+                if inputs["kind"] == "scip_import":
+                    if scip.same_import(inputs["scip"], submission):
+                        return {
+                            "status": "unchanged",
+                            "generation_id": base_id,
+                            "base_generation_id": inputs["scip"]["base_generation_id"],
+                            "index_sha256": submission.index_sha256,
+                            "manifest_sha256": submission.manifest_sha256,
+                        }
+                    raise ValueError(
+                        "The published generation already carries a different SCIP import; run "
+                        f"`atlas-aci index --repo {self.repo}` to rebuild from source first"
+                    )
+                if inputs["kind"] != "build":
+                    raise ValueError(
+                        f"SCIP import needs a `build` generation, not {inputs['kind']!r}; run "
+                        f"`atlas-aci index --repo {self.repo}` first"
+                    )
+                if reader._source_lease is None:
+                    raise ValueError("The published graph has no authenticated source snapshot")
+                coverage = self._read_coverage(reader, inputs)
+                if coverage is None:
+                    raise ValueError("The published generation has no valid coverage snapshot")
+                row = reader.db.execute(
+                    "SELECT value FROM manifest WHERE key='diagnostic_publication_token'"
+                ).fetchone()
+                base_token = row[0] if row else None
+                lease = reader._source_lease
+                plan = scip.plan_import(
+                    submission,
+                    current=lease.current,
+                    observations={
+                        r["path"]: r
+                        for r in reader._observation_records(reader.db, validate=False)
+                        if r["type"] == "observation"
+                    },
+                    read_source=lease.read,
+                )
+        except ToolError as exc:
+            raise ValueError(
+                f"No complete published graph under {self.atlas_dir}; run "
+                f"`atlas-aci index --repo {self.repo}` first"
+            ) from exc
+        block = scip.import_block(submission, base_id)
+        with self._writer_lock():
+            if self._publication_base() != (base_id, base_token):
+                raise ValueError(
+                    "The published generation changed during import; nothing was published. "
+                    "Retry the import."
+                )
+            return self._publish_scip(plan, block, inputs, coverage, submission)
+
+    def _publish_scip(
+        self,
+        plan: scip.Plan,
+        block: dict[str, Any],
+        base: dict[str, Any],
+        coverage: dict[str, Any],
+        submission: scip.Submission,
+    ) -> dict[str, Any]:
+        """Stage, publish and atomically replace; mirrors `_build_atomic`'s sequence."""
+        tmp_path = self._stage_path()
+        conn = None
+        builder = None
+        predecessor = None
+        try:
+            builder = snap.Builder(self.atlas_dir)
+            previous = sqlite3.connect(self.db_path.as_uri() + "?mode=ro", uri=True)
+            previous.row_factory = sqlite3.Row
+            try:
+                data = self._generation_data(previous)
+                ev.require(
+                    data is not None and data[0] == base, "base generation changed under the lock"
+                )
+                pointer = base["snapshot"]
+                predecessor = snap.acquire(
+                    self.atlas_dir,
+                    pointer["id"],
+                    repository=self.repo,
+                    expected=self._snapshot_binding(previous),
+                )
+                ev.require(
+                    all(
+                        predecessor.manifest["context"][key] == value
+                        for key, value in self._snapshot_context(base).items()
+                    ),
+                    "base source context",
+                )
+                conn = sqlite3.connect(tmp_path)
+                conn.row_factory = sqlite3.Row
+                previous.backup(conn)
+            finally:
+                previous.close()
+            for item, path in plan.records:
+                ev.put(conn, item, path)
+            for table, rows in (
+                ("symbols", plan.symbols),
+                ("refs", plan.refs),
+                ("edges", plan.edges),
+            ):
+                for values in rows:
+                    conn.execute(
+                        f"INSERT INTO {table}({','.join(values)}) "
+                        f"VALUES ({','.join('?' for _ in values)})",
+                        tuple(values.values()),
+                    )
+            self._validate_evidence_projections(conn)
+            dep.validate_outputs(conn)
+            try:
+                dep.snapshot(conn)
+                witness = dep.witness(conn, base)
+                conn.execute(
+                    "INSERT OR REPLACE INTO manifest(key,value) VALUES (?,?)",
+                    (dep.KEY, ev.canonical(witness)),
+                )
+            except (ValueError, TypeError, KeyError):
+                conn.execute("DELETE FROM manifest WHERE key=?", (dep.KEY,))
+            for current in predecessor.manifest["current"]:
+                if predecessor.bindings.get((current["path"], current["sha256"])) is True:
+                    builder.add(predecessor.read(current["path"], current["sha256"]))
+            context = {
+                **self._snapshot_context(base),
+                "identity": predecessor.manifest["context"]["identity"],
+            }
+            snapshot_id = builder.publish(context, self._snapshot_binding(conn), predecessor)
+            generation_id = self._store_generation(
+                conn,
+                {
+                    "format": "atlas-generation.v4",
+                    "kind": "scip_import",
+                    "repository": base["repository"],
+                    "schema": base["schema"],
+                    "configuration": base["configuration"],
+                    "producer": base["producer"],
+                    "snapshot": {
+                        "state": "available",
+                        "id": snapshot_id,
+                        "manifest_sha256": snapshot_id,
+                    },
+                    "source_hashes": base["source_hashes"],
+                    "observation_digest": base["observation_digest"],
+                    "scip": block,
+                },
+            )
+            conn.execute(
+                "INSERT OR REPLACE INTO manifest(key,value) VALUES ('coverage_snapshot',?)",
+                (self._canonical_generation({**coverage, "generation_id": generation_id}),),
+            )
+            self._new_publication_token(conn)
+            conn.commit()
+            if self._generation_data(conn) is None:
+                raise RuntimeError("Staging did not produce a complete generation")
+            conn.close()
+            conn = None
+            self._close_db()
+            os.replace(tmp_path, self.db_path)
+            builder.published = True
+            try:
+                snap.retain(self.atlas_dir, snapshot_id)
+            except (OSError, ValueError):
+                log.warning("source_snapshot_prune_failed")
+            return {
+                "status": "imported",
+                "generation_id": generation_id,
+                "base_generation_id": block["base_generation_id"],
+                "snapshot_id": snapshot_id,
+                "index_sha256": submission.index_sha256,
+                "manifest_sha256": submission.manifest_sha256,
+                **plan.counts,
+            }
+        finally:
+            if predecessor is not None:
+                predecessor.close()
+            if builder is not None:
+                builder.close()
+            if conn is not None:
+                conn.close()
+            for leftover in (tmp_path, Path(str(tmp_path) + "-journal")):
+                leftover.unlink(missing_ok=True)
 
     def _run_build(
         self, conn: sqlite3.Connection, get_parser: Any, since: str | None
@@ -4542,9 +4823,14 @@ class CodeGraph:
         remain in `edges` and are still returned in full by
         `callers_of`/`subclasses_of` (D4a, AC-A1-2/AC-A1-5 preserved).
         """
+        # Restricted to the structural relations: SCIP `reference` edges (ACI-S16)
+        # are not calls, so they never enter degree or community analytics.
+        relations = sorted(KNOWN_EDGE_RELATIONS)
         rows = self.db.execute(
             "SELECT * FROM edges WHERE confidence IN ('EXTRACTED', 'INFERRED') "
-            "ORDER BY source_path, source_line, source_col, callee_name"
+            f"AND relation IN ({','.join('?' for _ in relations)}) "
+            "ORDER BY source_path, source_line, source_col, callee_name",
+            relations,
         ).fetchall()
         return [self._edge_row_to_dict(r) for r in rows]
 
@@ -4667,8 +4953,11 @@ class CodeGraph:
         shared by `god_nodes()`/`communities()`'s `ambiguous_edges_excluded`
         field (AC-A2-3). Independent of `confident_edges()` on purpose: it
         counts what was WITHHELD, not a property of what was analyzed."""
+        relations = sorted(KNOWN_EDGE_RELATIONS)
         row = self.db.execute(
-            "SELECT COUNT(*) FROM edges WHERE confidence = 'AMBIGUOUS'"
+            "SELECT COUNT(*) FROM edges WHERE confidence = 'AMBIGUOUS' "
+            f"AND relation IN ({','.join('?' for _ in relations)})",
+            relations,
         ).fetchone()
         return cast(int, row[0])
 
@@ -4676,8 +4965,11 @@ class CodeGraph:
         """The resolved `kind` of an edge's target endpoint. `target_line`
         (`_resolve_edges`) is already the target symbol's exact
         `line_start` — an exact-match lookup, no range/ambiguity risk."""
+        # Tree-sitter targets only (never a same-spelled SCIP definition), and a
+        # fixed order so the answer cannot depend on row insertion.
         row = self.db.execute(
-            "SELECT kind FROM symbols WHERE path = ? AND line_start = ? AND name = ? LIMIT 1",
+            "SELECT kind FROM symbols WHERE path = ? AND line_start = ? AND name = ? "
+            "AND kind NOT LIKE 'scip\\_%' ESCAPE '\\' ORDER BY id LIMIT 1",
             (target["path"], target["line"], target["name"]),
         ).fetchone()
         return row["kind"] if row is not None else None
@@ -5616,7 +5908,15 @@ class CodeGraph:
                 assertions = [
                     assertion
                     for assertion in by_evidence.get(links["evidence_id"], [])
-                    if assertion["relation"] == row["relation"]
+                    if (
+                        assertion["relation"] == row["relation"]
+                        # SCIP: one occurrence range may carry several symbols, each its
+                        # own raw reference; match the assertion by symbol spelling.
+                        and (
+                            row["relation"] != ev.SCIP_RELATION
+                            or assertion["raw_target"] == row["callee_name"]
+                        )
+                    )
                     or (row["relation"] == "call" and assertion["relation"] == "construct")
                 ]
                 ev.require(bool(assertions), "unrepresented raw reference")

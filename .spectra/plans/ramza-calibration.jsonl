@@ -75,3 +75,9 @@
 {"rubric":"explore","total":55,"dims":{"alignment":5,"correctness":3,"maintainability":7,"performance":9,"simplicity":8,"risk":3,"innovation":3},"verdict":"weak","at":"2026-11-02T22:20:10Z","label":"jsx-as-unresolved-call"}
 {"rubric":"confidence","total":83.75,"dims":{"pattern_match":85,"requirement_clarity":85,"decomposition_stability":80,"constraint_compliance":85},"verdict":"VALIDATE","at":"2026-11-02T22:20:10Z","label":"tsx-plan"}
 {"rubric":"refine","cycle":1,"total":4.2,"min":4,"dims":{"clarity":4,"completeness":4,"actionability":4,"efficiency":4,"testability":5},"verdict":"pass","at":"2026-11-02T22:25:52Z","label":"post-checker-plan"}
+{"rubric":"complexity","total":10,"dims":{"scope":3,"ambiguity":2,"dependencies":3,"risk":2},"verdict":"human_loop","at":"2026-11-02T23:40:10Z","label":"scip-import"}
+{"rubric":"explore","total":80.5,"dims":{"alignment":9,"correctness":9,"maintainability":7,"performance":8,"simplicity":6,"risk":8,"innovation":7},"verdict":"solid","at":"2026-11-02T23:40:10Z","label":"wire-decoder-derived-generation"}
+{"rubric":"explore","total":69,"dims":{"alignment":6,"correctness":8,"maintainability":8,"performance":8,"simplicity":7,"risk":5,"innovation":4},"verdict":"weak","at":"2026-11-02T23:40:10Z","label":"runtime-protobuf-dependency"}
+{"rubric":"explore","total":65,"dims":{"alignment":7,"correctness":7,"maintainability":6,"performance":8,"simplicity":5,"risk":4,"innovation":7},"verdict":"weak","at":"2026-11-02T23:40:10Z","label":"traversable-reference-now"}
+{"rubric":"confidence","total":77.5,"dims":{"pattern_match":75,"requirement_clarity":85,"decomposition_stability":70,"constraint_compliance":80},"verdict":"VALIDATE","at":"2026-11-02T23:40:10Z","label":"scip-plan"}
+{"rubric":"refine","cycle":1,"total":4,"min":3,"dims":{"clarity":4,"completeness":4,"actionability":4,"efficiency":3,"testability":5},"verdict":"pass","at":"2026-11-03T13:55:08Z","label":"post-checker"}

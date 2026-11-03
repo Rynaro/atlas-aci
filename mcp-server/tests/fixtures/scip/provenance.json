@@ -1,0 +1,27 @@
+{
+ "artifact_sha256": "b1cedcc22c4af4faa1867dfa1b0fd63eccc6551857ffa2e4753e34635108f31f",
+ "bindings": {
+  "generator": "grpcio-tools==1.85.1 (protoc gencode 7.35.1)",
+  "scip_pb2_sha256": "a961643f8ad1f537f70d759eb7473e179e773f92d873caad2efbafe9e1136615"
+ },
+ "manifest_sha256": "4949f5038cadd0c125ed888b94d9b5cf0c0f4312bc9eb90913d31c5ce9f4a214",
+ "node_image": "node@sha256:4b150b48b4116e2a22f2c39cc27025fbf4f153e2078fd3b14d159fdb5c7279da",
+ "producer": {
+  "name": "@sourcegraph/scip-typescript",
+  "package_json_sha256": "f7c3fd9cc981a4baf1d164c6f3ac58efda9fc3398eb9dd39f279608f3dc6e46d",
+  "package_lock_sha256": "d780b8c41d75f862261590776006be73aef960be2f2cef4786fff18d3b20fe52",
+  "typescript": "5.9.3",
+  "version": "0.4.0"
+ },
+ "schema": {
+  "commit": "9d5796159c97c3b107355c424f6c06fb1a0ea01c",
+  "repository": "https://github.com/scip-code/scip",
+  "scip_proto_sha256": "b855eb9abdb3fe7f07600ee92f24a6c40f75fceef37136ccdc6844b300936a31",
+  "tag": "v0.6.1"
+ },
+ "sources": {
+  "src/greeting.ts": "76ca9af42ed3afde2e592a091d63035005418d837ab5934506f4820a2982d04a",
+  "src/main.ts": "02c4a7c53703fe9bb811826186291397665757833fb571ad2e048375c38e136e",
+  "src/windows.ts": "0297718f672887b9ae73e494965f7949d4c7b7e8efc6a34a12506cde67d66736"
+ }
+}

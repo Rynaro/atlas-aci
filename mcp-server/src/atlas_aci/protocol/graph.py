@@ -172,6 +172,23 @@ PRODUCER = obj(
     }
 )
 PRODUCER["required"] = ["codegraph_sha256", "queries_sha256", "packages"]
+# ACI-S16: the SCIP producer fingerprint is a second, closed shape. Evidence records
+# (hence retrieval/context bundles) may carry it; the generation-level producer in
+# status data stays the tree-sitter PRODUCER.
+SCIP_PRODUCER = obj(
+    {
+        "scip": obj(
+            {
+                "tool": obj({"name": STRING, "version": STRING}),
+                "schema_sha256": HASH,
+                "index_sha256": HASH,
+                "manifest_sha256": HASH,
+                "position_encoding": {"enum": sorted(ev.SCIP_ENCODINGS)},
+                "importer_sha256": HASH,
+            }
+        )
+    }
+)
 CAPABILITIES = obj(
     {
         "representation": {"const": "bounded_projection"},
@@ -347,7 +364,7 @@ RECORDS = {
             "type": {"const": "producer"},
             "id": HASH,
             "identity_basis": {"enum": ["parsed", "legacy_metadata", "legacy_unavailable"]},
-            "fingerprint": nullable(PRODUCER),
+            "fingerprint": {"anyOf": [PRODUCER, SCIP_PRODUCER, {"type": "null"}]},
         }
     ),
 }

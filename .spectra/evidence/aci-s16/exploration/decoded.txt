@@ -1,0 +1,52 @@
+{
+ "tool_info": {
+  "name": "scip-typescript",
+  "version": "0.4.0"
+ },
+ "project_root": "file:///x/proj",
+ "text_document_encoding": "UTF8"
+}
+DOC src/greeting.ts None enc= None occ= 14 sym= 8
+   [0, 0, 0] scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/ roles= 1 None enc_range= [1, 0, 4, 0]
+   [1, 17, 23] scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/Pessoa# roles= 1 None enc_range= [1, 0, 40]
+   [1, 26, 30] scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/Pessoa#nome. roles= 1 None enc_range= None
+   [2, 13, 18] scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/emoji. roles= 1 None enc_range= None
+   [2, 43, 51] scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/`saudação`(). roles= 1 None enc_range= [2, 27, 107]
+   [2, 52, 53] scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/`saudação`().(p) roles= 1 None enc_range= None
+   [2, 55, 61] scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/Pessoa# roles= 0 None enc_range= None
+   [2, 87, 88] scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/`saudação`().(p) roles= 0 None enc_range= None
+   [2, 89, 93] scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/Pessoa#nome. roles= 0 None enc_range= None
+   [2, 97, 102] scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/emoji. roles= 0 None enc_range= None
+   [3, 13, 17] scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/`Café`# roles= 1 None enc_range= [3, 0, 74]
+   [3, 20, 24] scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/`Café`#brew(). roles= 1 None enc_range= [3, 20, 72]
+   [3, 44, 52] scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/`saudação`(). roles= 0 None enc_range= None
+   [3, 55, 59] scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/Pessoa#nome. roles= 0 None enc_range= None
+  SYM scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/ None None []
+  SYM scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/Pessoa# None None []
+  SYM scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/Pessoa#nome. None None []
+  SYM scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/emoji. None None []
+  SYM scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/`saudação`(). None None []
+  SYM scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/`saudação`().(p) None None []
+  SYM scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/`Café`# None None []
+  SYM scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/`Café`#brew(). None None []
+DOC src/main.ts None enc= None occ= 16 sym= 3
+   [0, 0, 0] scip-typescript npm s16-fixture 1.0.0 src/`main.ts`/ roles= 1 None enc_range= [0, 0, 4, 0]
+   [0, 9, 17] scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/`saudação`(). roles= 0 None enc_range= None
+   [0, 19, 23] scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/`Café`# roles= 0 None enc_range= None
+   [0, 30, 36] scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/Pessoa# roles= 0 None enc_range= None
+   [0, 44, 56] scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/ roles= 0 None enc_range= None
+   [1, 6, 13] scip-typescript npm s16-fixture 1.0.0 src/`main.ts`/visitor. roles= 1 None enc_range= None
+   [1, 15, 21] scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/Pessoa# roles= 0 None enc_range= None
+   [1, 26, 30] scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/Pessoa#nome. roles= 0 None enc_range= None
+   [2, 6, 9] scip-typescript npm s16-fixture 1.0.0 src/`main.ts`/cup. roles= 1 None enc_range= None
+   [2, 16, 20] scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/`Café`# roles= 0 None enc_range= None
+   [3, 0, 7] scip-typescript npm typescript 5.9.3 lib/`lib.dom.d.ts`/console. roles= 0 None enc_range= None
+   [3, 8, 11] scip-typescript npm typescript 5.9.3 lib/`lib.dom.d.ts`/Console#log(). roles= 0 None enc_range= None
+   [3, 12, 20] scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/`saudação`(). roles= 0 None enc_range= None
+   [3, 21, 28] scip-typescript npm s16-fixture 1.0.0 src/`main.ts`/visitor. roles= 0 None enc_range= None
+   [3, 31, 34] scip-typescript npm s16-fixture 1.0.0 src/`main.ts`/cup. roles= 0 None enc_range= None
+   [3, 35, 39] scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/`Café`#brew(). roles= 0 None enc_range= None
+  SYM scip-typescript npm s16-fixture 1.0.0 src/`main.ts`/ None None []
+  SYM scip-typescript npm s16-fixture 1.0.0 src/`main.ts`/visitor. None None []
+  SYM scip-typescript npm s16-fixture 1.0.0 src/`main.ts`/cup. None None []
+external 0

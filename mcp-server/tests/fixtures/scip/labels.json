@@ -1,0 +1,779 @@
+{
+ "artifact_sha256": "b1cedcc22c4af4faa1867dfa1b0fd63eccc6551857ffa2e4753e34635108f31f",
+ "counts": {
+  "definitions": 17,
+  "documents": 3,
+  "external_references": 2,
+  "references": 24,
+  "unicode_rows": 20
+ },
+ "definitions": [
+  {
+   "codepoint_column": 0,
+   "end_byte": 0,
+   "kind": "namespace",
+   "line": 1,
+   "name": "greeting.ts",
+   "path": "src/greeting.ts",
+   "range": [
+    0,
+    0,
+    0
+   ],
+   "start_byte": 0,
+   "symbol": "scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/",
+   "text": "",
+   "unicode": false,
+   "utf16_column": 0,
+   "utf8_byte_column": 0
+  },
+  {
+   "codepoint_column": 17,
+   "end_byte": 89,
+   "kind": "type",
+   "line": 2,
+   "name": "Pessoa",
+   "path": "src/greeting.ts",
+   "range": [
+    1,
+    17,
+    23
+   ],
+   "start_byte": 83,
+   "symbol": "scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/Pessoa#",
+   "text": "Pessoa",
+   "unicode": false,
+   "utf16_column": 17,
+   "utf8_byte_column": 17
+  },
+  {
+   "codepoint_column": 26,
+   "end_byte": 96,
+   "kind": "term",
+   "line": 2,
+   "name": "nome",
+   "path": "src/greeting.ts",
+   "range": [
+    1,
+    26,
+    30
+   ],
+   "start_byte": 92,
+   "symbol": "scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/Pessoa#nome.",
+   "text": "nome",
+   "unicode": false,
+   "utf16_column": 26,
+   "utf8_byte_column": 26
+  },
+  {
+   "codepoint_column": 13,
+   "end_byte": 125,
+   "kind": "term",
+   "line": 3,
+   "name": "emoji",
+   "path": "src/greeting.ts",
+   "range": [
+    2,
+    13,
+    18
+   ],
+   "start_byte": 120,
+   "symbol": "scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/emoji.",
+   "text": "emoji",
+   "unicode": false,
+   "utf16_column": 13,
+   "utf8_byte_column": 13
+  },
+  {
+   "codepoint_column": 42,
+   "end_byte": 162,
+   "kind": "method",
+   "line": 3,
+   "name": "saudação",
+   "path": "src/greeting.ts",
+   "range": [
+    2,
+    43,
+    51
+   ],
+   "start_byte": 152,
+   "symbol": "scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/`saudação`().",
+   "text": "saudação",
+   "unicode": true,
+   "utf16_column": 43,
+   "utf8_byte_column": 45
+  },
+  {
+   "codepoint_column": 51,
+   "end_byte": 164,
+   "kind": "parameter",
+   "line": 3,
+   "name": "p",
+   "path": "src/greeting.ts",
+   "range": [
+    2,
+    52,
+    53
+   ],
+   "start_byte": 163,
+   "symbol": "scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/`saudação`().(p)",
+   "text": "p",
+   "unicode": true,
+   "utf16_column": 52,
+   "utf8_byte_column": 56
+  },
+  {
+   "codepoint_column": 13,
+   "end_byte": 238,
+   "kind": "type",
+   "line": 4,
+   "name": "Café",
+   "path": "src/greeting.ts",
+   "range": [
+    3,
+    13,
+    17
+   ],
+   "start_byte": 233,
+   "symbol": "scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/`Café`#",
+   "text": "Café",
+   "unicode": false,
+   "utf16_column": 13,
+   "utf8_byte_column": 13
+  },
+  {
+   "codepoint_column": 20,
+   "end_byte": 245,
+   "kind": "method",
+   "line": 4,
+   "name": "brew",
+   "path": "src/greeting.ts",
+   "range": [
+    3,
+    20,
+    24
+   ],
+   "start_byte": 241,
+   "symbol": "scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/`Café`#brew().",
+   "text": "brew",
+   "unicode": true,
+   "utf16_column": 20,
+   "utf8_byte_column": 21
+  },
+  {
+   "codepoint_column": 16,
+   "end_byte": 324,
+   "kind": "method",
+   "line": 5,
+   "name": "despedida",
+   "path": "src/greeting.ts",
+   "range": [
+    4,
+    16,
+    25
+   ],
+   "start_byte": 315,
+   "symbol": "scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/despedida().",
+   "text": "despedida",
+   "unicode": false,
+   "utf16_column": 16,
+   "utf8_byte_column": 16
+  },
+  {
+   "codepoint_column": 26,
+   "end_byte": 326,
+   "kind": "parameter",
+   "line": 5,
+   "name": "p",
+   "path": "src/greeting.ts",
+   "range": [
+    4,
+    26,
+    27
+   ],
+   "start_byte": 325,
+   "symbol": "scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/despedida().(p)",
+   "text": "p",
+   "unicode": false,
+   "utf16_column": 26,
+   "utf8_byte_column": 26
+  },
+  {
+   "codepoint_column": 53,
+   "end_byte": 357,
+   "kind": "local",
+   "line": 5,
+   "name": "adeus",
+   "path": "src/greeting.ts",
+   "range": [
+    4,
+    53,
+    58
+   ],
+   "start_byte": 352,
+   "symbol": "local 2",
+   "text": "adeus",
+   "unicode": false,
+   "utf16_column": 53,
+   "utf8_byte_column": 53
+  },
+  {
+   "codepoint_column": 0,
+   "end_byte": 0,
+   "kind": "namespace",
+   "line": 1,
+   "name": "main.ts",
+   "path": "src/main.ts",
+   "range": [
+    0,
+    0,
+    0
+   ],
+   "start_byte": 0,
+   "symbol": "scip-typescript npm s16-fixture 1.0.0 src/`main.ts`/",
+   "text": "",
+   "unicode": false,
+   "utf16_column": 0,
+   "utf8_byte_column": 0
+  },
+  {
+   "codepoint_column": 6,
+   "end_byte": 74,
+   "kind": "term",
+   "line": 2,
+   "name": "visitor",
+   "path": "src/main.ts",
+   "range": [
+    1,
+    6,
+    13
+   ],
+   "start_byte": 67,
+   "symbol": "scip-typescript npm s16-fixture 1.0.0 src/`main.ts`/visitor.",
+   "text": "visitor",
+   "unicode": false,
+   "utf16_column": 6,
+   "utf8_byte_column": 6
+  },
+  {
+   "codepoint_column": 6,
+   "end_byte": 111,
+   "kind": "term",
+   "line": 3,
+   "name": "cup",
+   "path": "src/main.ts",
+   "range": [
+    2,
+    6,
+    9
+   ],
+   "start_byte": 108,
+   "symbol": "scip-typescript npm s16-fixture 1.0.0 src/`main.ts`/cup.",
+   "text": "cup",
+   "unicode": false,
+   "utf16_column": 6,
+   "utf8_byte_column": 6
+  },
+  {
+   "codepoint_column": 0,
+   "end_byte": 0,
+   "kind": "namespace",
+   "line": 1,
+   "name": "windows.ts",
+   "path": "src/windows.ts",
+   "range": [
+    0,
+    0,
+    0
+   ],
+   "start_byte": 0,
+   "symbol": "scip-typescript npm s16-fixture 1.0.0 src/`windows.ts`/",
+   "text": "",
+   "unicode": false,
+   "utf16_column": 0,
+   "utf8_byte_column": 0
+  },
+  {
+   "codepoint_column": 13,
+   "end_byte": 19,
+   "kind": "term",
+   "line": 1,
+   "name": "señal",
+   "path": "src/windows.ts",
+   "range": [
+    0,
+    13,
+    18
+   ],
+   "start_byte": 13,
+   "symbol": "scip-typescript npm s16-fixture 1.0.0 src/`windows.ts`/`señal`.",
+   "text": "señal",
+   "unicode": false,
+   "utf16_column": 13,
+   "utf8_byte_column": 13
+  },
+  {
+   "codepoint_column": 42,
+   "end_byte": 53,
+   "kind": "method",
+   "line": 1,
+   "name": "ñandú",
+   "path": "src/windows.ts",
+   "range": [
+    0,
+    43,
+    48
+   ],
+   "start_byte": 46,
+   "symbol": "scip-typescript npm s16-fixture 1.0.0 src/`windows.ts`/`ñandú`().",
+   "text": "ñandú",
+   "unicode": true,
+   "utf16_column": 43,
+   "utf8_byte_column": 46
+  }
+ ],
+ "documents": {
+  "src/greeting.ts": "76ca9af42ed3afde2e592a091d63035005418d837ab5934506f4820a2982d04a",
+  "src/main.ts": "02c4a7c53703fe9bb811826186291397665757833fb571ad2e048375c38e136e",
+  "src/windows.ts": "0297718f672887b9ae73e494965f7949d4c7b7e8efc6a34a12506cde67d66736"
+ },
+ "position_encoding": "utf-16",
+ "references": [
+  {
+   "codepoint_column": 54,
+   "end_byte": 172,
+   "line": 3,
+   "path": "src/greeting.ts",
+   "range": [
+    2,
+    55,
+    61
+   ],
+   "resolution": "defined",
+   "start_byte": 166,
+   "symbol": "scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/Pessoa#",
+   "text": "Pessoa",
+   "unicode": true,
+   "utf16_column": 55,
+   "utf8_byte_column": 59
+  },
+  {
+   "codepoint_column": 86,
+   "end_byte": 200,
+   "line": 3,
+   "path": "src/greeting.ts",
+   "range": [
+    2,
+    87,
+    88
+   ],
+   "resolution": "defined",
+   "start_byte": 199,
+   "symbol": "scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/`saudação`().(p)",
+   "text": "p",
+   "unicode": true,
+   "utf16_column": 87,
+   "utf8_byte_column": 92
+  },
+  {
+   "codepoint_column": 88,
+   "end_byte": 205,
+   "line": 3,
+   "path": "src/greeting.ts",
+   "range": [
+    2,
+    89,
+    93
+   ],
+   "resolution": "defined",
+   "start_byte": 201,
+   "symbol": "scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/Pessoa#nome.",
+   "text": "nome",
+   "unicode": true,
+   "utf16_column": 89,
+   "utf8_byte_column": 94
+  },
+  {
+   "codepoint_column": 96,
+   "end_byte": 214,
+   "line": 3,
+   "path": "src/greeting.ts",
+   "range": [
+    2,
+    97,
+    102
+   ],
+   "resolution": "defined",
+   "start_byte": 209,
+   "symbol": "scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/emoji.",
+   "text": "emoji",
+   "unicode": true,
+   "utf16_column": 97,
+   "utf8_byte_column": 102
+  },
+  {
+   "codepoint_column": 44,
+   "end_byte": 275,
+   "line": 4,
+   "path": "src/greeting.ts",
+   "range": [
+    3,
+    44,
+    52
+   ],
+   "resolution": "defined",
+   "start_byte": 265,
+   "symbol": "scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/`saudação`().",
+   "text": "saudação",
+   "unicode": true,
+   "utf16_column": 44,
+   "utf8_byte_column": 45
+  },
+  {
+   "codepoint_column": 55,
+   "end_byte": 282,
+   "line": 4,
+   "path": "src/greeting.ts",
+   "range": [
+    3,
+    55,
+    59
+   ],
+   "resolution": "defined",
+   "start_byte": 278,
+   "symbol": "scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/Pessoa#nome.",
+   "text": "nome",
+   "unicode": true,
+   "utf16_column": 55,
+   "utf8_byte_column": 58
+  },
+  {
+   "codepoint_column": 29,
+   "end_byte": 334,
+   "line": 5,
+   "path": "src/greeting.ts",
+   "range": [
+    4,
+    29,
+    35
+   ],
+   "resolution": "defined",
+   "start_byte": 328,
+   "symbol": "scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/Pessoa#",
+   "text": "Pessoa",
+   "unicode": false,
+   "utf16_column": 29,
+   "utf8_byte_column": 29
+  },
+  {
+   "codepoint_column": 83,
+   "end_byte": 388,
+   "line": 5,
+   "path": "src/greeting.ts",
+   "range": [
+    4,
+    83,
+    88
+   ],
+   "resolution": "defined",
+   "start_byte": 383,
+   "symbol": "local 2",
+   "text": "adeus",
+   "unicode": true,
+   "utf16_column": 83,
+   "utf8_byte_column": 84
+  },
+  {
+   "codepoint_column": 93,
+   "end_byte": 394,
+   "line": 5,
+   "path": "src/greeting.ts",
+   "range": [
+    4,
+    93,
+    94
+   ],
+   "resolution": "defined",
+   "start_byte": 393,
+   "symbol": "scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/despedida().(p)",
+   "text": "p",
+   "unicode": true,
+   "utf16_column": 93,
+   "utf8_byte_column": 94
+  },
+  {
+   "codepoint_column": 95,
+   "end_byte": 399,
+   "line": 5,
+   "path": "src/greeting.ts",
+   "range": [
+    4,
+    95,
+    99
+   ],
+   "resolution": "defined",
+   "start_byte": 395,
+   "symbol": "scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/Pessoa#nome.",
+   "text": "nome",
+   "unicode": true,
+   "utf16_column": 95,
+   "utf8_byte_column": 96
+  },
+  {
+   "codepoint_column": 9,
+   "end_byte": 19,
+   "line": 1,
+   "path": "src/main.ts",
+   "range": [
+    0,
+    9,
+    17
+   ],
+   "resolution": "defined",
+   "start_byte": 9,
+   "symbol": "scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/`saudação`().",
+   "text": "saudação",
+   "unicode": false,
+   "utf16_column": 9,
+   "utf8_byte_column": 9
+  },
+  {
+   "codepoint_column": 19,
+   "end_byte": 26,
+   "line": 1,
+   "path": "src/main.ts",
+   "range": [
+    0,
+    19,
+    23
+   ],
+   "resolution": "defined",
+   "start_byte": 21,
+   "symbol": "scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/`Café`#",
+   "text": "Café",
+   "unicode": true,
+   "utf16_column": 19,
+   "utf8_byte_column": 21
+  },
+  {
+   "codepoint_column": 30,
+   "end_byte": 39,
+   "line": 1,
+   "path": "src/main.ts",
+   "range": [
+    0,
+    30,
+    36
+   ],
+   "resolution": "defined",
+   "start_byte": 33,
+   "symbol": "scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/Pessoa#",
+   "text": "Pessoa",
+   "unicode": true,
+   "utf16_column": 30,
+   "utf8_byte_column": 33
+  },
+  {
+   "codepoint_column": 44,
+   "end_byte": 59,
+   "line": 1,
+   "path": "src/main.ts",
+   "range": [
+    0,
+    44,
+    56
+   ],
+   "resolution": "defined",
+   "start_byte": 47,
+   "symbol": "scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/",
+   "text": "\"./greeting\"",
+   "unicode": true,
+   "utf16_column": 44,
+   "utf8_byte_column": 47
+  },
+  {
+   "codepoint_column": 15,
+   "end_byte": 82,
+   "line": 2,
+   "path": "src/main.ts",
+   "range": [
+    1,
+    15,
+    21
+   ],
+   "resolution": "defined",
+   "start_byte": 76,
+   "symbol": "scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/Pessoa#",
+   "text": "Pessoa",
+   "unicode": false,
+   "utf16_column": 15,
+   "utf8_byte_column": 15
+  },
+  {
+   "codepoint_column": 26,
+   "end_byte": 91,
+   "line": 2,
+   "path": "src/main.ts",
+   "range": [
+    1,
+    26,
+    30
+   ],
+   "resolution": "defined",
+   "start_byte": 87,
+   "symbol": "scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/Pessoa#nome.",
+   "text": "nome",
+   "unicode": false,
+   "utf16_column": 26,
+   "utf8_byte_column": 26
+  },
+  {
+   "codepoint_column": 16,
+   "end_byte": 123,
+   "line": 3,
+   "path": "src/main.ts",
+   "range": [
+    2,
+    16,
+    20
+   ],
+   "resolution": "defined",
+   "start_byte": 118,
+   "symbol": "scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/`Café`#",
+   "text": "Café",
+   "unicode": false,
+   "utf16_column": 16,
+   "utf8_byte_column": 16
+  },
+  {
+   "codepoint_column": 0,
+   "end_byte": 134,
+   "line": 4,
+   "path": "src/main.ts",
+   "range": [
+    3,
+    0,
+    7
+   ],
+   "resolution": "external",
+   "start_byte": 127,
+   "symbol": "scip-typescript npm typescript 5.9.3 lib/`lib.dom.d.ts`/console.",
+   "text": "console",
+   "unicode": false,
+   "utf16_column": 0,
+   "utf8_byte_column": 0
+  },
+  {
+   "codepoint_column": 8,
+   "end_byte": 138,
+   "line": 4,
+   "path": "src/main.ts",
+   "range": [
+    3,
+    8,
+    11
+   ],
+   "resolution": "external",
+   "start_byte": 135,
+   "symbol": "scip-typescript npm typescript 5.9.3 lib/`lib.dom.d.ts`/Console#log().",
+   "text": "log",
+   "unicode": false,
+   "utf16_column": 8,
+   "utf8_byte_column": 8
+  },
+  {
+   "codepoint_column": 12,
+   "end_byte": 149,
+   "line": 4,
+   "path": "src/main.ts",
+   "range": [
+    3,
+    12,
+    20
+   ],
+   "resolution": "defined",
+   "start_byte": 139,
+   "symbol": "scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/`saudação`().",
+   "text": "saudação",
+   "unicode": false,
+   "utf16_column": 12,
+   "utf8_byte_column": 12
+  },
+  {
+   "codepoint_column": 21,
+   "end_byte": 157,
+   "line": 4,
+   "path": "src/main.ts",
+   "range": [
+    3,
+    21,
+    28
+   ],
+   "resolution": "defined",
+   "start_byte": 150,
+   "symbol": "scip-typescript npm s16-fixture 1.0.0 src/`main.ts`/visitor.",
+   "text": "visitor",
+   "unicode": true,
+   "utf16_column": 21,
+   "utf8_byte_column": 23
+  },
+  {
+   "codepoint_column": 31,
+   "end_byte": 163,
+   "line": 4,
+   "path": "src/main.ts",
+   "range": [
+    3,
+    31,
+    34
+   ],
+   "resolution": "defined",
+   "start_byte": 160,
+   "symbol": "scip-typescript npm s16-fixture 1.0.0 src/`main.ts`/cup.",
+   "text": "cup",
+   "unicode": true,
+   "utf16_column": 31,
+   "utf8_byte_column": 33
+  },
+  {
+   "codepoint_column": 35,
+   "end_byte": 168,
+   "line": 4,
+   "path": "src/main.ts",
+   "range": [
+    3,
+    35,
+    39
+   ],
+   "resolution": "defined",
+   "start_byte": 164,
+   "symbol": "scip-typescript npm s16-fixture 1.0.0 src/`greeting.ts`/`Café`#brew().",
+   "text": "brew",
+   "unicode": true,
+   "utf16_column": 35,
+   "utf8_byte_column": 37
+  },
+  {
+   "codepoint_column": 67,
+   "end_byte": 79,
+   "line": 1,
+   "path": "src/windows.ts",
+   "range": [
+    0,
+    68,
+    73
+   ],
+   "resolution": "defined",
+   "start_byte": 73,
+   "symbol": "scip-typescript npm s16-fixture 1.0.0 src/`windows.ts`/`señal`.",
+   "text": "señal",
+   "unicode": true,
+   "utf16_column": 68,
+   "utf8_byte_column": 73
+  }
+ ],
+ "tool": [
+  "scip-typescript",
+  "0.4.0"
+ ]
+}

@@ -1,0 +1,7 @@
+{
+  "base_commit": "a2e7d37e288df9221e90a14453ac6f77c0acbffb",
+  "source": "GitHub Actions CI run 41545360972 on PR #81 head 88bae32 (merge a2e7d37 has the identical tree: main had not moved)",
+  "pytest_ruff_mypy": "889 passed, 10 skipped",
+  "other_jobs": ["export byte-determinism ubuntu/macos/diff: pass", "serve --read-only smoke (19 passed): pass", "harden-gate: pass"],
+  "local_runner_note": "Local unprivileged Docker runner shows the pre-existing timing failure tests/slices/test_s01_contract.py::test_call_deadline_after_initialization (see aci-s14 baseline.json); it passes in CI."
+}

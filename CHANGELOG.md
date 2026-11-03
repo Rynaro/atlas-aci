@@ -9,6 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Official SCIP import from one TypeScript producer (ACI-S16).** New operator
+  commands `atlas-aci scip-manifest` (producer-time sidecar
+  `atlas-scip-manifest.v1`: producer, declared position encoding, index digest,
+  per-document source hashes) and `atlas-aci import-scip INDEX --manifest M`
+  publish a derived `scip_import` generation from the current `build`
+  generation. Only `@sourcegraph/scip-typescript` 0.4.0 (UTF-16 columns) is
+  accepted; the index is decoded by a strict dependency-free wire decoder for the
+  vendored, hash-pinned `scip.proto` (v0.6.1) with explicit bounds. Definitions
+  become `scip_*` entities; reference-only occurrences become the new
+  `reference` relation (never `call`; not traversable, so protocol enums and
+  analytics are unchanged). Every validation runs before the writer lock and any
+  rejection leaves the published graph byte-identical. `atlas-aci status` gains a
+  `semantic_imports` block. See `atlas/docs/scip-import.md`. `protobuf` is a
+  dev-only test oracle; no runtime dependency is added.
+
 - **Measured TSX structural extraction (ACI-S14).** `.tsx` files are now indexed
   instead of skipped: class and function declarations, arrow/function-expression
   component declarators, methods, import occurrences (default, named, aliased,

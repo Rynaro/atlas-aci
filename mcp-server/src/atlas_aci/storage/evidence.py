@@ -48,7 +48,15 @@ RELATIONS = frozenset(
 # Raw references, unresolved assertions and cached reference rows may also carry
 # `jsx`. It is deliberately not in RELATIONS: that closed set feeds traversal
 # enums, and a `jsx` assertion can never be resolved into an edge.
-REFERENCE_RELATIONS = RELATIONS | {"jsx"}
+#
+# `reference` is the SCIP "occurrence without call semantics" relation (ACI-S16).
+# It is likewise kept out of RELATIONS (not traversable in this slice: protocol
+# enums and measured envelopes are unchanged) but, unlike `jsx`, may resolve to
+# an `edges` row (EDGE_RELATIONS) when the SCIP index defines the symbol.
+SCIP_RELATION = "reference"
+REFERENCE_RELATIONS = RELATIONS | {"jsx", SCIP_RELATION}
+EDGE_RELATIONS = (RELATIONS - {"rationale_for"}) | {SCIP_RELATION}
+SCIP_ENCODINGS = frozenset({"utf-8", "utf-16", "utf-32"})
 FIELDS = {
     "entity": {
         "type",
@@ -244,6 +252,9 @@ def _validate_record(item: Any) -> None:
             require(item["identity_basis"] == "legacy_unavailable", "unknown producer")
         else:
             require(isinstance(fingerprint, dict), "producer fingerprint")
+            if set(fingerprint) == {"scip"}:
+                _validate_scip_fingerprint(fingerprint["scip"], item["identity_basis"])
+                return
             require(
                 set(fingerprint)
                 in (
@@ -504,7 +515,7 @@ def _validate_record(item: Any) -> None:
                 "nullable reference strings",
             )
         if table == "edges":
-            require(row["relation"] in RELATIONS - {"rationale_for"}, "edge relation")
+            require(row["relation"] in EDGE_RELATIONS, "edge relation")
             require(row["confidence"] in {"EXTRACTED", "INFERRED", "AMBIGUOUS"}, "edge confidence")
             require(
                 all(
@@ -555,6 +566,39 @@ def _validate_record(item: Any) -> None:
                 row["binding_kind"] in {"assignment", "parameter", "import", "unsupported"},
                 "binding kind",
             )
+
+
+def _validate_scip_fingerprint(value: Any, basis: str) -> None:
+    """SCIP producer identity: exact tool/version, schema, artifact, manifest and importer."""
+    require(basis == "parsed", "scip producer basis")
+    require(
+        isinstance(value, dict)
+        and set(value)
+        == {
+            "tool",
+            "schema_sha256",
+            "index_sha256",
+            "manifest_sha256",
+            "position_encoding",
+            "importer_sha256",
+        },
+        "scip producer fields",
+    )
+    tool = value["tool"]
+    require(
+        isinstance(tool, dict)
+        and set(tool) == {"name", "version"}
+        and all(isinstance(tool[key], str) and tool[key] for key in tool),
+        "scip tool",
+    )
+    require(
+        all(
+            hash_value(value[key])
+            for key in ("schema_sha256", "index_sha256", "manifest_sha256", "importer_sha256")
+        ),
+        "scip producer hashes",
+    )
+    require(value["position_encoding"] in SCIP_ENCODINGS, "scip position encoding")
 
 
 def validate_record(item: Any) -> None:

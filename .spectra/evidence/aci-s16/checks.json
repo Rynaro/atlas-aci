@@ -1,0 +1,107 @@
+{
+ "harness": {
+  "dev_image": "atlas-aci-dev-s16 (sha256:783f2210c3d12ae25c567c76366b6b6dd09d4aa0c93ea1aee4fb03d8f17e859a; Dockerfile.dev-s16 = atlas-aci-dev-locked + uv sync --frozen --extra dev on the S16 lock)",
+  "wrapper": "dk16.sh: docker run --rm --user 1000:1000 -e HOME=/hc -e PYTHONPATH=/ws/mcp-server/src -v <scratch>/home:/hc -v <repo>:/ws -w /ws/mcp-server atlas-aci-dev-s16"
+ },
+ "s16_contract": {
+  "command": "dk16.sh /opt/venv/bin/python -m pytest -q -p no:cacheprovider tests/slices/test_s16_contract.py",
+  "exit_code": 0,
+  "summary": "8 passed",
+  "log": "s16-contract.log.gz"
+ },
+ "s16_supporting": {
+  "command": "dk16.sh /opt/venv/bin/python -m pytest -q -p no:cacheprovider tests/slices/test_s16_wire.py tests/slices/test_s16_lifecycle.py tests/slices/test_s16_cli.py tests/slices/test_s16_support.py",
+  "exit_code": 0,
+  "summary": "56 passed",
+  "log": "s16-supporting.log.gz"
+ },
+ "ac_neg5_untouched": {
+  "exit_code": 0,
+  "summary": "5 passed",
+  "log": "neg5.log.gz"
+ },
+ "ruff": {
+  "command": "dk16.sh /opt/venv/bin/ruff check src/ tests/",
+  "exit_code": 0,
+  "log": "ruff.log.gz"
+ },
+ "format": {
+  "command": "dk16.sh /opt/venv/bin/ruff format --check src/ tests/",
+  "exit_code": 0,
+  "log": "format.log.gz"
+ },
+ "mypy": {
+  "command": "dk16.sh /opt/venv/bin/mypy src/",
+  "exit_code": 0,
+  "log": "mypy.log.gz"
+ },
+ "lock_check": {
+  "command": "uv lock --check",
+  "exit_code": 0,
+  "log": "lock-check.log.gz"
+ },
+ "full_suite": {
+  "command": "dk16.sh /opt/venv/bin/python -m pytest -q -p no:cacheprovider",
+  "exit_code": 1,
+  "summary": "2 failed, 951 passed, 10 skipped",
+  "failed": [
+   "tests/slices/test_s01_contract.py::test_call_deadline_after_initialization",
+   "tests/slices/test_s08_integration.py::test_nonregular_pack_does_not_block_acquisition"
+  ],
+  "classification": {
+   "test_s01_contract::test_call_deadline_after_initialization": "pre-existing baseline failure under uid 1000 (baseline.json; also failed in S14 evidence)",
+   "test_s08_integration::test_nonregular_pack_does_not_block_acquisition": "pre-existing flake, not S16: on merged base a2e7d37 with atlas-aci-dev-locked it failed 2/6 isolated runs; on S16 1/3 isolated failures. Observed failure is returncode 0 with empty remaining stdout: process.stdout.readline() on a text pipe can buffer the REJECTED line before communicate() reads the fd. Untouched (outside S16 scope)."
+  },
+  "new_tests": "951 - 889 baseline passes = 62 net new passes (64 S16 tests; s08 flake accounts for the difference)",
+  "log": "full-suite.log.gz"
+ },
+ "producer_reproducibility": {
+  "procedure": "generate.sh steps 1-3 into scratch (pinned node image digest, npm ci from lockfile, scip-typescript index; scip-manifest; generate_labels.py)",
+  "index_scip_sha256": "b1cedcc22c4af4faa1867dfa1b0fd63eccc6551857ffa2e4753e34635108f31f",
+  "matches_committed": true,
+  "atlas_scip_manifest_identical": true,
+  "labels_identical": true
+ },
+ "production_image": {
+  "build": "docker build -t atlas-aci:s16 mcp-server",
+  "image_id": "sha256:621f88a39260c418c8824cbce755a071accdd602d35e5e446af8b08070be5c03",
+  "flags": "--read-only --network none, repo and artifact mounts :ro, writable /graphs only (default image uid)",
+  "index": {
+   "exit_code": 0,
+   "files_indexed": 3
+  },
+  "import_scip": {
+   "exit_code": 0,
+   "status": "imported",
+   "generation_id": "6a85d2478f57ceedde095194a1d2208306720e25ba33ad9fd7a6de56aa772292",
+   "definitions": 17,
+   "references": 24,
+   "resolved_references": 22,
+   "unresolved_references": 2
+  },
+  "reimport": {
+   "exit_code": 0,
+   "status": "unchanged",
+   "same_generation_id": true
+  },
+  "rejection": {
+   "artifact": "first 200 bytes of index.scip",
+   "exit_code": 1,
+   "error": "length_beyond_buffer: Index.documents overruns its parent",
+   "graph_root_byte_identical": true
+  },
+  "cli_status": {
+   "semantic_imports": "present (atlas-semantic-import.v1, producer scip-typescript 0.4.0, utf-16, five limitations)",
+   "log": "docker-status.json.gz"
+  },
+  "mcp_stdio": {
+   "graph_query_status": "ok; facts include SCIP rows",
+   "search_symbol_saudação": "tree-sitter function + scip_method definitions",
+   "callers_of_saudação": "one structural INFERRED call edge from Café.brew; no reference traversal",
+   "logs": [
+    "docker-mcp-status.jsonl.gz",
+    "docker-mcp-search.jsonl.gz"
+   ]
+  }
+ }
+}

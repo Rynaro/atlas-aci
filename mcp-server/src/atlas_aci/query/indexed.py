@@ -25,9 +25,14 @@ INCOMING_SQL = (
     "WHERE json_extract(payload,'$.target_entity_id')=? "
     "AND json_extract(payload,'$.relation')=? AND id>? ORDER BY id LIMIT 1"
 )
+# SCIP entities (kind `scip_*`, ACI-S16) are addressable by entity id but never
+# by bare name: a name seed that was unique among tree-sitter entities must stay
+# unique after a SCIP import adds same-spelled, differently-kinded entities.
 NAME_SQL = (
     "SELECT id,payload FROM entities INDEXED BY idx_entities_name_id "
-    "WHERE json_extract(payload,'$.name')=? AND id>? ORDER BY id LIMIT 1"
+    "WHERE json_extract(payload,'$.name')=? AND id>? "
+    "AND json_extract(payload,'$.kind') NOT LIKE 'scip\\_%' ESCAPE '\\' "
+    "ORDER BY id LIMIT 1"
 )
 
 
