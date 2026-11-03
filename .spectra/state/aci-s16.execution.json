@@ -4,7 +4,7 @@
   "issue_url": "https://github.com/Rynaro/atlas-aci/issues/37",
   "criteria_sha256": "b45b747ccfe19d0639ab837fc42541c865660b4d151740fd38093b6030e10e3b",
   "base_commit": "a2e7d37e288df9221e90a14453ac6f77c0acbffb",
-  "output_commit": null,
+  "output_commit": "9139f48bf64ea091653b97807ae4f3a1c14cb3cd",
   "declared_paths": [
     "mcp-server/src/atlas_aci/providers/scip*",
     "mcp-server/src/atlas_aci/__main__.py",
@@ -31,10 +31,244 @@
     ".spectra/backlog/execution.json",
     ".spectra/backlog/order.md"
   ],
-  "output_digests": {},
-  "status": "IN_PROGRESS",
+  "output_digests": {
+    ".spectra/backlog/execution.json": "04f9777ac46f274f3f14c48b4b1f1846259a768405a5466f7b4c07452ab304cc",
+    ".spectra/backlog/order.md": "df03ac71aace2ab9863f62445962447a1bb1c3875e0e3b99150a2be09b6de3c9",
+    ".spectra/changes/aci-s16/scope-amendment.json": "8ebad2220705b44ee7c7af1dd2cf3b706339e7628698c8dc6383043a5a841ec6",
+    ".spectra/evidence/aci-s16/Dockerfile.dev-s16": "8b9e0acf8123fc256f30cdf85c06b80f1efc90d2ca66450bf7c5ed76497dd98a",
+    ".spectra/evidence/aci-s16/baseline.json": "aba214ae9e6c08d05d56d73c98890f4ea383040c181cea85c24339c4e7fa5c24",
+    ".spectra/evidence/aci-s16/checks.json": "715bb02aecf3a6a443fef18687edcaafd9434c5cb9a80e4b56579069a8aa067a",
+    ".spectra/evidence/aci-s16/dk16.sh": "3b80291a6212f50e75b66455c070728e5d71a96a46401a193c9cf5f0b6619bed",
+    ".spectra/evidence/aci-s16/docker-mcp-search.jsonl.gz": "84e4d55255396cdc883fa15b5deda19cfa79b8ac21e8ecf9a737ba199945774e",
+    ".spectra/evidence/aci-s16/docker-mcp-status.jsonl.gz": "45bb441e8b621e25e4858b61e983e4b2e46c8981b7b0a85fbdbfddafddd7aba9",
+    ".spectra/evidence/aci-s16/docker-status.json.gz": "18c18fdb873846a9521b231a9c6782ec49adab670d3634eb5bc4afbb3c13a94e",
+    ".spectra/evidence/aci-s16/exploration/README.md": "67e5796e5df588d27f65ef5268e72390ff2a0022f78d8a48a09d6435debd6afa",
+    ".spectra/evidence/aci-s16/exploration/decode.py": "f78a1f3a98d0f2feb910f244c3f55f12ad4519e3f72cb5459e2661b2ba05b62e",
+    ".spectra/evidence/aci-s16/exploration/decoded.txt": "4ab2c3087f6bef8f6416375ef4f11857f953f9e0b07cf92902201483b66c99d2",
+    ".spectra/evidence/aci-s16/exploration/greeting.ts": "2d0dd46084b492653bbba56dd550c22f6c4de0be62d6328184cfed37f9b36145",
+    ".spectra/evidence/aci-s16/exploration/index.scip": "5894a4f2e6020a684b96046005a37e563fe46bb5c61e9d2e89cb576a1419c50d",
+    ".spectra/evidence/aci-s16/exploration/main.ts": "02c4a7c53703fe9bb811826186291397665757833fb571ad2e048375c38e136e",
+    ".spectra/evidence/aci-s16/exploration/scip.proto": "b855eb9abdb3fe7f07600ee92f24a6c40f75fceef37136ccdc6844b300936a31",
+    ".spectra/evidence/aci-s16/exploration/sha256.txt": "75ba414424957be7cd6e8c79119838a99b83a1cfc707c80bd839e9724dd3eb71",
+    ".spectra/evidence/aci-s16/format.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    ".spectra/evidence/aci-s16/format.log.gz": "5d8df908a2f2d0ad7e45cf31b599a613ce673f31d25a2610c43c23adf74b3e1a",
+    ".spectra/evidence/aci-s16/full-suite.exit": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+    ".spectra/evidence/aci-s16/full-suite.log.gz": "a10c0015ebcf3b591e20b2eef6e7be0b988ef7c5379bdf629710f1a11f5f8887",
+    ".spectra/evidence/aci-s16/interrupted-execution.json": "0a8bad579715e7c0c94a97455769a857f9f50a138d7ccd3b721c5466773144b1",
+    ".spectra/evidence/aci-s16/lock-check.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    ".spectra/evidence/aci-s16/lock-check.log.gz": "41af5d96bf029b6de7d4edbe0502e743dd43eb4f56e92065488bde3776213a52",
+    ".spectra/evidence/aci-s16/mypy.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    ".spectra/evidence/aci-s16/mypy.log.gz": "19c37ffb72690a291590425d1170165f6c409c8878a89b867d4421d68a83850d",
+    ".spectra/evidence/aci-s16/neg5.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    ".spectra/evidence/aci-s16/neg5.log.gz": "7910feb41af9004b1cc716b3e1b598b688ee2fc6b3494042e4d75bd0c1908061",
+    ".spectra/evidence/aci-s16/ruff.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    ".spectra/evidence/aci-s16/ruff.log.gz": "4b9b7f6e2b30b4d4bc845c2545474cbaedc30b3512d648437d7e8e1979a8398d",
+    ".spectra/evidence/aci-s16/s16-contract.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    ".spectra/evidence/aci-s16/s16-contract.log.gz": "0708a176cb33b2f33ae95276fcae7105332dbbabcb17833017d79b448f93437a",
+    ".spectra/evidence/aci-s16/s16-supporting.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    ".spectra/evidence/aci-s16/s16-supporting.log.gz": "2c1718cc9db2fbefebd71827cecf5868a01e3dfb7891e5f71d547351aa362f06",
+    ".spectra/plans/aci-s16.criteria.md": "b45b747ccfe19d0639ab837fc42541c865660b4d151740fd38093b6030e10e3b",
+    ".spectra/plans/aci-s16.issue.json": "eddea990428c62e30012c0298e82d36105c931a05f17f3e4ec7952ff2f17c473",
+    ".spectra/plans/aci-s16.md": "4e24abbeba5c223fb666e4cad3f84c4223df4fbcef2f85829a352b3e47d9962c",
+    ".spectra/plans/aci-s16.review.json": "55a2180209e2ee25ba3b1c0b6950267578475eb231ff4210329007f0a34a12a4",
+    ".spectra/plans/aci-s16.scope.txt": "77634b1093b7cc1b8f5b5af96e25d55c0d08b948721c7eac2229eb37270b07a3",
+    ".spectra/plans/aci-s16.state.json": "91e60642f3b390e82a6829586da83b3717089cba08fba2663f60f05d50f2d39c",
+    ".spectra/plans/ramza-calibration.jsonl": "a754a5ca804ed2ca8a56ebc9b47e4341acbe2bef6e0fd9aa428a3722181dc6a0",
+    "CHANGELOG.md": "e359558a93ea770fb15806d3b7086f45093b7e35182e568de4c6e713d4151fa8",
+    "INTEGRATION.md": "dc73e900109706812485c2d5c69e88da2c14895e682b5b66ad6f20e6e6bc049f",
+    "README.md": "d937f42b663ef5563e69348c015cf14d74075f124ce618af7f0b76947199ea2d",
+    "atlas/docs/evidence-graph.md": "2e81a3de3c54b41dbad163f0dae80cc78d6fc598327783c6f21bbdec6848cb7f",
+    "atlas/docs/graph-context.md": "817b8eb74177195bde5a7fe68aeea577810076ec1c0076938b2ad5b43392aa71",
+    "atlas/docs/graph-leases.md": "46e8f443f668d1560734c5f31599a4904b3ef8ddbe04cf83c9a5f615cab8ef53",
+    "atlas/docs/graph-navigation.md": "dd09b1bf97d445904b5fcbdc7c555877c32d234e81f55ac94e3aa9357b68e867",
+    "atlas/docs/graph-retrieval.md": "e581517ede6626bae763190207a83bb33ffb1ba9a2d213669acec3a85ffd6b96",
+    "atlas/docs/graph-status.md": "5b8e2e96de91c43957f9abcfacb45e07329a6df02b02cb144512a8fa16e3d8ae",
+    "atlas/docs/scip-import.md": "f5be0efd063add80b26e061918fcf2b9d40167c6ab5d8a3eb47afb5a1e1cfb58",
+    "mcp-server/pyproject.toml": "c0cfa084bb005c49229181defeb8b27273e0bb1f5a0ac2d0eb82f85d534cb36d",
+    "mcp-server/src/atlas_aci/__main__.py": "76cbb410e5b9550c77a0ba711f42fb75e7cc9a69da06e14b208bfc4721105718",
+    "mcp-server/src/atlas_aci/codegraph.py": "fc41c7cff2a7be63e535bd960d2f6d456024db1d04e562c6079b9d7caa1518ca",
+    "mcp-server/src/atlas_aci/protocol/context.py": "158c65b414cef420d398a38b1bff846ff3f9e50185e343b66f615ddfdf84cc32",
+    "mcp-server/src/atlas_aci/protocol/graph.py": "33f8d6bf153d70da54df180983f4646c18fa7c22e3c16876b653c2d4783676cd",
+    "mcp-server/src/atlas_aci/providers/scip.proto": "b855eb9abdb3fe7f07600ee92f24a6c40f75fceef37136ccdc6844b300936a31",
+    "mcp-server/src/atlas_aci/providers/scip.py": "24b0565e7b1788281d8c80d410616864e54117446d98568b4c9fdc369bbb7d90",
+    "mcp-server/src/atlas_aci/providers/scip_wire.py": "5d67f9e85a69135a930f0eb2d2b88f127394d728d49586388297349d5f3fb770",
+    "mcp-server/src/atlas_aci/query/indexed.py": "5164b449cc2a0906203c9ea2095e0aa7ae09ec30357bb9bdf391007ef2e0721c",
+    "mcp-server/src/atlas_aci/resolvers/dependencies.py": "e3bd74233b6bac6ddd808f5eb6f473c4211519afa007255ace79b30901e70ccd",
+    "mcp-server/src/atlas_aci/storage/evidence.py": "e05ffdd319720bc5b88fb61b9d2f848fe0dab86a84399d9d5605d81b40823441",
+    "mcp-server/src/atlas_aci/storage/snapshots.py": "6e800008cbbbda1b345f199aecbda193eb27c68b15aeb1ff941b5a840ab5be82",
+    "mcp-server/tests/fixtures/scip/atlas-scip-manifest.json": "4949f5038cadd0c125ed888b94d9b5cf0c0f4312bc9eb90913d31c5ce9f4a214",
+    "mcp-server/tests/fixtures/scip/generate.sh": "3f4882cb6fa7b0098840ebb2900a093b3b94e35049cda3fa59681e975e0afec2",
+    "mcp-server/tests/fixtures/scip/generate_labels.py": "803e6870c76d6615b1dee0df0a2bdf52720a98a5a8fe14f5f9597c3d045e696d",
+    "mcp-server/tests/fixtures/scip/index.scip": "b1cedcc22c4af4faa1867dfa1b0fd63eccc6551857ffa2e4753e34635108f31f",
+    "mcp-server/tests/fixtures/scip/labels.json": "ae19834270a42503d58ac1ac70a8f71b3abafc4f08598bd8161d098898191429",
+    "mcp-server/tests/fixtures/scip/project/package-lock.json": "d780b8c41d75f862261590776006be73aef960be2f2cef4786fff18d3b20fe52",
+    "mcp-server/tests/fixtures/scip/project/package.json": "f7c3fd9cc981a4baf1d164c6f3ac58efda9fc3398eb9dd39f279608f3dc6e46d",
+    "mcp-server/tests/fixtures/scip/project/src/greeting.ts": "76ca9af42ed3afde2e592a091d63035005418d837ab5934506f4820a2982d04a",
+    "mcp-server/tests/fixtures/scip/project/src/main.ts": "02c4a7c53703fe9bb811826186291397665757833fb571ad2e048375c38e136e",
+    "mcp-server/tests/fixtures/scip/project/src/windows.ts": "0297718f672887b9ae73e494965f7949d4c7b7e8efc6a34a12506cde67d66736",
+    "mcp-server/tests/fixtures/scip/project/tsconfig.json": "2793c292bfe1385384c5f22bc359d0e63cc1122f35f6c6cc3f1f2618c6afe212",
+    "mcp-server/tests/fixtures/scip/provenance.json": "d7927954bf13894399044450c04b0f35a60cde8aef8fc27297700ef625d30c80",
+    "mcp-server/tests/fixtures/scip/scip_pb2.py": "a961643f8ad1f537f70d759eb7473e179e773f92d873caad2efbafe9e1136615",
+    "mcp-server/tests/slices/test_s16_cli.py": "e13fab2b03e7477f34347a30c8cd52414367ab6795099d65f0002b0305c60c22",
+    "mcp-server/tests/slices/test_s16_contract.py": "84af7b832511502347777db5c92ea0de3e4af85ac97eca4b01f9c9616bf39d0d",
+    "mcp-server/tests/slices/test_s16_lifecycle.py": "627f5c85c98f9e4fd7985a8f27bdabff31799fdf3b52815a5d5251fc88ad84ba",
+    "mcp-server/tests/slices/test_s16_support.py": "deee5e407831bc2e51128a91b8d5d071692115d8a880a477dc054bf1b6f10c58",
+    "mcp-server/tests/slices/test_s16_wire.py": "92923b51c131e77f1b2de30af98d2d71daa461a8c4df819c0f3f06e2233c184f",
+    "mcp-server/uv.lock": "6b820f14327cd71951abe8d4a41b2d1962af21b33b492469de82553a31ca2962"
+  },
+  "status": "COMPLETE",
   "started_at": "2026-11-03T13:55:08Z",
   "planning_state": ".spectra/plans/aci-s16.state.json",
   "plan": ".spectra/plans/aci-s16.md",
-  "results": []
+  "results": [
+    {
+      "ac_id": "AC-S16-001",
+      "command": "docker run --rm --user 1000:1000 -e HOME=/hc -e PYTHONPATH=/ws/mcp-server/src -v <scratch>/home:/hc -v <reentry-worktree>:/ws -w /ws/mcp-server atlas-aci-dev-s16 /opt/venv/bin/python -m pytest -q -p no:cacheprovider tests/slices/test_s16_contract.py::test_official_artifact",
+      "exit_code": 0,
+      "result": "1 passed in 1.13s",
+      "output_commit": "9139f48bf64ea091653b97807ae4f3a1c14cb3cd",
+      "evidence": [
+        ".spectra/evidence/aci-s16/acceptance-runs.json",
+        ".spectra/evidence/aci-s16/s16-contract.log.gz",
+        ".spectra/evidence/aci-s16/full-suite.log.gz"
+      ]
+    },
+    {
+      "ac_id": "AC-S16-002",
+      "command": "docker run --rm --user 1000:1000 -e HOME=/hc -e PYTHONPATH=/ws/mcp-server/src -v <scratch>/home:/hc -v <reentry-worktree>:/ws -w /ws/mcp-server atlas-aci-dev-s16 /opt/venv/bin/python -m pytest -q -p no:cacheprovider tests/slices/test_s16_contract.py::test_producer_identity",
+      "exit_code": 0,
+      "result": "1 passed in 0.55s",
+      "output_commit": "9139f48bf64ea091653b97807ae4f3a1c14cb3cd",
+      "evidence": [
+        ".spectra/evidence/aci-s16/acceptance-runs.json",
+        ".spectra/evidence/aci-s16/s16-contract.log.gz",
+        ".spectra/evidence/aci-s16/full-suite.log.gz"
+      ]
+    },
+    {
+      "ac_id": "AC-S16-003",
+      "command": "docker run --rm --user 1000:1000 -e HOME=/hc -e PYTHONPATH=/ws/mcp-server/src -v <scratch>/home:/hc -v <reentry-worktree>:/ws -w /ws/mcp-server atlas-aci-dev-s16 /opt/venv/bin/python -m pytest -q -p no:cacheprovider tests/slices/test_s16_contract.py::test_reference_not_call",
+      "exit_code": 0,
+      "result": "1 passed in 0.61s",
+      "output_commit": "9139f48bf64ea091653b97807ae4f3a1c14cb3cd",
+      "evidence": [
+        ".spectra/evidence/aci-s16/acceptance-runs.json",
+        ".spectra/evidence/aci-s16/s16-contract.log.gz",
+        ".spectra/evidence/aci-s16/full-suite.log.gz"
+      ]
+    },
+    {
+      "ac_id": "AC-S16-004",
+      "command": "docker run --rm --user 1000:1000 -e HOME=/hc -e PYTHONPATH=/ws/mcp-server/src -v <scratch>/home:/hc -v <reentry-worktree>:/ws -w /ws/mcp-server atlas-aci-dev-s16 /opt/venv/bin/python -m pytest -q -p no:cacheprovider tests/slices/test_s16_contract.py::test_source_mismatch",
+      "exit_code": 0,
+      "result": "1 passed in 0.65s",
+      "output_commit": "9139f48bf64ea091653b97807ae4f3a1c14cb3cd",
+      "evidence": [
+        ".spectra/evidence/aci-s16/acceptance-runs.json",
+        ".spectra/evidence/aci-s16/s16-contract.log.gz",
+        ".spectra/evidence/aci-s16/full-suite.log.gz"
+      ]
+    },
+    {
+      "ac_id": "AC-S16-005",
+      "command": "docker run --rm --user 1000:1000 -e HOME=/hc -e PYTHONPATH=/ws/mcp-server/src -v <scratch>/home:/hc -v <reentry-worktree>:/ws -w /ws/mcp-server atlas-aci-dev-s16 /opt/venv/bin/python -m pytest -q -p no:cacheprovider tests/slices/test_s16_contract.py::test_malformed_scip",
+      "exit_code": 0,
+      "result": "1 passed in 0.53s",
+      "output_commit": "9139f48bf64ea091653b97807ae4f3a1c14cb3cd",
+      "evidence": [
+        ".spectra/evidence/aci-s16/acceptance-runs.json",
+        ".spectra/evidence/aci-s16/s16-contract.log.gz",
+        ".spectra/evidence/aci-s16/full-suite.log.gz"
+      ]
+    },
+    {
+      "ac_id": "AC-S16-006",
+      "command": "docker run --rm --user 1000:1000 -e HOME=/hc -e PYTHONPATH=/ws/mcp-server/src -v <scratch>/home:/hc -v <reentry-worktree>:/ws -w /ws/mcp-server atlas-aci-dev-s16 /opt/venv/bin/python -m pytest -q -p no:cacheprovider tests/slices/test_s16_contract.py::test_scip_reimport",
+      "exit_code": 0,
+      "result": "1 passed in 1.20s",
+      "output_commit": "9139f48bf64ea091653b97807ae4f3a1c14cb3cd",
+      "evidence": [
+        ".spectra/evidence/aci-s16/acceptance-runs.json",
+        ".spectra/evidence/aci-s16/s16-contract.log.gz",
+        ".spectra/evidence/aci-s16/full-suite.log.gz"
+      ]
+    },
+    {
+      "ac_id": "AC-S16-007",
+      "command": "docker run --rm --user 1000:1000 -e HOME=/hc -e PYTHONPATH=/ws/mcp-server/src -v <scratch>/home:/hc -v <reentry-worktree>:/ws -w /ws/mcp-server atlas-aci-dev-s16 /opt/venv/bin/python -m pytest -q -p no:cacheprovider tests/slices/test_s16_contract.py::test_missing_source_manifest",
+      "exit_code": 0,
+      "result": "1 passed in 0.67s",
+      "output_commit": "9139f48bf64ea091653b97807ae4f3a1c14cb3cd",
+      "evidence": [
+        ".spectra/evidence/aci-s16/acceptance-runs.json",
+        ".spectra/evidence/aci-s16/s16-contract.log.gz",
+        ".spectra/evidence/aci-s16/full-suite.log.gz"
+      ]
+    },
+    {
+      "ac_id": "AC-S16-008",
+      "command": "docker run --rm --user 1000:1000 -e HOME=/hc -e PYTHONPATH=/ws/mcp-server/src -v <scratch>/home:/hc -v <reentry-worktree>:/ws -w /ws/mcp-server atlas-aci-dev-s16 /opt/venv/bin/python -m pytest -q -p no:cacheprovider tests/slices/test_s16_contract.py::test_unicode_position_encoding",
+      "exit_code": 0,
+      "result": "1 passed in 1.00s",
+      "output_commit": "9139f48bf64ea091653b97807ae4f3a1c14cb3cd",
+      "evidence": [
+        ".spectra/evidence/aci-s16/acceptance-runs.json",
+        ".spectra/evidence/aci-s16/s16-contract.log.gz",
+        ".spectra/evidence/aci-s16/full-suite.log.gz"
+      ]
+    },
+    {
+      "ac_id": "AC-S16-RUN-01",
+      "command": "python3 -I .spectra/evidence/aci-s16/manifest.py <worktree> before/after re-entry; cmp; git -C <worktree> diff --exit-code 9139f48bf64ea091653b97807ae4f3a1c14cb3cd",
+      "exit_code": 0,
+      "result": "83-file SHA-256 manifest identical before/after clean-worktree re-entry; git diff exit 0; porcelain empty",
+      "evidence": [
+        ".spectra/evidence/aci-s16/final-reentry-before.json",
+        ".spectra/evidence/aci-s16/final-reentry-after.json",
+        ".spectra/evidence/aci-s16/final-reentry-summary.json"
+      ]
+    },
+    {
+      "ac_id": "AC-S16-RUN-02",
+      "command": "compare slice_id+criteria_sha256 of interrupted snapshot vs resumed receipt; enumerate receipt paths for ACI-S16",
+      "exit_code": 0,
+      "result": "identity ACI-S16 / b45b747c…e10e3b unchanged; one authoritative receipt path",
+      "evidence": [
+        ".spectra/evidence/aci-s16/interrupted-execution.json",
+        ".spectra/evidence/aci-s16/final-resume-identity.json"
+      ]
+    }
+  ],
+  "output_digest_exclusions": [
+    ".spectra/evidence/aci-s16/acceptance-runs.json",
+    ".spectra/evidence/aci-s16/final-reentry-after.json",
+    ".spectra/evidence/aci-s16/final-reentry-before.json",
+    ".spectra/evidence/aci-s16/final-reentry-summary.json",
+    ".spectra/evidence/aci-s16/final-resume-identity.json",
+    ".spectra/evidence/aci-s16/manifest.py",
+    ".spectra/state/aci-s16.execution.json"
+  ],
+  "completed_at": "2026-11-03T16:14:48Z",
+  "scope_amendments": [
+    ".spectra/changes/aci-s16/scope-amendment.json"
+  ],
+  "plan_review": ".spectra/plans/aci-s16.review.json",
+  "validation": {
+    "checks": ".spectra/evidence/aci-s16/checks.json",
+    "baseline": ".spectra/evidence/aci-s16/baseline.json",
+    "full_suite": "2 failed, 951 passed, 10 skipped (both failures pre-existing on base a2e7d37; classified in checks.json)",
+    "producer_reproducibility": "index.scip, atlas-scip-manifest.json and labels.json reproduced byte-identical from generate.sh steps 1-3",
+    "docker_production": "atlas-aci:s16 --read-only --network none: index, import-scip, idempotent re-import, all-or-nothing rejection, CLI status semantic_imports, MCP stdio search_symbol/callers_of/status (checks.json production_image)"
+  },
+  "limitations": [
+    "SCIP references are not traversable (scip_reference_traversal); callers_of and graph navigation unchanged by design",
+    "Only scip-typescript 0.4.0 with utf-16 position encoding is accepted",
+    "Docker-gated pytest modules (ATLAS_ACI_S1x_DOCKER_IMAGE) not run inside the dev container; production image verified directly",
+    "test_s01_contract::test_call_deadline_after_initialization fails identically on base under the unprivileged runner",
+    "test_s08_integration::test_nonregular_pack_does_not_block_acquisition is flaky on base (2/6) due to a text-pipe readline/communicate race; left untouched (out of scope)"
+  ],
+  "publication": {
+    "pull_request": null,
+    "note": "pushed after receipt commit; PR closes #37"
+  }
 }
