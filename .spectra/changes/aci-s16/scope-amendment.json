@@ -1,0 +1,34 @@
+{
+  "slice_id": "ACI-S16",
+  "criteria_changed": false,
+  "base_commit": "a2e7d37e288df9221e90a14453ac6f77c0acbffb",
+  "additional_paths": [
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/src/atlas_aci/storage/evidence.py",
+    "mcp-server/src/atlas_aci/storage/snapshots.py",
+    "mcp-server/src/atlas_aci/protocol/graph.py",
+    "mcp-server/src/atlas_aci/protocol/context.py",
+    "mcp-server/src/atlas_aci/query/indexed.py",
+    "mcp-server/src/atlas_aci/resolvers/dependencies.py",
+    "README.md",
+    "INTEGRATION.md",
+    "CHANGELOG.md"
+  ],
+  "reasons": {
+    "codegraph.py": "Derived scip_import generation kind at every kind-switch site, publish under writer lock, status semantic_imports block, confident_edges restricted to KNOWN_EDGE_RELATIONS, deterministic _target_kind.",
+    "storage/evidence.py": "SCIP producer fingerprint branch (parsed), `reference` in REFERENCE_RELATIONS and allowed on edges, not in RELATIONS.",
+    "storage/snapshots.py": "Only if Builder.publish needs a derived-generation entry point; otherwise untouched.",
+    "protocol/graph.py": "Producer record fingerprint anyOf tree-sitter | SCIP so context/retrieve over SCIP entities validates (checker blocker 1).",
+    "protocol/context.py": "Only if it pins the producer schema separately.",
+    "query/indexed.py": "Exclude scip_* entities from name-based navigation seeds (checker condition 5).",
+    "resolvers/dependencies.py": "Only if output validation/witness needs the new relation or recompute.",
+    "README.md/INTEGRATION.md/CHANGELOG.md": "Operator pointers and changelog."
+  },
+  "operator_decisions": {
+    "reference_traversal": "not in this slice",
+    "decoder": "own strict decoder + dev-only protobuf oracle",
+    "producer_version": "scip-typescript 0.4.0"
+  },
+  "no_speculative_docker_ci_change": true,
+  "review": ".spectra/plans/aci-s16.review.json"
+}

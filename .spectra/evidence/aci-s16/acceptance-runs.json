@@ -1,0 +1,50 @@
+[
+  {
+    "ac_id": "AC-S16-001",
+    "test": "mcp-server/tests/slices/test_s16_contract.py::test_official_artifact",
+    "exit_code": 0,
+    "tail": "1 passed in 1.13s"
+  },
+  {
+    "ac_id": "AC-S16-002",
+    "test": "mcp-server/tests/slices/test_s16_contract.py::test_producer_identity",
+    "exit_code": 0,
+    "tail": "1 passed in 0.55s"
+  },
+  {
+    "ac_id": "AC-S16-003",
+    "test": "mcp-server/tests/slices/test_s16_contract.py::test_reference_not_call",
+    "exit_code": 0,
+    "tail": "1 passed in 0.61s"
+  },
+  {
+    "ac_id": "AC-S16-004",
+    "test": "mcp-server/tests/slices/test_s16_contract.py::test_source_mismatch",
+    "exit_code": 0,
+    "tail": "1 passed in 0.65s"
+  },
+  {
+    "ac_id": "AC-S16-005",
+    "test": "mcp-server/tests/slices/test_s16_contract.py::test_malformed_scip",
+    "exit_code": 0,
+    "tail": "1 passed in 0.53s"
+  },
+  {
+    "ac_id": "AC-S16-006",
+    "test": "mcp-server/tests/slices/test_s16_contract.py::test_scip_reimport",
+    "exit_code": 0,
+    "tail": "1 passed in 1.20s"
+  },
+  {
+    "ac_id": "AC-S16-007",
+    "test": "mcp-server/tests/slices/test_s16_contract.py::test_missing_source_manifest",
+    "exit_code": 0,
+    "tail": "1 passed in 0.67s"
+  },
+  {
+    "ac_id": "AC-S16-008",
+    "test": "mcp-server/tests/slices/test_s16_contract.py::test_unicode_position_encoding",
+    "exit_code": 0,
+    "tail": "1 passed in 1.00s"
+  }
+]

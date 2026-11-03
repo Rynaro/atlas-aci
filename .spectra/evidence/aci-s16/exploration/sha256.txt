@@ -1,0 +1,2 @@
+5894a4f2e6020a684b96046005a37e563fe46bb5c61e9d2e89cb576a1419c50d  .spectra/evidence/aci-s16/exploration/index.scip
+b855eb9abdb3fe7f07600ee92f24a6c40f75fceef37136ccdc6844b300936a31  .spectra/evidence/aci-s16/exploration/scip.proto

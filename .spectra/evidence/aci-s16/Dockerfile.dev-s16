@@ -1,0 +1,3 @@
+FROM atlas-aci-dev-locked
+COPY pyproject.toml uv.lock README.md ./
+RUN uv sync --frozen --extra dev

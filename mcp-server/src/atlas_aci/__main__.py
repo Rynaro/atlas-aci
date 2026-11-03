@@ -1,4 +1,4 @@
-"""CLI entry point: `atlas-aci serve | index | export | import | status | tools`."""
+"""CLI entry point: `atlas-aci serve | index | export | import | import-scip | status | ...`."""
 
 from __future__ import annotations
 
@@ -261,6 +261,89 @@ def import_(repo: Path, in_path: Path, graph_root: Path | None = None) -> None:
     except ValueError as e:
         raise click.ClickException(str(e)) from e
     log.info("import_done", in_path=str(in_path), **stats)
+
+
+@cli.command(name="scip-manifest")
+@click.option(
+    "--repo",
+    required=True,
+    type=click.Path(exists=True, file_okay=False, path_type=Path),
+    help="The producer's working tree: the directory the SCIP indexer ran over",
+)
+@click.option(
+    "--position-encoding",
+    required=True,
+    type=click.Choice(["utf-8", "utf-16", "utf-32"]),
+    help=(
+        "How the producer counts Occurrence columns. No default: it must be declared and is "
+        "checked against what the producer version is known to emit"
+    ),
+)
+@click.option("--output", required=True, type=click.Path(dir_okay=False, path_type=Path))
+@click.argument(
+    "index_path", metavar="INDEX", type=click.Path(exists=True, dir_okay=False, path_type=Path)
+)
+def scip_manifest(repo: Path, position_encoding: str, output: Path, index_path: Path) -> None:
+    """Write the producer-time `atlas-scip-manifest.v1` sidecar for a SCIP index.
+
+    Run it right after the producer, in the same working tree: it records the
+    producer name/version, the declared position encoding, the exact index
+    digest and the SHA-256 of every indexed document as it is on disk now.
+    Reads only; writes only OUTPUT. Never an MCP tool.
+    """
+    from atlas_aci.providers import scip
+
+    log = structlog.get_logger()
+    try:
+        raw = scip.build_manifest(repo.resolve(), index_path.resolve(), position_encoding)
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_bytes(raw)
+    except (ValueError, OSError) as exc:
+        raise click.ClickException(str(exc)) from exc
+    log.info("scip_manifest_written", output=str(output), bytes=len(raw))
+
+
+@cli.command(name="import-scip")
+@click.option(
+    "--graph-root",
+    default=None,
+    type=click.Path(file_okay=False, path_type=Path),
+    help="External graph storage root (default: <repo>/.atlas; independent of memex)",
+)
+@click.option(
+    "--repo", required=True, type=click.Path(exists=True, file_okay=False, path_type=Path)
+)
+@click.option(
+    "--manifest",
+    required=True,
+    type=click.Path(exists=True, dir_okay=False, path_type=Path),
+    help="The `atlas-scip-manifest.v1` sidecar written by `atlas-aci scip-manifest`",
+)
+@click.argument(
+    "index_path", metavar="INDEX", type=click.Path(exists=True, dir_okay=False, path_type=Path)
+)
+def import_scip(
+    repo: Path, manifest: Path, index_path: Path, graph_root: Path | None = None
+) -> None:
+    """Import an official scip-typescript index onto the current published graph.
+
+    Validates everything (decode bounds, producer, manifest, source identity,
+    positions) before taking the writer lock; on any rejection the published
+    graph is untouched. On success publishes a derived `scip_import` generation
+    atomically. WRITES to the selected graph directory only; never an MCP tool.
+    """
+    log = structlog.get_logger()
+    repo = repo.resolve()
+    log.info("import_scip_start", repo=str(repo), index=str(index_path))
+    graph = _open_graph(repo, graph_root)
+    try:
+        stats = graph.import_scip(index_path.resolve(), manifest.resolve())
+    except (ValueError, RuntimeError) as exc:
+        raise click.ClickException(str(exc)) from exc
+    finally:
+        graph.close()
+    click.echo(json.dumps(stats, sort_keys=True, separators=(",", ":")))
+    log.info("import_scip_done", **stats)
 
 
 @cli.command()

@@ -262,6 +262,15 @@ excludes everything else under `.atlas/` but explicitly keeps that one
 subpath. See `README.md`'s "Migration"/"Why read-only" sections for that
 workflow and its documented 100 MB size ceiling (`AC-REL-2`).
 
+### D — Optional: import an official scip-typescript index
+
+For TypeScript repositories you can add compiler-grade definition and reference
+facts from `@sourcegraph/scip-typescript@0.4.0` on top of the structural index:
+run the producer, write the sidecar with `atlas-aci scip-manifest`, then
+`atlas-aci import-scip`. It is all-or-nothing, never an MCP tool, and the next
+`atlas-aci index` supersedes it. See
+[`atlas/docs/scip-import.md`](atlas/docs/scip-import.md).
+
 ---
 
 ## Step 7 — Wire your editor
@@ -496,6 +505,8 @@ A successful `gh attestation verify` confirms that:
 - [`README.md`](README.md) — orientation, tool manifest, security
   invariants
 - [`SETUP.md`](SETUP.md) — end-to-end install → canaries → hardening
+- [`atlas/docs/scip-import.md`](atlas/docs/scip-import.md) — importing an official
+  scip-typescript index
 - [`hosts/claude-code.md`](hosts/claude-code.md),
   [`hosts/copilot.md`](hosts/copilot.md),
   [`hosts/cursor.md`](hosts/cursor.md) — per-editor wiring

@@ -1,0 +1,179 @@
+{
+  "schema": "ramza/plan-state.v1",
+  "plan": "aci-s16",
+  "created_at": "2026-11-02T23:40:10Z",
+  "tier": "full",
+  "phase": "DONE",
+  "phases_done": [
+    "RS",
+    "S",
+    "P",
+    "E",
+    "C",
+    "T",
+    "A",
+    "DONE"
+  ],
+  "rightsize": {
+    "score": 7,
+    "computed_tier": "full",
+    "inputs": {
+      "files_est": 16,
+      "new_dep": true,
+      "public_api": true,
+      "migration": false,
+      "security": true,
+      "novel": true,
+      "stakes": "med"
+    }
+  },
+  "refine_cycles": 0,
+  "skips": [],
+  "gates": [
+    {
+      "rubric": "complexity",
+      "total": 10,
+      "dims": {
+        "scope": 3,
+        "ambiguity": 2,
+        "dependencies": 3,
+        "risk": 2
+      },
+      "verdict": "human_loop",
+      "at": "2026-11-02T23:40:10Z",
+      "label": "scip-import"
+    },
+    {
+      "rubric": "explore",
+      "total": 80.5,
+      "dims": {
+        "alignment": 9,
+        "correctness": 9,
+        "maintainability": 7,
+        "performance": 8,
+        "simplicity": 6,
+        "risk": 8,
+        "innovation": 7
+      },
+      "verdict": "solid",
+      "at": "2026-11-02T23:40:10Z",
+      "label": "wire-decoder-derived-generation"
+    },
+    {
+      "rubric": "explore",
+      "total": 69,
+      "dims": {
+        "alignment": 6,
+        "correctness": 8,
+        "maintainability": 8,
+        "performance": 8,
+        "simplicity": 7,
+        "risk": 5,
+        "innovation": 4
+      },
+      "verdict": "weak",
+      "at": "2026-11-02T23:40:10Z",
+      "label": "runtime-protobuf-dependency"
+    },
+    {
+      "rubric": "explore",
+      "total": 65,
+      "dims": {
+        "alignment": 7,
+        "correctness": 7,
+        "maintainability": 6,
+        "performance": 8,
+        "simplicity": 5,
+        "risk": 4,
+        "innovation": 7
+      },
+      "verdict": "weak",
+      "at": "2026-11-02T23:40:10Z",
+      "label": "traversable-reference-now"
+    },
+    {
+      "rubric": "confidence",
+      "total": 77.5,
+      "dims": {
+        "pattern_match": 75,
+        "requirement_clarity": 85,
+        "decomposition_stability": 70,
+        "constraint_compliance": 80
+      },
+      "verdict": "VALIDATE",
+      "at": "2026-11-02T23:40:10Z",
+      "label": "scip-plan"
+    },
+    {
+      "rubric": "refine",
+      "cycle": 1,
+      "total": 4,
+      "min": 3,
+      "dims": {
+        "clarity": 4,
+        "completeness": 4,
+        "actionability": 4,
+        "efficiency": 3,
+        "testability": 5
+      },
+      "verdict": "pass",
+      "at": "2026-11-03T13:55:08Z",
+      "label": "post-checker"
+    }
+  ],
+  "amendments": [],
+  "declared_scope": [
+    "mcp-server/src/atlas_aci/providers/scip*",
+    "mcp-server/src/atlas_aci/__main__.py",
+    "mcp-server/tests/slices/test_s16_*.py",
+    "mcp-server/tests/fixtures/scip/*",
+    "mcp-server/pyproject.toml",
+    "mcp-server/uv.lock",
+    "atlas/docs/*",
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/src/atlas_aci/storage/evidence.py",
+    "mcp-server/src/atlas_aci/storage/snapshots.py",
+    "mcp-server/src/atlas_aci/protocol/graph.py",
+    "mcp-server/src/atlas_aci/protocol/context.py",
+    "mcp-server/src/atlas_aci/query/indexed.py",
+    "mcp-server/src/atlas_aci/resolvers/dependencies.py",
+    "README.md",
+    "INTEGRATION.md",
+    "CHANGELOG.md",
+    ".spectra/plans/aci-s16.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/changes/aci-s16/*",
+    ".spectra/evidence/aci-s16/*",
+    ".spectra/state/aci-s16.execution.json",
+    ".spectra/backlog/execution.json",
+    ".spectra/backlog/order.md"
+  ],
+  "criteria_sha256": "b45b747ccfe19d0639ab837fc42541c865660b4d151740fd38093b6030e10e3b",
+  "critic": {
+    "author": "orchestrator-ramza-plan-s16",
+    "checker": "atlas-s16-plan-checker",
+    "at": "2026-11-03T13:55:08Z"
+  },
+  "criteria_frozen_at": "2026-11-03T13:55:08Z",
+  "scope_declared_at": "2026-11-03T13:55:08Z",
+  "drift_reports": [
+    {
+      "at": "2026-11-03T15:13:59Z",
+      "range": "worktree-vs-HEAD",
+      "files_changed": 53,
+      "uncovered": []
+    },
+    {
+      "at": "2026-11-03T16:13:10Z",
+      "range": "staged",
+      "files_changed": 75,
+      "uncovered": []
+    },
+    {
+      "at": "2026-11-03T16:13:44Z",
+      "range": "a2e7d37..HEAD",
+      "files_changed": 75,
+      "uncovered": []
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "name": "s16-fixture",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ACI-S16 SCIP fixture project; nothing here is published.",
+  "devDependencies": {
+    "@sourcegraph/scip-typescript": "0.4.0",
+    "typescript": "5.9.3"
+  }
+}
