@@ -1,0 +1,15 @@
+mcp-server/src/atlas_aci/query/diff*
+mcp-server/tests/slices/test_s19_*.py
+mcp-server/src/atlas_aci/__main__.py
+mcp-server/tests/fixtures/s19/*
+atlas/docs/symbol-diff.md
+README.md
+INTEGRATION.md
+CHANGELOG.md
+.spectra/plans/aci-s19.*
+.spectra/plans/ramza-calibration.jsonl
+.spectra/changes/aci-s19/*
+.spectra/evidence/aci-s19/*
+.spectra/state/aci-s19.execution.json
+.spectra/backlog/execution.json
+.spectra/backlog/order.md

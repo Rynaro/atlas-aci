@@ -271,6 +271,15 @@ run the producer, write the sidecar with `atlas-aci scip-manifest`, then
 `atlas-aci index` supersedes it. See
 [`atlas/docs/scip-import.md`](atlas/docs/scip-import.md).
 
+### E — Optional: compare two snapshots
+
+After indexing a checkout into one graph root, edit and index again into a second
+root (or index two worktrees of one repository under a shared root), then
+`atlas-aci diff --repo R --before-graph-root B --after-graph-root A` prints which
+declarations were added, removed, or changed in signature or body versus only
+moved. It is read-only, never an MCP tool, and rejects unrelated or unverifiable
+snapshots. See [`atlas/docs/symbol-diff.md`](atlas/docs/symbol-diff.md).
+
 ---
 
 ## Step 7 — Wire your editor
@@ -507,6 +516,8 @@ A successful `gh attestation verify` confirms that:
 - [`SETUP.md`](SETUP.md) — end-to-end install → canaries → hardening
 - [`atlas/docs/scip-import.md`](atlas/docs/scip-import.md) — importing an official
   scip-typescript index
+- [`atlas/docs/symbol-diff.md`](atlas/docs/symbol-diff.md) — comparing two snapshots at
+  symbol and contract boundaries
 - [`hosts/claude-code.md`](hosts/claude-code.md),
   [`hosts/copilot.md`](hosts/copilot.md),
   [`hosts/cursor.md`](hosts/cursor.md) — per-editor wiring

@@ -1,0 +1,31 @@
+{
+  "schema": "atlas-aci/slice-execution.v1",
+  "slice_id": "ACI-S19",
+  "issue_url": "https://github.com/Rynaro/atlas-aci/issues/40",
+  "criteria_sha256": "fea6cab2657356748b092b5824a29723886e1c296d24d2ac080035b203ef64e3",
+  "base_commit": "66d8a38a927dbff275aa6c4ac4fe33e29fa65c25",
+  "output_commit": null,
+  "declared_paths": [
+    "mcp-server/src/atlas_aci/query/diff*",
+    "mcp-server/tests/slices/test_s19_*.py",
+    "mcp-server/src/atlas_aci/__main__.py",
+    "mcp-server/tests/fixtures/s19/*",
+    "atlas/docs/symbol-diff.md",
+    "README.md",
+    "INTEGRATION.md",
+    "CHANGELOG.md",
+    ".spectra/plans/aci-s19.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/changes/aci-s19/*",
+    ".spectra/evidence/aci-s19/*",
+    ".spectra/state/aci-s19.execution.json",
+    ".spectra/backlog/execution.json",
+    ".spectra/backlog/order.md"
+  ],
+  "output_digests": {},
+  "status": "IN_PROGRESS",
+  "started_at": "2026-11-03T16:40:24Z",
+  "planning_state": ".spectra/plans/aci-s19.state.json",
+  "plan": ".spectra/plans/aci-s19.md",
+  "results": []
+}

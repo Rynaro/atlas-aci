@@ -1,0 +1,97 @@
+{
+ "harness": {
+  "wrapper": "dk19.sh = docker run --rm --user 1000:1000 -e HOME=/hc -e PYTHONPATH=/ws/mcp-server/src -v <scratch>/home:/hc -v <repo>:/ws -w /ws/mcp-server atlas-aci-dev-s16",
+  "dev_image": "atlas-aci-dev-s16 sha256:783f2210c3d12ae25c567c76366b6b6dd09d4aa0c93ea1aee4fb03d8f17e859a (lock unchanged since base 66d8a38)"
+ },
+ "s19_contract": {
+  "command": "dk19.sh /opt/venv/bin/python -m pytest -q -p no:cacheprovider tests/slices/test_s19_contract.py",
+  "exit_code": 0,
+  "summary": "6 passed",
+  "log": "s19-contract.log.gz"
+ },
+ "s19_supporting": {
+  "command": "dk19.sh ... tests/slices/test_s19_languages.py test_s19_semantics.py test_s19_cli.py test_s19_support.py",
+  "exit_code": 0,
+  "summary": "135 passed",
+  "log": "s19-supporting.log.gz"
+ },
+ "orchestrator_rerun": {
+  "command": "dk19.sh ... test_s19_contract.py test_s19_semantics.py test_s19_cli.py",
+  "exit_code": 0,
+  "summary": "33 passed"
+ },
+ "ruff": {
+  "exit_code": 0,
+  "log": "ruff.log.gz"
+ },
+ "format": {
+  "exit_code": 0,
+  "log": "format.log.gz"
+ },
+ "mypy": {
+  "exit_code": 0,
+  "summary": "no issues in 52 files",
+  "log": "mypy.log.gz"
+ },
+ "full_suite": {
+  "command": "dk19.sh /opt/venv/bin/python -m pytest -q -p no:cacheprovider",
+  "exit_code": 1,
+  "summary": "1 failed, 1093 passed, 10 skipped",
+  "failed": [
+   "tests/slices/test_s01_contract.py::test_call_deadline_after_initialization"
+  ],
+  "classification": "pre-existing under uid 1000 (baseline.json)",
+  "log": "full-suite.log.gz"
+ },
+ "g_producer": {
+  "command": "git diff --exit-code 66d8a38 -- codegraph.py storage extractors providers indexing resolvers protocol tools server.py enforcement.py",
+  "exit_code": 0,
+  "log": "g-producer.log.gz"
+ },
+ "g_mcp": {
+  "result": "atlas-aci tools --repo /ws output byte-identical to base 66d8a38 source (1,494,192 bytes); tools/ and READ_ONLY_TOOLS untouched"
+ },
+ "grammar_qualification": {
+  "evidence": [
+   "grammar/dump_grammar.py",
+   "grammar/dump.txt",
+   "grammar/qualify_rows.py",
+   "grammar/qualify_rows.txt"
+  ],
+  "outcome": "all parsed rows held (python, javascript, typescript, tsx, ruby, rust, bash, scss); none demoted"
+ },
+ "production_image": {
+  "build": "docker build -t atlas-aci:s19 mcp-server",
+  "image_id": "sha256:41c1d089b3f09540259f260a7ec2572c685f30fc8e2132428ce3e3fac16ddc83",
+  "flags": "--read-only --network none; repos and graph roots mounted :ro for diff",
+  "scenario": "git repo geo.py v1 indexed into root A; v2 (module comment, area gains scale=1, old_name renamed new_name with identical body) indexed into root B",
+  "diff": {
+   "exit_code": 0,
+   "summary": {
+    "added": 1,
+    "removed": 1,
+    "signature": 1,
+    "location": 1,
+    "body": 0,
+    "format": 0,
+    "unknown": 0,
+    "unchanged": 0,
+    "candidates": 1
+   },
+   "candidate": "rename / identical_normalized_signature_and_body",
+   "log": "docker-diff.json.gz"
+  },
+  "replay": "second run byte-identical",
+  "unrelated_repository": {
+   "exit_code": 1,
+   "stdout_bytes": 0,
+   "stderr": "Error: Snapshot diff rejected: repository_identity_mismatch"
+  },
+  "same_namespace": {
+   "exit_code": 2,
+   "stderr": "Error: both sides resolve to the same graph namespace"
+  },
+  "read_only": "sha256 inventory of all graph roots and repos identical before/after every diff call",
+  "note": "first unrelated-repo attempt returned index_unavailable because the other repo was indexed at /repo but diffed at /before (graph namespace is keyed on repo path); re-indexed at the diffed path"
+ }
+}

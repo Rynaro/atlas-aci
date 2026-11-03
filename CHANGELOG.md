@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Symbol and contract snapshot diff (ACI-S19).** New operator command
+  `atlas-aci diff` and read-only library `atlas_aci.query.diff` compare two
+  explicit, already-built snapshots (same checkout with two graph roots, or
+  worktrees of one repository under one root) and print the canonical
+  `atlas-symbol-diff.v1` change set: `added`, `removed`, `signature`, `body`,
+  `format` and `location` changes plus `unknown` (closed reasons) and a separate
+  list of conservative rename/move candidates. Fingerprints are recomputed from
+  hash-verified source-snapshot bytes; every record references both snapshots.
+  Unrelated or unverifiable snapshots are rejected with a closed reason (exit 1).
+  Nothing is added to the seven MCP tools, schemas or envelopes, and the indexer
+  and generation ids are unchanged. See `atlas/docs/symbol-diff.md`.
+
 - **Official SCIP import from one TypeScript producer (ACI-S16).** New operator
   commands `atlas-aci scip-manifest` (producer-time sidecar
   `atlas-scip-manifest.v1`: producer, declared position encoding, index digest,

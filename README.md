@@ -919,6 +919,7 @@ digest never changes. Each release's notes include the exact
 | [`scripts/`](scripts/) | Guards for the augmentation workstreams (canary orchestrator, probe/export-size verifiers) — not shipped project code |
 | [`docs/`](docs/) | Deep reference — the `graph_query` DSL |
 | [`atlas/docs/scip-import.md`](atlas/docs/scip-import.md) | Importing an official scip-typescript index (`atlas-aci scip-manifest` / `import-scip`) |
+| [`atlas/docs/symbol-diff.md`](atlas/docs/symbol-diff.md) | Comparing two indexed snapshots at symbol and contract boundaries (`atlas-aci diff`) |
 | [`SETUP.md`](SETUP.md) | End-to-end playbook: install → host wiring → canaries → hardening |
 | [`INTEGRATION.md`](INTEGRATION.md) | Onboarding an existing codebase: indexing, skip tuning, freshness, multi-repo |
 | [`CLAUDE.md`](CLAUDE.md) | How Claude Code should navigate this repo when opened in an agent loop |

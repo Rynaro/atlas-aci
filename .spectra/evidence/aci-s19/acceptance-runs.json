@@ -1,0 +1,38 @@
+[
+  {
+    "ac_id": "AC-S19-001",
+    "test": "mcp-server/tests/slices/test_s19_contract.py::test_signature_change",
+    "exit_code": 0,
+    "tail": "1 passed in 0.54s"
+  },
+  {
+    "ac_id": "AC-S19-002",
+    "test": "mcp-server/tests/slices/test_s19_contract.py::test_body_change",
+    "exit_code": 0,
+    "tail": "1 passed in 0.40s"
+  },
+  {
+    "ac_id": "AC-S19-003",
+    "test": "mcp-server/tests/slices/test_s19_contract.py::test_location_only",
+    "exit_code": 0,
+    "tail": "1 passed in 0.41s"
+  },
+  {
+    "ac_id": "AC-S19-004",
+    "test": "mcp-server/tests/slices/test_s19_contract.py::test_diff_evidence",
+    "exit_code": 0,
+    "tail": "1 passed in 0.48s"
+  },
+  {
+    "ac_id": "AC-S19-005",
+    "test": "mcp-server/tests/slices/test_s19_contract.py::test_incompatible_repositories",
+    "exit_code": 0,
+    "tail": "1 passed in 0.91s"
+  },
+  {
+    "ac_id": "AC-S19-006",
+    "test": "mcp-server/tests/slices/test_s19_contract.py::test_diff_replay",
+    "exit_code": 0,
+    "tail": "1 passed in 1.21s"
+  }
+]

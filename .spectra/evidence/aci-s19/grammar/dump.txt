@@ -1,0 +1,2793 @@
+tree-sitter 0.25.2 tree-sitter-language-pack 1.6.0
+
+===== python / function (root has_error=False) =====
+async def area(w: int, h: int = 2, *a, **k) -> int:
+    # c
+    return w * h  # t
+-----
+module [0:82]
+  function_definition [0:81]
+    ~async [0:5] 'async'
+    ~def [6:9] 'def'
+    name: identifier [10:14] 'area'
+    parameters: parameters [14:43]
+      ~( [14:15] '('
+      typed_parameter [15:21]
+        identifier [15:16] 'w'
+        ~: [16:17] ':'
+        type: type [18:21]
+          identifier [18:21] 'int'
+      ~, [21:22] ','
+      typed_default_parameter [23:33]
+        name: identifier [23:24] 'h'
+        ~: [24:25] ':'
+        type: type [26:29]
+          identifier [26:29] 'int'
+        ~= [30:31] '='
+        value: integer [32:33] '2'
+      ~, [33:34] ','
+      list_splat_pattern [35:37]
+        ~* [35:36] '*'
+        identifier [36:37] 'a'
+      ~, [37:38] ','
+      dictionary_splat_pattern [39:42]
+        ~** [39:41] '**'
+        identifier [41:42] 'k'
+      ~) [42:43] ')'
+    ~-> [44:46] '->'
+    return_type: type [47:50]
+      identifier [47:50] 'int'
+    ~: [50:51] ':'
+    comment [56:59] '# c'
+    body: block [64:81]
+      return_statement [64:76]
+        ~return [64:70] 'return'
+        binary_operator [71:76]
+          left: identifier [71:72] 'w'
+          operator: ~* [73:74] '*'
+          right: identifier [75:76] 'h'
+      comment [78:81] '# t'
+
+===== python / decorated (root has_error=False) =====
+@dec(1)
+# comment between
+@other
+def f(a):
+    pass
+
+class K:
+    @staticmethod
+    def m(): ...
+-----
+module [0:97]
+  decorated_definition [0:51]
+    decorator [0:7]
+      ~@ [0:1] '@'
+      call [1:7]
+        function: identifier [1:4] 'dec'
+        arguments: argument_list [4:7]
+          ~( [4:5] '('
+          integer [5:6] '1'
+          ~) [6:7] ')'
+    comment [8:25] '# comment between'
+    decorator [26:32]
+      ~@ [26:27] '@'
+      identifier [27:32] 'other'
+    definition: function_definition [33:51]
+      ~def [33:36] 'def'
+      name: identifier [37:38] 'f'
+      parameters: parameters [38:41]
+        ~( [38:39] '('
+        identifier [39:40] 'a'
+        ~) [40:41] ')'
+      ~: [41:42] ':'
+      body: block [47:51]
+        pass_statement [47:51]
+          ~pass [47:51] 'pass'
+  class_definition [53:96]
+    ~class [53:58] 'class'
+    name: identifier [59:60] 'K'
+    ~: [60:61] ':'
+    body: block [66:96]
+      decorated_definition [66:96]
+        decorator [66:79]
+          ~@ [66:67] '@'
+          identifier [67:79] 'staticmethod'
+        definition: function_definition [84:96]
+          ~def [84:87] 'def'
+          name: identifier [88:89] 'm'
+          parameters: parameters [89:91]
+            ~( [89:90] '('
+            ~) [90:91] ')'
+          ~: [91:92] ':'
+          body: block [93:96]
+            ellipsis [93:96] '...'
+
+===== python / class (root has_error=False) =====
+@dc
+class K[T](Base, metaclass=M):
+    x = 1
+    def m(self):
+        return 1
+-----
+module [0:79]
+  decorated_definition [0:78]
+    decorator [0:3]
+      ~@ [0:1] '@'
+      identifier [1:3] 'dc'
+    definition: class_definition [4:78]
+      ~class [4:9] 'class'
+      name: identifier [10:11] 'K'
+      type_parameters: type_parameter [11:14]
+        ~[ [11:12] '['
+        type [12:13]
+          identifier [12:13] 'T'
+        ~] [13:14] ']'
+      superclasses: argument_list [14:33]
+        ~( [14:15] '('
+        identifier [15:19] 'Base'
+        ~, [19:20] ','
+        keyword_argument [21:32]
+          name: identifier [21:30] 'metaclass'
+          ~= [30:31] '='
+          value: identifier [31:32] 'M'
+        ~) [32:33] ')'
+      ~: [33:34] ':'
+      body: block [39:78]
+        assignment [39:44]
+          left: identifier [39:40] 'x'
+          ~= [41:42] '='
+          right: integer [43:44] '1'
+        function_definition [49:78]
+          ~def [49:52] 'def'
+          name: identifier [53:54] 'm'
+          parameters: parameters [54:60]
+            ~( [54:55] '('
+            identifier [55:59] 'self'
+            ~) [59:60] ')'
+          ~: [60:61] ':'
+          body: block [70:78]
+            return_statement [70:78]
+              ~return [70:76] 'return'
+              integer [77:78] '1'
+
+===== python / empty (root has_error=False) =====
+def f(): pass
+def g(): ...
+def h():
+    '''doc'''
+-----
+module [0:50]
+  function_definition [0:13]
+    ~def [0:3] 'def'
+    name: identifier [4:5] 'f'
+    parameters: parameters [5:7]
+      ~( [5:6] '('
+      ~) [6:7] ')'
+    ~: [7:8] ':'
+    body: block [9:13]
+      pass_statement [9:13]
+        ~pass [9:13] 'pass'
+  function_definition [14:26]
+    ~def [14:17] 'def'
+    name: identifier [18:19] 'g'
+    parameters: parameters [19:21]
+      ~( [19:20] '('
+      ~) [20:21] ')'
+    ~: [21:22] ':'
+    body: block [23:26]
+      ellipsis [23:26] '...'
+  function_definition [27:49]
+    ~def [27:30] 'def'
+    name: identifier [31:32] 'h'
+    parameters: parameters [32:34]
+      ~( [32:33] '('
+      ~) [33:34] ')'
+    ~: [34:35] ':'
+    body: block [40:49]
+      string [40:49] "'''doc'''"
+        string_start [40:43] "'''"
+        string_content [43:46] 'doc'
+        string_end [46:49] "'''"
+
+===== python / dedent_a (root has_error=False) =====
+def f(x):
+    if x:
+        a()
+        b()
+-----
+module [0:44]
+  function_definition [0:43]
+    ~def [0:3] 'def'
+    name: identifier [4:5] 'f'
+    parameters: parameters [5:8]
+      ~( [5:6] '('
+      identifier [6:7] 'x'
+      ~) [7:8] ')'
+    ~: [8:9] ':'
+    body: block [14:43]
+      if_statement [14:43]
+        ~if [14:16] 'if'
+        condition: identifier [17:18] 'x'
+        ~: [18:19] ':'
+        consequence: block [28:43]
+          call [28:31]
+            function: identifier [28:29] 'a'
+            arguments: argument_list [29:31]
+              ~( [29:30] '('
+              ~) [30:31] ')'
+          call [40:43]
+            function: identifier [40:41] 'b'
+            arguments: argument_list [41:43]
+              ~( [41:42] '('
+              ~) [42:43] ')'
+
+===== python / dedent_b (root has_error=False) =====
+def f(x):
+    if x:
+        a()
+    b()
+-----
+module [0:40]
+  function_definition [0:39]
+    ~def [0:3] 'def'
+    name: identifier [4:5] 'f'
+    parameters: parameters [5:8]
+      ~( [5:6] '('
+      identifier [6:7] 'x'
+      ~) [7:8] ')'
+    ~: [8:9] ':'
+    body: block [14:39]
+      if_statement [14:31]
+        ~if [14:16] 'if'
+        condition: identifier [17:18] 'x'
+        ~: [18:19] ':'
+        consequence: block [28:31]
+          call [28:31]
+            function: identifier [28:29] 'a'
+            arguments: argument_list [29:31]
+              ~( [29:30] '('
+              ~) [30:31] ')'
+      call [36:39]
+        function: identifier [36:37] 'b'
+        arguments: argument_list [37:39]
+          ~( [37:38] '('
+          ~) [38:39] ')'
+
+===== python / strings (root has_error=False) =====
+def f():
+    return "a b"
+def g():
+    return f"x {y}  z"
+def h():
+    return """
+  multi  
+"""
+x = 1 \
+  + 2
+-----
+module [0:110]
+  function_definition [0:25]
+    ~def [0:3] 'def'
+    name: identifier [4:5] 'f'
+    parameters: parameters [5:7]
+      ~( [5:6] '('
+      ~) [6:7] ')'
+    ~: [7:8] ':'
+    body: block [13:25]
+      return_statement [13:25]
+        ~return [13:19] 'return'
+        string [20:25] '"a b"'
+          string_start [20:21] '"'
+          string_content [21:24] 'a b'
+          string_end [24:25] '"'
+  function_definition [26:57]
+    ~def [26:29] 'def'
+    name: identifier [30:31] 'g'
+    parameters: parameters [31:33]
+      ~( [31:32] '('
+      ~) [32:33] ')'
+    ~: [33:34] ':'
+    body: block [39:57]
+      return_statement [39:57]
+        ~return [39:45] 'return'
+        string [46:57] 'f"x {y}  z"'
+          string_start [46:48] 'f"'
+          string_content [48:50] 'x '
+          interpolation [50:53]
+            ~{ [50:51] '{'
+            expression: identifier [51:52] 'y'
+            ~} [52:53] '}'
+          string_content [53:56] '  z'
+          string_end [56:57] '"'
+  function_definition [58:95]
+    ~def [58:61] 'def'
+    name: identifier [62:63] 'h'
+    parameters: parameters [63:65]
+      ~( [63:64] '('
+      ~) [64:65] ')'
+    ~: [65:66] ':'
+    body: block [71:95]
+      return_statement [71:95]
+        ~return [71:77] 'return'
+        string [78:95] '"""\n  multi  \n"""'
+          string_start [78:81] '"""'
+          string_content [81:92] '\n  multi  \n'
+          string_end [92:95] '"""'
+  assignment [96:109]
+    left: identifier [96:97] 'x'
+    ~= [98:99] '='
+    right: binary_operator [100:109]
+      left: integer [100:101] '1'
+      line_continuation [102:104] '\\\n'
+      operator: ~+ [106:107] '+'
+      right: integer [108:109] '2'
+
+===== python / comments (root has_error=False) =====
+def f(a, # c1
+      b):  # c2
+    # c3
+    return a
+    # c4
+-----
+module [0:61]
+  function_definition [0:60]
+    ~def [0:3] 'def'
+    name: identifier [4:5] 'f'
+    parameters: parameters [5:22]
+      ~( [5:6] '('
+      identifier [6:7] 'a'
+      ~, [7:8] ','
+      comment [9:13] '# c1'
+      identifier [20:21] 'b'
+      ~) [21:22] ')'
+    ~: [22:23] ':'
+    comment [25:29] '# c2'
+    comment [34:38] '# c3'
+    body: block [43:60]
+      return_statement [43:51]
+        ~return [43:49] 'return'
+        identifier [50:51] 'a'
+      comment [56:60] '# c4'
+
+===== python / error (root has_error=True) =====
+def f(:
+    return 1
+-----
+module [0:21]
+  function_definition [0:20]
+    ~def [0:3] 'def'
+    name: identifier [4:5] 'f'
+    parameters: parameters [5:6]
+      ~( [5:6] '('
+      ~) [6:6] MISSING,HAS_ERROR ''
+    ~: [6:7] ':'
+    body: block [12:20]
+      return_statement [12:20]
+        ~return [12:18] 'return'
+        integer [19:20] '1'
+
+===== javascript / function (root has_error=False) =====
+async function* gen(a, b = 1, ...r) {
+  // c
+  return a; /* t */
+}
+-----
+program [0:67]
+  generator_function_declaration [0:66]
+    ~async [0:5] 'async'
+    ~function [6:14] 'function'
+    ~* [14:15] '*'
+    name: identifier [16:19] 'gen'
+    parameters: formal_parameters [19:35]
+      ~( [19:20] '('
+      identifier [20:21] 'a'
+      ~, [21:22] ','
+      assignment_pattern [23:28]
+        left: identifier [23:24] 'b'
+        ~= [25:26] '='
+        right: number [27:28] '1'
+      ~, [28:29] ','
+      rest_pattern [30:34]
+        ~... [30:33] '...'
+        identifier [33:34] 'r'
+      ~) [34:35] ')'
+    body: statement_block [36:66]
+      ~{ [36:37] '{'
+      comment [40:44] '// c'
+      return_statement [47:56]
+        ~return [47:53] 'return'
+        identifier [54:55] 'a'
+        ~; [55:56] ';'
+      comment [57:64] '/* t */'
+      ~} [65:66] '}'
+
+===== javascript / export (root has_error=False) =====
+export function f(a) { return a }
+export default function g() {}
+export default class {}
+export class C { static async m(a) { return 1 } get x() { return 1 } set x(v) {} *g() {} #p() {} }
+-----
+program [0:188]
+  export_statement [0:33]
+    ~export [0:6] 'export'
+    declaration: function_declaration [7:33]
+      ~function [7:15] 'function'
+      name: identifier [16:17] 'f'
+      parameters: formal_parameters [17:20]
+        ~( [17:18] '('
+        identifier [18:19] 'a'
+        ~) [19:20] ')'
+      body: statement_block [21:33]
+        ~{ [21:22] '{'
+        return_statement [23:31]
+          ~return [23:29] 'return'
+          identifier [30:31] 'a'
+        ~} [32:33] '}'
+  export_statement [34:64]
+    ~export [34:40] 'export'
+    ~default [41:48] 'default'
+    declaration: function_declaration [49:64]
+      ~function [49:57] 'function'
+      name: identifier [58:59] 'g'
+      parameters: formal_parameters [59:61]
+        ~( [59:60] '('
+        ~) [60:61] ')'
+      body: statement_block [62:64]
+        ~{ [62:63] '{'
+        ~} [63:64] '}'
+  export_statement [65:88]
+    ~export [65:71] 'export'
+    ~default [72:79] 'default'
+    value: class [80:88]
+      ~class [80:85] 'class'
+      body: class_body [86:88]
+        ~{ [86:87] '{'
+        ~} [87:88] '}'
+  export_statement [89:187]
+    ~export [89:95] 'export'
+    declaration: class_declaration [96:187]
+      ~class [96:101] 'class'
+      name: identifier [102:103] 'C'
+      body: class_body [104:187]
+        ~{ [104:105] '{'
+        member: method_definition [106:136]
+          ~static [106:112] 'static'
+          ~async [113:118] 'async'
+          name: property_identifier [119:120] 'm'
+          parameters: formal_parameters [120:123]
+            ~( [120:121] '('
+            identifier [121:122] 'a'
+            ~) [122:123] ')'
+          body: statement_block [124:136]
+            ~{ [124:125] '{'
+            return_statement [126:134]
+              ~return [126:132] 'return'
+              number [133:134] '1'
+            ~} [135:136] '}'
+        member: method_definition [137:157]
+          ~get [137:140] 'get'
+          name: property_identifier [141:142] 'x'
+          parameters: formal_parameters [142:144]
+            ~( [142:143] '('
+            ~) [143:144] ')'
+          body: statement_block [145:157]
+            ~{ [145:146] '{'
+            return_statement [147:155]
+              ~return [147:153] 'return'
+              number [154:155] '1'
+            ~} [156:157] '}'
+        member: method_definition [158:169]
+          ~set [158:161] 'set'
+          name: property_identifier [162:163] 'x'
+          parameters: formal_parameters [163:166]
+            ~( [163:164] '('
+            identifier [164:165] 'v'
+            ~) [165:166] ')'
+          body: statement_block [167:169]
+            ~{ [167:168] '{'
+            ~} [168:169] '}'
+        member: method_definition [170:177]
+          ~* [170:171] '*'
+          name: property_identifier [171:172] 'g'
+          parameters: formal_parameters [172:174]
+            ~( [172:173] '('
+            ~) [173:174] ')'
+          body: statement_block [175:177]
+            ~{ [175:176] '{'
+            ~} [176:177] '}'
+        member: method_definition [178:185]
+          name: private_property_identifier [178:180] '#p'
+          parameters: formal_parameters [180:182]
+            ~( [180:181] '('
+            ~) [181:182] ')'
+          body: statement_block [183:185]
+            ~{ [183:184] '{'
+            ~} [184:185] '}'
+        ~} [186:187] '}'
+
+===== javascript / class (root has_error=False) =====
+class A extends B { constructor(a) { super(a) } m() {} }
+-----
+program [0:57]
+  class_declaration [0:56]
+    ~class [0:5] 'class'
+    name: identifier [6:7] 'A'
+    class_heritage [8:17]
+      ~extends [8:15] 'extends'
+      identifier [16:17] 'B'
+    body: class_body [18:56]
+      ~{ [18:19] '{'
+      member: method_definition [20:47]
+        name: property_identifier [20:31] 'constructor'
+        parameters: formal_parameters [31:34]
+          ~( [31:32] '('
+          identifier [32:33] 'a'
+          ~) [33:34] ')'
+        body: statement_block [35:47]
+          ~{ [35:36] '{'
+          expression_statement [37:45]
+            call_expression [37:45]
+              function: super [37:42] 'super'
+              arguments: arguments [42:45]
+                ~( [42:43] '('
+                identifier [43:44] 'a'
+                ~) [44:45] ')'
+          ~} [46:47] '}'
+      member: method_definition [48:54]
+        name: property_identifier [48:49] 'm'
+        parameters: formal_parameters [49:51]
+          ~( [49:50] '('
+          ~) [50:51] ')'
+        body: statement_block [52:54]
+          ~{ [52:53] '{'
+          ~} [53:54] '}'
+      ~} [55:56] '}'
+
+===== javascript / decorators (root has_error=False) =====
+@dec class D { @m @n x() {} }
+@dec export class E {}
+export @dec class F {}
+-----
+program [0:76]
+  class_declaration [0:29]
+    decorator: decorator [0:4]
+      ~@ [0:1] '@'
+      identifier [1:4] 'dec'
+    ~class [5:10] 'class'
+    name: identifier [11:12] 'D'
+    body: class_body [13:29]
+      ~{ [13:14] '{'
+      member: method_definition [15:27]
+        decorator: decorator [15:17]
+          ~@ [15:16] '@'
+          identifier [16:17] 'm'
+        decorator: decorator [18:20]
+          ~@ [18:19] '@'
+          identifier [19:20] 'n'
+        name: property_identifier [21:22] 'x'
+        parameters: formal_parameters [22:24]
+          ~( [22:23] '('
+          ~) [23:24] ')'
+        body: statement_block [25:27]
+          ~{ [25:26] '{'
+          ~} [26:27] '}'
+      ~} [28:29] '}'
+  export_statement [30:52]
+    decorator: decorator [30:34]
+      ~@ [30:31] '@'
+      identifier [31:34] 'dec'
+    ~export [35:41] 'export'
+    declaration: class_declaration [42:52]
+      ~class [42:47] 'class'
+      name: identifier [48:49] 'E'
+      body: class_body [50:52]
+        ~{ [50:51] '{'
+        ~} [51:52] '}'
+  export_statement [53:75]
+    ~export [53:59] 'export'
+    declaration: class_declaration [60:75]
+      decorator: decorator [60:64]
+        ~@ [60:61] '@'
+        identifier [61:64] 'dec'
+      ~class [65:70] 'class'
+      name: identifier [71:72] 'F'
+      body: class_body [73:75]
+        ~{ [73:74] '{'
+        ~} [74:75] '}'
+
+===== javascript / strings (root has_error=False) =====
+function f() { return 'a b' }
+function g() { return `a ${x}  b` }
+function h() { return /a  b/g }
+-----
+program [0:98]
+  function_declaration [0:29]
+    ~function [0:8] 'function'
+    name: identifier [9:10] 'f'
+    parameters: formal_parameters [10:12]
+      ~( [10:11] '('
+      ~) [11:12] ')'
+    body: statement_block [13:29]
+      ~{ [13:14] '{'
+      return_statement [15:27]
+        ~return [15:21] 'return'
+        string [22:27] "'a b'"
+          ~' [22:23] "'"
+          string_fragment [23:26] 'a b'
+          ~' [26:27] "'"
+      ~} [28:29] '}'
+  function_declaration [30:65]
+    ~function [30:38] 'function'
+    name: identifier [39:40] 'g'
+    parameters: formal_parameters [40:42]
+      ~( [40:41] '('
+      ~) [41:42] ')'
+    body: statement_block [43:65]
+      ~{ [43:44] '{'
+      return_statement [45:63]
+        ~return [45:51] 'return'
+        template_string [52:63]
+          ~` [52:53] '`'
+          string_fragment [53:55] 'a '
+          template_substitution [55:59]
+            ~${ [55:57] '${'
+            identifier [57:58] 'x'
+            ~} [58:59] '}'
+          string_fragment [59:62] '  b'
+          ~` [62:63] '`'
+      ~} [64:65] '}'
+  function_declaration [66:97]
+    ~function [66:74] 'function'
+    name: identifier [75:76] 'h'
+    parameters: formal_parameters [76:78]
+      ~( [76:77] '('
+      ~) [77:78] ')'
+    body: statement_block [79:97]
+      ~{ [79:80] '{'
+      return_statement [81:95]
+        ~return [81:87] 'return'
+        regex [88:95]
+          ~/ [88:89] '/'
+          pattern: regex_pattern [89:93] 'a  b'
+          ~/ [93:94] '/'
+          flags: regex_flags [94:95] 'g'
+      ~} [96:97] '}'
+
+===== javascript / arrow (root has_error=False) =====
+const f = (a) => a;
+const g = a => a;
+-----
+program [0:38]
+  lexical_declaration [0:19]
+    kind: ~const [0:5] 'const'
+    variable_declarator [6:18]
+      name: identifier [6:7] 'f'
+      ~= [8:9] '='
+      value: arrow_function [10:18]
+        parameters: formal_parameters [10:13]
+          ~( [10:11] '('
+          identifier [11:12] 'a'
+          ~) [12:13] ')'
+        ~=> [14:16] '=>'
+        body: identifier [17:18] 'a'
+    ~; [18:19] ';'
+  lexical_declaration [20:37]
+    kind: ~const [20:25] 'const'
+    variable_declarator [26:36]
+      name: identifier [26:27] 'g'
+      ~= [28:29] '='
+      value: arrow_function [30:36]
+        parameter: identifier [30:31] 'a'
+        ~=> [32:34] '=>'
+        body: identifier [35:36] 'a'
+    ~; [36:37] ';'
+
+===== javascript / jsx (root has_error=False) =====
+function C() { return <div> hello  world </div>; }
+-----
+program [0:51]
+  function_declaration [0:50]
+    ~function [0:8] 'function'
+    name: identifier [9:10] 'C'
+    parameters: formal_parameters [10:12]
+      ~( [10:11] '('
+      ~) [11:12] ')'
+    body: statement_block [13:50]
+      ~{ [13:14] '{'
+      return_statement [15:48]
+        ~return [15:21] 'return'
+        jsx_element [22:47]
+          open_tag: jsx_opening_element [22:27]
+            ~< [22:23] '<'
+            name: identifier [23:26] 'div'
+            ~> [26:27] '>'
+          jsx_text [27:41] ' hello  world '
+          close_tag: jsx_closing_element [41:47]
+            ~</ [41:43] '</'
+            name: identifier [43:46] 'div'
+            ~> [46:47] '>'
+        ~; [47:48] ';'
+      ~} [49:50] '}'
+
+===== javascript / empty (root has_error=False) =====
+function f() {}
+class E {}
+class G { m() {} }
+-----
+program [0:46]
+  function_declaration [0:15]
+    ~function [0:8] 'function'
+    name: identifier [9:10] 'f'
+    parameters: formal_parameters [10:12]
+      ~( [10:11] '('
+      ~) [11:12] ')'
+    body: statement_block [13:15]
+      ~{ [13:14] '{'
+      ~} [14:15] '}'
+  class_declaration [16:26]
+    ~class [16:21] 'class'
+    name: identifier [22:23] 'E'
+    body: class_body [24:26]
+      ~{ [24:25] '{'
+      ~} [25:26] '}'
+  class_declaration [27:45]
+    ~class [27:32] 'class'
+    name: identifier [33:34] 'G'
+    body: class_body [35:45]
+      ~{ [35:36] '{'
+      member: method_definition [37:43]
+        name: property_identifier [37:38] 'm'
+        parameters: formal_parameters [38:40]
+          ~( [38:39] '('
+          ~) [39:40] ')'
+        body: statement_block [41:43]
+          ~{ [41:42] '{'
+          ~} [42:43] '}'
+      ~} [44:45] '}'
+
+===== typescript / function (root has_error=False) =====
+export async function f<T>(a: T, b?: number): Promise<T> {
+  // c
+  return a;
+}
+-----
+program [0:80]
+  export_statement [0:79]
+    ~export [0:6] 'export'
+    declaration: function_declaration [7:79]
+      ~async [7:12] 'async'
+      ~function [13:21] 'function'
+      name: identifier [22:23] 'f'
+      type_parameters: type_parameters [23:26]
+        ~< [23:24] '<'
+        type_parameter [24:25]
+          name: type_identifier [24:25] 'T'
+        ~> [25:26] '>'
+      parameters: formal_parameters [26:44]
+        ~( [26:27] '('
+        required_parameter [27:31]
+          pattern: identifier [27:28] 'a'
+          type: type_annotation [28:31]
+            ~: [28:29] ':'
+            type_identifier [30:31] 'T'
+        ~, [31:32] ','
+        optional_parameter [33:43]
+          pattern: identifier [33:34] 'b'
+          ~? [34:35] '?'
+          type: type_annotation [35:43]
+            ~: [35:36] ':'
+            predefined_type [37:43]
+              ~number [37:43] 'number'
+        ~) [43:44] ')'
+      return_type: type_annotation [44:56]
+        ~: [44:45] ':'
+        generic_type [46:56]
+          name: type_identifier [46:53] 'Promise'
+          type_arguments: type_arguments [53:56]
+            ~< [53:54] '<'
+            type_identifier [54:55] 'T'
+            ~> [55:56] '>'
+      body: statement_block [57:79]
+        ~{ [57:58] '{'
+        comment [61:65] '// c'
+        return_statement [68:77]
+          ~return [68:74] 'return'
+          identifier [75:76] 'a'
+          ~; [76:77] ';'
+        ~} [78:79] '}'
+
+===== typescript / overload (root has_error=False) =====
+function o(a: string): string;
+function o(a: number): number;
+function o(a: any): any { return a }
+declare function dd(a: number): void;
+-----
+program [0:137]
+  function_signature [0:30]
+    ~function [0:8] 'function'
+    name: identifier [9:10] 'o'
+    parameters: formal_parameters [10:21]
+      ~( [10:11] '('
+      required_parameter [11:20]
+        pattern: identifier [11:12] 'a'
+        type: type_annotation [12:20]
+          ~: [12:13] ':'
+          predefined_type [14:20]
+            ~string [14:20] 'string'
+      ~) [20:21] ')'
+    return_type: type_annotation [21:29]
+      ~: [21:22] ':'
+      predefined_type [23:29]
+        ~string [23:29] 'string'
+    ~; [29:30] ';'
+  function_signature [31:61]
+    ~function [31:39] 'function'
+    name: identifier [40:41] 'o'
+    parameters: formal_parameters [41:52]
+      ~( [41:42] '('
+      required_parameter [42:51]
+        pattern: identifier [42:43] 'a'
+        type: type_annotation [43:51]
+          ~: [43:44] ':'
+          predefined_type [45:51]
+            ~number [45:51] 'number'
+      ~) [51:52] ')'
+    return_type: type_annotation [52:60]
+      ~: [52:53] ':'
+      predefined_type [54:60]
+        ~number [54:60] 'number'
+    ~; [60:61] ';'
+  function_declaration [62:98]
+    ~function [62:70] 'function'
+    name: identifier [71:72] 'o'
+    parameters: formal_parameters [72:80]
+      ~( [72:73] '('
+      required_parameter [73:79]
+        pattern: identifier [73:74] 'a'
+        type: type_annotation [74:79]
+          ~: [74:75] ':'
+          predefined_type [76:79]
+            ~any [76:79] 'any'
+      ~) [79:80] ')'
+    return_type: type_annotation [80:85]
+      ~: [80:81] ':'
+      predefined_type [82:85]
+        ~any [82:85] 'any'
+    body: statement_block [86:98]
+      ~{ [86:87] '{'
+      return_statement [88:96]
+        ~return [88:94] 'return'
+        identifier [95:96] 'a'
+      ~} [97:98] '}'
+  ambient_declaration [99:136]
+    ~declare [99:106] 'declare'
+    function_signature [107:136]
+      ~function [107:115] 'function'
+      name: identifier [116:118] 'dd'
+      parameters: formal_parameters [118:129]
+        ~( [118:119] '('
+        required_parameter [119:128]
+          pattern: identifier [119:120] 'a'
+          type: type_annotation [120:128]
+            ~: [120:121] ':'
+            predefined_type [122:128]
+              ~number [122:128] 'number'
+        ~) [128:129] ')'
+      return_type: type_annotation [129:135]
+        ~: [129:130] ':'
+        predefined_type [131:135]
+          ~void [131:135] 'void'
+      ~; [135:136] ';'
+
+===== typescript / class (root has_error=False) =====
+export default abstract class C<T> extends B<T> implements I, J {
+  private static readonly x: number = 1;
+  public async m<U>(a: U): Promise<void> { }
+  protected abstract n(): void;
+  get v(): number { return 1 }
+  set v(x: number) {}
+  constructor(private a: string) { super() }
+  override o(): void {}
+  #p() {}
+}
+-----
+program [0:318]
+  export_statement [0:317]
+    ~export [0:6] 'export'
+    ~default [7:14] 'default'
+    declaration: abstract_class_declaration [15:317]
+      ~abstract [15:23] 'abstract'
+      ~class [24:29] 'class'
+      name: type_identifier [30:31] 'C'
+      type_parameters: type_parameters [31:34]
+        ~< [31:32] '<'
+        type_parameter [32:33]
+          name: type_identifier [32:33] 'T'
+        ~> [33:34] '>'
+      class_heritage [35:63]
+        extends_clause [35:47]
+          ~extends [35:42] 'extends'
+          value: identifier [43:44] 'B'
+          type_arguments: type_arguments [44:47]
+            ~< [44:45] '<'
+            type_identifier [45:46] 'T'
+            ~> [46:47] '>'
+        implements_clause [48:63]
+          ~implements [48:58] 'implements'
+          type_identifier [59:60] 'I'
+          ~, [60:61] ','
+          type_identifier [62:63] 'J'
+      body: class_body [64:317]
+        ~{ [64:65] '{'
+        public_field_definition [68:105]
+          accessibility_modifier [68:75]
+            ~private [68:75] 'private'
+          ~static [76:82] 'static'
+          ~readonly [83:91] 'readonly'
+          name: property_identifier [92:93] 'x'
+          type: type_annotation [93:101]
+            ~: [93:94] ':'
+            predefined_type [95:101]
+              ~number [95:101] 'number'
+          ~= [102:103] '='
+          value: number [104:105] '1'
+        ~; [105:106] ';'
+        method_definition [109:151]
+          accessibility_modifier [109:115]
+            ~public [109:115] 'public'
+          ~async [116:121] 'async'
+          name: property_identifier [122:123] 'm'
+          type_parameters: type_parameters [123:126]
+            ~< [123:124] '<'
+            type_parameter [124:125]
+              name: type_identifier [124:125] 'U'
+            ~> [125:126] '>'
+          parameters: formal_parameters [126:132]
+            ~( [126:127] '('
+            required_parameter [127:131]
+              pattern: identifier [127:128] 'a'
+              type: type_annotation [128:131]
+                ~: [128:129] ':'
+                type_identifier [130:131] 'U'
+            ~) [131:132] ')'
+          return_type: type_annotation [132:147]
+            ~: [132:133] ':'
+            generic_type [134:147]
+              name: type_identifier [134:141] 'Promise'
+              type_arguments: type_arguments [141:147]
+                ~< [141:142] '<'
+                predefined_type [142:146]
+                  ~void [142:146] 'void'
+                ~> [146:147] '>'
+          body: statement_block [148:151]
+            ~{ [148:149] '{'
+            ~} [150:151] '}'
+        abstract_method_signature [154:182]
+          accessibility_modifier [154:163]
+            ~protected [154:163] 'protected'
+          ~abstract [164:172] 'abstract'
+          name: property_identifier [173:174] 'n'
+          parameters: formal_parameters [174:176]
+            ~( [174:175] '('
+            ~) [175:176] ')'
+          return_type: type_annotation [176:182]
+            ~: [176:177] ':'
+            predefined_type [178:182]
+              ~void [178:182] 'void'
+        ~; [182:183] ';'
+        method_definition [186:214]
+          ~get [186:189] 'get'
+          name: property_identifier [190:191] 'v'
+          parameters: formal_parameters [191:193]
+            ~( [191:192] '('
+            ~) [192:193] ')'
+          return_type: type_annotation [193:201]
+            ~: [193:194] ':'
+            predefined_type [195:201]
+              ~number [195:201] 'number'
+          body: statement_block [202:214]
+            ~{ [202:203] '{'
+            return_statement [204:212]
+              ~return [204:210] 'return'
+              number [211:212] '1'
+            ~} [213:214] '}'
+        method_definition [217:236]
+          ~set [217:220] 'set'
+          name: property_identifier [221:222] 'v'
+          parameters: formal_parameters [222:233]
+            ~( [222:223] '('
+            required_parameter [223:232]
+              pattern: identifier [223:224] 'x'
+              type: type_annotation [224:232]
+                ~: [224:225] ':'
+                predefined_type [226:232]
+                  ~number [226:232] 'number'
+            ~) [232:233] ')'
+          body: statement_block [234:236]
+            ~{ [234:235] '{'
+            ~} [235:236] '}'
+        method_definition [239:281]
+          name: property_identifier [239:250] 'constructor'
+          parameters: formal_parameters [250:269]
+            ~( [250:251] '('
+            required_parameter [251:268]
+              accessibility_modifier [251:258]
+                ~private [251:258] 'private'
+              pattern: identifier [259:260] 'a'
+              type: type_annotation [260:268]
+                ~: [260:261] ':'
+                predefined_type [262:268]
+                  ~string [262:268] 'string'
+            ~) [268:269] ')'
+          body: statement_block [270:281]
+            ~{ [270:271] '{'
+            expression_statement [272:279]
+              call_expression [272:279]
+                function: super [272:277] 'super'
+                arguments: arguments [277:279]
+                  ~( [277:278] '('
+                  ~) [278:279] ')'
+            ~} [280:281] '}'
+        method_definition [284:305]
+          override_modifier [284:292]
+            ~override [284:292] 'override'
+          name: property_identifier [293:294] 'o'
+          parameters: formal_parameters [294:296]
+            ~( [294:295] '('
+            ~) [295:296] ')'
+          return_type: type_annotation [296:302]
+            ~: [296:297] ':'
+            predefined_type [298:302]
+              ~void [298:302] 'void'
+          body: statement_block [303:305]
+            ~{ [303:304] '{'
+            ~} [304:305] '}'
+        method_definition [308:315]
+          name: private_property_identifier [308:310] '#p'
+          parameters: formal_parameters [310:312]
+            ~( [310:311] '('
+            ~) [311:312] ')'
+          body: statement_block [313:315]
+            ~{ [313:314] '{'
+            ~} [314:315] '}'
+        ~} [316:317] '}'
+
+===== typescript / decorators (root has_error=False) =====
+@Component({a: 1})
+export class D {
+  @Input() x: string;
+  @HostListener('a')
+  m(@Inject(T) a: T) {}
+}
+@dec export class E {}
+export @dec class F {}
+-----
+program [0:151]
+  export_statement [0:104]
+    decorator: decorator [0:18]
+      ~@ [0:1] '@'
+      call_expression [1:18]
+        function: identifier [1:10] 'Component'
+        arguments: arguments [10:18]
+          ~( [10:11] '('
+          object [11:17]
+            ~{ [11:12] '{'
+            pair [12:16]
+              key: property_identifier [12:13] 'a'
+              ~: [13:14] ':'
+              value: number [15:16] '1'
+            ~} [16:17] '}'
+          ~) [17:18] ')'
+    ~export [19:25] 'export'
+    declaration: class_declaration [26:104]
+      ~class [26:31] 'class'
+      name: type_identifier [32:33] 'D'
+      body: class_body [34:104]
+        ~{ [34:35] '{'
+        public_field_definition [38:56]
+          decorator: decorator [38:46]
+            ~@ [38:39] '@'
+            call_expression [39:46]
+              function: identifier [39:44] 'Input'
+              arguments: arguments [44:46]
+                ~( [44:45] '('
+                ~) [45:46] ')'
+          name: property_identifier [47:48] 'x'
+          type: type_annotation [48:56]
+            ~: [48:49] ':'
+            predefined_type [50:56]
+              ~string [50:56] 'string'
+        ~; [56:57] ';'
+        decorator: decorator [60:78]
+          ~@ [60:61] '@'
+          call_expression [61:78]
+            function: identifier [61:73] 'HostListener'
+            arguments: arguments [73:78]
+              ~( [73:74] '('
+              string [74:77] "'a'"
+                ~' [74:75] "'"
+                string_fragment [75:76] 'a'
+                ~' [76:77] "'"
+              ~) [77:78] ')'
+        method_definition [81:102]
+          name: property_identifier [81:82] 'm'
+          parameters: formal_parameters [82:99]
+            ~( [82:83] '('
+            required_parameter [83:98]
+              decorator: decorator [83:93]
+                ~@ [83:84] '@'
+                call_expression [84:93]
+                  function: identifier [84:90] 'Inject'
+                  arguments: arguments [90:93]
+                    ~( [90:91] '('
+                    identifier [91:92] 'T'
+                    ~) [92:93] ')'
+              pattern: identifier [94:95] 'a'
+              type: type_annotation [95:98]
+                ~: [95:96] ':'
+                type_identifier [97:98] 'T'
+            ~) [98:99] ')'
+          body: statement_block [100:102]
+            ~{ [100:101] '{'
+            ~} [101:102] '}'
+        ~} [103:104] '}'
+  export_statement [105:127]
+    decorator: decorator [105:109]
+      ~@ [105:106] '@'
+      identifier [106:109] 'dec'
+    ~export [110:116] 'export'
+    declaration: class_declaration [117:127]
+      ~class [117:122] 'class'
+      name: type_identifier [123:124] 'E'
+      body: class_body [125:127]
+        ~{ [125:126] '{'
+        ~} [126:127] '}'
+  export_statement [128:150]
+    ~export [128:134] 'export'
+    declaration: class_declaration [135:150]
+      decorator: decorator [135:139]
+        ~@ [135:136] '@'
+        identifier [136:139] 'dec'
+      ~class [140:145] 'class'
+      name: type_identifier [146:147] 'F'
+      body: class_body [148:150]
+        ~{ [148:149] '{'
+        ~} [149:150] '}'
+
+===== typescript / method_sig (root has_error=False) =====
+interface I { m(a: number): void; }
+abstract class A { abstract m(a: number): void; }
+class B { m(a: number): void; m(a: any) {} }
+-----
+program [0:131]
+  interface_declaration [0:35]
+    ~interface [0:9] 'interface'
+    name: type_identifier [10:11] 'I'
+    body: interface_body [12:35]
+      ~{ [12:13] '{'
+      method_signature [14:32]
+        name: property_identifier [14:15] 'm'
+        parameters: formal_parameters [15:26]
+          ~( [15:16] '('
+          required_parameter [16:25]
+            pattern: identifier [16:17] 'a'
+            type: type_annotation [17:25]
+              ~: [17:18] ':'
+              predefined_type [19:25]
+                ~number [19:25] 'number'
+          ~) [25:26] ')'
+        return_type: type_annotation [26:32]
+          ~: [26:27] ':'
+          predefined_type [28:32]
+            ~void [28:32] 'void'
+      ~; [32:33] ';'
+      ~} [34:35] '}'
+  abstract_class_declaration [36:85]
+    ~abstract [36:44] 'abstract'
+    ~class [45:50] 'class'
+    name: type_identifier [51:52] 'A'
+    body: class_body [53:85]
+      ~{ [53:54] '{'
+      abstract_method_signature [55:82]
+        ~abstract [55:63] 'abstract'
+        name: property_identifier [64:65] 'm'
+        parameters: formal_parameters [65:76]
+          ~( [65:66] '('
+          required_parameter [66:75]
+            pattern: identifier [66:67] 'a'
+            type: type_annotation [67:75]
+              ~: [67:68] ':'
+              predefined_type [69:75]
+                ~number [69:75] 'number'
+          ~) [75:76] ')'
+        return_type: type_annotation [76:82]
+          ~: [76:77] ':'
+          predefined_type [78:82]
+            ~void [78:82] 'void'
+      ~; [82:83] ';'
+      ~} [84:85] '}'
+  class_declaration [86:130]
+    ~class [86:91] 'class'
+    name: type_identifier [92:93] 'B'
+    body: class_body [94:130]
+      ~{ [94:95] '{'
+      method_signature [96:114]
+        name: property_identifier [96:97] 'm'
+        parameters: formal_parameters [97:108]
+          ~( [97:98] '('
+          required_parameter [98:107]
+            pattern: identifier [98:99] 'a'
+            type: type_annotation [99:107]
+              ~: [99:100] ':'
+              predefined_type [101:107]
+                ~number [101:107] 'number'
+          ~) [107:108] ')'
+        return_type: type_annotation [108:114]
+          ~: [108:109] ':'
+          predefined_type [110:114]
+            ~void [110:114] 'void'
+      ~; [114:115] ';'
+      method_definition [116:128]
+        name: property_identifier [116:117] 'm'
+        parameters: formal_parameters [117:125]
+          ~( [117:118] '('
+          required_parameter [118:124]
+            pattern: identifier [118:119] 'a'
+            type: type_annotation [119:124]
+              ~: [119:120] ':'
+              predefined_type [121:124]
+                ~any [121:124] 'any'
+          ~) [124:125] ')'
+        body: statement_block [126:128]
+          ~{ [126:127] '{'
+          ~} [127:128] '}'
+      ~} [129:130] '}'
+
+===== typescript / strings (root has_error=False) =====
+function f() { return 'a b' }
+function g() { return `a ${x}  b` }
+function h(): string { return "x  y" }
+-----
+program [0:105]
+  function_declaration [0:29]
+    ~function [0:8] 'function'
+    name: identifier [9:10] 'f'
+    parameters: formal_parameters [10:12]
+      ~( [10:11] '('
+      ~) [11:12] ')'
+    body: statement_block [13:29]
+      ~{ [13:14] '{'
+      return_statement [15:27]
+        ~return [15:21] 'return'
+        string [22:27] "'a b'"
+          ~' [22:23] "'"
+          string_fragment [23:26] 'a b'
+          ~' [26:27] "'"
+      ~} [28:29] '}'
+  function_declaration [30:65]
+    ~function [30:38] 'function'
+    name: identifier [39:40] 'g'
+    parameters: formal_parameters [40:42]
+      ~( [40:41] '('
+      ~) [41:42] ')'
+    body: statement_block [43:65]
+      ~{ [43:44] '{'
+      return_statement [45:63]
+        ~return [45:51] 'return'
+        template_string [52:63]
+          ~` [52:53] '`'
+          string_fragment [53:55] 'a '
+          template_substitution [55:59]
+            ~${ [55:57] '${'
+            identifier [57:58] 'x'
+            ~} [58:59] '}'
+          string_fragment [59:62] '  b'
+          ~` [62:63] '`'
+      ~} [64:65] '}'
+  function_declaration [66:104]
+    ~function [66:74] 'function'
+    name: identifier [75:76] 'h'
+    parameters: formal_parameters [76:78]
+      ~( [76:77] '('
+      ~) [77:78] ')'
+    return_type: type_annotation [78:86]
+      ~: [78:79] ':'
+      predefined_type [80:86]
+        ~string [80:86] 'string'
+    body: statement_block [87:104]
+      ~{ [87:88] '{'
+      return_statement [89:102]
+        ~return [89:95] 'return'
+        string [96:102] '"x  y"'
+          ~" [96:97] '"'
+          string_fragment [97:101] 'x  y'
+          ~" [101:102] '"'
+      ~} [103:104] '}'
+
+===== typescript / empty (root has_error=False) =====
+function f() {}
+class E {}
+class G { m() {} }
+-----
+program [0:46]
+  function_declaration [0:15]
+    ~function [0:8] 'function'
+    name: identifier [9:10] 'f'
+    parameters: formal_parameters [10:12]
+      ~( [10:11] '('
+      ~) [11:12] ')'
+    body: statement_block [13:15]
+      ~{ [13:14] '{'
+      ~} [14:15] '}'
+  class_declaration [16:26]
+    ~class [16:21] 'class'
+    name: type_identifier [22:23] 'E'
+    body: class_body [24:26]
+      ~{ [24:25] '{'
+      ~} [25:26] '}'
+  class_declaration [27:45]
+    ~class [27:32] 'class'
+    name: type_identifier [33:34] 'G'
+    body: class_body [35:45]
+      ~{ [35:36] '{'
+      method_definition [37:43]
+        name: property_identifier [37:38] 'm'
+        parameters: formal_parameters [38:40]
+          ~( [38:39] '('
+          ~) [39:40] ')'
+        body: statement_block [41:43]
+          ~{ [41:42] '{'
+          ~} [42:43] '}'
+      ~} [44:45] '}'
+
+===== tsx / arrow (root has_error=False) =====
+export const A = (a: number): number => a * 2;
+const B = async <T,>(a: T) => { return a };
+let C = function (x) { return x };
+const D = x => x;
+export default function E() { return <div> a  b </div>; }
+export class F { m() { return <b/> } }
+-----
+program [0:241]
+  export_statement [0:46]
+    ~export [0:6] 'export'
+    declaration: lexical_declaration [7:46]
+      kind: ~const [7:12] 'const'
+      variable_declarator [13:45]
+        name: identifier [13:14] 'A'
+        ~= [15:16] '='
+        value: arrow_function [17:45]
+          parameters: formal_parameters [17:28]
+            ~( [17:18] '('
+            required_parameter [18:27]
+              pattern: identifier [18:19] 'a'
+              type: type_annotation [19:27]
+                ~: [19:20] ':'
+                predefined_type [21:27]
+                  ~number [21:27] 'number'
+            ~) [27:28] ')'
+          return_type: type_annotation [28:36]
+            ~: [28:29] ':'
+            predefined_type [30:36]
+              ~number [30:36] 'number'
+          ~=> [37:39] '=>'
+          body: binary_expression [40:45]
+            left: identifier [40:41] 'a'
+            operator: ~* [42:43] '*'
+            right: number [44:45] '2'
+      ~; [45:46] ';'
+  lexical_declaration [47:90]
+    kind: ~const [47:52] 'const'
+    variable_declarator [53:89]
+      name: identifier [53:54] 'B'
+      ~= [55:56] '='
+      value: arrow_function [57:89]
+        ~async [57:62] 'async'
+        type_parameters: type_parameters [63:67]
+          ~< [63:64] '<'
+          type_parameter [64:65]
+            name: type_identifier [64:65] 'T'
+          ~, [65:66] ','
+          ~> [66:67] '>'
+        parameters: formal_parameters [67:73]
+          ~( [67:68] '('
+          required_parameter [68:72]
+            pattern: identifier [68:69] 'a'
+            type: type_annotation [69:72]
+              ~: [69:70] ':'
+              type_identifier [71:72] 'T'
+          ~) [72:73] ')'
+        ~=> [74:76] '=>'
+        body: statement_block [77:89]
+          ~{ [77:78] '{'
+          return_statement [79:87]
+            ~return [79:85] 'return'
+            identifier [86:87] 'a'
+          ~} [88:89] '}'
+    ~; [89:90] ';'
+  lexical_declaration [91:125]
+    kind: ~let [91:94] 'let'
+    variable_declarator [95:124]
+      name: identifier [95:96] 'C'
+      ~= [97:98] '='
+      value: function_expression [99:124]
+        ~function [99:107] 'function'
+        parameters: formal_parameters [108:111]
+          ~( [108:109] '('
+          required_parameter [109:110]
+            pattern: identifier [109:110] 'x'
+          ~) [110:111] ')'
+        body: statement_block [112:124]
+          ~{ [112:113] '{'
+          return_statement [114:122]
+            ~return [114:120] 'return'
+            identifier [121:122] 'x'
+          ~} [123:124] '}'
+    ~; [124:125] ';'
+  lexical_declaration [126:143]
+    kind: ~const [126:131] 'const'
+    variable_declarator [132:142]
+      name: identifier [132:133] 'D'
+      ~= [134:135] '='
+      value: arrow_function [136:142]
+        parameter: identifier [136:137] 'x'
+        ~=> [138:140] '=>'
+        body: identifier [141:142] 'x'
+    ~; [142:143] ';'
+  export_statement [144:201]
+    ~export [144:150] 'export'
+    ~default [151:158] 'default'
+    declaration: function_declaration [159:201]
+      ~function [159:167] 'function'
+      name: identifier [168:169] 'E'
+      parameters: formal_parameters [169:171]
+        ~( [169:170] '('
+        ~) [170:171] ')'
+      body: statement_block [172:201]
+        ~{ [172:173] '{'
+        return_statement [174:199]
+          ~return [174:180] 'return'
+          jsx_element [181:198]
+            open_tag: jsx_opening_element [181:186]
+              ~< [181:182] '<'
+              name: identifier [182:185] 'div'
+              ~> [185:186] '>'
+            jsx_text [186:192] ' a  b '
+            close_tag: jsx_closing_element [192:198]
+              ~</ [192:194] '</'
+              name: identifier [194:197] 'div'
+              ~> [197:198] '>'
+          ~; [198:199] ';'
+        ~} [200:201] '}'
+  export_statement [202:240]
+    ~export [202:208] 'export'
+    declaration: class_declaration [209:240]
+      ~class [209:214] 'class'
+      name: type_identifier [215:216] 'F'
+      body: class_body [217:240]
+        ~{ [217:218] '{'
+        method_definition [219:238]
+          name: property_identifier [219:220] 'm'
+          parameters: formal_parameters [220:222]
+            ~( [220:221] '('
+            ~) [221:222] ')'
+          body: statement_block [223:238]
+            ~{ [223:224] '{'
+            return_statement [225:236]
+              ~return [225:231] 'return'
+              jsx_self_closing_element [232:236]
+                ~< [232:233] '<'
+                name: identifier [233:234] 'b'
+                ~/> [234:236] '/>'
+            ~} [237:238] '}'
+        ~} [239:240] '}'
+
+===== tsx / multi_decl (root has_error=False) =====
+const a = () => 1, b = () => 2;
+-----
+program [0:32]
+  lexical_declaration [0:31]
+    kind: ~const [0:5] 'const'
+    variable_declarator [6:17]
+      name: identifier [6:7] 'a'
+      ~= [8:9] '='
+      value: arrow_function [10:17]
+        parameters: formal_parameters [10:12]
+          ~( [10:11] '('
+          ~) [11:12] ')'
+        ~=> [13:15] '=>'
+        body: number [16:17] '1'
+    ~, [17:18] ','
+    variable_declarator [19:30]
+      name: identifier [19:20] 'b'
+      ~= [21:22] '='
+      value: arrow_function [23:30]
+        parameters: formal_parameters [23:25]
+          ~( [23:24] '('
+          ~) [24:25] ')'
+        ~=> [26:28] '=>'
+        body: number [29:30] '2'
+    ~; [30:31] ';'
+
+===== tsx / typed (root has_error=False) =====
+const f: Fn = (a) => a;
+-----
+program [0:24]
+  lexical_declaration [0:23]
+    kind: ~const [0:5] 'const'
+    variable_declarator [6:22]
+      name: identifier [6:7] 'f'
+      type: type_annotation [7:11]
+        ~: [7:8] ':'
+        type_identifier [9:11] 'Fn'
+      ~= [12:13] '='
+      value: arrow_function [14:22]
+        parameters: formal_parameters [14:17]
+          ~( [14:15] '('
+          required_parameter [15:16]
+            pattern: identifier [15:16] 'a'
+          ~) [16:17] ')'
+        ~=> [18:20] '=>'
+        body: identifier [21:22] 'a'
+    ~; [22:23] ';'
+
+===== tsx / comments (root has_error=False) =====
+// lead
+export const A = (/* p */ a) => /* b */ a; // t
+-----
+program [0:56]
+  comment [0:7] '// lead'
+  export_statement [8:50]
+    ~export [8:14] 'export'
+    declaration: lexical_declaration [15:50]
+      kind: ~const [15:20] 'const'
+      variable_declarator [21:49]
+        name: identifier [21:22] 'A'
+        ~= [23:24] '='
+        value: arrow_function [25:49]
+          parameters: formal_parameters [25:36]
+            ~( [25:26] '('
+            comment [26:33] '/* p */'
+            required_parameter [34:35]
+              pattern: identifier [34:35] 'a'
+            ~) [35:36] ')'
+          ~=> [37:39] '=>'
+          comment [40:47] '/* b */'
+          body: identifier [48:49] 'a'
+      ~; [49:50] ';'
+  comment [51:55] '// t'
+
+===== ruby / method (root has_error=False) =====
+def area(w, h = 1, *a, k: 1, &b)
+  # c
+  w * h # t
+end
+-----
+program [0:55]
+  method [0:54]
+    ~def [0:3] 'def'
+    name: identifier [4:8] 'area'
+    parameters: method_parameters [8:32]
+      ~( [8:9] '('
+      identifier [9:10] 'w'
+      ~, [10:11] ','
+      optional_parameter [12:17]
+        name: identifier [12:13] 'h'
+        ~= [14:15] '='
+        value: integer [16:17] '1'
+      ~, [17:18] ','
+      splat_parameter [19:21]
+        ~* [19:20] '*'
+        name: identifier [20:21] 'a'
+      ~, [21:22] ','
+      keyword_parameter [23:27]
+        name: identifier [23:24] 'k'
+        ~: [24:25] ':'
+        value: integer [26:27] '1'
+      ~, [27:28] ','
+      block_parameter [29:31]
+        ~& [29:30] '&'
+        name: identifier [30:31] 'b'
+      ~) [31:32] ')'
+    comment [35:38] '# c'
+    body: body_statement [41:50]
+      binary [41:46]
+        left: identifier [41:42] 'w'
+        operator: ~* [43:44] '*'
+        right: identifier [45:46] 'h'
+      comment [47:50] '# t'
+    ~end [51:54] 'end'
+
+===== ruby / endless (root has_error=False) =====
+def sq(x) = x * x
+def nothing; end
+-----
+program [0:35]
+  method [0:17]
+    ~def [0:3] 'def'
+    name: identifier [4:6] 'sq'
+    parameters: method_parameters [6:9]
+      ~( [6:7] '('
+      identifier [7:8] 'x'
+      ~) [8:9] ')'
+    ~= [10:11] '='
+    body: binary [12:17]
+      left: identifier [12:13] 'x'
+      operator: ~* [14:15] '*'
+      right: identifier [16:17] 'x'
+  method [18:34]
+    ~def [18:21] 'def'
+    name: identifier [22:29] 'nothing'
+    ~; [29:30] ';'
+    ~end [31:34] 'end'
+
+===== ruby / singleton (root has_error=False) =====
+def self.build(a)
+  new(a)
+end
+def obj.m; 1; end
+-----
+program [0:49]
+  singleton_method [0:30]
+    ~def [0:3] 'def'
+    object: self [4:8] 'self'
+    ~. [8:9] '.'
+    name: identifier [9:14] 'build'
+    parameters: method_parameters [14:17]
+      ~( [14:15] '('
+      identifier [15:16] 'a'
+      ~) [16:17] ')'
+    body: body_statement [20:26]
+      call [20:26]
+        method: identifier [20:23] 'new'
+        arguments: argument_list [23:26]
+          ~( [23:24] '('
+          identifier [24:25] 'a'
+          ~) [25:26] ')'
+    ~end [27:30] 'end'
+  singleton_method [31:48]
+    ~def [31:34] 'def'
+    object: identifier [35:38] 'obj'
+    ~. [38:39] '.'
+    name: identifier [39:40] 'm'
+    ~; [40:41] ';'
+    body: body_statement [42:44]
+      integer [42:43] '1'
+      ~; [43:44] ';'
+    ~end [45:48] 'end'
+
+===== ruby / visibility (root has_error=False) =====
+class K
+  private def a; end
+  public def b; 1; end
+  protected def c() = 2
+  module_function def d; end
+  private_class_method def self.e; end
+  private
+  def f; end
+end
+-----
+program [0:171]
+  class [0:170]
+    ~class [0:5] 'class'
+    name: constant [6:7] 'K'
+    body: body_statement [10:166]
+      call [10:28]
+        method: identifier [10:17] 'private'
+        arguments: argument_list [18:28]
+          method [18:28]
+            ~def [18:21] 'def'
+            name: identifier [22:23] 'a'
+            ~; [23:24] ';'
+            ~end [25:28] 'end'
+      call [31:51]
+        method: identifier [31:37] 'public'
+        arguments: argument_list [38:51]
+          method [38:51]
+            ~def [38:41] 'def'
+            name: identifier [42:43] 'b'
+            ~; [43:44] ';'
+            body: body_statement [45:47]
+              integer [45:46] '1'
+              ~; [46:47] ';'
+            ~end [48:51] 'end'
+      call [54:75]
+        method: identifier [54:63] 'protected'
+        arguments: argument_list [64:75]
+          method [64:75]
+            ~def [64:67] 'def'
+            name: identifier [68:69] 'c'
+            parameters: method_parameters [69:71]
+              ~( [69:70] '('
+              ~) [70:71] ')'
+            ~= [72:73] '='
+            body: integer [74:75] '2'
+      call [78:104]
+        method: identifier [78:93] 'module_function'
+        arguments: argument_list [94:104]
+          method [94:104]
+            ~def [94:97] 'def'
+            name: identifier [98:99] 'd'
+            ~; [99:100] ';'
+            ~end [101:104] 'end'
+      call [107:143]
+        method: identifier [107:127] 'private_class_method'
+        arguments: argument_list [128:143]
+          singleton_method [128:143]
+            ~def [128:131] 'def'
+            object: self [132:136] 'self'
+            ~. [136:137] '.'
+            name: identifier [137:138] 'e'
+            ~; [138:139] ';'
+            ~end [140:143] 'end'
+      identifier [146:153] 'private'
+      method [156:166]
+        ~def [156:159] 'def'
+        name: identifier [160:161] 'f'
+        ~; [161:162] ';'
+        ~end [163:166] 'end'
+    ~end [167:170] 'end'
+
+===== ruby / class (root has_error=False) =====
+class A < B
+  def m; 1; end
+end
+class A::B < C::D; end
+module M
+  def x; end
+end
+module N::O; end
+-----
+program [0:98]
+  class [0:31]
+    ~class [0:5] 'class'
+    name: constant [6:7] 'A'
+    superclass: superclass [8:11]
+      ~< [8:9] '<'
+      constant [10:11] 'B'
+    body: body_statement [14:27]
+      method [14:27]
+        ~def [14:17] 'def'
+        name: identifier [18:19] 'm'
+        ~; [19:20] ';'
+        body: body_statement [21:23]
+          integer [21:22] '1'
+          ~; [22:23] ';'
+        ~end [24:27] 'end'
+    ~end [28:31] 'end'
+  class [32:54]
+    ~class [32:37] 'class'
+    name: scope_resolution [38:42]
+      scope: constant [38:39] 'A'
+      ~:: [39:41] '::'
+      name: constant [41:42] 'B'
+    superclass: superclass [43:49]
+      ~< [43:44] '<'
+      scope_resolution [45:49]
+        scope: constant [45:46] 'C'
+        ~:: [46:48] '::'
+        name: constant [48:49] 'D'
+    ~; [49:50] ';'
+    ~end [51:54] 'end'
+  module [55:80]
+    ~module [55:61] 'module'
+    name: constant [62:63] 'M'
+    body: body_statement [66:76]
+      method [66:76]
+        ~def [66:69] 'def'
+        name: identifier [70:71] 'x'
+        ~; [71:72] ';'
+        ~end [73:76] 'end'
+    ~end [77:80] 'end'
+  module [81:97]
+    ~module [81:87] 'module'
+    name: scope_resolution [88:92]
+      scope: constant [88:89] 'N'
+      ~:: [89:91] '::'
+      name: constant [91:92] 'O'
+    ~; [92:93] ';'
+    ~end [94:97] 'end'
+
+===== ruby / setter_op (root has_error=False) =====
+class K
+  def x=(v); @x = v; end
+  def +(o); 1; end
+  def [](i) = i
+end
+-----
+program [0:72]
+  class [0:71]
+    ~class [0:5] 'class'
+    name: constant [6:7] 'K'
+    body: body_statement [10:67]
+      method [10:32]
+        ~def [10:13] 'def'
+        name: setter [14:16]
+          name: identifier [14:15] 'x'
+          ~= [15:16] '='
+        parameters: method_parameters [16:19]
+          ~( [16:17] '('
+          identifier [17:18] 'v'
+          ~) [18:19] ')'
+        ~; [19:20] ';'
+        body: body_statement [21:28]
+          assignment [21:27]
+            left: instance_variable [21:23] '@x'
+            ~= [24:25] '='
+            right: identifier [26:27] 'v'
+          ~; [27:28] ';'
+        ~end [29:32] 'end'
+      method [35:51]
+        ~def [35:38] 'def'
+        name: operator [39:40]
+          ~+ [39:40] '+'
+        parameters: method_parameters [40:43]
+          ~( [40:41] '('
+          identifier [41:42] 'o'
+          ~) [42:43] ')'
+        ~; [43:44] ';'
+        body: body_statement [45:47]
+          integer [45:46] '1'
+          ~; [46:47] ';'
+        ~end [48:51] 'end'
+      method [54:67]
+        ~def [54:57] 'def'
+        name: operator [58:60]
+          ~[] [58:60] '[]'
+        parameters: method_parameters [60:63]
+          ~( [60:61] '('
+          identifier [61:62] 'i'
+          ~) [62:63] ')'
+        ~= [64:65] '='
+        body: identifier [66:67] 'i'
+    ~end [68:71] 'end'
+
+===== ruby / strings (root has_error=False) =====
+def f
+  'a b'
+end
+def g
+  "a #{x}  b"
+end
+def h
+  <<~EOS
+    x  y
+  EOS
+end
+def i
+  %w[a  b]
+end
+-----
+program [0:97]
+  method [0:17]
+    ~def [0:3] 'def'
+    name: identifier [4:5] 'f'
+    body: body_statement [8:13]
+      string [8:13] "'a b'"
+        ~" [8:9] "'"
+        string_content [9:12] 'a b'
+        ~" [12:13] "'"
+    ~end [14:17] 'end'
+  method [18:41]
+    ~def [18:21] 'def'
+    name: identifier [22:23] 'g'
+    body: body_statement [26:37]
+      string [26:37] '"a #{x}  b"'
+        ~" [26:27] '"'
+        string_content [27:29] 'a '
+        interpolation [29:33]
+          ~#{ [29:31] '#{'
+          identifier [31:32] 'x'
+          ~} [32:33] '}'
+        string_content [33:36] '  b'
+        ~" [36:37] '"'
+    ~end [38:41] 'end'
+  method [42:75]
+    ~def [42:45] 'def'
+    name: identifier [46:47] 'h'
+    body: body_statement [50:71]
+      heredoc_beginning [50:56] '<<~EOS'
+      heredoc_body [56:71]
+        heredoc_content [56:68] '\n    x  y\n  '
+        heredoc_end [68:71] 'EOS'
+    ~end [72:75] 'end'
+  method [76:96]
+    ~def [76:79] 'def'
+    name: identifier [80:81] 'i'
+    body: body_statement [84:92]
+      string_array [84:92]
+        ~%w( [84:87] '%w['
+        bare_string [87:88]
+          string_content [87:88] 'a'
+        bare_string [90:91]
+          string_content [90:91] 'b'
+        ~) [91:92] ']'
+    ~end [93:96] 'end'
+
+===== ruby / rescue (root has_error=False) =====
+def f
+  1
+rescue => e
+  2
+ensure
+  3
+end
+-----
+program [0:41]
+  method [0:40]
+    ~def [0:3] 'def'
+    name: identifier [4:5] 'f'
+    body: body_statement [8:36]
+      integer [8:9] '1'
+      rescue [10:25]
+        ~rescue [10:16] 'rescue'
+        variable: exception_variable [17:21]
+          ~=> [17:19] '=>'
+          identifier [20:21] 'e'
+        body: then [21:25]
+          integer [24:25] '2'
+      ensure [26:36]
+        ~ensure [26:32] 'ensure'
+        integer [35:36] '3'
+    ~end [37:40] 'end'
+
+===== rust / function (root has_error=False) =====
+#[inline]
+/// doc
+pub(crate) async fn f<T: Clone>(a: T, b: &str) -> Option<T> where T: Send {
+    // c
+    Some(a)
+}
+-----
+source_file [0:117]
+  attribute_item [0:9]
+    ~# [0:1] '#'
+    ~[ [1:2] '['
+    attribute [2:8]
+      identifier [2:8] 'inline'
+    ~] [8:9] ']'
+  line_comment [10:18]
+    ~// [10:12] '//'
+    outer: outer_doc_comment_marker [12:13]
+      ~/ [12:13] '/'
+    doc: doc_comment [13:18] ' doc\n'
+  function_item [18:116]
+    visibility_modifier [18:28]
+      ~pub [18:21] 'pub'
+      ~( [21:22] '('
+      crate [22:27] 'crate'
+      ~) [27:28] ')'
+    function_modifiers [29:34]
+      ~async [29:34] 'async'
+    ~fn [35:37] 'fn'
+    name: identifier [38:39] 'f'
+    type_parameters: type_parameters [39:49]
+      ~< [39:40] '<'
+      type_parameter [40:48]
+        name: type_identifier [40:41] 'T'
+        bounds: trait_bounds [41:48]
+          ~: [41:42] ':'
+          type_identifier [43:48] 'Clone'
+      ~> [48:49] '>'
+    parameters: parameters [49:64]
+      ~( [49:50] '('
+      parameter [50:54]
+        pattern: identifier [50:51] 'a'
+        ~: [51:52] ':'
+        type: type_identifier [53:54] 'T'
+      ~, [54:55] ','
+      parameter [56:63]
+        pattern: identifier [56:57] 'b'
+        ~: [57:58] ':'
+        type: reference_type [59:63]
+          ~& [59:60] '&'
+          type: primitive_type [60:63] 'str'
+      ~) [63:64] ')'
+    ~-> [65:67] '->'
+    return_type: generic_type [68:77]
+      type: type_identifier [68:74] 'Option'
+      type_arguments: type_arguments [74:77]
+        ~< [74:75] '<'
+        type_identifier [75:76] 'T'
+        ~> [76:77] '>'
+    where_clause [78:91]
+      ~where [78:83] 'where'
+      where_predicate [84:91]
+        left: type_identifier [84:85] 'T'
+        bounds: trait_bounds [85:91]
+          ~: [85:86] ':'
+          type_identifier [87:91] 'Send'
+    body: block [92:116]
+      ~{ [92:93] '{'
+      line_comment [98:102]
+        ~// [98:100] '//'
+      call_expression [107:114]
+        function: identifier [107:111] 'Some'
+        arguments: arguments [111:114]
+          ~( [111:112] '('
+          identifier [112:113] 'a'
+          ~) [113:114] ')'
+      ~} [115:116] '}'
+
+===== rust / impl (root has_error=False) =====
+impl<T> Foo<T> {
+    #[must_use]
+    pub fn m(&self) -> i32 { 1 }
+    fn n() {}
+}
+trait Tr: Sized {
+    fn s(&self);
+    fn d(&self) { }
+}
+-----
+source_file [0:139]
+  impl_item [0:81]
+    ~impl [0:4] 'impl'
+    type_parameters: type_parameters [4:7]
+      ~< [4:5] '<'
+      type_parameter [5:6]
+        name: type_identifier [5:6] 'T'
+      ~> [6:7] '>'
+    type: generic_type [8:14]
+      type: type_identifier [8:11] 'Foo'
+      type_arguments: type_arguments [11:14]
+        ~< [11:12] '<'
+        type_identifier [12:13] 'T'
+        ~> [13:14] '>'
+    body: declaration_list [15:81]
+      ~{ [15:16] '{'
+      attribute_item [21:32]
+        ~# [21:22] '#'
+        ~[ [22:23] '['
+        attribute [23:31]
+          identifier [23:31] 'must_use'
+        ~] [31:32] ']'
+      function_item [37:65]
+        visibility_modifier [37:40]
+          ~pub [37:40] 'pub'
+        ~fn [41:43] 'fn'
+        name: identifier [44:45] 'm'
+        parameters: parameters [45:52]
+          ~( [45:46] '('
+          self_parameter [46:51]
+            ~& [46:47] '&'
+            self [47:51] 'self'
+          ~) [51:52] ')'
+        ~-> [53:55] '->'
+        return_type: primitive_type [56:59] 'i32'
+        body: block [60:65]
+          ~{ [60:61] '{'
+          integer_literal [62:63] '1'
+          ~} [64:65] '}'
+      function_item [70:79]
+        ~fn [70:72] 'fn'
+        name: identifier [73:74] 'n'
+        parameters: parameters [74:76]
+          ~( [74:75] '('
+          ~) [75:76] ')'
+        body: block [77:79]
+          ~{ [77:78] '{'
+          ~} [78:79] '}'
+      ~} [80:81] '}'
+  trait_item [82:138]
+    ~trait [82:87] 'trait'
+    name: type_identifier [88:90] 'Tr'
+    bounds: trait_bounds [90:97]
+      ~: [90:91] ':'
+      type_identifier [92:97] 'Sized'
+    body: declaration_list [98:138]
+      ~{ [98:99] '{'
+      function_signature_item [104:116]
+        ~fn [104:106] 'fn'
+        name: identifier [107:108] 's'
+        parameters: parameters [108:115]
+          ~( [108:109] '('
+          self_parameter [109:114]
+            ~& [109:110] '&'
+            self [110:114] 'self'
+          ~) [114:115] ')'
+        ~; [115:116] ';'
+      function_item [121:136]
+        ~fn [121:123] 'fn'
+        name: identifier [124:125] 'd'
+        parameters: parameters [125:132]
+          ~( [125:126] '('
+          self_parameter [126:131]
+            ~& [126:127] '&'
+            self [127:131] 'self'
+          ~) [131:132] ')'
+        body: block [133:136]
+          ~{ [133:134] '{'
+          ~} [135:136] '}'
+      ~} [137:138] '}'
+
+===== rust / struct_enum (root has_error=False) =====
+#[derive(Debug)]
+pub struct S { pub a: i32, b: String }
+struct U;
+struct T(i32, i32);
+#[derive(Clone)]
+enum E { A, B(i32), C { x: i32 } }
+-----
+source_file [0:138]
+  attribute_item [0:16]
+    ~# [0:1] '#'
+    ~[ [1:2] '['
+    attribute [2:15]
+      identifier [2:8] 'derive'
+      arguments: token_tree [8:15]
+        ~( [8:9] '('
+        identifier [9:14] 'Debug'
+        ~) [14:15] ')'
+    ~] [15:16] ']'
+  struct_item [17:55]
+    visibility_modifier [17:20]
+      ~pub [17:20] 'pub'
+    ~struct [21:27] 'struct'
+    name: type_identifier [28:29] 'S'
+    body: field_declaration_list [30:55]
+      ~{ [30:31] '{'
+      field_declaration [32:42]
+        visibility_modifier [32:35]
+          ~pub [32:35] 'pub'
+        name: field_identifier [36:37] 'a'
+        ~: [37:38] ':'
+        type: primitive_type [39:42] 'i32'
+      ~, [42:43] ','
+      field_declaration [44:53]
+        name: field_identifier [44:45] 'b'
+        ~: [45:46] ':'
+        type: type_identifier [47:53] 'String'
+      ~} [54:55] '}'
+  struct_item [56:65]
+    ~struct [56:62] 'struct'
+    name: type_identifier [63:64] 'U'
+    ~; [64:65] ';'
+  struct_item [66:85]
+    ~struct [66:72] 'struct'
+    name: type_identifier [73:74] 'T'
+    body: ordered_field_declaration_list [74:84]
+      ~( [74:75] '('
+      type: primitive_type [75:78] 'i32'
+      ~, [78:79] ','
+      type: primitive_type [80:83] 'i32'
+      ~) [83:84] ')'
+    ~; [84:85] ';'
+  attribute_item [86:102]
+    ~# [86:87] '#'
+    ~[ [87:88] '['
+    attribute [88:101]
+      identifier [88:94] 'derive'
+      arguments: token_tree [94:101]
+        ~( [94:95] '('
+        identifier [95:100] 'Clone'
+        ~) [100:101] ')'
+    ~] [101:102] ']'
+  enum_item [103:137]
+    ~enum [103:107] 'enum'
+    name: type_identifier [108:109] 'E'
+    body: enum_variant_list [110:137]
+      ~{ [110:111] '{'
+      enum_variant [112:113]
+        name: identifier [112:113] 'A'
+      ~, [113:114] ','
+      enum_variant [115:121]
+        name: identifier [115:116] 'B'
+        body: ordered_field_declaration_list [116:121]
+          ~( [116:117] '('
+          type: primitive_type [117:120] 'i32'
+          ~) [120:121] ')'
+      ~, [121:122] ','
+      enum_variant [123:135]
+        name: identifier [123:124] 'C'
+        body: field_declaration_list [125:135]
+          ~{ [125:126] '{'
+          field_declaration [127:133]
+            name: field_identifier [127:128] 'x'
+            ~: [128:129] ':'
+            type: primitive_type [130:133] 'i32'
+          ~} [134:135] '}'
+      ~} [136:137] '}'
+
+===== rust / mod (root has_error=False) =====
+mod x;
+#[cfg(test)]
+mod tests { fn t() {} }
+pub mod y {}
+-----
+source_file [0:57]
+  mod_item [0:6]
+    ~mod [0:3] 'mod'
+    name: identifier [4:5] 'x'
+    ~; [5:6] ';'
+  attribute_item [7:19]
+    ~# [7:8] '#'
+    ~[ [8:9] '['
+    attribute [9:18]
+      identifier [9:12] 'cfg'
+      arguments: token_tree [12:18]
+        ~( [12:13] '('
+        identifier [13:17] 'test'
+        ~) [17:18] ')'
+    ~] [18:19] ']'
+  mod_item [20:43]
+    ~mod [20:23] 'mod'
+    name: identifier [24:29] 'tests'
+    body: declaration_list [30:43]
+      ~{ [30:31] '{'
+      function_item [32:41]
+        ~fn [32:34] 'fn'
+        name: identifier [35:36] 't'
+        parameters: parameters [36:38]
+          ~( [36:37] '('
+          ~) [37:38] ')'
+        body: block [39:41]
+          ~{ [39:40] '{'
+          ~} [40:41] '}'
+      ~} [42:43] '}'
+  mod_item [44:56]
+    visibility_modifier [44:47]
+      ~pub [44:47] 'pub'
+    ~mod [48:51] 'mod'
+    name: identifier [52:53] 'y'
+    body: declaration_list [54:56]
+      ~{ [54:55] '{'
+      ~} [55:56] '}'
+
+===== rust / trait (root has_error=False) =====
+pub trait T<A>: Sized where A: Copy { type X; const C: i32; fn f(&self); }
+-----
+source_file [0:75]
+  trait_item [0:74]
+    visibility_modifier [0:3]
+      ~pub [0:3] 'pub'
+    ~trait [4:9] 'trait'
+    name: type_identifier [10:11] 'T'
+    type_parameters: type_parameters [11:14]
+      ~< [11:12] '<'
+      type_parameter [12:13]
+        name: type_identifier [12:13] 'A'
+      ~> [13:14] '>'
+    bounds: trait_bounds [14:21]
+      ~: [14:15] ':'
+      type_identifier [16:21] 'Sized'
+    where_clause [22:35]
+      ~where [22:27] 'where'
+      where_predicate [28:35]
+        left: type_identifier [28:29] 'A'
+        bounds: trait_bounds [29:35]
+          ~: [29:30] ':'
+          type_identifier [31:35] 'Copy'
+    body: declaration_list [36:74]
+      ~{ [36:37] '{'
+      associated_type [38:45]
+        ~type [38:42] 'type'
+        name: type_identifier [43:44] 'X'
+        ~; [44:45] ';'
+      const_item [46:59]
+        ~const [46:51] 'const'
+        name: identifier [52:53] 'C'
+        ~: [53:54] ':'
+        type: primitive_type [55:58] 'i32'
+        ~; [58:59] ';'
+      function_signature_item [60:72]
+        ~fn [60:62] 'fn'
+        name: identifier [63:64] 'f'
+        parameters: parameters [64:71]
+          ~( [64:65] '('
+          self_parameter [65:70]
+            ~& [65:66] '&'
+            self [66:70] 'self'
+          ~) [70:71] ')'
+        ~; [71:72] ';'
+      ~} [73:74] '}'
+
+===== rust / strings (root has_error=False) =====
+fn f() { let a = "a  b"; let b = r#"x  y"#; let c = 'c'; let d = b"q"; }
+-----
+source_file [0:73]
+  function_item [0:72]
+    ~fn [0:2] 'fn'
+    name: identifier [3:4] 'f'
+    parameters: parameters [4:6]
+      ~( [4:5] '('
+      ~) [5:6] ')'
+    body: block [7:72]
+      ~{ [7:8] '{'
+      let_declaration [9:24]
+        ~let [9:12] 'let'
+        pattern: identifier [13:14] 'a'
+        ~= [15:16] '='
+        value: string_literal [17:23]
+          ~" [17:18] '"'
+          string_content [18:22] 'a  b'
+          ~" [22:23] '"'
+        ~; [23:24] ';'
+      let_declaration [25:43]
+        ~let [25:28] 'let'
+        pattern: identifier [29:30] 'b'
+        ~= [31:32] '='
+        value: raw_string_literal [33:42]
+          string_content [36:40] 'x  y'
+        ~; [42:43] ';'
+      let_declaration [44:56]
+        ~let [44:47] 'let'
+        pattern: identifier [48:49] 'c'
+        ~= [50:51] '='
+        value: char_literal [52:55] "'c'"
+        ~; [55:56] ';'
+      let_declaration [57:70]
+        ~let [57:60] 'let'
+        pattern: identifier [61:62] 'd'
+        ~= [63:64] '='
+        value: string_literal [65:69]
+          ~" [65:67] 'b"'
+          string_content [67:68] 'q'
+          ~" [68:69] '"'
+        ~; [69:70] ';'
+      ~} [71:72] '}'
+
+===== rust / comments (root has_error=False) =====
+// c0
+fn f(/* p */ a: i32) /* r */ -> i32 { /* b */ a } // t
+/// doc
+fn g() {}
+-----
+source_file [0:79]
+  line_comment [0:5]
+    ~// [0:2] '//'
+  function_item [6:55]
+    ~fn [6:8] 'fn'
+    name: identifier [9:10] 'f'
+    parameters: parameters [10:26]
+      ~( [10:11] '('
+      block_comment [11:18]
+        ~/* [11:13] '/*'
+        ~*/ [16:18] '*/'
+      parameter [19:25]
+        pattern: identifier [19:20] 'a'
+        ~: [20:21] ':'
+        type: primitive_type [22:25] 'i32'
+      ~) [25:26] ')'
+    block_comment [27:34]
+      ~/* [27:29] '/*'
+      ~*/ [32:34] '*/'
+    ~-> [35:37] '->'
+    return_type: primitive_type [38:41] 'i32'
+    body: block [42:55]
+      ~{ [42:43] '{'
+      block_comment [44:51]
+        ~/* [44:46] '/*'
+        ~*/ [49:51] '*/'
+      identifier [52:53] 'a'
+      ~} [54:55] '}'
+  line_comment [56:60]
+    ~// [56:58] '//'
+  line_comment [61:69]
+    ~// [61:63] '//'
+    outer: outer_doc_comment_marker [63:64]
+      ~/ [63:64] '/'
+    doc: doc_comment [64:69] ' doc\n'
+  function_item [69:78]
+    ~fn [69:71] 'fn'
+    name: identifier [72:73] 'g'
+    parameters: parameters [73:75]
+      ~( [73:74] '('
+      ~) [74:75] ')'
+    body: block [76:78]
+      ~{ [76:77] '{'
+      ~} [77:78] '}'
+
+===== rust / macro (root has_error=False) =====
+fn f() { println!("a  b {}", 1); }
+macro_rules! m { () => {} }
+-----
+source_file [0:63]
+  function_item [0:34]
+    ~fn [0:2] 'fn'
+    name: identifier [3:4] 'f'
+    parameters: parameters [4:6]
+      ~( [4:5] '('
+      ~) [5:6] ')'
+    body: block [7:34]
+      ~{ [7:8] '{'
+      expression_statement [9:32]
+        macro_invocation [9:31]
+          macro: identifier [9:16] 'println'
+          ~! [16:17] '!'
+          token_tree [17:31]
+            ~( [17:18] '('
+            string_literal [18:27]
+              ~" [18:19] '"'
+              string_content [19:26] 'a  b {}'
+              ~" [26:27] '"'
+            ~, [27:28] ','
+            integer_literal [29:30] '1'
+            ~) [30:31] ')'
+        ~; [31:32] ';'
+      ~} [33:34] '}'
+  macro_definition [35:62]
+    ~macro_rules! [35:47] 'macro_rules!'
+    name: identifier [48:49] 'm'
+    ~{ [50:51] '{'
+    macro_rule [52:60]
+      left: token_tree_pattern [52:54]
+        ~( [52:53] '('
+        ~) [53:54] ')'
+      ~=> [55:57] '=>'
+      right: token_tree [58:60]
+        ~{ [58:59] '{'
+        ~} [59:60] '}'
+    ~} [61:62] '}'
+
+===== bash / function (root has_error=False) =====
+f() {
+  # c
+  echo a  b
+}
+function g { echo 1; }
+function h() { echo 2; }
+-----
+program [0:74]
+  function_definition [0:25]
+    name: word [0:1] 'f'
+    ~( [1:2] '('
+    ~) [2:3] ')'
+    body: compound_statement [4:25]
+      ~{ [4:5] '{'
+      comment [8:11] '# c'
+      command [14:23]
+        name: command_name [14:18]
+          word [14:18] 'echo'
+        argument: word [19:20] 'a'
+        argument: word [22:23] 'b'
+      ~} [24:25] '}'
+  function_definition [26:48]
+    ~function [26:34] 'function'
+    name: word [35:36] 'g'
+    body: compound_statement [37:48]
+      ~{ [37:38] '{'
+      command [39:45]
+        name: command_name [39:43]
+          word [39:43] 'echo'
+        argument: number [44:45] '1'
+      ~; [45:46] ';'
+      ~} [47:48] '}'
+  function_definition [49:73]
+    ~function [49:57] 'function'
+    name: word [58:59] 'h'
+    ~( [59:60] '('
+    ~) [60:61] ')'
+    body: compound_statement [62:73]
+      ~{ [62:63] '{'
+      command [64:70]
+        name: command_name [64:68]
+          word [64:68] 'echo'
+        argument: number [69:70] '2'
+      ~; [70:71] ';'
+      ~} [72:73] '}'
+
+===== bash / strings (root has_error=False) =====
+f() { echo "a  b" 'c  d' $(x  y); cat <<EOF
+  h  i
+EOF
+}
+-----
+program [0:57]
+  function_definition [0:56]
+    name: word [0:1] 'f'
+    ~( [1:2] '('
+    ~) [2:3] ')'
+    body: compound_statement [4:56]
+      ~{ [4:5] '{'
+      command [6:32]
+        name: command_name [6:10]
+          word [6:10] 'echo'
+        argument: string [11:17] '"a  b"'
+          ~" [11:12] '"'
+          string_content [12:16] 'a  b'
+          ~" [16:17] '"'
+        argument: raw_string [18:24] "'c  d'"
+        argument: command_substitution [25:32]
+          ~$( [25:27] '$('
+          command [27:31]
+            name: command_name [27:28]
+              word [27:28] 'x'
+            argument: word [30:31] 'y'
+          ~) [31:32] ')'
+      ~; [32:33] ';'
+      redirected_statement [34:54]
+        body: command [34:37]
+          name: command_name [34:37]
+            word [34:37] 'cat'
+        redirect: heredoc_redirect [38:54]
+          ~<< [38:40] '<<'
+          heredoc_start [40:43] 'EOF'
+          heredoc_body [46:51] 'h  i\n'
+          heredoc_end [51:54] 'EOF'
+      ~} [55:56] '}'
+
+===== bash / newlines (root has_error=False) =====
+f() {
+  a
+  b
+}
+g() {
+  a; b
+}
+-----
+program [0:31]
+  function_definition [0:15]
+    name: word [0:1] 'f'
+    ~( [1:2] '('
+    ~) [2:3] ')'
+    body: compound_statement [4:15]
+      ~{ [4:5] '{'
+      command [8:9]
+        name: command_name [8:9]
+          word [8:9] 'a'
+      command [12:13]
+        name: command_name [12:13]
+          word [12:13] 'b'
+      ~} [14:15] '}'
+  function_definition [16:30]
+    name: word [16:17] 'g'
+    ~( [17:18] '('
+    ~) [18:19] ')'
+    body: compound_statement [20:30]
+      ~{ [20:21] '{'
+      command [24:25]
+        name: command_name [24:25]
+          word [24:25] 'a'
+      ~; [25:26] ';'
+      command [27:28]
+        name: command_name [27:28]
+          word [27:28] 'b'
+      ~} [29:30] '}'
+
+===== bash / empty (root has_error=False) =====
+f() { :; }
+g() { true; }
+-----
+program [0:25]
+  function_definition [0:10]
+    name: word [0:1] 'f'
+    ~( [1:2] '('
+    ~) [2:3] ')'
+    body: compound_statement [4:10]
+      ~{ [4:5] '{'
+      command [6:7]
+        name: command_name [6:7]
+          word [6:7] ':'
+      ~; [7:8] ';'
+      ~} [9:10] '}'
+  function_definition [11:24]
+    name: word [11:12] 'g'
+    ~( [12:13] '('
+    ~) [13:14] ')'
+    body: compound_statement [15:24]
+      ~{ [15:16] '{'
+      command [17:21]
+        name: command_name [17:21]
+          word [17:21] 'true'
+      ~; [21:22] ';'
+      ~} [23:24] '}'
+
+===== scss / mixin (root has_error=False) =====
+@mixin m($a, $b: 1) {
+  // c
+  color: $a;
+}
+@function f($x) { @return $x * 2; }
+@mixin n { a: b }
+-----
+stylesheet [0:98]
+  mixin_statement [0:43]
+    ~@mixin [0:6] '@mixin'
+    name: identifier [7:8] 'm'
+    parameters [8:19]
+      ~( [8:9] '('
+      parameter [9:11]
+        variable [9:11] '$a'
+      ~, [11:12] ','
+      parameter [13:18]
+        variable [13:15] '$b'
+        ~: [15:16] ':'
+        default: integer_value [17:18] '1'
+      ~) [18:19] ')'
+    block [20:43]
+      ~{ [20:21] '{'
+      js_comment [24:28] '// c'
+      declaration [31:41]
+        property_name [31:36] 'color'
+        ~: [36:37] ':'
+        variable [38:40] '$a'
+        ~; [40:41] ';'
+      ~} [42:43] '}'
+  function_statement [44:79]
+    ~@function [44:53] '@function'
+    name: identifier [54:55] 'f'
+    parameters [55:59]
+      ~( [55:56] '('
+      parameter [56:58]
+        variable [56:58] '$x'
+      ~) [58:59] ')'
+    block [60:79]
+      ~{ [60:61] '{'
+      return_statement [62:77]
+        ~@return [62:69] '@return'
+        binary_expression [70:76]
+          variable [70:72] '$x'
+          ~* [73:74] '*'
+          integer_value [75:76] '2'
+        ~; [76:77] ';'
+      ~} [78:79] '}'
+  mixin_statement [80:97]
+    ~@mixin [80:86] '@mixin'
+    name: identifier [87:88] 'n'
+    block [89:97]
+      ~{ [89:90] '{'
+      declaration [91:95]
+        property_name [91:92] 'a'
+        ~: [92:93] ':'
+        plain_value [94:95] 'b'
+      ~} [96:97] '}'
+
+===== scss / others (root has_error=False) =====
+%ph { color: red; }
+$var: 1px;
+.cls { a: b }
+#idn { a: b }
+-----
+stylesheet [0:59]
+  rule_set [0:19]
+    selectors [0:3]
+      placeholder [0:3]
+        ~% [0:1] '%'
+        identifier [1:3] 'ph'
+    block [4:19]
+      ~{ [4:5] '{'
+      declaration [6:17]
+        property_name [6:11] 'color'
+        ~: [11:12] ':'
+        plain_value [13:16] 'red'
+        ~; [16:17] ';'
+      ~} [18:19] '}'
+  declaration [20:30]
+    property_name [20:24] '$var'
+    ~: [24:25] ':'
+    integer_value [26:29]
+      unit [27:29] 'px'
+    ~; [29:30] ';'
+  rule_set [31:44]
+    selectors [31:35]
+      class_selector [31:35]
+        ~. [31:32] '.'
+        class_name [32:35] 'cls'
+    block [36:44]
+      ~{ [36:37] '{'
+      declaration [38:42]
+        property_name [38:39] 'a'
+        ~: [39:40] ':'
+        plain_value [41:42] 'b'
+      ~} [43:44] '}'
+  rule_set [45:58]
+    selectors [45:49]
+      id_selector [45:49]
+        ~# [45:46] '#'
+        id_name [46:49] 'idn'
+    block [50:58]
+      ~{ [50:51] '{'
+      declaration [52:56]
+        property_name [52:53] 'a'
+        ~: [53:54] ':'
+        plain_value [55:56] 'b'
+      ~} [57:58] '}'
+
+===== scss / comments (root has_error=False) =====
+/* c */
+@mixin m($a /* p */) { x: y /* q */; }
+-----
+stylesheet [0:47]
+  comment [0:7] '/* c */'
+  mixin_statement [8:46]
+    ~@mixin [8:14] '@mixin'
+    name: identifier [15:16] 'm'
+    parameters [16:28]
+      ~( [16:17] '('
+      parameter [17:19]
+        variable [17:19] '$a'
+      comment [20:27] '/* p */'
+      ~) [27:28] ')'
+    block [29:46]
+      ~{ [29:30] '{'
+      declaration [31:44]
+        property_name [31:32] 'x'
+        ~: [32:33] ':'
+        plain_value [34:35] 'y'
+        comment [36:43] '/* q */'
+        ~; [43:44] ';'
+      ~} [45:46] '}'
+
+===== html / id (root has_error=False) =====
+<div id="a" class="b">x</div>
+-----
+document [0:30]
+  element [0:29]
+    start_tag [0:22]
+      ~< [0:1] '<'
+      tag_name [1:4] 'div'
+      attribute [5:11]
+        attribute_name [5:7] 'id'
+        ~= [7:8] '='
+        quoted_attribute_value [8:11]
+          ~" [8:9] '"'
+          attribute_value [9:10] 'a'
+          ~" [10:11] '"'
+      attribute [12:21]
+        attribute_name [12:17] 'class'
+        ~= [17:18] '='
+        quoted_attribute_value [18:21]
+          ~" [18:19] '"'
+          attribute_value [19:20] 'b'
+          ~" [20:21] '"'
+      ~> [21:22] '>'
+    text [22:23] 'x'
+    end_tag [23:29]
+      ~</ [23:25] '</'
+      tag_name [25:28] 'div'
+      ~> [28:29] '>'
+
+===== yaml / key (root has_error=False) =====
+a:
+  b: 1
+c: 2
+-----
+stream [0:15]
+  document [0:15]
+    block_node [0:15]
+      block_mapping [0:15]
+        block_mapping_pair [0:9]
+          key: flow_node [0:1]
+            plain_scalar [0:1]
+              string_scalar [0:1] 'a'
+          ~: [1:2] ':'
+          value: block_node [5:9]
+            block_mapping [5:9]
+              block_mapping_pair [5:9]
+                key: flow_node [5:6]
+                  plain_scalar [5:6]
+                    string_scalar [5:6] 'b'
+                ~: [6:7] ':'
+                value: flow_node [8:9]
+                  plain_scalar [8:9]
+                    integer_scalar [8:9] '1'
+        block_mapping_pair [10:14]
+          key: flow_node [10:11]
+            plain_scalar [10:11]
+              string_scalar [10:11] 'c'
+          ~: [11:12] ':'
+          value: flow_node [13:14]
+            plain_scalar [13:14]
+              integer_scalar [13:14] '2'
+
+===== markdown / heading (root has_error=False) =====
+# Title
+
+text
+
+Sub
+---
+-----
+document [0:23]
+  section [0:23]
+    atx_heading [0:8]
+      atx_h1_marker [0:1] '#'
+      heading_content: inline [2:7] 'Title'
+    paragraph [9:14]
+      inline [9:13] 'text'
+    setext_heading [15:23]
+      heading_content: paragraph [15:19]
+        inline [15:18] 'Sub'
+      setext_h2_underline [19:22] '---'

@@ -1,0 +1,37 @@
+{
+  "slice_id": "ACI-S19",
+  "criteria_changed": false,
+  "base_commit": "66d8a38a927dbff275aa6c4ac4fe33e29fa65c25",
+  "additional_paths": [
+    "mcp-server/src/atlas_aci/__main__.py",
+    "mcp-server/tests/fixtures/s19/*",
+    "atlas/docs/symbol-diff.md",
+    "README.md",
+    "INTEGRATION.md",
+    "CHANGELOG.md"
+  ],
+  "narrowed_paths": {
+    "mcp-server/src/atlas_aci/storage/*": "Issue-declared but intentionally untouched: storage/evidence.py and storage/snapshots.py are hashed by CodeGraph._producer_inputs; editing them churns every generation id and pinned fixture. Enforced by G-PRODUCER and by ramza-drift (narrowed out of aci-s19.scope.txt)."
+  },
+  "reasons": {
+    "__main__.py": "Operator CLI `atlas-aci diff` (before/after repo + graph-root per side, canonical JSON stdout, DiffRejected -> ClickException exit 1). Not a fingerprinted producer module; precedent S16 import-scip.",
+    "tests/fixtures/s19/*": "Only if inline per-language sources in test_s19_*.py become unreadable; otherwise unused.",
+    "atlas/docs/symbol-diff.md": "Operator workflow (two roots / two worktrees), compatibility rule, categories, normalization rule, candidate rule, limitations.",
+    "README.md/INTEGRATION.md/CHANGELOG.md": "Operator pointers and [Unreleased] entry."
+  },
+  "operator_decisions": {
+    "surface": "library query/diff*.py + operator CLI; no MCP tool/protocol/envelope change",
+    "compatibility": "identity kind equal; git common_dir equal or non-git root equal; schema, configuration and producer equal; available source snapshot on both sides",
+    "categories": "added, removed, signature, body, format, location, unknown(reason); unchanged counted only",
+    "whitespace_comment_only": "format (not body, not location)",
+    "candidates": "separate list; unique 1:1 identical normalized signature+body, same language+kind; never name similarity",
+    "records": "content-addressed canonical atlas-symbol-diff.v1; both-side snapshot/generation/occurrence/evidence/span references; no absolute paths or timestamps"
+  },
+  "invariance_gates": [
+    "G-PRODUCER",
+    "G-MCP",
+    "G-RO"
+  ],
+  "no_speculative_docker_ci_change": true,
+  "review": ".spectra/plans/aci-s19.review.json"
+}
