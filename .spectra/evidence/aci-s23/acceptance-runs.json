@@ -1,0 +1,38 @@
+[
+  {
+    "ac_id": "AC-S23-001",
+    "test": "mcp-server/tests/slices/test_s23_contract.py::test_paired_inputs",
+    "exit_code": 0,
+    "tail": "1 passed in 0.52s"
+  },
+  {
+    "ac_id": "AC-S23-002",
+    "test": "mcp-server/tests/slices/test_s23_contract.py::test_release_integrity_gate",
+    "exit_code": 0,
+    "tail": "1 passed in 14.11s"
+  },
+  {
+    "ac_id": "AC-S23-003",
+    "test": "mcp-server/tests/slices/test_s23_contract.py::test_span_budget_matrix",
+    "exit_code": 0,
+    "tail": "1 passed in 0.50s"
+  },
+  {
+    "ac_id": "AC-S23-004",
+    "test": "mcp-server/tests/slices/test_s23_contract.py::test_cost_accounting",
+    "exit_code": 0,
+    "tail": "1 passed in 0.56s"
+  },
+  {
+    "ac_id": "AC-S23-005",
+    "test": "mcp-server/tests/slices/test_s23_contract.py::test_incomplete_live_gate",
+    "exit_code": 0,
+    "tail": "1 passed in 0.51s"
+  },
+  {
+    "ac_id": "AC-S23-006",
+    "test": "mcp-server/tests/slices/test_s23_contract.py::test_report_replay",
+    "exit_code": 0,
+    "tail": "1 passed in 0.63s"
+  }
+]
