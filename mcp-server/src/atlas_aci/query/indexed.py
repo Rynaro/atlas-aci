@@ -32,6 +32,7 @@ NAME_SQL = (
     "SELECT id,payload FROM entities INDEXED BY idx_entities_name_id "
     "WHERE json_extract(payload,'$.name')=? AND id>? "
     "AND json_extract(payload,'$.kind') NOT LIKE 'scip\\_%' ESCAPE '\\' "
+    "AND json_extract(payload,'$.kind')<>'coverage_test' "
     "ORDER BY id LIMIT 1"
 )
 
@@ -149,6 +150,8 @@ class IndexedReader:
         record = json.loads(row[1])
         ev.validate_record(record)
         ev.require(record["type"] == kind and record["id"] == row[0], "indexed record identity")
+        if kind == "entity" and record["kind"] == ev.COVERAGE_TEST_KIND:
+            return None  # observed test executions are never a traversal seed or endpoint
         return record
 
     def record(self, kind, identifier, *, endpoint=False):

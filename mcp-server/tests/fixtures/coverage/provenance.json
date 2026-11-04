@@ -1,0 +1,39 @@
+{
+ "context_mode": "pytest-cov:test",
+ "images": {
+  "a": "python@sha256:b18b261e1b4974b4f321451ad5251ded85abb22c2b8b262da527dda1d031ab30",
+  "b": "python@sha256:ae14d4ce8771606477a81446e7ef429edd6762305fc50c84507c1041fa8285d1"
+ },
+ "producer": {
+  "coverage.py": "7.16.2",
+  "pytest": "9.1.1",
+  "pytest-cov": "7.1.0"
+ },
+ "report_format": 3,
+ "requirements_sha256": "3d87f57300f034143d200e473686767b5e9c6211df4ae40177d77009e2a56190",
+ "runs": {
+  "a": {
+   "artifact_sha256": "eee0495abd7318adbfdeb1a4ed7f9fe7cf22bc0aac8a2ef3eaa04a16d07df2af",
+   "environment_sha256": "d9a5128495893ffdddeca5ce9709720587f8b4be37ed96a41975d0b14eff4a2b",
+   "manifest_sha256": "db9e270a200923dadc41e6c451903a1264ece65ebbceeca74c2ff0355843f970"
+  },
+  "b": {
+   "artifact_sha256": "ef29c618b5288401163827abd8ed63963eae33a05aac35bb6e4992b61bfa10c5",
+   "environment_sha256": "0d367ee729101e898f0d3c9f33fdf2234f838533f9cf9c318471b40dd89fd84d",
+   "manifest_sha256": "b52e4aa9de46c6b5266795319c22e62ed9e2371ded34d90274c0716a4e7478d2"
+  }
+ },
+ "sources": {
+  "app/__init__.py": "a4e26ebccc99471fd0ed09acb5ef970e500ec9c5d122281f902cc71f6f935c69",
+  "app/aio.py": "258ec3b69af52ac7d159e004d2da39ab8ce7367bbdc6ce0ef22e6da23c10eaf3",
+  "app/calc.py": "aa30c1282bd945d19e182d2b8bac14bc2036211871fea7372a458dce6d0ed70a",
+  "app/crlf_mod.py": "e518b665080f387129292e40ab27b9b4e8f7e1fff9f3ad04a236df0ecc8f85f5",
+  "app/ff_mod.py": "80a8e565c67ec68fb055a4b82b1539fb82c08bd1deba30a8be5f50d34a0f0ae5",
+  "app/sep.py": "5f50acd58f1c01e0c000b4530c92f40e63dccf4791700e96508d1e5e1659a908",
+  "app/uni.py": "f76191a064dcbbc267f1e98d822571bf4290a54a6e0ceae5c30c81455808218b",
+  "tests/conftest.py": "d522feb1489a8741d68ceae7db7654e2a6cacbfdb9637d73b972cb6b1bffb442",
+  "tests/test_basic.py": "a4f1ce1e64cb6d6d24c1673a42385d86d72b4787a0be6f720f7308570c570c21",
+  "tests/test_forms.py": "53396e4f89ecd3051ddf8644f88ddd4a7f27786e06d1d68ec404bb178f5aad76",
+  "tests/test_params.py": "13a78fefb2f5ad52ca3b22413080aa7dd4214c6169e01ea49afb482ef56e1a79"
+ }
+}

@@ -35,7 +35,7 @@ from atlas_aci.extractors import rust, tsx
 from atlas_aci.indexing import extraction_cache as xc
 from atlas_aci.indexing import retrieval as ret
 from atlas_aci.label_propagation import label_propagation
-from atlas_aci.providers import python_imports, scip
+from atlas_aci.providers import coverage_py, python_imports, scip
 from atlas_aci.resolvers import dependencies as dep
 from atlas_aci.storage import evidence as ev
 from atlas_aci.storage import snapshots as snap
@@ -339,6 +339,9 @@ _SCOPED_LANGS: frozenset[str] = frozenset({"python", "ruby"}) | _JS_FAMILY
 # Recompute via:
 #   python -c "from atlas_aci.codegraph import SCHEMA, ddl_hash; print(ddl_hash(SCHEMA))"
 SCHEMA_EPOCH = 9
+# Generation kinds that carry authenticated source bytes: a `build`, and the derived
+# generations published over one (ACI-S16 `scip_import`, ACI-S21 `coverage_import`).
+_SOURCE_KINDS = frozenset({"build", "scip_import", "coverage_import"})
 # Exchange records carry no native indexes; preserve their established epoch.
 PORTABLE_SCHEMA_EPOCH = 7
 
@@ -1038,7 +1041,7 @@ class CodeGraph:
                     {"build", "import"}
                     if legacy
                     else {"build", "import", "legacy_conversion"}
-                    | ({"scip_import"} if epoch == "9" else set())
+                    | ({"scip_import", "coverage_import"} if epoch == "9" else set())
                 )
                 or inputs.get("repository") != str(self.repo)
                 or inputs.get("schema") != expected_schema
@@ -1071,7 +1074,7 @@ class CodeGraph:
                 common.add("observation_digest")
                 observations = self._observation_records(
                     conn,
-                    require_current=inputs["kind"] in {"build", "scip_import"}
+                    require_current=inputs["kind"] in _SOURCE_KINDS
                     or inputs["format"] != "atlas-generation.v5"
                     or inputs["retrieval"]["coverage"]["source_policy"] == "import",
                 )
@@ -1082,7 +1085,7 @@ class CodeGraph:
                 source = inputs.get("snapshot")
                 if not isinstance(source, dict):
                     return None
-                if inputs["kind"] in {"build", "scip_import"}:
+                if inputs["kind"] in _SOURCE_KINDS:
                     if (
                         set(source) != {"state", "id", "manifest_sha256"}
                         or source["state"] != "available"
@@ -1105,7 +1108,7 @@ class CodeGraph:
                 common.add("retrieval")
                 policy = (
                     "available"
-                    if inputs["kind"] in {"build", "scip_import"}
+                    if inputs["kind"] in _SOURCE_KINDS
                     else "import"
                     if inputs["kind"] == "import"
                     else "legacy_source"
@@ -1121,14 +1124,24 @@ class CodeGraph:
                     retrieval_documents = ret.stores(conn, inputs["retrieval"])
                     if retain_observations:
                         self._acquisition_retrieval_documents = retrieval_documents
-            if inputs["kind"] in {"build", "scip_import"}:
+            if inputs["kind"] in _SOURCE_KINDS:
                 scip_import = inputs["kind"] == "scip_import"
-                if inputs["format"] != "atlas-generation.v5" and scip_import:
+                coverage_import = inputs["kind"] == "coverage_import"
+                if inputs["format"] != "atlas-generation.v5" and (scip_import or coverage_import):
                     return None
                 if set(inputs) != common | {"source_hashes", "configuration", "producer"} | (
-                    {"scip"} if scip_import else set()
+                    {"scip"} if scip_import else {"coverage"} if coverage_import else set()
                 ):
                     return None
+                if coverage_import:
+                    block = coverage_py.validate_block(inputs["coverage"])
+                    # Condition 6: the producers table is checked against the block here
+                    # (not in `_validate_evidence_projections`, which also runs against a
+                    # staged predecessor while runs accumulate).
+                    if coverage_py.coverage_producer_ids(conn) != coverage_py.block_producer_ids(
+                        block
+                    ):
+                        return None
                 if scip_import:
                     block = scip.validate_block(inputs["scip"])
                     if (
@@ -1896,11 +1909,7 @@ class CodeGraph:
             ]
         )
         published = self._observation_records(self.db, validate=False)
-        coverage = (
-            self._read_coverage(self, inputs)
-            if inputs["kind"] in {"build", "scip_import"}
-            else None
-        )
+        coverage = self._read_coverage(self, inputs) if inputs["kind"] in _SOURCE_KINDS else None
         histories = {r["id"]: r for r in published if r["type"] == "history"}
         observations = {r["path"]: r for r in published if r["type"] == "observation"}
         fact_paths = {
@@ -2127,6 +2136,7 @@ class CodeGraph:
         fact_paths: set[str] = set()
         published = []
         semantic_imports: list[dict[str, Any]] = []
+        execution_observations: list[dict[str, Any]] = []
         try:
             with self.reader_lease() as reader:
                 generation = reader.generation_id
@@ -2145,7 +2155,11 @@ class CodeGraph:
                 published = reader._observation_records(reader.db)
                 if inputs["kind"] == "scip_import":
                     semantic_imports.append(self._scip_status(reader.db, inputs["scip"]))
-                if inputs["kind"] in {"build", "scip_import"} and token is not None:
+                if inputs["kind"] == "coverage_import":
+                    execution_observations.append(
+                        coverage_py.status_block(reader.db, inputs["coverage"])
+                    )
+                if inputs["kind"] in _SOURCE_KINDS and token is not None:
                     coverage = self._read_coverage(reader, inputs)
                 attempt, problem = self._read_attempt()
         except ToolError:
@@ -2280,6 +2294,7 @@ class CodeGraph:
             "generation_id": generation,
             "runtime": runtime,
             "semantic_imports": semantic_imports,
+            "execution_observations": execution_observations,
             "indexed": {
                 "configuration": inputs.get("configuration"),
                 "capabilities": coverage["capabilities"] if coverage else None,
@@ -2339,7 +2354,7 @@ class CodeGraph:
         original_format = inputs["format"]
         inputs = {**inputs, "format": "atlas-generation.v5"}
         inputs["observation_digest"] = self._status_hash(self._observation_records(conn))
-        if inputs["kind"] in {"build", "scip_import"}:
+        if inputs["kind"] in _SOURCE_KINDS:
             pointer = inputs.get("snapshot")
             ev.require(
                 isinstance(pointer, dict) and pointer.get("state") == "available",
@@ -2549,7 +2564,7 @@ class CodeGraph:
                         # SCIP facts (ACI-S16) are derived from an external artifact: a later
                         # parse failure must never retain them as stale tree-sitter history.
                         full = list(ev.records(previous)) + self._projection_records(previous)
-                        dropped = scip.scip_record_ids(full)
+                        dropped = scip.scip_record_ids(full) | coverage_py.record_ids(full)
                         self._proof_predecessor_records = [
                             r for r in full if r["id"] not in dropped
                         ]
@@ -2639,6 +2654,226 @@ class CodeGraph:
                 conn.close()
             for path in (tmp_path, Path(str(tmp_path) + "-journal")):
                 path.unlink(missing_ok=True)
+
+    # ---- Per-test coverage import (operator CLI only; never an MCP tool) ----
+
+    def import_coverage(
+        self,
+        artifact_path: Path,
+        manifest_path: Path,
+        *,
+        limits: coverage_py.Limits = coverage_py.DEFAULT_LIMITS,
+    ) -> dict[str, Any]:
+        """Publish a derived ``coverage_import`` generation over the current graph (ACI-S21).
+
+        Mirrors `import_scip`: every check that can reject the submission (strict report,
+        sidecar, producer allow-list, environment, source and test-file identity, line
+        mapping, bounds) completes inside a reader lease before the writer lock is taken and
+        before any staging file exists. The base is re-verified under the lock. Runs
+        accumulate: a `build` base starts a block, a `coverage_import` base adds the run
+        (order independent). Nothing runs a test or an interpreter.
+        """
+        from atlas_aci.enforcement import ToolError
+
+        if self.read_only:
+            raise RuntimeError("Coverage import requires a writable graph")
+        submission = coverage_py.load_submission(artifact_path, manifest_path, limits)
+        producer_id = ev.producer(coverage_py.run_fingerprint(submission))["id"]
+        entry = coverage_py.run_entry(submission, producer_id)
+        try:
+            with self.reader_lease() as reader:
+                data = reader._generation_data(reader.db, _check_retrieval=False)
+                if data is None:
+                    raise ValueError("The published graph is not a complete generation")
+                inputs, base_id = data
+                if inputs.get("format") != "atlas-generation.v5" or inputs["schema"]["epoch"] != 9:
+                    raise ValueError(
+                        "Coverage import needs a native epoch-9 generation; run "
+                        f"`atlas-aci index --repo {self.repo}` first"
+                    )
+                if inputs["kind"] not in {"build", "coverage_import"}:
+                    raise coverage_py.CoverageImportError(
+                        "base_kind_unsupported",
+                        f"coverage import needs a `build` or `coverage_import` generation, not "
+                        f"{inputs['kind']!r}; run `atlas-aci index --repo {self.repo}` first",
+                    )
+                existing = inputs["coverage"] if inputs["kind"] == "coverage_import" else None
+                state, runs = coverage_py.merge_runs(existing, entry, limits)
+                chain_base = existing["base_generation_id"] if existing else base_id
+                if state == "unchanged":
+                    return {
+                        "status": "unchanged",
+                        "generation_id": base_id,
+                        "base_generation_id": chain_base,
+                        "run_id": entry["run_id"],
+                        "artifact_sha256": submission.artifact_sha256,
+                        "manifest_sha256": submission.manifest_sha256,
+                    }
+                if reader._source_lease is None:
+                    raise ValueError("The published graph has no authenticated source snapshot")
+                coverage = self._read_coverage(reader, inputs)
+                if coverage is None:
+                    raise ValueError("The published generation has no valid coverage snapshot")
+                row = reader.db.execute(
+                    "SELECT value FROM manifest WHERE key='diagnostic_publication_token'"
+                ).fetchone()
+                base_token = row[0] if row else None
+                lease = reader._source_lease
+                db = reader.db
+                plan = coverage_py.plan_import(
+                    submission,
+                    current=lease.current,
+                    observations={
+                        r["path"]: r
+                        for r in reader._observation_records(db, validate=False)
+                        if r["type"] == "observation"
+                    },
+                    read_source=lease.read,
+                    known_entity=lambda identifier: (
+                        db.execute("SELECT 1 FROM entities WHERE id=?", (identifier,)).fetchone()
+                        is not None
+                    ),
+                )
+                if coverage_py.record_totals(db) + plan.record_count > (
+                    limits.max_records_per_generation
+                ):
+                    raise coverage_py.CoverageImportError(
+                        "generation_limit",
+                        "a generation keeps at most "
+                        f"{limits.max_records_per_generation} coverage records",
+                    )
+        except ToolError as exc:
+            raise ValueError(
+                f"No complete published graph under {self.atlas_dir}; run "
+                f"`atlas-aci index --repo {self.repo}` first"
+            ) from exc
+        block = coverage_py.block_of(chain_base, runs)
+        with self._writer_lock():
+            if self._publication_base() != (base_id, base_token):
+                raise ValueError(
+                    "The published generation changed during import; nothing was published. "
+                    "Retry the import."
+                )
+            return self._publish_coverage(plan, block, inputs, coverage, submission)
+
+    def _publish_coverage(
+        self,
+        plan: coverage_py.Plan,
+        block: dict[str, Any],
+        base: dict[str, Any],
+        coverage: dict[str, Any],
+        submission: coverage_py.Submission,
+    ) -> dict[str, Any]:
+        """Stage, publish and atomically replace; mirrors `_publish_scip` (not refactored)."""
+        tmp_path = self._stage_path()
+        conn = None
+        builder = None
+        predecessor = None
+        try:
+            builder = snap.Builder(self.atlas_dir)
+            previous = sqlite3.connect(self.db_path.as_uri() + "?mode=ro", uri=True)
+            previous.row_factory = sqlite3.Row
+            try:
+                data = self._generation_data(previous)
+                ev.require(
+                    data is not None and data[0] == base, "base generation changed under the lock"
+                )
+                pointer = base["snapshot"]
+                predecessor = snap.acquire(
+                    self.atlas_dir,
+                    pointer["id"],
+                    repository=self.repo,
+                    expected=self._snapshot_binding(previous),
+                )
+                ev.require(
+                    all(
+                        predecessor.manifest["context"][key] == value
+                        for key, value in self._snapshot_context(base).items()
+                    ),
+                    "base source context",
+                )
+                conn = sqlite3.connect(tmp_path)
+                conn.row_factory = sqlite3.Row
+                previous.backup(conn)
+            finally:
+                previous.close()
+            for item, path in plan.records:
+                ev.put(conn, item, path)
+            self._validate_evidence_projections(conn)
+            dep.validate_outputs(conn)
+            try:
+                dep.snapshot(conn)
+                witness = dep.witness(conn, base)
+                conn.execute(
+                    "INSERT OR REPLACE INTO manifest(key,value) VALUES (?,?)",
+                    (dep.KEY, ev.canonical(witness)),
+                )
+            except (ValueError, TypeError, KeyError):
+                conn.execute("DELETE FROM manifest WHERE key=?", (dep.KEY,))
+            for current in predecessor.manifest["current"]:
+                if predecessor.bindings.get((current["path"], current["sha256"])) is True:
+                    builder.add(predecessor.read(current["path"], current["sha256"]))
+            context = {
+                **self._snapshot_context(base),
+                "identity": predecessor.manifest["context"]["identity"],
+            }
+            snapshot_id = builder.publish(context, self._snapshot_binding(conn), predecessor)
+            generation_id = self._store_generation(
+                conn,
+                {
+                    "format": "atlas-generation.v4",
+                    "kind": "coverage_import",
+                    "repository": base["repository"],
+                    "schema": base["schema"],
+                    "configuration": base["configuration"],
+                    "producer": base["producer"],
+                    "snapshot": {
+                        "state": "available",
+                        "id": snapshot_id,
+                        "manifest_sha256": snapshot_id,
+                    },
+                    "source_hashes": base["source_hashes"],
+                    "observation_digest": base["observation_digest"],
+                    "coverage": block,
+                },
+            )
+            conn.execute(
+                "INSERT OR REPLACE INTO manifest(key,value) VALUES ('coverage_snapshot',?)",
+                (self._canonical_generation({**coverage, "generation_id": generation_id}),),
+            )
+            self._new_publication_token(conn)
+            conn.commit()
+            if self._generation_data(conn) is None:
+                raise RuntimeError("Staging did not produce a complete generation")
+            conn.close()
+            conn = None
+            self._close_db()
+            os.replace(tmp_path, self.db_path)
+            builder.published = True
+            try:
+                snap.retain(self.atlas_dir, snapshot_id)
+            except (OSError, ValueError):
+                log.warning("source_snapshot_prune_failed")
+            return {
+                "status": "imported",
+                "generation_id": generation_id,
+                "base_generation_id": block["base_generation_id"],
+                "snapshot_id": snapshot_id,
+                "run_id": plan.run["run_id"],
+                "artifact_sha256": submission.artifact_sha256,
+                "manifest_sha256": submission.manifest_sha256,
+                "runs": len(block["runs"]),
+                **submission.observations.counts,
+            }
+        finally:
+            if predecessor is not None:
+                predecessor.close()
+            if builder is not None:
+                builder.close()
+            if conn is not None:
+                conn.close()
+            for leftover in (tmp_path, Path(str(tmp_path) + "-journal")):
+                leftover.unlink(missing_ok=True)
 
     # ---- Official SCIP import (operator CLI only; never an MCP tool) ----
 
@@ -5854,7 +6089,12 @@ class CodeGraph:
         ev.validate_database(conn)
         definitions = {row["entity_id"]: dict(row) for row in conn.execute("SELECT * FROM symbols")}
         by_evidence: dict[str, list[dict[str, Any]]] = {}
-        for row in conn.execute("SELECT payload FROM assertions"):
+        # Observed test execution (ACI-S21) has no raw-reference row to match: leave it out so
+        # coverage volume never enters this index.
+        for row in conn.execute(
+            "SELECT payload FROM assertions WHERE json_extract(payload,'$.relation')<>?",
+            (ev.COVERAGE_RELATION,),
+        ):
             item = json.loads(row[0])
             by_evidence.setdefault(item["evidence_id"], []).append(item)
 
@@ -6139,11 +6379,11 @@ class CodeGraph:
             if table == "symbols":
                 defined_entities.add(links["entity_id"])
         for record in ev.records(conn):
-            if record["type"] == "entity" and record["kind"] != "file":
+            if record["type"] == "entity" and record["kind"] not in {"file", ev.COVERAGE_TEST_KIND}:
                 ev.require(record["id"] in defined_entities, "missing declaration projection")
             if record["type"] == "occurrence":
                 role = record["role"]
-                if role in {"file", "legacy_file"}:
+                if role in {"file", "legacy_file"} or role.startswith(ev.COVERAGE_ROLE_PREFIX):
                     continue
                 if role.startswith(("definition:", "legacy_definition")):
                     table = "symbols"
@@ -6163,6 +6403,8 @@ class CodeGraph:
                     record["id"] in coverage[table], "missing occurrence projection: " + table
                 )
             if record["type"] == "assertion":
+                if record["relation"] == ev.COVERAGE_RELATION:
+                    continue  # observed execution: no refs/edges projection by design
                 if record["relation"] == "import":
                     table = "import_bindings"
                 elif record["relation"] == "rationale_for":
@@ -6179,6 +6421,7 @@ class CodeGraph:
                 ev.require(
                     record["id"] in asserted[table], "missing assertion projection: " + table
                 )
+        coverage_py.validate_records(conn)
 
     def export_jsonl(self, out_path: Path) -> dict[str, Any]:
         """Export complete canonical evidence and coherent compatibility projections.

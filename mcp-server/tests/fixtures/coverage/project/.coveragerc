@@ -1,0 +1,4 @@
+[run]
+relative_files = true
+source = .
+data_file = .coverage

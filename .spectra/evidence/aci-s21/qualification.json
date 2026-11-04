@@ -1,0 +1,617 @@
+{
+ "condition_3_outcome": "context lines are NOT a subset of executed_lines (module/function docstring line 1, multi-line call continuation lines, dict/comprehension continuation lines): the importer takes the context keys as the raw recorded lines and uses executed_lines for counts only; no import is rejected on that basis",
+ "context_mode": "pytest-cov:test (--cov-context=test)",
+ "coverage_reader_quirk": "coverage.py's own source reader replaces form feed by a space when parsing; a form feed at the START of a line makes coverage fail to parse the file ('unindent does not match'), so the fixture places form feeds inside a string literal and a comment instead of at line start",
+ "date": "2026-11-03",
+ "final_fixture_note": "The committed runs were regenerated end to end by generate.sh after the importer code existed (probe printed by `atlas-aci coverage-probe`, run under `python -I -` in the producer container, sidecar by `atlas-aci coverage-manifest`); same pins, same digests, same shape as the preliminary qualification runs above; both runs record 66 test executions over 14 tests and 11 files.",
+ "final_fixture_runs_via_generate_sh": {
+  "a": {
+   "artifact_sha256": "eee0495abd7318adbfdeb1a4ed7f9fe7cf22bc0aac8a2ef3eaa04a16d07df2af",
+   "generate_labels_oracles": {
+    "app/__init__.py": {
+     "lines": 3,
+     "str_splitlines_disagrees": false,
+     "tokens": 4
+    },
+    "app/aio.py": {
+     "lines": 14,
+     "str_splitlines_disagrees": false,
+     "tokens": 47
+    },
+    "app/calc.py": {
+     "lines": 52,
+     "str_splitlines_disagrees": false,
+     "tokens": 169
+    },
+    "app/crlf_mod.py": {
+     "lines": 12,
+     "str_splitlines_disagrees": false,
+     "tokens": 26
+    },
+    "app/ff_mod.py": {
+     "lines": 16,
+     "str_splitlines_disagrees": true,
+     "tokens": 27
+    },
+    "app/sep.py": {
+     "lines": 10,
+     "str_splitlines_disagrees": true,
+     "tokens": 24
+    },
+    "app/uni.py": {
+     "lines": 11,
+     "str_splitlines_disagrees": false,
+     "tokens": 29
+    },
+    "tests/conftest.py": {
+     "lines": 10,
+     "str_splitlines_disagrees": false,
+     "tokens": 43
+    },
+    "tests/test_basic.py": {
+     "lines": 18,
+     "str_splitlines_disagrees": false,
+     "tokens": 94
+    },
+    "tests/test_forms.py": {
+     "lines": 21,
+     "str_splitlines_disagrees": false,
+     "tokens": 108
+    },
+    "tests/test_params.py": {
+     "lines": 17,
+     "str_splitlines_disagrees": false,
+     "tokens": 107
+    }
+   },
+   "image": "python@sha256:b18b261e1b4974b4f321451ad5251ded85abb22c2b8b262da527dda1d031ab30",
+   "label_rows": 66,
+   "label_source": "coverage.data.CoverageData.contexts_by_lineno (the .coverage data file, not the JSON the importer parses)",
+   "manifest_sha256": "db9e270a200923dadc41e6c451903a1264ece65ebbceeca74c2ff0355843f970",
+   "oracle_result": "all files agree: terminator splitter == bytes.splitlines(); tokenize token text == split-line text at every (row, col); every context line is a tokenizer physical row; every executed line is an ast statement start; def/class/async def column offsets match the bytes (generate.sh exited 0; any disagreement exits 3 = STOP)",
+   "platform": {
+    "machine": "aarch64",
+    "system": "Linux"
+   },
+   "python": "3.12.16",
+   "report_timestamp": "2026-11-03T23:10:47.142480"
+  },
+  "b": {
+   "artifact_sha256": "ef29c618b5288401163827abd8ed63963eae33a05aac35bb6e4992b61bfa10c5",
+   "generate_labels_oracles": {
+    "app/__init__.py": {
+     "lines": 3,
+     "str_splitlines_disagrees": false,
+     "tokens": 4
+    },
+    "app/aio.py": {
+     "lines": 14,
+     "str_splitlines_disagrees": false,
+     "tokens": 47
+    },
+    "app/calc.py": {
+     "lines": 52,
+     "str_splitlines_disagrees": false,
+     "tokens": 169
+    },
+    "app/crlf_mod.py": {
+     "lines": 12,
+     "str_splitlines_disagrees": false,
+     "tokens": 26
+    },
+    "app/ff_mod.py": {
+     "lines": 16,
+     "str_splitlines_disagrees": true,
+     "tokens": 27
+    },
+    "app/sep.py": {
+     "lines": 10,
+     "str_splitlines_disagrees": true,
+     "tokens": 24
+    },
+    "app/uni.py": {
+     "lines": 11,
+     "str_splitlines_disagrees": false,
+     "tokens": 29
+    },
+    "tests/conftest.py": {
+     "lines": 10,
+     "str_splitlines_disagrees": false,
+     "tokens": 43
+    },
+    "tests/test_basic.py": {
+     "lines": 18,
+     "str_splitlines_disagrees": false,
+     "tokens": 94
+    },
+    "tests/test_forms.py": {
+     "lines": 21,
+     "str_splitlines_disagrees": false,
+     "tokens": 108
+    },
+    "tests/test_params.py": {
+     "lines": 17,
+     "str_splitlines_disagrees": false,
+     "tokens": 107
+    }
+   },
+   "image": "python@sha256:ae14d4ce8771606477a81446e7ef429edd6762305fc50c84507c1041fa8285d1",
+   "label_rows": 66,
+   "label_source": "coverage.data.CoverageData.contexts_by_lineno (the .coverage data file, not the JSON the importer parses)",
+   "manifest_sha256": "b52e4aa9de46c6b5266795319c22e62ed9e2371ded34d90274c0716a4e7478d2",
+   "oracle_result": "all files agree: terminator splitter == bytes.splitlines(); tokenize token text == split-line text at every (row, col); every context line is a tokenizer physical row; every executed line is an ast statement start; def/class/async def column offsets match the bytes (generate.sh exited 0; any disagreement exits 3 = STOP)",
+   "platform": {
+    "machine": "aarch64",
+    "system": "Linux"
+   },
+   "python": "3.13.18",
+   "report_timestamp": "2026-11-03T23:10:55.536248"
+  }
+ },
+ "images": {
+  "python:3.12-slim": "python@sha256:b18b261e1b4974b4f321451ad5251ded85abb22c2b8b262da527dda1d031ab30",
+  "python:3.13-slim": "python@sha256:ae14d4ce8771606477a81446e7ef429edd6762305fc50c84507c1041fa8285d1"
+ },
+ "line_and_context_sets_identical_on_3.12_and_3.13": true,
+ "maturity_rule": "newest release >= 14 days old on 2026-11-03 (coverage 7.17.0 is 11 days old and 7.17.1 is 0 days old, so 7.16.2; pytest 9.2.0 is 6 days old, so 9.1.1; pluggy 1.7.0 is 18 days, iniconfig 2.3.1 is 27 days, packaging 26.3, pygments 2.21.0)",
+ "pins": {
+  "coverage": "7.16.2",
+  "iniconfig": "2.3.1",
+  "packaging": "26.3",
+  "pluggy": "1.7.0",
+  "pygments": "2.21.0",
+  "pytest": "9.1.1",
+  "pytest-cov": "7.1.0"
+ },
+ "report_format": 3,
+ "requirements_sha256": "3d87f57300f034143d200e473686767b5e9c6211df4ae40177d77009e2a56190",
+ "ruff_on_fixtures_condition_9": {
+  "check": "All checks passed on tests/fixtures/coverage",
+  "format_check": "11 files already formatted",
+  "notes": [
+   "CRLF file is wholly CRLF (no mixed endings) and passes unmodified",
+   "non-ASCII file passes unmodified",
+   "U+2028 file needs a file-level '# ruff: noqa: RUF001' (no pyproject edit)",
+   "a form feed on its own line or before 'def' is rewritten/flagged (W293 / formatter), so form feeds live inside a string literal and a comment, which pass unmodified"
+  ],
+  "ruff": "0.15.10"
+ },
+ "runs": {
+  "py312": {
+   "context_lines_not_in_executed_lines": {
+    "app/__init__.py": [
+     1
+    ],
+    "app/aio.py": [
+     1,
+     13
+    ],
+    "app/calc.py": [
+     1,
+     27,
+     28,
+     35,
+     36,
+     37,
+     38
+    ],
+    "app/crlf_mod.py": [
+     1,
+     10,
+     11
+    ],
+    "app/ff_mod.py": [
+     1
+    ],
+    "app/uni.py": [
+     1
+    ]
+   },
+   "context_lines_subset_of_executed_lines": false,
+   "context_list_order": "not deterministic between runs; the importer must sort",
+   "context_value_spelling": "<nodeid>|<phase> with the LAST | separating the phase; parametrized ids kept verbatim inside [...] (pipe and \\u/\\x escapes included)",
+   "coverage": "7.16.2",
+   "empty_context_representation": "the JSON string \"\" (default context, import-time and non-test lines)",
+   "executed_lines_without_context_entry": {},
+   "files": [
+    "app/__init__.py",
+    "app/aio.py",
+    "app/calc.py",
+    "app/crlf_mod.py",
+    "app/ff_mod.py",
+    "app/sep.py",
+    "app/uni.py",
+    "tests/conftest.py",
+    "tests/test_basic.py",
+    "tests/test_forms.py",
+    "tests/test_params.py"
+   ],
+   "freeze": [
+    "coverage==7.16.2",
+    "iniconfig==2.3.1",
+    "packaging==26.3",
+    "pluggy==1.7.0",
+    "Pygments==2.21.0",
+    "pytest==9.1.1",
+    "pytest-cov==7.1.0"
+   ],
+   "image": "python@sha256:b18b261e1b4974b4f321451ad5251ded85abb22c2b8b262da527dda1d031ab30",
+   "json_contexts_equal_CoverageData_contexts_by_lineno": true,
+   "json_top_level_keys": [
+    "files",
+    "meta",
+    "totals"
+   ],
+   "meta": {
+    "branch_coverage": false,
+    "format": 3,
+    "show_contexts": true,
+    "timestamp": "<varies>",
+    "version": "7.16.2"
+   },
+   "meta_keys": [
+    "branch_coverage",
+    "format",
+    "show_contexts",
+    "timestamp",
+    "version"
+   ],
+   "oracle": {
+    "app/__init__.py": {
+     "def_class_offset_mismatches": 0,
+     "executed_not_ast_statement_rows": [],
+     "lines": 3,
+     "token_text_mismatches": 0,
+     "tokens": 4
+    },
+    "app/aio.py": {
+     "def_class_offset_mismatches": 0,
+     "executed_not_ast_statement_rows": [],
+     "lines": 14,
+     "token_text_mismatches": 0,
+     "tokens": 47
+    },
+    "app/calc.py": {
+     "def_class_offset_mismatches": 0,
+     "executed_not_ast_statement_rows": [],
+     "lines": 52,
+     "token_text_mismatches": 0,
+     "tokens": 169
+    },
+    "app/crlf_mod.py": {
+     "def_class_offset_mismatches": 0,
+     "executed_not_ast_statement_rows": [],
+     "lines": 12,
+     "token_text_mismatches": 0,
+     "tokens": 26
+    },
+    "app/ff_mod.py": {
+     "def_class_offset_mismatches": 0,
+     "executed_not_ast_statement_rows": [],
+     "lines": 16,
+     "token_text_mismatches": 0,
+     "tokens": 27
+    },
+    "app/sep.py": {
+     "def_class_offset_mismatches": 0,
+     "executed_not_ast_statement_rows": [],
+     "lines": 10,
+     "token_text_mismatches": 0,
+     "tokens": 24
+    },
+    "app/uni.py": {
+     "def_class_offset_mismatches": 0,
+     "executed_not_ast_statement_rows": [],
+     "lines": 11,
+     "token_text_mismatches": 0,
+     "tokens": 29
+    },
+    "tests/conftest.py": {
+     "def_class_offset_mismatches": 0,
+     "executed_not_ast_statement_rows": [],
+     "lines": 10,
+     "token_text_mismatches": 0,
+     "tokens": 43
+    },
+    "tests/test_basic.py": {
+     "def_class_offset_mismatches": 0,
+     "executed_not_ast_statement_rows": [],
+     "lines": 18,
+     "token_text_mismatches": 0,
+     "tokens": 94
+    },
+    "tests/test_forms.py": {
+     "def_class_offset_mismatches": 0,
+     "executed_not_ast_statement_rows": [],
+     "lines": 21,
+     "token_text_mismatches": 0,
+     "tokens": 108
+    },
+    "tests/test_params.py": {
+     "def_class_offset_mismatches": 0,
+     "executed_not_ast_statement_rows": [],
+     "lines": 17,
+     "token_text_mismatches": 0,
+     "tokens": 107
+    }
+   },
+   "oracle_all_agree": true,
+   "per_file_keys": [
+    "classes",
+    "contexts",
+    "excluded_lines",
+    "executed_lines",
+    "functions",
+    "missing_lines",
+    "summary"
+   ],
+   "phases_observed": [
+    "run",
+    "setup",
+    "teardown"
+   ],
+   "python": "3.12.16",
+   "relative_path_spelling": "POSIX, relative to the config root when [run] relative_files = true"
+  },
+  "py313": {
+   "context_lines_not_in_executed_lines": {
+    "app/__init__.py": [
+     1
+    ],
+    "app/aio.py": [
+     1,
+     13
+    ],
+    "app/calc.py": [
+     1,
+     27,
+     28,
+     35,
+     36,
+     37,
+     38
+    ],
+    "app/crlf_mod.py": [
+     1,
+     10,
+     11
+    ],
+    "app/ff_mod.py": [
+     1
+    ],
+    "app/uni.py": [
+     1
+    ]
+   },
+   "context_lines_subset_of_executed_lines": false,
+   "context_list_order": "not deterministic between runs; the importer must sort",
+   "context_value_spelling": "<nodeid>|<phase> with the LAST | separating the phase; parametrized ids kept verbatim inside [...] (pipe and \\u/\\x escapes included)",
+   "coverage": "7.16.2",
+   "empty_context_representation": "the JSON string \"\" (default context, import-time and non-test lines)",
+   "executed_lines_without_context_entry": {},
+   "files": [
+    "app/__init__.py",
+    "app/aio.py",
+    "app/calc.py",
+    "app/crlf_mod.py",
+    "app/ff_mod.py",
+    "app/sep.py",
+    "app/uni.py",
+    "tests/conftest.py",
+    "tests/test_basic.py",
+    "tests/test_forms.py",
+    "tests/test_params.py"
+   ],
+   "freeze": [
+    "coverage==7.16.2",
+    "iniconfig==2.3.1",
+    "packaging==26.3",
+    "pluggy==1.7.0",
+    "Pygments==2.21.0",
+    "pytest==9.1.1",
+    "pytest-cov==7.1.0"
+   ],
+   "image": "python@sha256:ae14d4ce8771606477a81446e7ef429edd6762305fc50c84507c1041fa8285d1",
+   "json_contexts_equal_CoverageData_contexts_by_lineno": true,
+   "json_top_level_keys": [
+    "files",
+    "meta",
+    "totals"
+   ],
+   "meta": {
+    "branch_coverage": false,
+    "format": 3,
+    "show_contexts": true,
+    "timestamp": "<varies>",
+    "version": "7.16.2"
+   },
+   "meta_keys": [
+    "branch_coverage",
+    "format",
+    "show_contexts",
+    "timestamp",
+    "version"
+   ],
+   "oracle": {
+    "app/__init__.py": {
+     "def_class_offset_mismatches": 0,
+     "executed_not_ast_statement_rows": [],
+     "lines": 3,
+     "token_text_mismatches": 0,
+     "tokens": 4
+    },
+    "app/aio.py": {
+     "def_class_offset_mismatches": 0,
+     "executed_not_ast_statement_rows": [],
+     "lines": 14,
+     "token_text_mismatches": 0,
+     "tokens": 47
+    },
+    "app/calc.py": {
+     "def_class_offset_mismatches": 0,
+     "executed_not_ast_statement_rows": [],
+     "lines": 52,
+     "token_text_mismatches": 0,
+     "tokens": 169
+    },
+    "app/crlf_mod.py": {
+     "def_class_offset_mismatches": 0,
+     "executed_not_ast_statement_rows": [],
+     "lines": 12,
+     "token_text_mismatches": 0,
+     "tokens": 26
+    },
+    "app/ff_mod.py": {
+     "def_class_offset_mismatches": 0,
+     "executed_not_ast_statement_rows": [],
+     "lines": 16,
+     "token_text_mismatches": 0,
+     "tokens": 27
+    },
+    "app/sep.py": {
+     "def_class_offset_mismatches": 0,
+     "executed_not_ast_statement_rows": [],
+     "lines": 10,
+     "token_text_mismatches": 0,
+     "tokens": 24
+    },
+    "app/uni.py": {
+     "def_class_offset_mismatches": 0,
+     "executed_not_ast_statement_rows": [],
+     "lines": 11,
+     "token_text_mismatches": 0,
+     "tokens": 29
+    },
+    "tests/conftest.py": {
+     "def_class_offset_mismatches": 0,
+     "executed_not_ast_statement_rows": [],
+     "lines": 10,
+     "token_text_mismatches": 0,
+     "tokens": 43
+    },
+    "tests/test_basic.py": {
+     "def_class_offset_mismatches": 0,
+     "executed_not_ast_statement_rows": [],
+     "lines": 18,
+     "token_text_mismatches": 0,
+     "tokens": 94
+    },
+    "tests/test_forms.py": {
+     "def_class_offset_mismatches": 0,
+     "executed_not_ast_statement_rows": [],
+     "lines": 21,
+     "token_text_mismatches": 0,
+     "tokens": 108
+    },
+    "tests/test_params.py": {
+     "def_class_offset_mismatches": 0,
+     "executed_not_ast_statement_rows": [],
+     "lines": 17,
+     "token_text_mismatches": 0,
+     "tokens": 107
+    }
+   },
+   "oracle_all_agree": true,
+   "per_file_keys": [
+    "classes",
+    "contexts",
+    "excluded_lines",
+    "executed_lines",
+    "functions",
+    "missing_lines",
+    "summary"
+   ],
+   "phases_observed": [
+    "run",
+    "setup",
+    "teardown"
+   ],
+   "python": "3.13.18",
+   "relative_path_spelling": "POSIX, relative to the config root when [run] relative_files = true"
+  }
+ },
+ "slice": "ACI-S21",
+ "stage": "Day-1 qualification (before importer code)",
+ "stop_rule_outcome": "NOT triggered: contexts nodeid|phase present on both interpreters; no line-numbering disagreement on any fixture file (CRLF, form feed in string/comment/docstring, raw U+2028, non-ASCII, multi-line call/dict/decorator/docstring/comprehension/async).",
+ "variants": {
+  "COVERAGE_CORE_sysmon": {
+   "context_set_3.12": [
+    "",
+    "tests/test_basic.py::TestTotals::test_table|run",
+    "tests/test_basic.py::TestTotals::test_total|run",
+    "tests/test_basic.py::test_add|run",
+    "tests/test_basic.py::test_add|setup",
+    "tests/test_basic.py::test_add|teardown",
+    "tests/test_basic.py::test_clamp|run",
+    "tests/test_forms.py::test_async|run",
+    "tests/test_forms.py::test_crlf|run",
+    "tests/test_forms.py::test_form_feed|run",
+    "tests/test_forms.py::test_separator|run",
+    "tests/test_params.py::test_clamp_param[0]|run",
+    "tests/test_params.py::test_pipe[a|b]|run",
+    "tests/test_params.py::test_unicode_param[h\\xe9llo]|run"
+   ],
+   "context_set_3.13": [
+    "",
+    "tests/test_basic.py::TestTotals::test_table|run",
+    "tests/test_basic.py::TestTotals::test_total|run",
+    "tests/test_basic.py::test_add|run",
+    "tests/test_basic.py::test_add|setup",
+    "tests/test_basic.py::test_add|teardown",
+    "tests/test_basic.py::test_clamp|run",
+    "tests/test_forms.py::test_async|run",
+    "tests/test_forms.py::test_crlf|run",
+    "tests/test_forms.py::test_form_feed|run",
+    "tests/test_forms.py::test_separator|run",
+    "tests/test_params.py::test_clamp_param[0]|run",
+    "tests/test_params.py::test_pipe[a|b]|run",
+    "tests/test_params.py::test_unicode_param[h\\xe9llo]|run"
+   ],
+   "observed": "coverage warns 'Dynamic contexts aren't supported with core=sysmon; context data may be incomplete' on both 3.12 and 3.13 although the same 14 contexts were recorded",
+   "qualified_core": "default (CTracer); sysmon is not qualified"
+  },
+  "no_cov_context_flag": {
+   "contexts": [
+    ""
+   ],
+   "importer_handling": "no non-empty context at all -> no_test_contexts",
+   "observed": "meta.show_contexts is true but every line carries only the empty context"
+  },
+  "no_show_contexts": {
+   "importer_handling": "contexts_absent",
+   "meta": {
+    "branch_coverage": false,
+    "format": 3,
+    "show_contexts": false,
+    "version": "7.16.2"
+   },
+   "observed": "meta.show_contexts false and the per-file 'contexts' key is absent",
+   "per_file_keys": [
+    "classes",
+    "excluded_lines",
+    "executed_lines",
+    "functions",
+    "missing_lines",
+    "summary"
+   ]
+  },
+  "pytest_rootdir_parent_of_repo": {
+   "contexts_sample": [
+    "proj/tests/test_basic.py::TestTotals::test_table|run",
+    "proj/tests/test_basic.py::TestTotals::test_total|run"
+   ],
+   "importer_handling": "test file absent from the sidecar/repo -> manifest_incomplete with a rootdir hint (condition 4)",
+   "observed": "with --rootdir=/tmp over /tmp/proj the nodeids are 'proj/tests/test_basic.py::...' while measured file paths stay 'app/...'"
+  },
+  "static_context_run_context_ci": {
+   "contexts_sample": [
+    "ci",
+    "ci|tests/test_basic.py::TestTotals::test_table|run",
+    "ci|tests/test_basic.py::TestTotals::test_total|run"
+   ],
+   "importer_handling": "nodeid path part contains '|' (or no '|' at all) -> unsupported_context",
+   "observed": "coverage json prefixes every dynamic context with the static one: 'ci|tests/test_basic.py::test_add|run'; the default/import-time context becomes the bare string 'ci' (no |phase suffix)"
+  }
+ },
+ "verdict": "QUALIFIED: per-line nodeid|phase contexts are emitted in the JSON report on 3.12 and 3.13; line numbering agrees with the byte/tokenize/ast oracles on every fixture file. Context lines are NOT a subset of executed_lines (condition 3 applies)."
+}

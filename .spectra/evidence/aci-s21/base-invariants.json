@@ -1,0 +1,67 @@
+{
+ "COLLECTION_MINIMUM_BUDGET": 3448,
+ "EDGE_RELATIONS": [
+  "call",
+  "construct",
+  "extend",
+  "import",
+  "include",
+  "prepend",
+  "reference",
+  "superclass"
+ ],
+ "FIXED_ERROR_ENVELOPE_CAP": 797,
+ "MINIMUM_BUDGET": 3436,
+ "REFERENCE_RELATIONS": [
+  "call",
+  "construct",
+  "extend",
+  "import",
+  "include",
+  "jsx",
+  "prepend",
+  "rationale_for",
+  "reference",
+  "superclass"
+ ],
+ "RELATIONS": [
+  "call",
+  "construct",
+  "extend",
+  "import",
+  "include",
+  "prepend",
+  "rationale_for",
+  "superclass"
+ ],
+ "atlas_aci_tools_json": {
+  "bytes": 1631472,
+  "command": "atlas-aci tools --repo /ws (docker, working tree src)",
+  "sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+  "tool_count": 7
+ },
+ "base_commit": "e818a57d36df5a4bc8fe88bc581cabd1216b65df",
+ "full_pytest_at_base": {
+  "command": "dk21.sh /opt/venv/bin/python -m pytest -q -p no:cacheprovider",
+  "failed": [
+   "tests/slices/test_s01_contract.py::test_call_deadline_after_initialization (pre-existing under uid 1000)",
+   "tests/slices/test_s08_integration.py::test_nonregular_pack_does_not_block_acquisition (flaky, known)"
+  ],
+  "log": "base-full-suite.log.gz",
+  "result": "2 failed, 1147 passed, 10 skipped in 385.84s"
+ },
+ "recorded": "2026-11-03 before any src edit (working tree = base + untracked fixtures/evidence only)",
+ "slice": "ACI-S21",
+ "tests_pinning_literal_hashes_inventory": {
+  "files": [
+   "tests/slices/test_s20_support.py (FIXTURE_SHA256, fixture bytes)",
+   "tests/slices/test_s11_contract.py:59",
+   "tests/test_export.py:605",
+   "tests/slices/test_s08_lease_footprint.py:29",
+   "tests/slices/test_s12_storage.py:244 (ddl_hash)",
+   "tests/slices/test_s16_support.py (ARTIFACT_SHA256, SCHEMA_SHA256: fixture/schema bytes)",
+   "tests/slices/test_s20_mcp.py:364-409 (ids/digests)"
+  ],
+  "note": "files containing 64-hex literals; to be re-run after the codegraph/evidence/retrieval edits and any churn explained"
+ }
+}
