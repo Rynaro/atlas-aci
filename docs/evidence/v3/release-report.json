@@ -1,0 +1,3714 @@
+{
+ "canonical": {
+  "cost": {
+   "index.cold_full": {
+    "coverage-project": {
+     "V0": {
+      "reason": "v0_index_cost_recorded_on_s18_only",
+      "status": "unmeasured"
+     },
+     "V1": {
+      "counters": {
+       "binding_resolution": {
+        "affected_paths": [
+         "app/__init__.py",
+         "app/aio.py",
+         "app/calc.py",
+         "app/crlf_mod.py",
+         "app/ff_mod.py",
+         "app/sep.py",
+         "app/uni.py",
+         "tests/conftest.py",
+         "tests/test_basic.py",
+         "tests/test_forms.py",
+         "tests/test_params.py"
+        ],
+        "affected_units": 11,
+        "mode": "full",
+        "reason": "full_requested_or_incompatible_inputs",
+        "removed_paths": [],
+        "removed_units": 0,
+        "reused_paths": [],
+        "reused_units": 0
+       },
+       "edges": 1,
+       "extraction_cache": {
+        "disk_hits": 0,
+        "miss_reasons": {
+         "missing": 11
+        },
+        "misses": 11,
+        "parser_invocations": 11,
+        "predecessor_reused": 0,
+        "write_failures": 0
+       },
+       "extraction_state": "complete",
+       "files_failed": 0,
+       "files_indexed": 11,
+       "files_removed": 0,
+       "files_skipped": 0,
+       "rationale": 0,
+       "refs": 33,
+       "schema_epoch": 9,
+       "symbols": 31,
+       "unsupported_skipped": {}
+      },
+      "status": "measured"
+     }
+    },
+    "s18-useful-spans": {
+     "V0": {
+      "counters": {
+       "edges": 4,
+       "files_indexed": 7,
+       "files_removed": 0,
+       "files_skipped": 0,
+       "rationale": 0,
+       "refs": 7,
+       "schema_epoch": 5,
+       "symbols": 11,
+       "unsupported_skipped": {}
+      },
+      "status": "measured"
+     },
+     "V1": {
+      "counters": {
+       "binding_resolution": {
+        "affected_paths": [
+         "app/client.py",
+         "app/payments.py",
+         "app/render.py",
+         "app/summary.py",
+         "noise/task.py",
+         "other/payments.py"
+        ],
+        "affected_units": 6,
+        "mode": "full",
+        "reason": "full_requested_or_incompatible_inputs",
+        "removed_paths": [],
+        "removed_units": 0,
+        "reused_paths": [],
+        "reused_units": 0
+       },
+       "edges": 4,
+       "extraction_cache": {
+        "disk_hits": 0,
+        "miss_reasons": {
+         "missing": 7
+        },
+        "misses": 7,
+        "parser_invocations": 7,
+        "predecessor_reused": 0,
+        "write_failures": 0
+       },
+       "extraction_state": "partial",
+       "files_failed": 1,
+       "files_indexed": 6,
+       "files_removed": 0,
+       "files_skipped": 0,
+       "rationale": 0,
+       "refs": 7,
+       "schema_epoch": 9,
+       "symbols": 10,
+       "unsupported_skipped": {}
+      },
+      "status": "measured"
+     }
+    },
+    "self-source-fa75bec": {
+     "V0": {
+      "reason": "v0_index_cost_recorded_on_s18_only",
+      "status": "unmeasured"
+     },
+     "V1": {
+      "counters": {
+       "binding_resolution": {
+        "affected_paths": [
+         "atlas_aci/__init__.py",
+         "atlas_aci/__main__.py",
+         "atlas_aci/codegraph.py",
+         "atlas_aci/config.py",
+         "atlas_aci/enforcement.py",
+         "atlas_aci/extractors/__init__.py",
+         "atlas_aci/extractors/rust.py",
+         "atlas_aci/indexing/__init__.py",
+         "atlas_aci/indexing/extraction_cache.py",
+         "atlas_aci/label_propagation.py",
+         "atlas_aci/memex.py",
+         "atlas_aci/providers/__init__.py",
+         "atlas_aci/providers/python_imports.py",
+         "atlas_aci/resolvers/__init__.py",
+         "atlas_aci/resolvers/dependencies.py",
+         "atlas_aci/server.py",
+         "atlas_aci/tools/__init__.py",
+         "atlas_aci/tools/graph_query.py",
+         "atlas_aci/tools/list_dir.py",
+         "atlas_aci/tools/search_symbol.py",
+         "atlas_aci/tools/search_text.py",
+         "atlas_aci/tools/test_dry_run.py",
+         "atlas_aci/tools/view_file.py"
+        ],
+        "affected_units": 23,
+        "mode": "full",
+        "reason": "full_requested_or_incompatible_inputs",
+        "removed_paths": [],
+        "removed_units": 0,
+        "reused_paths": [],
+        "reused_units": 0
+       },
+       "edges": 327,
+       "extraction_cache": {
+        "disk_hits": 0,
+        "miss_reasons": {
+         "missing": 23
+        },
+        "misses": 23,
+        "parser_invocations": 23,
+        "predecessor_reused": 0,
+        "write_failures": 0
+       },
+       "extraction_state": "complete",
+       "files_failed": 0,
+       "files_indexed": 23,
+       "files_removed": 0,
+       "files_skipped": 0,
+       "rationale": 0,
+       "refs": 2452,
+       "schema_epoch": 9,
+       "symbols": 201,
+       "unsupported_skipped": {}
+      },
+      "status": "measured"
+     }
+    }
+   },
+   "index.incremental_noop": {
+    "coverage-project": {
+     "V0": {
+      "reason": "v0_index_cost_recorded_on_s18_only",
+      "status": "unmeasured"
+     },
+     "V1": {
+      "counters": {
+       "binding_resolution": {
+        "affected_paths": [],
+        "affected_units": 0,
+        "mode": "affected",
+        "reason": "complete_dependency_match",
+        "removed_paths": [],
+        "removed_units": 0,
+        "reused_paths": [
+         "app/__init__.py",
+         "app/aio.py",
+         "app/calc.py",
+         "app/crlf_mod.py",
+         "app/ff_mod.py",
+         "app/sep.py",
+         "app/uni.py",
+         "tests/conftest.py",
+         "tests/test_basic.py",
+         "tests/test_forms.py",
+         "tests/test_params.py"
+        ],
+        "reused_units": 11
+       },
+       "edges": 1,
+       "extraction_cache": {
+        "disk_hits": 0,
+        "miss_reasons": {},
+        "misses": 0,
+        "parser_invocations": 0,
+        "predecessor_reused": 11,
+        "write_failures": 0
+       },
+       "extraction_state": "complete",
+       "files_failed": 0,
+       "files_indexed": 0,
+       "files_removed": 0,
+       "files_skipped": 11,
+       "rationale": 0,
+       "refs": 0,
+       "schema_epoch": 9,
+       "symbols": 0,
+       "unsupported_skipped": {}
+      },
+      "status": "measured"
+     }
+    },
+    "s18-useful-spans": {
+     "V0": {
+      "reason": "pre_v3_counters_not_exposed",
+      "status": "not_applicable"
+     },
+     "V1": {
+      "counters": {
+       "binding_resolution": {
+        "affected_paths": [],
+        "affected_units": 0,
+        "mode": "affected",
+        "reason": "complete_dependency_match",
+        "removed_paths": [],
+        "removed_units": 0,
+        "reused_paths": [
+         "app/client.py",
+         "app/payments.py",
+         "app/render.py",
+         "app/summary.py",
+         "noise/task.py",
+         "other/payments.py"
+        ],
+        "reused_units": 6
+       },
+       "edges": 4,
+       "extraction_cache": {
+        "disk_hits": 0,
+        "miss_reasons": {
+         "failed": 1
+        },
+        "misses": 1,
+        "parser_invocations": 1,
+        "predecessor_reused": 6,
+        "write_failures": 0
+       },
+       "extraction_state": "partial",
+       "files_failed": 1,
+       "files_indexed": 0,
+       "files_removed": 0,
+       "files_skipped": 6,
+       "rationale": 0,
+       "refs": 0,
+       "schema_epoch": 9,
+       "symbols": 0,
+       "unsupported_skipped": {}
+      },
+      "status": "measured"
+     }
+    },
+    "self-source-fa75bec": {
+     "V0": {
+      "reason": "v0_index_cost_recorded_on_s18_only",
+      "status": "unmeasured"
+     },
+     "V1": {
+      "counters": {
+       "binding_resolution": {
+        "affected_paths": [],
+        "affected_units": 0,
+        "mode": "affected",
+        "reason": "complete_dependency_match",
+        "removed_paths": [],
+        "removed_units": 0,
+        "reused_paths": [
+         "atlas_aci/__init__.py",
+         "atlas_aci/__main__.py",
+         "atlas_aci/codegraph.py",
+         "atlas_aci/config.py",
+         "atlas_aci/enforcement.py",
+         "atlas_aci/extractors/__init__.py",
+         "atlas_aci/extractors/rust.py",
+         "atlas_aci/indexing/__init__.py",
+         "atlas_aci/indexing/extraction_cache.py",
+         "atlas_aci/label_propagation.py",
+         "atlas_aci/memex.py",
+         "atlas_aci/providers/__init__.py",
+         "atlas_aci/providers/python_imports.py",
+         "atlas_aci/resolvers/__init__.py",
+         "atlas_aci/resolvers/dependencies.py",
+         "atlas_aci/server.py",
+         "atlas_aci/tools/__init__.py",
+         "atlas_aci/tools/graph_query.py",
+         "atlas_aci/tools/list_dir.py",
+         "atlas_aci/tools/search_symbol.py",
+         "atlas_aci/tools/search_text.py",
+         "atlas_aci/tools/test_dry_run.py",
+         "atlas_aci/tools/view_file.py"
+        ],
+        "reused_units": 23
+       },
+       "edges": 327,
+       "extraction_cache": {
+        "disk_hits": 0,
+        "miss_reasons": {},
+        "misses": 0,
+        "parser_invocations": 0,
+        "predecessor_reused": 23,
+        "write_failures": 0
+       },
+       "extraction_state": "complete",
+       "files_failed": 0,
+       "files_indexed": 0,
+       "files_removed": 0,
+       "files_skipped": 23,
+       "rationale": 0,
+       "refs": 0,
+       "schema_epoch": 9,
+       "symbols": 0,
+       "unsupported_skipped": {}
+      },
+      "status": "measured"
+     }
+    }
+   },
+   "index.refresh_after_edit": {
+    "coverage-project": {
+     "V0": {
+      "reason": "v0_index_cost_recorded_on_s18_only",
+      "status": "unmeasured"
+     },
+     "V1": {
+      "counters": {
+       "binding_resolution": {
+        "affected_paths": [
+         "app/calc.py"
+        ],
+        "affected_units": 1,
+        "mode": "affected",
+        "reason": "complete_dependency_match",
+        "removed_paths": [],
+        "removed_units": 0,
+        "reused_paths": [
+         "app/__init__.py",
+         "app/aio.py",
+         "app/crlf_mod.py",
+         "app/ff_mod.py",
+         "app/sep.py",
+         "app/uni.py",
+         "tests/conftest.py",
+         "tests/test_basic.py",
+         "tests/test_forms.py",
+         "tests/test_params.py"
+        ],
+        "reused_units": 10
+       },
+       "edges": 1,
+       "extraction_cache": {
+        "disk_hits": 0,
+        "miss_reasons": {
+         "missing": 1
+        },
+        "misses": 1,
+        "parser_invocations": 1,
+        "predecessor_reused": 10,
+        "write_failures": 0
+       },
+       "extraction_state": "complete",
+       "files_failed": 0,
+       "files_indexed": 1,
+       "files_removed": 0,
+       "files_skipped": 10,
+       "rationale": 0,
+       "refs": 6,
+       "schema_epoch": 9,
+       "symbols": 7,
+       "unsupported_skipped": {}
+      },
+      "status": "measured"
+     }
+    },
+    "s18-useful-spans": {
+     "V0": {
+      "reason": "pre_v3_counters_not_exposed",
+      "status": "not_applicable"
+     },
+     "V1": {
+      "counters": {
+       "binding_resolution": {
+        "affected_paths": [
+         "app/payments.py"
+        ],
+        "affected_units": 1,
+        "mode": "affected",
+        "reason": "complete_dependency_match",
+        "removed_paths": [],
+        "removed_units": 0,
+        "reused_paths": [
+         "app/client.py",
+         "app/render.py",
+         "app/summary.py",
+         "noise/task.py",
+         "other/payments.py"
+        ],
+        "reused_units": 5
+       },
+       "edges": 4,
+       "extraction_cache": {
+        "disk_hits": 0,
+        "miss_reasons": {
+         "failed": 1,
+         "missing": 1
+        },
+        "misses": 2,
+        "parser_invocations": 2,
+        "predecessor_reused": 5,
+        "write_failures": 0
+       },
+       "extraction_state": "partial",
+       "files_failed": 1,
+       "files_indexed": 1,
+       "files_removed": 0,
+       "files_skipped": 5,
+       "rationale": 0,
+       "refs": 3,
+       "schema_epoch": 9,
+       "symbols": 3,
+       "unsupported_skipped": {}
+      },
+      "status": "measured"
+     }
+    },
+    "self-source-fa75bec": {
+     "V0": {
+      "reason": "v0_index_cost_recorded_on_s18_only",
+      "status": "unmeasured"
+     },
+     "V1": {
+      "counters": {
+       "binding_resolution": {
+        "affected_paths": [],
+        "affected_units": 0,
+        "mode": "affected",
+        "reason": "complete_dependency_match",
+        "removed_paths": [],
+        "removed_units": 0,
+        "reused_paths": [
+         "atlas_aci/__init__.py",
+         "atlas_aci/__main__.py",
+         "atlas_aci/codegraph.py",
+         "atlas_aci/config.py",
+         "atlas_aci/enforcement.py",
+         "atlas_aci/extractors/__init__.py",
+         "atlas_aci/extractors/rust.py",
+         "atlas_aci/indexing/__init__.py",
+         "atlas_aci/indexing/extraction_cache.py",
+         "atlas_aci/label_propagation.py",
+         "atlas_aci/memex.py",
+         "atlas_aci/providers/__init__.py",
+         "atlas_aci/providers/python_imports.py",
+         "atlas_aci/resolvers/__init__.py",
+         "atlas_aci/resolvers/dependencies.py",
+         "atlas_aci/server.py",
+         "atlas_aci/tools/__init__.py",
+         "atlas_aci/tools/graph_query.py",
+         "atlas_aci/tools/list_dir.py",
+         "atlas_aci/tools/search_symbol.py",
+         "atlas_aci/tools/search_text.py",
+         "atlas_aci/tools/test_dry_run.py",
+         "atlas_aci/tools/view_file.py"
+        ],
+        "reused_units": 23
+       },
+       "edges": 327,
+       "extraction_cache": {
+        "disk_hits": 0,
+        "miss_reasons": {
+         "missing": 1
+        },
+        "misses": 1,
+        "parser_invocations": 1,
+        "predecessor_reused": 22,
+        "write_failures": 0
+       },
+       "extraction_state": "complete",
+       "files_failed": 0,
+       "files_indexed": 1,
+       "files_removed": 0,
+       "files_skipped": 22,
+       "rationale": 0,
+       "refs": 0,
+       "schema_epoch": 9,
+       "symbols": 0,
+       "unsupported_skipped": {}
+      },
+      "status": "measured"
+     }
+    }
+   },
+   "index.warm_full": {
+    "coverage-project": {
+     "V0": {
+      "reason": "v0_index_cost_recorded_on_s18_only",
+      "status": "unmeasured"
+     },
+     "V1": {
+      "counters": {
+       "binding_resolution": {
+        "affected_paths": [
+         "app/__init__.py",
+         "app/aio.py",
+         "app/calc.py",
+         "app/crlf_mod.py",
+         "app/ff_mod.py",
+         "app/sep.py",
+         "app/uni.py",
+         "tests/conftest.py",
+         "tests/test_basic.py",
+         "tests/test_forms.py",
+         "tests/test_params.py"
+        ],
+        "affected_units": 11,
+        "mode": "full",
+        "reason": "full_requested_or_incompatible_inputs",
+        "removed_paths": [],
+        "removed_units": 0,
+        "reused_paths": [],
+        "reused_units": 0
+       },
+       "edges": 1,
+       "extraction_cache": {
+        "disk_hits": 11,
+        "miss_reasons": {},
+        "misses": 0,
+        "parser_invocations": 0,
+        "predecessor_reused": 0,
+        "write_failures": 0
+       },
+       "extraction_state": "complete",
+       "files_failed": 0,
+       "files_indexed": 11,
+       "files_removed": 0,
+       "files_skipped": 0,
+       "rationale": 0,
+       "refs": 33,
+       "schema_epoch": 9,
+       "symbols": 31,
+       "unsupported_skipped": {}
+      },
+      "status": "measured"
+     }
+    },
+    "s18-useful-spans": {
+     "V0": {
+      "reason": "pre_v3_counters_not_exposed",
+      "status": "not_applicable"
+     },
+     "V1": {
+      "counters": {
+       "binding_resolution": {
+        "affected_paths": [
+         "app/client.py",
+         "app/payments.py",
+         "app/render.py",
+         "app/summary.py",
+         "noise/task.py",
+         "other/payments.py"
+        ],
+        "affected_units": 6,
+        "mode": "full",
+        "reason": "full_requested_or_incompatible_inputs",
+        "removed_paths": [],
+        "removed_units": 0,
+        "reused_paths": [],
+        "reused_units": 0
+       },
+       "edges": 4,
+       "extraction_cache": {
+        "disk_hits": 6,
+        "miss_reasons": {
+         "failed": 1
+        },
+        "misses": 1,
+        "parser_invocations": 1,
+        "predecessor_reused": 0,
+        "write_failures": 0
+       },
+       "extraction_state": "partial",
+       "files_failed": 1,
+       "files_indexed": 6,
+       "files_removed": 0,
+       "files_skipped": 0,
+       "rationale": 0,
+       "refs": 7,
+       "schema_epoch": 9,
+       "symbols": 10,
+       "unsupported_skipped": {}
+      },
+      "status": "measured"
+     }
+    },
+    "self-source-fa75bec": {
+     "V0": {
+      "reason": "v0_index_cost_recorded_on_s18_only",
+      "status": "unmeasured"
+     },
+     "V1": {
+      "counters": {
+       "binding_resolution": {
+        "affected_paths": [
+         "atlas_aci/__init__.py",
+         "atlas_aci/__main__.py",
+         "atlas_aci/codegraph.py",
+         "atlas_aci/config.py",
+         "atlas_aci/enforcement.py",
+         "atlas_aci/extractors/__init__.py",
+         "atlas_aci/extractors/rust.py",
+         "atlas_aci/indexing/__init__.py",
+         "atlas_aci/indexing/extraction_cache.py",
+         "atlas_aci/label_propagation.py",
+         "atlas_aci/memex.py",
+         "atlas_aci/providers/__init__.py",
+         "atlas_aci/providers/python_imports.py",
+         "atlas_aci/resolvers/__init__.py",
+         "atlas_aci/resolvers/dependencies.py",
+         "atlas_aci/server.py",
+         "atlas_aci/tools/__init__.py",
+         "atlas_aci/tools/graph_query.py",
+         "atlas_aci/tools/list_dir.py",
+         "atlas_aci/tools/search_symbol.py",
+         "atlas_aci/tools/search_text.py",
+         "atlas_aci/tools/test_dry_run.py",
+         "atlas_aci/tools/view_file.py"
+        ],
+        "affected_units": 23,
+        "mode": "full",
+        "reason": "full_requested_or_incompatible_inputs",
+        "removed_paths": [],
+        "removed_units": 0,
+        "reused_paths": [],
+        "reused_units": 0
+       },
+       "edges": 327,
+       "extraction_cache": {
+        "disk_hits": 23,
+        "miss_reasons": {},
+        "misses": 0,
+        "parser_invocations": 0,
+        "predecessor_reused": 0,
+        "write_failures": 0
+       },
+       "extraction_state": "complete",
+       "files_failed": 0,
+       "files_indexed": 23,
+       "files_removed": 0,
+       "files_skipped": 0,
+       "rationale": 0,
+       "refs": 2452,
+       "schema_epoch": 9,
+       "symbols": 201,
+       "unsupported_skipped": {}
+      },
+      "status": "measured"
+     }
+    }
+   },
+   "query.model": {
+    "reason": "no_operator_budget",
+    "status": "unmeasured"
+   },
+   "query.retrieval": [
+    {
+     "arm": "V0.legacy",
+     "budget_tokens": 2000,
+     "byte_quarter_tokens": 698,
+     "calls": 10,
+     "result_bytes": 2785,
+     "result_bytes_repo_normalized": 2785
+    },
+    {
+     "arm": "V0.legacy",
+     "budget_tokens": 8000,
+     "byte_quarter_tokens": 698,
+     "calls": 10,
+     "result_bytes": 2785,
+     "result_bytes_repo_normalized": 2785
+    },
+    {
+     "arm": "V0.legacy",
+     "budget_tokens": 16000,
+     "byte_quarter_tokens": 698,
+     "calls": 10,
+     "result_bytes": 2785,
+     "result_bytes_repo_normalized": 2785
+    },
+    {
+     "arm": "V1.legacy",
+     "budget_tokens": 2000,
+     "byte_quarter_tokens": 1040,
+     "calls": 10,
+     "result_bytes": 4154,
+     "result_bytes_repo_normalized": 4154
+    },
+    {
+     "arm": "V1.legacy",
+     "budget_tokens": 8000,
+     "byte_quarter_tokens": 1040,
+     "calls": 10,
+     "result_bytes": 4154,
+     "result_bytes_repo_normalized": 4154
+    },
+    {
+     "arm": "V1.legacy",
+     "budget_tokens": 16000,
+     "byte_quarter_tokens": 1040,
+     "calls": 10,
+     "result_bytes": 4154,
+     "result_bytes_repo_normalized": 4154
+    },
+    {
+     "arm": "V1.context.references",
+     "budget_tokens": 2000,
+     "byte_quarter_tokens": 5179,
+     "calls": 4,
+     "result_bytes": 21573,
+     "result_bytes_repo_normalized": 20709
+    },
+    {
+     "arm": "V1.context.references",
+     "budget_tokens": 8000,
+     "byte_quarter_tokens": 22137,
+     "calls": 4,
+     "result_bytes": 89696,
+     "result_bytes_repo_normalized": 88544
+    },
+    {
+     "arm": "V1.context.references",
+     "budget_tokens": 16000,
+     "byte_quarter_tokens": 28386,
+     "calls": 4,
+     "result_bytes": 114694,
+     "result_bytes_repo_normalized": 113542
+    },
+    {
+     "arm": "V1.context.inline",
+     "budget_tokens": 2000,
+     "byte_quarter_tokens": 5194,
+     "calls": 4,
+     "result_bytes": 21635,
+     "result_bytes_repo_normalized": 20771
+    },
+    {
+     "arm": "V1.context.inline",
+     "budget_tokens": 8000,
+     "byte_quarter_tokens": 24290,
+     "calls": 4,
+     "result_bytes": 98306,
+     "result_bytes_repo_normalized": 97154
+    },
+    {
+     "arm": "V1.context.inline",
+     "budget_tokens": 16000,
+     "byte_quarter_tokens": 32460,
+     "calls": 4,
+     "result_bytes": 130986,
+     "result_bytes_repo_normalized": 129834
+    },
+    {
+     "arm": "B.search_read",
+     "budget_tokens": 2000,
+     "byte_quarter_tokens": 271,
+     "calls": 4,
+     "result_bytes": 1080,
+     "result_bytes_repo_normalized": 1080
+    },
+    {
+     "arm": "B.search_read",
+     "budget_tokens": 8000,
+     "byte_quarter_tokens": 10917,
+     "calls": 9,
+     "result_bytes": 43659,
+     "result_bytes_repo_normalized": 43659
+    },
+    {
+     "arm": "B.search_read",
+     "budget_tokens": 16000,
+     "byte_quarter_tokens": 11768,
+     "calls": 10,
+     "result_bytes": 47065,
+     "result_bytes_repo_normalized": 47065
+    }
+   ]
+  },
+  "engineering_outcomes": {
+   "live": {
+    "agent_turns": {
+     "reason": "no_operator_budget",
+     "status": "unmeasured",
+     "value": null
+    },
+    "coding_task_success": {
+     "reason": "no_operator_budget",
+     "status": "unmeasured",
+     "value": null
+    },
+    "model_cost": {
+     "reason": "no_operator_budget",
+     "status": "unmeasured",
+     "value": null
+    },
+    "model_tokens": {
+     "reason": "no_operator_budget",
+     "status": "unmeasured",
+     "value": null
+    }
+   },
+   "offline": {
+    "validation_plan_comparison": {
+     "label": "offline_fixture_proxy",
+     "result": {
+      "baselines": {
+       "B0_run_everything": {
+        "fn": 0,
+        "fp": 8,
+        "gaps": null,
+        "precision": 0.2727,
+        "recall": 1.0,
+        "selected": 11,
+        "selected_functions": [
+         "tests/test_basic.py::TestTotals::test_table",
+         "tests/test_basic.py::TestTotals::test_total",
+         "tests/test_basic.py::test_add",
+         "tests/test_basic.py::test_clamp",
+         "tests/test_forms.py::test_async",
+         "tests/test_forms.py::test_crlf",
+         "tests/test_forms.py::test_form_feed",
+         "tests/test_forms.py::test_separator",
+         "tests/test_params.py::test_clamp_param",
+         "tests/test_params.py::test_pipe",
+         "tests/test_params.py::test_unicode_param"
+        ],
+        "tp": 3
+       },
+       "B1_structural_only": {
+        "fn": 0,
+        "fp": 0,
+        "gaps": 1,
+        "precision": 1.0,
+        "recall": 1.0,
+        "selected": 3,
+        "selected_functions": [
+         "tests/test_basic.py::TestTotals::test_total",
+         "tests/test_basic.py::test_clamp",
+         "tests/test_params.py::test_clamp_param"
+        ],
+        "tp": 3
+       },
+       "B2_validation_plan": {
+        "fn": 0,
+        "fp": 0,
+        "gaps": 1,
+        "observed_selected": 3,
+        "precision": 1.0,
+        "recall": 1.0,
+        "selected": 3,
+        "selected_functions": [
+         "tests/test_basic.py::TestTotals::test_total",
+         "tests/test_basic.py::test_clamp",
+         "tests/test_params.py::test_clamp_param"
+        ],
+        "tp": 3
+       }
+      },
+      "edits": {
+       "clamp": [
+        "tests/test_basic.py::test_clamp",
+        "tests/test_params.py::test_clamp_param[0]",
+        "tests/test_params.py::test_clamp_param[5]"
+       ],
+       "never_called": [],
+       "total": [
+        "tests/test_basic.py::TestTotals::test_total"
+       ]
+      },
+      "fixture": "mcp-server/tests/fixtures/coverage/project (run a)",
+      "format": "atlas-validation-plan-comparison.v1",
+      "gaps_B2": [
+       {
+        "name": "never_called",
+        "reasons": [
+         "no_coverage_source",
+         "no_observation_in_span",
+         "no_structural_test"
+        ]
+       }
+      ],
+      "granularity": "function (a [param] suffix is stripped)",
+      "notes": [
+       "B2 observed recall is consistent by construction: plan and truth read the same run.",
+       "B1 against the truth is the informative number (no coverage was used).",
+       "B1 is perfect here because the fixture tests call the edited functions by name; that is a property of this fixture, not a general claim.",
+       "No superiority threshold is claimed; one edit on one small fixture.",
+       "Recommendations are advisory; nothing was executed to produce them."
+      ],
+      "plan_ids": {
+       "B1": "0ad684bd7d3d5a9b89301282db7aaa0c3c14d3ae01eb2735a811b607972d67d8",
+       "B2": "7e994370a04c9616aa651fed6a990145a306cb08b381baccd120ccd1aefbb8f4"
+      },
+      "run_a_nodeids_total": 14,
+      "truth_functions": [
+       "tests/test_basic.py::TestTotals::test_total",
+       "tests/test_basic.py::test_clamp",
+       "tests/test_params.py::test_clamp_param"
+      ],
+      "truth_nodeids": [
+       "tests/test_basic.py::TestTotals::test_total",
+       "tests/test_basic.py::test_clamp",
+       "tests/test_params.py::test_clamp_param[0]",
+       "tests/test_params.py::test_clamp_param[5]"
+      ]
+     },
+     "status": "measured"
+    }
+   }
+  },
+  "gates": {
+   "cost": "pass",
+   "live_agent_evaluation": "incomplete",
+   "paired_inputs": "pass",
+   "release_integrity": "pass",
+   "span_matrix": "pass"
+  },
+  "host_matrix": [
+   {
+    "dimension": "MCP client SDK",
+    "evidence": "release recorder probe and arms; test_s18_stdio",
+    "status": "tested",
+    "value": "mcp 1.27.0 (uv.lock)"
+   },
+   {
+    "dimension": "Protocol (op=context only)",
+    "evidence": "test_s18_stdio.py:32-35 (CI); this evaluation negotiates one version per server (see probes)",
+    "status": "tested",
+    "value": "2024-11-05, 2025-03-26, 2025-06-18, 2025-11-25; unknown -> negotiated"
+   },
+   {
+    "dimension": "Transport",
+    "evidence": "server.py:20; all arms",
+    "status": "tested",
+    "value": "stdio"
+   },
+   {
+    "dimension": "Transport",
+    "evidence": "not implemented",
+    "status": "unsupported",
+    "value": "HTTP/SSE"
+   },
+   {
+    "dimension": "CPython (client and CI)",
+    "evidence": "ci.yml:108",
+    "status": "tested",
+    "value": "3.14"
+   },
+   {
+    "dimension": "CPython (recorder runtime)",
+    "evidence": "release run (recorder producer, diagnostic)",
+    "status": "tested",
+    "value": "3.12 in the atlas-aci-dev-s23-recorder container"
+   },
+   {
+    "dimension": "CPython (server runtime)",
+    "evidence": "mcp-server/Dockerfile:55; ci.yml S06/S08 docker job",
+    "status": "tested (smoke)",
+    "value": "3.12 in the Docker python:3.12-slim image only, driven by a 3.14 host client"
+   },
+   {
+    "dimension": "CPython",
+    "evidence": "requires-python >=3.11 only",
+    "status": "unverified",
+    "value": "3.11, 3.13"
+   },
+   {
+    "dimension": "OS",
+    "evidence": "CI ubuntu",
+    "status": "tested",
+    "value": "Linux x86_64"
+   },
+   {
+    "dimension": "OS",
+    "evidence": "CI export-determinism job only",
+    "status": "tested (partial)",
+    "value": "macOS"
+   },
+   {
+    "dimension": "OS",
+    "evidence": "no CI or evidence",
+    "status": "unverified",
+    "value": "Windows"
+   },
+   {
+    "dimension": "Image",
+    "evidence": "CI docker smoke job",
+    "status": "tested",
+    "value": "linux/amd64"
+   },
+   {
+    "dimension": "Image",
+    "evidence": "built by release.yml:155, not run in CI (the pre-v3 image is run on arm64 in this evaluation)",
+    "status": "documented",
+    "value": "linux/arm64"
+   },
+   {
+    "dimension": "Hosts",
+    "evidence": "hosts/*.md, no automated run",
+    "status": "documented",
+    "value": "Claude Code, Copilot, Cursor"
+   },
+   {
+    "dimension": "Canary adapters",
+    "evidence": "run-canaries.py:342",
+    "status": "unsupported",
+    "value": "claude-code-api, copilot, cursor"
+   },
+   {
+    "dimension": "Pre-v3 server",
+    "evidence": "V0 records",
+    "status": "tested (this eval)",
+    "value": "atlas-aci 2.0.0 @ sha256:e2542ef8d569882c560065f0bcaed9ef2a7398e7e61765e25b142a3c93ec7cf7"
+   }
+  ],
+  "inputs": [
+   {
+    "name": "cost.coverage-project.V1",
+    "sha256": "b1a29ef933ff132fbbd7934d2fb9723a87b5122f75e96a4b4d2fd68911ed5f1e"
+   },
+   {
+    "name": "cost.s18-useful-spans.V0",
+    "sha256": "97b2bb3b41afe7a3b685e8734ac8a1b46e90b0da2bddd5b5211fdf3a94b0cc2d"
+   },
+   {
+    "name": "cost.s18-useful-spans.V1",
+    "sha256": "66caff8df33682df49563d2803be8a54cc7f61d09c7a7b303fe7c704d5a64910"
+   },
+   {
+    "name": "cost.self-source-fa75bec.V1",
+    "sha256": "6584f19136b7c4aba8035caf54764bd9865adeba05516d64354f253aa50c52c5"
+   },
+   {
+    "name": "offline.validation_plan_comparison",
+    "sha256": "2333ebe1aac8c91a5790ac21e2b50fe6e98410cf2bf29f28c907375fb318b9f7"
+   },
+   {
+    "name": "p0.all",
+    "sha256": "308155808396a19c11180ebbecfdd1d04564b34b72815a77d41fca04187bef66"
+   },
+   {
+    "name": "probe.V0",
+    "sha256": "148b4ec6b422b6e60dcd689399e329cdf65a2e62edb83ba5db75d6059fc2b4db"
+   },
+   {
+    "name": "probe.V1",
+    "sha256": "7c733289b5f865164357eab029378f815bca975811ee048e55f3b63f4a8fd0d1"
+   },
+   {
+    "name": "retrieval.B.search_read",
+    "sha256": "783be9806644cb0237f2881ee5dc8f38f94ad6b9943e83c5e0cadb79d149cbc1"
+   },
+   {
+    "name": "retrieval.V0.legacy",
+    "sha256": "4b4c2d04e8ab186961aa352a8ca1ab67410bfa0283d02fa2a7747ede1edb197c"
+   },
+   {
+    "name": "retrieval.V1.context.inline",
+    "sha256": "9a1345b52681f0ee90ab99e466d33c4bfd2498d097037cd7cc9f45b7aa78d8f8"
+   },
+   {
+    "name": "retrieval.V1.context.references",
+    "sha256": "5e0804d4ed55b893206a384f159941a5321425a962cb67230b3a91d2b33607fb"
+   },
+   {
+    "name": "retrieval.V1.legacy",
+    "sha256": "ca74e7fb7d77d0027150a41d05364fcc64a1c44eaa3781e1cbb6251baac8cb4a"
+   }
+  ],
+  "known_failures": [
+   {
+    "evidence": "fails under uid 1000 in the dev container; passes in CI (qualification and base-invariants.json)",
+    "id": "tests/slices/test_s01_contract.py::test_call_deadline_after_initialization",
+    "kind": "known_failure_uid_1000"
+   },
+   {
+    "evidence": "timing-sensitive; excluded from the P0 gate",
+    "id": "tests/slices/test_s08_integration.py::test_nonregular_pack_does_not_block_acquisition",
+    "kind": "known_flaky"
+   }
+  ],
+  "limitations": [
+   "no_live_agent_evaluation_no_operator_budget",
+   "four_labelled_tasks_742_bytes_no_generalisation",
+   "no_thresholds_or_significance_claimed",
+   "policies_are_deterministic_transcripts_not_agents",
+   "byte_quarter_is_not_model_tokens",
+   "result_bytes_client_measured_repo_root_normalized",
+   "protocol_version_negotiated_per_server_not_controlled",
+   "v0_limited_to_legacy_tools",
+   "offline_validation_comparison_is_fixture_proxy",
+   "grammar_cache_warm_in_cold_builds",
+   "durations_diagnostic_only",
+   "retrieve_impact_diff_ops_not_span_evaluated",
+   "search_symbol_is_exact_name_match_so_phrase_terms_find_no_definitions",
+   "v0_index_uses_a_prefetched_declared_grammar_cache",
+   "search_text_match_order_is_ripgrep_thread_order_so_B_recordings_can_vary_between_runs"
+  ],
+  "manifest_sha256": "3b901b99607d3db95d02a79794792cc8fb0df142901dc35fb502a1fa8e49b1ce",
+  "pairing": {
+   "arms": [
+    {
+     "arm": "V0.legacy",
+     "status": "complete",
+     "tasks": [
+      "payment",
+      "phrase",
+      "request",
+      "unicode"
+     ]
+    },
+    {
+     "arm": "V1.legacy",
+     "status": "complete",
+     "tasks": [
+      "payment",
+      "phrase",
+      "request",
+      "unicode"
+     ]
+    },
+    {
+     "arm": "V1.context.references",
+     "status": "complete",
+     "tasks": [
+      "payment",
+      "phrase",
+      "request",
+      "unicode"
+     ]
+    },
+    {
+     "arm": "V1.context.inline",
+     "status": "complete",
+     "tasks": [
+      "payment",
+      "phrase",
+      "request",
+      "unicode"
+     ]
+    },
+    {
+     "arm": "B.search_read",
+     "status": "complete",
+     "tasks": [
+      "payment",
+      "phrase",
+      "request",
+      "unicode"
+     ]
+    }
+   ],
+   "corpus_commit": "c1ac2ed0b8d13af001822cc27d605c3f6490ffc1",
+   "paired": true,
+   "task_input_sha256": "236c0def27a416dd93a411a4e40d2666510320c4d9f9cfff08f29a1145cc8fe6"
+  },
+  "probes": [
+   {
+    "image": {
+     "architecture": "arm64",
+     "id": "sha256:e2542ef8d569882c560065f0bcaed9ef2a7398e7e61765e25b142a3c93ec7cf7",
+     "os": "linux",
+     "repo_digests": [
+      "ghcr.io/rynaro/atlas-aci@sha256:e2542ef8d569882c560065f0bcaed9ef2a7398e7e61765e25b142a3c93ec7cf7"
+     ]
+    },
+    "protocol_version": "2025-11-25",
+    "server_info": {
+     "name": "atlas-aci",
+     "version": "1.27.0"
+    },
+    "status": "complete",
+    "tools": [
+     "view_file",
+     "list_dir",
+     "search_text",
+     "search_symbol",
+     "graph_query",
+     "test_dry_run",
+     "memex_read"
+    ],
+    "tools_list_sha256": "bf8799b02caf4cfbf743607c090d358000823efe7ff19c3c213f311fe05f36fe",
+    "variant": "V0"
+   },
+   {
+    "image": null,
+    "protocol_version": "2025-11-25",
+    "server_info": {
+     "name": "atlas-aci",
+     "version": "1.27.0"
+    },
+    "status": "complete",
+    "tools": [
+     "view_file",
+     "list_dir",
+     "search_text",
+     "search_symbol",
+     "graph_query",
+     "test_dry_run",
+     "memex_read"
+    ],
+    "tools_list_sha256": "9837ab0126ed3046f545eb2b83700034c516d1bca8b5b213d7c799d4ecdaff29",
+    "variant": "V1"
+   }
+  ],
+  "release_integrity": {
+   "passed": 30,
+   "results": [
+    {
+     "category": "binding",
+     "node_id": "tests/slices/test_s02_contract.py::test_additional_binding_constructs_fail_closed",
+     "outcome": "passed",
+     "testcases": 1
+    },
+    {
+     "category": "binding",
+     "node_id": "tests/slices/test_s02_contract.py::test_binding_replay",
+     "outcome": "passed",
+     "testcases": 1
+    },
+    {
+     "category": "binding",
+     "node_id": "tests/slices/test_s02_contract.py::test_cross_language_collision",
+     "outcome": "passed",
+     "testcases": 1
+    },
+    {
+     "category": "binding",
+     "node_id": "tests/slices/test_s02_contract.py::test_no_cross_file_module_guess",
+     "outcome": "passed",
+     "testcases": 1
+    },
+    {
+     "category": "binding",
+     "node_id": "tests/slices/test_s02_contract.py::test_owned_receiver",
+     "outcome": "passed",
+     "testcases": 1
+    },
+    {
+     "category": "binding",
+     "node_id": "tests/slices/test_s02_contract.py::test_shadowed_name",
+     "outcome": "passed",
+     "testcases": 1
+    },
+    {
+     "category": "binding",
+     "node_id": "tests/slices/test_s02_contract.py::test_unknown_alias",
+     "outcome": "passed",
+     "testcases": 1
+    },
+    {
+     "category": "binding",
+     "node_id": "tests/slices/test_s02_contract.py::test_unrelated_receiver",
+     "outcome": "passed",
+     "testcases": 1
+    },
+    {
+     "category": "snapshot",
+     "node_id": "tests/slices/test_s03_contract.py::test_active_request_pinned",
+     "outcome": "passed",
+     "testcases": 3
+    },
+    {
+     "category": "snapshot",
+     "node_id": "tests/slices/test_s03_contract.py::test_concurrent_readers_keep_their_own_generation",
+     "outcome": "passed",
+     "testcases": 1
+    },
+    {
+     "category": "snapshot",
+     "node_id": "tests/slices/test_s03_contract.py::test_consumed_buffer_hash_and_failure",
+     "outcome": "passed",
+     "testcases": 1
+    },
+    {
+     "category": "snapshot",
+     "node_id": "tests/slices/test_s03_contract.py::test_failed_publish",
+     "outcome": "passed",
+     "testcases": 1
+    },
+    {
+     "category": "snapshot",
+     "node_id": "tests/slices/test_s03_contract.py::test_generation_replay",
+     "outcome": "passed",
+     "testcases": 1
+    },
+    {
+     "category": "snapshot",
+     "node_id": "tests/slices/test_s08_contract.py::test_active_lease_retained",
+     "outcome": "passed",
+     "testcases": 1
+    },
+    {
+     "category": "snapshot",
+     "node_id": "tests/slices/test_s08_contract.py::test_snapshot_replay",
+     "outcome": "passed",
+     "testcases": 1
+    },
+    {
+     "category": "snapshot",
+     "node_id": "tests/slices/test_s08_contract.py::test_snapshot_source_coherence",
+     "outcome": "passed",
+     "testcases": 1
+    },
+    {
+     "category": "snapshot",
+     "node_id": "tests/slices/test_s08_integration.py::test_coherently_rehashed_foreign_binding_fails_before_exposure",
+     "outcome": "passed",
+     "testcases": 4
+    },
+    {
+     "category": "snapshot",
+     "node_id": "tests/slices/test_s08_integration.py::test_prune_during_unexposed_acquisition_retries_latest",
+     "outcome": "passed",
+     "testcases": 1
+    },
+    {
+     "category": "snapshot",
+     "node_id": "tests/slices/test_s08_lease_footprint.py::test_rehashed_compact_or_raw_range_contradiction",
+     "outcome": "passed",
+     "testcases": 6
+    },
+    {
+     "category": "snapshot",
+     "node_id": "tests/slices/test_s09_contract.py::test_producer_change",
+     "outcome": "passed",
+     "testcases": 1
+    },
+    {
+     "category": "snapshot",
+     "node_id": "tests/slices/test_s09_contract.py::test_same_stat_changed_content",
+     "outcome": "passed",
+     "testcases": 1
+    },
+    {
+     "category": "binding",
+     "node_id": "tests/slices/test_s10_contract.py::test_call_only_reuses_nonempty_same_language_unit",
+     "outcome": "passed",
+     "testcases": 1
+    },
+    {
+     "category": "binding",
+     "node_id": "tests/slices/test_s10_contract.py::test_incremental_replay",
+     "outcome": "passed",
+     "testcases": 1
+    },
+    {
+     "category": "binding",
+     "node_id": "tests/slices/test_s10_contract.py::test_unknown_dependency_fallback",
+     "outcome": "passed",
+     "testcases": 1
+    },
+    {
+     "category": "binding",
+     "node_id": "tests/slices/test_s10_dependencies.py::test_fatal_selected_binding_preserves_pinned_g1",
+     "outcome": "passed",
+     "testcases": 1
+    },
+    {
+     "category": "binding",
+     "node_id": "tests/slices/test_s10_dependencies.py::test_incoherent_outputs_force_full_repair",
+     "outcome": "passed",
+     "testcases": 4
+    },
+    {
+     "category": "binding",
+     "node_id": "tests/slices/test_s10_dependencies.py::test_untrusted_witness_full_fallback",
+     "outcome": "passed",
+     "testcases": 8
+    },
+    {
+     "category": "snapshot",
+     "node_id": "tests/slices/test_s12_storage.py::test_genuine_epoch6_reader_and_writer_conversion",
+     "outcome": "passed",
+     "testcases": 1
+    },
+    {
+     "category": "snapshot",
+     "node_id": "tests/slices/test_s12_storage.py::test_staged_upgrade_preserves_history_and_held_source",
+     "outcome": "passed",
+     "testcases": 1
+    },
+    {
+     "category": "snapshot",
+     "node_id": "tests/slices/test_s17_storage.py::test_genuine_held8_upgrade9_overlay_and_replay",
+     "outcome": "passed",
+     "testcases": 1
+    }
+   ],
+   "status": "pass",
+   "total": 30
+  },
+  "retrieval": {
+   "budget": {
+    "max_bytes": [
+     8000,
+     32000,
+     64000
+    ],
+    "measure": "result_bytes_repo_normalized.v1",
+    "prefix_rule": "atlas-budget-prefix.v1",
+    "tokens": [
+     2000,
+     8000,
+     16000
+    ],
+    "unit": "byte_quarter.v1"
+   },
+   "paired_differences": [
+    {
+     "budget_tokens": 2000,
+     "differences": {
+      "byte_quarter_tokens": 342,
+      "calls": 0,
+      "errors": 0,
+      "redundant_inline_bytes": 0,
+      "redundant_reference_bytes": 0,
+      "result_bytes_repo_normalized": 1369,
+      "unique_inline_bytes": 0,
+      "unique_reference_bytes": 0,
+      "useful_inline_bytes": 0,
+      "useful_reference_bytes": 0
+     },
+     "left": "V1.legacy",
+     "right": "V0.legacy",
+     "status": "measured"
+    },
+    {
+     "budget_tokens": 8000,
+     "differences": {
+      "byte_quarter_tokens": 342,
+      "calls": 0,
+      "errors": 0,
+      "redundant_inline_bytes": 0,
+      "redundant_reference_bytes": 0,
+      "result_bytes_repo_normalized": 1369,
+      "unique_inline_bytes": 0,
+      "unique_reference_bytes": 0,
+      "useful_inline_bytes": 0,
+      "useful_reference_bytes": 0
+     },
+     "left": "V1.legacy",
+     "right": "V0.legacy",
+     "status": "measured"
+    },
+    {
+     "budget_tokens": 16000,
+     "differences": {
+      "byte_quarter_tokens": 342,
+      "calls": 0,
+      "errors": 0,
+      "redundant_inline_bytes": 0,
+      "redundant_reference_bytes": 0,
+      "result_bytes_repo_normalized": 1369,
+      "unique_inline_bytes": 0,
+      "unique_reference_bytes": 0,
+      "useful_inline_bytes": 0,
+      "useful_reference_bytes": 0
+     },
+     "left": "V1.legacy",
+     "right": "V0.legacy",
+     "status": "measured"
+    },
+    {
+     "budget_tokens": 2000,
+     "differences": {
+      "byte_quarter_tokens": 4923,
+      "calls": 0,
+      "errors": 1,
+      "redundant_inline_bytes": 0,
+      "redundant_reference_bytes": -51,
+      "result_bytes_repo_normalized": 19691,
+      "unique_inline_bytes": -339,
+      "unique_reference_bytes": -339,
+      "useful_inline_bytes": -339,
+      "useful_reference_bytes": -339
+     },
+     "left": "V1.context.inline",
+     "right": "B.search_read",
+     "status": "measured"
+    },
+    {
+     "budget_tokens": 8000,
+     "differences": {
+      "byte_quarter_tokens": 13373,
+      "calls": -5,
+      "errors": 0,
+      "redundant_inline_bytes": 180,
+      "redundant_reference_bytes": -637268,
+      "result_bytes_repo_normalized": 53495,
+      "unique_inline_bytes": 307,
+      "unique_reference_bytes": -2896,
+      "useful_inline_bytes": 233,
+      "useful_reference_bytes": 233
+     },
+     "left": "V1.context.inline",
+     "right": "B.search_read",
+     "status": "measured"
+    },
+    {
+     "budget_tokens": 16000,
+     "differences": {
+      "byte_quarter_tokens": 20692,
+      "calls": -6,
+      "errors": 0,
+      "redundant_inline_bytes": 402,
+      "redundant_reference_bytes": -640249,
+      "result_bytes_repo_normalized": 82769,
+      "unique_inline_bytes": 590,
+      "unique_reference_bytes": 590,
+      "useful_inline_bytes": 403,
+      "useful_reference_bytes": 403
+     },
+     "left": "V1.context.inline",
+     "right": "B.search_read",
+     "status": "measured"
+    },
+    {
+     "budget_tokens": 2000,
+     "differences": {
+      "byte_quarter_tokens": 4139,
+      "calls": -6,
+      "errors": 1,
+      "redundant_inline_bytes": 0,
+      "redundant_reference_bytes": -354,
+      "result_bytes_repo_normalized": 16555,
+      "unique_inline_bytes": -354,
+      "unique_reference_bytes": -354,
+      "useful_inline_bytes": -243,
+      "useful_reference_bytes": -243
+     },
+     "left": "V1.context.references",
+     "right": "V1.legacy",
+     "status": "measured"
+    },
+    {
+     "budget_tokens": 8000,
+     "differences": {
+      "byte_quarter_tokens": 21097,
+      "calls": -6,
+      "errors": 0,
+      "redundant_inline_bytes": 0,
+      "redundant_reference_bytes": -174,
+      "result_bytes_repo_normalized": 84390,
+      "unique_inline_bytes": -354,
+      "unique_reference_bytes": 3525,
+      "useful_inline_bytes": -243,
+      "useful_reference_bytes": 329
+     },
+     "left": "V1.context.references",
+     "right": "V1.legacy",
+     "status": "measured"
+    },
+    {
+     "budget_tokens": 16000,
+     "differences": {
+      "byte_quarter_tokens": 27346,
+      "calls": -6,
+      "errors": 0,
+      "redundant_inline_bytes": 0,
+      "redundant_reference_bytes": 48,
+      "result_bytes_repo_normalized": 109388,
+      "unique_inline_bytes": -354,
+      "unique_reference_bytes": 7041,
+      "useful_inline_bytes": -243,
+      "useful_reference_bytes": 499
+     },
+     "left": "V1.context.references",
+     "right": "V1.legacy",
+     "status": "measured"
+    }
+   ],
+   "per_task": [
+    {
+     "arm": "V0.legacy",
+     "budget_tokens": 2000,
+     "bundles": null,
+     "byte_quarter_tokens": 303,
+     "calls": 3,
+     "calls_recorded": 3,
+     "errors": 0,
+     "path_replacements": 0,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 212,
+     "result_bytes": 1209,
+     "result_bytes_repo_normalized": 1209,
+     "selected_files": [
+      "app/payments.py",
+      "other/payments.py"
+     ],
+     "task_id": "payment",
+     "unique_inline_bytes": 212,
+     "unique_reference_bytes": 212,
+     "useful_inline_bytes": 101,
+     "useful_label_bytes": 270,
+     "useful_reference_bytes": 101
+    },
+    {
+     "arm": "V0.legacy",
+     "budget_tokens": 2000,
+     "bundles": null,
+     "byte_quarter_tokens": 158,
+     "calls": 2,
+     "calls_recorded": 2,
+     "errors": 0,
+     "path_replacements": 0,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 73,
+     "result_bytes": 632,
+     "result_bytes_repo_normalized": 632,
+     "selected_files": [
+      "app/client.py"
+     ],
+     "task_id": "request",
+     "unique_inline_bytes": 73,
+     "unique_reference_bytes": 73,
+     "useful_inline_bytes": 73,
+     "useful_label_bytes": 207,
+     "useful_reference_bytes": 73
+    },
+    {
+     "arm": "V0.legacy",
+     "budget_tokens": 2000,
+     "bundles": null,
+     "byte_quarter_tokens": 158,
+     "calls": 2,
+     "calls_recorded": 2,
+     "errors": 0,
+     "path_replacements": 0,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 69,
+     "result_bytes": 629,
+     "result_bytes_repo_normalized": 629,
+     "selected_files": [
+      "app/render.py"
+     ],
+     "task_id": "unicode",
+     "unique_inline_bytes": 69,
+     "unique_reference_bytes": 69,
+     "useful_inline_bytes": 69,
+     "useful_label_bytes": 132,
+     "useful_reference_bytes": 69
+    },
+    {
+     "arm": "V0.legacy",
+     "budget_tokens": 2000,
+     "bundles": null,
+     "byte_quarter_tokens": 79,
+     "calls": 3,
+     "calls_recorded": 3,
+     "errors": 0,
+     "path_replacements": 0,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 0,
+     "result_bytes": 315,
+     "result_bytes_repo_normalized": 315,
+     "selected_files": [],
+     "task_id": "phrase",
+     "unique_inline_bytes": 0,
+     "unique_reference_bytes": 0,
+     "useful_inline_bytes": 0,
+     "useful_label_bytes": 133,
+     "useful_reference_bytes": 0
+    },
+    {
+     "arm": "V0.legacy",
+     "budget_tokens": 8000,
+     "bundles": null,
+     "byte_quarter_tokens": 303,
+     "calls": 3,
+     "calls_recorded": 3,
+     "errors": 0,
+     "path_replacements": 0,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 212,
+     "result_bytes": 1209,
+     "result_bytes_repo_normalized": 1209,
+     "selected_files": [
+      "app/payments.py",
+      "other/payments.py"
+     ],
+     "task_id": "payment",
+     "unique_inline_bytes": 212,
+     "unique_reference_bytes": 212,
+     "useful_inline_bytes": 101,
+     "useful_label_bytes": 270,
+     "useful_reference_bytes": 101
+    },
+    {
+     "arm": "V0.legacy",
+     "budget_tokens": 8000,
+     "bundles": null,
+     "byte_quarter_tokens": 158,
+     "calls": 2,
+     "calls_recorded": 2,
+     "errors": 0,
+     "path_replacements": 0,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 73,
+     "result_bytes": 632,
+     "result_bytes_repo_normalized": 632,
+     "selected_files": [
+      "app/client.py"
+     ],
+     "task_id": "request",
+     "unique_inline_bytes": 73,
+     "unique_reference_bytes": 73,
+     "useful_inline_bytes": 73,
+     "useful_label_bytes": 207,
+     "useful_reference_bytes": 73
+    },
+    {
+     "arm": "V0.legacy",
+     "budget_tokens": 8000,
+     "bundles": null,
+     "byte_quarter_tokens": 158,
+     "calls": 2,
+     "calls_recorded": 2,
+     "errors": 0,
+     "path_replacements": 0,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 69,
+     "result_bytes": 629,
+     "result_bytes_repo_normalized": 629,
+     "selected_files": [
+      "app/render.py"
+     ],
+     "task_id": "unicode",
+     "unique_inline_bytes": 69,
+     "unique_reference_bytes": 69,
+     "useful_inline_bytes": 69,
+     "useful_label_bytes": 132,
+     "useful_reference_bytes": 69
+    },
+    {
+     "arm": "V0.legacy",
+     "budget_tokens": 8000,
+     "bundles": null,
+     "byte_quarter_tokens": 79,
+     "calls": 3,
+     "calls_recorded": 3,
+     "errors": 0,
+     "path_replacements": 0,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 0,
+     "result_bytes": 315,
+     "result_bytes_repo_normalized": 315,
+     "selected_files": [],
+     "task_id": "phrase",
+     "unique_inline_bytes": 0,
+     "unique_reference_bytes": 0,
+     "useful_inline_bytes": 0,
+     "useful_label_bytes": 133,
+     "useful_reference_bytes": 0
+    },
+    {
+     "arm": "V0.legacy",
+     "budget_tokens": 16000,
+     "bundles": null,
+     "byte_quarter_tokens": 303,
+     "calls": 3,
+     "calls_recorded": 3,
+     "errors": 0,
+     "path_replacements": 0,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 212,
+     "result_bytes": 1209,
+     "result_bytes_repo_normalized": 1209,
+     "selected_files": [
+      "app/payments.py",
+      "other/payments.py"
+     ],
+     "task_id": "payment",
+     "unique_inline_bytes": 212,
+     "unique_reference_bytes": 212,
+     "useful_inline_bytes": 101,
+     "useful_label_bytes": 270,
+     "useful_reference_bytes": 101
+    },
+    {
+     "arm": "V0.legacy",
+     "budget_tokens": 16000,
+     "bundles": null,
+     "byte_quarter_tokens": 158,
+     "calls": 2,
+     "calls_recorded": 2,
+     "errors": 0,
+     "path_replacements": 0,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 73,
+     "result_bytes": 632,
+     "result_bytes_repo_normalized": 632,
+     "selected_files": [
+      "app/client.py"
+     ],
+     "task_id": "request",
+     "unique_inline_bytes": 73,
+     "unique_reference_bytes": 73,
+     "useful_inline_bytes": 73,
+     "useful_label_bytes": 207,
+     "useful_reference_bytes": 73
+    },
+    {
+     "arm": "V0.legacy",
+     "budget_tokens": 16000,
+     "bundles": null,
+     "byte_quarter_tokens": 158,
+     "calls": 2,
+     "calls_recorded": 2,
+     "errors": 0,
+     "path_replacements": 0,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 69,
+     "result_bytes": 629,
+     "result_bytes_repo_normalized": 629,
+     "selected_files": [
+      "app/render.py"
+     ],
+     "task_id": "unicode",
+     "unique_inline_bytes": 69,
+     "unique_reference_bytes": 69,
+     "useful_inline_bytes": 69,
+     "useful_label_bytes": 132,
+     "useful_reference_bytes": 69
+    },
+    {
+     "arm": "V0.legacy",
+     "budget_tokens": 16000,
+     "bundles": null,
+     "byte_quarter_tokens": 79,
+     "calls": 3,
+     "calls_recorded": 3,
+     "errors": 0,
+     "path_replacements": 0,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 0,
+     "result_bytes": 315,
+     "result_bytes_repo_normalized": 315,
+     "selected_files": [],
+     "task_id": "phrase",
+     "unique_inline_bytes": 0,
+     "unique_reference_bytes": 0,
+     "useful_inline_bytes": 0,
+     "useful_label_bytes": 133,
+     "useful_reference_bytes": 0
+    },
+    {
+     "arm": "V1.legacy",
+     "budget_tokens": 2000,
+     "bundles": null,
+     "byte_quarter_tokens": 382,
+     "calls": 3,
+     "calls_recorded": 3,
+     "errors": 0,
+     "path_replacements": 0,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 212,
+     "result_bytes": 1527,
+     "result_bytes_repo_normalized": 1527,
+     "selected_files": [
+      "app/payments.py",
+      "other/payments.py"
+     ],
+     "task_id": "payment",
+     "unique_inline_bytes": 212,
+     "unique_reference_bytes": 212,
+     "useful_inline_bytes": 101,
+     "useful_label_bytes": 270,
+     "useful_reference_bytes": 101
+    },
+    {
+     "arm": "V1.legacy",
+     "budget_tokens": 2000,
+     "bundles": null,
+     "byte_quarter_tokens": 220,
+     "calls": 2,
+     "calls_recorded": 2,
+     "errors": 0,
+     "path_replacements": 0,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 73,
+     "result_bytes": 880,
+     "result_bytes_repo_normalized": 880,
+     "selected_files": [
+      "app/client.py"
+     ],
+     "task_id": "request",
+     "unique_inline_bytes": 73,
+     "unique_reference_bytes": 73,
+     "useful_inline_bytes": 73,
+     "useful_label_bytes": 207,
+     "useful_reference_bytes": 73
+    },
+    {
+     "arm": "V1.legacy",
+     "budget_tokens": 2000,
+     "bundles": null,
+     "byte_quarter_tokens": 219,
+     "calls": 2,
+     "calls_recorded": 2,
+     "errors": 0,
+     "path_replacements": 0,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 69,
+     "result_bytes": 874,
+     "result_bytes_repo_normalized": 874,
+     "selected_files": [
+      "app/render.py"
+     ],
+     "task_id": "unicode",
+     "unique_inline_bytes": 69,
+     "unique_reference_bytes": 69,
+     "useful_inline_bytes": 69,
+     "useful_label_bytes": 132,
+     "useful_reference_bytes": 69
+    },
+    {
+     "arm": "V1.legacy",
+     "budget_tokens": 2000,
+     "bundles": null,
+     "byte_quarter_tokens": 219,
+     "calls": 3,
+     "calls_recorded": 3,
+     "errors": 0,
+     "path_replacements": 0,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 0,
+     "result_bytes": 873,
+     "result_bytes_repo_normalized": 873,
+     "selected_files": [],
+     "task_id": "phrase",
+     "unique_inline_bytes": 0,
+     "unique_reference_bytes": 0,
+     "useful_inline_bytes": 0,
+     "useful_label_bytes": 133,
+     "useful_reference_bytes": 0
+    },
+    {
+     "arm": "V1.legacy",
+     "budget_tokens": 8000,
+     "bundles": null,
+     "byte_quarter_tokens": 382,
+     "calls": 3,
+     "calls_recorded": 3,
+     "errors": 0,
+     "path_replacements": 0,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 212,
+     "result_bytes": 1527,
+     "result_bytes_repo_normalized": 1527,
+     "selected_files": [
+      "app/payments.py",
+      "other/payments.py"
+     ],
+     "task_id": "payment",
+     "unique_inline_bytes": 212,
+     "unique_reference_bytes": 212,
+     "useful_inline_bytes": 101,
+     "useful_label_bytes": 270,
+     "useful_reference_bytes": 101
+    },
+    {
+     "arm": "V1.legacy",
+     "budget_tokens": 8000,
+     "bundles": null,
+     "byte_quarter_tokens": 220,
+     "calls": 2,
+     "calls_recorded": 2,
+     "errors": 0,
+     "path_replacements": 0,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 73,
+     "result_bytes": 880,
+     "result_bytes_repo_normalized": 880,
+     "selected_files": [
+      "app/client.py"
+     ],
+     "task_id": "request",
+     "unique_inline_bytes": 73,
+     "unique_reference_bytes": 73,
+     "useful_inline_bytes": 73,
+     "useful_label_bytes": 207,
+     "useful_reference_bytes": 73
+    },
+    {
+     "arm": "V1.legacy",
+     "budget_tokens": 8000,
+     "bundles": null,
+     "byte_quarter_tokens": 219,
+     "calls": 2,
+     "calls_recorded": 2,
+     "errors": 0,
+     "path_replacements": 0,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 69,
+     "result_bytes": 874,
+     "result_bytes_repo_normalized": 874,
+     "selected_files": [
+      "app/render.py"
+     ],
+     "task_id": "unicode",
+     "unique_inline_bytes": 69,
+     "unique_reference_bytes": 69,
+     "useful_inline_bytes": 69,
+     "useful_label_bytes": 132,
+     "useful_reference_bytes": 69
+    },
+    {
+     "arm": "V1.legacy",
+     "budget_tokens": 8000,
+     "bundles": null,
+     "byte_quarter_tokens": 219,
+     "calls": 3,
+     "calls_recorded": 3,
+     "errors": 0,
+     "path_replacements": 0,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 0,
+     "result_bytes": 873,
+     "result_bytes_repo_normalized": 873,
+     "selected_files": [],
+     "task_id": "phrase",
+     "unique_inline_bytes": 0,
+     "unique_reference_bytes": 0,
+     "useful_inline_bytes": 0,
+     "useful_label_bytes": 133,
+     "useful_reference_bytes": 0
+    },
+    {
+     "arm": "V1.legacy",
+     "budget_tokens": 16000,
+     "bundles": null,
+     "byte_quarter_tokens": 382,
+     "calls": 3,
+     "calls_recorded": 3,
+     "errors": 0,
+     "path_replacements": 0,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 212,
+     "result_bytes": 1527,
+     "result_bytes_repo_normalized": 1527,
+     "selected_files": [
+      "app/payments.py",
+      "other/payments.py"
+     ],
+     "task_id": "payment",
+     "unique_inline_bytes": 212,
+     "unique_reference_bytes": 212,
+     "useful_inline_bytes": 101,
+     "useful_label_bytes": 270,
+     "useful_reference_bytes": 101
+    },
+    {
+     "arm": "V1.legacy",
+     "budget_tokens": 16000,
+     "bundles": null,
+     "byte_quarter_tokens": 220,
+     "calls": 2,
+     "calls_recorded": 2,
+     "errors": 0,
+     "path_replacements": 0,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 73,
+     "result_bytes": 880,
+     "result_bytes_repo_normalized": 880,
+     "selected_files": [
+      "app/client.py"
+     ],
+     "task_id": "request",
+     "unique_inline_bytes": 73,
+     "unique_reference_bytes": 73,
+     "useful_inline_bytes": 73,
+     "useful_label_bytes": 207,
+     "useful_reference_bytes": 73
+    },
+    {
+     "arm": "V1.legacy",
+     "budget_tokens": 16000,
+     "bundles": null,
+     "byte_quarter_tokens": 219,
+     "calls": 2,
+     "calls_recorded": 2,
+     "errors": 0,
+     "path_replacements": 0,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 69,
+     "result_bytes": 874,
+     "result_bytes_repo_normalized": 874,
+     "selected_files": [
+      "app/render.py"
+     ],
+     "task_id": "unicode",
+     "unique_inline_bytes": 69,
+     "unique_reference_bytes": 69,
+     "useful_inline_bytes": 69,
+     "useful_label_bytes": 132,
+     "useful_reference_bytes": 69
+    },
+    {
+     "arm": "V1.legacy",
+     "budget_tokens": 16000,
+     "bundles": null,
+     "byte_quarter_tokens": 219,
+     "calls": 3,
+     "calls_recorded": 3,
+     "errors": 0,
+     "path_replacements": 0,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 0,
+     "result_bytes": 873,
+     "result_bytes_repo_normalized": 873,
+     "selected_files": [],
+     "task_id": "phrase",
+     "unique_inline_bytes": 0,
+     "unique_reference_bytes": 0,
+     "useful_inline_bytes": 0,
+     "useful_label_bytes": 133,
+     "useful_reference_bytes": 0
+    },
+    {
+     "arm": "V1.context.references",
+     "budget_tokens": 2000,
+     "bundles": 0,
+     "byte_quarter_tokens": 195,
+     "calls": 1,
+     "calls_recorded": 1,
+     "errors": 1,
+     "path_replacements": 0,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 0,
+     "result_bytes": 777,
+     "result_bytes_repo_normalized": 777,
+     "selected_files": [],
+     "task_id": "payment",
+     "unique_inline_bytes": 0,
+     "unique_reference_bytes": 0,
+     "useful_inline_bytes": 0,
+     "useful_label_bytes": 270,
+     "useful_reference_bytes": 0
+    },
+    {
+     "arm": "V1.context.references",
+     "budget_tokens": 2000,
+     "bundles": 0,
+     "byte_quarter_tokens": 1790,
+     "calls": 1,
+     "calls_recorded": 1,
+     "errors": 0,
+     "path_replacements": 2,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 0,
+     "result_bytes": 7446,
+     "result_bytes_repo_normalized": 7158,
+     "selected_files": [],
+     "task_id": "request",
+     "unique_inline_bytes": 0,
+     "unique_reference_bytes": 0,
+     "useful_inline_bytes": 0,
+     "useful_label_bytes": 207,
+     "useful_reference_bytes": 0
+    },
+    {
+     "arm": "V1.context.references",
+     "budget_tokens": 2000,
+     "bundles": 0,
+     "byte_quarter_tokens": 1789,
+     "calls": 1,
+     "calls_recorded": 1,
+     "errors": 0,
+     "path_replacements": 2,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 0,
+     "result_bytes": 7444,
+     "result_bytes_repo_normalized": 7156,
+     "selected_files": [],
+     "task_id": "unicode",
+     "unique_inline_bytes": 0,
+     "unique_reference_bytes": 0,
+     "useful_inline_bytes": 0,
+     "useful_label_bytes": 132,
+     "useful_reference_bytes": 0
+    },
+    {
+     "arm": "V1.context.references",
+     "budget_tokens": 2000,
+     "bundles": 0,
+     "byte_quarter_tokens": 1405,
+     "calls": 1,
+     "calls_recorded": 1,
+     "errors": 0,
+     "path_replacements": 2,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 0,
+     "result_bytes": 5906,
+     "result_bytes_repo_normalized": 5618,
+     "selected_files": [],
+     "task_id": "phrase",
+     "unique_inline_bytes": 0,
+     "unique_reference_bytes": 0,
+     "useful_inline_bytes": 0,
+     "useful_label_bytes": 133,
+     "useful_reference_bytes": 0
+    },
+    {
+     "arm": "V1.context.references",
+     "budget_tokens": 8000,
+     "bundles": 2,
+     "byte_quarter_tokens": 6207,
+     "calls": 1,
+     "calls_recorded": 1,
+     "errors": 0,
+     "path_replacements": 2,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 16,
+     "result_bytes": 25114,
+     "result_bytes_repo_normalized": 24826,
+     "selected_files": [
+      "app/payments.py"
+     ],
+     "task_id": "payment",
+     "unique_inline_bytes": 0,
+     "unique_reference_bytes": 100,
+     "useful_inline_bytes": 0,
+     "useful_label_bytes": 270,
+     "useful_reference_bytes": 100
+    },
+    {
+     "arm": "V1.context.references",
+     "budget_tokens": 8000,
+     "bundles": 3,
+     "byte_quarter_tokens": 6528,
+     "calls": 1,
+     "calls_recorded": 1,
+     "errors": 0,
+     "path_replacements": 2,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 85,
+     "result_bytes": 26398,
+     "result_bytes_repo_normalized": 26110,
+     "selected_files": [
+      "app/client.py"
+     ],
+     "task_id": "request",
+     "unique_inline_bytes": 0,
+     "unique_reference_bytes": 207,
+     "useful_inline_bytes": 0,
+     "useful_label_bytes": 207,
+     "useful_reference_bytes": 207
+    },
+    {
+     "arm": "V1.context.references",
+     "budget_tokens": 8000,
+     "bundles": 3,
+     "byte_quarter_tokens": 6525,
+     "calls": 1,
+     "calls_recorded": 1,
+     "errors": 0,
+     "path_replacements": 2,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 79,
+     "result_bytes": 26388,
+     "result_bytes_repo_normalized": 26100,
+     "selected_files": [
+      "app/render.py"
+     ],
+     "task_id": "unicode",
+     "unique_inline_bytes": 0,
+     "unique_reference_bytes": 132,
+     "useful_inline_bytes": 0,
+     "useful_label_bytes": 132,
+     "useful_reference_bytes": 132
+    },
+    {
+     "arm": "V1.context.references",
+     "budget_tokens": 8000,
+     "bundles": 2,
+     "byte_quarter_tokens": 2877,
+     "calls": 1,
+     "calls_recorded": 1,
+     "errors": 0,
+     "path_replacements": 2,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 0,
+     "result_bytes": 11796,
+     "result_bytes_repo_normalized": 11508,
+     "selected_files": [
+      "app/client.py",
+      "noise/task.py"
+     ],
+     "task_id": "phrase",
+     "unique_inline_bytes": 0,
+     "unique_reference_bytes": 3440,
+     "useful_inline_bytes": 0,
+     "useful_label_bytes": 133,
+     "useful_reference_bytes": 133
+    },
+    {
+     "arm": "V1.context.references",
+     "budget_tokens": 16000,
+     "bundles": 7,
+     "byte_quarter_tokens": 12456,
+     "calls": 1,
+     "calls_recorded": 1,
+     "errors": 0,
+     "path_replacements": 2,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 238,
+     "result_bytes": 50112,
+     "result_bytes_repo_normalized": 49824,
+     "selected_files": [
+      "app/payments.py",
+      "noise/task.py",
+      "other/payments.py"
+     ],
+     "task_id": "payment",
+     "unique_inline_bytes": 0,
+     "unique_reference_bytes": 3616,
+     "useful_inline_bytes": 0,
+     "useful_label_bytes": 270,
+     "useful_reference_bytes": 270
+    },
+    {
+     "arm": "V1.context.references",
+     "budget_tokens": 16000,
+     "bundles": 3,
+     "byte_quarter_tokens": 6528,
+     "calls": 1,
+     "calls_recorded": 1,
+     "errors": 0,
+     "path_replacements": 2,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 85,
+     "result_bytes": 26398,
+     "result_bytes_repo_normalized": 26110,
+     "selected_files": [
+      "app/client.py"
+     ],
+     "task_id": "request",
+     "unique_inline_bytes": 0,
+     "unique_reference_bytes": 207,
+     "useful_inline_bytes": 0,
+     "useful_label_bytes": 207,
+     "useful_reference_bytes": 207
+    },
+    {
+     "arm": "V1.context.references",
+     "budget_tokens": 16000,
+     "bundles": 3,
+     "byte_quarter_tokens": 6525,
+     "calls": 1,
+     "calls_recorded": 1,
+     "errors": 0,
+     "path_replacements": 2,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 79,
+     "result_bytes": 26388,
+     "result_bytes_repo_normalized": 26100,
+     "selected_files": [
+      "app/render.py"
+     ],
+     "task_id": "unicode",
+     "unique_inline_bytes": 0,
+     "unique_reference_bytes": 132,
+     "useful_inline_bytes": 0,
+     "useful_label_bytes": 132,
+     "useful_reference_bytes": 132
+    },
+    {
+     "arm": "V1.context.references",
+     "budget_tokens": 16000,
+     "bundles": 2,
+     "byte_quarter_tokens": 2877,
+     "calls": 1,
+     "calls_recorded": 1,
+     "errors": 0,
+     "path_replacements": 2,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 0,
+     "result_bytes": 11796,
+     "result_bytes_repo_normalized": 11508,
+     "selected_files": [
+      "app/client.py",
+      "noise/task.py"
+     ],
+     "task_id": "phrase",
+     "unique_inline_bytes": 0,
+     "unique_reference_bytes": 3440,
+     "useful_inline_bytes": 0,
+     "useful_label_bytes": 133,
+     "useful_reference_bytes": 133
+    },
+    {
+     "arm": "V1.context.inline",
+     "budget_tokens": 2000,
+     "bundles": 0,
+     "byte_quarter_tokens": 195,
+     "calls": 1,
+     "calls_recorded": 1,
+     "errors": 1,
+     "path_replacements": 0,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 0,
+     "result_bytes": 777,
+     "result_bytes_repo_normalized": 777,
+     "selected_files": [],
+     "task_id": "payment",
+     "unique_inline_bytes": 0,
+     "unique_reference_bytes": 0,
+     "useful_inline_bytes": 0,
+     "useful_label_bytes": 270,
+     "useful_reference_bytes": 0
+    },
+    {
+     "arm": "V1.context.inline",
+     "budget_tokens": 2000,
+     "bundles": 0,
+     "byte_quarter_tokens": 1795,
+     "calls": 1,
+     "calls_recorded": 1,
+     "errors": 0,
+     "path_replacements": 2,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 0,
+     "result_bytes": 7466,
+     "result_bytes_repo_normalized": 7178,
+     "selected_files": [],
+     "task_id": "request",
+     "unique_inline_bytes": 0,
+     "unique_reference_bytes": 0,
+     "useful_inline_bytes": 0,
+     "useful_label_bytes": 207,
+     "useful_reference_bytes": 0
+    },
+    {
+     "arm": "V1.context.inline",
+     "budget_tokens": 2000,
+     "bundles": 0,
+     "byte_quarter_tokens": 1794,
+     "calls": 1,
+     "calls_recorded": 1,
+     "errors": 0,
+     "path_replacements": 2,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 0,
+     "result_bytes": 7464,
+     "result_bytes_repo_normalized": 7176,
+     "selected_files": [],
+     "task_id": "unicode",
+     "unique_inline_bytes": 0,
+     "unique_reference_bytes": 0,
+     "useful_inline_bytes": 0,
+     "useful_label_bytes": 132,
+     "useful_reference_bytes": 0
+    },
+    {
+     "arm": "V1.context.inline",
+     "budget_tokens": 2000,
+     "bundles": 0,
+     "byte_quarter_tokens": 1410,
+     "calls": 1,
+     "calls_recorded": 1,
+     "errors": 0,
+     "path_replacements": 2,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 0,
+     "result_bytes": 5928,
+     "result_bytes_repo_normalized": 5640,
+     "selected_files": [],
+     "task_id": "phrase",
+     "unique_inline_bytes": 0,
+     "unique_reference_bytes": 0,
+     "useful_inline_bytes": 0,
+     "useful_label_bytes": 133,
+     "useful_reference_bytes": 0
+    },
+    {
+     "arm": "V1.context.inline",
+     "budget_tokens": 8000,
+     "bundles": 2,
+     "byte_quarter_tokens": 6286,
+     "calls": 1,
+     "calls_recorded": 1,
+     "errors": 0,
+     "path_replacements": 2,
+     "redundant_inline_bytes": 16,
+     "redundant_reference_bytes": 16,
+     "result_bytes": 25429,
+     "result_bytes_repo_normalized": 25141,
+     "selected_files": [
+      "app/payments.py"
+     ],
+     "task_id": "payment",
+     "unique_inline_bytes": 100,
+     "unique_reference_bytes": 100,
+     "useful_inline_bytes": 100,
+     "useful_label_bytes": 270,
+     "useful_reference_bytes": 100
+    },
+    {
+     "arm": "V1.context.inline",
+     "budget_tokens": 8000,
+     "bundles": 3,
+     "byte_quarter_tokens": 6709,
+     "calls": 1,
+     "calls_recorded": 1,
+     "errors": 0,
+     "path_replacements": 2,
+     "redundant_inline_bytes": 85,
+     "redundant_reference_bytes": 85,
+     "result_bytes": 27123,
+     "result_bytes_repo_normalized": 26835,
+     "selected_files": [
+      "app/client.py"
+     ],
+     "task_id": "request",
+     "unique_inline_bytes": 207,
+     "unique_reference_bytes": 207,
+     "useful_inline_bytes": 207,
+     "useful_label_bytes": 207,
+     "useful_reference_bytes": 207
+    },
+    {
+     "arm": "V1.context.inline",
+     "budget_tokens": 8000,
+     "bundles": 3,
+     "byte_quarter_tokens": 6668,
+     "calls": 1,
+     "calls_recorded": 1,
+     "errors": 0,
+     "path_replacements": 2,
+     "redundant_inline_bytes": 79,
+     "redundant_reference_bytes": 79,
+     "result_bytes": 26958,
+     "result_bytes_repo_normalized": 26670,
+     "selected_files": [
+      "app/render.py"
+     ],
+     "task_id": "unicode",
+     "unique_inline_bytes": 132,
+     "unique_reference_bytes": 132,
+     "useful_inline_bytes": 132,
+     "useful_label_bytes": 132,
+     "useful_reference_bytes": 132
+    },
+    {
+     "arm": "V1.context.inline",
+     "budget_tokens": 8000,
+     "bundles": 2,
+     "byte_quarter_tokens": 4627,
+     "calls": 1,
+     "calls_recorded": 1,
+     "errors": 0,
+     "path_replacements": 2,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 0,
+     "result_bytes": 18796,
+     "result_bytes_repo_normalized": 18508,
+     "selected_files": [
+      "app/client.py",
+      "noise/task.py"
+     ],
+     "task_id": "phrase",
+     "unique_inline_bytes": 3440,
+     "unique_reference_bytes": 3440,
+     "useful_inline_bytes": 133,
+     "useful_label_bytes": 133,
+     "useful_reference_bytes": 133
+    },
+    {
+     "arm": "V1.context.inline",
+     "budget_tokens": 16000,
+     "bundles": 7,
+     "byte_quarter_tokens": 14456,
+     "calls": 1,
+     "calls_recorded": 1,
+     "errors": 0,
+     "path_replacements": 2,
+     "redundant_inline_bytes": 238,
+     "redundant_reference_bytes": 238,
+     "result_bytes": 58109,
+     "result_bytes_repo_normalized": 57821,
+     "selected_files": [
+      "app/payments.py",
+      "noise/task.py",
+      "other/payments.py"
+     ],
+     "task_id": "payment",
+     "unique_inline_bytes": 3616,
+     "unique_reference_bytes": 3616,
+     "useful_inline_bytes": 270,
+     "useful_label_bytes": 270,
+     "useful_reference_bytes": 270
+    },
+    {
+     "arm": "V1.context.inline",
+     "budget_tokens": 16000,
+     "bundles": 3,
+     "byte_quarter_tokens": 6709,
+     "calls": 1,
+     "calls_recorded": 1,
+     "errors": 0,
+     "path_replacements": 2,
+     "redundant_inline_bytes": 85,
+     "redundant_reference_bytes": 85,
+     "result_bytes": 27123,
+     "result_bytes_repo_normalized": 26835,
+     "selected_files": [
+      "app/client.py"
+     ],
+     "task_id": "request",
+     "unique_inline_bytes": 207,
+     "unique_reference_bytes": 207,
+     "useful_inline_bytes": 207,
+     "useful_label_bytes": 207,
+     "useful_reference_bytes": 207
+    },
+    {
+     "arm": "V1.context.inline",
+     "budget_tokens": 16000,
+     "bundles": 3,
+     "byte_quarter_tokens": 6668,
+     "calls": 1,
+     "calls_recorded": 1,
+     "errors": 0,
+     "path_replacements": 2,
+     "redundant_inline_bytes": 79,
+     "redundant_reference_bytes": 79,
+     "result_bytes": 26958,
+     "result_bytes_repo_normalized": 26670,
+     "selected_files": [
+      "app/render.py"
+     ],
+     "task_id": "unicode",
+     "unique_inline_bytes": 132,
+     "unique_reference_bytes": 132,
+     "useful_inline_bytes": 132,
+     "useful_label_bytes": 132,
+     "useful_reference_bytes": 132
+    },
+    {
+     "arm": "V1.context.inline",
+     "budget_tokens": 16000,
+     "bundles": 2,
+     "byte_quarter_tokens": 4627,
+     "calls": 1,
+     "calls_recorded": 1,
+     "errors": 0,
+     "path_replacements": 2,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 0,
+     "result_bytes": 18796,
+     "result_bytes_repo_normalized": 18508,
+     "selected_files": [
+      "app/client.py",
+      "noise/task.py"
+     ],
+     "task_id": "phrase",
+     "unique_inline_bytes": 3440,
+     "unique_reference_bytes": 3440,
+     "useful_inline_bytes": 133,
+     "useful_label_bytes": 133,
+     "useful_reference_bytes": 133
+    },
+    {
+     "arm": "B.search_read",
+     "budget_tokens": 2000,
+     "bundles": null,
+     "byte_quarter_tokens": 0,
+     "calls": 0,
+     "calls_recorded": 2,
+     "errors": 0,
+     "path_replacements": 0,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 0,
+     "result_bytes": 0,
+     "result_bytes_repo_normalized": 0,
+     "selected_files": [],
+     "task_id": "payment",
+     "unique_inline_bytes": 0,
+     "unique_reference_bytes": 0,
+     "useful_inline_bytes": 0,
+     "useful_label_bytes": 270,
+     "useful_reference_bytes": 0
+    },
+    {
+     "arm": "B.search_read",
+     "budget_tokens": 2000,
+     "bundles": null,
+     "byte_quarter_tokens": 146,
+     "calls": 2,
+     "calls_recorded": 2,
+     "errors": 0,
+     "path_replacements": 0,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 27,
+     "result_bytes": 583,
+     "result_bytes_repo_normalized": 583,
+     "selected_files": [
+      "app/client.py"
+     ],
+     "task_id": "request",
+     "unique_inline_bytes": 207,
+     "unique_reference_bytes": 207,
+     "useful_inline_bytes": 207,
+     "useful_label_bytes": 207,
+     "useful_reference_bytes": 207
+    },
+    {
+     "arm": "B.search_read",
+     "budget_tokens": 2000,
+     "bundles": null,
+     "byte_quarter_tokens": 125,
+     "calls": 2,
+     "calls_recorded": 2,
+     "errors": 0,
+     "path_replacements": 0,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 24,
+     "result_bytes": 497,
+     "result_bytes_repo_normalized": 497,
+     "selected_files": [
+      "app/render.py"
+     ],
+     "task_id": "unicode",
+     "unique_inline_bytes": 132,
+     "unique_reference_bytes": 132,
+     "useful_inline_bytes": 132,
+     "useful_label_bytes": 132,
+     "useful_reference_bytes": 132
+    },
+    {
+     "arm": "B.search_read",
+     "budget_tokens": 2000,
+     "bundles": null,
+     "byte_quarter_tokens": 0,
+     "calls": 0,
+     "calls_recorded": 4,
+     "errors": 0,
+     "path_replacements": 0,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 0,
+     "result_bytes": 0,
+     "result_bytes_repo_normalized": 0,
+     "selected_files": [],
+     "task_id": "phrase",
+     "unique_inline_bytes": 0,
+     "unique_reference_bytes": 0,
+     "useful_inline_bytes": 0,
+     "useful_label_bytes": 133,
+     "useful_reference_bytes": 0
+    },
+    {
+     "arm": "B.search_read",
+     "budget_tokens": 8000,
+     "bundles": null,
+     "byte_quarter_tokens": 3300,
+     "calls": 2,
+     "calls_recorded": 2,
+     "errors": 0,
+     "path_replacements": 0,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 160150,
+     "result_bytes": 13198,
+     "result_bytes_repo_normalized": 13198,
+     "selected_files": [
+      "noise/task.py"
+     ],
+     "task_id": "payment",
+     "unique_inline_bytes": 3233,
+     "unique_reference_bytes": 3233,
+     "useful_inline_bytes": 0,
+     "useful_label_bytes": 270,
+     "useful_reference_bytes": 0
+    },
+    {
+     "arm": "B.search_read",
+     "budget_tokens": 8000,
+     "bundles": null,
+     "byte_quarter_tokens": 146,
+     "calls": 2,
+     "calls_recorded": 2,
+     "errors": 0,
+     "path_replacements": 0,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 27,
+     "result_bytes": 583,
+     "result_bytes_repo_normalized": 583,
+     "selected_files": [
+      "app/client.py"
+     ],
+     "task_id": "request",
+     "unique_inline_bytes": 207,
+     "unique_reference_bytes": 207,
+     "useful_inline_bytes": 207,
+     "useful_label_bytes": 207,
+     "useful_reference_bytes": 207
+    },
+    {
+     "arm": "B.search_read",
+     "budget_tokens": 8000,
+     "bundles": null,
+     "byte_quarter_tokens": 125,
+     "calls": 2,
+     "calls_recorded": 2,
+     "errors": 0,
+     "path_replacements": 0,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 24,
+     "result_bytes": 497,
+     "result_bytes_repo_normalized": 497,
+     "selected_files": [
+      "app/render.py"
+     ],
+     "task_id": "unicode",
+     "unique_inline_bytes": 132,
+     "unique_reference_bytes": 132,
+     "useful_inline_bytes": 132,
+     "useful_label_bytes": 132,
+     "useful_reference_bytes": 132
+    },
+    {
+     "arm": "B.search_read",
+     "budget_tokens": 8000,
+     "bundles": null,
+     "byte_quarter_tokens": 7346,
+     "calls": 3,
+     "calls_recorded": 4,
+     "errors": 0,
+     "path_replacements": 0,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 477247,
+     "result_bytes": 29381,
+     "result_bytes_repo_normalized": 29381,
+     "selected_files": [
+      "noise/task.py"
+     ],
+     "task_id": "phrase",
+     "unique_inline_bytes": 0,
+     "unique_reference_bytes": 3203,
+     "useful_inline_bytes": 0,
+     "useful_label_bytes": 133,
+     "useful_reference_bytes": 0
+    },
+    {
+     "arm": "B.search_read",
+     "budget_tokens": 16000,
+     "bundles": null,
+     "byte_quarter_tokens": 3300,
+     "calls": 2,
+     "calls_recorded": 2,
+     "errors": 0,
+     "path_replacements": 0,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 160150,
+     "result_bytes": 13198,
+     "result_bytes_repo_normalized": 13198,
+     "selected_files": [
+      "noise/task.py"
+     ],
+     "task_id": "payment",
+     "unique_inline_bytes": 3233,
+     "unique_reference_bytes": 3233,
+     "useful_inline_bytes": 0,
+     "useful_label_bytes": 270,
+     "useful_reference_bytes": 0
+    },
+    {
+     "arm": "B.search_read",
+     "budget_tokens": 16000,
+     "bundles": null,
+     "byte_quarter_tokens": 146,
+     "calls": 2,
+     "calls_recorded": 2,
+     "errors": 0,
+     "path_replacements": 0,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 27,
+     "result_bytes": 583,
+     "result_bytes_repo_normalized": 583,
+     "selected_files": [
+      "app/client.py"
+     ],
+     "task_id": "request",
+     "unique_inline_bytes": 207,
+     "unique_reference_bytes": 207,
+     "useful_inline_bytes": 207,
+     "useful_label_bytes": 207,
+     "useful_reference_bytes": 207
+    },
+    {
+     "arm": "B.search_read",
+     "budget_tokens": 16000,
+     "bundles": null,
+     "byte_quarter_tokens": 125,
+     "calls": 2,
+     "calls_recorded": 2,
+     "errors": 0,
+     "path_replacements": 0,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 24,
+     "result_bytes": 497,
+     "result_bytes_repo_normalized": 497,
+     "selected_files": [
+      "app/render.py"
+     ],
+     "task_id": "unicode",
+     "unique_inline_bytes": 132,
+     "unique_reference_bytes": 132,
+     "useful_inline_bytes": 132,
+     "useful_label_bytes": 132,
+     "useful_reference_bytes": 132
+    },
+    {
+     "arm": "B.search_read",
+     "budget_tokens": 16000,
+     "bundles": null,
+     "byte_quarter_tokens": 8197,
+     "calls": 4,
+     "calls_recorded": 4,
+     "errors": 0,
+     "path_replacements": 0,
+     "redundant_inline_bytes": 0,
+     "redundant_reference_bytes": 480450,
+     "result_bytes": 32787,
+     "result_bytes_repo_normalized": 32787,
+     "selected_files": [
+      "noise/task.py"
+     ],
+     "task_id": "phrase",
+     "unique_inline_bytes": 3233,
+     "unique_reference_bytes": 3233,
+     "useful_inline_bytes": 0,
+     "useful_label_bytes": 133,
+     "useful_reference_bytes": 0
+    }
+   ],
+   "span_matrix": [
+    {
+     "arm": "V0.legacy",
+     "budget_tokens": 2000,
+     "max_bytes": 8000,
+     "metrics": {
+      "bundles": null,
+      "byte_quarter_tokens": 698,
+      "calls": 10,
+      "calls_recorded": 10,
+      "errors": 0,
+      "inline_precision": {
+       "den": 354,
+       "num": 243,
+       "value": "0.686441"
+      },
+      "inline_recall": {
+       "den": 742,
+       "num": 243,
+       "value": "0.327493"
+      },
+      "path_replacements": 0,
+      "redundant_inline_bytes": 0,
+      "redundant_reference_bytes": 354,
+      "reference_recall": {
+       "den": 742,
+       "num": 243,
+       "value": "0.327493"
+      },
+      "result_bytes": 2785,
+      "result_bytes_repo_normalized": 2785,
+      "unique_inline_bytes": 354,
+      "unique_reference_bytes": 354,
+      "useful_inline_bytes": 243,
+      "useful_label_bytes": 742,
+      "useful_reference_bytes": 243
+     },
+     "status": "measured"
+    },
+    {
+     "arm": "V0.legacy",
+     "budget_tokens": 8000,
+     "max_bytes": 32000,
+     "metrics": {
+      "bundles": null,
+      "byte_quarter_tokens": 698,
+      "calls": 10,
+      "calls_recorded": 10,
+      "errors": 0,
+      "inline_precision": {
+       "den": 354,
+       "num": 243,
+       "value": "0.686441"
+      },
+      "inline_recall": {
+       "den": 742,
+       "num": 243,
+       "value": "0.327493"
+      },
+      "path_replacements": 0,
+      "redundant_inline_bytes": 0,
+      "redundant_reference_bytes": 354,
+      "reference_recall": {
+       "den": 742,
+       "num": 243,
+       "value": "0.327493"
+      },
+      "result_bytes": 2785,
+      "result_bytes_repo_normalized": 2785,
+      "unique_inline_bytes": 354,
+      "unique_reference_bytes": 354,
+      "useful_inline_bytes": 243,
+      "useful_label_bytes": 742,
+      "useful_reference_bytes": 243
+     },
+     "status": "measured"
+    },
+    {
+     "arm": "V0.legacy",
+     "budget_tokens": 16000,
+     "max_bytes": 64000,
+     "metrics": {
+      "bundles": null,
+      "byte_quarter_tokens": 698,
+      "calls": 10,
+      "calls_recorded": 10,
+      "errors": 0,
+      "inline_precision": {
+       "den": 354,
+       "num": 243,
+       "value": "0.686441"
+      },
+      "inline_recall": {
+       "den": 742,
+       "num": 243,
+       "value": "0.327493"
+      },
+      "path_replacements": 0,
+      "redundant_inline_bytes": 0,
+      "redundant_reference_bytes": 354,
+      "reference_recall": {
+       "den": 742,
+       "num": 243,
+       "value": "0.327493"
+      },
+      "result_bytes": 2785,
+      "result_bytes_repo_normalized": 2785,
+      "unique_inline_bytes": 354,
+      "unique_reference_bytes": 354,
+      "useful_inline_bytes": 243,
+      "useful_label_bytes": 742,
+      "useful_reference_bytes": 243
+     },
+     "status": "measured"
+    },
+    {
+     "arm": "V1.legacy",
+     "budget_tokens": 2000,
+     "max_bytes": 8000,
+     "metrics": {
+      "bundles": null,
+      "byte_quarter_tokens": 1040,
+      "calls": 10,
+      "calls_recorded": 10,
+      "errors": 0,
+      "inline_precision": {
+       "den": 354,
+       "num": 243,
+       "value": "0.686441"
+      },
+      "inline_recall": {
+       "den": 742,
+       "num": 243,
+       "value": "0.327493"
+      },
+      "path_replacements": 0,
+      "redundant_inline_bytes": 0,
+      "redundant_reference_bytes": 354,
+      "reference_recall": {
+       "den": 742,
+       "num": 243,
+       "value": "0.327493"
+      },
+      "result_bytes": 4154,
+      "result_bytes_repo_normalized": 4154,
+      "unique_inline_bytes": 354,
+      "unique_reference_bytes": 354,
+      "useful_inline_bytes": 243,
+      "useful_label_bytes": 742,
+      "useful_reference_bytes": 243
+     },
+     "status": "measured"
+    },
+    {
+     "arm": "V1.legacy",
+     "budget_tokens": 8000,
+     "max_bytes": 32000,
+     "metrics": {
+      "bundles": null,
+      "byte_quarter_tokens": 1040,
+      "calls": 10,
+      "calls_recorded": 10,
+      "errors": 0,
+      "inline_precision": {
+       "den": 354,
+       "num": 243,
+       "value": "0.686441"
+      },
+      "inline_recall": {
+       "den": 742,
+       "num": 243,
+       "value": "0.327493"
+      },
+      "path_replacements": 0,
+      "redundant_inline_bytes": 0,
+      "redundant_reference_bytes": 354,
+      "reference_recall": {
+       "den": 742,
+       "num": 243,
+       "value": "0.327493"
+      },
+      "result_bytes": 4154,
+      "result_bytes_repo_normalized": 4154,
+      "unique_inline_bytes": 354,
+      "unique_reference_bytes": 354,
+      "useful_inline_bytes": 243,
+      "useful_label_bytes": 742,
+      "useful_reference_bytes": 243
+     },
+     "status": "measured"
+    },
+    {
+     "arm": "V1.legacy",
+     "budget_tokens": 16000,
+     "max_bytes": 64000,
+     "metrics": {
+      "bundles": null,
+      "byte_quarter_tokens": 1040,
+      "calls": 10,
+      "calls_recorded": 10,
+      "errors": 0,
+      "inline_precision": {
+       "den": 354,
+       "num": 243,
+       "value": "0.686441"
+      },
+      "inline_recall": {
+       "den": 742,
+       "num": 243,
+       "value": "0.327493"
+      },
+      "path_replacements": 0,
+      "redundant_inline_bytes": 0,
+      "redundant_reference_bytes": 354,
+      "reference_recall": {
+       "den": 742,
+       "num": 243,
+       "value": "0.327493"
+      },
+      "result_bytes": 4154,
+      "result_bytes_repo_normalized": 4154,
+      "unique_inline_bytes": 354,
+      "unique_reference_bytes": 354,
+      "useful_inline_bytes": 243,
+      "useful_label_bytes": 742,
+      "useful_reference_bytes": 243
+     },
+     "status": "measured"
+    },
+    {
+     "arm": "V1.context.references",
+     "budget_tokens": 2000,
+     "max_bytes": 8000,
+     "metrics": {
+      "bundles": 0,
+      "byte_quarter_tokens": 5179,
+      "calls": 4,
+      "calls_recorded": 4,
+      "errors": 1,
+      "inline_precision": {
+       "den": 0,
+       "num": 0,
+       "value": null
+      },
+      "inline_recall": {
+       "den": 742,
+       "num": 0,
+       "value": "0.000000"
+      },
+      "path_replacements": 6,
+      "redundant_inline_bytes": 0,
+      "redundant_reference_bytes": 0,
+      "reference_recall": {
+       "den": 742,
+       "num": 0,
+       "value": "0.000000"
+      },
+      "result_bytes": 21573,
+      "result_bytes_repo_normalized": 20709,
+      "unique_inline_bytes": 0,
+      "unique_reference_bytes": 0,
+      "useful_inline_bytes": 0,
+      "useful_label_bytes": 742,
+      "useful_reference_bytes": 0
+     },
+     "status": "measured"
+    },
+    {
+     "arm": "V1.context.references",
+     "budget_tokens": 8000,
+     "max_bytes": 32000,
+     "metrics": {
+      "bundles": 10,
+      "byte_quarter_tokens": 22137,
+      "calls": 4,
+      "calls_recorded": 4,
+      "errors": 0,
+      "inline_precision": {
+       "den": 0,
+       "num": 0,
+       "value": null
+      },
+      "inline_recall": {
+       "den": 742,
+       "num": 0,
+       "value": "0.000000"
+      },
+      "path_replacements": 8,
+      "redundant_inline_bytes": 0,
+      "redundant_reference_bytes": 180,
+      "reference_recall": {
+       "den": 742,
+       "num": 572,
+       "value": "0.770889"
+      },
+      "result_bytes": 89696,
+      "result_bytes_repo_normalized": 88544,
+      "unique_inline_bytes": 0,
+      "unique_reference_bytes": 3879,
+      "useful_inline_bytes": 0,
+      "useful_label_bytes": 742,
+      "useful_reference_bytes": 572
+     },
+     "status": "measured"
+    },
+    {
+     "arm": "V1.context.references",
+     "budget_tokens": 16000,
+     "max_bytes": 64000,
+     "metrics": {
+      "bundles": 15,
+      "byte_quarter_tokens": 28386,
+      "calls": 4,
+      "calls_recorded": 4,
+      "errors": 0,
+      "inline_precision": {
+       "den": 0,
+       "num": 0,
+       "value": null
+      },
+      "inline_recall": {
+       "den": 742,
+       "num": 0,
+       "value": "0.000000"
+      },
+      "path_replacements": 8,
+      "redundant_inline_bytes": 0,
+      "redundant_reference_bytes": 402,
+      "reference_recall": {
+       "den": 742,
+       "num": 742,
+       "value": "1.000000"
+      },
+      "result_bytes": 114694,
+      "result_bytes_repo_normalized": 113542,
+      "unique_inline_bytes": 0,
+      "unique_reference_bytes": 7395,
+      "useful_inline_bytes": 0,
+      "useful_label_bytes": 742,
+      "useful_reference_bytes": 742
+     },
+     "status": "measured"
+    },
+    {
+     "arm": "V1.context.inline",
+     "budget_tokens": 2000,
+     "max_bytes": 8000,
+     "metrics": {
+      "bundles": 0,
+      "byte_quarter_tokens": 5194,
+      "calls": 4,
+      "calls_recorded": 4,
+      "errors": 1,
+      "inline_precision": {
+       "den": 0,
+       "num": 0,
+       "value": null
+      },
+      "inline_recall": {
+       "den": 742,
+       "num": 0,
+       "value": "0.000000"
+      },
+      "path_replacements": 6,
+      "redundant_inline_bytes": 0,
+      "redundant_reference_bytes": 0,
+      "reference_recall": {
+       "den": 742,
+       "num": 0,
+       "value": "0.000000"
+      },
+      "result_bytes": 21635,
+      "result_bytes_repo_normalized": 20771,
+      "unique_inline_bytes": 0,
+      "unique_reference_bytes": 0,
+      "useful_inline_bytes": 0,
+      "useful_label_bytes": 742,
+      "useful_reference_bytes": 0
+     },
+     "status": "measured"
+    },
+    {
+     "arm": "V1.context.inline",
+     "budget_tokens": 8000,
+     "max_bytes": 32000,
+     "metrics": {
+      "bundles": 10,
+      "byte_quarter_tokens": 24290,
+      "calls": 4,
+      "calls_recorded": 4,
+      "errors": 0,
+      "inline_precision": {
+       "den": 3879,
+       "num": 572,
+       "value": "0.147461"
+      },
+      "inline_recall": {
+       "den": 742,
+       "num": 572,
+       "value": "0.770889"
+      },
+      "path_replacements": 8,
+      "redundant_inline_bytes": 180,
+      "redundant_reference_bytes": 180,
+      "reference_recall": {
+       "den": 742,
+       "num": 572,
+       "value": "0.770889"
+      },
+      "result_bytes": 98306,
+      "result_bytes_repo_normalized": 97154,
+      "unique_inline_bytes": 3879,
+      "unique_reference_bytes": 3879,
+      "useful_inline_bytes": 572,
+      "useful_label_bytes": 742,
+      "useful_reference_bytes": 572
+     },
+     "status": "measured"
+    },
+    {
+     "arm": "V1.context.inline",
+     "budget_tokens": 16000,
+     "max_bytes": 64000,
+     "metrics": {
+      "bundles": 15,
+      "byte_quarter_tokens": 32460,
+      "calls": 4,
+      "calls_recorded": 4,
+      "errors": 0,
+      "inline_precision": {
+       "den": 7395,
+       "num": 742,
+       "value": "0.100338"
+      },
+      "inline_recall": {
+       "den": 742,
+       "num": 742,
+       "value": "1.000000"
+      },
+      "path_replacements": 8,
+      "redundant_inline_bytes": 402,
+      "redundant_reference_bytes": 402,
+      "reference_recall": {
+       "den": 742,
+       "num": 742,
+       "value": "1.000000"
+      },
+      "result_bytes": 130986,
+      "result_bytes_repo_normalized": 129834,
+      "unique_inline_bytes": 7395,
+      "unique_reference_bytes": 7395,
+      "useful_inline_bytes": 742,
+      "useful_label_bytes": 742,
+      "useful_reference_bytes": 742
+     },
+     "status": "measured"
+    },
+    {
+     "arm": "B.search_read",
+     "budget_tokens": 2000,
+     "max_bytes": 8000,
+     "metrics": {
+      "bundles": null,
+      "byte_quarter_tokens": 271,
+      "calls": 4,
+      "calls_recorded": 10,
+      "errors": 0,
+      "inline_precision": {
+       "den": 339,
+       "num": 339,
+       "value": "1.000000"
+      },
+      "inline_recall": {
+       "den": 742,
+       "num": 339,
+       "value": "0.456873"
+      },
+      "path_replacements": 0,
+      "redundant_inline_bytes": 0,
+      "redundant_reference_bytes": 51,
+      "reference_recall": {
+       "den": 742,
+       "num": 339,
+       "value": "0.456873"
+      },
+      "result_bytes": 1080,
+      "result_bytes_repo_normalized": 1080,
+      "unique_inline_bytes": 339,
+      "unique_reference_bytes": 339,
+      "useful_inline_bytes": 339,
+      "useful_label_bytes": 742,
+      "useful_reference_bytes": 339
+     },
+     "status": "measured"
+    },
+    {
+     "arm": "B.search_read",
+     "budget_tokens": 8000,
+     "max_bytes": 32000,
+     "metrics": {
+      "bundles": null,
+      "byte_quarter_tokens": 10917,
+      "calls": 9,
+      "calls_recorded": 10,
+      "errors": 0,
+      "inline_precision": {
+       "den": 3572,
+       "num": 339,
+       "value": "0.094905"
+      },
+      "inline_recall": {
+       "den": 742,
+       "num": 339,
+       "value": "0.456873"
+      },
+      "path_replacements": 0,
+      "redundant_inline_bytes": 0,
+      "redundant_reference_bytes": 637448,
+      "reference_recall": {
+       "den": 742,
+       "num": 339,
+       "value": "0.456873"
+      },
+      "result_bytes": 43659,
+      "result_bytes_repo_normalized": 43659,
+      "unique_inline_bytes": 3572,
+      "unique_reference_bytes": 6775,
+      "useful_inline_bytes": 339,
+      "useful_label_bytes": 742,
+      "useful_reference_bytes": 339
+     },
+     "status": "measured"
+    },
+    {
+     "arm": "B.search_read",
+     "budget_tokens": 16000,
+     "max_bytes": 64000,
+     "metrics": {
+      "bundles": null,
+      "byte_quarter_tokens": 11768,
+      "calls": 10,
+      "calls_recorded": 10,
+      "errors": 0,
+      "inline_precision": {
+       "den": 6805,
+       "num": 339,
+       "value": "0.049816"
+      },
+      "inline_recall": {
+       "den": 742,
+       "num": 339,
+       "value": "0.456873"
+      },
+      "path_replacements": 0,
+      "redundant_inline_bytes": 0,
+      "redundant_reference_bytes": 640651,
+      "reference_recall": {
+       "den": 742,
+       "num": 339,
+       "value": "0.456873"
+      },
+      "result_bytes": 47065,
+      "result_bytes_repo_normalized": 47065,
+      "unique_inline_bytes": 6805,
+      "unique_reference_bytes": 6805,
+      "useful_inline_bytes": 339,
+      "useful_label_bytes": 742,
+      "useful_reference_bytes": 339
+     },
+     "status": "measured"
+    },
+    {
+     "arm": "V0.context.references",
+     "budget_tokens": 2000,
+     "max_bytes": 8000,
+     "metrics": null,
+     "reason": "op_unavailable_pre_v3",
+     "status": "not_applicable"
+    },
+    {
+     "arm": "V0.context.references",
+     "budget_tokens": 8000,
+     "max_bytes": 32000,
+     "metrics": null,
+     "reason": "op_unavailable_pre_v3",
+     "status": "not_applicable"
+    },
+    {
+     "arm": "V0.context.references",
+     "budget_tokens": 16000,
+     "max_bytes": 64000,
+     "metrics": null,
+     "reason": "op_unavailable_pre_v3",
+     "status": "not_applicable"
+    },
+    {
+     "arm": "V0.context.inline",
+     "budget_tokens": 2000,
+     "max_bytes": 8000,
+     "metrics": null,
+     "reason": "op_unavailable_pre_v3",
+     "status": "not_applicable"
+    },
+    {
+     "arm": "V0.context.inline",
+     "budget_tokens": 8000,
+     "max_bytes": 32000,
+     "metrics": null,
+     "reason": "op_unavailable_pre_v3",
+     "status": "not_applicable"
+    },
+    {
+     "arm": "V0.context.inline",
+     "budget_tokens": 16000,
+     "max_bytes": 64000,
+     "metrics": null,
+     "reason": "op_unavailable_pre_v3",
+     "status": "not_applicable"
+    }
+   ]
+  },
+  "task_input_sha256": "236c0def27a416dd93a411a4e40d2666510320c4d9f9cfff08f29a1145cc8fe6"
+ },
+ "canonical_sha256": "59b6e81d26979265f76bb52533a1b78848901bf177eb4e658e3f42506dcd3a4e",
+ "diagnostic": {
+  "durations_seconds": {
+   "cost.coverage-project.V1": {
+    "index.cold_full": 0.289,
+    "index.incremental_noop": 0.283,
+    "index.refresh_after_edit": 0.308,
+    "index.warm_full": 0.298
+   },
+   "cost.s18-useful-spans.V1": {
+    "index.cold_full": 0.167,
+    "index.incremental_noop": 0.13,
+    "index.refresh_after_edit": 0.147,
+    "index.warm_full": 0.182
+   },
+   "cost.self-source-fa75bec.V1": {
+    "index.cold_full": 4.326,
+    "index.incremental_noop": 7.681,
+    "index.refresh_after_edit": 7.506,
+    "index.warm_full": 6.762
+   },
+   "p0.all": {
+    "p0": 12.599
+   },
+   "probe.V0": {
+    "probe": 1.275
+   },
+   "probe.V1": {
+    "probe": 1.17
+   },
+   "retrieval.B.search_read": {
+    "payment-r0": 1.153,
+    "payment-s0": 1.17,
+    "phrase-r0": 1.201,
+    "phrase-s0": 1.17,
+    "phrase-s1": 1.167,
+    "phrase-s2": 1.172,
+    "request-r0": 1.154,
+    "request-s0": 1.159,
+    "unicode-r0": 1.157,
+    "unicode-s0": 1.211
+   },
+   "retrieval.V0.legacy": {
+    "payment-r0": 0.523,
+    "payment-r1": 0.516,
+    "payment-s0": 0.535,
+    "phrase-s0": 0.508,
+    "phrase-s1": 0.604,
+    "phrase-s2": 0.539,
+    "request-r0": 0.527,
+    "request-s0": 0.531,
+    "unicode-r0": 0.531,
+    "unicode-s0": 0.516
+   },
+   "retrieval.V1.context.inline": {
+    "payment-b16000": 2.19,
+    "payment-b2000": 1.135,
+    "payment-b8000": 2.147,
+    "phrase-b16000": 2.255,
+    "phrase-b2000": 2.117,
+    "phrase-b8000": 2.172,
+    "request-b16000": 2.266,
+    "request-b2000": 2.112,
+    "request-b8000": 2.215,
+    "unicode-b16000": 2.225,
+    "unicode-b2000": 2.13,
+    "unicode-b8000": 2.176
+   },
+   "retrieval.V1.context.references": {
+    "payment-b16000": 2.185,
+    "payment-b2000": 1.155,
+    "payment-b8000": 2.153,
+    "phrase-b16000": 2.175,
+    "phrase-b2000": 2.125,
+    "phrase-b8000": 2.133,
+    "request-b16000": 2.174,
+    "request-b2000": 2.107,
+    "request-b8000": 2.192,
+    "unicode-b16000": 2.142,
+    "unicode-b2000": 2.092,
+    "unicode-b8000": 2.171
+   },
+   "retrieval.V1.legacy": {
+    "payment-r0": 1.155,
+    "payment-r1": 1.127,
+    "payment-s0": 1.182,
+    "phrase-s0": 1.168,
+    "phrase-s1": 1.201,
+    "phrase-s2": 1.162,
+    "request-r0": 1.128,
+    "request-s0": 1.159,
+    "unicode-r0": 1.14,
+    "unicode-s0": 1.151
+   }
+  },
+  "platforms": [
+   "Linux-7.0.14-linuxkit-aarch64-with-glibc2.41"
+  ],
+  "producers": [
+   "1bf31400207bf8cad3e3e19250f38e00ac31510eafe5fa693efcc3948f0871da"
+  ],
+  "run_ids": [
+   "0793011193a57c3e2ebeb183fc05efbec3a5dac12dc52a3f4e705491edc3f35a",
+   "453c990e36f50ac19d9352ab00ef1ca0695890d21f31d3045980aed95a47f081",
+   "46770514164715f7a7efca6d5c111d220b478cd706e4e04a9345a7d216fb33eb",
+   "97807d512da2610573394e85161e36cdf8833e6c04341808fd97b9ecb9306fe1",
+   "d19c8b8a597749bf07bcc1d13af7670b16758b65838b18906d0f4a3e468a3378",
+   "de45d70b9c306466a0fe54b5c74106bfee3a97e96fb36970771c3bdbe505dafd",
+   "e1c3029a4f8bcf8ddab4ec036f2b74da440eb250d7a624f9352f3ccd4e5ff44a",
+   "e951e66eea772550686151abf28ca38d9678ee489ea813a06b70e0a0a2a1692b"
+  ]
+ },
+ "format": "atlas-release-report.v1"
+}

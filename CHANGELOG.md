@@ -9,6 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Reproducible v3 evidence and compatibility package (ACI-S23).** `docs/evidence/v3/`
+  publishes a release report derived by a pure, stdlib-only aggregator
+  (`scripts/eval/v3_aggregate.py`) from immutable raw records written by a recorder
+  (`scripts/eval/v3_record.py`) under the frozen manifest `atlas/evals/v3/manifest.v1.json`.
+  It pairs three variants on one frozen task input and corpus commit (pre-v3 atlas-aci 2.0.0
+  by image digest, v3 HEAD, and a deterministic search-then-read baseline), reports
+  useful-span results per arm at 2000/8000/16000 byte-quarter-token budgets, indexing and
+  query cost counters from `CodeGraph.build()` (cold, warm, incremental no-op, refresh), a
+  P0 binding/snapshot regression gate (30 explicit pytest ids), an honest host/SDK matrix,
+  and marks every live agent outcome `unmeasured` (`no_operator_budget`). Replaying the
+  aggregation on the committed records reproduces the canonical section byte for byte.
+  `scripts/run-canaries.py --server-json` (and `stdio_runner.run_cli`) run a task manifest
+  against another server command. The README and SETUP canary sections are corrected
+  (`--canaries-dir`, the real `--host stdio`). `atlas/evals/span_metrics.py` holds the S18
+  useful-span functions as a shared, verified copy. No MCP operation, dependency, schema
+  or runtime source changes; the tools JSON is byte-identical.
+
 - **Evidence-backed validation plan (ACI-S22).** New operator command
   `atlas-aci validation-plan` (library `atlas_aci.query.validation`) composes the S20
   impact change set and propagation, computed once, with S21 observed coverage and

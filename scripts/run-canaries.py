@@ -311,6 +311,14 @@ def main() -> int:
         default=10.0,
         help="Initialization plus tool call deadline in seconds.",
     )
+    p.add_argument(
+        "--server-json",
+        default=None,
+        help=(
+            "stdio host only: the server argv as a JSON array (inline, or a file path) "
+            "instead of the default in-process `python -m atlas_aci serve --repo REPO`."
+        ),
+    )
     args = p.parse_args()
     if args.host == "stdio":
         adapter = runpy.run_path(

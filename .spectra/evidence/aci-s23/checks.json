@@ -1,0 +1,87 @@
+{
+  "harness": {
+    "wrapper": "dk23.sh = docker run --rm --user 1000:1000 -e HOME=/hc -e PYTHONPATH=/ws/mcp-server/src -v <scratch>/home:/hc -v <repo>:/ws -w /ws/mcp-server atlas-aci-dev-s16",
+    "dev_image": "atlas-aci-dev-s16 sha256:783f2210c3d12ae25c567c76366b6b6dd09d4aa0c93ea1aee4fb03d8f17e859a (lock unchanged since base)",
+    "recorder": "Dockerfile.recorder -> atlas-aci-dev-s23-recorder (pinned static docker CLI 29.8.2 sha256-checked); rec23.sh mounts the host docker socket with --group-add 0 and identical host paths"
+  },
+  "s23_contract": {
+    "exit_code": 0,
+    "summary": "6 passed",
+    "log": "s23-contract.log.gz"
+  },
+  "s23_supporting": {
+    "exit_code": 0,
+    "summary": "metrics, recorder, isolation, support all passed",
+    "log": "s23-supporting.log.gz"
+  },
+  "regression": {
+    "exit_code": 1,
+    "summary": "1 failed, 121 passed, 1 skipped",
+    "failed": [
+      "tests/slices/test_s01_contract.py::test_call_deadline_after_initialization"
+    ],
+    "classification": "pre-existing under uid 1000",
+    "log": "regression.log.gz"
+  },
+  "orchestrator_rerun": [
+    {
+      "command": "dk23.sh pytest test_s23_contract.py test_s23_metrics.py test_s23_isolation.py test_s23_support.py",
+      "exit_code": 0,
+      "summary": "22 passed"
+    },
+    {
+      "command": "dk23.sh pytest test_s23_recorder.py",
+      "exit_code": 0,
+      "summary": "12 passed"
+    },
+    {
+      "command": "dk23.sh exact CI lint/type steps (ruff check+format src/ tests/, mypy src/, ruff check+format ../scripts/ --exclude fingerprint-fixture, mypy ../scripts/)",
+      "exit_code": 0
+    }
+  ],
+  "ruff": {
+    "exit_code": 0,
+    "note": "CI commands plus atlas/evals/span_metrics.py"
+  },
+  "format": {
+    "exit_code": 0
+  },
+  "mypy": {
+    "exit_code": 0,
+    "note": "src/, ../scripts/, span_metrics.py"
+  },
+  "full_suite": {
+    "exit_code": 1,
+    "summary": "2 failed, 1378 passed, 10 skipped",
+    "failed": [
+      "tests/slices/test_s01_contract.py::test_call_deadline_after_initialization",
+      "tests/slices/test_s08_integration.py::test_nonregular_pack_does_not_block_acquisition"
+    ],
+    "classification": "first pre-existing under uid 1000; second a known timing flake (passes in regression/CI runs of prior slices)",
+    "log": "full-suite.log.gz"
+  },
+  "g_src": {
+    "exit_code": 0,
+    "note": "git diff 1cedf60 -- mcp-server/src: no changes (orchestrator re-checked on the staged tree: 0 files)"
+  },
+  "g_mcp": {
+    "exit_code": 0,
+    "tools_json_sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+    "tools_json_bytes": 1631472
+  },
+  "g_envelope": {
+    "MINIMUM_BUDGET": 3436,
+    "COLLECTION_MINIMUM_BUDGET": 3448,
+    "FIXED_ERROR_ENVELOPE_CAP": 797,
+    "IMPACT_MINIMUM_BUDGET": 7730,
+    "source": "unchanged: no mcp-server/src diff"
+  },
+  "drift": "ramza-drift --staged: 72 changed files, all within declared scope",
+  "production_image": {
+    "build": "docker build -t atlas-aci:s23 mcp-server",
+    "image_id": "sha256:75058a32a49ba445cedb7a9fa492e35a55f985507413c6d5f335a5957725e7de",
+    "tools": "docker run --network none atlas-aci:s23 tools: 7 tools, 1631472 bytes, sha256 94f9567a...",
+    "report_replay": "dev image, repo :ro, --network none: v3_aggregate.py over committed raw/ -> release-report.md byte-identical, canonical section identical, canonical_sha256 59b6e81d26979265f76bb52533a1b78848901bf177eb4e658e3f42506dcd3a4e"
+  },
+  "day1_qualification": "qualification.json: topology preflight; V0 grammar cache (v0-grammar-cache.json, option 2) with offline index files_indexed=7 symbols=11; result_text parity 0 mismatches; P0 30 ids pass"
+}

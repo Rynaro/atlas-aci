@@ -196,11 +196,17 @@ cp -r atlas/templates/* .github/templates/atlas/
 ```bash
 uv run python scripts/run-canaries.py \
   --repo ~/code/your-repo \
-  --canaries atlas/evals/canary-missions.md \
+  --canaries-dir /path/to/tasks \
+  --host stdio \
   --output /tmp/canary-results.json
 ```
 
-This is a thin orchestrator that:
+`--canaries-dir` holds a `tasks.json` task manifest (`atlas/task-manifest.v1`, see
+`atlas/evals/README.md`). The default `--host stdio` is a real MCP SDK host that replays the
+manifest's tool calls over stdio and records a transport ledger; it runs no model.
+`--server-json` swaps the server command (inline JSON array or a file path).
+
+The legacy scout-report flow is a thin orchestrator that:
 
 1. Loads each canary mission's `mission.md`.
 2. Dispatches it to a host adapter you plug in under `--host`.
@@ -208,13 +214,11 @@ This is a thin orchestrator that:
 4. Compares against the canary's `expected/` answers.
 5. Emits pass/fail + telemetry.
 
-**Status: no host dispatcher ships today.** `--host stub` is the only wired
-option, and `StubDispatcher.dispatch()` deliberately raises
-`NotImplementedError` — see the deferred note in
-[`scripts/run-canaries.py`](scripts/run-canaries.py). Real dispatchers
-(Claude Code via API, Copilot via Action, Cursor headless) are sketched as
-comments in that file but not implemented; there is no pass rate to quote
-until one exists. Wire one in before relying on this step.
+**Status: no scout-report host dispatcher ships today.** `--host stub` and the
+`claude-code-api`, `copilot` and `cursor` values raise `NotImplementedError` — see the deferred
+note in [`scripts/run-canaries.py`](scripts/run-canaries.py). Real dispatchers are sketched as
+comments in that file but not implemented; there is no agent pass rate to quote until one
+exists. The `stdio` host is the only working adapter.
 
 ---
 
@@ -297,9 +301,9 @@ Roughly in priority order:
 4. **Telemetry → CORTEX bridge.** Right now telemetry is per-mission. A
    pipeline that ingests every mission's telemetry into your existing
    CORTEX JSONL gives you the cross-session reflection signal.
-5. **A canary host dispatcher.** `scripts/run-canaries.py` ships only a
-   `StubDispatcher`; a real Claude Code / Copilot / Cursor adapter is
-   needed before the canary suite produces a meaningful pass rate.
+5. **A canary host dispatcher.** `scripts/run-canaries.py` has a real `stdio` transport host but only
+   a `StubDispatcher` for scout reports; a real Claude Code / Copilot / Cursor adapter is
+   needed before the canary suite produces a meaningful agent pass rate.
 
 ---
 

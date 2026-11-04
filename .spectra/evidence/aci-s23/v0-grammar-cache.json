@@ -1,0 +1,52 @@
+{
+ "arch": "linux/arm64 (aarch64)",
+ "fetch": {
+  "argv": [
+   "docker",
+   "run",
+   "--rm",
+   "--pull",
+   "never",
+   "-v",
+   "<cache>:/tmp/.cache",
+   "--entrypoint",
+   "python",
+   "<image>",
+   "-c",
+   "import tree_sitter_language_pack as t; t.download(LANGS)"
+  ],
+  "exit": 0,
+  "image": "ghcr.io/rynaro/atlas-aci@sha256:e2542ef8d569882c560065f0bcaed9ef2a7398e7e61765e25b142a3c93ec7cf7",
+  "languages": [
+   "ruby",
+   "python",
+   "typescript",
+   "javascript",
+   "scss",
+   "html",
+   "yaml",
+   "markdown",
+   "bash"
+  ],
+  "network": "enabled for this one step only",
+  "returned": 9,
+  "url": "https://github.com/kreuzberg-dev/tree-sitter-language-pack/releases/download/v1.6.0/parsers.json (and the per-grammar assets it lists)"
+ },
+ "files": {
+  "tree-sitter-language-pack/v1.6.0/libs/libtree_sitter_bash.so": "30af97cff031ccd5f478a5e2cb4c16bc2d84a036e2e1ae26f94675a54b7b0d0b",
+  "tree-sitter-language-pack/v1.6.0/libs/libtree_sitter_html.so": "d978ce66e402d74806a9cbb872fa20c24da7b908114620b114f003a4a6f4acc0",
+  "tree-sitter-language-pack/v1.6.0/libs/libtree_sitter_javascript.so": "cb63ea22c27003dc451a0c9e7ab5c6af5e3d1cc95bc3a849925fd365b46eb152",
+  "tree-sitter-language-pack/v1.6.0/libs/libtree_sitter_markdown.so": "4ffbb641f58d06552fca6377b0be0900a68ff2526c6c7a73c4d2c16da5076bc1",
+  "tree-sitter-language-pack/v1.6.0/libs/libtree_sitter_python.so": "bf09f267c4eb456cd338613f75181687dfc95f9f2d11d7cf04313617046bc8f9",
+  "tree-sitter-language-pack/v1.6.0/libs/libtree_sitter_ruby.so": "1474a92786ca8f47dfaaf3567a3afaa8caefa97819543d9492422c02d5edb857",
+  "tree-sitter-language-pack/v1.6.0/libs/libtree_sitter_scss.so": "be105f94cc324250ce2bfb8bab997cf790fcc0043b63bd3601dfe9b98d757a89",
+  "tree-sitter-language-pack/v1.6.0/libs/libtree_sitter_typescript.so": "1197cb57ee4574b04f79a611b36f6a42010222c3bd939d95c99d9d53f1d0f369",
+  "tree-sitter-language-pack/v1.6.0/libs/libtree_sitter_yaml.so": "3d04d93ba65e1c86d3a2ef04cb2b31a69f6bb75c5a56f378a6821d666d10c391",
+  "tree-sitter-language-pack/v1.6.0/manifest.json": "99ffaec9e46e92689a5492252cdfa61d9f1b56454fbfdd06732d1926adabcd6f"
+ },
+ "format": "atlas-v0-grammar-cache.v1",
+ "mount": "<cache>:/tmp/.cache (HOME=/tmp in the image; cache_dir=/tmp/.cache/tree-sitter-language-pack/v1.6.0/libs)",
+ "purpose": "declared input: tree-sitter grammars for the offline v2.0.0 index; binaries are not committed",
+ "tree_sha256": "7544239ace3c6bdfe0fd352936ad2b95b6a3c47505ad17d96d2c817a4f80690c",
+ "tree_sitter_language_pack": "1.6.0"
+}

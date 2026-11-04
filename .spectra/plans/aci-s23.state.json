@@ -1,0 +1,145 @@
+{
+  "schema": "ramza/plan-state.v1",
+  "plan": "aci-s23",
+  "created_at": "2026-11-04T02:00:16Z",
+  "tier": "full",
+  "phase": "DONE",
+  "phases_done": [
+    "RS",
+    "S",
+    "P",
+    "E",
+    "C",
+    "T",
+    "A",
+    "DONE"
+  ],
+  "rightsize": {
+    "score": 5,
+    "computed_tier": "full",
+    "inputs": {
+      "files_est": 12,
+      "new_dep": false,
+      "public_api": true,
+      "migration": false,
+      "security": false,
+      "novel": true,
+      "stakes": "med"
+    }
+  },
+  "refine_cycles": 0,
+  "skips": [],
+  "gates": [
+    {
+      "rubric": "complexity",
+      "total": 10,
+      "dims": {
+        "scope": 3,
+        "ambiguity": 2,
+        "dependencies": 3,
+        "risk": 2
+      },
+      "verdict": "human_loop",
+      "at": "2026-11-04T02:09:26Z",
+      "label": "v3-evidence-package"
+    },
+    {
+      "rubric": "explore",
+      "total": 82,
+      "dims": {
+        "alignment": 9,
+        "correctness": 9,
+        "maintainability": 8,
+        "performance": 8,
+        "simplicity": 7,
+        "risk": 7,
+        "innovation": 7
+      },
+      "verdict": "solid",
+      "at": "2026-11-04T02:09:26Z",
+      "label": "recorder-plus-pure-replay-aggregator"
+    },
+    {
+      "rubric": "confidence",
+      "total": 79.5,
+      "dims": {
+        "pattern_match": 80,
+        "requirement_clarity": 78,
+        "decomposition_stability": 74,
+        "constraint_compliance": 86
+      },
+      "verdict": "VALIDATE",
+      "at": "2026-11-04T02:09:26Z",
+      "label": "v3-evidence-package"
+    },
+    {
+      "rubric": "refine",
+      "cycle": 1,
+      "total": 4.2,
+      "min": 4,
+      "dims": {
+        "clarity": 4,
+        "completeness": 4,
+        "actionability": 4,
+        "efficiency": 4,
+        "testability": 5
+      },
+      "verdict": "pass",
+      "at": "2026-11-04T02:09:26Z",
+      "label": "pre-checker"
+    },
+    {
+      "rubric": "refine",
+      "cycle": 1,
+      "total": 3.8,
+      "min": 3,
+      "dims": {
+        "clarity": 4,
+        "completeness": 4,
+        "actionability": 4,
+        "efficiency": 3,
+        "testability": 4
+      },
+      "verdict": "pass",
+      "at": "2026-11-04T02:17:56Z",
+      "label": "post-checker"
+    }
+  ],
+  "amendments": [],
+  "declared_scope": [
+    "atlas/evals/*",
+    "atlas/evals/v3/*",
+    "scripts/run-canaries.py",
+    "scripts/eval/*",
+    "mcp-server/tests/slices/test_s23_*.py",
+    "docs/evidence/*",
+    "docs/evidence/v3/*",
+    "docs/evidence/v3/raw/*",
+    "README.md",
+    "CHANGELOG.md",
+    "SETUP.md",
+    ".spectra/plans/aci-s23.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/changes/aci-s23/*",
+    ".spectra/evidence/aci-s23/*",
+    ".spectra/state/aci-s23.execution.json",
+    ".spectra/backlog/execution.json",
+    ".spectra/backlog/order.md"
+  ],
+  "criteria_sha256": "3a7f63e210562a7710523bbd07a465217f63851115c9aeb537e4eb061a0f7529",
+  "critic": {
+    "author": "orchestrator-ramza-plan-s23",
+    "checker": "atlas-s23-plan-checker",
+    "at": "2026-11-04T02:17:56Z"
+  },
+  "criteria_frozen_at": "2026-11-04T02:17:56Z",
+  "scope_declared_at": "2026-11-04T02:17:56Z",
+  "drift_reports": [
+    {
+      "at": "2026-11-04T03:33:31Z",
+      "range": "staged",
+      "files_changed": 72,
+      "uncovered": []
+    }
+  ]
+}

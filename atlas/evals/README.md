@@ -108,3 +108,11 @@ construction (it reads the same run as the truth), the structural baseline is pe
 only because the fixture tests call the edited functions by name, and no superiority
 threshold is claimed. `ruff check` covers `tests/`, which imports this script; `mypy src/`
 does not cover it.
+
+## v3 evidence (ACI-S23)
+
+`span_metrics.py` holds the S18 `union`/`metrics`/`body_and_sources` accounting as a pure module
+shared by the v3 aggregator (`scripts/eval/v3_aggregate.py`); `measure_context_yield.py` is
+unchanged and `test_s23_metrics.py` proves the two agree on every committed S18 row. The frozen
+manifest is `v3/manifest.v1.json`. `run-canaries.py --server-json` runs any `tasks.json` against
+another server argv (inline JSON array or a file). See `docs/evidence/v3/README.md`.
