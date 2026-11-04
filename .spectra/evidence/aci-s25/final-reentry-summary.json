@@ -1,0 +1,16 @@
+{
+  "output_commit": "d5ac2dba1effc34854932b8702ffa25c9adbdc46",
+  "worktree": "clean detached worktree at output commit (scratchpad)",
+  "files": 90,
+  "manifest_equal": true,
+  "git_status_porcelain_lines": 0,
+  "git_diff_exit_code": 0,
+  "reentry_actions": [
+    "ramza-gate status (exit 0, phase DONE)",
+    "ramza-freeze --verify (exit 0)",
+    "ramza-drift --range f409094..output on a state copy (exit 0, 91 files in scope)",
+    "7 named AC tests in Docker against the worktree (all exit 0)"
+  ],
+  "no_implementation_diff": true,
+  "at": "2026-11-04T20:21:33Z"
+}
