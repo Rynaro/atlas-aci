@@ -48,7 +48,8 @@ atlas-aci check-architecture --repo /path/to/repo --rules rules.json [--graph-ro
 * `relation` must be `import`. Calls and other relations are not supported.
 * `from` and `to` are non-empty, duplicate-free lists of at most 32 selectors of 1 to 512
   characters.
-* Limits of the document: 256 KiB, 64 rules. Bounds are never supplied by a rule; they are command
+* Limits of the document: 256 KiB, 64 rules, nesting depth 16 (`[`/`{` outside strings; deeper is
+  `invalid_json`, checked by a linear pre-parse scan, never by the interpreter's recursion limit). Bounds are never supplied by a rule; they are command
   options.
 * The schema is closed (no extra keys). Duplicate keys, `NaN`/`Infinity`, a byte order mark,
   non-UTF-8 bytes and lone surrogates are rejected.
@@ -83,7 +84,7 @@ An invalid document is rejected before the graph is opened, with a structured `i
 `{error, reason, rule_index, rule_id}`. `rule_id` is set only when it matches the id pattern.
 Selector text, descriptions and paths are never echoed.
 
-`reason` is one of `too_large`, `invalid_json`, `unsupported_format`, `schema`,
+`reason` is one of `too_large`, `invalid_json` (including nesting deeper than 16), `unsupported_format`, `schema`,
 `unsupported_relation`, `malformed_selector`, `duplicate_rule_id`, checked in that order (the first
 failure wins). Per rule, in document order: selector count, relation, each `from` then `to`
 selector, then the id.

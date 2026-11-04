@@ -7,7 +7,8 @@ folding, no regex or fnmatch evaluation, only string operations on the sorted pa
 
 Validation order (the first failure wins):
   1. more than `MAX_DOCUMENT_BYTES` bytes                       -> too_large
-  2. strict parse (UTF-8, no BOM, no duplicate key, no NaN/Infinity, no lone surrogate)
+  2. strict parse (nesting at most MAX_NESTING_DEPTH, UTF-8, no BOM, no duplicate key,
+     no NaN/Infinity, no lone surrogate)
                                                                 -> invalid_json
   3. an object whose `format` is present and not `FORMAT`       -> unsupported_format
   4. the closed JSON Schema, then a full-match recheck of ids   -> schema
@@ -38,6 +39,7 @@ MAX_RULES = 64
 MAX_SELECTORS = 32
 MAX_SELECTOR_CHARS = 512
 MAX_DESCRIPTION_CHARS = 512
+MAX_NESTING_DEPTH = 16
 ID_PATTERN = "^[a-z0-9][a-z0-9._-]{0,63}$"
 INVALID_RULE_REASONS = (
     "too_large",
@@ -215,8 +217,35 @@ def _has_surrogate(document: Any) -> bool:
     return False
 
 
+def _check_nesting(raw: bytes) -> None:
+    """Linear scan: `[`/`{` depth outside JSON strings must not exceed `MAX_NESTING_DEPTH`.
+
+    Independent of the interpreter's recursion limit, so the reason never varies by version.
+    """
+    depth = 0
+    in_string = False
+    escaped = False
+    for byte in raw:
+        if in_string:
+            if escaped:
+                escaped = False
+            elif byte == 0x5C:
+                escaped = True
+            elif byte == 0x22:
+                in_string = False
+        elif byte == 0x22:
+            in_string = True
+        elif byte in (0x5B, 0x7B):
+            depth += 1
+            if depth > MAX_NESTING_DEPTH:
+                raise ValueError("nesting too deep")
+        elif byte in (0x5D, 0x7D):
+            depth = max(depth - 1, 0)
+
+
 def _parse(raw: bytes) -> Any:
     try:
+        _check_nesting(raw)
         if raw.startswith(b"\xef\xbb\xbf"):
             raise ValueError("byte order mark")
         document = json.loads(

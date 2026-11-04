@@ -5,7 +5,7 @@
   },
   "s31_contract": {
     "exit_code": 0,
-    "summary": "101 passed",
+    "summary": "105 passed (after nesting-bound fix)",
     "log": "s31-contract.log.gz"
   },
   "regression": {
@@ -70,5 +70,10 @@
     "read_only": "sha256 inventory of repo and graph root unchanged after both runs",
     "invalid_rule": "duplicate id -> exit 1 'Architecture rules rejected: invalid_rule: duplicate_rule_id (rule 1)'"
   },
-  "day1_qualification": "qualification.json: file-level chain facts, unresolved reasons as observed, observation states incl. failed-with-history, query plans use idx_assertions_path, epoch gate, dynamic-call raw_target spelling, null snapshot on imported generation, hydrate"
+  "day1_qualification": "qualification.json: file-level chain facts, unresolved reasons as observed, observation states incl. failed-with-history, query plans use idx_assertions_path, epoch gate, dynamic-call raw_target spelling, null snapshot on imported generation, hydrate",
+  "ci_fix": {
+    "trigger": "CI run 41784242944 (Python 3.14): test_architecture_invalid_documents_are_rejected[deep] got 'schema' not 'invalid_json' because 3.14 json.loads accepts 100000-deep nesting that 3.12 rejects with RecursionError",
+    "fix": "rules.py MAX_NESTING_DEPTH=16 enforced by a linear pre-parse byte scan outside JSON strings -> invalid_json, interpreter-independent; boundary tests 16->schema, 17->invalid_json, brackets inside strings not counted",
+    "orchestrator_rerun": "dk31.sh test_s31 105 passed; ruff/format/mypy exit 0; drift 4 files in scope"
+  }
 }

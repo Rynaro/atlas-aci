@@ -551,6 +551,21 @@ INLINE = {
     "infinity": ((HEAD + "[Infinity]}").encode(), "invalid_json", None),
     "not-utf8": (b"\xff\xfe{}", "invalid_json", None),
     "deep": (b"[" * 100000 + b"]" * 100000, "invalid_json", None),
+    "nesting-at-bound": (
+        b"[" * rules.MAX_NESTING_DEPTH + b"]" * rules.MAX_NESTING_DEPTH,
+        "schema",
+        None,
+    ),
+    "nesting-over-bound": (
+        b"[" * (rules.MAX_NESTING_DEPTH + 1) + b"]" * (rules.MAX_NESTING_DEPTH + 1),
+        "invalid_json",
+        None,
+    ),
+    "nesting-objects-over-bound": (
+        b'{"a":' * (rules.MAX_NESTING_DEPTH + 1) + b"1" + b"}" * (rules.MAX_NESTING_DEPTH + 1),
+        "invalid_json",
+        None,
+    ),
     "surrogate-selector": (
         (HEAD + ONE.replace("pkg/a.py", "pkg/\\ud800.py") + "}").encode(),
         "invalid_json",
@@ -615,6 +630,18 @@ def test_architecture_invalid_rule_rejected(name, reason, index, tmp_path):
 def test_architecture_invalid_documents_are_rejected(name, tmp_path):
     raw, reason, index = INLINE[name]
     check_rejection(raw, reason, index, tmp_path, World(tmp_path, tmp_path / "graph"))
+
+
+def test_architecture_brackets_inside_strings_do_not_count_toward_depth():
+    noisy = "[" * 100 + '\\" ' + "{" * 100 + "]]"
+    text = HEAD + ONE.replace('"relation"', '"description": "' + noisy + '", "relation"') + "}"
+    loaded = rules.load(text.encode())
+    assert loaded.rules[0].description == "[" * 100 + '" ' + "{" * 100 + "]]"
+    # An escaped backslash before the closing quote ends the string: depth counts again.
+    over = HEAD + '[{"x": "\\\\"}' + "[" * rules.MAX_NESTING_DEPTH + "]" * rules.MAX_NESTING_DEPTH
+    with pytest.raises(rules.InvalidRule) as info:
+        rules.load((over + "]}").encode())
+    assert info.value.reason == "invalid_json"
 
 
 def test_architecture_rule_ids_and_echo_guard():
