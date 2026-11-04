@@ -9,6 +9,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Rails: explicit associations, model tables and migration table references (ACI-S25).** New
+  opt-in adapter `rails_models` (`atlas-aci index --frameworks rails_models`, library
+  `CodeGraph(repo, frameworks=("rails_models",))`; the closed registry is now `{rails,
+  rails_models}`, both need `ruby`) with an optional operator table map
+  (`--rails-table-map FILE`, format `atlas-rails-table-map.v1`, strictly parsed by the CLI, exit 2
+  and no graph directory on any rejection). It reads only `app/models/**` (not concerns) and
+  `db/migrate/*.rb` from the build's captured bytes, never runs Ruby, Rails or a migration and
+  never opens a database. Per declaration it records a `rails_model` occurrence, evidence from a
+  `rails_models` producer and an assertion: `association` (a literal `class_name:` linked to the
+  model class it names, `INFERRED` only when exactly one existing candidate name holds exactly one
+  model, `AMBIGUOUS` with candidate ids otherwise, `UNRESOLVED` with `class_not_found` or
+  `target_not_recognized_model`, and `unsupported_association` for through, polymorphic, implicit
+  or computed forms), `model_table` (a literal `self.table_name` or one unambiguous operator-map
+  entry) and `migration_mentions` (literal `create_table`, `add_column`, `remove_column`). The last
+  two are target-less `EXTRACTED` assertions carrying the table in the canonical `raw_target`
+  ("literal declaration extracted, no graph edge"; tables are not entities). Facts are rebuilt
+  globally on every enabled build and purged by a build without the flag. The adapters `rails` and
+  `rails_models` are independent and combinable. No MCP operation, enum, traversal, `edges` row,
+  entity kind or dependency change; the tools JSON is byte-identical. Editing `codegraph.py` and
+  `storage/evidence.py` changes the native producer id again: every evidence, assertion, link,
+  generation and snapshot id differs from the previous release for all graphs and existing indexes
+  rebuild in full on the first `--since` run (entity and occurrence ids are unchanged). Documented
+  in `docs/frameworks/rails.md`.
+
 - **Rails: explicit routes mapped to controller actions (ACI-S24).** New opt-in
   `atlas-aci index --frameworks rails` (library `CodeGraph(repo, frameworks=("rails",))`, closed
   registry `{rails}`; an unknown name or `rails` without `ruby` is a usage error, exit 2). The

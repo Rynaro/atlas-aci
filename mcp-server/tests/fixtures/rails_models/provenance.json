@@ -1,0 +1,155 @@
+{
+ "expected": {
+  "classes": {
+   "migrations": 3,
+   "models": 11,
+   "unbound": 1
+  },
+  "declarations": 56,
+  "facts": {
+   "association": {
+    "AMBIGUOUS": 2,
+    "INFERRED": 4,
+    "UNRESOLVED": 20
+   },
+   "migration_mentions": {
+    "EXTRACTED": 7,
+    "UNRESOLVED": 14
+   },
+   "model_table": {
+    "EXTRACTED": 2,
+    "UNRESOLVED": 9
+   }
+  },
+  "files": {
+   "failed": 0,
+   "limited": 0,
+   "migrations": 4,
+   "models": 13
+  },
+  "map": {
+   "ambiguous": 1,
+   "bound": 1,
+   "confirmed": 1,
+   "conflicting": 1,
+   "entries": 7,
+   "suppressed": 1,
+   "unmatched": 2
+  },
+  "records": {
+   "assertions": 58,
+   "evidence": 58,
+   "occurrences": 58,
+   "producers": 1
+  }
+ },
+ "files": {
+  "app/models/admin.rb": {
+   "bytes": 91,
+   "sha256": "b935556f06201ef6b483d1c30688daaf86cecb4b5a740d99c1c4df5c9d6b42cf"
+  },
+  "app/models/application_record.rb": {
+   "bytes": 78,
+   "sha256": "20cec87060a568766c09d755b1ba38e7ed776d7f6030515217096f4f4777525e"
+  },
+  "app/models/archive.rb": {
+   "bytes": 138,
+   "sha256": "31fd9d4c76b55c7521adbb1c0760af71fa8fc6d58068ee7e20df97d71de3efb2"
+  },
+  "app/models/blog/post.rb": {
+   "bytes": 945,
+   "sha256": "b4f8c6727759554b5b28dd078d72c87a18ab82d6c486c4e1c8a1238fff9deec4"
+  },
+  "app/models/blog/tag.rb": {
+   "bytes": 40,
+   "sha256": "cacaa4e2891ef2397ce92be6ef1f5dad814071c10d7cb9b92a716907876c1c69"
+  },
+  "app/models/concerns/taggable.rb": {
+   "bytes": 193,
+   "sha256": "1290f181ef9d720a9179fab4c493d5d5265a1e7b5a3652b7dca32cc97eb376c2"
+  },
+  "app/models/invoice.rb": {
+   "bytes": 38,
+   "sha256": "e34c2b264e1c0864a40e8a75c14ea001d0e8d1517a8731c7ad283c7bb6a1f983"
+  },
+  "app/models/invoice_reopened.rb": {
+   "bytes": 38,
+   "sha256": "e34c2b264e1c0864a40e8a75c14ea001d0e8d1517a8731c7ad283c7bb6a1f983"
+  },
+  "app/models/label.rb": {
+   "bytes": 36,
+   "sha256": "8a92083af82c7b96fa7350f0a79b20ac2951f2b54272c173fa076c86b2f04331"
+  },
+  "app/models/legacy/order.rb": {
+   "bytes": 124,
+   "sha256": "77fa159e85537ee694b9acfbcfc3078e35367ae2c34c6f8e45d8bc0bf4d87780"
+  },
+  "app/models/profile.rb": {
+   "bytes": 77,
+   "sha256": "9eba74578983ffa47d5585e50a44d735935bffc0cc33d9471aafc4da3aa0c79a"
+  },
+  "app/models/storage/vault.rb": {
+   "bytes": 36,
+   "sha256": "8c9299c1738679dbd3027c56efc301a9de803873453625f000b17508e3537e8b"
+  },
+  "app/models/tag.rb": {
+   "bytes": 64,
+   "sha256": "59395981ddfa29a8013817c5b3b9cd7c8a08e79bad57c2bf52173e458519400e"
+  },
+  "app/models/user.rb": {
+   "bytes": 584,
+   "sha256": "c1d1d5a0ecac912d426e18cdd28c818b5d199b1e6b27ebd5dfb8fa0c938898e5"
+  },
+  "app/models/zed/wrapped.rb": {
+   "bytes": 137,
+   "sha256": "24368dc1eadfdff99b76ae47acea8b0b1b9034f9183f0b3b1b9f4bb733ee2500"
+  },
+  "db/migrate/20240101000000_create_users.rb": {
+   "bytes": 271,
+   "sha256": "705cdc2aa5eab536c654c85311a9106c627b1746be483b8cfbbc3fab00881817"
+  },
+  "db/migrate/20240102000000_alter_posts.rb": {
+   "bytes": 712,
+   "sha256": "59e6ba72115008feaad0a37825face011007ac7484951344806c9e04ad936db1"
+  },
+  "db/migrate/20240103000000_legacy_rows.rb": {
+   "bytes": 145,
+   "sha256": "719e884e6803e29bf90168ac5c772174e91d8602f7d1b220a996a7b0708a66af"
+  },
+  "db/migrate/20240104000000_helper.rb": {
+   "bytes": 68,
+   "sha256": "869fb73d6209f6ffde445b47c92aeb7fb310c3d77a1f8b6ce70df1c8b9c69855"
+  },
+  "db/migrate/archive/20230101000000_old.rb": {
+   "bytes": 93,
+   "sha256": "365f14b013e840431ef6dda2184bcc3d35b0f389bc2d1ebaf11918d75d8997a3"
+  },
+  "db/schema.rb": {
+   "bytes": 125,
+   "sha256": "ed2bde4661f5b64085ab3ad99a82200c4163f52db6136476e7efe5486b6fda32"
+  },
+  "db/seeds.rb": {
+   "bytes": 44,
+   "sha256": "79408b9db9875241c5d3b9aac451131a957b416847b3097ba6118850ee8276a4"
+  },
+  "lib/blog/label.rb": {
+   "bytes": 36,
+   "sha256": "6fc583ee949fa49126e357e85a3054014b46435b1849c402c29cb6bd7c2365f2"
+  },
+  "lib/models/widget.rb": {
+   "bytes": 37,
+   "sha256": "f5e219931b00907895bbd3036b02f748e873f1e6b161347a494dbfe2cec7cd5d"
+  },
+  "lib/team.rb": {
+   "bytes": 15,
+   "sha256": "0155c9e967dfbc4a756426ab14948b1159bbad09222a6eae2ba25afb7260999e"
+  }
+ },
+ "note": "ASCII fixture for the rails_models adapter; expected totals are asserted by test_s25_rails_models.py",
+ "slice": "ACI-S25",
+ "table_map": {
+  "bytes": 271,
+  "file": "table-map.json",
+  "sha256": "bbbf28fb43a2c2e830c4b4d7493899a2fcb6bc4e844a1746e8cc2f431b105b16"
+ }
+}

@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import asyncio
 import json
+import os
+import stat
 import sys
 from pathlib import Path
 from typing import Any
@@ -15,6 +17,7 @@ from atlas_aci.codegraph import DEFAULT_LANGS, CodeGraph
 from atlas_aci.config import Config
 from atlas_aci.frameworks import REGISTRY as FRAMEWORK_ADAPTERS
 from atlas_aci.frameworks import normalize as normalize_frameworks
+from atlas_aci.frameworks import rails_models
 
 # AC-REL-2's documented bound (README.md "Why read-only" section /
 # GITHUB_FILE_HARD_LIMIT_BYTES): GitHub rejects any single committed file
@@ -30,6 +33,25 @@ from atlas_aci.frameworks import normalize as normalize_frameworks
 # for why this warning exists, not a hypothetical.
 _GITHUB_FILE_WARN_BYTES = 50 * 1024 * 1024
 _GITHUB_FILE_HARD_LIMIT_BYTES = 100 * 1024 * 1024
+
+
+def _read_table_map(path: Path) -> bytes:
+    """Bounded read of the operator table map (only the CLI reads it; the adapter takes bytes).
+
+    Opened without blocking, then required to be a regular file, then read at most one byte
+    past the limit. The messages are fixed text: the path and the document are never echoed.
+    """
+    try:
+        descriptor = os.open(path, os.O_RDONLY | getattr(os, "O_NONBLOCK", 0))
+    except OSError:
+        raise click.UsageError("Cannot read the Rails table map") from None
+    try:
+        with os.fdopen(descriptor, "rb") as stream:
+            if not stat.S_ISREG(os.fstat(stream.fileno()).st_mode):
+                raise click.UsageError("The Rails table map is not a regular file")
+            return stream.read(rails_models.MAX_MAP_BYTES + 1)
+    except OSError:
+        raise click.UsageError("Cannot read the Rails table map") from None
 
 
 def _open_graph(repo: Path, graph_root: Path | None, **options) -> CodeGraph:
@@ -164,12 +186,20 @@ def serve(
     help="Comma-separated opt-in framework adapters; closed set: "
     + ", ".join(sorted(FRAMEWORK_ADAPTERS)),
 )
+@click.option(
+    "--rails-table-map",
+    default=None,
+    type=click.Path(path_type=Path),
+    help="Operator model-to-table map (JSON, atlas-rails-table-map.v1); needs the "
+    "rails_models framework adapter",
+)
 def index(
     repo: Path,
     langs: str,
     since: str | None,
     frameworks: str = "",
     graph_root: Path | None = None,
+    rails_table_map: Path | None = None,
 ) -> None:
     """Build or update the code-graph index for a repository."""
     log = structlog.get_logger()
@@ -183,8 +213,20 @@ def index(
     except ValueError as exc:
         raise click.UsageError(str(exc)) from exc
 
+    table_map: bytes | None = None
+    if rails_table_map is not None:
+        if "rails_models" not in adapters:
+            raise click.UsageError("--rails-table-map requires --frameworks rails_models")
+        table_map = _read_table_map(rails_table_map)
+        try:
+            rails_models.parse_table_map(table_map)
+        except ValueError as exc:
+            raise click.UsageError(str(exc)) from None
+
     log.info("index_start", repo=str(repo), langs=lang_list, since=since, frameworks=adapters)
-    graph = _open_graph(repo, graph_root, langs=lang_list, frameworks=adapters)
+    graph = _open_graph(
+        repo, graph_root, langs=lang_list, frameworks=adapters, rails_table_map=table_map
+    )
     stats = graph.build(since=since)
     log.info("index_done", **stats)
 

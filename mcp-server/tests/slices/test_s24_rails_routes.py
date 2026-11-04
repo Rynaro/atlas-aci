@@ -378,7 +378,7 @@ def banned_attribute(name):
 
 def test_adapter_sources_are_static_ascii_and_never_call_themselves():
     sources = sorted(SRC.glob("*.py"))
-    assert {p.name for p in sources} == {"__init__.py", "rails_routes.py"}
+    assert {p.name for p in sources} == {"__init__.py", "rails_models.py", "rails_routes.py"}
     reads = 0
     for path in sources:
         text = path.read_text()
@@ -415,7 +415,7 @@ def test_adapter_sources_are_static_ascii_and_never_call_themselves():
                         assert called != node.name, (path, node.name)
         for pattern in (r"\\d", r"\\w"):
             assert re.search(pattern, text) is None, (path, pattern)
-    assert reads == 1  # Path(__file__).read_bytes() for adapter_sha256 is the only file read
+    assert reads == 2  # Path(__file__).read_bytes() for adapter_sha256, once per adapter
 
 
 def install_spies(monkeypatch, launches):

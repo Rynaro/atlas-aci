@@ -1,6 +1,7 @@
-"""Opt-in framework adapters (ACI-S24).
+"""Opt-in framework adapters (ACI-S24, ACI-S25).
 
-The registry is closed. An adapter is enabled per build with
+The registry is closed: ``rails`` (explicit routes) and ``rails_models`` (explicit associations,
+tables and migration table references). An adapter is enabled per build with
 ``CodeGraph(repo, frameworks=("rails",))`` or ``atlas-aci index --frameworks rails``; with the
 default empty selection no adapter code runs and no adapter record is written.
 
@@ -12,9 +13,9 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 
-REGISTRY = frozenset({"rails"})
+REGISTRY = frozenset({"rails", "rails_models"})
 # Each adapter reads a single language; it cannot run when that language is disabled.
-REQUIRED_LANGUAGE = {"rails": "ruby"}
+REQUIRED_LANGUAGE = {"rails": "ruby", "rails_models": "ruby"}
 
 
 def normalize(names: Iterable[str] | str | None, languages: Iterable[str]) -> tuple[str, ...]:

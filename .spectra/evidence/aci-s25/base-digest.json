@@ -1,0 +1,167 @@
+{
+ "base_commit": "f4090946ac4493dccad2ddcd5349aa3d16ed1e3a",
+ "digests": {
+  "s24off": {
+   "adapters": {
+    "rails": {
+     "manifest_present": false,
+     "producer_ids": [],
+     "records": {
+      "assertions": 0,
+      "evidence": 0,
+      "occurrences": 0
+     }
+    },
+    "rails_models": {
+     "manifest_present": false,
+     "producer_ids": [],
+     "records": {
+      "assertions": 0,
+      "evidence": 0,
+      "occurrences": 0
+     }
+    }
+   },
+   "exclusions": [
+    "files.indexed_at",
+    "files.mtime_ns (differs between mounts)",
+    "generation_inputs.producer/schema (base vs off only: the producer id churns by design)",
+    "manifest.generation_id",
+    "manifest.generation_inputs.snapshot",
+    "retrieval_fts*",
+    "retrieval_documents.candidate_id",
+    "refs.id, edges.id, symbols.id (autoincrement)",
+    "refs.evidence_id, edges.assertion_id (producer-derived link ids)"
+   ],
+   "native_producer_ids": [
+    "aa0e898fcd54cef57a955a7ca3cfaa2893bc1d5e54d57101a38ce01130cdfb46"
+   ],
+   "path": "(base-code build of the fixture, scratch)",
+   "row_counts": {
+    "assertion_ids": 45,
+    "assertions": 45,
+    "assignment_targets": 0,
+    "edges": 0,
+    "entity_ids": 32,
+    "evidence_ids": 77,
+    "files": 8,
+    "import_bindings": 0,
+    "occurrence_ids": 77,
+    "rationale": 0,
+    "refs": 45,
+    "retrieval_documents": 40,
+    "symbols": 24
+   },
+   "sha256": "57937204d9421c837a95e66ea8bd01e54dece51cdcfe875d0e2ef1c439dea2b3"
+  },
+  "s24rails": {
+   "adapters": {
+    "rails": {
+     "manifest_present": true,
+     "producer_ids": [
+      "181c79d584a1755cd05e1a1669c37adaf1eb435b0c6ad075e7163ce7263fe03b"
+     ],
+     "records": {
+      "assertions": 35,
+      "evidence": 35,
+      "occurrences": 35
+     }
+    },
+    "rails_models": {
+     "manifest_present": false,
+     "producer_ids": [],
+     "records": {
+      "assertions": 0,
+      "evidence": 0,
+      "occurrences": 0
+     }
+    }
+   },
+   "exclusions": [
+    "files.indexed_at",
+    "files.mtime_ns (differs between mounts)",
+    "generation_inputs.producer/schema (base vs off only: the producer id churns by design)",
+    "manifest.generation_id",
+    "manifest.generation_inputs.snapshot",
+    "retrieval_fts*",
+    "retrieval_documents.candidate_id",
+    "refs.id, edges.id, symbols.id (autoincrement)",
+    "refs.evidence_id, edges.assertion_id (producer-derived link ids)"
+   ],
+   "native_producer_ids": [
+    "aa0e898fcd54cef57a955a7ca3cfaa2893bc1d5e54d57101a38ce01130cdfb46"
+   ],
+   "path": "(base-code build of the fixture, scratch)",
+   "row_counts": {
+    "assertion_ids": 45,
+    "assertions": 45,
+    "assignment_targets": 0,
+    "edges": 0,
+    "entity_ids": 32,
+    "evidence_ids": 77,
+    "files": 8,
+    "import_bindings": 0,
+    "occurrence_ids": 77,
+    "rationale": 0,
+    "refs": 45,
+    "retrieval_documents": 40,
+    "symbols": 24
+   },
+   "sha256": "77063199a8fe4380bfaf76dc6973e0bb261498c9a95fab02a27f98480a8fec6e"
+  },
+  "s25off": {
+   "adapters": {
+    "rails": {
+     "manifest_present": false,
+     "producer_ids": [],
+     "records": {
+      "assertions": 0,
+      "evidence": 0,
+      "occurrences": 0
+     }
+    },
+    "rails_models": {
+     "manifest_present": false,
+     "producer_ids": [],
+     "records": {
+      "assertions": 0,
+      "evidence": 0,
+      "occurrences": 0
+     }
+    }
+   },
+   "exclusions": [
+    "files.indexed_at",
+    "files.mtime_ns (differs between mounts)",
+    "generation_inputs.producer/schema (base vs off only: the producer id churns by design)",
+    "manifest.generation_id",
+    "manifest.generation_inputs.snapshot",
+    "retrieval_fts*",
+    "retrieval_documents.candidate_id",
+    "refs.id, edges.id, symbols.id (autoincrement)",
+    "refs.evidence_id, edges.assertion_id (producer-derived link ids)"
+   ],
+   "native_producer_ids": [
+    "aa0e898fcd54cef57a955a7ca3cfaa2893bc1d5e54d57101a38ce01130cdfb46"
+   ],
+   "path": "(base-code build of the fixture, scratch)",
+   "row_counts": {
+    "assertion_ids": 97,
+    "assertions": 97,
+    "assignment_targets": 12,
+    "edges": 14,
+    "entity_ids": 59,
+    "evidence_ids": 168,
+    "files": 24,
+    "import_bindings": 0,
+    "occurrence_ids": 168,
+    "rationale": 0,
+    "refs": 97,
+    "retrieval_documents": 83,
+    "symbols": 35
+   },
+   "sha256": "87fbac0fc3d1b5e415c03f6ee029bd7ac40981a4140ba400e58fce71f54fdb35"
+  }
+ },
+ "method": "base code (git archive f409094) in atlas-aci-dev-s16; fixtures built with build_for_digest.py; digests by compare_graphs.py --digest"
+}
