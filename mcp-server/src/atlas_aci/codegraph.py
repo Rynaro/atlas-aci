@@ -21,7 +21,7 @@ import secrets
 import sqlite3
 import stat
 import tempfile
-from collections.abc import Mapping
+from collections.abc import Iterable, Mapping
 from contextlib import contextmanager
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
@@ -32,6 +32,8 @@ import structlog
 
 from atlas_aci.config import DEFAULT_MAX_BOUND_FIELD_ELEMENTS, path_is_within
 from atlas_aci.extractors import rust, tsx
+from atlas_aci.frameworks import normalize as normalize_frameworks
+from atlas_aci.frameworks import rails_routes
 from atlas_aci.indexing import extraction_cache as xc
 from atlas_aci.indexing import retrieval as ret
 from atlas_aci.label_propagation import label_propagation
@@ -878,9 +880,12 @@ class CodeGraph:
         read_only: bool = False,
         query_limit: int | None = None,
         graph_root: Path | None = None,
+        frameworks: Iterable[str] = (),
     ):
         self.repo = repo.resolve()
         self.langs = set(langs) if langs else set(DEFAULT_LANGS)
+        # Opt-in framework adapters (ACI-S24); a closed registry, rejected at construction.
+        self.frameworks = normalize_frameworks(frameworks, self.langs)
         self.read_only = read_only
         self.query_limit = (
             query_limit if query_limit is not None else DEFAULT_MAX_BOUND_FIELD_ELEMENTS + 1
@@ -2564,7 +2569,11 @@ class CodeGraph:
                         # SCIP facts (ACI-S16) are derived from an external artifact: a later
                         # parse failure must never retain them as stale tree-sitter history.
                         full = list(ev.records(previous)) + self._projection_records(previous)
-                        dropped = scip.scip_record_ids(full) | coverage_py.record_ids(full)
+                        dropped = (
+                            scip.scip_record_ids(full)
+                            | coverage_py.record_ids(full)
+                            | rails_routes.record_ids(full)
+                        )
                         self._proof_predecessor_records = [
                             r for r in full if r["id"] not in dropped
                         ]
@@ -3156,6 +3165,9 @@ class CodeGraph:
         files_indexed = 0
         files_skipped = 0
         files_removed = 0
+        # Root routes.rb bytes for the opt-in Rails adapter (ACI-S24); captured before every
+        # disabled/unchanged/parse-failure `continue`, so cache hits are covered too.
+        routes_capture: tuple[bytes, str] | None = None
         symbols_added = 0
         refs_added = 0
         rationale_added = 0
@@ -3197,6 +3209,8 @@ class CodeGraph:
             source_hash = hashlib.sha256(source).hexdigest()
             source_hashes[rel] = source_hash
             observation["source_sha256"] = source_hash
+            if rel == ev.RAILS_ROUTES_PATH and lang == "ruby":
+                routes_capture = (source, source_hash)
             if lang not in QUERIES:
                 observation.update(state="unsupported", reason="no_extraction_query")
                 unsupported_skipped[lang] = unsupported_skipped.get(lang, 0) + 1
@@ -3529,6 +3543,16 @@ class CodeGraph:
         selected = affected | removed if binding_mode == "affected" else None
         edges_added = self._resolve_edges(conn, selected)
         self._resolve_rationale_assertions(conn, selected)
+        # Rails facts are rebuilt globally on every enabled build (not republished per file
+        # through the S10 plan); a disabled build still purges any predecessor rails records.
+        rails_routes.refresh(
+            conn,
+            enabled="rails" in self.frameworks,
+            capture=routes_capture,
+            observations=all_observed,
+            get_parser=get_parser,
+            graph_producer_id=self._capture_producer["id"],
+        )
         self._validate_evidence_projections(conn)
         if current_dependencies is not None:
             binding_witness = dep.witness(conn, base_inputs)
@@ -6383,7 +6407,9 @@ class CodeGraph:
                 ev.require(record["id"] in defined_entities, "missing declaration projection")
             if record["type"] == "occurrence":
                 role = record["role"]
-                if role in {"file", "legacy_file"} or role.startswith(ev.COVERAGE_ROLE_PREFIX):
+                if role in {"file", "legacy_file"} or role.startswith(
+                    (ev.COVERAGE_ROLE_PREFIX, ev.RAILS_ROLE_PREFIX)
+                ):
                     continue
                 if role.startswith(("definition:", "legacy_definition")):
                     table = "symbols"
@@ -6403,8 +6429,8 @@ class CodeGraph:
                     record["id"] in coverage[table], "missing occurrence projection: " + table
                 )
             if record["type"] == "assertion":
-                if record["relation"] == ev.COVERAGE_RELATION:
-                    continue  # observed execution: no refs/edges projection by design
+                if record["relation"] in {ev.COVERAGE_RELATION, ev.RAILS_RELATION}:
+                    continue  # observed execution / rails routes: no refs/edges projection
                 if record["relation"] == "import":
                     table = "import_bindings"
                 elif record["relation"] == "rationale_for":
@@ -6422,6 +6448,7 @@ class CodeGraph:
                     record["id"] in asserted[table], "missing assertion projection: " + table
                 )
         coverage_py.validate_records(conn)
+        rails_routes.validate_records(conn)
 
     def export_jsonl(self, out_path: Path) -> dict[str, Any]:
         """Export complete canonical evidence and coherent compatibility projections.

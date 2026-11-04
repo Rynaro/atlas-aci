@@ -1,0 +1,46 @@
+{
+  "slice_id": "ACI-S24",
+  "criteria_changed": false,
+  "base_commit": "2e342a3aa354a465a548e29a3880bfb42a8550c0",
+  "additional_paths": [
+    "mcp-server/src/atlas_aci/storage/evidence.py",
+    "mcp-server/src/atlas_aci/frameworks/__init__.py",
+    "mcp-server/tests/slices/test_s24_*.py",
+    "mcp-server/tests/fixtures/rails_routes/**",
+    "CHANGELOG.md",
+    "README.md"
+  ],
+  "narrowed_paths": {},
+  "reasons": {
+    "storage/evidence.py": "Minimal S21-style closed-set amendment (EV1-EV6): RAILS_RELATION routes_to accepted only by ASSERTION_RELATIONS (never RELATIONS/REFERENCE_RELATIONS/EDGE_RELATIONS); occurrence kind rails_route bound 1:1 to role prefix rails_route: with path config/routes.rb and language ruby; routes_to resolution limited to INFERRED/AMBIGUOUS/UNRESOLVED; {rails} producer fingerprint branch (adapter, adapter_sha256, graph_producer_id, routes_path); validate_database rails evidence/assertion discrimination and file-entity source. No new entity kind, FIELDS or COLUMNS change. Fingerprinted: native producer, evidence, assertion, generation and snapshot ids change for all graphs (as S16/S21).",
+    "frameworks/__init__.py": "Package marker plus the closed adapter registry {rails} and normalize(names, languages) shared by CodeGraph and the index CLI.",
+    "tests/slices/test_s24_*.py": "Splits supporting isolation gates (G-OFF, G-ONOFF, G-ENVELOPE, G-MCP, G-NOLEAK, G-QUERY) into test_s24_isolation.py; AC tests stay in the declared test_s24_rails_routes.py.",
+    "tests/fixtures/rails_routes/**": "Nested fixture project (config/routes.rb, controllers, lib duplicate) plus provenance.json under the declared fixture directory.",
+    "codegraph.py": "Declared path; edits CG1-CG8 only: constructor frameworks=(), routes.rb byte capture, rails_routes.refresh between _resolve_rationale_assertions and _validate_evidence_projections, dropped-set exclusion, role/relation carve-outs, rails_routes.validate_records. _producer_inputs, _build_inputs and the configuration and generation-input shapes are unchanged.",
+    "CHANGELOG.md/README.md": "[Unreleased] entry (including producer-id churn) and an operator pointer to docs/frameworks/rails.md."
+  },
+  "operator_decisions": {
+    "architecture": "in-build opt-in: CodeGraph(frameworks=()) and atlas-aci index --frameworks rails over a closed registry {rails}; unknown name is a usage error (exit 2); no new generation kind; no protocol/query/server/tools edits (user decision 2026-11-04)",
+    "identity": "flag not in the configuration shape; adapter identity in the rails producer fingerprint and the rails_routes manifest key, which is absent when the flag is off; frameworks/* not hashed into _producer_inputs",
+    "shapes": "unique -> INFERRED; >=2 method entities -> AMBIGUOUS with sorted candidate_ids and reason ambiguous_controller_action (the only unresolved-with-candidates encoding evidence.py accepts); controller_not_found/action_not_found/unsupported_route_construct -> UNRESOLVED; convention label raw_target.mapping = rails_convention.v1",
+    "invalidation": "purge every rails-owned record on every build; recompute from scratch when enabled; rails ids added to the predecessor dropped set",
+    "constructs": "root config/routes.rb only; direct statements of a recognised draw block; receiverless get/post/put/patch/delete with plain literal path and plain literal to:; only as: allowed besides to:; hash-rocket, constraints/defaults/format/anchor and all other options or constructs are diagnostics with closed codes",
+    "lookup": "symbols table by class namespace and method owner ruby:Q with category instance; not restricted to app/controllers; default ASCII inflection only",
+    "churn": "producer/evidence/assertion/generation/snapshot id churn for all graphs accepted (S16/S21 precedent) and stated in plan, docs and PR"
+  },
+  "invariance_gates": [
+    "G-OFF",
+    "G-ONOFF",
+    "G-IMAGE",
+    "G-ENVELOPE",
+    "G-MCP",
+    "G-NOLEAK",
+    "G-QUERY",
+    "G-SRC",
+    "G-NOEXEC",
+    "G-RO",
+    "G-DEPS"
+  ],
+  "no_speculative_docker_ci_change": true,
+  "review": ".spectra/plans/aci-s24.review.json"
+}

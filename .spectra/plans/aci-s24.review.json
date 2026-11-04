@@ -1,0 +1,88 @@
+{
+ "slice_id": "ACI-S24",
+ "plan": ".spectra/plans/aci-s24.md",
+ "author": "orchestrator-ramza-plan-s24",
+ "checker": "atlas-s24-plan-checker",
+ "verdict": "APPROVE_WITH_CONDITIONS",
+ "method": "independent read-only code review; no commands executed",
+ "findings": [
+  {
+   "n": 1,
+   "severity": "MAJOR",
+   "summary": "CodeGraph.__init__ parameter 'frameworks' shadows the imported module (codegraph.py:874); frameworks.normalize(frameworks, ...) raises AttributeError; alias the import",
+   "disposition": "accepted as plan condition 1"
+  },
+  {
+   "n": 2,
+   "severity": "MAJOR",
+   "summary": "all_observed holds observation and history records (codegraph.py:3494, 3266); refresh must filter type==observation by path; AC-005(iii) asserts state failed with history present",
+   "disposition": "accepted as plan condition 2"
+  },
+  {
+   "n": 3,
+   "severity": "MAJOR",
+   "summary": "AC-005 is satisfied by global adapter recompute plus S10 remove_path/dep.plan, not per-file republish; state so in docs/PR/receipt; assert affected_paths contains config/routes.rb in (i),(ii) and add controller-only edit case (v)",
+   "disposition": "accepted as plan condition 3"
+  },
+  {
+   "n": 4,
+   "severity": "MAJOR",
+   "summary": "validate_records must not pin adapter_sha256 to the current file and must raise only ValueError (predecessor check at codegraph.py:2557-2560 catches only ValueError/KeyError/TypeError); add non-object raw_target corruption test",
+   "disposition": "accepted as plan condition 4"
+  },
+  {
+   "n": 5,
+   "severity": "MINOR",
+   "summary": "CLI: normalize in the index body before _open_graph (which maps ValueError to exit 1, __main__.py:33-37); UsageError exit 2; test both option orders",
+   "disposition": "accepted as plan condition 5"
+  },
+  {
+   "n": 6,
+   "severity": "MINOR",
+   "summary": "as: string must pass literal check (L) else unsupported_option; document that as is not recorded",
+   "disposition": "accepted as plan condition 6"
+  },
+  {
+   "n": 7,
+   "severity": "MINOR",
+   "summary": "literal value is bytes between delimiters, tolerate multiple string_content children; Day-1 probes %q, chained_string, heredoc, single-quote hash-brace and symbol kinds",
+   "disposition": "accepted as plan condition 7"
+  },
+  {
+   "n": 8,
+   "severity": "MINOR",
+   "summary": "skip patterns (codegraph.py:3688, config.py:26-48) make controller_not_found mean no indexed class; document and pin with a test",
+   "disposition": "accepted as plan condition 8"
+  },
+  {
+   "n": 9,
+   "severity": "MINOR",
+   "summary": "gate the always-on purge on a rails producer or manifest key probe; never call get_parser when OFF/absent/failed (counting-parser test); document per-build re-parse",
+   "disposition": "accepted as plan condition 9"
+  },
+  {
+   "n": 10,
+   "severity": "MINOR",
+   "summary": "AC-007 AST ban adds getattr/setattr/globals/locals/vars/breakpoint/input/__builtins__ and system/popen/spawn*/exec*/fork* attributes; spies via monkeypatch; OFF comparison under same spy",
+   "disposition": "accepted as plan condition 10"
+  },
+  {
+   "n": 11,
+   "severity": "MINOR",
+   "summary": "G-IMAGE compare_graphs.py lists explicit exclusions, asserts non-empty counts, records base/OFF/ON producer ids",
+   "disposition": "accepted as plan condition 11"
+  },
+  {
+   "n": 12,
+   "severity": "MINOR",
+   "summary": "document wrapped draw blocks yielding no facts and no diagnostic; add cheap validation test on a copy of an ON database for derived-generation carve-outs",
+   "disposition": "accepted as plan condition 12"
+  },
+  {
+   "n": 13,
+   "severity": "MINOR",
+   "summary": "scope complete and timebox credible but tight; keep cut order, never cut G-OFF/G-ONOFF/G-IMAGE/validate_records",
+   "disposition": "accepted as plan condition 13"
+  }
+ ]
+}

@@ -1,0 +1,19 @@
+{
+ "base_commit": "2e342a3aa354a465a548e29a3880bfb42a8550c0",
+ "method": "git archive 2e342a3 into a scratch tree, run in atlas-aci-dev-s16 (uid 1000, python 3.12.16)",
+ "tools_json": {
+  "sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+  "bytes": 1631472,
+  "matches_pin": true
+ },
+ "envelopes": {"MINIMUM_BUDGET": 3436, "COLLECTION_MINIMUM_BUDGET": 3448, "FIXED_ERROR_ENVELOPE_CAP": 797, "IMPACT_MINIMUM_BUDGET": 7730, "source": "asserted by the base tests test_s21/test_s22/test_s32 isolation (all passed at base)"},
+ "full_suite": {
+  "command": "pytest -q -p no:cacheprovider -v --deselect tests/slices/test_s08_integration.py::test_nonregular_pack_does_not_block_acquisition",
+  "result": "1 failed, 1587 passed, 10 skipped, 1 deselected in 583.93s",
+  "failed": ["tests/slices/test_s01_contract.py::test_call_deadline_after_initialization (known pre-existing failure under uid 1000)"],
+  "deselected": "test_s08_integration::test_nonregular_pack_does_not_block_acquisition (known flaky: a first unfiltered base run hung on it for >2 hours)",
+  "ci_reference": "baseline.json: 1589 passed, 10 skipped on CI"
+ },
+ "base_digest": "base-digest.json (compare_graphs.py --digest of the fixture built by base code)",
+ "stop_rule": "not triggered: the base is green apart from the two known pre-existing items"
+}

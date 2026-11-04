@@ -1,0 +1,35 @@
+{
+ "exclusions": [
+  "files.indexed_at",
+  "files.mtime_ns (differs between mounts)",
+  "generation_inputs.producer/schema (base vs off only: the producer id churns by design)",
+  "manifest.generation_id",
+  "manifest.generation_inputs.snapshot",
+  "retrieval_fts*",
+  "retrieval_documents.candidate_id",
+  "refs.id, edges.id, symbols.id (autoincrement)",
+  "refs.evidence_id, edges.assertion_id (producer-derived link ids)"
+ ],
+ "native_producer_ids": [
+  "b0ca305b50bd978f3d8fad30297347495423a851e841e13e92e1cf8f34ae966d"
+ ],
+ "path": "/hc/gimg/g-base/repos/f15e06a60669fca6007f0dcdbcde4e2fefee9f140e6aafd3896ea75b6909dfce/graph.9.db",
+ "rails_producer_ids": [],
+ "row_counts": {
+  "assertion_ids": 45,
+  "assertions": 45,
+  "assignment_targets": 0,
+  "edges": 0,
+  "entity_ids": 32,
+  "evidence_ids": 77,
+  "files": 8,
+  "import_bindings": 0,
+  "occurrence_ids": 77,
+  "rails_occurrence_ids": 0,
+  "rationale": 0,
+  "refs": 45,
+  "retrieval_documents": 40,
+  "symbols": 24
+ },
+ "sha256": "5ee206fad07a9e4c7d56fd37b120b7793f4c3137e57f19843ae8fc0aa1ba7a57"
+}

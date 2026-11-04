@@ -1,0 +1,144 @@
+{
+  "schema": "ramza/plan-state.v1",
+  "plan": "aci-s24",
+  "created_at": "2026-11-04T13:48:15Z",
+  "tier": "lite",
+  "phase": "DONE",
+  "phases_done": [
+    "RS",
+    "S",
+    "P",
+    "E",
+    "C",
+    "T",
+    "A",
+    "DONE"
+  ],
+  "rightsize": {
+    "score": 4,
+    "computed_tier": "lite",
+    "inputs": {
+      "files_est": 7,
+      "new_dep": false,
+      "public_api": true,
+      "migration": false,
+      "security": false,
+      "novel": true,
+      "stakes": "med"
+    }
+  },
+  "refine_cycles": 0,
+  "skips": [],
+  "gates": [
+    {
+      "rubric": "complexity",
+      "total": 9,
+      "dims": {
+        "scope": 2,
+        "ambiguity": 2,
+        "dependencies": 2,
+        "risk": 3
+      },
+      "verdict": "extended",
+      "at": "2026-11-04T14:10:18Z",
+      "label": "rails-routes"
+    },
+    {
+      "rubric": "explore",
+      "total": 81.5,
+      "dims": {
+        "alignment": 9,
+        "correctness": 8,
+        "maintainability": 8,
+        "performance": 9,
+        "simplicity": 8,
+        "risk": 7,
+        "innovation": 5
+      },
+      "verdict": "solid",
+      "at": "2026-11-04T14:10:18Z",
+      "label": "in-build-opt-in"
+    },
+    {
+      "rubric": "confidence",
+      "total": 83.75,
+      "dims": {
+        "pattern_match": 85,
+        "requirement_clarity": 85,
+        "decomposition_stability": 80,
+        "constraint_compliance": 85
+      },
+      "verdict": "VALIDATE",
+      "at": "2026-11-04T14:10:18Z",
+      "label": "rails-routes"
+    },
+    {
+      "rubric": "refine",
+      "cycle": 1,
+      "total": 4.6,
+      "min": 4,
+      "dims": {
+        "clarity": 4,
+        "completeness": 5,
+        "actionability": 5,
+        "efficiency": 4,
+        "testability": 5
+      },
+      "verdict": "pass",
+      "at": "2026-11-04T14:10:18Z",
+      "label": "pre-checker"
+    },
+    {
+      "rubric": "refine",
+      "cycle": 1,
+      "total": 3.8,
+      "min": 3,
+      "dims": {
+        "clarity": 4,
+        "completeness": 4,
+        "actionability": 4,
+        "efficiency": 3,
+        "testability": 4
+      },
+      "verdict": "pass",
+      "at": "2026-11-04T14:35:43Z",
+      "label": "post-checker"
+    }
+  ],
+  "amendments": [],
+  "declared_scope": [
+    ".spectra/plans/aci-s24.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/changes/aci-s24/*",
+    ".spectra/evidence/aci-s24/*",
+    ".spectra/state/aci-s24.execution.json",
+    ".spectra/backlog/execution.json",
+    ".spectra/backlog/order.md",
+    "mcp-server/src/atlas_aci/frameworks/__init__.py",
+    "mcp-server/src/atlas_aci/frameworks/rails_routes.py",
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/src/atlas_aci/__main__.py",
+    "mcp-server/src/atlas_aci/storage/evidence.py",
+    "mcp-server/tests/slices/test_s24_rails_routes.py",
+    "mcp-server/tests/slices/test_s24_*.py",
+    "mcp-server/tests/fixtures/rails_routes/**",
+    "docs/frameworks/rails.md",
+    "CHANGELOG.md",
+    "README.md"
+  ],
+  "criteria_sha256": "7bb68294a58a4ac246660bf33b6dd407a3994d56b6e8b889ae3a551309ee1173",
+  "critic": {
+    "author": null,
+    "checker": null
+  },
+  "criteria_frozen_at": "2026-11-04T14:35:43Z",
+  "scope_declared_at": "2026-11-04T14:35:43Z",
+  "drift_reports": [
+    {
+      "at": "2026-11-04T17:33:17Z",
+      "range": "staged",
+      "files_changed": 56,
+      "uncovered": []
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+ "description": "ACI-S24 Rails routes fixture; ASCII, hand-written; every file is byte-exact",
+ "files": {
+  "app/controllers/admin/users_controller.rb": {"bytes": 113, "sha256": "42e37488c1e06b8a69db9f5201c2a53341f768f46c381552541115cb57b25690"},
+  "app/controllers/api/v1/ping_controller.rb": {"bytes": 105, "sha256": "41e568f5efdcf6f4701d8fe5a9acab071d13a54ef7459656c5797fac957f9c4c"},
+  "app/controllers/api/v1/widgets_controller.rb": {"bytes": 92, "sha256": "51009bd772442270b480903355ea587e6ff6d8d7df611ee47106cfa42ce93ca9"},
+  "app/controllers/legacy/orders_controller.rb": {"bytes": 80, "sha256": "243d54da8da5069b1488594d13cc4ed62b39b54487f76d45302712d4b4cd9118"},
+  "app/controllers/reports_controller.rb": {"bytes": 53, "sha256": "a073595a7250bb6412e847fa11dccacba7017425561526b214e3956d8d3d7b5c"},
+  "app/controllers/users_controller.rb": {"bytes": 152, "sha256": "5728cd8c323384171c43c96361ded941888eca227f03e53013601e323e6bf4b9"},
+  "config/routes.rb": {"bytes": 1625, "sha256": "490cca82d23c0e678314ceee6ac36068207db4715f3d0aad3eab8ace6cd8cdbf"},
+  "lib/legacy/orders_controller.rb": {"bytes": 80, "sha256": "243d54da8da5069b1488594d13cc4ed62b39b54487f76d45302712d4b4cd9118"}
+ }
+}
