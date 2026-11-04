@@ -1,0 +1,10 @@
+{
+  "bytes": 1095904,
+  "change_set_ms": 8271,
+  "changes": 1,
+  "index_ms": 60953,
+  "n_files": 2040,
+  "peak_rss_mb": 235,
+  "staging_build_ms": 61695,
+  "staging_ms_per_file": 30.243
+}

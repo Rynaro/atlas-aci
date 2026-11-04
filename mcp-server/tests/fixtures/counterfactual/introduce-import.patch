@@ -1,0 +1,10 @@
+diff --git a/pkg/domain/b.py b/pkg/domain/b.py
+index fcac4c2..11a0a7e 100644
+--- a/pkg/domain/b.py
++++ b/pkg/domain/b.py
+@@ -1,2 +1,5 @@
++from ..infra.c import fc
++
++
+ def fb():
+     return 1

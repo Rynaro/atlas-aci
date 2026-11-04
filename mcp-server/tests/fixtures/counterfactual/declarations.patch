@@ -1,0 +1,38 @@
+diff --git a/pkg/domain/b.py b/pkg/domain/b.py
+index fcac4c2..cc92a45 100644
+--- a/pkg/domain/b.py
++++ b/pkg/domain/b.py
+@@ -1,2 +1,6 @@
+-def fb():
++def fb(x=0):
+     return 1
++
++
++def fb2():
++    return 2
+diff --git a/pkg/domain/e.py b/pkg/domain/e.py
+deleted file mode 100644
+index e9cb4ee..0000000
+--- a/pkg/domain/e.py
++++ /dev/null
+@@ -1,2 +0,0 @@
+-def fe():
+-    return 5
+diff --git a/pkg/domain/n.py b/pkg/domain/n.py
+new file mode 100644
+index 0000000..ae6355c
+--- /dev/null
++++ b/pkg/domain/n.py
+@@ -0,0 +1,2 @@
++def fn():
++    return 7
+diff --git a/pkg/infra/c.py b/pkg/infra/c.py
+index f823c07..25714bc 100644
+--- a/pkg/infra/c.py
++++ b/pkg/infra/c.py
+@@ -2,4 +2,4 @@ from ..domain.b import fb
+ 
+ 
+ def fc():
+-    return fb()
++    return fb() + 1

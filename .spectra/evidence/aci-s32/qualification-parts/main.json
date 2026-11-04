@@ -1,0 +1,195 @@
+{
+  "a": {
+    "base_record_types": [
+      "observation"
+    ],
+    "base_snapshot_id": "f525d83f18e8550e23eaf6fd5dee3dac2c693fb6c3beb065f43c69c93b789348",
+    "base_states": [
+      "indexed"
+    ],
+    "change_set_id": "52f67a183f27dc9807ba902119016ae9c1c0fc616b8306f3b043fcdfd7a3dc47",
+    "changes": 0,
+    "compat_keys": [
+      "configuration_sha256",
+      "identity_kind",
+      "identity_rule",
+      "producer_sha256",
+      "schema"
+    ],
+    "compatible": true,
+    "generation_id_equal": true,
+    "manifest_differing_keys": [],
+    "n_overlays": 7,
+    "observation_vectors_equal": true,
+    "partial_paths": [],
+    "snapshot_id_equal": true,
+    "staged_snapshot_id": "f525d83f18e8550e23eaf6fd5dee3dac2c693fb6c3beb065f43c69c93b789348",
+    "tag": "a"
+  },
+  "b": {
+    "compare_bytes_equal": true,
+    "compare_bytes_len": 10270,
+    "generation_id_equal": true,
+    "manifest_differing_keys": [],
+    "snapshot_id_equal": true
+  },
+  "c": {
+    "context_equal": true,
+    "identity_equal": true,
+    "producer_inputs_equal": true,
+    "staged_configuration_equals_base": true,
+    "staged_producer_equals_base": true
+  },
+  "d": {
+    "base_report_equals_run": true,
+    "report_id_equal": true,
+    "staged_report_bytes_equal_real": true
+  },
+  "e": {
+    "base_record_types": [
+      "observation"
+    ],
+    "base_snapshot_id": "f525d83f18e8550e23eaf6fd5dee3dac2c693fb6c3beb065f43c69c93b789348",
+    "base_states": [
+      "indexed"
+    ],
+    "change_set_id": "52f67a183f27dc9807ba902119016ae9c1c0fc616b8306f3b043fcdfd7a3dc47",
+    "changes": 0,
+    "compat_keys": [
+      "configuration_sha256",
+      "identity_kind",
+      "identity_rule",
+      "producer_sha256",
+      "schema"
+    ],
+    "compatible": true,
+    "generation_id_equal": true,
+    "manifest_differing_keys": [],
+    "n_overlays": 7,
+    "observation_vectors_equal": true,
+    "partial_paths": [],
+    "same_snapshot_as_a": true,
+    "snapshot_id_equal": true,
+    "staged_snapshot_id": "f525d83f18e8550e23eaf6fd5dee3dac2c693fb6c3beb065f43c69c93b789348",
+    "tag": "e",
+    "zz_observed": false
+  },
+  "f": {
+    "generation_equal": true,
+    "scratch_dirs_differ": true,
+    "snapshot_equal": true,
+    "t1_snapshot": "f525d83f18e8550e23eaf6fd5dee3dac2c693fb6c3beb065f43c69c93b789348",
+    "t3_snapshot": "f525d83f18e8550e23eaf6fd5dee3dac2c693fb6c3beb065f43c69c93b789348"
+  },
+  "triggers": {
+    "empty_source_selection": [
+      {
+        "id": "domain-a-not-infra",
+        "outcome": "unknown",
+        "reasons": [
+          "empty_source_selection"
+        ]
+      },
+      {
+        "id": "domain-not-infra",
+        "outcome": "satisfied_within_scope",
+        "reasons": []
+      }
+    ],
+    "i_parse_error": {
+      "categories": [
+        "unknown"
+      ],
+      "failed": [
+        [
+          "pkg/domain/b.py",
+          "failed",
+          "parse_error"
+        ]
+      ],
+      "partial_paths": [
+        "pkg/domain/b.py"
+      ],
+      "record_types": [
+        "observation"
+      ],
+      "unknown_reasons": [
+        "extraction_failed_after"
+      ]
+    },
+    "ii_changed_file_limit": {
+      "code": "IMPACT_DIFF_TOO_LARGE",
+      "reason": "changed_file_limit"
+    },
+    "iii_entity_limit": {
+      "code": "IMPACT_DIFF_TOO_LARGE",
+      "reason": "diff_entity_limit"
+    },
+    "iv_depth1": [
+      {
+        "counterexamples": 0,
+        "id": "domain-a-not-infra",
+        "outcome": "incomplete_due_to_budget",
+        "reasons": [
+          "depth_limit"
+        ],
+        "violating_pairs": 0
+      },
+      {
+        "counterexamples": 1,
+        "id": "domain-not-infra",
+        "outcome": "violated",
+        "reasons": [
+          "depth_limit"
+        ],
+        "violating_pairs": 1
+      }
+    ],
+    "iv_full": [
+      {
+        "id": "domain-a-not-infra",
+        "outcome": "violated",
+        "reasons": [],
+        "violating_pairs": 1
+      },
+      {
+        "id": "domain-not-infra",
+        "outcome": "violated",
+        "reasons": [],
+        "violating_pairs": 2
+      }
+    ],
+    "v_import_json": [
+      {
+        "id": "domain-a-not-infra",
+        "outcome": "unknown",
+        "reasons": [
+          "unresolved_import"
+        ]
+      },
+      {
+        "id": "domain-not-infra",
+        "outcome": "unknown",
+        "reasons": [
+          "unresolved_import"
+        ]
+      }
+    ],
+    "v_relative_missing": [
+      {
+        "id": "domain-a-not-infra",
+        "outcome": "unknown",
+        "reasons": [
+          "unresolved_import"
+        ]
+      },
+      {
+        "id": "domain-not-infra",
+        "outcome": "unknown",
+        "reasons": [
+          "unresolved_import"
+        ]
+      }
+    ]
+  }
+}

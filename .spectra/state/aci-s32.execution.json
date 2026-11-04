@@ -1,0 +1,32 @@
+{
+  "schema": "atlas-aci/slice-execution.v1",
+  "slice_id": "ACI-S32",
+  "issue_url": "https://github.com/Rynaro/atlas-aci/issues/53",
+  "criteria_sha256": "1d713204b1c51813227214cd35a204df6339cf13650037a259f3311d7d02cd8e",
+  "base_commit": "79ae0b0f20279f24f7bb0c5d8a324871d249c087",
+  "output_commit": null,
+  "declared_paths": [
+    "mcp-server/src/atlas_aci/counterfactual/__init__.py",
+    "mcp-server/src/atlas_aci/counterfactual/patch_input.py",
+    "mcp-server/src/atlas_aci/counterfactual/analyze.py",
+    "mcp-server/src/atlas_aci/__main__.py",
+    "mcp-server/tests/slices/test_s32_counterfactual.py",
+    "mcp-server/tests/fixtures/counterfactual/*",
+    "docs/counterfactual-analysis.md",
+    "CHANGELOG.md",
+    "README.md",
+    ".spectra/plans/aci-s32.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/changes/aci-s32/*",
+    ".spectra/evidence/aci-s32/*",
+    ".spectra/state/aci-s32.execution.json",
+    ".spectra/backlog/execution.json",
+    ".spectra/backlog/order.md"
+  ],
+  "output_digests": {},
+  "status": "IN_PROGRESS",
+  "started_at": "2026-11-04T07:02:00Z",
+  "planning_state": ".spectra/plans/aci-s32.state.json",
+  "plan": ".spectra/plans/aci-s32.md",
+  "results": []
+}

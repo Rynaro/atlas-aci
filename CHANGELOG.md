@@ -9,6 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Counterfactual patch analysis (ACI-S32).** New operator command
+  `atlas-aci counterfactual --repo R --base-snapshot ID --patch P [--rules F]` (library
+  `atlas_aci.counterfactual`) applies a proposed unified diff to the base snapshot's own source
+  bytes, indexes the result into a temporary namespace outside the repository (never published,
+  removed on every exit path), and prints a canonical `atlas-counterfactual-report.v1`: the S19
+  source diff between the declared base and the staged snapshot, and, with a rule document, the
+  per-rule before/after S31 classification (introduced, resolved, persisting). The report is
+  labelled hypothetical and identified by the base snapshot, patch digest and producer
+  configuration. Unsafe or non-applying patches (escaping paths, symlink, submodule, binary,
+  rename/copy, mode changes, context mismatch, limits) are rejected with a closed reason before
+  anything is indexed; truncated or unresolved analyses are marked `incomplete` and never shown as
+  a clean delta. The working tree, git state and active graph are never modified. Documented in
+  `docs/counterfactual-analysis.md`, including measured cost (staging re-indexes every observed
+  file). No MCP operation, producer, schema or dependency change; the tools JSON is
+  byte-identical.
+
 - **Forbidden-import architecture rules (ACI-S31).** New operator command
   `atlas-aci check-architecture --repo R --rules rules.json` (library `atlas_aci.architecture`)
   evaluates a closed `atlas-architecture-rules.v1` document (`import` relation, closed selector

@@ -1,0 +1,10 @@
+{
+  "base_identity_kind": "git",
+  "change_set": {
+    "code": "SNAPSHOT_DIFF_REJECTED",
+    "reason": "identity_kind_mismatch"
+  },
+  "check_compatible": "DiffRejected:identity_kind_mismatch",
+  "staged_identity_kind": "git_unavailable",
+  "staging_with_slow_git_ms": 3167
+}

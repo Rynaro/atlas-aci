@@ -1,0 +1,10 @@
+diff --git a/pkg/domain/e.py b/pkg/domain/e.py
+index e9cb4ee..a73c50b 100644
+--- a/pkg/domain/e.py
++++ b/pkg/domain/e.py
+@@ -1,2 +1,5 @@
++from ..infra.c import fc
++
++
+ def fe():
+     return 5

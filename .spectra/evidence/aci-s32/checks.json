@@ -1,0 +1,81 @@
+{
+  "harness": {
+    "wrapper": "dk32.sh = docker run --rm --user 1000:1000 -e HOME=/hc -e PYTHONPATH=/ws/mcp-server/src -v <scratch>/home:/hc -v <repo>:/ws -w /ws/mcp-server atlas-aci-dev-s16",
+    "dev_image": "atlas-aci-dev-s16 sha256:783f2210c3d12ae25c567c76366b6b6dd09d4aa0c93ea1aee4fb03d8f17e859a (lock unchanged since base)"
+  },
+  "s32_contract": {
+    "exit_code": 0,
+    "summary": "37 passed",
+    "log": "s32-contract.log.gz"
+  },
+  "regression": {
+    "exit_code": 0,
+    "summary": "393 passed, 1 skipped (test_s08_*, test_s19_*, test_s20_*, test_s31_*, test_thesis_negatives, test_export)",
+    "log": "regression.log.gz"
+  },
+  "orchestrator_rerun": [
+    {
+      "command": "dk32.sh pytest -p no:cacheprovider tests/slices/test_s32_counterfactual.py",
+      "exit_code": 0,
+      "summary": "37 passed"
+    },
+    {
+      "command": "dk32.sh exact CI lint/type steps (ruff check+format src/ tests/, mypy src/, ruff check+format ../scripts/ --exclude fingerprint-fixture, mypy ../scripts/)",
+      "exit_code": 0
+    },
+    {
+      "command": "dk32.sh pytest -q (full suite, orchestrator run after identity fix)",
+      "exit_code": 1,
+      "summary": "1 failed, 1538 passed, 10 skipped",
+      "failed": [
+        "tests/slices/test_s01_contract.py::test_call_deadline_after_initialization"
+      ]
+    }
+  ],
+  "ruff": {
+    "exit_code": 0
+  },
+  "format": {
+    "exit_code": 0
+  },
+  "mypy": {
+    "exit_code": 0
+  },
+  "full_suite": {
+    "exit_code": 1,
+    "summary": "1 failed, 1538 passed, 10 skipped",
+    "failed": [
+      "tests/slices/test_s01_contract.py::test_call_deadline_after_initialization"
+    ],
+    "classification": "pre-existing under uid 1000",
+    "log": "full-suite.log.gz"
+  },
+  "g_src": {
+    "exit_code": 0,
+    "note": "server.py, enforcement.py, config.py, codegraph.py, protocol/, query/, tools/, storage/, extractors/, providers/, architecture/, indexing/, reports/, pyproject.toml, uv.lock, .github/workflows byte-unchanged vs 79ae0b0; src changes limited to counterfactual/* and __main__.py (orchestrator re-checked on the staged tree)"
+  },
+  "g_mcp": {
+    "exit_code": 0,
+    "tools_json_sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+    "tools_json_bytes": 1631472
+  },
+  "g_envelope": {
+    "MINIMUM_BUDGET": 3436,
+    "COLLECTION_MINIMUM_BUDGET": 3448,
+    "FIXED_ERROR_ENVELOPE_CAP": 797,
+    "IMPACT_MINIMUM_BUDGET": 7730,
+    "source": "unchanged: protocol/query byte-unchanged; pinned by test_s32 isolation"
+  },
+  "drift": "ramza-drift --staged: changed files all within declared scope",
+  "production_image": {
+    "build": "docker build -t atlas-aci:s32 mcp-server",
+    "image_id": "sha256:4d44978b1c5f8b8b6f69c82d845a76d326295637c6e7c2628504d6bb421fe9ff",
+    "scenario": "git repo pkg/domain/a.py -> pkg/svc/b.py; git-generated patch (--no-renames, isolated config) makes b.py import ..infra.c; indexed --network none as uid 1000; counterfactual run --read-only --network none with repo/graph/patch/rules :ro and only a scratch root writable",
+    "result": "exit 0; report with S19 source diff, S31 architecture delta and hypothetical identity (kind hypothetical, published false)",
+    "replay": "6 consecutive runs plus 2 gate runs: rc=0, byte-identical reports",
+    "read_only": "sha256 inventory of repo and graph root, git for-each-ref, HEAD and status --porcelain unchanged; scratch root empty afterwards",
+    "rejections": "patch escaping the repo -> exit 1 'Counterfactual patch rejected: invalid_path', no stdout; wrong --base-snapshot -> exit 1 base_snapshot_mismatch",
+    "defect_found_and_fixed": "first image alternated rc=0/1 with staged_incompatible: identity_kind_mismatch: Docker Desktop bind-mount ownership flips between uid 0 and 1000, so git's dubious-ownership check flipped between the base lease probe and the staged build probe. Fix: staged build records the base manifest's identity (no live git probe); regression tests added; 6/6 runs pass after rebuild"
+  },
+  "day1_qualification": "qualification.json: unmodified staging equals base (snapshot, generation, empty change set); history-record bases rejected as base_not_buildable (a2); patched staging equals a real build; producer/configuration unchanged; S31 parity; live-tree independence; scratch-path determinism; self-index 623 files staged in 70 s; synthetic 2040/5100 files at 30-39 ms/file"
+}

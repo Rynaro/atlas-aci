@@ -924,6 +924,176 @@ def check_architecture(
     stream.flush()
 
 
+_COUNTERFACTUAL_LIMITS = (
+    ("max_patch_bytes", "Patch size in bytes (1..262144)"),
+    ("max_files", "Files in the patch (1..32)"),
+    ("max_hunks", "Hunks in the patch (1..1024)"),
+    ("max_line_bytes", "Bytes per patch line (1..65536)"),
+    ("max_result_file_bytes", "Bytes per patched file (1..8388608)"),
+    ("max_base_files", "Observed files in the base (1..200000)"),
+    ("max_base_bytes", "Distinct source bytes in the base (1..2147483648)"),
+    ("max_listed_failures", "Failed files listed in the report (0..1024)"),
+    ("max_diff_entities", "S19 entity admission bound (0..10^9)"),
+    ("max_diff_occurrences", "S19 occurrence admission bound (0..10^9)"),
+    ("max_changed_files", "S19 changed-file admission bound (0..10^9)"),
+    ("max_depth", "Rules: hops per source search (1..32)"),
+    ("max_visited_nodes", "Rules: files per search (1..1000)"),
+    ("max_examined_edges", "Rules: import rows per search"),
+    ("max_total_examined_edges", "Rules: import rows per run (0..2000000)"),
+    ("max_sources_per_rule", "Rules: sources per rule (1..4096)"),
+    ("max_counterexamples_per_rule", "Rules: emitted witnesses (1..64)"),
+    ("max_boundaries_per_rule", "Rules: emitted boundaries"),
+)
+
+
+def _counterfactual_limit_options(command):
+    for name, help_text in reversed(_COUNTERFACTUAL_LIMITS):
+        command = click.option(
+            "--" + name.replace("_", "-"), name, default=None, type=int, help=help_text
+        )(command)
+    return command
+
+
+@cli.command()
+@click.option(
+    "--repo",
+    required=True,
+    type=click.Path(exists=True, file_okay=False, path_type=Path),
+    help="Repository whose indexed snapshot is the base",
+)
+@click.option(
+    "--graph-root",
+    default=None,
+    type=click.Path(path_type=Path),
+    help="External graph root of the base (default: <repo>/.atlas)",
+)
+@click.option(
+    "--base-snapshot",
+    "base_snapshot",
+    required=True,
+    help="Snapshot id the patch is declared against (must be the active snapshot)",
+)
+@click.option(
+    "--patch",
+    "patch_path",
+    required=True,
+    type=click.Path(dir_okay=False, path_type=Path),
+    help="Unified diff (git or plain headers); read once, never applied to the checkout",
+)
+@click.option(
+    "--rules",
+    "rules_path",
+    default=None,
+    type=click.Path(dir_okay=False, path_type=Path),
+    help="Optional atlas-architecture-rules.v1 document evaluated before and after",
+)
+@click.option(
+    "--scratch-root",
+    default=None,
+    type=click.Path(file_okay=False, path_type=Path),
+    help="Existing directory for the temporary staged namespace (default: the system temp dir)",
+)
+@click.option("--timing", is_flag=True, help="Print the elapsed milliseconds to stderr")
+@_counterfactual_limit_options
+def counterfactual(
+    repo: Path,
+    graph_root: Path | None,
+    base_snapshot: str,
+    patch_path: Path,
+    rules_path: Path | None,
+    scratch_root: Path | None,
+    timing: bool,
+    **limits: int | None,
+) -> None:
+    """Analyze a proposed patch in an isolated hypothetical snapshot.
+
+    Prints the canonical `atlas-counterfactual-report.v1` (JSON) on stdout. The report is
+    HYPOTHETICAL: the patch is applied to the base snapshot's source bytes, indexed into a
+    temporary namespace outside the repository, compared with the base, and discarded. The
+    checkout, git state and active graph are never modified. Exit 0 means the analysis ran:
+    read each `analyses` status. Nothing is printed on rejection (exit 1) or invalid usage
+    (exit 2).
+    """
+    import re
+    import sqlite3
+
+    from atlas_aci.architecture import rules
+    from atlas_aci.counterfactual import analyze, patch_input
+    from atlas_aci.query import diff as symbol_diff
+
+    started = None
+    if timing:
+        import time
+
+        started = time.perf_counter_ns()
+    if re.fullmatch(r"[0-9a-f]{64}", base_snapshot) is None:
+        raise click.UsageError("--base-snapshot must be a 64-character lowercase hex snapshot id.")
+    try:
+        effective = analyze.normalize_limits(limits, with_rules=rules_path is not None)
+    except analyze.CounterfactualUsageError as exc:
+        raise click.UsageError("Invalid counterfactual limit: " + str(exc.name)) from None
+    try:
+        with patch_path.open("rb") as handle:
+            raw_patch = handle.read(int((effective["patch"] or {})["max_patch_bytes"]) + 1)
+    except OSError:
+        # Fixed text: the underlying message spells the path.
+        raise click.ClickException("Counterfactual patch file cannot be read.") from None
+    raw_rules = None
+    if rules_path is not None:
+        try:
+            with rules_path.open("rb") as handle:
+                raw_rules = handle.read(rules.MAX_DOCUMENT_BYTES + 1)
+        except OSError:
+            raise click.ClickException("Architecture rules file cannot be read.") from None
+    try:
+        report = analyze.run(
+            symbol_diff.Side(repo.resolve(), graph_root),
+            base_snapshot,
+            raw_patch,
+            rule_bytes=raw_rules,
+            limits=limits,
+            scratch_root=scratch_root,
+        )
+    except patch_input.PatchRejected as exc:
+        raise click.ClickException(f"Counterfactual patch rejected: {exc.reason}") from None
+    except rules.InvalidRule as exc:
+        where = "" if exc.rule_index is None else f" (rule {exc.rule_index})"
+        raise click.ClickException(
+            f"Architecture rules rejected: invalid_rule: {exc.reason}{where}"
+        ) from None
+    except analyze.CounterfactualUsageError as exc:
+        usage = {
+            "limit": "Invalid counterfactual limit: " + str(exc.name),
+            "base_snapshot": "--base-snapshot must be a 64-character lowercase hex snapshot id.",
+            "scratch_root": (
+                "The scratch root must be an existing directory outside the repository "
+                "and its graph root."
+            ),
+            "namespace": "The repository cannot be opened as a graph namespace.",
+        }
+        raise click.UsageError(usage[exc.kind]) from None
+    except analyze.CounterfactualRejected as exc:
+        raise click.ClickException(f"Counterfactual analysis rejected: {exc.reason}") from None
+    except analyze.CounterfactualFailed as exc:
+        detail = "" if exc.detail is None else f": {exc.detail}"
+        raise click.ClickException(
+            f"Counterfactual analysis failed: {exc.reason}{detail}"
+        ) from None
+    except (OSError, ValueError, sqlite3.Error) as exc:
+        # Never `str(exc)`: a message may carry a repository, graph-root or patch path.
+        raise click.ClickException(
+            "Counterfactual analysis failed: " + type(exc).__name__
+        ) from None
+    stream = click.get_binary_stream("stdout")
+    stream.write(analyze.canonical_bytes(report))
+    stream.flush()
+    if started is not None:
+        import time
+
+        elapsed = (time.perf_counter_ns() - started) // 1_000_000
+        click.echo(f"Counterfactual timing: elapsed_ms={elapsed}", err=True)
+
+
 @cli.command()
 @click.option(
     "--repo", required=True, type=click.Path(exists=True, file_okay=False, path_type=Path)

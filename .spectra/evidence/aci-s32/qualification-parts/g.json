@@ -1,0 +1,23 @@
+{
+  "bytes": 5408389,
+  "change_set_ms": 9424,
+  "changes": 1,
+  "files": 623,
+  "index_ms": 64966,
+  "index_stats": {
+    "edges": 4222,
+    "files_failed": 1,
+    "files_indexed": 622,
+    "files_removed": 0,
+    "files_skipped": 0,
+    "rationale": 1,
+    "refs": 34145,
+    "schema_epoch": 9,
+    "symbols": 4923
+  },
+  "pack_read_ms": 11,
+  "peak_rss_mb": 305,
+  "s31_two_sides_ms": 16851,
+  "staging_build_ms": 69844,
+  "wall_ms": 96130
+}

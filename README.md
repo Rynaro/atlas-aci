@@ -939,6 +939,7 @@ digest never changes. Each release's notes include the exact
 | [`atlas/docs/validation-plan.md`](atlas/docs/validation-plan.md) | Evidence-backed, advisory validation plan from impact plus observed coverage (`atlas-aci validation-plan`; CLI only, no MCP op) |
 | [`docs/evidence-reports.md`](docs/evidence-reports.md) | Exporting one scoped context answer as offline HTML plus canonical JSON (`atlas-aci evidence-report`; CLI only, no MCP op) |
 | [`docs/architecture-rules.md`](docs/architecture-rules.md) | Declarative forbidden-import rules checked against one indexed snapshot with bounded counterexamples (`atlas-aci check-architecture`; CLI only, no MCP op) |
+| [`docs/counterfactual-analysis.md`](docs/counterfactual-analysis.md) | Hypothetical analysis of a proposed patch: S19 source diff and S31 rule delta against a declared base snapshot, staged outside the checkout and never published (`atlas-aci counterfactual`; CLI only, no MCP op) |
 | [`SETUP.md`](SETUP.md) | End-to-end playbook: install → host wiring → canaries → hardening |
 | [`INTEGRATION.md`](INTEGRATION.md) | Onboarding an existing codebase: indexing, skip tuning, freshness, multi-repo |
 | [`CLAUDE.md`](CLAUDE.md) | How Claude Code should navigate this repo when opened in an agent loop |

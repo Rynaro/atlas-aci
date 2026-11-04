@@ -1,0 +1,76 @@
+{
+ "slice_id": "ACI-S32",
+ "plan": ".spectra/plans/aci-s32.md",
+ "author": "orchestrator-ramza-plan-s32",
+ "checker": "atlas-s32-plan-checker",
+ "verdict": "APPROVE_WITH_CONDITIONS",
+ "method": "independent read-only code review; no commands executed",
+ "findings": [
+  {
+   "n": 1,
+   "severity": "MAJOR",
+   "summary": "from-scratch staging cannot reproduce a base with history records or incremental lineage (codegraph.py:2576-2580,3266-3270,3494-3496); D5 step 6 drops history; add Day-1 a2 with failed-history and deleted-file --since base, reject non-observation source_observations records as base_not_buildable unless a2 proves equality",
+   "disposition": "accepted as plan condition 1"
+  },
+  {
+   "n": 2,
+   "severity": "MAJOR",
+   "summary": "SourceLease.read ValueError (snapshots.py:661-677) and change_set ValueError (impact.py:233) escape typed paths; analyze.run must wrap every stage into closed reasons so no raw exception crosses the library boundary; add real-fixture test",
+   "disposition": "accepted as plan condition 2"
+  },
+  {
+   "n": 3,
+   "severity": "MAJOR",
+   "summary": "D2 under-specifies backslash-no-newline binding (context line both sides, mid-hunk between - and +, leading or duplicate malformed); add grammar table cases, CRLF byte-exact and tab-after-path header tests",
+   "disposition": "accepted as plan condition 3"
+  },
+  {
+   "n": 4,
+   "severity": "MINOR",
+   "summary": "DECL delete e.py plus create n.py triggers git rename detection; generate oracle patches with --no-renames, pinned prefixes and isolated git config, LF-only static fixtures with sha256 pins",
+   "disposition": "accepted as plan condition 4"
+  },
+  {
+   "n": 5,
+   "severity": "MINOR",
+   "summary": "patch limits inside hypothetical_snapshot_id hash exceed AC-001 wording (base snapshot, patch digest, producer configuration); move limits to effective_limits or document as admission policy with test",
+   "disposition": "accepted as plan condition 5"
+  },
+  {
+   "n": 6,
+   "severity": "MINOR",
+   "summary": "diff._build partial includes paths failed on both sides (diff.py:458-462) so any base failed file makes source_diff permanently incomplete; split partial_paths into touched and preexisting",
+   "disposition": "accepted as plan condition 6"
+  },
+  {
+   "n": 7,
+   "severity": "MINOR",
+   "summary": "empty_source/target_selection (checker.py:466-469) forces resolved null on legitimate deletions, and non-null lists are lower bounds when the other side is non-exhaustive; special-case or document",
+   "disposition": "accepted as plan condition 7"
+  },
+  {
+   "n": 8,
+   "severity": "MINOR",
+   "summary": "reject file/directory prefix collisions in P2; use Path.suffix semantics and per-component skip match exactly as build; avoid duplicate blob copies when summing max_base_bytes",
+   "disposition": "accepted as plan condition 8"
+  },
+  {
+   "n": 9,
+   "severity": "MINOR",
+   "summary": "build structlog output (codegraph.py:3480) goes to stderr only via the CLI group (__main__.py:47-57) and to stdout for library callers; scope the no-path claim to CLI fixed messages, use .py-only fixtures for the timing stderr test",
+   "disposition": "accepted as plan condition 9"
+  },
+  {
+   "n": 10,
+   "severity": "MINOR",
+   "summary": "Day-1 must record real triggers for every AC-007 path (case v import json), synthetic N-file scaling, and the 3s git identity probe flake mapped to a typed reason",
+   "disposition": "accepted as plan condition 10"
+  },
+  {
+   "n": 11,
+   "severity": "MINOR",
+   "summary": "docs must name limitations: non-ASCII quoted paths, not_utf8 sources, 20000-file cap, import/scip/coverage bases rejected, live symlink preflight, cold extraction cache",
+   "disposition": "accepted as plan condition 11"
+  }
+ ]
+}

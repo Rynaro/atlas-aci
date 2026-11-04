@@ -1,0 +1,8 @@
+diff --git a/pkg/domain/b.py b/pkg/domain/b.py
+index fcac4c2..794c478 100644
+--- a/pkg/domain/b.py
++++ b/pkg/domain/b.py
+@@ -1,2 +1 @@
+-def fb():
+-    return 1
++def fb(:
