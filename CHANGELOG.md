@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Security
+
+- **Dependency floors raised against known fixable CVEs.** `mcp` is now `>=1.28.1,<2`
+  (CVE-2026-52869, CVE-2026-52870, CVE-2026-59950; the `<2` bound keeps a fresh resolve off
+  the breaking 2.x SDK) and `constraint-dependencies` gains/raises floors: `anyio>=4.14.2`
+  (CVE-2026-63374), `certifi>=2026.10.18` (GHSA-6q48-6c7w-9gw2), `cryptography>=50.0.0`
+  (CVE-2026-69247), `pyjwt>=2.15.1` (CVE-2026-102268 family). Lockfile regenerated
+  (mcp 1.27.0 -> 1.30.0). A digest-pinned image rebuilt from this lock scans Trivy-clean for
+  fixable HIGH/CRITICAL findings, where the previous lock carried 3 CRITICAL + 10 HIGH.
+  Known consequence: the S23 evidence manifest stays byte-frozen (its raw records embed
+  `manifest_sha256`), so `test_manifest_anchors_declared_inputs_and_p0_ids_still_exist`
+  now fails by design — the anchor tripwire caught the lockfile the eval cited changing.
+  Resolving it (re-record S23 under a new manifest, or revise the anchor semantics) is a
+  separate, deliberate evidence decision.
+
 ### Added
 
 - **Rails: explicit routes mapped to controller actions (ACI-S24).** New opt-in
