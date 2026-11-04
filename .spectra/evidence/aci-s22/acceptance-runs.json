@@ -1,0 +1,38 @@
+[
+  {
+    "ac_id": "AC-S22-001",
+    "test": "mcp-server/tests/slices/test_s22_contract.py::test_observed_test_suggestion",
+    "exit_code": 0,
+    "tail": "1 passed in 1.75s"
+  },
+  {
+    "ac_id": "AC-S22-002",
+    "test": "mcp-server/tests/slices/test_s22_contract.py::test_static_test_label",
+    "exit_code": 0,
+    "tail": "1 passed in 2.20s"
+  },
+  {
+    "ac_id": "AC-S22-003",
+    "test": "mcp-server/tests/slices/test_s22_contract.py::test_uncovered_change",
+    "exit_code": 0,
+    "tail": "1 passed in 1.99s"
+  },
+  {
+    "ac_id": "AC-S22-004",
+    "test": "mcp-server/tests/slices/test_s22_contract.py::test_no_execution",
+    "exit_code": 0,
+    "tail": "1 passed in 2.76s"
+  },
+  {
+    "ac_id": "AC-S22-005",
+    "test": "mcp-server/tests/slices/test_s22_contract.py::test_stale_coverage",
+    "exit_code": 0,
+    "tail": "1 passed in 2.82s"
+  },
+  {
+    "ac_id": "AC-S22-006",
+    "test": "mcp-server/tests/slices/test_s22_contract.py::test_validation_replay",
+    "exit_code": 0,
+    "tail": "1 passed in 6.79s"
+  }
+]

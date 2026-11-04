@@ -1,0 +1,119 @@
+{
+  "harness": {
+    "wrapper": "dk22.sh = docker run --rm --user 1000:1000 -e HOME=/hc -e PYTHONPATH=/ws/mcp-server/src -v <scratch>/home:/hc -v <repo>:/ws -w /ws/mcp-server atlas-aci-dev-s16",
+    "dev_image": "atlas-aci-dev-s16 sha256:783f2210c3d12ae25c567c76366b6b6dd09d4aa0c93ea1aee4fb03d8f17e859a (lock unchanged since base)"
+  },
+  "s22_contract": {
+    "exit_code": 0,
+    "summary": "6 passed",
+    "log": "s22-contract.log.gz"
+  },
+  "s22_supporting": {
+    "exit_code": 0,
+    "summary": "61 passed",
+    "log": "s22-supporting.log.gz"
+  },
+  "regression": {
+    "exit_code": 0,
+    "summary": "326 passed (test_s19_*, test_s20_*, test_s21_*)",
+    "log": "regression.log.gz"
+  },
+  "orchestrator_rerun": {
+    "command": "dk22.sh ... test_s22_contract.py test_s22_isolation.py",
+    "exit_code": 0,
+    "summary": "17 passed"
+  },
+  "ruff": {
+    "exit_code": 0,
+    "note": "includes atlas/evals/validation_plan_comparison.py"
+  },
+  "format": {
+    "exit_code": 0
+  },
+  "mypy": {
+    "exit_code": 0,
+    "summary": "no issues in 63 files"
+  },
+  "full_suite": {
+    "exit_code": 1,
+    "summary": "1 failed, 1345 passed, 10 skipped",
+    "failed": [
+      "tests/slices/test_s01_contract.py::test_call_deadline_after_initialization"
+    ],
+    "classification": "pre-existing under uid 1000 (base-full-suite.log.gz)",
+    "log": "full-suite.log.gz"
+  },
+  "g_producer": {
+    "exit_code": 0
+  },
+  "g_engine": {
+    "exit_code": 0
+  },
+  "g_surface": {
+    "exit_code": 0,
+    "note": "tools/graph_query.py and tests/fixtures byte-unchanged"
+  },
+  "g_mcp": {
+    "exit_code": 0,
+    "tools_json_sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+    "tools_json_bytes": 1631472
+  },
+  "g_envelope": {
+    "MINIMUM_BUDGET": 3436,
+    "COLLECTION_MINIMUM_BUDGET": 3448,
+    "FIXED_ERROR_ENVELOPE_CAP": 797,
+    "IMPACT_MINIMUM_BUDGET": 7730,
+    "source": "orchestrator check against working tree"
+  },
+  "orchestrator_gated_diff": "git diff --exit-code 4843ddc -- codegraph.py storage extractors providers indexing resolvers query/{impact*,diff*,indexed,traversal,admission,paging}.py protocol tools server.py enforcement.py config.py pyproject.toml uv.lock tests/fixtures: exit 0",
+  "production_image": {
+    "build": "docker build -t atlas-aci:s22 mcp-server",
+    "image_id": "sha256:22037e27983014ca1bbab112dd79430ff1b2e3fbe2c16071d486422dd9deaec0",
+    "flags": "validation-plan runs with --read-only --network none; repo and every graph root :ro",
+    "scenario": "tests/fixtures/coverage/project; /before = build + import run a at original bytes; calc.py clamp and never_called bodies edited (same line count); /after = build of edit",
+    "observed": {
+      "exit_code": 0,
+      "file": "docker-plan-observed.json.gz",
+      "recommendations_observed": [
+        "tests/test_basic.py::test_clamp",
+        "tests/test_params.py::test_clamp_param[0]",
+        "tests/test_params.py::test_clamp_param[5]"
+      ],
+      "observed_in": {
+        "before": true
+      },
+      "post_change_validation": false,
+      "run_id_prefix": "e36af3840b",
+      "span_clamp": "observed_before_only",
+      "gap": {
+        "never_called": [
+          "no_coverage_source",
+          "no_observation_in_span",
+          "no_structural_test"
+        ]
+      },
+      "structural": "same_name_reference records labeled basis structural, observed_in {}"
+    },
+    "replay": "second run byte-identical (cmp)",
+    "duplicate_source": {
+      "case": "--coverage-graph-root = root with same build + run a (same generation as before)",
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stderr": "Validation plan rejected: VALIDATION_SOURCE_REJECTED: duplicate_source"
+    },
+    "stale": {
+      "exit_code": 0,
+      "file": "docker-plan-stale.json.gz",
+      "case": "before = edit v1 build, after = edit v2 build, --coverage-graph-root = original bytes + run a",
+      "classification": "external app/calc.py stale",
+      "stale_observation_rows": 26,
+      "observed_execution_recommendations": 0,
+      "span_clamp": "structural_only (before/after stale_only)",
+      "gap_never_called": [
+        "no_structural_test",
+        "stale_coverage_only"
+      ]
+    },
+    "read_only": "before and stale graph roots byte-unchanged after planning"
+  }
+}

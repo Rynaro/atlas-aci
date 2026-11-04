@@ -1,0 +1,266 @@
+{
+ "a_to_e_cov": {
+  "a_before_is_coverage_import": true,
+  "a_body_all": true,
+  "a_clamp_before_span": [
+   43,
+   48,
+   672,
+   797
+  ],
+  "a_records": {
+   "clamp": {
+    "category": "body",
+    "has_after": true,
+    "has_before": true
+   },
+   "never_called": {
+    "category": "body",
+    "has_after": true,
+    "has_before": true
+   },
+   "table": {
+    "category": "location",
+    "has_after": true,
+    "has_before": true
+   },
+   "total": {
+    "category": "body",
+    "has_after": true,
+    "has_before": true
+   }
+  },
+  "a_ref_hash_eq_manifest_eq_bytes": true,
+  "b_clamp_nodeids": [
+   "tests/test_basic.py::test_clamp",
+   "tests/test_params.py::test_clamp_param[0]",
+   "tests/test_params.py::test_clamp_param[5]"
+  ],
+  "b_file_entities": 1,
+  "b_labels_keys": [
+   "artifact_sha256",
+   "files",
+   "rows",
+   "run",
+   "source"
+  ],
+  "b_nodeids_total": 6,
+  "b_occ_hash_eq_before_ref_hash": true,
+  "b_query_plan": [
+   [
+    4,
+    0,
+    0,
+    "SEARCH assertions USING INDEX idx_assertions_target_relation_id (<expr>=? AND <expr>=?)"
+   ]
+  ],
+  "b_rows": 26,
+  "b_sample": {
+   "asr": {
+    "candidate_ids": [],
+    "evidence_id": "5ff1c56264b8730bf48a9b3e9f6aaacd178ccb585d1cf1cd9142cfa7c3665009",
+    "id": "0e5d49b6ac4ae7488ea1b22831f0ad07788c8a08af513d25f91748777bb0bbae",
+    "raw_target": "app/calc.py:12",
+    "relation": "test_executes",
+    "resolution": "EXTRACTED",
+    "source_entity_id": "e04f1255d6fcc839790131725ad4b9b044496238f03318d4f801ba02f9383384",
+    "target_entity_id": "510116f7043e7d68d44a8867c5a6bf6721048eaa949cb2cccd3605ca731af688",
+    "type": "assertion",
+    "unresolved_reason": null
+   },
+   "occ": {
+    "column": 0,
+    "end_byte": 259,
+    "end_column": 36,
+    "end_line": 12,
+    "entity_id": "510116f7043e7d68d44a8867c5a6bf6721048eaa949cb2cccd3605ca731af688",
+    "id": "44e1a1fcebc5c33264c50aa23abe00b56925dd578c55f27e6a2d9ac874b083b5",
+    "kind": "execution",
+    "language": "python",
+    "line": 12,
+    "path": "app/calc.py",
+    "provenance_state": "source",
+    "role": "observed_execution:run+setup",
+    "source_sha256": "aa30c1282bd945d19e182d2b8bac14bc2036211871fea7372a458dce6d0ed70a",
+    "source_size": 843,
+    "start_byte": 223,
+    "type": "occurrence"
+   },
+   "prod_keys": [
+    "coverage"
+   ],
+   "src": {
+    "id": "e04f1255d6fcc839790131725ad4b9b044496238f03318d4f801ba02f9383384",
+    "identity_basis": "parsed",
+    "kind": "coverage_test",
+    "language": "python",
+    "name": "tests/test_basic.py::test_add",
+    "ordinal": 0,
+    "owners": [],
+    "path": "tests/test_basic.py",
+    "type": "entity"
+   }
+  },
+  "c_assertions": [
+   {
+    "path": "tests/test_basic.py",
+    "raw_target": "total",
+    "relation": "call",
+    "src": {
+     "kind": "function",
+     "name": "test_total",
+     "owners": [
+      {
+       "kind": "module",
+       "name": null,
+       "ordinal": 0
+      },
+      {
+       "kind": "class",
+       "name": "TestTotals",
+       "ordinal": 0
+      },
+      {
+       "kind": "block",
+       "name": null,
+       "ordinal": 0
+      }
+     ]
+    },
+    "target": null
+   },
+   {
+    "path": "tests/test_basic.py",
+    "raw_target": "clamp",
+    "relation": "call",
+    "src": {
+     "kind": "function",
+     "name": "test_clamp",
+     "owners": [
+      {
+       "kind": "module",
+       "name": null,
+       "ordinal": 0
+      }
+     ]
+    },
+    "target": null
+   },
+   {
+    "path": "tests/test_basic.py",
+    "raw_target": "clamp",
+    "relation": "call",
+    "src": {
+     "kind": "function",
+     "name": "test_clamp",
+     "owners": [
+      {
+       "kind": "module",
+       "name": null,
+       "ordinal": 0
+      }
+     ]
+    },
+    "target": null
+   },
+   {
+    "path": "tests/test_params.py",
+    "raw_target": "clamp",
+    "relation": "call",
+    "src": {
+     "kind": "function",
+     "name": "test_clamp_param",
+     "owners": [
+      {
+       "kind": "module",
+       "name": null,
+       "ordinal": 0
+      }
+     ]
+    },
+    "target": null
+   }
+  ],
+  "c_refs_clamp": [
+   [
+    "tests/test_basic.py",
+    17,
+    16
+   ],
+   [
+    "tests/test_basic.py",
+    18,
+    16
+   ],
+   [
+    "tests/test_params.py",
+    7,
+    16
+   ]
+  ],
+  "c_refs_total": [
+   [
+    "tests/test_basic.py",
+    10,
+    20
+   ]
+  ],
+  "e_buildonly_generation_distinct_from_r0": true,
+  "e_c_atlas_dir_distinct": true,
+  "e_c_equals_r0_generation": true,
+  "e_c_matches_before_hash": true,
+  "e_compat_keys": [
+   "configuration_sha256",
+   "identity_kind",
+   "identity_rule",
+   "producer_sha256",
+   "schema"
+  ],
+  "e_gen_ids": {
+   "C": "9af2b13e9d8cd768b3c21943ca4e07529b96273cd3bdc8518b9a9f93576955be",
+   "R0": "9af2b13e9d8cd768b3c21943ca4e07529b96273cd3bdc8518b9a9f93576955be",
+   "R1": "92c932df680b7d6b0e02cbcfa49b7d50cb5b030419f684b7d11786311b3732e0"
+  },
+  "e_leased": true
+ },
+ "d_ok": true,
+ "d_pkg_impacted": [
+  [
+   "rect_area",
+   "function",
+   "pkg/shapes.py",
+   1
+  ],
+  [
+   "test_rect_area",
+   "function",
+   "pkg/test_shapes.py",
+   2
+  ]
+ ],
+ "d_pkg_seeds": [
+  [
+   "area",
+   "signature"
+  ]
+ ],
+ "f_launches_during_a_to_e": [],
+ "f_liveness_counted": [
+  "Popen"
+ ],
+ "f_liveness_raised": true,
+ "f_sentinel_exists": false,
+ "notes": [
+  "PKG variant: the test calls a free function rect_area (not Rect().rect_area()); instance-method call via Rect() was NOT reverse-resolved in this probe (impacted = [rect_area] only).",
+  "External root C built at original bytes + import a has the SAME generation_id as R0 (content-hashed): duplicate_source applies (checker condition 2)."
+ ],
+ "verdict": {
+  "a": true,
+  "b": true,
+  "c": true,
+  "d": true,
+  "e": true,
+  "f": true,
+  "stop_rule_triggered": false
+ }
+}

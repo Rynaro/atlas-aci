@@ -9,6 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Evidence-backed validation plan (ACI-S22).** New operator command
+  `atlas-aci validation-plan` (library `atlas_aci.query.validation`) composes the S20
+  impact change set and propagation, computed once, with S21 observed coverage and
+  returns a ranked, **advisory** list of tests to run. Observed execution matches a
+  changed span only through a byte-identical file snapshot of the before or after side
+  (`post_change_validation` is true only for the after side); coverage matching neither is
+  `stale`, counted and never used; repeatable `--coverage-graph-root` adds external sources.
+  Tests found only by static relationships are labelled `structural` (reverse path, or
+  same-name reference) under the closed `atlas-pytest-default-conventions.v1` rule and rank
+  below observed ones. Every changed span nothing maps to is an explicit gap with closed
+  reasons. The record `atlas-validation-plan.v1` is closed, canonical and content-addressed
+  (`plan_id`), carries exact assertion/evidence/occurrence/producer/run/generation/snapshot
+  ids, and is replay-identical for unchanged inputs. Nothing is run, imported or
+  collected; no MCP operation is added (still exactly seven tools, tools JSON
+  unchanged) and no earlier module, schema or generation id changes. See
+  `atlas/docs/validation-plan.md` and `atlas/evals/validation_plan_comparison.py`.
+
 - **Per-test Python coverage observations (ACI-S21).** New operator commands
   `atlas-aci coverage-probe` (prints the environment probe you pipe to the test
   interpreter), `atlas-aci coverage-manifest` (producer-time sidecar

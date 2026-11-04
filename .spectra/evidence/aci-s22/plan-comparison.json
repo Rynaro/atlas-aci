@@ -1,0 +1,102 @@
+{
+ "baselines": {
+  "B0_run_everything": {
+   "fn": 0,
+   "fp": 8,
+   "gaps": null,
+   "precision": 0.2727,
+   "recall": 1.0,
+   "selected": 11,
+   "selected_functions": [
+    "tests/test_basic.py::TestTotals::test_table",
+    "tests/test_basic.py::TestTotals::test_total",
+    "tests/test_basic.py::test_add",
+    "tests/test_basic.py::test_clamp",
+    "tests/test_forms.py::test_async",
+    "tests/test_forms.py::test_crlf",
+    "tests/test_forms.py::test_form_feed",
+    "tests/test_forms.py::test_separator",
+    "tests/test_params.py::test_clamp_param",
+    "tests/test_params.py::test_pipe",
+    "tests/test_params.py::test_unicode_param"
+   ],
+   "tp": 3
+  },
+  "B1_structural_only": {
+   "fn": 0,
+   "fp": 0,
+   "gaps": 1,
+   "precision": 1.0,
+   "recall": 1.0,
+   "selected": 3,
+   "selected_functions": [
+    "tests/test_basic.py::TestTotals::test_total",
+    "tests/test_basic.py::test_clamp",
+    "tests/test_params.py::test_clamp_param"
+   ],
+   "tp": 3
+  },
+  "B2_validation_plan": {
+   "fn": 0,
+   "fp": 0,
+   "gaps": 1,
+   "observed_selected": 3,
+   "precision": 1.0,
+   "recall": 1.0,
+   "selected": 3,
+   "selected_functions": [
+    "tests/test_basic.py::TestTotals::test_total",
+    "tests/test_basic.py::test_clamp",
+    "tests/test_params.py::test_clamp_param"
+   ],
+   "tp": 3
+  }
+ },
+ "edits": {
+  "clamp": [
+   "tests/test_basic.py::test_clamp",
+   "tests/test_params.py::test_clamp_param[0]",
+   "tests/test_params.py::test_clamp_param[5]"
+  ],
+  "never_called": [],
+  "total": [
+   "tests/test_basic.py::TestTotals::test_total"
+  ]
+ },
+ "fixture": "mcp-server/tests/fixtures/coverage/project (run a)",
+ "format": "atlas-validation-plan-comparison.v1",
+ "gaps_B2": [
+  {
+   "name": "never_called",
+   "reasons": [
+    "no_coverage_source",
+    "no_observation_in_span",
+    "no_structural_test"
+   ]
+  }
+ ],
+ "granularity": "function (a [param] suffix is stripped)",
+ "notes": [
+  "B2 observed recall is consistent by construction: plan and truth read the same run.",
+  "B1 against the truth is the informative number (no coverage was used).",
+  "B1 is perfect here because the fixture tests call the edited functions by name; that is a property of this fixture, not a general claim.",
+  "No superiority threshold is claimed; one edit on one small fixture.",
+  "Recommendations are advisory; nothing was executed to produce them."
+ ],
+ "plan_ids": {
+  "B1": "a254a08e2412db460144e66cc5ec52fb85196a9ae457cc1344316eaa09df1276",
+  "B2": "afaf3795567f47d7661261cf6ad35af6763182170e9b0bf0507b2c47a5997e31"
+ },
+ "run_a_nodeids_total": 14,
+ "truth_functions": [
+  "tests/test_basic.py::TestTotals::test_total",
+  "tests/test_basic.py::test_clamp",
+  "tests/test_params.py::test_clamp_param"
+ ],
+ "truth_nodeids": [
+  "tests/test_basic.py::TestTotals::test_total",
+  "tests/test_basic.py::test_clamp",
+  "tests/test_params.py::test_clamp_param[0]",
+  "tests/test_params.py::test_clamp_param[5]"
+ ]
+}

@@ -87,3 +87,24 @@ and continue with the first missing task. Completed failure outcomes are durable
 also; change the inputs/deadline or explicitly remove that run's receipt to retry.
 Use one writer per result directory; concurrent execution is outside this slice.
 Durations and Atlas diagnostic response timing may differ on fresh executions.
+
+## Validation-plan comparison (ACI-S22)
+
+`validation_plan_comparison.py` is a small, labelled demonstration of
+`atlas-aci validation-plan`: on one edit of the coverage fixture
+(`mcp-server/tests/fixtures/coverage`, three function bodies changed) it compares
+run-everything, structural-only and the plan against truth taken from the frozen
+run-`a` labels, at function granularity (precision, recall, TP/FP/FN and the gap count).
+It launches no process and runs no test. Run it from the checkout root in the
+`mcp-server` Python environment:
+
+```sh
+python atlas/evals/validation_plan_comparison.py [--output PATH]
+```
+
+It writes `.spectra/evidence/aci-s22/plan-comparison.json` when that directory exists.
+The numbers are honest about their limits: the plan's observed recall is consistent by
+construction (it reads the same run as the truth), the structural baseline is perfect here
+only because the fixture tests call the edited functions by name, and no superiority
+threshold is claimed. `ruff check` covers `tests/`, which imports this script; `mypy src/`
+does not cover it.

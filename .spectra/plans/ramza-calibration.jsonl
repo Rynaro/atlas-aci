@@ -105,3 +105,8 @@
 {"rubric":"confidence","total":76.5,"dims":{"pattern_match":78,"requirement_clarity":74,"decomposition_stability":70,"constraint_compliance":84},"verdict":"VALIDATE","at":"2026-11-03T22:46:26Z","label":"coverage-import-plan"}
 {"rubric":"refine","cycle":1,"total":4,"min":3,"dims":{"clarity":4,"completeness":4,"actionability":4,"efficiency":3,"testability":5},"verdict":"pass","at":"2026-11-03T22:46:26Z","label":"pre-checker"}
 {"rubric":"refine","cycle":1,"total":4.2,"min":4,"dims":{"clarity":4,"completeness":4,"actionability":4,"efficiency":4,"testability":5},"verdict":"pass","at":"2026-11-03T22:54:43Z","label":"post-checker"}
+{"rubric":"complexity","total":8,"dims":{"scope":2,"ambiguity":2,"dependencies":2,"risk":2},"verdict":"extended","at":"2026-11-04T00:49:21Z","label":"validation-plan"}
+{"rubric":"explore","total":81,"dims":{"alignment":9,"correctness":8,"maintainability":8,"performance":8,"simplicity":7,"risk":8,"innovation":7},"verdict":"solid","at":"2026-11-04T00:49:21Z","label":"library-cli-byte-hash-matching"}
+{"rubric":"confidence","total":81.5,"dims":{"pattern_match":82,"requirement_clarity":80,"decomposition_stability":78,"constraint_compliance":86},"verdict":"VALIDATE","at":"2026-11-04T00:49:21Z","label":"validation-plan"}
+{"rubric":"refine","cycle":1,"total":4.4,"min":4,"dims":{"clarity":4,"completeness":4,"actionability":5,"efficiency":4,"testability":5},"verdict":"pass","at":"2026-11-04T00:49:21Z","label":"pre-checker"}
+{"rubric":"refine","cycle":1,"total":4.2,"min":3,"dims":{"clarity":4,"completeness":5,"actionability":4,"efficiency":3,"testability":5},"verdict":"pass","at":"2026-11-04T00:56:46Z","label":"post-checker"}
