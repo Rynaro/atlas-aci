@@ -9,6 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Rails: explicit routes mapped to controller actions (ACI-S24).** New opt-in
+  `atlas-aci index --frameworks rails` (library `CodeGraph(repo, frameworks=("rails",))`, closed
+  registry `{rails}`; an unknown name or `rails` without `ruby` is a usage error, exit 2). The
+  adapter reads only the root `config/routes.rb` from the build's captured bytes (no Ruby, Rails,
+  rake or bundler is ever run) and records, per declaration, a `rails_route` occurrence, evidence
+  from a `rails` producer and a `routes_to` assertion carrying the literal verb, path, target text
+  and the `rails_convention.v1` label. A unique controller action is `INFERRED`, two or more are
+  `AMBIGUOUS` with their candidate ids, and everything else is `UNRESOLVED` with a closed reason
+  (`action_not_found`, `controller_not_found` meaning "no indexed class",
+  `unsupported_route_construct`); `resources`, `mount`, `namespace`, interpolation, engines and any
+  runtime-dependent target are diagnostics and are never expanded. Rails facts are rebuilt globally
+  by the adapter on every enabled build (the S10 plan contributes per-file `remove_path` and the
+  `affected` classification; it does not republish per-file facts), and a build without the flag
+  purges any earlier rails records. Documented in `docs/frameworks/rails.md`. No MCP operation,
+  enum, traversal, `edges` row or dependency change; the tools JSON is byte-identical.
+
 - **OpenAPI 3.1 contract import and contract diff (ACI-S29).** New operator commands
   `atlas-aci openapi-snapshot DOCUMENT` and `atlas-aci openapi-diff --before F --after F`
   (libraries `atlas_aci.importers.openapi31` and `atlas_aci.contracts.openapi_diff`) import one
@@ -180,6 +196,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Producer-id churn (ACI-S24).** The native producer fingerprint covers `codegraph.py` and
+  `storage/evidence.py`, which this slice edits, so for every graph (flag on or off) evidence,
+  assertion and projection link ids, generation ids, snapshot ids and export bytes change, and
+  existing indexes rebuild in full on the first `--since` run. Entity ids, occurrence ids and the
+  symbols/refs/edges rows are unchanged.
 - `.tsx` is no longer reported under `unsupported_skipped`; only `.go` and
   `.java` remain recognized without an extraction query.
 

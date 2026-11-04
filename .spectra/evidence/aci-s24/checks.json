@@ -1,0 +1,81 @@
+{
+ "harness": {
+  "wrapper": "dk24.sh = docker run --rm --user 1000:1000 -e HOME=/hc -e PYTHONPATH=/ws/mcp-server/src -v <scratch>/home:/hc -v <repo>:/ws -w /ws/mcp-server atlas-aci-dev-s16",
+  "dev_image": "atlas-aci-dev-s16 sha256:783f2210c3d12ae25c567c76366b6b6dd09d4aa0c93ea1aee4fb03d8f17e859a (lock unchanged since base)"
+ },
+ "s24_contract": {
+  "exit_code": 0,
+  "summary": "61 passed in 38.48s (test_s24_rails_routes.py, test_s24_isolation.py)",
+  "log": "s24-contract.log.gz"
+ },
+ "regression": {
+  "exit_code": 0,
+  "summary": "702 passed (test_s07_*, test_s09_*, test_s10_*, test_s12_storage, test_s16_*, test_s19_*, test_s20_*, test_s21_*, test_s22_*, test_s37_*, test_schema_epoch, test_thesis_negatives, test_export)",
+  "log": "regression.log.gz"
+ },
+ "orchestrator_rerun": [
+  {
+   "command": "dk24.sh pytest -p no:cacheprovider tests/slices/test_s24_rails_routes.py tests/slices/test_s24_isolation.py",
+   "exit_code": 0,
+   "summary": "61 passed"
+  },
+  {
+   "command": "dk24.sh exact CI lint/type steps (ruff check+format src/ tests/, mypy src/, ruff check+format ../scripts/ --exclude fingerprint-fixture, mypy ../scripts/)",
+   "exit_code": 0
+  }
+ ],
+ "ruff": {
+  "exit_code": 0
+ },
+ "format": {
+  "exit_code": 0
+ },
+ "mypy": {
+  "exit_code": 0,
+  "summary": "no issues in 77 source files"
+ },
+ "full_suite": {
+  "exit_code": 1,
+  "summary": "1 failed, 1648 passed, 10 skipped, 1 deselected",
+  "failed": [
+   "tests/slices/test_s01_contract.py::test_call_deadline_after_initialization"
+  ],
+  "classification": "pre-existing under uid 1000 (also fails on the base archive)",
+  "deselected": [
+   "tests/slices/test_s08_integration.py::test_nonregular_pack_does_not_block_acquisition (known flaky; hung >2h on the unmodified base archive)"
+  ],
+  "log": "full-suite.log.gz"
+ },
+ "g_src": {
+  "exit_code": 0,
+  "note": "gated src paths, storage/* except evidence.py, pyproject.toml, uv.lock, .github/workflows byte-unchanged vs 2e342a3; src changes limited to frameworks/*, codegraph.py, __main__.py, storage/evidence.py; RELATIONS/REFERENCE_RELATIONS/EDGE_RELATIONS/FIELDS/COLUMNS and _producer_inputs module list untouched (orchestrator re-checked on the staged tree; g-src.exit rewritten from an empty line to 0 after re-check)"
+ },
+ "g_mcp": {
+  "exit_code": 0,
+  "tools_json_sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+  "tools_json_bytes": 1631472
+ },
+ "g_envelope": {
+  "MINIMUM_BUDGET": 3436,
+  "COLLECTION_MINIMUM_BUDGET": 3448,
+  "FIXED_ERROR_ENVELOPE_CAP": 797,
+  "IMPACT_MINIMUM_BUDGET": 7730,
+  "source": "unchanged: protocol/query byte-unchanged"
+ },
+ "drift": "ramza-drift --staged: 56 changed files, all within declared scope",
+ "interpretation": "Rails facts are rebuilt globally by the adapter on every enabled build; S10 contributes per-file remove_path and the affected binding plan (checker condition 3). routes_to is convention-derived: resolution INFERRED with raw_target.mapping rails_convention.v1, never EXTRACTED. AC-003 'unresolved with candidate identities' is the AMBIGUOUS resolution (evidence.py rejects UNRESOLVED with candidates).",
+ "fingerprint_churn": "Editing codegraph.py and storage/evidence.py changes the native producer id (base b0ca305b50bd... vs new aa0e898fcd54... on the rails fixture) and therefore evidence/assertion/generation/snapshot ids for every graph, as accepted for S16/S21. Entity ids, occurrence ids and symbols/refs/edges rows are identical (G-IMAGE).",
+ "production_image": {
+  "base": "atlas-aci:s24-base sha256:4f10705b7d619e5879358a0b2ff5e10a40d35b09e8589bc254041d618bf035d4 (built from 2e342a3)",
+  "build": "docker build -t atlas-aci:s24 mcp-server -> sha256:d21800907bb29d168fd17e5ff8681ea47f77c7472f6337d0a613d10e777a58c2",
+  "scenario": "uid 1000, fixture repos mounted :ro, separate graph root; index --langs ruby,python (network allowed only so the tree-sitter pack can fetch the ruby parser, identically for base and new images)",
+  "g_image": "compare_graphs.py BASE OFF ON: ok=true on tests/fixtures/rails_routes/project and tests/fixtures/coverage/project; entity ids, occurrence ids, symbols, refs, edges and retrieval projection equal; base/off native producer ids differ (expected churn), off/on native producers equal, on adds exactly one rails producer; rails fixture ON = 35 rails assertions/evidence/occurrences",
+  "rails_facts": "ON: 7 INFERRED routes_to, 1 AMBIGUOUS (legacy/orders#index, 2 candidates), 2 controller_not_found (ghosts#index; api/v1/ping#show, the documented API acronym case), 2 action_not_found, 23 unsupported_route_construct diagnostics with closed construct codes",
+  "replay": "two ON builds: comparison digests identical except the database path; coverage fixture REF/CAND replay ok=true",
+  "cli_rejection": "index --frameworks django -> exit 2, empty stdout",
+  "inputs_unchanged": "fixture sha256 inventories unchanged",
+  "tools": "7 tools, sha256 94f9567a... 1631472 bytes unchanged",
+  "artifacts": "g-image/rails-compare3.json, g-image/cov-compare3.json, g-image/cov-replay.json"
+ },
+ "day1_qualification": "qualification.json: grammar probe pass, symbol shapes pass, assertion validity pass, flag-off baseline digest recorded; STOP RULE not triggered"
+}

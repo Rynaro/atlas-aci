@@ -135,3 +135,8 @@
 {"rubric":"confidence","total":83.25,"dims":{"pattern_match":85,"requirement_clarity":78,"decomposition_stability":82,"constraint_compliance":88},"verdict":"VALIDATE","at":"2026-11-04T08:39:44Z","label":"openapi-diff"}
 {"rubric":"refine","cycle":1,"total":4.4,"min":4,"dims":{"clarity":4,"completeness":4,"actionability":5,"efficiency":4,"testability":5},"verdict":"pass","at":"2026-11-04T08:39:44Z","label":"pre-checker"}
 {"rubric":"refine","cycle":1,"total":3.8,"min":3,"dims":{"clarity":4,"completeness":4,"actionability":4,"efficiency":3,"testability":4},"verdict":"pass","at":"2026-11-04T08:44:46Z","label":"post-checker"}
+{"rubric":"complexity","total":9,"dims":{"scope":2,"ambiguity":2,"dependencies":2,"risk":3},"verdict":"extended","at":"2026-11-04T14:10:18Z","label":"rails-routes"}
+{"rubric":"explore","total":81.5,"dims":{"alignment":9,"correctness":8,"maintainability":8,"performance":9,"simplicity":8,"risk":7,"innovation":5},"verdict":"solid","at":"2026-11-04T14:10:18Z","label":"in-build-opt-in"}
+{"rubric":"confidence","total":83.75,"dims":{"pattern_match":85,"requirement_clarity":85,"decomposition_stability":80,"constraint_compliance":85},"verdict":"VALIDATE","at":"2026-11-04T14:10:18Z","label":"rails-routes"}
+{"rubric":"refine","cycle":1,"total":4.6,"min":4,"dims":{"clarity":4,"completeness":5,"actionability":5,"efficiency":4,"testability":5},"verdict":"pass","at":"2026-11-04T14:10:18Z","label":"pre-checker"}
+{"rubric":"refine","cycle":1,"total":3.8,"min":3,"dims":{"clarity":4,"completeness":4,"actionability":4,"efficiency":3,"testability":4},"verdict":"pass","at":"2026-11-04T14:35:43Z","label":"post-checker"}

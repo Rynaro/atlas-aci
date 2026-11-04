@@ -13,6 +13,8 @@ import structlog
 
 from atlas_aci.codegraph import DEFAULT_LANGS, CodeGraph
 from atlas_aci.config import Config
+from atlas_aci.frameworks import REGISTRY as FRAMEWORK_ADAPTERS
+from atlas_aci.frameworks import normalize as normalize_frameworks
 
 # AC-REL-2's documented bound (README.md "Why read-only" section /
 # GITHUB_FILE_HARD_LIMIT_BYTES): GitHub rejects any single committed file
@@ -156,14 +158,33 @@ def serve(
         "(pass any marker, e.g. HEAD)"
     ),
 )
-def index(repo: Path, langs: str, since: str | None, graph_root: Path | None = None) -> None:
+@click.option(
+    "--frameworks",
+    default="",
+    help="Comma-separated opt-in framework adapters; closed set: "
+    + ", ".join(sorted(FRAMEWORK_ADAPTERS)),
+)
+def index(
+    repo: Path,
+    langs: str,
+    since: str | None,
+    frameworks: str = "",
+    graph_root: Path | None = None,
+) -> None:
     """Build or update the code-graph index for a repository."""
     log = structlog.get_logger()
     repo = repo.resolve()
     lang_list = [s.strip() for s in langs.split(",") if s.strip()]
+    # Validated here, not in an option callback: click processes options in command-line
+    # order, so only the command body sees both --langs and --frameworks. Nothing is opened
+    # (and no graph directory is created) when the selection is rejected.
+    try:
+        adapters = normalize_frameworks(frameworks, lang_list or DEFAULT_LANGS)
+    except ValueError as exc:
+        raise click.UsageError(str(exc)) from exc
 
-    log.info("index_start", repo=str(repo), langs=lang_list, since=since)
-    graph = _open_graph(repo, graph_root, langs=lang_list)
+    log.info("index_start", repo=str(repo), langs=lang_list, since=since, frameworks=adapters)
+    graph = _open_graph(repo, graph_root, langs=lang_list, frameworks=adapters)
     stats = graph.build(since=since)
     log.info("index_done", **stats)
 

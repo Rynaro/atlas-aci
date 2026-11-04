@@ -1,0 +1,44 @@
+{
+ "slice_id": "ACI-S24",
+ "base_commit": "2e342a3aa354a465a548e29a3880bfb42a8550c0",
+ "interpreter": "python 3.12.16 (atlas-aci-dev-s16, docker only; no host python for project code)",
+ "a_grammar": {
+  "result": "pass",
+  "has_error": false,
+  "notes": [
+   "call fields: receiver, operator, method (identifier), arguments (argument_list), block (do_block|block)",
+   "do_block/block body field: body_statement (do) / block_body (braces); comments before the first statement are siblings of body, not children",
+   "pair: key (hash_key_symbol for `to:`; string for `\"to\":` and for hash rocket), value, anonymous `=>` token only in rocket pairs",
+   "string: children are anonymous quote tokens plus string_content / interpolation / escape_sequence; single-quoted `#{` stays one string_content",
+   "a lone `#@` yields TWO string_content children (a, #@) without interpolation, so the literal must be the source bytes between the delimiters",
+   "`%q(/a)` is a string whose delimiters are `%q(` and `)` (rejected by the quote check); `\"/a\" \"/b\"` is chained_string; heredoc is heredoc_beginning + heredoc_body; `%w()` is string_array",
+   "empty string has no string_content child",
+   "statement types seen: call, identifier (root), if_modifier, unless_modifier, unless, case, assignment",
+   "Rails.application.routes receiver is call(call(constant, application), routes); Blog::Engine.routes receiver contains scope_resolution",
+   "get(\"/a\", to: \"u#i\") parenthesised call keeps the same argument_list named children",
+   "a heredoc body is a separate named sibling (heredoc_body) after the statement that owns the marker; the adapter skips heredoc_body like comment so it is not a spurious statement (the marker statement is non_literal_path)",
+   "field name for the call's argument list is `arguments` (not `argument_list`); the block field of a call is `block`; the draw body field is `body`"
+  ],
+  "adaptations_to_D4": [
+   "statement skip set is {comment, heredoc_body}",
+   "no other node-name or field difference from the plan"
+  ],
+  "dump": "scratch probe_a.txt / probe_a2.txt (routes.rb and snippet node dumps)"
+ },
+ "b_symbols": {
+  "result": "pass",
+  "class_namespace": "Admin::UsersController, Api::V1::WidgetsController, API::V1::PingController, Legacy::OrdersController (x2), UsersController, ReportsController",
+  "method_binding": "owner ruby:<namespace>, category instance, entity_id present; def self.build has category static; private def helper stays instance",
+  "symbol_kind_strings": ["class", "method", "module"]
+ },
+ "c_validity": {
+  "result": "pass",
+  "INFERRED_with_target": "accepted",
+  "AMBIGUOUS_two_sorted_candidates_with_reason": "accepted",
+  "UNRESOLVED_with_reason": "accepted",
+  "UNRESOLVED_with_candidates": "rejected: Invalid evidence: ambiguity candidates"
+ },
+ "d_flag_off_baseline": "base-digest.json (written with compare_graphs.py)",
+ "e_invariants": "base-invariants.json",
+ "stop_rule": "not triggered"
+}

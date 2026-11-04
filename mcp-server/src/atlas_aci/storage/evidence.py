@@ -62,7 +62,17 @@ SCIP_ENCODINGS = frozenset({"utf-8", "utf-16", "utf-32"})
 # in a refs/edges row, is not traversable and is never an MCP enum value. Only the closed
 # assertion-record check below accepts it, and only in the shape `validate_database` pins.
 COVERAGE_RELATION = "test_executes"
-ASSERTION_RELATIONS = REFERENCE_RELATIONS | {COVERAGE_RELATION}
+# Convention-derived Rails route mapping (ACI-S24). `routes_to` follows the same rule as
+# `test_executes`: it is in NONE of RELATIONS / REFERENCE_RELATIONS / EDGE_RELATIONS, never
+# produces an `edges` row, is not traversable and is never an MCP enum value. Only the closed
+# assertion-record check accepts it, in the shape `validate_database` and
+# `frameworks.rails_routes.validate_records` pin.
+RAILS_RELATION = "routes_to"
+RAILS_ROUTE_KIND = "rails_route"
+RAILS_ROLE_PREFIX = "rails_route:"
+RAILS_ADAPTER = "rails-routes.v1"
+RAILS_ROUTES_PATH = "config/routes.rb"
+ASSERTION_RELATIONS = REFERENCE_RELATIONS | {COVERAGE_RELATION, RAILS_RELATION}
 COVERAGE_TEST_KIND = "coverage_test"
 COVERAGE_EXECUTION_KIND = "execution"
 COVERAGE_ROLE_PREFIX = "observed_execution:"
@@ -280,6 +290,9 @@ def _validate_record(item: Any) -> None:
             if set(fingerprint) == {"coverage"}:
                 _validate_coverage_fingerprint(fingerprint["coverage"], item["identity_basis"])
                 return
+            if set(fingerprint) == {"rails"}:
+                _validate_rails_fingerprint(fingerprint["rails"], item["identity_basis"])
+                return
             require(
                 set(fingerprint)
                 in (
@@ -393,7 +406,14 @@ def _validate_record(item: Any) -> None:
             require(item["entity_id"] is None or hash_value(item["entity_id"]), "occurrence entity")
             require(
                 item["kind"]
-                in {"definition", "reference", "rationale", "legacy", COVERAGE_EXECUTION_KIND},
+                in {
+                    "definition",
+                    "reference",
+                    "rationale",
+                    "legacy",
+                    COVERAGE_EXECUTION_KIND,
+                    RAILS_ROUTE_KIND,
+                },
                 "occurrence kind",
             )
             require(
@@ -410,6 +430,18 @@ def _validate_record(item: Any) -> None:
                 == item["role"].startswith(COVERAGE_ROLE_PREFIX),
                 "execution occurrence role",
             )
+            require(
+                (item["kind"] == RAILS_ROUTE_KIND) == item["role"].startswith(RAILS_ROLE_PREFIX),
+                "rails route occurrence role",
+            )
+            if item["kind"] == RAILS_ROUTE_KIND:
+                require(
+                    state == "source"
+                    and hash_value(item["entity_id"])
+                    and item["path"] == RAILS_ROUTES_PATH
+                    and item["language"] == "ruby",
+                    "rails route occurrence shape",
+                )
             if item["kind"] == COVERAGE_EXECUTION_KIND:
                 phases = item["role"][len(COVERAGE_ROLE_PREFIX) :].split("+")
                 require(
@@ -454,6 +486,11 @@ def _validate_record(item: Any) -> None:
                 item["resolution"] == "EXTRACTED"
                 and re.fullmatch(r".+:[1-9][0-9]*", item["raw_target"] or "") is not None,
                 "test_executes assertion",
+            )
+        if item["relation"] == RAILS_RELATION:
+            require(
+                item["resolution"] in {"INFERRED", "AMBIGUOUS", "UNRESOLVED"},
+                "routes_to assertion",
             )
         require(
             item["relation"] != "jsx" or item["resolution"] == "UNRESOLVED",
@@ -715,6 +752,25 @@ def _validate_coverage_fingerprint(value: Any, basis: str) -> None:
     )
 
 
+def _validate_rails_fingerprint(value: Any, basis: str) -> None:
+    """Rails routes adapter identity. Hashes are checked for format only, never pinned to the
+    running adapter: a predecessor may legitimately carry another adapter build's hash."""
+    require(basis == "parsed", "rails producer basis")
+    require(
+        isinstance(value, dict)
+        and set(value) == {"adapter", "adapter_sha256", "graph_producer_id", "routes_path"},
+        "rails producer fields",
+    )
+    require(
+        value["adapter"] == RAILS_ADAPTER and value["routes_path"] == RAILS_ROUTES_PATH,
+        "rails producer values",
+    )
+    require(
+        hash_value(value["adapter_sha256"]) and hash_value(value["graph_producer_id"]),
+        "rails producer hashes",
+    )
+
+
 def validate_record(item: Any) -> None:
     try:
         _validate_record(item)
@@ -764,7 +820,8 @@ def validate_database(conn: sqlite3.Connection) -> None:
                 "occurrence/entity location",
             )
             require(
-                (item["kind"] == COVERAGE_EXECUTION_KIND) <= (entity["kind"] == "file"),
+                (item["kind"] in {COVERAGE_EXECUTION_KIND, RAILS_ROUTE_KIND})
+                <= (entity["kind"] == "file"),
                 "execution occurrence entity",
             )
             require(
@@ -783,6 +840,11 @@ def validate_database(conn: sqlite3.Connection) -> None:
                 (set(producer_record["fingerprint"] or ()) == {"coverage"})
                 == (occurrence["kind"] == COVERAGE_EXECUTION_KIND),
                 "coverage evidence/execution occurrence",
+            )
+            require(
+                (set(producer_record["fingerprint"] or ()) == {"rails"})
+                == (occurrence["kind"] == RAILS_ROUTE_KIND),
+                "rails evidence/route occurrence",
             )
             for key in (
                 "source_sha256",
@@ -804,6 +866,18 @@ def validate_database(conn: sqlite3.Connection) -> None:
                 == (occurrence["kind"] == COVERAGE_EXECUTION_KIND),
                 "coverage assertion discrimination",
             )
+            rails = item["relation"] == RAILS_RELATION
+            require(
+                rails
+                == (set(producer_record["fingerprint"] or ()) == {"rails"})
+                == (occurrence["kind"] == RAILS_ROUTE_KIND),
+                "rails assertion discrimination",
+            )
+            if rails:
+                require(
+                    source["kind"] == "file" and source["id"] == occurrence["entity_id"],
+                    "rails assertion source",
+                )
             if coverage:
                 # Observed test execution: the source is a test (path of the TEST file), the
                 # occurrence lives in the executed source file, so the generic same-path
