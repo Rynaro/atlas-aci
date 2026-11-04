@@ -1,0 +1,44 @@
+[
+  {
+    "ac_id": "AC-S21-001",
+    "test": "mcp-server/tests/slices/test_s21_contract.py::test_test_execution_mapping",
+    "exit_code": 0,
+    "tail": "1 passed in 1.44s"
+  },
+  {
+    "ac_id": "AC-S21-002",
+    "test": "mcp-server/tests/slices/test_s21_contract.py::test_run_provenance",
+    "exit_code": 0,
+    "tail": "1 passed in 1.45s"
+  },
+  {
+    "ac_id": "AC-S21-003",
+    "test": "mcp-server/tests/slices/test_s21_contract.py::test_coverage_source_mismatch",
+    "exit_code": 0,
+    "tail": "1 passed in 2.24s"
+  },
+  {
+    "ac_id": "AC-S21-004",
+    "test": "mcp-server/tests/slices/test_s21_contract.py::test_no_assertion_inference",
+    "exit_code": 0,
+    "tail": "1 passed in 1.49s"
+  },
+  {
+    "ac_id": "AC-S21-005",
+    "test": "mcp-server/tests/slices/test_s21_contract.py::test_coverage_reimport",
+    "exit_code": 0,
+    "tail": "1 passed in 2.26s"
+  },
+  {
+    "ac_id": "AC-S21-006",
+    "test": "mcp-server/tests/slices/test_s21_contract.py::test_distinct_run_preserved",
+    "exit_code": 0,
+    "tail": "1 passed in 2.76s"
+  },
+  {
+    "ac_id": "AC-S21-007",
+    "test": "mcp-server/tests/slices/test_s21_contract.py::test_missing_coverage_identity",
+    "exit_code": 0,
+    "tail": "16 passed in 6.71s"
+  }
+]
