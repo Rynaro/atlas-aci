@@ -3,42 +3,42 @@
     "ac_id": "AC-S31-001",
     "test": "mcp-server/tests/slices/test_s31_architecture_rules.py::test_architecture_violation_has_counterexample",
     "exit_code": 0,
-    "tail": "1 passed in 1.12s"
+    "tail": "1 passed in 1.06s"
   },
   {
     "ac_id": "AC-S31-002",
     "test": "mcp-server/tests/slices/test_s31_architecture_rules.py::test_architecture_complete_scope_can_satisfy",
     "exit_code": 0,
-    "tail": "1 passed in 1.35s"
+    "tail": "1 passed in 1.32s"
   },
   {
     "ac_id": "AC-S31-003",
     "test": "mcp-server/tests/slices/test_s31_architecture_rules.py::test_architecture_incomplete_scope_is_unknown",
     "exit_code": 0,
-    "tail": "8 passed in 2.77s"
+    "tail": "8 passed in 2.65s"
   },
   {
     "ac_id": "AC-S31-004",
     "test": "mcp-server/tests/slices/test_s31_architecture_rules.py::test_architecture_path_budget_is_visible",
     "exit_code": 0,
-    "tail": "1 passed in 1.40s"
+    "tail": "1 passed in 1.42s"
   },
   {
     "ac_id": "AC-S31-005",
     "test": "mcp-server/tests/slices/test_s31_architecture_rules.py::test_architecture_invalid_rule_rejected",
     "exit_code": 0,
-    "tail": "14 passed in 0.96s"
+    "tail": "14 passed in 0.99s"
   },
   {
     "ac_id": "AC-S31-006",
     "test": "mcp-server/tests/slices/test_s31_architecture_rules.py::test_architecture_rule_replay_is_idempotent",
     "exit_code": 0,
-    "tail": "1 passed in 4.10s"
+    "tail": "1 passed in 3.95s"
   },
   {
     "ac_id": "AC-S31-007",
     "test": "mcp-server/tests/slices/test_s31_architecture_rules.py::test_architecture_check_is_read_only",
     "exit_code": 0,
-    "tail": "1 passed in 1.26s"
+    "tail": "1 passed in 1.21s"
   }
 ]
