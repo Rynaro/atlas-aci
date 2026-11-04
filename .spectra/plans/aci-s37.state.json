@@ -1,0 +1,142 @@
+{
+  "schema": "ramza/plan-state.v1",
+  "plan": "aci-s37",
+  "created_at": "2026-11-04T03:49:00Z",
+  "tier": "lite",
+  "phase": "DONE",
+  "phases_done": [
+    "RS",
+    "S",
+    "P",
+    "E",
+    "C",
+    "T",
+    "A",
+    "DONE"
+  ],
+  "rightsize": {
+    "score": 3,
+    "computed_tier": "lite",
+    "inputs": {
+      "files_est": 7,
+      "new_dep": false,
+      "public_api": true,
+      "migration": false,
+      "security": false,
+      "novel": false,
+      "stakes": "med"
+    }
+  },
+  "refine_cycles": 0,
+  "skips": [],
+  "gates": [
+    {
+      "rubric": "complexity",
+      "total": 7,
+      "dims": {
+        "scope": 2,
+        "ambiguity": 2,
+        "dependencies": 1,
+        "risk": 2
+      },
+      "verdict": "extended",
+      "at": "2026-11-04T04:03:26Z",
+      "label": "evidence-report"
+    },
+    {
+      "rubric": "explore",
+      "total": 82,
+      "dims": {
+        "alignment": 9,
+        "correctness": 9,
+        "maintainability": 8,
+        "performance": 8,
+        "simplicity": 7,
+        "risk": 8,
+        "innovation": 5
+      },
+      "verdict": "solid",
+      "at": "2026-11-04T04:03:26Z",
+      "label": "template-shell-context-only"
+    },
+    {
+      "rubric": "confidence",
+      "total": 85,
+      "dims": {
+        "pattern_match": 85,
+        "requirement_clarity": 85,
+        "decomposition_stability": 80,
+        "constraint_compliance": 90
+      },
+      "verdict": "AUTO_PROCEED",
+      "at": "2026-11-04T04:03:26Z",
+      "label": "evidence-report"
+    },
+    {
+      "rubric": "refine",
+      "cycle": 1,
+      "total": 4.6,
+      "min": 4,
+      "dims": {
+        "clarity": 4,
+        "completeness": 5,
+        "actionability": 5,
+        "efficiency": 4,
+        "testability": 5
+      },
+      "verdict": "pass",
+      "at": "2026-11-04T04:03:26Z",
+      "label": "pre-checker"
+    },
+    {
+      "rubric": "refine",
+      "cycle": 1,
+      "total": 4,
+      "min": 3,
+      "dims": {
+        "clarity": 4,
+        "completeness": 4,
+        "actionability": 4,
+        "efficiency": 3,
+        "testability": 5
+      },
+      "verdict": "pass",
+      "at": "2026-11-04T04:10:16Z",
+      "label": "post-checker"
+    }
+  ],
+  "amendments": [],
+  "declared_scope": [
+    "mcp-server/src/atlas_aci/reports/__init__.py",
+    "mcp-server/src/atlas_aci/reports/evidence.py",
+    "mcp-server/src/atlas_aci/reports/evidence_template.html",
+    "mcp-server/src/atlas_aci/__main__.py",
+    "mcp-server/tests/slices/test_s37_evidence_report.py",
+    "mcp-server/tests/fixtures/evidence_report/*",
+    "docs/evidence-reports.md",
+    "CHANGELOG.md",
+    "README.md",
+    ".spectra/plans/aci-s37.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/changes/aci-s37/*",
+    ".spectra/evidence/aci-s37/*",
+    ".spectra/state/aci-s37.execution.json",
+    ".spectra/backlog/execution.json",
+    ".spectra/backlog/order.md"
+  ],
+  "criteria_sha256": "31a6c71bfdcf180cf4715ebe949fdbfd012ed221fb98aba574872c732283be55",
+  "critic": {
+    "author": null,
+    "checker": null
+  },
+  "criteria_frozen_at": "2026-11-04T04:10:16Z",
+  "scope_declared_at": "2026-11-04T04:10:16Z",
+  "drift_reports": [
+    {
+      "at": "2026-11-04T04:53:13Z",
+      "range": "staged",
+      "files_changed": 54,
+      "uncovered": []
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "slice_id": "ACI-S37",
+  "base_commit": "7b009443492f0550400e1754b47066dc045b1af0",
+  "environment": "atlas-aci-dev-s16, uid 1000, python 3.12.16, clean `git archive 7b00944` tree (no untracked files)",
+  "tools_json": {
+    "sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+    "bytes": 1631472,
+    "exit": 0,
+    "command": "atlas-aci tools --repo <copy of tests/fixtures/s21 project> (CliRunner)"
+  },
+  "budgets": {
+    "MINIMUM_BUDGET": 3436,
+    "COLLECTION_MINIMUM_BUDGET": 3448,
+    "FIXED_ERROR_ENVELOPE_CAP": 797,
+    "IMPACT_MINIMUM_BUDGET": 7730
+  },
+  "READ_ONLY_TOOLS_count": 7,
+  "pytest_full_suite": {
+    "command": "pytest -q -p no:cacheprovider (from mcp-server)",
+    "exit": 1,
+    "summary": "1 failed, 1379 passed, 10 skipped in 494.62s",
+    "failed": ["tests/slices/test_s01_contract.py::test_call_deadline_after_initialization"],
+    "note": "The single failure is the known pre-existing uid-1000 failure; it also fails at base. CI reference run 41768141850 reports 1380 passed, 10 skipped (same suite, CI environment).",
+    "log": "base-pytest.log.gz"
+  }
+}

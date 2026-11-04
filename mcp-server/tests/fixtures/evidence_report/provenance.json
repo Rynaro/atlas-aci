@@ -1,0 +1,70 @@
+{
+  "base_commit": "7b009443492f0550400e1754b47066dc045b1af0",
+  "environment": {
+    "image": "atlas-aci-dev-s16 (Dockerfile.dev, Linux)",
+    "python": "3.12.16",
+    "tree-sitter": "0.25.2",
+    "tree-sitter-language-pack": "1.6.0"
+  },
+  "fixtures": {
+    "hostile": {
+      "arguments": {
+        "continuation": true,
+        "op": "context",
+        "schema_version": "atlas.graph.v1",
+        "text": "process_payment_audit"
+      },
+      "sha256": {
+        "hostile.envelope.json": "8718ea57de6b88dae0f446b9d0b04c3738317d41b9f0465eb8b85fef04da58ab",
+        "hostile.report.html": "8d42993d55d8f1f8041e6ce6b6ef9408539feba5dd2a254ea05cdc52a9bbfe08",
+        "hostile.report.json": "1b9685cb924fc9a2fcc70acd7e00e697e3c57cdfa581101255819dfcc233c266"
+      }
+    },
+    "inline": {
+      "arguments": {
+        "continuation": true,
+        "op": "context",
+        "schema_version": "atlas.graph.v1",
+        "text": "process_payment"
+      },
+      "sha256": {
+        "inline.envelope.json": "2ff529e1692d7727b4e9ee848595516a3a9fa94956c513c6c3ecd3c083efe89e",
+        "inline.report.html": "b4a34332849ee61d44c38328fea910b321aedb84939e60c611292158ee8e3f8e",
+        "inline.report.json": "cbddbc19e7b7f3d7d693c3ca979ec45dc3279260118225f01cedc756ad68df5e"
+      }
+    },
+    "path-references": {
+      "arguments": {
+        "continuation": true,
+        "op": "context",
+        "schema_version": "atlas.graph.v1",
+        "source_policy": "references",
+        "target": {
+          "name": "validate_payment"
+        },
+        "text": "process_payment"
+      },
+      "sha256": {
+        "path-references.envelope.json": "4639594b621249208d600915acbca84a053935008e48935e9c2e79ac1451d28c",
+        "path-references.report.html": "ad6ec3594c6ba020c6d525dc3c46cb88080d0b29e85a72f8ce04f741bc669127",
+        "path-references.report.json": "a8bd73b202eef1d4dc4353e9a1376c4b08e5a4a1a9a99d4db97acc63ce68d339"
+      }
+    },
+    "truncated": {
+      "arguments": {
+        "continuation": true,
+        "max_bytes": 40000,
+        "op": "context",
+        "schema_version": "atlas.graph.v1",
+        "text": "process_payment"
+      },
+      "sha256": {
+        "truncated.envelope.json": "568b8b99979422a5ce9f71bf1c91d6fcc5e4a4bc66e532f46e6e72f6c3e116a5",
+        "truncated.report.html": "51146f8ca719cce7437af5b27997d408749237fc2295e2bea552091efc4216d9",
+        "truncated.report.json": "da7c8107d7cf1ea6ef4e5e30e19d60bc0fef353f216ae69076b095ffcc017c13"
+      }
+    }
+  },
+  "rendering_version": "atlas-evidence-render.1",
+  "repository_path": "/tmp/atlas-s37-evidence/repo"
+}

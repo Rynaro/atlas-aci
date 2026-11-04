@@ -1,0 +1,74 @@
+{
+  "harness": {
+    "wrapper": "dk37.sh = docker run --rm --user 1000:1000 -e HOME=/hc -e PYTHONPATH=/ws/mcp-server/src -v <scratch>/home:/hc -v <repo>:/ws -w /ws/mcp-server atlas-aci-dev-s16",
+    "dev_image": "atlas-aci-dev-s16 sha256:783f2210c3d12ae25c567c76366b6b6dd09d4aa0c93ea1aee4fb03d8f17e859a (lock unchanged since base)"
+  },
+  "s37_contract": {
+    "exit_code": 0,
+    "summary": "17 passed",
+    "log": "s37-contract.log.gz"
+  },
+  "regression": {
+    "exit_code": 0,
+    "summary": "110 passed, 2 skipped (test_s13_*, test_s18_*, test_s20_cli, test_export, test_thesis_negatives)",
+    "log": "regression.log.gz"
+  },
+  "orchestrator_rerun": [
+    {
+      "command": "dk37.sh pytest -p no:cacheprovider tests/slices/test_s37_evidence_report.py",
+      "exit_code": 0,
+      "summary": "17 passed"
+    },
+    {
+      "command": "dk37.sh exact CI lint/type steps (ruff check+format src/ tests/, mypy src/, ruff check+format ../scripts/ --exclude fingerprint-fixture, mypy ../scripts/)",
+      "exit_code": 0
+    }
+  ],
+  "ruff": {
+    "exit_code": 0
+  },
+  "format": {
+    "exit_code": 0
+  },
+  "mypy": {
+    "exit_code": 0,
+    "summary": "no issues in 65 files"
+  },
+  "full_suite": {
+    "exit_code": 1,
+    "summary": "1 failed, 1396 passed, 10 skipped",
+    "failed": [
+      "tests/slices/test_s01_contract.py::test_call_deadline_after_initialization"
+    ],
+    "classification": "pre-existing under uid 1000 (base-pytest.log.gz: same single failure)",
+    "log": "full-suite.log.gz"
+  },
+  "g_src": {
+    "exit_code": 0,
+    "note": "server.py, enforcement.py, config.py, codegraph.py, protocol/, query/, tools/, storage/, pyproject.toml, uv.lock, .github/workflows byte-unchanged vs 7b00944; src changes limited to reports/* and __main__.py; .gitattributes absent (orchestrator re-checked on the staged tree)"
+  },
+  "g_mcp": {
+    "exit_code": 0,
+    "tools_json_sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+    "tools_json_bytes": 1631472
+  },
+  "g_envelope": {
+    "MINIMUM_BUDGET": 3436,
+    "COLLECTION_MINIMUM_BUDGET": 3448,
+    "FIXED_ERROR_ENVELOPE_CAP": 797,
+    "IMPACT_MINIMUM_BUDGET": 7730,
+    "source": "unchanged: protocol/query/results byte-unchanged; pinned by test_s37 isolation"
+  },
+  "drift": "ramza-drift --staged: 54 changed files, all within declared scope",
+  "production_image": {
+    "build": "docker build -t atlas-aci:s37 mcp-server",
+    "image_id": "sha256:e76b9558607860a1757e4863da3daedf9d96e18532f22c63d4fc697bb2faf3ad",
+    "python": "3.12.16",
+    "tools": "7 tools, sha256 94f9567a... unchanged",
+    "template": "importlib.resources atlas_aci.reports/evidence_template.html readable from the installed wheel (1631 bytes)",
+    "replay": "--user 1000:1000 --network none --read-only, fixtures :ro: evidence-report on inline, path-references, truncated, hostile envelopes -> HTML and JSON byte-identical to committed goldens",
+    "mixed_snapshot": "inline envelope with resources[0].snapshot_id replaced -> exit 1, 'Error: Evidence report rejected: mixed_snapshot_evidence', no output files",
+    "hostile": "hostile.html contains no '<script' and no http(s) URL"
+  },
+  "day1_qualification": "qualification.json: real context envelopes (continuation pages with resources, budget-truncated, source-free import), id re-derivation after stripping, hostile excerpt/base64/label/filename reachable from real index, wire structuredContent == content text for 9 envelopes"
+}

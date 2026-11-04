@@ -115,3 +115,8 @@
 {"rubric":"confidence","total":79.5,"dims":{"pattern_match":80,"requirement_clarity":78,"decomposition_stability":74,"constraint_compliance":86},"verdict":"VALIDATE","at":"2026-11-04T02:09:26Z","label":"v3-evidence-package"}
 {"rubric":"refine","cycle":1,"total":4.2,"min":4,"dims":{"clarity":4,"completeness":4,"actionability":4,"efficiency":4,"testability":5},"verdict":"pass","at":"2026-11-04T02:09:26Z","label":"pre-checker"}
 {"rubric":"refine","cycle":1,"total":3.8,"min":3,"dims":{"clarity":4,"completeness":4,"actionability":4,"efficiency":3,"testability":4},"verdict":"pass","at":"2026-11-04T02:17:56Z","label":"post-checker"}
+{"rubric":"complexity","total":7,"dims":{"scope":2,"ambiguity":2,"dependencies":1,"risk":2},"verdict":"extended","at":"2026-11-04T04:03:26Z","label":"evidence-report"}
+{"rubric":"explore","total":82,"dims":{"alignment":9,"correctness":9,"maintainability":8,"performance":8,"simplicity":7,"risk":8,"innovation":5},"verdict":"solid","at":"2026-11-04T04:03:26Z","label":"template-shell-context-only"}
+{"rubric":"confidence","total":85,"dims":{"pattern_match":85,"requirement_clarity":85,"decomposition_stability":80,"constraint_compliance":90},"verdict":"AUTO_PROCEED","at":"2026-11-04T04:03:26Z","label":"evidence-report"}
+{"rubric":"refine","cycle":1,"total":4.6,"min":4,"dims":{"clarity":4,"completeness":5,"actionability":5,"efficiency":4,"testability":5},"verdict":"pass","at":"2026-11-04T04:03:26Z","label":"pre-checker"}
+{"rubric":"refine","cycle":1,"total":4,"min":3,"dims":{"clarity":4,"completeness":4,"actionability":4,"efficiency":3,"testability":5},"verdict":"pass","at":"2026-11-04T04:10:16Z","label":"post-checker"}

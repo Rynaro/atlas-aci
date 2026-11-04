@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'">
+<meta name="referrer" content="no-referrer">
+<title>ATLAS ACI evidence report</title>
+<style>
+body { font-family: sans-serif; margin: 1.5rem; line-height: 1.4; }
+h1, h2, h3 { margin: 1rem 0 0.5rem; }
+table { border-collapse: collapse; margin: 0.5rem 0; }
+th, td { border: 1px solid #888; padding: 0.2rem 0.5rem; text-align: left; vertical-align: top; word-break: break-all; }
+dl { display: grid; grid-template-columns: max-content 1fr; gap: 0.2rem 1rem; }
+dt { font-weight: bold; }
+dd { margin: 0; word-break: break-all; }
+pre { background: #f4f4f4; border: 1px solid #ccc; padding: 0.5rem; overflow-x: auto; white-space: pre-wrap; }
+article { border-top: 1px solid #bbb; margin-top: 1rem; padding-top: 0.5rem; }
+.cp { background: #fdd; border: 1px solid #c33; font-family: monospace; font-size: 0.8em; }
+</style>
+</head>
+<body>
+$identity
+<nav>
+<ul>
+<li><a href="#section-identity">Identity</a></li>
+<li><a href="#section-markers">Markers</a></li>
+<li><a href="#section-omitted">Omitted fields</a></li>
+<li><a href="#section-bundles">Evidence bundles</a></li>
+<li><a href="#section-sources">Sources</a></li>
+</ul>
+</nav>
+<main>
+$markers
+$omitted
+$bundles
+$sources
+</main>
+<footer>
+<p>This static report was rendered from one recorded context envelope. It embeds the server repository path in the identity section; review it before sharing. Live lease URIs and continuation cursors are omitted, so this file cannot fetch further evidence.</p>
+</footer>
+</body>
+</html>

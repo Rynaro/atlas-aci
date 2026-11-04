@@ -1,0 +1,16 @@
+mcp-server/src/atlas_aci/reports/__init__.py
+mcp-server/src/atlas_aci/reports/evidence.py
+mcp-server/src/atlas_aci/reports/evidence_template.html
+mcp-server/src/atlas_aci/__main__.py
+mcp-server/tests/slices/test_s37_evidence_report.py
+mcp-server/tests/fixtures/evidence_report/*
+docs/evidence-reports.md
+CHANGELOG.md
+README.md
+.spectra/plans/aci-s37.*
+.spectra/plans/ramza-calibration.jsonl
+.spectra/changes/aci-s37/*
+.spectra/evidence/aci-s37/*
+.spectra/state/aci-s37.execution.json
+.spectra/backlog/execution.json
+.spectra/backlog/order.md

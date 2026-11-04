@@ -846,5 +846,71 @@ def tools(repo: Path) -> None:
     click.echo(json.dumps(manifest, indent=2))
 
 
+@cli.command("evidence-report")
+@click.argument("envelope", type=click.Path(exists=True, dir_okay=False, path_type=Path))
+@click.option(
+    "--html",
+    "html_out",
+    required=True,
+    type=click.Path(dir_okay=False, path_type=Path),
+    help="Write the self-contained HTML report here.",
+)
+@click.option(
+    "--json",
+    "json_out",
+    required=True,
+    type=click.Path(dir_okay=False, path_type=Path),
+    help="Write the canonical JSON report here.",
+)
+def evidence_report(envelope: Path, html_out: Path, json_out: Path) -> None:
+    """Export one recorded `graph_query op=context` envelope as offline HTML and canonical JSON.
+
+    ENVELOPE is a file holding one successful, default-bounds context response. Live lease
+    URIs and continuation cursors are omitted from both outputs. Both outputs are rendered in
+    memory first: a rejection (exit 1) writes nothing and leaves existing files untouched.
+    Nothing is printed to stdout, and no server, repository or network is contacted.
+    """
+    import os
+
+    from atlas_aci.reports import evidence
+
+    def same(first: Path, second: Path) -> bool:
+        if first.resolve() == second.resolve():
+            return True
+        try:
+            return first.exists() and second.exists() and first.samefile(second)
+        except OSError:
+            return False
+
+    if same(html_out, json_out) or same(html_out, envelope) or same(json_out, envelope):
+        raise click.UsageError("ENVELOPE, --html and --json must be three different files.")
+    try:
+        with envelope.open("rb") as handle:
+            raw = handle.read(evidence.MAX_INPUT_FILE_BYTES + 1)
+    except OSError as exc:
+        raise click.ClickException("Evidence report rejected: invalid_input") from exc
+    try:
+        report = evidence.export(raw)
+    except evidence.ReportRejected as exc:
+        raise click.ClickException(f"Evidence report rejected: {exc}") from None
+    except Exception as exc:
+        # Never `str(exc)`: a message may carry input text or a path.
+        raise click.ClickException("Evidence report failed: " + type(exc).__name__) from None
+    staged: list[tuple[Path, Path]] = []
+    try:
+        for target, payload in ((json_out, report.json), (html_out, report.html)):
+            target.parent.mkdir(parents=True, exist_ok=True)
+            temp = target.with_name(f".{target.name}.{os.getpid()}.tmp")
+            with temp.open("xb") as sink:
+                staged.append((temp, target))
+                sink.write(payload)
+        for temp, target in staged:
+            temp.replace(target)
+    except OSError as exc:
+        for temp, _ in staged:
+            temp.unlink(missing_ok=True)
+        raise click.ClickException("Evidence report failed: " + type(exc).__name__) from None
+
+
 if __name__ == "__main__":
     cli()

@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'">
+<meta name="referrer" content="no-referrer">
+<title>ATLAS ACI evidence report</title>
+<style>
+body { font-family: sans-serif; margin: 1.5rem; line-height: 1.4; }
+h1, h2, h3 { margin: 1rem 0 0.5rem; }
+table { border-collapse: collapse; margin: 0.5rem 0; }
+th, td { border: 1px solid #888; padding: 0.2rem 0.5rem; text-align: left; vertical-align: top; word-break: break-all; }
+dl { display: grid; grid-template-columns: max-content 1fr; gap: 0.2rem 1rem; }
+dt { font-weight: bold; }
+dd { margin: 0; word-break: break-all; }
+pre { background: #f4f4f4; border: 1px solid #ccc; padding: 0.5rem; overflow-x: auto; white-space: pre-wrap; }
+article { border-top: 1px solid #bbb; margin-top: 1rem; padding-top: 0.5rem; }
+.cp { background: #fdd; border: 1px solid #c33; font-family: monospace; font-size: 0.8em; }
+</style>
+</head>
+<body>
+<header id="section-identity">
+<h1>ATLAS ACI evidence report</h1>
+<dl>
+<dt>report_format</dt><dd>atlas-evidence-report.v1</dd>
+<dt>rendering_version</dt><dd>atlas-evidence-render.1</dd>
+<dt>options</dt><dd>{&quot;control_codepoints&quot;:&quot;visible_placeholder&quot;,&quot;credential_fields&quot;:&quot;omitted&quot;,&quot;html_excerpts&quot;:&quot;escaped_text&quot;}</dd>
+<dt>envelope_sha256</dt><dd>2fe1e2e0aacfa5eda9d88ab80b4ca0a02e069cdf269afc96da8605c5058cef26</dd>
+<dt>json_report_sha256</dt><dd>cbddbc19e7b7f3d7d693c3ca979ec45dc3279260118225f01cedc756ad68df5e</dd>
+<dt>schema_version</dt><dd>atlas.graph.v1</dd>
+<dt>operation</dt><dd>context</dd>
+<dt>status</dt><dd>ok</dd>
+<dt>evidence_status</dt><dd>partial</dd>
+<dt>generation_id</dt><dd>806a23726379eb84c32c3b2851c8f4a233a98d2e0e29d201e7081f7ee5783da5</dd>
+<dt>snapshot_id</dt><dd>f75369ff8ca9a8676e076054650ec2547da5a11bd55f0d29b88bbfa4c8fe63b6</dd>
+<dt>repository</dt><dd>/tmp/atlas-s37-evidence/repo</dd>
+<dt>retrieval_record_id</dt><dd>65fbbf51394fc23c33373418ec192f9fc289bf845562f01049d1bd76c32eb3ae</dd>
+<dt>query_digest</dt><dd>25f219c88aa03ca372f13a3a1058b162f97b137873ed702de7b68ad2ac64d522</dd>
+<dt>ranker</dt><dd>atlas-context-diversity.v1</dd>
+<dt>request_text</dt><dd>process_payment</dd>
+<dt>source_policy</dt><dd>inline_if_complete</dd>
+<dt>tokenizer (diagnostic)</dt><dd>{&quot;algorithm&quot;:&quot;byte_quarter&quot;,&quot;domain&quot;:&quot;negotiated_mcp_result_utf8_excluding_jsonrpc&quot;,&quot;mode&quot;:&quot;estimated&quot;,&quot;version&quot;:&quot;1&quot;}</dd>
+<dt>token_usage (diagnostic)</dt><dd>{&quot;algorithm&quot;:&quot;byte_quarter&quot;,&quot;count&quot;:22115,&quot;domain&quot;:&quot;negotiated_mcp_result_utf8_excluding_jsonrpc&quot;,&quot;mode&quot;:&quot;estimated&quot;,&quot;version&quot;:&quot;1&quot;}</dd>
+</dl>
+</header>
+<nav>
+<ul>
+<li><a href="#section-identity">Identity</a></li>
+<li><a href="#section-markers">Markers</a></li>
+<li><a href="#section-omitted">Omitted fields</a></li>
+<li><a href="#section-bundles">Evidence bundles</a></li>
+<li><a href="#section-sources">Sources</a></li>
+</ul>
+</nav>
+<main>
+<section id="section-markers">
+<h2>Markers</h2>
+<p>Values are copied from the input envelope. A value of none means the input value is null; an absent key is not listed.</p>
+<table>
+<thead><tr><th>#</th><th>name</th><th>pointer</th><th>value</th></tr></thead>
+<tbody>
+<tr id="marker-0"><td>0</td><td>evidence_status</td><td>/evidence_status</td><td>partial</td></tr>
+<tr id="marker-1"><td>1</td><td>bounds.element_limit</td><td>/bounds/element_limit</td><td>200</td></tr>
+<tr id="marker-2"><td>2</td><td>bounds.truncated</td><td>/bounds/truncated</td><td>false</td></tr>
+<tr id="marker-3"><td>3</td><td>bounds.lists</td><td>/bounds/lists</td><td>{}</td></tr>
+<tr id="marker-4"><td>4</td><td>data.selection.total_count</td><td>/data/selection/total_count</td><td>7</td></tr>
+<tr id="marker-5"><td>5</td><td>data.selection.has_more</td><td>/data/selection/has_more</td><td>false</td></tr>
+<tr id="marker-6"><td>6</td><td>data.selection.reason</td><td>/data/selection/reason</td><td>none</td></tr>
+<tr id="marker-7"><td>7</td><td>data.selection_truncated</td><td>/data/selection_truncated</td><td>false</td></tr>
+<tr id="marker-8"><td>8</td><td>data.selection_reason</td><td>/data/selection_reason</td><td>none</td></tr>
+<tr id="marker-9"><td>9</td><td>data.has_more</td><td>/data/has_more</td><td>false</td></tr>
+<tr id="marker-10"><td>10</td><td>data.total_count</td><td>/data/total_count</td><td>7</td></tr>
+<tr id="marker-11"><td>11</td><td>data.retrieval.truncated</td><td>/data/retrieval/truncated</td><td>false</td></tr>
+<tr id="marker-12"><td>12</td><td>data.retrieval.truncation_reason</td><td>/data/retrieval/truncation_reason</td><td>none</td></tr>
+<tr id="marker-13"><td>13</td><td>data.retrieval.diagnostic_reason</td><td>/data/retrieval/diagnostic_reason</td><td>matched</td></tr>
+<tr id="marker-14"><td>14</td><td>data.collection_stop</td><td>/data/collection_stop</td><td>none</td></tr>
+<tr id="marker-15"><td>15</td><td>data.coverage.state</td><td>/data/coverage/state</td><td>partial</td></tr>
+<tr id="marker-16"><td>16</td><td>data.coverage.source_policy</td><td>/data/coverage/source_policy</td><td>available</td></tr>
+<tr id="marker-17"><td>17</td><td>data.coverage.excluded_counts</td><td>/data/coverage/excluded_counts</td><td>{&quot;observation_failed&quot;:1}</td></tr>
+<tr id="marker-18"><td>18</td><td>data.effective_limits</td><td>/data/effective_limits</td><td>{&quot;deadline_ms&quot;:2000,&quot;max_bundles&quot;:128,&quot;max_bytes&quot;:1048576,&quot;max_candidates&quot;:32,&quot;max_collection_bytes&quot;:8388608,&quot;max_depth&quot;:2,&quot;max_examined_edges&quot;:256,&quot;max_inline_bytes&quot;:8192,&quot;max_seeds&quot;:8,&quot;max_vm_operations&quot;:1000000}</td></tr>
+<tr id="marker-19"><td>19</td><td>data.work</td><td>/data/work</td><td>{&quot;examined_edges&quot;:4,&quot;proof_queries&quot;:42,&quot;source_bytes&quot;:3616,&quot;source_reads&quot;:3,&quot;sql_queries&quot;:56,&quot;vm_operations_reserved&quot;:1200,&quot;vm_progress_callbacks&quot;:1144}</td></tr>
+<tr id="marker-20"><td>20</td><td>data.frontiers.0.outcome</td><td>/data/frontiers/0/outcome</td><td>complete</td></tr>
+<tr id="marker-21"><td>21</td><td>data.frontiers.0.stop_reason</td><td>/data/frontiers/0/stop_reason</td><td>none</td></tr>
+<tr id="marker-22"><td>22</td><td>data.frontiers.0.target_state</td><td>/data/frontiers/0/target_state</td><td>none</td></tr>
+<tr id="marker-23"><td>23</td><td>data.frontiers.1.outcome</td><td>/data/frontiers/1/outcome</td><td>complete</td></tr>
+<tr id="marker-24"><td>24</td><td>data.frontiers.1.stop_reason</td><td>/data/frontiers/1/stop_reason</td><td>none</td></tr>
+<tr id="marker-25"><td>25</td><td>data.frontiers.1.target_state</td><td>/data/frontiers/1/target_state</td><td>none</td></tr>
+<tr id="marker-26"><td>26</td><td>data.bundles.0.rank.source_unavailable</td><td>/data/bundles/0/rank/source_unavailable</td><td>false</td></tr>
+<tr id="marker-27"><td>27</td><td>data.bundles.0.sources.0.state</td><td>/data/bundles/0/sources/0/state</td><td>available</td></tr>
+<tr id="marker-28"><td>28</td><td>data.bundles.0.sources.0.reason</td><td>/data/bundles/0/sources/0/reason</td><td>none</td></tr>
+<tr id="marker-29"><td>29</td><td>data.bundles.0.sources.0.inline_reason</td><td>/data/bundles/0/sources/0/inline_reason</td><td>none</td></tr>
+<tr id="marker-30"><td>30</td><td>data.bundles.1.rank.source_unavailable</td><td>/data/bundles/1/rank/source_unavailable</td><td>false</td></tr>
+<tr id="marker-31"><td>31</td><td>data.bundles.1.sources.0.state</td><td>/data/bundles/1/sources/0/state</td><td>available</td></tr>
+<tr id="marker-32"><td>32</td><td>data.bundles.1.sources.0.reason</td><td>/data/bundles/1/sources/0/reason</td><td>none</td></tr>
+<tr id="marker-33"><td>33</td><td>data.bundles.1.sources.0.inline_reason</td><td>/data/bundles/1/sources/0/inline_reason</td><td>none</td></tr>
+<tr id="marker-34"><td>34</td><td>data.bundles.1.records.proof.assertion.resolution</td><td>/data/bundles/1/records/proof/assertion/resolution</td><td>INFERRED</td></tr>
+<tr id="marker-35"><td>35</td><td>data.bundles.1.records.proof.assertion.unresolved_reason</td><td>/data/bundles/1/records/proof/assertion/unresolved_reason</td><td>none</td></tr>
+<tr id="marker-36"><td>36</td><td>data.bundles.1.records.proof.assertion.candidate_ids</td><td>/data/bundles/1/records/proof/assertion/candidate_ids</td><td>[]</td></tr>
+<tr id="marker-37"><td>37</td><td>data.bundles.1.records.proof.source_availability</td><td>/data/bundles/1/records/proof/source_availability</td><td>available</td></tr>
+<tr id="marker-38"><td>38</td><td>data.bundles.2.rank.source_unavailable</td><td>/data/bundles/2/rank/source_unavailable</td><td>false</td></tr>
+<tr id="marker-39"><td>39</td><td>data.bundles.2.sources.0.state</td><td>/data/bundles/2/sources/0/state</td><td>available</td></tr>
+<tr id="marker-40"><td>40</td><td>data.bundles.2.sources.0.reason</td><td>/data/bundles/2/sources/0/reason</td><td>none</td></tr>
+<tr id="marker-41"><td>41</td><td>data.bundles.2.sources.0.inline_reason</td><td>/data/bundles/2/sources/0/inline_reason</td><td>none</td></tr>
+<tr id="marker-42"><td>42</td><td>data.bundles.3.rank.source_unavailable</td><td>/data/bundles/3/rank/source_unavailable</td><td>false</td></tr>
+<tr id="marker-43"><td>43</td><td>data.bundles.3.sources.0.state</td><td>/data/bundles/3/sources/0/state</td><td>available</td></tr>
+<tr id="marker-44"><td>44</td><td>data.bundles.3.sources.0.reason</td><td>/data/bundles/3/sources/0/reason</td><td>none</td></tr>
+<tr id="marker-45"><td>45</td><td>data.bundles.3.sources.0.inline_reason</td><td>/data/bundles/3/sources/0/inline_reason</td><td>none</td></tr>
+<tr id="marker-46"><td>46</td><td>data.bundles.4.rank.source_unavailable</td><td>/data/bundles/4/rank/source_unavailable</td><td>false</td></tr>
+<tr id="marker-47"><td>47</td><td>data.bundles.4.sources.0.state</td><td>/data/bundles/4/sources/0/state</td><td>available</td></tr>
+<tr id="marker-48"><td>48</td><td>data.bundles.4.sources.0.reason</td><td>/data/bundles/4/sources/0/reason</td><td>none</td></tr>
+<tr id="marker-49"><td>49</td><td>data.bundles.4.sources.0.inline_reason</td><td>/data/bundles/4/sources/0/inline_reason</td><td>none</td></tr>
+<tr id="marker-50"><td>50</td><td>data.bundles.5.rank.source_unavailable</td><td>/data/bundles/5/rank/source_unavailable</td><td>false</td></tr>
+<tr id="marker-51"><td>51</td><td>data.bundles.5.sources.0.state</td><td>/data/bundles/5/sources/0/state</td><td>available</td></tr>
+<tr id="marker-52"><td>52</td><td>data.bundles.5.sources.0.reason</td><td>/data/bundles/5/sources/0/reason</td><td>none</td></tr>
+<tr id="marker-53"><td>53</td><td>data.bundles.5.sources.0.inline_reason</td><td>/data/bundles/5/sources/0/inline_reason</td><td>none</td></tr>
+<tr id="marker-54"><td>54</td><td>data.bundles.6.rank.source_unavailable</td><td>/data/bundles/6/rank/source_unavailable</td><td>false</td></tr>
+<tr id="marker-55"><td>55</td><td>data.bundles.6.sources.0.state</td><td>/data/bundles/6/sources/0/state</td><td>available</td></tr>
+<tr id="marker-56"><td>56</td><td>data.bundles.6.sources.0.reason</td><td>/data/bundles/6/sources/0/reason</td><td>none</td></tr>
+<tr id="marker-57"><td>57</td><td>data.bundles.6.sources.0.inline_reason</td><td>/data/bundles/6/sources/0/inline_reason</td><td>none</td></tr>
+<tr id="marker-58"><td>58</td><td>data.bundles.6.records.proof.assertion.resolution</td><td>/data/bundles/6/records/proof/assertion/resolution</td><td>INFERRED</td></tr>
+<tr id="marker-59"><td>59</td><td>data.bundles.6.records.proof.assertion.unresolved_reason</td><td>/data/bundles/6/records/proof/assertion/unresolved_reason</td><td>none</td></tr>
+<tr id="marker-60"><td>60</td><td>data.bundles.6.records.proof.assertion.candidate_ids</td><td>/data/bundles/6/records/proof/assertion/candidate_ids</td><td>[]</td></tr>
+<tr id="marker-61"><td>61</td><td>data.bundles.6.records.proof.source_availability</td><td>/data/bundles/6/records/proof/source_availability</td><td>available</td></tr>
+</tbody>
+</table>
+</section>
+<section id="section-omitted">
+<h2>Omitted fields</h2>
+<p>Live capability credentials are removed from both artifacts. A value of null means the input carried no cursor; redacted means a credential was present and removed.</p>
+<ul>
+<li>/data/next_cursor - capability_credential - null</li>
+<li>/data/resources/0/uri - capability_credential - redacted</li>
+<li>/data/resources/1/uri - capability_credential - redacted</li>
+<li>/data/resources/2/uri - capability_credential - redacted</li>
+<li>/data/resources/3/uri - capability_credential - redacted</li>
+<li>/data/resources/4/uri - capability_credential - redacted</li>
+<li>/data/resources/5/uri - capability_credential - redacted</li>
+<li>/data/resources/6/uri - capability_credential - redacted</li>
+</ul>
+</section>
+<section id="section-bundles">
+<h2>Evidence bundles</h2>
+<article id="bundle-0">
+<h3>Bundle 0: definition</h3>
+<dl>
+<dt>kind</dt><dd>definition</dd>
+<dt>id</dt><dd>924229c84f6508569050d409a1fec97725004e1a1f3cc73c01ba83009809b0a1</dd>
+<dt>rank</dt><dd>{&quot;distance&quot;:0,&quot;owners&quot;:[{&quot;kind&quot;:&quot;module&quot;,&quot;name&quot;:null,&quot;ordinal&quot;:0}],&quot;primary_path&quot;:&quot;app/payments.py&quot;,&quot;seed_rank&quot;:0,&quot;source_unavailable&quot;:false,&quot;tier&quot;:&quot;exact_name&quot;}</dd>
+<dt>location</dt><dd>app/payments.py:1:0-4:17</dd>
+<dt>nodes (id | name | kind | path)</dt><dd><ol>
+<li>15f42782ba729058733d11b0bf4f3464c3bab2e971a54560f51bb1d866ba9189 | process_payment | function | app/payments.py</li>
+</ol></dd>
+<dt>sources</dt><dd><ul>
+<li><a href="#source-572125b12d6744a4a176caa976e72f5ba1aa95d11cb5ae00780185abbe3924a1">572125b12d6744a4a176caa976e72f5ba1aa95d11cb5ae00780185abbe3924a1</a></li>
+</ul></dd>
+</dl>
+<p>hops: none</p>
+</article>
+<article id="bundle-1">
+<h3>Bundle 1: relationship</h3>
+<dl>
+<dt>kind</dt><dd>relationship</dd>
+<dt>id</dt><dd>660a8e3b2b55231be3d531dee21bf19772c18fcc9df7468dd8d1a8699e515f86</dd>
+<dt>rank</dt><dd>{&quot;distance&quot;:1,&quot;owners&quot;:[{&quot;kind&quot;:&quot;module&quot;,&quot;name&quot;:null,&quot;ordinal&quot;:0}],&quot;primary_path&quot;:&quot;app/payments.py&quot;,&quot;seed_rank&quot;:0,&quot;source_unavailable&quot;:false,&quot;tier&quot;:&quot;exact_name&quot;}</dd>
+<dt>nodes (id | name | kind | path)</dt><dd><ol>
+<li>15f42782ba729058733d11b0bf4f3464c3bab2e971a54560f51bb1d866ba9189 | process_payment | function | app/payments.py</li>
+<li>7db06b3a18a471af684e5c51ba6463764a1d7a7fb7da330967ac013ed01b7a6f | validate_payment | function | app/payments.py</li>
+</ol></dd>
+<dt>sources</dt><dd><ul>
+<li><a href="#source-749d5ba469dd3cc5caee5a1411322b03051181e76b1e0b4b6afac4683c5a3f2c">749d5ba469dd3cc5caee5a1411322b03051181e76b1e0b4b6afac4683c5a3f2c</a></li>
+</ul></dd>
+</dl>
+<table>
+<thead><tr><th>relation</th><th>direction</th><th>resolution</th><th>unresolved_reason</th><th>raw_target</th><th>source_entity</th><th>target_entity</th><th>location</th><th>bytes</th><th>source_sha256</th><th>source_availability</th><th>source</th></tr></thead>
+<tbody>
+<tr id="bundle-1-hop-0"><td>call</td><td>outgoing</td><td>INFERRED</td><td>none</td><td>validate_payment</td><td>15f42782ba729058733d11b0bf4f3464c3bab2e971a54560f51bb1d866ba9189</td><td>7db06b3a18a471af684e5c51ba6463764a1d7a7fb7da330967ac013ed01b7a6f</td><td>app/payments.py:2:4-2:20</td><td>bytes [33, 49)</td><td>782c869ba1b534f3d12e727acc3cd703a3eb1742ab2ed897898b79c49298f81c</td><td>available</td><td><a href="#source-749d5ba469dd3cc5caee5a1411322b03051181e76b1e0b4b6afac4683c5a3f2c">source</a></td></tr>
+</tbody>
+</table>
+</article>
+<article id="bundle-2">
+<h3>Bundle 2: definition</h3>
+<dl>
+<dt>kind</dt><dd>definition</dd>
+<dt>id</dt><dd>6f1b67fa3eb4b1aa0c9b86160b2c091f5ea3360c47cf235bbaee2da73e2455f4</dd>
+<dt>rank</dt><dd>{&quot;distance&quot;:0,&quot;owners&quot;:[{&quot;kind&quot;:&quot;module&quot;,&quot;name&quot;:null,&quot;ordinal&quot;:0}],&quot;primary_path&quot;:&quot;other/payments.py&quot;,&quot;seed_rank&quot;:1,&quot;source_unavailable&quot;:false,&quot;tier&quot;:&quot;exact_name&quot;}</dd>
+<dt>location</dt><dd>other/payments.py:1:0-3:22</dd>
+<dt>nodes (id | name | kind | path)</dt><dd><ol>
+<li>41e1a1ae8f44a21da4d705725fab8985aaf458115f7573bd1947b6ca2a5c5fc7 | process_payment | function | other/payments.py</li>
+</ol></dd>
+<dt>sources</dt><dd><ul>
+<li><a href="#source-f2ae1ba942e262d2cc73edbadfe5da50b8d88e59420dbe0864e9f4ffbbee2179">f2ae1ba942e262d2cc73edbadfe5da50b8d88e59420dbe0864e9f4ffbbee2179</a></li>
+</ul></dd>
+</dl>
+<p>hops: none</p>
+</article>
+<article id="bundle-3">
+<h3>Bundle 3: lexical_file</h3>
+<dl>
+<dt>kind</dt><dd>lexical_file</dd>
+<dt>id</dt><dd>401f82dad88cf5f70cb1d281c8c92b93d3cd87a46d26de74c63e37757a5c0685</dd>
+<dt>rank</dt><dd>{&quot;distance&quot;:0,&quot;owners&quot;:[],&quot;primary_path&quot;:&quot;noise/task.py&quot;,&quot;seed_rank&quot;:2,&quot;source_unavailable&quot;:false,&quot;tier&quot;:&quot;lexical&quot;}</dd>
+<dt>path</dt><dd>noise/task.py</dd>
+<dt>match_tier</dt><dd>lexical</dd>
+<dt>score</dt><dd>-2.3068523765181155</dd>
+<dt>sources</dt><dd><ul>
+<li><a href="#source-631c9c53aa3624756eccb9a131761797b860507ab2e98f63d8a161db371be044">631c9c53aa3624756eccb9a131761797b860507ab2e98f63d8a161db371be044</a></li>
+</ul></dd>
+</dl>
+<p>hops: none</p>
+</article>
+<article id="bundle-4">
+<h3>Bundle 4: lexical_file</h3>
+<dl>
+<dt>kind</dt><dd>lexical_file</dd>
+<dt>id</dt><dd>3d9771239925d82a0fbb7410070abb44b614b27983cd92f4f33b7eb9ad8c3c50</dd>
+<dt>rank</dt><dd>{&quot;distance&quot;:0,&quot;owners&quot;:[],&quot;primary_path&quot;:&quot;app/payments.py&quot;,&quot;seed_rank&quot;:4,&quot;source_unavailable&quot;:false,&quot;tier&quot;:&quot;lexical&quot;}</dd>
+<dt>path</dt><dd>app/payments.py</dd>
+<dt>match_tier</dt><dd>lexical</dd>
+<dt>score</dt><dd>-1.3164879878824067</dd>
+<dt>sources</dt><dd><ul>
+<li><a href="#source-71cfc319d75486f4cfa694795c5cebc905183c06a3e989ff5cf5746a8dd6aa93">71cfc319d75486f4cfa694795c5cebc905183c06a3e989ff5cf5746a8dd6aa93</a></li>
+</ul></dd>
+</dl>
+<p>hops: none</p>
+</article>
+<article id="bundle-5">
+<h3>Bundle 5: lexical_file</h3>
+<dl>
+<dt>kind</dt><dd>lexical_file</dd>
+<dt>id</dt><dd>a6dbd488da1980b293cf0d257cd7ac57f47dc4a723066ee18359bf18b6d669b6</dd>
+<dt>rank</dt><dd>{&quot;distance&quot;:0,&quot;owners&quot;:[],&quot;primary_path&quot;:&quot;other/payments.py&quot;,&quot;seed_rank&quot;:3,&quot;source_unavailable&quot;:false,&quot;tier&quot;:&quot;lexical&quot;}</dd>
+<dt>path</dt><dd>other/payments.py</dd>
+<dt>match_tier</dt><dd>lexical</dd>
+<dt>score</dt><dd>-1.6142202798306837</dd>
+<dt>sources</dt><dd><ul>
+<li><a href="#source-f1f9f30df6355000cddac4bc41f61f57fb492dbf8faafaa5f963a0c202f85f64">f1f9f30df6355000cddac4bc41f61f57fb492dbf8faafaa5f963a0c202f85f64</a></li>
+</ul></dd>
+</dl>
+<p>hops: none</p>
+</article>
+<article id="bundle-6">
+<h3>Bundle 6: relationship</h3>
+<dl>
+<dt>kind</dt><dd>relationship</dd>
+<dt>id</dt><dd>bae93d3cbf92509ae76e36a7b98c5562e829ce5ccb42162aa457b6cc2cb2d312</dd>
+<dt>rank</dt><dd>{&quot;distance&quot;:1,&quot;owners&quot;:[{&quot;kind&quot;:&quot;module&quot;,&quot;name&quot;:null,&quot;ordinal&quot;:0}],&quot;primary_path&quot;:&quot;app/payments.py&quot;,&quot;seed_rank&quot;:0,&quot;source_unavailable&quot;:false,&quot;tier&quot;:&quot;exact_name&quot;}</dd>
+<dt>nodes (id | name | kind | path)</dt><dd><ol>
+<li>15f42782ba729058733d11b0bf4f3464c3bab2e971a54560f51bb1d866ba9189 | process_payment | function | app/payments.py</li>
+<li>1f09b3f48b489e9b1339aaf420f54d1953a5a9f1ca587017fdd457bcaef7ac3f | write_ledger | function | app/payments.py</li>
+</ol></dd>
+<dt>sources</dt><dd><ul>
+<li><a href="#source-3a5d2c7b1917d45df093e676a1e7a48cf08820ce7df0b2e1dd0c00f1d3429fb5">3a5d2c7b1917d45df093e676a1e7a48cf08820ce7df0b2e1dd0c00f1d3429fb5</a></li>
+</ul></dd>
+</dl>
+<table>
+<thead><tr><th>relation</th><th>direction</th><th>resolution</th><th>unresolved_reason</th><th>raw_target</th><th>source_entity</th><th>target_entity</th><th>location</th><th>bytes</th><th>source_sha256</th><th>source_availability</th><th>source</th></tr></thead>
+<tbody>
+<tr id="bundle-6-hop-0"><td>call</td><td>outgoing</td><td>INFERRED</td><td>none</td><td>write_ledger</td><td>15f42782ba729058733d11b0bf4f3464c3bab2e971a54560f51bb1d866ba9189</td><td>1f09b3f48b489e9b1339aaf420f54d1953a5a9f1ca587017fdd457bcaef7ac3f</td><td>app/payments.py:3:4-3:16</td><td>bytes [62, 74)</td><td>782c869ba1b534f3d12e727acc3cd703a3eb1742ab2ed897898b79c49298f81c</td><td>available</td><td><a href="#source-3a5d2c7b1917d45df093e676a1e7a48cf08820ce7df0b2e1dd0c00f1d3429fb5">source</a></td></tr>
+</tbody>
+</table>
+</article>
+</section>
+<section id="section-sources">
+<h2>Sources</h2>
+<article id="source-572125b12d6744a4a176caa976e72f5ba1aa95d11cb5ae00780185abbe3924a1">
+<h3>Source 572125b12d6744a4a176caa976e72f5ba1aa95d11cb5ae00780185abbe3924a1</h3>
+<dl>
+<dt>id</dt><dd>572125b12d6744a4a176caa976e72f5ba1aa95d11cb5ae00780185abbe3924a1</dd>
+<dt>kind</dt><dd>definition</dd>
+<dt>state</dt><dd>available</dd>
+<dt>reason</dt><dd>none</dd>
+<dt>path</dt><dd>app/payments.py</dd>
+<dt>byte range</dt><dd>bytes [0, 100)</dd>
+<dt>source_sha256</dt><dd>782c869ba1b534f3d12e727acc3cd703a3eb1742ab2ed897898b79c49298f81c</dd>
+<dt>source_size</dt><dd>272</dd>
+<dt>provenance_state</dt><dd>source</dd>
+<dt>inline_reason</dt><dd>none</dd>
+<dt>resource_ids</dt><dd>[&quot;72f3035bdf646a9207957310caa9ccff19788f193bcee14d2428767fef9bf83a&quot;]</dd>
+</dl>
+<pre class="excerpt">
+def process_payment(amount):
+    validate_payment(amount)
+    write_ledger(amount)
+    return amount</pre>
+</article>
+<article id="source-749d5ba469dd3cc5caee5a1411322b03051181e76b1e0b4b6afac4683c5a3f2c">
+<h3>Source 749d5ba469dd3cc5caee5a1411322b03051181e76b1e0b4b6afac4683c5a3f2c</h3>
+<dl>
+<dt>id</dt><dd>749d5ba469dd3cc5caee5a1411322b03051181e76b1e0b4b6afac4683c5a3f2c</dd>
+<dt>kind</dt><dd>assertion</dd>
+<dt>state</dt><dd>available</dd>
+<dt>reason</dt><dd>none</dd>
+<dt>path</dt><dd>app/payments.py</dd>
+<dt>byte range</dt><dd>bytes [33, 49)</dd>
+<dt>source_sha256</dt><dd>782c869ba1b534f3d12e727acc3cd703a3eb1742ab2ed897898b79c49298f81c</dd>
+<dt>source_size</dt><dd>272</dd>
+<dt>provenance_state</dt><dd>source</dd>
+<dt>inline_reason</dt><dd>none</dd>
+<dt>resource_ids</dt><dd>[&quot;43ca4051cd9935ffaa9dc37115d705398f030ec4f839022d2eea8b63e27ece69&quot;]</dd>
+</dl>
+<pre class="excerpt">
+validate_payment</pre>
+</article>
+<article id="source-f2ae1ba942e262d2cc73edbadfe5da50b8d88e59420dbe0864e9f4ffbbee2179">
+<h3>Source f2ae1ba942e262d2cc73edbadfe5da50b8d88e59420dbe0864e9f4ffbbee2179</h3>
+<dl>
+<dt>id</dt><dd>f2ae1ba942e262d2cc73edbadfe5da50b8d88e59420dbe0864e9f4ffbbee2179</dd>
+<dt>kind</dt><dd>definition</dd>
+<dt>state</dt><dd>available</dd>
+<dt>reason</dt><dd>none</dd>
+<dt>path</dt><dd>other/payments.py</dd>
+<dt>byte range</dt><dd>bytes [0, 110)</dd>
+<dt>source_sha256</dt><dd>746954ef4f33bce466edd4e4c5fe1d74201b77b34d3dc894a02b3cbe0f0d1368</dd>
+<dt>source_size</dt><dd>111</dd>
+<dt>provenance_state</dt><dd>source</dd>
+<dt>inline_reason</dt><dd>none</dd>
+<dt>resource_ids</dt><dd>[&quot;29ce208cdd4926d9023872d7a1d2177130c7df38a33a874c455c5a0d63a27b11&quot;]</dd>
+</dl>
+<pre class="excerpt">
+def process_payment(amount):
+    # unrelated reporting-only homonym; no ledger mutation
+    return str(amount)</pre>
+</article>
+<article id="source-631c9c53aa3624756eccb9a131761797b860507ab2e98f63d8a161db371be044">
+<h3>Source 631c9c53aa3624756eccb9a131761797b860507ab2e98f63d8a161db371be044</h3>
+<dl>
+<dt>id</dt><dd>631c9c53aa3624756eccb9a131761797b860507ab2e98f63d8a161db371be044</dd>
+<dt>kind</dt><dd>file</dd>
+<dt>state</dt><dd>available</dd>
+<dt>reason</dt><dd>none</dd>
+<dt>path</dt><dd>noise/task.py</dd>
+<dt>byte range</dt><dd>bytes [0, 3233)</dd>
+<dt>source_sha256</dt><dd>27de5ed39168722cce50d06270b48994e041ac059986f0c4f3a973f595da3d9f</dd>
+<dt>source_size</dt><dd>3233</dd>
+<dt>provenance_state</dt><dd>source</dd>
+<dt>inline_reason</dt><dd>none</dd>
+<dt>resource_ids</dt><dd>[&quot;abba97233eb94cb436ac0778b4c343e38bc23257c89412b1bc9b9726985b0a84&quot;]</dd>
+</dl>
+<pre class="excerpt">
+def unrelated():
+    return 0
+# process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout process_payment retry transport timeout 
+</pre>
+</article>
+<article id="source-71cfc319d75486f4cfa694795c5cebc905183c06a3e989ff5cf5746a8dd6aa93">
+<h3>Source 71cfc319d75486f4cfa694795c5cebc905183c06a3e989ff5cf5746a8dd6aa93</h3>
+<dl>
+<dt>id</dt><dd>71cfc319d75486f4cfa694795c5cebc905183c06a3e989ff5cf5746a8dd6aa93</dd>
+<dt>kind</dt><dd>file</dd>
+<dt>state</dt><dd>available</dd>
+<dt>reason</dt><dd>none</dd>
+<dt>path</dt><dd>app/payments.py</dd>
+<dt>byte range</dt><dd>bytes [0, 272)</dd>
+<dt>source_sha256</dt><dd>782c869ba1b534f3d12e727acc3cd703a3eb1742ab2ed897898b79c49298f81c</dd>
+<dt>source_size</dt><dd>272</dd>
+<dt>provenance_state</dt><dd>source</dd>
+<dt>inline_reason</dt><dd>none</dd>
+<dt>resource_ids</dt><dd>[&quot;1bbfa6e3d71f672d4d938e2d7d1ccb898a5da0eb05a0721c4e4d3aeef172e6f5&quot;]</dd>
+</dl>
+<pre class="excerpt">
+def process_payment(amount):
+    validate_payment(amount)
+    write_ledger(amount)
+    return amount
+
+def validate_payment(amount):
+    if amount &lt; 0:
+        raise ValueError(&quot;negative payment&quot;)
+    return amount
+
+def write_ledger(amount):
+    return {&quot;payment&quot;: amount}
+</pre>
+</article>
+<article id="source-f1f9f30df6355000cddac4bc41f61f57fb492dbf8faafaa5f963a0c202f85f64">
+<h3>Source f1f9f30df6355000cddac4bc41f61f57fb492dbf8faafaa5f963a0c202f85f64</h3>
+<dl>
+<dt>id</dt><dd>f1f9f30df6355000cddac4bc41f61f57fb492dbf8faafaa5f963a0c202f85f64</dd>
+<dt>kind</dt><dd>file</dd>
+<dt>state</dt><dd>available</dd>
+<dt>reason</dt><dd>none</dd>
+<dt>path</dt><dd>other/payments.py</dd>
+<dt>byte range</dt><dd>bytes [0, 111)</dd>
+<dt>source_sha256</dt><dd>746954ef4f33bce466edd4e4c5fe1d74201b77b34d3dc894a02b3cbe0f0d1368</dd>
+<dt>source_size</dt><dd>111</dd>
+<dt>provenance_state</dt><dd>source</dd>
+<dt>inline_reason</dt><dd>none</dd>
+<dt>resource_ids</dt><dd>[&quot;79f3ae9081ded277dabee3fdf201477756671845d3dc8814285be7b96998e887&quot;]</dd>
+</dl>
+<pre class="excerpt">
+def process_payment(amount):
+    # unrelated reporting-only homonym; no ledger mutation
+    return str(amount)
+</pre>
+</article>
+<article id="source-3a5d2c7b1917d45df093e676a1e7a48cf08820ce7df0b2e1dd0c00f1d3429fb5">
+<h3>Source 3a5d2c7b1917d45df093e676a1e7a48cf08820ce7df0b2e1dd0c00f1d3429fb5</h3>
+<dl>
+<dt>id</dt><dd>3a5d2c7b1917d45df093e676a1e7a48cf08820ce7df0b2e1dd0c00f1d3429fb5</dd>
+<dt>kind</dt><dd>assertion</dd>
+<dt>state</dt><dd>available</dd>
+<dt>reason</dt><dd>none</dd>
+<dt>path</dt><dd>app/payments.py</dd>
+<dt>byte range</dt><dd>bytes [62, 74)</dd>
+<dt>source_sha256</dt><dd>782c869ba1b534f3d12e727acc3cd703a3eb1742ab2ed897898b79c49298f81c</dd>
+<dt>source_size</dt><dd>272</dd>
+<dt>provenance_state</dt><dd>source</dd>
+<dt>inline_reason</dt><dd>none</dd>
+<dt>resource_ids</dt><dd>[&quot;8d1d76f235b53a9267d24f9929483388b2f6d842e3347eb80f7a6ce33ba5d72f&quot;]</dd>
+</dl>
+<pre class="excerpt">
+write_ledger</pre>
+</article>
+</section>
+</main>
+<footer>
+<p>This static report was rendered from one recorded context envelope. It embeds the server repository path in the identity section; review it before sharing. Live lease URIs and continuation cursors are omitted, so this file cannot fetch further evidence.</p>
+</footer>
+</body>
+</html>

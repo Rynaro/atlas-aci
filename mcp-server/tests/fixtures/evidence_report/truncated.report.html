@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'">
+<meta name="referrer" content="no-referrer">
+<title>ATLAS ACI evidence report</title>
+<style>
+body { font-family: sans-serif; margin: 1.5rem; line-height: 1.4; }
+h1, h2, h3 { margin: 1rem 0 0.5rem; }
+table { border-collapse: collapse; margin: 0.5rem 0; }
+th, td { border: 1px solid #888; padding: 0.2rem 0.5rem; text-align: left; vertical-align: top; word-break: break-all; }
+dl { display: grid; grid-template-columns: max-content 1fr; gap: 0.2rem 1rem; }
+dt { font-weight: bold; }
+dd { margin: 0; word-break: break-all; }
+pre { background: #f4f4f4; border: 1px solid #ccc; padding: 0.5rem; overflow-x: auto; white-space: pre-wrap; }
+article { border-top: 1px solid #bbb; margin-top: 1rem; padding-top: 0.5rem; }
+.cp { background: #fdd; border: 1px solid #c33; font-family: monospace; font-size: 0.8em; }
+</style>
+</head>
+<body>
+<header id="section-identity">
+<h1>ATLAS ACI evidence report</h1>
+<dl>
+<dt>report_format</dt><dd>atlas-evidence-report.v1</dd>
+<dt>rendering_version</dt><dd>atlas-evidence-render.1</dd>
+<dt>options</dt><dd>{&quot;control_codepoints&quot;:&quot;visible_placeholder&quot;,&quot;credential_fields&quot;:&quot;omitted&quot;,&quot;html_excerpts&quot;:&quot;escaped_text&quot;}</dd>
+<dt>envelope_sha256</dt><dd>e11c6c883d476d12c049c04370f4a97fd197f457cebb8f75d434a524a2317a1a</dd>
+<dt>json_report_sha256</dt><dd>da7c8107d7cf1ea6ef4e5e30e19d60bc0fef353f216ae69076b095ffcc017c13</dd>
+<dt>schema_version</dt><dd>atlas.graph.v1</dd>
+<dt>operation</dt><dd>context</dd>
+<dt>status</dt><dd>ok</dd>
+<dt>evidence_status</dt><dd>partial</dd>
+<dt>generation_id</dt><dd>806a23726379eb84c32c3b2851c8f4a233a98d2e0e29d201e7081f7ee5783da5</dd>
+<dt>snapshot_id</dt><dd>f75369ff8ca9a8676e076054650ec2547da5a11bd55f0d29b88bbfa4c8fe63b6</dd>
+<dt>repository</dt><dd>/tmp/atlas-s37-evidence/repo</dd>
+<dt>retrieval_record_id</dt><dd>d4be85559e335d421e6f47202d7194464750fa95c52b6d2d9627f767961ba4d3</dd>
+<dt>query_digest</dt><dd>ed9d557a8dcdae988f5955b98cae2a25a091768836cafa4b78d63318d8b78ecd</dd>
+<dt>ranker</dt><dd>atlas-context-diversity.v1</dd>
+<dt>request_text</dt><dd>process_payment</dd>
+<dt>source_policy</dt><dd>inline_if_complete</dd>
+<dt>tokenizer (diagnostic)</dt><dd>{&quot;algorithm&quot;:&quot;byte_quarter&quot;,&quot;domain&quot;:&quot;negotiated_mcp_result_utf8_excluding_jsonrpc&quot;,&quot;mode&quot;:&quot;estimated&quot;,&quot;version&quot;:&quot;1&quot;}</dd>
+<dt>token_usage (diagnostic)</dt><dd>{&quot;algorithm&quot;:&quot;byte_quarter&quot;,&quot;count&quot;:5430,&quot;domain&quot;:&quot;negotiated_mcp_result_utf8_excluding_jsonrpc&quot;,&quot;mode&quot;:&quot;estimated&quot;,&quot;version&quot;:&quot;1&quot;}</dd>
+</dl>
+</header>
+<nav>
+<ul>
+<li><a href="#section-identity">Identity</a></li>
+<li><a href="#section-markers">Markers</a></li>
+<li><a href="#section-omitted">Omitted fields</a></li>
+<li><a href="#section-bundles">Evidence bundles</a></li>
+<li><a href="#section-sources">Sources</a></li>
+</ul>
+</nav>
+<main>
+<section id="section-markers">
+<h2>Markers</h2>
+<p>Values are copied from the input envelope. A value of none means the input value is null; an absent key is not listed.</p>
+<table>
+<thead><tr><th>#</th><th>name</th><th>pointer</th><th>value</th></tr></thead>
+<tbody>
+<tr id="marker-0"><td>0</td><td>evidence_status</td><td>/evidence_status</td><td>partial</td></tr>
+<tr id="marker-1"><td>1</td><td>bounds.element_limit</td><td>/bounds/element_limit</td><td>200</td></tr>
+<tr id="marker-2"><td>2</td><td>bounds.truncated</td><td>/bounds/truncated</td><td>false</td></tr>
+<tr id="marker-3"><td>3</td><td>bounds.lists</td><td>/bounds/lists</td><td>{}</td></tr>
+<tr id="marker-4"><td>4</td><td>data.selection.total_count</td><td>/data/selection/total_count</td><td>7</td></tr>
+<tr id="marker-5"><td>5</td><td>data.selection.has_more</td><td>/data/selection/has_more</td><td>true</td></tr>
+<tr id="marker-6"><td>6</td><td>data.selection.reason</td><td>/data/selection/reason</td><td>none</td></tr>
+<tr id="marker-7"><td>7</td><td>data.selection_truncated</td><td>/data/selection_truncated</td><td>false</td></tr>
+<tr id="marker-8"><td>8</td><td>data.selection_reason</td><td>/data/selection_reason</td><td>none</td></tr>
+<tr id="marker-9"><td>9</td><td>data.has_more</td><td>/data/has_more</td><td>true</td></tr>
+<tr id="marker-10"><td>10</td><td>data.total_count</td><td>/data/total_count</td><td>7</td></tr>
+<tr id="marker-11"><td>11</td><td>data.retrieval.truncated</td><td>/data/retrieval/truncated</td><td>false</td></tr>
+<tr id="marker-12"><td>12</td><td>data.retrieval.truncation_reason</td><td>/data/retrieval/truncation_reason</td><td>none</td></tr>
+<tr id="marker-13"><td>13</td><td>data.retrieval.diagnostic_reason</td><td>/data/retrieval/diagnostic_reason</td><td>matched</td></tr>
+<tr id="marker-14"><td>14</td><td>data.collection_stop</td><td>/data/collection_stop</td><td>none</td></tr>
+<tr id="marker-15"><td>15</td><td>data.coverage.state</td><td>/data/coverage/state</td><td>partial</td></tr>
+<tr id="marker-16"><td>16</td><td>data.coverage.source_policy</td><td>/data/coverage/source_policy</td><td>available</td></tr>
+<tr id="marker-17"><td>17</td><td>data.coverage.excluded_counts</td><td>/data/coverage/excluded_counts</td><td>{&quot;observation_failed&quot;:1}</td></tr>
+<tr id="marker-18"><td>18</td><td>data.effective_limits</td><td>/data/effective_limits</td><td>{&quot;deadline_ms&quot;:2000,&quot;max_bundles&quot;:128,&quot;max_bytes&quot;:40000,&quot;max_candidates&quot;:32,&quot;max_collection_bytes&quot;:8388608,&quot;max_depth&quot;:2,&quot;max_examined_edges&quot;:256,&quot;max_inline_bytes&quot;:8192,&quot;max_seeds&quot;:8,&quot;max_vm_operations&quot;:1000000}</td></tr>
+<tr id="marker-19"><td>19</td><td>data.work</td><td>/data/work</td><td>{&quot;examined_edges&quot;:4,&quot;proof_queries&quot;:42,&quot;source_bytes&quot;:3616,&quot;source_reads&quot;:3,&quot;sql_queries&quot;:56,&quot;vm_operations_reserved&quot;:1200,&quot;vm_progress_callbacks&quot;:1144}</td></tr>
+<tr id="marker-20"><td>20</td><td>data.frontiers.0.outcome</td><td>/data/frontiers/0/outcome</td><td>complete</td></tr>
+<tr id="marker-21"><td>21</td><td>data.frontiers.0.stop_reason</td><td>/data/frontiers/0/stop_reason</td><td>none</td></tr>
+<tr id="marker-22"><td>22</td><td>data.frontiers.0.target_state</td><td>/data/frontiers/0/target_state</td><td>none</td></tr>
+<tr id="marker-23"><td>23</td><td>data.frontiers.1.outcome</td><td>/data/frontiers/1/outcome</td><td>complete</td></tr>
+<tr id="marker-24"><td>24</td><td>data.frontiers.1.stop_reason</td><td>/data/frontiers/1/stop_reason</td><td>none</td></tr>
+<tr id="marker-25"><td>25</td><td>data.frontiers.1.target_state</td><td>/data/frontiers/1/target_state</td><td>none</td></tr>
+<tr id="marker-26"><td>26</td><td>data.bundles.0.rank.source_unavailable</td><td>/data/bundles/0/rank/source_unavailable</td><td>false</td></tr>
+<tr id="marker-27"><td>27</td><td>data.bundles.0.sources.0.state</td><td>/data/bundles/0/sources/0/state</td><td>available</td></tr>
+<tr id="marker-28"><td>28</td><td>data.bundles.0.sources.0.reason</td><td>/data/bundles/0/sources/0/reason</td><td>none</td></tr>
+<tr id="marker-29"><td>29</td><td>data.bundles.0.sources.0.inline_reason</td><td>/data/bundles/0/sources/0/inline_reason</td><td>none</td></tr>
+</tbody>
+</table>
+</section>
+<section id="section-omitted">
+<h2>Omitted fields</h2>
+<p>Live capability credentials are removed from both artifacts. A value of null means the input carried no cursor; redacted means a credential was present and removed.</p>
+<ul>
+<li>/data/next_cursor - capability_credential - redacted</li>
+<li>/data/resources/0/uri - capability_credential - redacted</li>
+</ul>
+</section>
+<section id="section-bundles">
+<h2>Evidence bundles</h2>
+<article id="bundle-0">
+<h3>Bundle 0: definition</h3>
+<dl>
+<dt>kind</dt><dd>definition</dd>
+<dt>id</dt><dd>924229c84f6508569050d409a1fec97725004e1a1f3cc73c01ba83009809b0a1</dd>
+<dt>rank</dt><dd>{&quot;distance&quot;:0,&quot;owners&quot;:[{&quot;kind&quot;:&quot;module&quot;,&quot;name&quot;:null,&quot;ordinal&quot;:0}],&quot;primary_path&quot;:&quot;app/payments.py&quot;,&quot;seed_rank&quot;:0,&quot;source_unavailable&quot;:false,&quot;tier&quot;:&quot;exact_name&quot;}</dd>
+<dt>location</dt><dd>app/payments.py:1:0-4:17</dd>
+<dt>nodes (id | name | kind | path)</dt><dd><ol>
+<li>15f42782ba729058733d11b0bf4f3464c3bab2e971a54560f51bb1d866ba9189 | process_payment | function | app/payments.py</li>
+</ol></dd>
+<dt>sources</dt><dd><ul>
+<li><a href="#source-572125b12d6744a4a176caa976e72f5ba1aa95d11cb5ae00780185abbe3924a1">572125b12d6744a4a176caa976e72f5ba1aa95d11cb5ae00780185abbe3924a1</a></li>
+</ul></dd>
+</dl>
+<p>hops: none</p>
+</article>
+</section>
+<section id="section-sources">
+<h2>Sources</h2>
+<article id="source-572125b12d6744a4a176caa976e72f5ba1aa95d11cb5ae00780185abbe3924a1">
+<h3>Source 572125b12d6744a4a176caa976e72f5ba1aa95d11cb5ae00780185abbe3924a1</h3>
+<dl>
+<dt>id</dt><dd>572125b12d6744a4a176caa976e72f5ba1aa95d11cb5ae00780185abbe3924a1</dd>
+<dt>kind</dt><dd>definition</dd>
+<dt>state</dt><dd>available</dd>
+<dt>reason</dt><dd>none</dd>
+<dt>path</dt><dd>app/payments.py</dd>
+<dt>byte range</dt><dd>bytes [0, 100)</dd>
+<dt>source_sha256</dt><dd>782c869ba1b534f3d12e727acc3cd703a3eb1742ab2ed897898b79c49298f81c</dd>
+<dt>source_size</dt><dd>272</dd>
+<dt>provenance_state</dt><dd>source</dd>
+<dt>inline_reason</dt><dd>none</dd>
+<dt>resource_ids</dt><dd>[&quot;72f3035bdf646a9207957310caa9ccff19788f193bcee14d2428767fef9bf83a&quot;]</dd>
+</dl>
+<pre class="excerpt">
+def process_payment(amount):
+    validate_payment(amount)
+    write_ledger(amount)
+    return amount</pre>
+</article>
+</section>
+</main>
+<footer>
+<p>This static report was rendered from one recorded context envelope. It embeds the server repository path in the identity section; review it before sharing. Live lease URIs and continuation cursors are omitted, so this file cannot fetch further evidence.</p>
+</footer>
+</body>
+</html>
