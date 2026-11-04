@@ -1,0 +1,99 @@
+{
+  "slice_id": "ACI-S37",
+  "base_commit": "7b009443492f0550400e1754b47066dc045b1af0",
+  "recorded_before_implementation": true,
+  "declared_by_issue": [
+    "mcp-server/src/atlas_aci/reports/evidence.py",
+    "mcp-server/src/atlas_aci/reports/evidence_template.html",
+    "mcp-server/src/atlas_aci/__main__.py",
+    "mcp-server/tests/slices/test_s37_evidence_report.py",
+    "mcp-server/tests/fixtures/evidence_report/",
+    "docs/evidence-reports.md"
+  ],
+  "glob_depth_clarifications": [
+    {
+      "path": "mcp-server/tests/fixtures/evidence_report/*",
+      "reason": "Frozen context envelopes, golden .report.html/.report.json and provenance.json; flat files directly under the declared fixture directory"
+    }
+  ],
+  "added": [
+    {
+      "path": "mcp-server/src/atlas_aci/reports/__init__.py",
+      "reason": "Package marker required for importability and importlib.resources loading of evidence_template.html from the wheel; docstring only"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "reason": "Unreleased entry for the atlas-aci evidence-report command (no release tag)"
+    },
+    {
+      "path": "README.md",
+      "reason": "One docs-table row linking docs/evidence-reports.md (first cut item)"
+    },
+    {
+      "path": ".spectra/plans/aci-s37.*",
+      "reason": "Ramza plan, criteria, state, scope, review, issue snapshot"
+    },
+    {
+      "path": ".spectra/plans/ramza-calibration.jsonl",
+      "reason": "Ramza calibration append"
+    },
+    {
+      "path": ".spectra/changes/aci-s37/*",
+      "reason": "This amendment"
+    },
+    {
+      "path": ".spectra/evidence/aci-s37/*",
+      "reason": "Day-1 qualification, base invariants, gate logs"
+    },
+    {
+      "path": ".spectra/state/aci-s37.execution.json",
+      "reason": "Authoritative execution receipt (AC-RUN-01/02)"
+    },
+    {
+      "path": ".spectra/backlog/execution.json",
+      "reason": "Backlog status update"
+    },
+    {
+      "path": ".spectra/backlog/order.md",
+      "reason": "Backlog order update"
+    }
+  ],
+  "not_touched_follow_up": [
+    {
+      "path": "atlas/docs/",
+      "reason": "Per-op operator docs live there; S37 keeps the issue-declared docs/evidence-reports.md and links it from README only"
+    },
+    {
+      "path": "INTEGRATION.md",
+      "reason": "No host wiring changes; operator CLI only"
+    },
+    {
+      "path": "mcp-server/src/atlas_aci/protocol/impact.py",
+      "reason": "Impact-envelope report input is an explicit follow-up (orchestrator decision 1)"
+    }
+  ],
+  "explicitly_untouched_gated": [
+    "mcp-server/src/atlas_aci/server.py",
+    "mcp-server/src/atlas_aci/protocol/",
+    "mcp-server/src/atlas_aci/query/",
+    "mcp-server/src/atlas_aci/tools/",
+    "mcp-server/src/atlas_aci/storage/",
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/src/atlas_aci/enforcement.py",
+    "mcp-server/src/atlas_aci/config.py",
+    "mcp-server/pyproject.toml",
+    "mcp-server/uv.lock",
+    ".github/workflows/",
+    ".gitattributes (must remain absent)"
+  ],
+  "invariants": {
+    "tools_json_sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+    "tools_json_bytes": 1631472,
+    "READ_ONLY_TOOLS_count": 7,
+    "MINIMUM_BUDGET": 3436,
+    "COLLECTION_MINIMUM_BUDGET": 3448,
+    "FIXED_ERROR_ENVELOPE_CAP": 797,
+    "IMPACT_MINIMUM_BUDGET": 7730,
+    "criteria_sha256": "31a6c71bfdcf180cf4715ebe949fdbfd012ed221fb98aba574872c732283be55"
+  }
+}

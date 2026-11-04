@@ -1,0 +1,82 @@
+{
+ "slice_id": "ACI-S37",
+ "plan": ".spectra/plans/aci-s37.md",
+ "author": "orchestrator-ramza-plan-s37",
+ "checker": "atlas-s37-plan-checker",
+ "verdict": "APPROVE_WITH_CONDITIONS",
+ "method": "independent read-only code review; no commands executed",
+ "findings": [
+  {
+   "n": 1,
+   "severity": "BLOCKER",
+   "summary": "resources, uri and next_cursor exist only when continuation=True (server.py:472-482, query/context.py:293-341, context_pages.py:46-155); default E_inline has none, so AC-007 tampers 1-3,5 and omitted-field/stripping assertions are unsatisfiable; use continuation=True for E_inline/E_refs/E_path and frozen fixtures, one asyncio.run plus registry.aclose",
+   "disposition": "accepted as plan condition 1"
+  },
+  {
+   "n": 2,
+   "severity": "BLOCKER",
+   "summary": "continuation pages carry selection.reason null and selection_truncated false (context_pages.py:80-94); byte_limit appears only in the non-continuation path with has_more false (query/context.py:299-333); split E_trunc into page and budget variants and fix AC-003 assertions; frozen truncated must be the page variant with a cursor",
+   "disposition": "accepted as plan condition 2"
+  },
+  {
+   "n": 3,
+   "severity": "MAJOR",
+   "summary": "catch any Exception incl. RecursionError/OverflowError in D2 steps 2-4 and 7 (server precedent results.py:154); validate with min(200, bounds.element_limit); add deep-nesting and 1e999 tests",
+   "disposition": "accepted as plan condition 3"
+  },
+  {
+   "n": 4,
+   "severity": "MAJOR",
+   "summary": "structuredContent equals content text only in process; wire dump uses exclude_none (results.py:38-40); Day-1 must compare on wire bytes and drop the structuredContent-file claim if they differ",
+   "disposition": "accepted as plan condition 4"
+  },
+  {
+   "n": 5,
+   "severity": "MINOR",
+   "summary": "pin view.identity.query_digest to /data/query_digest (data and retrieval both carry one)",
+   "disposition": "accepted as plan condition 5"
+  },
+  {
+   "n": 6,
+   "severity": "MINOR",
+   "summary": "assertion.unresolved_reason is schema-const null (graph.py:337); add candidate_ids marker and document; no assertion may need it non-null",
+   "disposition": "accepted as plan condition 6"
+  },
+  {
+   "n": 7,
+   "severity": "MINOR",
+   "summary": "extra LF after <pre> (browsers drop the first LF) and add Unicode tag characters U+E0001/E0020-E007F to the placeholder table",
+   "disposition": "accepted as plan condition 7"
+  },
+  {
+   "n": 8,
+   "severity": "MINOR",
+   "summary": "ruff RUF001 flags en dash and literal bidi characters; use ASCII hyphen or \\u escapes in src and tests",
+   "disposition": "accepted as plan condition 8"
+  },
+  {
+   "n": 9,
+   "severity": "MINOR",
+   "summary": "dev image Python 3.12 vs CI 3.14; regenerate fixtures in the Linux dev image, record python and language-pack versions in provenance; tests only replay frozen envelopes (no lease HMAC check in validate_context)",
+   "disposition": "accepted as plan condition 9"
+  },
+  {
+   "n": 10,
+   "severity": "MINOR",
+   "summary": "CLI: stderr carries 'Error: ' prefix; stage outputs via temp+replace so OSError leaves no partial pair; samefile alias check; README scope means root README",
+   "disposition": "accepted as plan condition 10"
+  },
+  {
+   "n": 11,
+   "severity": "MINOR",
+   "summary": "record real envelope and fixture sizes at Day-1; shrink via max_bytes or narrower query if a file exceeds 512 KB, never by editing bytes",
+   "disposition": "accepted as plan condition 11"
+  },
+  {
+   "n": 12,
+   "severity": "MINOR",
+   "summary": "D1 'no retrieval by construction' overstated (protocol.graph transitively loads query.*); reword; import protocol.graph first, never protocol.context directly",
+   "disposition": "accepted as plan condition 12"
+  }
+ ]
+}

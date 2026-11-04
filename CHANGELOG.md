@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Offline evidence report (ACI-S37).** New operator command
+  `atlas-aci evidence-report ENVELOPE --html OUT.html --json OUT.json` (library
+  `atlas_aci.reports.evidence`) exports one recorded `graph_query op=context` envelope as a
+  self-contained, script-free HTML page and a canonical JSON report
+  (`atlas-evidence-report.v1`). The input is validated with the shipped schema and
+  `validate_context`; a closed set of typed rejection codes (`envelope_too_large`,
+  `invalid_input`, `invalid_envelope`, `unsupported_operation`, `mixed_snapshot_evidence`,
+  `report_too_large`) covers every failure. Lease URIs and continuation cursors are omitted and
+  listed, truncation and unresolved markers appear in both formats, every source-derived value
+  is escaped text, and repeat export is byte-identical. Documented in
+  `docs/evidence-reports.md`; frozen envelopes and goldens live in
+  `mcp-server/tests/fixtures/evidence_report/`. No MCP operation, dependency, schema or
+  runtime source outside `reports/` and the CLI changes; the tools JSON is byte-identical.
+
 - **Reproducible v3 evidence and compatibility package (ACI-S23).** `docs/evidence/v3/`
   publishes a release report derived by a pure, stdlib-only aggregator
   (`scripts/eval/v3_aggregate.py`) from immutable raw records written by a recorder

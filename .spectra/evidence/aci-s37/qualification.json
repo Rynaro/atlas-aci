@@ -1,0 +1,359 @@
+{
+  "a_real_envelopes": {
+    "E_import": {
+      "bundles": [
+        "definition",
+        "relationship",
+        "definition"
+      ],
+      "evidence_status": "partial",
+      "generation_null": false,
+      "has_more": true,
+      "isError": false,
+      "observation": "snapshot_id is null, generation_id non-null, no resources, every source unavailable, has_more true with a cursor",
+      "query": {
+        "continuation": true,
+        "max_bytes": 40000,
+        "note": "source-free import destination",
+        "text": "process_payment"
+      },
+      "resources": 0,
+      "size": 17084,
+      "snapshot_null": true,
+      "valid": true,
+      "wire_sc_equals_text": true
+    },
+    "condition_1_assertions": {
+      "E_inline": {
+        "resources_ge_1": true,
+        "snapshot_id_non_null": true
+      },
+      "E_path": {
+        "resources_ge_1": true,
+        "snapshot_id_non_null": true
+      },
+      "E_refs": {
+        "resources_ge_1": true,
+        "snapshot_id_non_null": true
+      },
+      "E_trunc_page": {
+        "resources_ge_1": true,
+        "snapshot_id_non_null": true
+      }
+    },
+    "condition_2": {
+      "E_trunc_budget": {
+        "has_more": false,
+        "query": {
+          "max_bytes": 12000
+        },
+        "selection_reason": "byte_limit",
+        "selection_truncated": true
+      },
+      "E_trunc_page": {
+        "has_more": true,
+        "next_cursor_set": true,
+        "query": {
+          "continuation": true,
+          "max_bytes": 40000
+        },
+        "resources": 1,
+        "selection_reason": null,
+        "selection_truncated": false
+      }
+    },
+    "envelopes": {
+      "E_default": {
+        "attr_sc_equals_text": true,
+        "bundles": [
+          "definition",
+          "relationship",
+          "definition",
+          "lexical_file",
+          "definition",
+          "lexical_file",
+          "lexical_file",
+          "lexical_file",
+          "relationship"
+        ],
+        "evidence_status": "partial",
+        "generation_null": false,
+        "has_more": false,
+        "hops": 2,
+        "isError": false,
+        "next_cursor_set": false,
+        "resources": 0,
+        "selection_reason": null,
+        "selection_truncated": false,
+        "size_canonical": 33603,
+        "snapshot_null": false,
+        "stripped_identity_ok": true,
+        "valid": true,
+        "wire_sc_equals_text": true
+      },
+      "E_hostile": {
+        "attr_sc_equals_text": true,
+        "bundles": [
+          "definition",
+          "lexical_file"
+        ],
+        "evidence_status": "partial",
+        "generation_null": false,
+        "has_more": false,
+        "hops": 0,
+        "isError": false,
+        "next_cursor_set": false,
+        "resources": 2,
+        "selection_reason": null,
+        "selection_truncated": false,
+        "size_canonical": 12748,
+        "snapshot_null": false,
+        "stripped_identity_ok": true,
+        "valid": true,
+        "wire_sc_equals_text": true
+      },
+      "E_import": {
+        "bundles": [
+          "definition",
+          "relationship",
+          "definition"
+        ],
+        "evidence_status": "partial",
+        "generation_null": false,
+        "has_more": true,
+        "isError": false,
+        "resources": 0,
+        "size": 17084,
+        "snapshot_null": true,
+        "valid": true,
+        "wire_sc_equals_text": true
+      },
+      "E_inline": {
+        "attr_sc_equals_text": true,
+        "bundles": [
+          "definition",
+          "relationship",
+          "definition",
+          "lexical_file",
+          "definition",
+          "lexical_file",
+          "lexical_file",
+          "lexical_file",
+          "relationship"
+        ],
+        "evidence_status": "partial",
+        "generation_null": false,
+        "has_more": false,
+        "hops": 2,
+        "isError": false,
+        "next_cursor_set": false,
+        "resources": 9,
+        "selection_reason": null,
+        "selection_truncated": false,
+        "size_canonical": 52770,
+        "snapshot_null": false,
+        "stripped_identity_ok": true,
+        "valid": true,
+        "wire_sc_equals_text": true
+      },
+      "E_label": {
+        "attr_sc_equals_text": true,
+        "bundles": [],
+        "evidence_status": "partial",
+        "generation_null": false,
+        "has_more": false,
+        "hops": 0,
+        "isError": false,
+        "next_cursor_set": false,
+        "resources": 0,
+        "selection_reason": null,
+        "selection_truncated": false,
+        "size_canonical": 2665,
+        "snapshot_null": false,
+        "stripped_identity_ok": true,
+        "valid": true,
+        "wire_sc_equals_text": true
+      },
+      "E_path": {
+        "attr_sc_equals_text": true,
+        "bundles": [
+          "definition",
+          "path",
+          "definition",
+          "lexical_file",
+          "definition",
+          "lexical_file",
+          "lexical_file",
+          "lexical_file"
+        ],
+        "evidence_status": "partial",
+        "generation_null": false,
+        "has_more": false,
+        "hops": 1,
+        "isError": false,
+        "next_cursor_set": false,
+        "resources": 8,
+        "selection_reason": null,
+        "selection_truncated": false,
+        "size_canonical": 46351,
+        "snapshot_null": false,
+        "stripped_identity_ok": true,
+        "valid": true,
+        "wire_sc_equals_text": true
+      },
+      "E_refs": {
+        "attr_sc_equals_text": true,
+        "bundles": [
+          "definition",
+          "relationship",
+          "definition",
+          "lexical_file",
+          "definition",
+          "lexical_file",
+          "lexical_file",
+          "lexical_file",
+          "relationship"
+        ],
+        "evidence_status": "partial",
+        "generation_null": false,
+        "has_more": false,
+        "hops": 2,
+        "isError": false,
+        "next_cursor_set": false,
+        "resources": 9,
+        "selection_reason": null,
+        "selection_truncated": false,
+        "size_canonical": 48534,
+        "snapshot_null": false,
+        "stripped_identity_ok": true,
+        "valid": true,
+        "wire_sc_equals_text": true
+      },
+      "E_trunc_budget": {
+        "attr_sc_equals_text": true,
+        "bundles": [],
+        "evidence_status": "partial",
+        "generation_null": false,
+        "has_more": false,
+        "hops": 0,
+        "isError": false,
+        "next_cursor_set": false,
+        "resources": 0,
+        "selection_reason": "byte_limit",
+        "selection_truncated": true,
+        "size_canonical": 4908,
+        "snapshot_null": false,
+        "stripped_identity_ok": true,
+        "valid": true,
+        "wire_sc_equals_text": true
+      },
+      "E_trunc_page": {
+        "attr_sc_equals_text": true,
+        "bundles": [
+          "definition"
+        ],
+        "evidence_status": "partial",
+        "generation_null": false,
+        "has_more": true,
+        "hops": 0,
+        "isError": false,
+        "next_cursor_set": true,
+        "resources": 1,
+        "selection_reason": null,
+        "selection_truncated": false,
+        "size_canonical": 11165,
+        "snapshot_null": false,
+        "stripped_identity_ok": true,
+        "valid": true,
+        "wire_sc_equals_text": true
+      }
+    },
+    "note": "Each envelope passes STRUCTURED_VALIDATOR and validate_context(..., 200) on the full unstripped input. Default query (E_default) has no resources/uri/next_cursor (checker condition 1); E_inline/E_refs/E_path/E_trunc_page use continuation=True (single page, cursor null except E_trunc_page).",
+    "result": "PASS"
+  },
+  "b_stripped_identity": {
+    "note": "After deleting data.next_cursor and data.resources[].uri: retrieval_record_id (17-key domain), every resource id, every source id and every bundle id recompute equal",
+    "per_envelope": {
+      "E_default": true,
+      "E_hostile": true,
+      "E_inline": true,
+      "E_label": true,
+      "E_path": true,
+      "E_refs": true,
+      "E_trunc_budget": true,
+      "E_trunc_page": true
+    },
+    "result": "PASS"
+  },
+  "base_commit": "7b009443492f0550400e1754b47066dc045b1af0",
+  "c_hostile": {
+    "excerpt": {
+      "img": true,
+      "label_in_request": true,
+      "pre": true,
+      "script": true,
+      "u202e": true
+    },
+    "hostile_filename": {
+      "paths": [
+        "app/x\"><b>.py"
+      ],
+      "valid": true
+    },
+    "nonutf8_conclusion": "an indexed file with non-UTF-8 bytes yields an available source with inline encoding base64 (real, no copy route needed)",
+    "nonutf8_file": {
+      "inline": [
+        [
+          "available",
+          "base64",
+          null,
+          null
+        ]
+      ]
+    },
+    "request_text": "text='process_payment <script>x</script>' yields an ok envelope (diagnostic_reason no_match, no bundles); the label is in data.request.text",
+    "result": "PASS"
+  },
+  "condition_4_wire_comparison": {
+    "E_inline": true,
+    "E_trunc_page": true,
+    "all_envelopes": {
+      "E_default": true,
+      "E_hostile": true,
+      "E_import": true,
+      "E_inline": true,
+      "E_label": true,
+      "E_path": true,
+      "E_refs": true,
+      "E_trunc_budget": true,
+      "E_trunc_page": true
+    },
+    "compared": "json.loads(result_bytes(result))['structuredContent'] versus json.loads(content[0].text)",
+    "conclusion": "equal on the wire for every envelope tested; the structuredContent-file input claim is kept"
+  },
+  "d_regeneration": {
+    "fixed_path": "/tmp/atlas-s37-evidence/repo exists and indexes inside the container; python -m atlas_aci --help lists the CLI",
+    "note": "Frozen fixtures are regenerated inside atlas-aci-dev-s16 (python 3.12; CI is 3.14); producer fingerprints enter ids, versions are recorded in provenance.json",
+    "result": "PASS"
+  },
+  "environment": {
+    "fixed_repo_path": "/tmp/atlas-s37-evidence/repo",
+    "image": "atlas-aci-dev-s16",
+    "python": "3.12.16",
+    "tree-sitter": "0.25.2",
+    "tree-sitter-language-pack": "1.6.0"
+  },
+  "sizes": {
+    "E_default": 33603,
+    "E_hostile": 12748,
+    "E_import": 17084,
+    "E_inline": 52770,
+    "E_label": 2665,
+    "E_path": 46351,
+    "E_refs": 48534,
+    "E_trunc_budget": 4908,
+    "E_trunc_page": 11165
+  },
+  "slice_id": "ACI-S37",
+  "stop_rule": "no STOP condition triggered; (a),(b),(c) pass without mocks"
+}

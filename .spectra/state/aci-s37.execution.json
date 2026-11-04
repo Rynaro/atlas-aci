@@ -1,0 +1,178 @@
+{
+  "schema": "atlas-aci/slice-execution.v1",
+  "slice_id": "ACI-S37",
+  "issue_url": "https://github.com/Rynaro/atlas-aci/issues/58",
+  "criteria_sha256": "31a6c71bfdcf180cf4715ebe949fdbfd012ed221fb98aba574872c732283be55",
+  "base_commit": "7b009443492f0550400e1754b47066dc045b1af0",
+  "output_commit": "84225d0dcbce8093c4ea4338d3c100269ee2b67a",
+  "declared_paths": [
+    "mcp-server/src/atlas_aci/reports/__init__.py",
+    "mcp-server/src/atlas_aci/reports/evidence.py",
+    "mcp-server/src/atlas_aci/reports/evidence_template.html",
+    "mcp-server/src/atlas_aci/__main__.py",
+    "mcp-server/tests/slices/test_s37_evidence_report.py",
+    "mcp-server/tests/fixtures/evidence_report/*",
+    "docs/evidence-reports.md",
+    "CHANGELOG.md",
+    "README.md",
+    ".spectra/plans/aci-s37.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/changes/aci-s37/*",
+    ".spectra/evidence/aci-s37/*",
+    ".spectra/state/aci-s37.execution.json",
+    ".spectra/backlog/execution.json",
+    ".spectra/backlog/order.md"
+  ],
+  "output_digests": {
+    ".spectra/backlog/execution.json": "b843ba0e0973647d3587f693d3660b9fdf7f282682c43a2850ba72e03e1017df",
+    ".spectra/backlog/order.md": "48707511a837e31b0e14842e51afe5c59e237b24c65deb24be72aded4db92f0c",
+    ".spectra/changes/aci-s37/scope-amendment.json": "512e8263ede2e5170d1518be17d41e4b0e81f669a5d2566f1252749cbd216c06",
+    ".spectra/evidence/aci-s37/base-invariants.json": "4aa198f64b16e13d56991862dffce5fd29a036d29ffd3683fc5d4bbe99990617",
+    ".spectra/evidence/aci-s37/base-pytest.log.gz": "528220d7d48224b72d0a280362675ee101713be0cebd3b7f9aaa9d39cb0ade7b",
+    ".spectra/evidence/aci-s37/baseline.json": "27384b1441c5866a26339fad5aa006a7f384e5c49247e53b6f708ffa7b8d94d5",
+    ".spectra/evidence/aci-s37/checks.json": "966bc392f5f59288d9161e1d12d12f3f70e11eab8708e16f18d5d2ce44d29b7b",
+    ".spectra/evidence/aci-s37/dk37.sh": "3b80291a6212f50e75b66455c070728e5d71a96a46401a193c9cf5f0b6619bed",
+    ".spectra/evidence/aci-s37/format.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    ".spectra/evidence/aci-s37/format.log.gz": "837476125b2fce283dcabe96d492a66659ed95bb9b16882cc8ecb8eecfcb1e70",
+    ".spectra/evidence/aci-s37/full-suite.exit": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+    ".spectra/evidence/aci-s37/full-suite.log.gz": "f97d54fb59b98281d09d678ed4f13844fe9ab5c590a734798b2d8526732dc5a9",
+    ".spectra/evidence/aci-s37/g-mcp.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    ".spectra/evidence/aci-s37/g-mcp.log.gz": "08c4a14bc9aae4685f885227838aae1956cbc53d630f660c9df7a03692d4170d",
+    ".spectra/evidence/aci-s37/g-src.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    ".spectra/evidence/aci-s37/g-src.log.gz": "2e557005a16f3f8cd5572325f6971f0676b849fdf29b7a076190f1be954892b4",
+    ".spectra/evidence/aci-s37/interrupted-execution.json": "6f9511be0c102846059105014107bf4332c047326dff2c15dd2c6f95c1c65b9c",
+    ".spectra/evidence/aci-s37/mypy.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    ".spectra/evidence/aci-s37/mypy.log.gz": "93ce72206354befe4324e06d7c6c29ca145198ac2ca2abea5df0994919bc83fd",
+    ".spectra/evidence/aci-s37/qualification.json": "94bb51662913e7f1da251a1484fd436e4fef8daf013009977eaf19ea98ccee55",
+    ".spectra/evidence/aci-s37/regression.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    ".spectra/evidence/aci-s37/regression.log.gz": "27ca153095e93bd3cf00c42b5df77b79de224b62e5cadc1e9b1c7b804b7edc42",
+    ".spectra/evidence/aci-s37/ruff.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    ".spectra/evidence/aci-s37/ruff.log.gz": "e57bfc2e2e55741a52a87bf29ccee0072a85d202358d7bac2250b50591335480",
+    ".spectra/evidence/aci-s37/s37-contract.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    ".spectra/evidence/aci-s37/s37-contract.log.gz": "8fc43989fa9787c2bbf8adf8ef9bb9aafbada00e6a7cbdf569977bbf501380dc",
+    ".spectra/plans/aci-s37.criteria.md": "31a6c71bfdcf180cf4715ebe949fdbfd012ed221fb98aba574872c732283be55",
+    ".spectra/plans/aci-s37.issue.json": "0281c69cab8ac78247b6772cc49406b76da2603058cfdb3b031f296fc781adcf",
+    ".spectra/plans/aci-s37.md": "70c50cb145ffb9acca3a0d8614760d350f516cb23583d43b9091d0d24c64a387",
+    ".spectra/plans/aci-s37.review.json": "ec0031c4f153ca29f648ee8f3d8affb1a376d94720525b077b164354a0d8cc3b",
+    ".spectra/plans/aci-s37.scope.txt": "676a14a994498f4f497160e469dc246c24a33ada29643047829275aa845cadb3",
+    ".spectra/plans/aci-s37.state.json": "6123b35dbaf10b813233783a65fc41e4d3d29a6b9be1bef6c7f45599660dd8f9",
+    ".spectra/plans/ramza-calibration.jsonl": "676b24095f814020803ee49c5740f2e4a1171c0a14f51208b45b5556f129f93c",
+    "CHANGELOG.md": "f431c42728f8d47ac0e03a7aca196456d4a9e2041ec37f26cf8a3832a6f558f1",
+    "README.md": "ed50d31f86f10b61a6001d6c291c13b1b3801084255e60ba89824345dcd04ad6",
+    "docs/evidence-reports.md": "da1dfc5940eb4bcd18aca4b2f9653653d0f1bba0fe3f4963c201146f9df0a34d",
+    "mcp-server/src/atlas_aci/__main__.py": "6a4feed9b3be642a591eb321d85d8c35cd75b4e19641c12e47ae21f5c44ea542",
+    "mcp-server/src/atlas_aci/reports/__init__.py": "67ebabc4a55898ff7971764070afdc786367d7026e8e951a84097ecc6fba112b",
+    "mcp-server/src/atlas_aci/reports/evidence.py": "12f5eff0cfda812fe1670adc4d79748da5e3b488a8a04a0355d15712d4500115",
+    "mcp-server/src/atlas_aci/reports/evidence_template.html": "1f8a7e998ad9576cb9d73322c1bce02e60fa5e63e19d30d8a0d9a3285ecb14f6",
+    "mcp-server/tests/fixtures/evidence_report/hostile.envelope.json": "8718ea57de6b88dae0f446b9d0b04c3738317d41b9f0465eb8b85fef04da58ab",
+    "mcp-server/tests/fixtures/evidence_report/hostile.report.html": "8d42993d55d8f1f8041e6ce6b6ef9408539feba5dd2a254ea05cdc52a9bbfe08",
+    "mcp-server/tests/fixtures/evidence_report/hostile.report.json": "1b9685cb924fc9a2fcc70acd7e00e697e3c57cdfa581101255819dfcc233c266",
+    "mcp-server/tests/fixtures/evidence_report/inline.envelope.json": "2ff529e1692d7727b4e9ee848595516a3a9fa94956c513c6c3ecd3c083efe89e",
+    "mcp-server/tests/fixtures/evidence_report/inline.report.html": "b4a34332849ee61d44c38328fea910b321aedb84939e60c611292158ee8e3f8e",
+    "mcp-server/tests/fixtures/evidence_report/inline.report.json": "cbddbc19e7b7f3d7d693c3ca979ec45dc3279260118225f01cedc756ad68df5e",
+    "mcp-server/tests/fixtures/evidence_report/path-references.envelope.json": "4639594b621249208d600915acbca84a053935008e48935e9c2e79ac1451d28c",
+    "mcp-server/tests/fixtures/evidence_report/path-references.report.html": "ad6ec3594c6ba020c6d525dc3c46cb88080d0b29e85a72f8ce04f741bc669127",
+    "mcp-server/tests/fixtures/evidence_report/path-references.report.json": "a8bd73b202eef1d4dc4353e9a1376c4b08e5a4a1a9a99d4db97acc63ce68d339",
+    "mcp-server/tests/fixtures/evidence_report/provenance.json": "cb0083c3152446b08fc1783d90b3a490e7d41055f93052fef643a4068dac6d69",
+    "mcp-server/tests/fixtures/evidence_report/truncated.envelope.json": "568b8b99979422a5ce9f71bf1c91d6fcc5e4a4bc66e532f46e6e72f6c3e116a5",
+    "mcp-server/tests/fixtures/evidence_report/truncated.report.html": "51146f8ca719cce7437af5b27997d408749237fc2295e2bea552091efc4216d9",
+    "mcp-server/tests/fixtures/evidence_report/truncated.report.json": "da7c8107d7cf1ea6ef4e5e30e19d60bc0fef353f216ae69076b095ffcc017c13",
+    "mcp-server/tests/slices/test_s37_evidence_report.py": "622d86147abb8171c51d69ee90aaf42e1dc45f0f26fd7385b15545d84cd26e77"
+  },
+  "status": "COMPLETE",
+  "started_at": "2026-11-04T04:10:28Z",
+  "planning_state": ".spectra/plans/aci-s37.state.json",
+  "plan": ".spectra/plans/aci-s37.md",
+  "results": [
+    {
+      "ac_id": "AC-S37-001",
+      "command": "docker run --rm --user 1000:1000 -e HOME=/hc -e PYTHONPATH=/ws/mcp-server/src -v <scratch>/home:/hc -v <reentry-worktree>:/ws -w /ws/mcp-server atlas-aci-dev-s16 /opt/venv/bin/python -m pytest -q -p no:cacheprovider tests/slices/test_s37_evidence_report.py::test_evidence_json_preserves_response_identity",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s37/acceptance-runs.json"
+    },
+    {
+      "ac_id": "AC-S37-002",
+      "command": "docker run --rm --user 1000:1000 -e HOME=/hc -e PYTHONPATH=/ws/mcp-server/src -v <scratch>/home:/hc -v <reentry-worktree>:/ws -w /ws/mcp-server atlas-aci-dev-s16 /opt/venv/bin/python -m pytest -q -p no:cacheprovider tests/slices/test_s37_evidence_report.py::test_evidence_html_has_source_paths",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s37/acceptance-runs.json"
+    },
+    {
+      "ac_id": "AC-S37-003",
+      "command": "docker run --rm --user 1000:1000 -e HOME=/hc -e PYTHONPATH=/ws/mcp-server/src -v <scratch>/home:/hc -v <reentry-worktree>:/ws -w /ws/mcp-server atlas-aci-dev-s16 /opt/venv/bin/python -m pytest -q -p no:cacheprovider tests/slices/test_s37_evidence_report.py::test_evidence_report_preserves_incompleteness",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s37/acceptance-runs.json"
+    },
+    {
+      "ac_id": "AC-S37-004",
+      "command": "docker run --rm --user 1000:1000 -e HOME=/hc -e PYTHONPATH=/ws/mcp-server/src -v <scratch>/home:/hc -v <reentry-worktree>:/ws -w /ws/mcp-server atlas-aci-dev-s16 /opt/venv/bin/python -m pytest -q -p no:cacheprovider tests/slices/test_s37_evidence_report.py::test_evidence_html_escapes_source_content",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s37/acceptance-runs.json"
+    },
+    {
+      "ac_id": "AC-S37-005",
+      "command": "docker run --rm --user 1000:1000 -e HOME=/hc -e PYTHONPATH=/ws/mcp-server/src -v <scratch>/home:/hc -v <reentry-worktree>:/ws -w /ws/mcp-server atlas-aci-dev-s16 /opt/venv/bin/python -m pytest -q -p no:cacheprovider tests/slices/test_s37_evidence_report.py::test_evidence_report_is_self_contained",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s37/acceptance-runs.json"
+    },
+    {
+      "ac_id": "AC-S37-006",
+      "command": "docker run --rm --user 1000:1000 -e HOME=/hc -e PYTHONPATH=/ws/mcp-server/src -v <scratch>/home:/hc -v <reentry-worktree>:/ws -w /ws/mcp-server atlas-aci-dev-s16 /opt/venv/bin/python -m pytest -q -p no:cacheprovider tests/slices/test_s37_evidence_report.py::test_evidence_report_replay_is_idempotent",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s37/acceptance-runs.json"
+    },
+    {
+      "ac_id": "AC-S37-007",
+      "command": "docker run --rm --user 1000:1000 -e HOME=/hc -e PYTHONPATH=/ws/mcp-server/src -v <scratch>/home:/hc -v <reentry-worktree>:/ws -w /ws/mcp-server atlas-aci-dev-s16 /opt/venv/bin/python -m pytest -q -p no:cacheprovider tests/slices/test_s37_evidence_report.py::test_evidence_mixed_snapshot_rejected",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s37/acceptance-runs.json"
+    },
+    {
+      "ac_id": "AC-S37-RUN-01",
+      "command": "manifest.py before/after clean detached worktree re-entry; git status --porcelain; git diff --exit-code output",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s37/final-reentry-summary.json"
+    },
+    {
+      "ac_id": "AC-S37-RUN-02",
+      "command": "compare slice_id + criteria_sha256 of interrupted snapshot and resumed receipt",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s37/final-resume-identity.json"
+    }
+  ],
+  "output_digest_exclusions": [
+    ".spectra/evidence/aci-s37/acceptance-runs.json",
+    ".spectra/evidence/aci-s37/final-reentry-after.json",
+    ".spectra/evidence/aci-s37/final-reentry-before.json",
+    ".spectra/evidence/aci-s37/final-reentry-summary.json",
+    ".spectra/evidence/aci-s37/final-resume-identity.json",
+    ".spectra/evidence/aci-s37/manifest.py",
+    ".spectra/state/aci-s37.execution.json"
+  ],
+  "completed_at": "2026-11-04T04:55:02Z",
+  "scope_amendments": [
+    ".spectra/changes/aci-s37/scope-amendment.json"
+  ],
+  "operator_decision": "Orchestrator decisions under the user's autonomous-execution instruction (2026-11-04): context envelopes only (impact is a follow-up); lease uri and next_cursor stripped from both outputs and listed as omitted fields; CLI evidence-report with explicit --html/--json; stdlib string.Template shell with Python-escaped fragments and no scripts",
+  "validation": {
+    "checks": ".spectra/evidence/aci-s37/checks.json",
+    "baseline": ".spectra/evidence/aci-s37/baseline.json",
+    "qualification": ".spectra/evidence/aci-s37/qualification.json",
+    "full_suite": "1 failed, 1396 passed, 10 skipped (single failure pre-existing under uid 1000)",
+    "invariance": "G-SRC, G-MCP exit 0; envelope minimums unchanged",
+    "production_image": "atlas-aci:s37 template ships; goldens replay byte-identically read-only/offline; mixed_snapshot_evidence rejection writes nothing"
+  },
+  "limitations": [
+    "Context envelopes only; impact, page/continue, retrieve and validation-plan inputs are rejected (follow-up)",
+    "Continuation pages are not merged or fetched; has_more is shown and the cursor is omitted",
+    "data.repository (absolute server path) is identity-bearing and retained; review before sharing",
+    "Default bounds only (1 MiB canonical envelope, 200 elements per list)",
+    "base64 excerpts are not decoded; control/bidi codepoints are visible placeholders in HTML",
+    "The two output files are replaced one after the other; a failure between the moves can leave only the first",
+    "Frozen envelopes were generated on Python 3.12; CI (3.14) replays them only"
+  ],
+  "plan_review": ".spectra/plans/aci-s37.review.json",
+  "publication": {
+    "pull_request": null,
+    "note": "pushed after receipt commit"
+  }
+}
