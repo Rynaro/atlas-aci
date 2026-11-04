@@ -1,0 +1,214 @@
+{
+ "databases": {
+  "both": {
+   "adapters": {
+    "rails": {
+     "manifest_present": true,
+     "producer_ids": [
+      "8ed249e0a54d8fdb1948926cccc7140a619c58470d4b66e151ad23441f0cde3b"
+     ],
+     "records": {
+      "assertions": 35,
+      "evidence": 35,
+      "occurrences": 35
+     }
+    },
+    "rails_models": {
+     "manifest_present": true,
+     "producer_ids": [],
+     "records": {
+      "assertions": 0,
+      "evidence": 0,
+      "occurrences": 0
+     }
+    }
+   },
+   "native_producer_ids": [
+    "29c2aa3ed5ec84d3a88c0fc80ef7a35013f6ef5ec03becb4a29aa76014cd4d1b"
+   ],
+   "path": "/private/tmp/claude-501/-Users-henrique-workspace-oss-agents-atlas-aci/694bbcf4-4624-4586-978b-245709fb6cab/scratchpad/gimg/routes-both/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/graph.9.db",
+   "row_counts": {
+    "assertion_ids": 45,
+    "assertions": 45,
+    "assignment_targets": 0,
+    "edges": 0,
+    "entity_ids": 32,
+    "evidence_ids": 77,
+    "files": 8,
+    "import_bindings": 0,
+    "occurrence_ids": 77,
+    "rationale": 0,
+    "refs": 45,
+    "retrieval_documents": 40,
+    "symbols": 24
+   }
+  },
+  "rails_only": {
+   "adapters": {
+    "rails": {
+     "manifest_present": true,
+     "producer_ids": [
+      "8ed249e0a54d8fdb1948926cccc7140a619c58470d4b66e151ad23441f0cde3b"
+     ],
+     "records": {
+      "assertions": 35,
+      "evidence": 35,
+      "occurrences": 35
+     }
+    },
+    "rails_models": {
+     "manifest_present": false,
+     "producer_ids": [],
+     "records": {
+      "assertions": 0,
+      "evidence": 0,
+      "occurrences": 0
+     }
+    }
+   },
+   "native_producer_ids": [
+    "29c2aa3ed5ec84d3a88c0fc80ef7a35013f6ef5ec03becb4a29aa76014cd4d1b"
+   ],
+   "path": "/private/tmp/claude-501/-Users-henrique-workspace-oss-agents-atlas-aci/694bbcf4-4624-4586-978b-245709fb6cab/scratchpad/gimg/routes-new/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/graph.9.db",
+   "row_counts": {
+    "assertion_ids": 45,
+    "assertions": 45,
+    "assignment_targets": 0,
+    "edges": 0,
+    "entity_ids": 32,
+    "evidence_ids": 77,
+    "files": 8,
+    "import_bindings": 0,
+    "occurrence_ids": 77,
+    "rationale": 0,
+    "refs": 45,
+    "retrieval_documents": 40,
+    "symbols": 24
+   }
+  }
+ },
+ "exclusions": [
+  "files.indexed_at",
+  "files.mtime_ns (differs between mounts)",
+  "generation_inputs.producer/schema (base vs off only: the producer id churns by design)",
+  "manifest.generation_id",
+  "manifest.generation_inputs.snapshot",
+  "retrieval_fts*",
+  "retrieval_documents.candidate_id",
+  "refs.id, edges.id, symbols.id (autoincrement)",
+  "refs.evidence_id, edges.assertion_id (producer-derived link ids)"
+ ],
+ "extra": [
+  {
+   "both_has_models_manifest": true,
+   "rails_only_has_no_models": true,
+   "rails_records_present": true,
+   "rails_view_identical": true
+  }
+ ],
+ "ok": true,
+ "pairs": [
+  {
+   "checks": [
+    {
+     "equal": true,
+     "ok": true,
+     "rows": 32,
+     "table": "entity_ids",
+     "vacuous": false
+    },
+    {
+     "equal": true,
+     "ok": true,
+     "rows": 77,
+     "table": "occurrence_ids",
+     "vacuous": false
+    },
+    {
+     "equal": true,
+     "ok": true,
+     "rows": 24,
+     "table": "symbols",
+     "vacuous": false
+    },
+    {
+     "equal": true,
+     "ok": true,
+     "rows": 45,
+     "table": "refs",
+     "vacuous": false
+    },
+    {
+     "equal": true,
+     "ok": true,
+     "rows": 0,
+     "table": "edges",
+     "vacuous": true
+    },
+    {
+     "equal": true,
+     "ok": true,
+     "rows": 0,
+     "table": "rationale",
+     "vacuous": true
+    },
+    {
+     "equal": true,
+     "ok": true,
+     "rows": 0,
+     "table": "import_bindings",
+     "vacuous": true
+    },
+    {
+     "equal": true,
+     "ok": true,
+     "rows": 0,
+     "table": "assignment_targets",
+     "vacuous": true
+    },
+    {
+     "equal": true,
+     "ok": true,
+     "rows": 45,
+     "table": "assertions",
+     "vacuous": false
+    },
+    {
+     "equal": true,
+     "ok": true,
+     "rows": 8,
+     "table": "files",
+     "vacuous": false
+    },
+    {
+     "equal": true,
+     "ok": true,
+     "rows": 40,
+     "table": "retrieval_documents",
+     "vacuous": false
+    },
+    {
+     "equal": true,
+     "ok": true,
+     "rows": 9,
+     "table": "generation_inputs_without_snapshot",
+     "vacuous": false
+    },
+    {
+     "equal": true,
+     "ok": true,
+     "rows": 77,
+     "table": "evidence_ids"
+    },
+    {
+     "equal": true,
+     "ok": true,
+     "rows": 45,
+     "table": "assertion_ids"
+    }
+   ],
+   "ok": true,
+   "pair": "rails-only vs both (minus adapter-owned)"
+  }
+ ]
+}

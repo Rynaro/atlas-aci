@@ -72,7 +72,27 @@ RAILS_ROUTE_KIND = "rails_route"
 RAILS_ROLE_PREFIX = "rails_route:"
 RAILS_ADAPTER = "rails-routes.v1"
 RAILS_ROUTES_PATH = "config/routes.rb"
-ASSERTION_RELATIONS = REFERENCE_RELATIONS | {COVERAGE_RELATION, RAILS_RELATION}
+# Explicit Rails models, tables and migrations (ACI-S25). The three relations follow the same
+# rule as `routes_to`: they are in NONE of RELATIONS / REFERENCE_RELATIONS / EDGE_RELATIONS, never
+# produce an `edges` row, are not traversable and are never an MCP enum value. `association`
+# targets a class entity (INFERRED, AMBIGUOUS or UNRESOLVED, never EXTRACTED). `model_table` and
+# `migration_mentions` are target-less: EXTRACTED means "literal declaration extracted, no graph
+# edge", the table lives in the canonical `raw_target` and tables are not entities. Only the
+# closed assertion-record check accepts them, in the shape `validate_database` and
+# `frameworks.rails_models.validate_records` pin.
+RAILS_ASSOCIATION_RELATION = "association"
+RAILS_TABLE_RELATION = "model_table"
+RAILS_MIGRATION_RELATION = "migration_mentions"
+RAILS_MODEL_RELATIONS = frozenset(
+    {RAILS_ASSOCIATION_RELATION, RAILS_TABLE_RELATION, RAILS_MIGRATION_RELATION}
+)
+RAILS_TARGETLESS_RELATIONS = frozenset({RAILS_TABLE_RELATION, RAILS_MIGRATION_RELATION})
+RAILS_MODEL_KIND = "rails_model"
+RAILS_MODEL_ROLE_PREFIX = "rails_model:"
+RAILS_MODELS_ADAPTER = "rails-models.v1"
+ASSERTION_RELATIONS = (
+    REFERENCE_RELATIONS | {COVERAGE_RELATION, RAILS_RELATION} | RAILS_MODEL_RELATIONS
+)
 COVERAGE_TEST_KIND = "coverage_test"
 COVERAGE_EXECUTION_KIND = "execution"
 COVERAGE_ROLE_PREFIX = "observed_execution:"
@@ -293,6 +313,11 @@ def _validate_record(item: Any) -> None:
             if set(fingerprint) == {"rails"}:
                 _validate_rails_fingerprint(fingerprint["rails"], item["identity_basis"])
                 return
+            if set(fingerprint) == {"rails_models"}:
+                _validate_rails_models_fingerprint(
+                    fingerprint["rails_models"], item["identity_basis"]
+                )
+                return
             require(
                 set(fingerprint)
                 in (
@@ -413,6 +438,7 @@ def _validate_record(item: Any) -> None:
                     "legacy",
                     COVERAGE_EXECUTION_KIND,
                     RAILS_ROUTE_KIND,
+                    RAILS_MODEL_KIND,
                 },
                 "occurrence kind",
             )
@@ -441,6 +467,18 @@ def _validate_record(item: Any) -> None:
                     and item["path"] == RAILS_ROUTES_PATH
                     and item["language"] == "ruby",
                     "rails route occurrence shape",
+                )
+            require(
+                (item["kind"] == RAILS_MODEL_KIND)
+                == item["role"].startswith(RAILS_MODEL_ROLE_PREFIX),
+                "rails model occurrence role",
+            )
+            if item["kind"] == RAILS_MODEL_KIND:
+                require(
+                    state == "source"
+                    and hash_value(item["entity_id"])
+                    and item["language"] == "ruby",
+                    "rails model occurrence shape",
                 )
             if item["kind"] == COVERAGE_EXECUTION_KIND:
                 phases = item["role"][len(COVERAGE_ROLE_PREFIX) :].split("+")
@@ -492,6 +530,18 @@ def _validate_record(item: Any) -> None:
                 item["resolution"] in {"INFERRED", "AMBIGUOUS", "UNRESOLVED"},
                 "routes_to assertion",
             )
+        if item["relation"] == RAILS_ASSOCIATION_RELATION:
+            require(
+                item["resolution"] in {"INFERRED", "AMBIGUOUS", "UNRESOLVED"},
+                "association assertion",
+            )
+        if item["relation"] in RAILS_TARGETLESS_RELATIONS:
+            require(
+                item["resolution"] in {"EXTRACTED", "UNRESOLVED"}
+                and item["target_entity_id"] is None
+                and not item["candidate_ids"],
+                "targetless rails model assertion",
+            )
         require(
             item["relation"] != "jsx" or item["resolution"] == "UNRESOLVED",
             "jsx assertion must be unresolved",
@@ -510,8 +560,14 @@ def _validate_record(item: Any) -> None:
         )
         require(isinstance(item["raw_target"], str) and bool(item["raw_target"]), "raw target")
         if item["resolution"] in {"EXTRACTED", "INFERRED"}:
+            # Only the target-less rails model relations may be resolved without a target
+            # (EXTRACTED means "literal declaration extracted"); every other relation keeps the
+            # rule that a resolved assertion names its target.
             require(
-                item["target_entity_id"] is not None
+                (
+                    item["relation"] in RAILS_TARGETLESS_RELATIONS
+                    or item["target_entity_id"] is not None
+                )
                 and not candidates
                 and item["unresolved_reason"] is None,
                 "resolved endpoints",
@@ -771,6 +827,24 @@ def _validate_rails_fingerprint(value: Any, basis: str) -> None:
     )
 
 
+def _validate_rails_models_fingerprint(value: Any, basis: str) -> None:
+    """Rails models adapter identity; hashes are format-checked, never pinned to the running
+    adapter or map (a predecessor may legitimately carry another build's hashes)."""
+    require(basis == "parsed", "rails_models producer basis")
+    require(
+        isinstance(value, dict)
+        and set(value) == {"adapter", "adapter_sha256", "graph_producer_id", "table_map_sha256"},
+        "rails_models producer fields",
+    )
+    require(value["adapter"] == RAILS_MODELS_ADAPTER, "rails_models producer values")
+    require(
+        hash_value(value["adapter_sha256"])
+        and hash_value(value["graph_producer_id"])
+        and (value["table_map_sha256"] is None or hash_value(value["table_map_sha256"])),
+        "rails_models producer hashes",
+    )
+
+
 def validate_record(item: Any) -> None:
     try:
         _validate_record(item)
@@ -825,6 +899,10 @@ def validate_database(conn: sqlite3.Connection) -> None:
                 "execution occurrence entity",
             )
             require(
+                (item["kind"] == RAILS_MODEL_KIND) <= (entity["kind"] in {"class", "file"}),
+                "rails model occurrence entity",
+            )
+            require(
                 (item["provenance_state"] == "source") == (entity["identity_basis"] == "parsed"),
                 "occurrence/entity identity basis",
             )
@@ -845,6 +923,11 @@ def validate_database(conn: sqlite3.Connection) -> None:
                 (set(producer_record["fingerprint"] or ()) == {"rails"})
                 == (occurrence["kind"] == RAILS_ROUTE_KIND),
                 "rails evidence/route occurrence",
+            )
+            require(
+                (set(producer_record["fingerprint"] or ()) == {"rails_models"})
+                == (occurrence["kind"] == RAILS_MODEL_KIND),
+                "rails_models evidence/occurrence",
             )
             for key in (
                 "source_sha256",
@@ -877,6 +960,20 @@ def validate_database(conn: sqlite3.Connection) -> None:
                 require(
                     source["kind"] == "file" and source["id"] == occurrence["entity_id"],
                     "rails assertion source",
+                )
+            rails_models = item["relation"] in RAILS_MODEL_RELATIONS
+            require(
+                rails_models
+                == (set(producer_record["fingerprint"] or ()) == {"rails_models"})
+                == (occurrence["kind"] == RAILS_MODEL_KIND),
+                "rails_models assertion discrimination",
+            )
+            if rails_models:
+                require(
+                    source["id"] == occurrence["entity_id"]
+                    and source["kind"]
+                    == ("file" if item["relation"] == RAILS_MIGRATION_RELATION else "class"),
+                    "rails_models assertion source",
                 )
             if coverage:
                 # Observed test execution: the source is a test (path of the TEST file), the

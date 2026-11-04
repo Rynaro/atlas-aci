@@ -1,0 +1,82 @@
+{
+ "slice_id": "ACI-S25",
+ "plan": ".spectra/plans/aci-s25.md",
+ "author": "orchestrator-ramza-plan-s25",
+ "checker": "atlas-s25-plan-checker",
+ "verdict": "APPROVE_WITH_CONDITIONS",
+ "method": "independent read-only code review; no commands executed",
+ "findings": [
+  {
+   "n": 1,
+   "severity": "MAJOR",
+   "summary": "D5 resolves over models only, ignoring earlier non-model class/module candidates that Rails compute_type would pick: false INFERRED. INFERRED only when exactly one distinct candidate name exists over all indexed classes and modules and it has one model entity; otherwise AMBIGUOUS, target_not_model or class_not_found; add shadow fixture",
+   "disposition": "accepted as plan condition 1"
+  },
+  {
+   "n": 2,
+   "severity": "MAJOR",
+   "summary": "capture bounded by file count only and Declaration nodes retain every parse tree; return plain span objects, release trees per file, add MAX_CAPTURE_BYTES and per-file cap counted in files.limited/truncated, test with monkeypatched caps",
+   "disposition": "accepted as plan condition 2"
+  },
+  {
+   "n": 3,
+   "severity": "MINOR",
+   "summary": "binding.namespace (codegraph.py:4082-4086) can be ::X::Y or Z::A::B for compact names; unbound unless fullmatching MODEL_KEY_RE, stricter: compact names with an enclosing module are unbound; fixture and test",
+   "disposition": "accepted as plan condition 3"
+  },
+  {
+   "n": 4,
+   "severity": "MINOR",
+   "summary": "ambiguous_model emits per-entity records so total can exceed MAX_DECLARATIONS+1+MAX_MAP_ENTRIES and fail staging in validate_records; cap emitted map records and set truncated, test",
+   "disposition": "accepted as plan condition 4"
+  },
+  {
+   "n": 5,
+   "severity": "MINOR",
+   "summary": "map parser lacks S31 surrogate guard; check ASCII regex before encode, wrap all failures into fixed-text TableMapError, pin format as required, lone-surrogate test",
+   "disposition": "accepted as plan condition 5"
+  },
+  {
+   "n": 6,
+   "severity": "MINOR",
+   "summary": "CLI reads via open+fstat S_ISREG (coverage_py.py:597), bounded read, fixed message text without path, exit 2 and no graph directory",
+   "disposition": "accepted as plan condition 6"
+  },
+  {
+   "n": 7,
+   "severity": "MINOR",
+   "summary": "target_not_model misleads for models under non-listed abstract bases; document exact meaning or rename target_not_recognized_model; AMBIGUOUS rationale must not claim load-order dependence",
+   "disposition": "accepted as plan condition 7"
+  },
+  {
+   "n": 8,
+   "severity": "MINOR",
+   "summary": "AC-007 sqlite3.connect spy must normalise file: URIs and :memory:, call through, assert at least one target recorded under graph_root/tmp and none under the repo",
+   "disposition": "accepted as plan condition 8"
+  },
+  {
+   "n": 9,
+   "severity": "MINOR",
+   "summary": "compare_graphs.py ownership keyed on 'rails' only (:93-94); report rails and rails_models owned sets separately, exclude union, check both manifest keys, self-test on a two-adapter database",
+   "disposition": "accepted as plan condition 9"
+  },
+  {
+   "n": 10,
+   "severity": "MINOR",
+   "summary": "src-wide scans (thesis_negatives.py:51 alter table, test_export.py:374 nx.compose) and ruff RUF/B/SIM: ASCII source, no banned strings/names, no \\d \\w $ in regex or docstrings",
+   "disposition": "accepted as plan condition 10"
+  },
+  {
+   "n": 11,
+   "severity": "MINOR",
+   "summary": "docs/frameworks/rails.md:83 says rails mapping never EXTRACTED; scope to routes_to and define EXTRACTED for model_table/migration_mentions as literal declaration extracted, no edge, tables not entities",
+   "disposition": "accepted as plan condition 11"
+  },
+  {
+   "n": 12,
+   "severity": "MINOR",
+   "summary": "Day 2 overloaded; move EV1-6 to Day 1 PM and planted-corruption and CLI tests to Day 3; keep cut order and STOP RULE",
+   "disposition": "accepted as plan condition 12"
+  }
+ ]
+}

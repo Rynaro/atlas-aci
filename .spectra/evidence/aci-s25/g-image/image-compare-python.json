@@ -1,0 +1,337 @@
+{
+ "databases": {
+  "base": {
+   "adapters": {
+    "rails": {
+     "manifest_present": false,
+     "producer_ids": [],
+     "records": {
+      "assertions": 0,
+      "evidence": 0,
+      "occurrences": 0
+     }
+    },
+    "rails_models": {
+     "manifest_present": false,
+     "producer_ids": [],
+     "records": {
+      "assertions": 0,
+      "evidence": 0,
+      "occurrences": 0
+     }
+    }
+   },
+   "native_producer_ids": [
+    "aa0e898fcd54cef57a955a7ca3cfaa2893bc1d5e54d57101a38ce01130cdfb46"
+   ],
+   "path": "/private/tmp/claude-501/-Users-henrique-workspace-oss-agents-atlas-aci/694bbcf4-4624-4586-978b-245709fb6cab/scratchpad/gimg/py-base/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/graph.9.db",
+   "row_counts": {
+    "assertion_ids": 47,
+    "assertions": 47,
+    "assignment_targets": 46,
+    "edges": 1,
+    "entity_ids": 42,
+    "evidence_ids": 135,
+    "files": 11,
+    "import_bindings": 14,
+    "occurrence_ids": 135,
+    "rationale": 0,
+    "refs": 33,
+    "retrieval_documents": 53,
+    "symbols": 31
+   }
+  },
+  "off": {
+   "adapters": {
+    "rails": {
+     "manifest_present": false,
+     "producer_ids": [],
+     "records": {
+      "assertions": 0,
+      "evidence": 0,
+      "occurrences": 0
+     }
+    },
+    "rails_models": {
+     "manifest_present": false,
+     "producer_ids": [],
+     "records": {
+      "assertions": 0,
+      "evidence": 0,
+      "occurrences": 0
+     }
+    }
+   },
+   "native_producer_ids": [
+    "29c2aa3ed5ec84d3a88c0fc80ef7a35013f6ef5ec03becb4a29aa76014cd4d1b"
+   ],
+   "path": "/private/tmp/claude-501/-Users-henrique-workspace-oss-agents-atlas-aci/694bbcf4-4624-4586-978b-245709fb6cab/scratchpad/gimg/py-off/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/graph.9.db",
+   "row_counts": {
+    "assertion_ids": 47,
+    "assertions": 47,
+    "assignment_targets": 46,
+    "edges": 1,
+    "entity_ids": 42,
+    "evidence_ids": 135,
+    "files": 11,
+    "import_bindings": 14,
+    "occurrence_ids": 135,
+    "rationale": 0,
+    "refs": 33,
+    "retrieval_documents": 53,
+    "symbols": 31
+   }
+  },
+  "on": {
+   "adapters": {
+    "rails": {
+     "manifest_present": false,
+     "producer_ids": [],
+     "records": {
+      "assertions": 0,
+      "evidence": 0,
+      "occurrences": 0
+     }
+    },
+    "rails_models": {
+     "manifest_present": true,
+     "producer_ids": [],
+     "records": {
+      "assertions": 0,
+      "evidence": 0,
+      "occurrences": 0
+     }
+    }
+   },
+   "native_producer_ids": [
+    "29c2aa3ed5ec84d3a88c0fc80ef7a35013f6ef5ec03becb4a29aa76014cd4d1b"
+   ],
+   "path": "/private/tmp/claude-501/-Users-henrique-workspace-oss-agents-atlas-aci/694bbcf4-4624-4586-978b-245709fb6cab/scratchpad/gimg/py-on/repos/816fc349d3faebf805d1bed70fce7e14754cad5251c77dda31c414ee961a0bdd/graph.9.db",
+   "row_counts": {
+    "assertion_ids": 47,
+    "assertions": 47,
+    "assignment_targets": 46,
+    "edges": 1,
+    "entity_ids": 42,
+    "evidence_ids": 135,
+    "files": 11,
+    "import_bindings": 14,
+    "occurrence_ids": 135,
+    "rationale": 0,
+    "refs": 33,
+    "retrieval_documents": 53,
+    "symbols": 31
+   }
+  }
+ },
+ "exclusions": [
+  "files.indexed_at",
+  "files.mtime_ns (differs between mounts)",
+  "generation_inputs.producer/schema (base vs off only: the producer id churns by design)",
+  "manifest.generation_id",
+  "manifest.generation_inputs.snapshot",
+  "retrieval_fts*",
+  "retrieval_documents.candidate_id",
+  "refs.id, edges.id, symbols.id (autoincrement)",
+  "refs.evidence_id, edges.assertion_id (producer-derived link ids)"
+ ],
+ "extra": [
+  {
+   "base_has_no_adapter_records": true,
+   "base_off_native_producer_ids_differ_expected_churn": true,
+   "off_has_no_adapter_records": true,
+   "on_enables_at_least_one_adapter": true,
+   "on_native_producers_equal_off": true,
+   "rails_absent_in_on": true,
+   "rails_models_no_records_no_producer": true
+  }
+ ],
+ "ok": true,
+ "pairs": [
+  {
+   "checks": [
+    {
+     "equal": true,
+     "ok": true,
+     "rows": 42,
+     "table": "entity_ids",
+     "vacuous": false
+    },
+    {
+     "equal": true,
+     "ok": true,
+     "rows": 135,
+     "table": "occurrence_ids",
+     "vacuous": false
+    },
+    {
+     "equal": true,
+     "ok": true,
+     "rows": 31,
+     "table": "symbols",
+     "vacuous": false
+    },
+    {
+     "equal": true,
+     "ok": true,
+     "rows": 33,
+     "table": "refs",
+     "vacuous": false
+    },
+    {
+     "equal": true,
+     "ok": true,
+     "rows": 1,
+     "table": "edges",
+     "vacuous": false
+    },
+    {
+     "equal": true,
+     "ok": true,
+     "rows": 0,
+     "table": "rationale",
+     "vacuous": true
+    },
+    {
+     "equal": true,
+     "ok": true,
+     "rows": 14,
+     "table": "import_bindings",
+     "vacuous": false
+    },
+    {
+     "equal": true,
+     "ok": true,
+     "rows": 46,
+     "table": "assignment_targets",
+     "vacuous": false
+    },
+    {
+     "equal": true,
+     "ok": true,
+     "rows": 47,
+     "table": "assertions",
+     "vacuous": false
+    },
+    {
+     "equal": true,
+     "ok": true,
+     "rows": 11,
+     "table": "files",
+     "vacuous": false
+    },
+    {
+     "equal": true,
+     "ok": true,
+     "rows": 53,
+     "table": "retrieval_documents",
+     "vacuous": false
+    }
+   ],
+   "ok": true,
+   "pair": "base vs off"
+  },
+  {
+   "checks": [
+    {
+     "equal": true,
+     "ok": true,
+     "rows": 42,
+     "table": "entity_ids",
+     "vacuous": false
+    },
+    {
+     "equal": true,
+     "ok": true,
+     "rows": 135,
+     "table": "occurrence_ids",
+     "vacuous": false
+    },
+    {
+     "equal": true,
+     "ok": true,
+     "rows": 31,
+     "table": "symbols",
+     "vacuous": false
+    },
+    {
+     "equal": true,
+     "ok": true,
+     "rows": 33,
+     "table": "refs",
+     "vacuous": false
+    },
+    {
+     "equal": true,
+     "ok": true,
+     "rows": 1,
+     "table": "edges",
+     "vacuous": false
+    },
+    {
+     "equal": true,
+     "ok": true,
+     "rows": 0,
+     "table": "rationale",
+     "vacuous": true
+    },
+    {
+     "equal": true,
+     "ok": true,
+     "rows": 14,
+     "table": "import_bindings",
+     "vacuous": false
+    },
+    {
+     "equal": true,
+     "ok": true,
+     "rows": 46,
+     "table": "assignment_targets",
+     "vacuous": false
+    },
+    {
+     "equal": true,
+     "ok": true,
+     "rows": 47,
+     "table": "assertions",
+     "vacuous": false
+    },
+    {
+     "equal": true,
+     "ok": true,
+     "rows": 11,
+     "table": "files",
+     "vacuous": false
+    },
+    {
+     "equal": true,
+     "ok": true,
+     "rows": 53,
+     "table": "retrieval_documents",
+     "vacuous": false
+    },
+    {
+     "equal": true,
+     "ok": true,
+     "rows": 9,
+     "table": "generation_inputs_without_snapshot",
+     "vacuous": false
+    },
+    {
+     "equal": true,
+     "ok": true,
+     "rows": 135,
+     "table": "evidence_ids"
+    },
+    {
+     "equal": true,
+     "ok": true,
+     "rows": 47,
+     "table": "assertion_ids"
+    }
+   ],
+   "ok": true,
+   "pair": "off vs on (minus adapter-owned)"
+  }
+ ]
+}

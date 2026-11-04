@@ -1,0 +1,64 @@
+{
+  "slice_id": "ACI-S25",
+  "criteria_changed": false,
+  "base_commit": "f4090946ac4493dccad2ddcd5349aa3d16ed1e3a",
+  "additional_paths": [
+    "mcp-server/src/atlas_aci/storage/evidence.py",
+    "mcp-server/src/atlas_aci/frameworks/__init__.py",
+    "mcp-server/src/atlas_aci/__main__.py",
+    "mcp-server/tests/slices/test_s25_*.py",
+    "mcp-server/tests/slices/test_s24_rails_routes.py",
+    "CHANGELOG.md",
+    "README.md",
+    ".spectra/evidence/aci-s25/compare_graphs.py"
+  ],
+  "narrowed_paths": {
+    "mcp-server/src/atlas_aci/frameworks/rails_routes.py": "Declared by the issue but NOT edited (orchestrator decision 1): the literal rule is copied into rails_models.py so the S24 adapter_sha256, route producer and record identity are untouched; G-SRC requires it byte-unchanged vs f409094."
+  },
+  "reasons": {
+    "storage/evidence.py": "Minimal closed-set amendment EV1-EV6: association/model_table/migration_mentions accepted only by ASSERTION_RELATIONS (never RELATIONS/REFERENCE_RELATIONS/EDGE_RELATIONS); occurrence kind rails_model bound 1:1 to role prefix rails_model: (source state, hash entity, ruby); association resolution limited to INFERRED/AMBIGUOUS/UNRESOLVED; relation-gated target-less EXTRACTED carve-out for model_table/migration_mentions only (every other relation keeps 'resolved requires target'); {rails_models} producer fingerprint branch (adapter, adapter_sha256, graph_producer_id, table_map_sha256); validate_database rails_models evidence/assertion discrimination with source == occurrence entity (class for association/model_table, file for migration_mentions). No new entity kind, FIELDS or COLUMNS change. Native producer churn for all graphs accepted (S16/S21/S24 precedent).",
+    "frameworks/__init__.py": "Closed registry becomes {rails, rails_models}; REQUIRED_LANGUAGE rails_models -> ruby; normalize unchanged.",
+    "__main__.py": "index --rails-table-map FILE: requires rails_models in --frameworks (UsageError exit 2), bounded byte read by the CLI (the adapter never reads files), strict parse before _open_graph so no graph directory is created on rejection; --frameworks help lists the closed set.",
+    "codegraph.py": "Declared path; edits CG1-CG8 only: import, rails_table_map constructor parameter (validated and parsed before any write), flag-gated bounded model/migration byte capture before every continue, rails_models.refresh after rails_routes.refresh and before _validate_evidence_projections, dropped-set exclusion, role/relation projection carve-outs, rails_models.validate_records. _producer_inputs, _build_inputs, configuration and generation-input shapes unchanged.",
+    "tests/slices/test_s25_*.py": "AC tests stay in the declared test_s25_rails_models.py; supporting isolation gates in test_s25_isolation.py; shared helpers in test_s25_support.py.",
+    "tests/slices/test_s24_rails_routes.py": "Exactly two lines: the frameworks/ file-set pin (:381) gains rails_models.py and the adapter-read count (:418) becomes 2. No other S24 test edit is allowed.",
+    "CHANGELOG.md/README.md": "[Unreleased] entry (including producer-id churn) and an operator pointer to docs/frameworks/rails.md.",
+    ".spectra/evidence/aci-s25/compare_graphs.py": "Copy of the S24 G-IMAGE comparison extended to recognise rails_models producer ownership and the rails_models manifest key."
+  },
+  "operator_decisions": {
+    "layout": "separate adapter rails_models (registry {rails, rails_models}, requires ruby); producer fingerprint key rails_models {adapter rails-models.v1, adapter_sha256, graph_producer_id, table_map_sha256}; manifest key rails_models format atlas-rails-models.v1; adapters combinable and separately replaceable",
+    "table_targets": "option B: model_table and migration_mentions are target-less EXTRACTED assertions carrying the table in canonical raw_target; tables are not graph entities; association targets class entities INFERRED/AMBIGUOUS/UNRESOLVED",
+    "vocabulary": "three relations only in ASSERTION_RELATIONS; one occurrence kind rails_model with role prefix rails_model:; fingerprint key == occurrence kind == relation set",
+    "associations": "receiverless direct class-body belongs_to/has_one/has_many in classes with base ApplicationRecord/ActiveRecord::Base/::ActiveRecord::Base under app/models/** (not concerns); literal class_name required; Rails compute_type candidate list restricted to indexed model classes; unique INFERRED, >=2 AMBIGUOUS ambiguous_class_name, target_not_model, class_not_found; every unsupported form UNRESOLVED unsupported_association with a closed construct code; no inflection",
+    "tables": "literal self.table_name or operator map atlas-rails-table-map.v1 via index --rails-table-map (bytes read by the caller, S31-style strict parse, typed errors before any write); conflicting_table_mapping, ambiguous_table_name, ambiguous_model, unsupported_table_name; unmatched keys counted in the manifest only",
+    "migrations": "db/migrate/*.rb only; ActiveRecord::Migration or ActiveRecord::Migration[d.d]; direct statements of def change/up/down; literal create_table/add_column/remove_column EXTRACTED; every other statement a closed unsupported_migration_op diagnostic; never proof of applied or live schema",
+    "invalidation": "probe-gated global purge and recompute on every build; rails_models ids join dropped; flag-gated bounded capture before every continue with MAX_FILES and declaration_limit",
+    "provenance": "occurrence span = declaration statement (class node for map facts) bound by the generation snapshot; map facts carry map_sha256",
+    "no_execution": "S24 spies plus sqlite3.connect/socket guards and AST ban; ASCII, iterative, no \\d/\\w/$",
+    "churn": "native producer/evidence/assertion/generation/snapshot id churn for all graphs accepted (S16/S21/S24 precedent); --frameworks rails route facts unchanged in substance (G-ROUTES)"
+  },
+  "invariance_gates": [
+    "G-OFF",
+    "G-ONOFF",
+    "G-IMAGE",
+    "G-ROUTES",
+    "G-ENVELOPE",
+    "G-MCP",
+    "G-NOLEAK",
+    "G-QUERY",
+    "G-SRC",
+    "G-NOEXEC",
+    "G-RO",
+    "G-DEPS"
+  ],
+  "invariants": {
+    "tools_json_sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+    "tools_json_bytes": 1631472,
+    "MINIMUM_BUDGET": 3436,
+    "COLLECTION_MINIMUM_BUDGET": 3448,
+    "FIXED_ERROR": 797,
+    "IMPACT": 7730
+  },
+  "no_speculative_docker_ci_change": true,
+  "review": ".spectra/plans/aci-s25.review.json"
+}

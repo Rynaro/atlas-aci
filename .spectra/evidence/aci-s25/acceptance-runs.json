@@ -1,0 +1,44 @@
+[
+  {
+    "ac_id": "AC-S25-001",
+    "test": "mcp-server/tests/slices/test_s25_rails_models.py::test_rails_explicit_association_target",
+    "exit_code": 0,
+    "tail": "1 passed in 2.81s"
+  },
+  {
+    "ac_id": "AC-S25-002",
+    "test": "mcp-server/tests/slices/test_s25_rails_models.py::test_rails_explicit_model_table",
+    "exit_code": 0,
+    "tail": "1 passed in 2.95s"
+  },
+  {
+    "ac_id": "AC-S25-003",
+    "test": "mcp-server/tests/slices/test_s25_rails_models.py::test_rails_migration_table_mentions",
+    "exit_code": 0,
+    "tail": "1 passed in 2.56s"
+  },
+  {
+    "ac_id": "AC-S25-004",
+    "test": "mcp-server/tests/slices/test_s25_rails_models.py::test_rails_unsupported_association_is_visible",
+    "exit_code": 0,
+    "tail": "1 passed in 2.58s"
+  },
+  {
+    "ac_id": "AC-S25-005",
+    "test": "mcp-server/tests/slices/test_s25_rails_models.py::test_rails_model_relation_provenance",
+    "exit_code": 0,
+    "tail": "1 passed in 2.61s"
+  },
+  {
+    "ac_id": "AC-S25-006",
+    "test": "mcp-server/tests/slices/test_s25_rails_models.py::test_rails_model_reindex_is_idempotent",
+    "exit_code": 0,
+    "tail": "1 passed in 5.32s"
+  },
+  {
+    "ac_id": "AC-S25-007",
+    "test": "mcp-server/tests/slices/test_s25_rails_models.py::test_rails_models_never_execute_database_code",
+    "exit_code": 0,
+    "tail": "1 passed in 4.75s"
+  }
+]

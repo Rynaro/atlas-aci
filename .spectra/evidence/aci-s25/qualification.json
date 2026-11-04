@@ -1,0 +1,54 @@
+{
+ "slice_id": "ACI-S25",
+ "base_commit": "f4090946ac4493dccad2ddcd5349aa3d16ed1e3a",
+ "interpreter": "python 3.12.16 (atlas-aci-dev-s16, docker only); tree-sitter-language-pack 1.6.0 / tree-sitter 0.25.2 (equal to uv.lock). The host has no tree-sitter, and no project code runs on the host, so the host half of (a) is not applicable: the pinned grammar is exercised in the dev image only.",
+ "stop_rule": "not triggered",
+ "a_grammar": {
+  "result": "pass",
+  "has_error": "false for all 25 fixture .rb files (qual_grammar.py)",
+  "notes": [
+   "class fields: name (constant | scope_resolution for compact `Blog::Tag`), superclass (a `superclass` node whose first named child is the base: constant, or scope_resolution for `::ActiveRecord::Base`; `ActiveRecord::Migration[7.1]` is element_reference(object: scope_resolution, float), `ActiveRecord::Migration` is scope_resolution), body (body_statement); an empty class has NO body field",
+   "association call: method (identifier), arguments (argument_list; positional simple_symbol/string/identifier/lambda/splat_argument, pair children), block (do_block); `has_many(*SHARED)` -> splat_argument; `-> { }` -> lambda with a block body",
+   "pair: key (hash_key_symbol for `name:`; string for `\"name\":` and for rocket pairs), value; the `=>` token is a direct child only of rocket pairs",
+   "simple_symbol text includes the leading `:`; `:\"x\"` is delimited_symbol; string with interpolation has an `interpolation` child; a lone `#{` in single quotes stays string_content",
+   "table statement: assignment(left: call(receiver: self, method: identifier table_name), right: string | simple_symbol | other); operator_assignment has the same left; `def self.table_name` is singleton_method(object: self, name: identifier)",
+   "migration: class body `method` nodes (name identifier, body body_statement; an empty def has no body); `def self.up` is singleton_method; create_table block is do_block under the `block` field",
+   "if-modifier statements are if_modifier; bare `reversible` style statements are call with a block"
+  ]
+ },
+ "b_binding": {
+  "result": "pass",
+  "classes_and_modules_probed": 27,
+  "all_class_nodes_equal_definition_occurrence_spans": true,
+  "namespaces": {
+   "top_level": "User",
+   "module_wrapped": "Blog::Post (owner ruby:Blog)",
+   "compact": "Blog::Tag (name is the scope_resolution text)",
+   "compact_inside_module": "Zed::Outer::Inner (enclosing names are joined with the raw declared name)",
+   "reopened": "Invoice twice (two entities, same namespace)",
+   "modules": "symbols rows with kind module and the module namespace"
+  },
+  "skip_pattern": "app/models/storage/vault.rb is not observed (the path part `storage` is in the skip list): True",
+  "generation_inputs_snapshot_path": "manifest generation_inputs -> snapshot {id, manifest_sha256, state}; reader.snapshot_id equals it: True",
+  "evidence": "qual_binding.py (base code)"
+ },
+ "c_validity": {
+  "result": "pass",
+  "base": "on f409094 ev.validate_record rejects a target-less EXTRACTED `call`, `routes_to` and `test_executes`, and a target-less INFERRED (probe_c.py run against the base tree: 'resolved endpoints' / relation messages)",
+  "carve_out": "with EV1-EV6 and CG6/CG7 only: a target-less EXTRACTED model_table / migration_mentions passes; INFERRED target-less still fails for association, routes_to and call; EXTRACTED association is rejected; model_table with a target is rejected; ev.validate_database and CodeGraph._validate_evidence_projections pass on a hand-built database holding one such record (qual_validity.py)",
+  "no_edit_beyond_ev1_ev6_cg6_cg7": true,
+  "gated_consumers": "unchanged and green: the full suite passes (see full-suite gate); consumers are relation-filtered (RELATIONS / explicit relation parameter / definition occurrences only)"
+ },
+ "d_flag_off_baselines": {
+  "file": "base-digest.json",
+  "note": "base-code digests of the S25 fixture (OFF) and the S24 fixture (OFF and --frameworks rails); non-empty tables incl. 14 edges for the S25 fixture"
+ },
+ "e_base_invariants": {
+  "file": "base-invariants.json"
+ },
+ "f_rails_fidelity": {
+  "result": "verified",
+  "source": "activerecord/lib/active_record/inheritance.rb, ActiveRecord::Inheritance::ClassMethods#compute_type, fetched from https://raw.githubusercontent.com/rails/rails/<tag>/ for v7.1.3 (line 240), v7.2.0 (242) and v8.0.0 (242)",
+  "finding": "`::`-prefixed names are constantized absolutely; otherwise the candidate list is built by `name.scan(/::|$/) { candidates.unshift \"#{$`}::#{type_name}\" }` then `candidates << type_name`, and the first candidate whose safe_constantize equals the candidate string wins (deepest first, bare name last). Equal to D5's candidate list; docs claim only the list, not precedence."
+ }
+}

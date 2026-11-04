@@ -1,0 +1,79 @@
+{
+ "harness": {
+  "wrapper": "dk25.sh = docker run --rm --user 1000:1000 -e HOME=/hc -e PYTHONPATH=/ws/mcp-server/src -v <scratch>/home:/hc -v <repo>:/ws -w /ws/mcp-server atlas-aci-dev-s16",
+  "dev_image": "atlas-aci-dev-s16 sha256:783f2210c3d12ae25c567c76366b6b6dd09d4aa0c93ea1aee4fb03d8f17e859a (lock unchanged since base)"
+ },
+ "s25_contract": {
+  "exit_code": 0,
+  "summary": "177 passed in 48.4s (test_s25_rails_models.py, test_s25_isolation.py, test_s25_support.py)",
+  "log": "s25-contract.log.gz"
+ },
+ "regression": {
+  "exit_code": 0,
+  "summary": "763 passed (test_s07_*, test_s09_*, test_s10_*, test_s12_storage, test_s16_*, test_s19_*, test_s20_*, test_s21_*, test_s22_*, test_s24_*, test_s37_*, test_schema_epoch, test_thesis_negatives, test_export)",
+  "log": "regression.log.gz"
+ },
+ "orchestrator_rerun": [
+  {
+   "command": "dk25.sh pytest -p no:cacheprovider tests/slices/test_s25_*.py tests/slices/test_s24_*.py",
+   "exit_code": 0,
+   "summary": "238 passed"
+  },
+  {
+   "command": "dk25.sh exact CI lint/type steps (ruff check+format src/ tests/, mypy src/, ruff check+format ../scripts/ --exclude fingerprint-fixture, mypy ../scripts/)",
+   "exit_code": 0
+  }
+ ],
+ "ruff": {
+  "exit_code": 0
+ },
+ "format": {
+  "exit_code": 0
+ },
+ "mypy": {
+  "exit_code": 0
+ },
+ "full_suite": {
+  "exit_code": 1,
+  "summary": "1 failed, 1825 passed, 10 skipped, 1 deselected",
+  "failed": [
+   "tests/slices/test_s01_contract.py::test_call_deadline_after_initialization"
+  ],
+  "classification": "pre-existing under uid 1000 (also fails on the base)",
+  "deselected": [
+   "tests/slices/test_s08_integration.py::test_nonregular_pack_does_not_block_acquisition (known flaky; hangs in the dev image)"
+  ],
+  "log": "full-suite.log.gz"
+ },
+ "g_src": {
+  "exit_code": 0,
+  "note": "gated src paths, storage/* except evidence.py, frameworks/rails_routes.py, pyproject.toml, uv.lock, .github/workflows byte-unchanged vs f409094; src changes limited to frameworks/__init__.py, frameworks/rails_models.py, codegraph.py, __main__.py, storage/evidence.py; S24 test edit limited to two lines (file-set pin, reads == 2); RELATIONS/REFERENCE_RELATIONS/EDGE_RELATIONS unchanged (orchestrator re-checked on the staged tree)"
+ },
+ "g_mcp": {
+  "exit_code": 0,
+  "tools_json_sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+  "tools_json_bytes": 1631472
+ },
+ "g_envelope": {
+  "MINIMUM_BUDGET": 3436,
+  "COLLECTION_MINIMUM_BUDGET": 3448,
+  "FIXED_ERROR_ENVELOPE_CAP": 797,
+  "IMPACT_MINIMUM_BUDGET": 7730,
+  "source": "unchanged: protocol/query byte-unchanged"
+ },
+ "drift": "ramza-drift --staged: 86 changed files, all within declared scope",
+ "interpretation": "Separate rails_models adapter and producer (separately replaceable from S24 route facts). model_table and migration_mentions are EXTRACTED assertions with no target entity (tables are not graph entities; relation-gated carve-out); association targets class entities (INFERRED/AMBIGUOUS/UNRESOLVED). Migration mentions are source statements, not proof a migration was applied. Atlas does not evaluate Rails constant-lookup precedence: two or more existing candidates are reported AMBIGUOUS.",
+ "fingerprint_churn": "Editing codegraph.py and storage/evidence.py changes the native producer id again (accepted as in S16/S21/S24); entity ids, occurrence ids and symbols/refs/edges rows are unchanged (G-IMAGE).",
+ "production_image": {
+  "base": "atlas-aci:s25-base sha256:ff8239d57393e7a64deb2d9e4ca25affc5be0b08dd7926a73b6d976274df010f (built from f409094)",
+  "build": "docker build -t atlas-aci:s25 mcp-server -> sha256:7e9d7196f41bc05fc67f489a2a6e8efa6d80c246248f82468cb3c54ba19965eb",
+  "scenario": ".spectra/evidence/aci-s25/g_image.sh atlas-aci:s25-base atlas-aci:s25 <out>; index --langs ruby,python (network only for the parser download, identical for both images), repos mounted :ro, separate graph roots",
+  "g_image": "rails_models fixture and Python coverage fixture: base vs new OFF vs new ON ok=true (native records equal, expected producer churn, ON adds exactly one rails_models producer and only its records)",
+  "g_routes": "S24 fixture with --frameworks rails: base vs new rails route view equal (occurrence ids equal, records equal minus graph producer id); rails vs rails,rails_models: rails view identical",
+  "rejections": "--frameworks django -> exit 2; --rails-table-map without rails_models -> exit 2; no graph directory created",
+  "rails_models_facts": "association: 4 INFERRED, 2 AMBIGUOUS ambiguous_class_name (2 candidates each), 3 target_not_recognized_model, 2 class_not_found, 15 unsupported_association; model_table: 2 EXTRACTED (literal user_profiles; operator_map with map_sha256), 2 conflicting_table_mapping, 2 ambiguous_table_name, 2 ambiguous_model, 3 unsupported_table_name; migration_mentions: 7 EXTRACTED (create_table x3, add_column x2, remove_column x2), 14 unsupported_migration_op",
+  "tools": "7 tools, sha256 94f9567a... 1631472 bytes unchanged",
+  "artifacts": "g-image-orchestrator/*.json"
+ },
+ "day1_qualification": "qualification.json: grammar (25 fixture files, no errors, tree-sitter-language-pack 1.6.0), binding 27/27 class/module spans, validity carve-out, Rails compute_type checked against v7.1.3/v7.2.0/v8.0.0; STOP RULE not triggered"
+}

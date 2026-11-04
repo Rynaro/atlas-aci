@@ -1,0 +1,12 @@
+{
+  "format": "atlas-rails-table-map.v1",
+  "models": {
+    "Blog::Tag": "blog_tags",
+    "Invoice": "invoices_x",
+    "Legacy::Order": "orders_map",
+    "Nope::Missing": "nope_missing",
+    "Profile": "user_profiles",
+    "Tag": "tags_legacy",
+    "Team": "teams"
+  }
+}
