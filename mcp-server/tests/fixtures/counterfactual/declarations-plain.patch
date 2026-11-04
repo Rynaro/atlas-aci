@@ -1,0 +1,28 @@
+--- a/pkg/domain/b.py
++++ b/pkg/domain/b.py
+@@ -1,2 +1,6 @@
+-def fb():
++def fb(x=0):
+     return 1
++
++
++def fb2():
++    return 2
+--- a/pkg/domain/e.py
++++ /dev/null
+@@ -1,2 +0,0 @@
+-def fe():
+-    return 5
+--- /dev/null
++++ b/pkg/domain/n.py
+@@ -0,0 +1,2 @@
++def fn():
++    return 7
+--- a/pkg/infra/c.py
++++ b/pkg/infra/c.py
+@@ -2,4 +2,4 @@
+ 
+ 
+ def fc():
+-    return fb()
++    return fb() + 1

@@ -1,0 +1,5 @@
+--- a/../outside.py
++++ b/../outside.py
+@@ -1 +1 @@
+-x = 1
++x = 2

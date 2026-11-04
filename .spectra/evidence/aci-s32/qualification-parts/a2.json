@@ -1,0 +1,164 @@
+{
+  "equality_proved_per_step": {
+    "step0_full": true,
+    "step1_broken_since": false,
+    "step2_restored_since": true,
+    "step3_deleted_since": true,
+    "step4_fresh_broken_full": false
+  },
+  "has_non_observation_records": {
+    "step0_full": false,
+    "step1_broken_since": true,
+    "step2_restored_since": false,
+    "step3_deleted_since": false,
+    "step4_fresh_broken_full": false
+  },
+  "step0_full": {
+    "base_record_types": [
+      "observation"
+    ],
+    "base_snapshot_id": "76146e76df31082f0ee62157ad3985ee910f126dfb153f8f0310191c51361438",
+    "base_states": [
+      "indexed"
+    ],
+    "change_set_id": "8d428e640bc7db678930e7514f80de77688836db8c911fd51dab4ccb35b64cf6",
+    "changes": 0,
+    "compat_keys": [
+      "configuration_sha256",
+      "identity_kind",
+      "identity_rule",
+      "producer_sha256",
+      "schema"
+    ],
+    "compatible": true,
+    "generation_id_equal": true,
+    "manifest_differing_keys": [],
+    "n_overlays": 7,
+    "observation_vectors_equal": true,
+    "partial_paths": [],
+    "snapshot_id_equal": true,
+    "staged_snapshot_id": "76146e76df31082f0ee62157ad3985ee910f126dfb153f8f0310191c51361438",
+    "tag": "h0"
+  },
+  "step1_broken_since": {
+    "base_record_types": [
+      "history",
+      "observation"
+    ],
+    "base_snapshot_id": "2ca69337efb1baa903975a1b44edef7b490b015ec5e093d0f2c7482af0a92f8f",
+    "base_states": [
+      "failed",
+      "indexed"
+    ],
+    "change_set_id": "6654aebcbed51ce44f6f7cfecfb538222827880987c8fae65a8e4686cad696a1",
+    "changes": 0,
+    "compat_keys": [
+      "configuration_sha256",
+      "identity_kind",
+      "identity_rule",
+      "producer_sha256",
+      "schema"
+    ],
+    "compatible": true,
+    "generation_id_equal": false,
+    "manifest_differing_keys": [
+      "bindings",
+      "graph_digest",
+      "observation_digest",
+      "pack",
+      "range_proof"
+    ],
+    "n_overlays": 7,
+    "observation_vectors_equal": true,
+    "partial_paths": [
+      "pkg/domain/b.py"
+    ],
+    "snapshot_id_equal": false,
+    "staged_snapshot_id": "fca84a3429c24a24fc63d7ac87f19421aa1cc4c1f769b507bee7e0530fccc002",
+    "tag": "h1"
+  },
+  "step2_restored_since": {
+    "base_record_types": [
+      "observation"
+    ],
+    "base_snapshot_id": "76146e76df31082f0ee62157ad3985ee910f126dfb153f8f0310191c51361438",
+    "base_states": [
+      "indexed"
+    ],
+    "change_set_id": "8d428e640bc7db678930e7514f80de77688836db8c911fd51dab4ccb35b64cf6",
+    "changes": 0,
+    "compat_keys": [
+      "configuration_sha256",
+      "identity_kind",
+      "identity_rule",
+      "producer_sha256",
+      "schema"
+    ],
+    "compatible": true,
+    "generation_id_equal": true,
+    "manifest_differing_keys": [],
+    "n_overlays": 7,
+    "observation_vectors_equal": true,
+    "partial_paths": [],
+    "snapshot_id_equal": true,
+    "staged_snapshot_id": "76146e76df31082f0ee62157ad3985ee910f126dfb153f8f0310191c51361438",
+    "tag": "h2"
+  },
+  "step3_deleted_since": {
+    "base_record_types": [
+      "observation"
+    ],
+    "base_snapshot_id": "0120fcab02f77f667336e6a26317c6344f422ab2e85ae7277c868bf60cb41806",
+    "base_states": [
+      "indexed"
+    ],
+    "change_set_id": "700240d077086b17048d062b3cab59c08cadc9b94cfd80db0a446417957591e9",
+    "changes": 0,
+    "compat_keys": [
+      "configuration_sha256",
+      "identity_kind",
+      "identity_rule",
+      "producer_sha256",
+      "schema"
+    ],
+    "compatible": true,
+    "generation_id_equal": true,
+    "manifest_differing_keys": [],
+    "n_overlays": 6,
+    "observation_vectors_equal": true,
+    "partial_paths": [],
+    "snapshot_id_equal": true,
+    "staged_snapshot_id": "0120fcab02f77f667336e6a26317c6344f422ab2e85ae7277c868bf60cb41806",
+    "tag": "h3"
+  },
+  "step4_fresh_broken_full": {
+    "base_record_types": [
+      "observation"
+    ],
+    "base_snapshot_id": "d1f7f4e3f3cb08d4d3f6bc032d5a4e85d70d9f796e86a5668eba2ef661fb2f57",
+    "base_states": [
+      "failed",
+      "indexed"
+    ],
+    "change_set_id": "7c0d53bba88a00b6bb745b25e1355eefd457d64d480a792cb3fec8600a631645",
+    "changes": 0,
+    "compat_keys": [
+      "configuration_sha256",
+      "identity_kind",
+      "identity_rule",
+      "producer_sha256",
+      "schema"
+    ],
+    "compatible": true,
+    "generation_id_equal": true,
+    "manifest_differing_keys": [],
+    "n_overlays": 7,
+    "observation_vectors_equal": true,
+    "partial_paths": [
+      "pkg/domain/b.py"
+    ],
+    "snapshot_id_equal": true,
+    "staged_snapshot_id": "d1f7f4e3f3cb08d4d3f6bc032d5a4e85d70d9f796e86a5668eba2ef661fb2f57",
+    "tag": "h4"
+  }
+}

@@ -1,0 +1,5 @@
+--- a/pkg/domain/b.py
++++ b/pkg/domain/b.py
+@@ -1 +1 @@
+-def fb():
++def fb(ÿ):

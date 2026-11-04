@@ -1,0 +1,35 @@
+{
+  "base_commit": "79ae0b0f20279f24f7bb0c5d8a324871d249c087",
+  "base_pytest_ci": {
+    "result": "1502 passed, 10 skipped",
+    "run": "41785293981"
+  },
+  "base_pytest_dev_image": {
+    "failed": [
+      "tests/slices/test_s01_contract.py::test_call_deadline_after_initialization (known, uid 1000)",
+      "tests/slices/test_s08_integration.py::test_nonregular_pack_does_not_block_acquisition (known flaky)"
+    ],
+    "log": "base-full.log.gz",
+    "method": "git archive 79ae0b0 extracted outside the repo, mounted at /ws in atlas-aci-dev-s16 (uid 1000, python 3.12), pytest -q",
+    "result": "2 failed, 1500 passed, 10 skipped in 608.72s"
+  },
+  "budgets": {
+    "COLLECTION": 3448,
+    "FIXED_ERROR": 797,
+    "IMPACT": 7730,
+    "MINIMUM": 3436,
+    "verified_by": "test_s32_counterfactual.py::test_counterfactual_is_cli_only_and_the_tool_surface_is_unchanged"
+  },
+  "final_tree_dev_image": {
+    "accounting": "1502 base tests + 35 new S32 tests = 1537 non-skipped; the flaky s08 test passed this time",
+    "failed": [
+      "tests/slices/test_s01_contract.py::test_call_deadline_after_initialization (known, uid 1000)"
+    ],
+    "result": "1 failed, 1536 passed, 10 skipped in 610.35s"
+  },
+  "tools_json": {
+    "bytes": 1631472,
+    "sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+    "verified_by": "g-mcp gate (gate-mcp.sh) on the final tree; the gated source paths are byte-identical to the base"
+  }
+}

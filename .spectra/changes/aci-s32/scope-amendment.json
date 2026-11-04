@@ -1,0 +1,108 @@
+{
+  "slice_id": "ACI-S32",
+  "base_commit": "79ae0b0f20279f24f7bb0c5d8a324871d249c087",
+  "recorded_before_implementation": true,
+  "declared_by_issue": [
+    "mcp-server/src/atlas_aci/counterfactual/patch_input.py",
+    "mcp-server/src/atlas_aci/counterfactual/analyze.py",
+    "mcp-server/src/atlas_aci/__main__.py",
+    "mcp-server/tests/slices/test_s32_counterfactual.py",
+    "mcp-server/tests/fixtures/counterfactual/",
+    "docs/counterfactual-analysis.md"
+  ],
+  "glob_depth_clarifications": [
+    {
+      "path": "mcp-server/tests/fixtures/counterfactual/*",
+      "reason": "Flat static fixtures directly under the declared directory: *.patch files (positive git-style and plain patches, unsafe-*.patch rejection cases including raw non-UTF-8 bytes) and rules-domain-infra.json; source trees are built in-test from dicts, so no .py fixture files are added"
+    }
+  ],
+  "added": [
+    {
+      "path": "mcp-server/src/atlas_aci/counterfactual/__init__.py",
+      "reason": "Package marker required for the new counterfactual package to be importable; docstring only (hatch packages=['src/atlas_aci'] ships it)"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "reason": "Unreleased entry for the atlas-aci counterfactual command (no release tag)"
+    },
+    {
+      "path": "README.md",
+      "reason": "One root docs-table row linking docs/counterfactual-analysis.md (first cut item)"
+    },
+    {
+      "path": ".spectra/plans/aci-s32.*",
+      "reason": "Ramza plan, criteria, state, scope, review, issue snapshot"
+    },
+    {
+      "path": ".spectra/plans/ramza-calibration.jsonl",
+      "reason": "Ramza calibration append"
+    },
+    {
+      "path": ".spectra/changes/aci-s32/*",
+      "reason": "This amendment"
+    },
+    {
+      "path": ".spectra/evidence/aci-s32/*",
+      "reason": "Day-1 qualification, base invariants, gate logs, production-image scenario"
+    },
+    {
+      "path": ".spectra/state/aci-s32.execution.json",
+      "reason": "Authoritative execution receipt (AC-RUN-01/02)"
+    },
+    {
+      "path": ".spectra/backlog/execution.json",
+      "reason": "Backlog status update"
+    },
+    {
+      "path": ".spectra/backlog/order.md",
+      "reason": "Backlog order update"
+    }
+  ],
+  "not_touched_follow_up": [
+    {
+      "path": "mcp-server/src/atlas_aci/indexing/extraction_cache.py",
+      "reason": "Seeding the staged namespace from the base extraction cache would cut re-index cost but couples to cache validation and changes the producer fingerprint if edited; separate follow-up slice"
+    },
+    {
+      "path": "mcp-server/src/atlas_aci/codegraph.py",
+      "reason": "A first-class source-provider/tombstone overlay API would remove the private _iter_source_files override but changes the producer fingerprint; follow-up only"
+    },
+    {
+      "path": "mcp-server/src/atlas_aci/protocol/",
+      "reason": "MCP exposure of counterfactual analysis is out of scope (tools JSON and budget pins unchanged)"
+    },
+    {
+      "path": "INTEGRATION.md",
+      "reason": "No host wiring changes; operator CLI only"
+    }
+  ],
+  "explicitly_untouched_gated": [
+    "mcp-server/src/atlas_aci/server.py",
+    "mcp-server/src/atlas_aci/protocol/",
+    "mcp-server/src/atlas_aci/query/",
+    "mcp-server/src/atlas_aci/tools/",
+    "mcp-server/src/atlas_aci/storage/",
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/src/atlas_aci/extractors/",
+    "mcp-server/src/atlas_aci/providers/",
+    "mcp-server/src/atlas_aci/indexing/",
+    "mcp-server/src/atlas_aci/resolvers/",
+    "mcp-server/src/atlas_aci/reports/",
+    "mcp-server/src/atlas_aci/architecture/",
+    "mcp-server/src/atlas_aci/enforcement.py",
+    "mcp-server/src/atlas_aci/config.py",
+    "mcp-server/pyproject.toml",
+    "mcp-server/uv.lock",
+    ".github/workflows/"
+  ],
+  "invariants": {
+    "tools_json_sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+    "tools_json_bytes": 1631472,
+    "READ_ONLY_TOOLS_count": 7,
+    "MINIMUM_BUDGET": 3436,
+    "COLLECTION_MINIMUM_BUDGET": 3448,
+    "FIXED_ERROR_ENVELOPE_CAP": 797,
+    "IMPACT_MINIMUM_BUDGET": 7730,
+    "criteria_sha256": "1d713204b1c51813227214cd35a204df6339cf13650037a259f3311d7d02cd8e"
+  }
+}

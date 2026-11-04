@@ -1,0 +1,44 @@
+[
+  {
+    "ac_id": "AC-S32-001",
+    "test": "mcp-server/tests/slices/test_s32_counterfactual.py::test_counterfactual_identity_is_hypothetical",
+    "exit_code": 0,
+    "tail": "1 passed in 2.23s"
+  },
+  {
+    "ac_id": "AC-S32-002",
+    "test": "mcp-server/tests/slices/test_s32_counterfactual.py::test_counterfactual_source_diff_matches_proposal",
+    "exit_code": 0,
+    "tail": "1 passed in 1.50s"
+  },
+  {
+    "ac_id": "AC-S32-003",
+    "test": "mcp-server/tests/slices/test_s32_counterfactual.py::test_counterfactual_architecture_delta",
+    "exit_code": 0,
+    "tail": "1 passed in 1.95s"
+  },
+  {
+    "ac_id": "AC-S32-004",
+    "test": "mcp-server/tests/slices/test_s32_counterfactual.py::test_counterfactual_original_state_unchanged",
+    "exit_code": 0,
+    "tail": "1 passed in 1.68s"
+  },
+  {
+    "ac_id": "AC-S32-005",
+    "test": "mcp-server/tests/slices/test_s32_counterfactual.py::test_counterfactual_unsafe_patch_rejected",
+    "exit_code": 0,
+    "tail": "1 passed in 1.20s"
+  },
+  {
+    "ac_id": "AC-S32-006",
+    "test": "mcp-server/tests/slices/test_s32_counterfactual.py::test_counterfactual_replay_is_idempotent",
+    "exit_code": 0,
+    "tail": "1 passed in 5.13s"
+  },
+  {
+    "ac_id": "AC-S32-007",
+    "test": "mcp-server/tests/slices/test_s32_counterfactual.py::test_counterfactual_incomplete_analysis_is_visible",
+    "exit_code": 0,
+    "tail": "1 passed in 3.02s"
+  }
+]

@@ -1,0 +1,8 @@
+diff --git a/pkg/domain/link.py b/pkg/domain/link.py
+new file mode 120000
+index 0000000..1234567
+--- /dev/null
++++ b/pkg/domain/link.py
+@@ -0,0 +1 @@
++b.py
+\ No newline at end of file
