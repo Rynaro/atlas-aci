@@ -1,0 +1,49 @@
+{
+  "slice_id": "ACI-S21",
+  "criteria_changed": false,
+  "base_commit": "e818a57d36df5a4bc8fe88bc581cabd1216b65df",
+  "additional_paths": [
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/src/atlas_aci/storage/evidence.py",
+    "mcp-server/src/atlas_aci/indexing/retrieval.py",
+    "mcp-server/src/atlas_aci/query/indexed.py",
+    "mcp-server/src/atlas_aci/query/diff.py",
+    "mcp-server/src/atlas_aci/query/impact.py",
+    "mcp-server/tests/fixtures/coverage/**",
+    "README.md",
+    "INTEGRATION.md",
+    "CHANGELOG.md"
+  ],
+  "narrowed_paths": {},
+  "reasons": {
+    "codegraph.py": "Derived coverage_import generation at every kind-switch site (1041,1074,1085,1108,1124-1141,1901,2146-2148,2342); import_coverage/_publish_coverage under the writer lock with TOCTOU re-check (mirrors _publish_scip, which stays unedited); status execution_observations block; _validate_evidence_projections coverage-only exemptions plus coverage_py.validate_records; predecessor-history filter 2551-2555 drops coverage records. Fingerprinted: generation ids change (as S16).",
+    "storage/evidence.py": "COVERAGE_RELATION test_executes accepted only by the assertion-record check (ASSERTION_RELATIONS), never RELATIONS/REFERENCE_RELATIONS/EDGE_RELATIONS; occurrence kind execution with observed_execution role; coverage_test entity shape; {coverage} producer fingerprint branch; validate_database source-location check replaced only for test_executes by a stricter coverage shape check.",
+    "indexing/retrieval.py": "Exclude coverage_test entities from retrieval documents so coverage never reaches MCP retrieve/context (operator decision: CLI status only). Fingerprinted.",
+    "query/indexed.py": "NAME_SQL excludes coverage_test so name seeds never resolve to observations.",
+    "query/diff.py": "Load excludes coverage_test (otherwise reported as added entities); diff_syntax LIMITATIONS unchanged so S19/S20 change-set ids are stable.",
+    "query/impact.py": "ENTITY_PATHS_SQL mirrors diff.py's exclusion (G-DIFF parity); entity-count admission unchanged (conservative).",
+    "tests/fixtures/coverage/**": "Nested fixture project (pkg/, tests/, .coveragerc, requirements.lock) under the declared fixture directory.",
+    "README.md/INTEGRATION.md/CHANGELOG.md": "Operator pointers and [Unreleased] entry."
+  },
+  "operator_decisions": {
+    "storage": "derived generation coverage_import over the current build; test_executes kept out of ev.RELATIONS; one content-addressed producer record per run; runs accumulate (sorted by run_id, order-independent); index supersedes (user decision 2026-11-03)",
+    "query": "CLI status only: execution_observations block labelled observed_execution; records via evidence export; no MCP/protocol op (user decision 2026-11-03)",
+    "format": "coverage.py JSON report format 3 with --show-contexts, pytest-cov --cov-context=test nodeid|phase; exact versions qualified Day 1",
+    "rejection": "all-or-nothing reject before the writer lock (no quarantine)",
+    "run_id": "content-derived sha256(artifact_sha256, manifest_sha256)",
+    "environment": "producer-attested via stdlib probe piped by the operator; Atlas never executes the test interpreter",
+    "chaining": "no chaining with scip_import in either direction"
+  },
+  "invariance_gates": [
+    "G-ENVELOPE",
+    "G-MCP",
+    "G-NOLEAK",
+    "G-S16",
+    "G-DIFF-NEUTRAL",
+    "G-RO",
+    "G-NOEXEC",
+    "G-DEPS"
+  ],
+  "no_speculative_docker_ci_change": true,
+  "review": ".spectra/plans/aci-s21.review.json"
+}

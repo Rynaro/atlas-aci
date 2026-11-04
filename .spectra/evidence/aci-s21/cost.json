@@ -1,0 +1,99 @@
+{
+ "build_baseline": {
+  "build_s": 37.2,
+  "db_mb": 120.0,
+  "lease_median_s": 4.89015375200006,
+  "lease_samples_s": [
+   4.876630336000289,
+   4.888459251999848,
+   4.89015375200006,
+   4.987568544000169,
+   5.077841626999998
+  ],
+  "peak_rss_mb": 152.49609375,
+  "repo_files_indexed": 150,
+  "tracemalloc_peak_mb": 27.16402530670166
+ },
+ "chosen_defaults": {
+  "max_executes_per_generation": 100000,
+  "max_executes_per_run": 50000,
+  "max_files": 20000,
+  "max_records_per_generation": "3*max_executes_per_generation + max_tests = 400000 (occurrences + evidence + assertions + tests)",
+  "max_runs": 16,
+  "max_tests": 100000
+ },
+ "criterion": "lease wall time at the bound <= 2x the build lease on the same repository",
+ "decision": "D11 / checker condition 2(c,d,e)",
+ "host": "Docker Desktop linux/arm64, 1 CPU-bound python process, atlas-aci-dev-s16 image, python 3.12",
+ "method": "synthetic fixture over a real graph (the dogfood run of the atlas-aci suite was cut: cut order step 6); synthetic coverage.py format-3 reports with real per-test context spelling over the python files of a 150-file copy of atlas-aci (mcp-server/src, mcp-server/tests; the 'storage' package is a default skip pattern and is not indexed), a sidecar made by the real coverage-manifest code, imported by the real importer; each size measured in a fresh interpreter, 5 reader-lease acquisitions (median), peak RSS from getrusage and tracemalloc peak of one acquisition",
+ "notes": [
+  "the 200,000 point was cut: a generation above the shipped bound is also refused at lease time (block validation), so the bound cannot be silently exceeded by an operator-raised import limit",
+  "a 100k run in one report is rejected at the per-run bound (observed: run_limit), which is why the 100k point uses two runs",
+  "tiny repositories pay a larger ratio but a small absolute cost; the criterion is evaluated on a real 150-file repository"
+ ],
+ "points": [
+  {
+   "db_mb": 141.3,
+   "import_s": 42.9,
+   "lease_median_s": 5.733,
+   "lease_ratio_vs_build": 1.18,
+   "note": "first measurement run; baseline lease 4.856s",
+   "peak_rss_mb": 177.1,
+   "rss_delta_mb": 24.7,
+   "runs": 1,
+   "test_executes": 9960,
+   "tracemalloc_peak_mb": 30.6
+  },
+  {
+   "db_mb": 197.6,
+   "import_s": 59.2,
+   "lease_median_s": 7.026,
+   "lease_ratio_vs_build": 1.447,
+   "note": "first measurement run; the per-run bound",
+   "peak_rss_mb": 313.5,
+   "rss_delta_mb": 161.1,
+   "runs": 1,
+   "test_executes": 49980,
+   "tracemalloc_peak_mb": 46.8
+  },
+  {
+   "db_mb": 234.3828125,
+   "import_s": 125.88300347328186,
+   "lease_median_s": 9.628680796000026,
+   "lease_ratio_vs_build": 1.96899346816282,
+   "lease_samples_s": [
+    8.06139808700027,
+    9.056850462000057,
+    9.628680796000026,
+    9.699078169999666,
+    12.183066131000032
+   ],
+   "note": "noisy (host contention, 8.06-12.18 s samples); not used for the decision",
+   "peak_rss_mb": 310.4453125,
+   "runs": 2,
+   "test_executes": 74960,
+   "tracemalloc_peak_mb": 49.18281555175781
+  },
+  {
+   "db_mb": 265.671875,
+   "import_s": 136.76025676727295,
+   "lease_median_s": 8.598472378999759,
+   "lease_ratio_vs_build": 1.7583235241801969,
+   "lease_samples_s": [
+    8.527111546000015,
+    8.539603794999948,
+    8.598472378999759,
+    8.610547253999812,
+    8.62582046300031
+   ],
+   "note": "the proposed per-generation bound (2 runs of 50,000)",
+   "peak_rss_mb": 395.95703125,
+   "rss_delta_mb": 243.4609375,
+   "runs": 2,
+   "test_executes": 99960,
+   "tracemalloc_peak_mb": 54.00190830230713
+  }
+ ],
+ "result": "at 99,960 test_executes (2 runs) the lease takes 8.60 s = 1.76x the 4.89 s build lease; peak RSS 396 MB vs 152 MB (+243 MB, about 2.4 KB per observation)",
+ "slice": "ACI-S21"
+}

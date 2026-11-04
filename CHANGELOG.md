@@ -9,6 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Per-test Python coverage observations (ACI-S21).** New operator commands
+  `atlas-aci coverage-probe` (prints the environment probe you pipe to the test
+  interpreter), `atlas-aci coverage-manifest` (producer-time sidecar
+  `atlas-coverage-manifest.v1`) and `atlas-aci import-coverage REPORT --manifest M`
+  record which tests were observed executing which source lines of the exact
+  indexed snapshot, as a derived `coverage_import` generation. Only coverage.py
+  7.16.2 with pytest-cov 7.1.0 `--cov-context=test` JSON (format 3) is accepted;
+  runs accumulate and re-import is idempotent. Observed execution is stored as a
+  `coverage_test` entity, an `execution` occurrence over the line's bytes and a
+  `test_executes` assertion (outside `RELATIONS`: not traversable, no protocol,
+  envelope or MCP change; still exactly seven tools) and is never an assertion
+  about behavior or a pass/fail. All validation runs before the writer lock and
+  a rejection leaves the graph byte-identical; `atlas-aci index` supersedes it;
+  `atlas-aci status` gains `execution_observations`. See
+  `atlas/docs/coverage-import.md`. No runtime or dev dependency is added.
+
 - **Potential change impact through typed reverse paths (ACI-S20).** New
   `graph_query op=impact` (closed, additive `atlas.graph.v1` operation; still
   exactly seven MCP tools) and operator command `atlas-aci impact` share one

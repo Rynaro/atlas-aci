@@ -1,0 +1,107 @@
+{
+  "harness": {
+    "wrapper": "dk21.sh = docker run --rm --user 1000:1000 -e HOME=/hc -e PYTHONPATH=/ws/mcp-server/src -v <scratch>/home:/hc -v <repo>:/ws -w /ws/mcp-server atlas-aci-dev-s16",
+    "dev_image": "atlas-aci-dev-s16 sha256:783f2210c3d12ae25c567c76366b6b6dd09d4aa0c93ea1aee4fb03d8f17e859a (lock unchanged since base)"
+  },
+  "s21_contract": {
+    "exit_code": 0,
+    "summary": "23 passed",
+    "log": "s21-contract.log.gz"
+  },
+  "s21_supporting": {
+    "exit_code": 0,
+    "summary": "107 passed",
+    "log": "s21-supporting.log.gz"
+  },
+  "regression": {
+    "exit_code": 0,
+    "summary": "265 passed",
+    "log": "regression.log.gz"
+  },
+  "orchestrator_rerun": {
+    "command": "dk21.sh ... test_s21_contract.py test_s21_isolation.py",
+    "exit_code": 0,
+    "summary": "34 passed"
+  },
+  "ruff": {
+    "exit_code": 0
+  },
+  "format": {
+    "exit_code": 0
+  },
+  "mypy": {
+    "exit_code": 0
+  },
+  "full_suite": {
+    "exit_code": 1,
+    "summary": "1 failed, 1278 passed, 10 skipped",
+    "failed": [
+      "tests/slices/test_s01_contract.py::test_call_deadline_after_initialization"
+    ],
+    "classification": "pre-existing under uid 1000 (baseline.json; base-full-suite.log.gz also shows it plus the known flaky s08 test)",
+    "log": "full-suite.log.gz"
+  },
+  "g_gated": {
+    "exit_code": 0,
+    "paths": "protocol/ tools/ server.py enforcement.py config.py providers/scip* storage/snapshots.py resolvers/dependencies.py query/diff_syntax.py query/traversal.py pyproject.toml uv.lock",
+    "orchestrator_check": "git diff --exit-code e818a57 -- <paths> exit 0"
+  },
+  "g_mcp": {
+    "exit_code": 0,
+    "tools_json_sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+    "orchestrator_check": "production image tools output has the same sha256 as base"
+  },
+  "g_envelope": {
+    "MINIMUM_BUDGET": 3436,
+    "COLLECTION_MINIMUM_BUDGET": 3448,
+    "FIXED_ERROR_ENVELOPE_CAP": 797,
+    "IMPACT_MINIMUM_BUDGET": 7730,
+    "source": "orchestrator check against working tree; equals base"
+  },
+  "production_image": {
+    "build": "docker build -t atlas-aci:s21 mcp-server",
+    "image_id": "sha256:00c64f5bc48aa0a1f46788872d4993631d6ec1923e446e9df9e3c4ac2aa688d0",
+    "scenario": "tests/fixtures/coverage/project copied to /repo (:ro), external graph root /graph, run A report and environment from tests/fixtures/coverage/runs/a",
+    "coverage_manifest": {
+      "exit_code": 0,
+      "equals_committed_fixture_sidecar": true,
+      "file": "docker-coverage-manifest.json"
+    },
+    "rejection": {
+      "case": "sidecar artifact_sha256 zeroed",
+      "exit_code": 1,
+      "error": "artifact_hash_mismatch",
+      "graph_root_bytes_unchanged": true
+    },
+    "import": {
+      "exit_code": 0,
+      "status": "imported",
+      "generation_id": "973af9242073a09b1f702de5162942d11e61baf8da0c8f0f602c84da0630bcf5",
+      "base_generation_id": "9ad9e0271497226324565cc8dae6ae2dfe33a2e7d9b89fe0b1da4e5afd37e6d0",
+      "run_id": "e36af3840b2d86cc21e6d69486bf91c70d432757a25952fff0c7424a74d1a2fe",
+      "tests": 14,
+      "test_executes": 66,
+      "observed_lines": 48,
+      "unattributed_lines": 58
+    },
+    "reimport": {
+      "exit_code": 0,
+      "status": "unchanged",
+      "graph_root_bytes_unchanged": true
+    },
+    "status": {
+      "execution_observations.format": "atlas-execution-observations.v1",
+      "assertion_inference": "not_performed",
+      "file": "docker-status.json.gz"
+    },
+    "mcp_non_exposure": {
+      "file": "docker-mcp-coverage.jsonl.gz",
+      "served_generation": "973af924...",
+      "neighborhood_coverage_test_entity_id": "seed state absent",
+      "neighborhood_coverage_test_name": "seed state absent",
+      "incoming_neighborhood_of_file_app_calc_py": "0 edges, no test_executes",
+      "search_symbol_test_total": "function symbol only, no coverage_test"
+    },
+    "read_only": "repo mounted :ro for every command; writes only to the graph root"
+  }
+}

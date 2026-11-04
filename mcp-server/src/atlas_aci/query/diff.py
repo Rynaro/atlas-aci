@@ -105,7 +105,7 @@ class _Loaded:
         for _path, payload in db.execute("SELECT path, payload FROM entities"):
             entity = json.loads(payload)
             kind = entity["kind"]
-            if kind == "file" or kind.startswith("scip_"):
+            if kind == "file" or kind.startswith("scip_") or kind == ev.COVERAGE_TEST_KIND:
                 continue
             self.entities.setdefault(entity["path"], {})[entity["id"]] = entity
         known = {i for group in self.entities.values() for i in group}

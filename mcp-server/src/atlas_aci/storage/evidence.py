@@ -57,6 +57,18 @@ SCIP_RELATION = "reference"
 REFERENCE_RELATIONS = RELATIONS | {"jsx", SCIP_RELATION}
 EDGE_RELATIONS = (RELATIONS - {"rationale_for"}) | {SCIP_RELATION}
 SCIP_ENCODINGS = frozenset({"utf-8", "utf-16", "utf-32"})
+# Observed test execution from an imported per-test coverage run (ACI-S21). `test_executes` is
+# deliberately in NONE of RELATIONS / REFERENCE_RELATIONS / EDGE_RELATIONS: it can never appear
+# in a refs/edges row, is not traversable and is never an MCP enum value. Only the closed
+# assertion-record check below accepts it, and only in the shape `validate_database` pins.
+COVERAGE_RELATION = "test_executes"
+ASSERTION_RELATIONS = REFERENCE_RELATIONS | {COVERAGE_RELATION}
+COVERAGE_TEST_KIND = "coverage_test"
+COVERAGE_EXECUTION_KIND = "execution"
+COVERAGE_ROLE_PREFIX = "observed_execution:"
+COVERAGE_PHASES = ("run", "setup", "teardown")
+COVERAGE_RUN_FORMAT = "atlas-coverage-run.v1"
+COVERAGE_ENVIRONMENT_FORMAT = "atlas-coverage-environment.v1"
 FIELDS = {
     "entity": {
         "type",
@@ -234,6 +246,16 @@ def _validate_record(item: Any) -> None:
         require(item["identity_basis"] in {"parsed", "legacy_projection"}, "identity basis")
         require(integer(item["ordinal"]), "duplicate ordinal")
         require(isinstance(item["owners"], list), "owner chain")
+        if item["kind"] == COVERAGE_TEST_KIND:
+            require(
+                item["owners"] == []
+                and item["ordinal"] == 0
+                and item["identity_basis"] == "parsed"
+                and item["name"].startswith(item["path"] + "::")
+                and item["path"].endswith(".py")
+                and item["language"] == "python",
+                "coverage test entity",
+            )
         for owner in item["owners"]:
             require(
                 isinstance(owner, dict) and set(owner) == {"kind", "name", "ordinal"},
@@ -254,6 +276,9 @@ def _validate_record(item: Any) -> None:
             require(isinstance(fingerprint, dict), "producer fingerprint")
             if set(fingerprint) == {"scip"}:
                 _validate_scip_fingerprint(fingerprint["scip"], item["identity_basis"])
+                return
+            if set(fingerprint) == {"coverage"}:
+                _validate_coverage_fingerprint(fingerprint["coverage"], item["identity_basis"])
                 return
             require(
                 set(fingerprint)
@@ -367,7 +392,8 @@ def _validate_record(item: Any) -> None:
             require(relative_path(item["path"]), "occurrence path")
             require(item["entity_id"] is None or hash_value(item["entity_id"]), "occurrence entity")
             require(
-                item["kind"] in {"definition", "reference", "rationale", "legacy"},
+                item["kind"]
+                in {"definition", "reference", "rationale", "legacy", COVERAGE_EXECUTION_KIND},
                 "occurrence kind",
             )
             require(
@@ -378,6 +404,23 @@ def _validate_record(item: Any) -> None:
                 require(
                     item[key] is None or integer(item[key], 1 if "line" in key else 0),
                     "display location",
+                )
+            require(
+                (item["kind"] == COVERAGE_EXECUTION_KIND)
+                == item["role"].startswith(COVERAGE_ROLE_PREFIX),
+                "execution occurrence role",
+            )
+            if item["kind"] == COVERAGE_EXECUTION_KIND:
+                phases = item["role"][len(COVERAGE_ROLE_PREFIX) :].split("+")
+                require(
+                    state == "source"
+                    and hash_value(item["entity_id"])
+                    and phases == sorted(set(phases))
+                    and set(phases) <= set(COVERAGE_PHASES)
+                    and item["line"] == item["end_line"]
+                    and item["column"] == 0
+                    and item["end_column"] == item["end_byte"] - item["start_byte"],
+                    "execution occurrence shape",
                 )
             if state == "source":
                 require(
@@ -405,7 +448,13 @@ def _validate_record(item: Any) -> None:
             item["target_entity_id"] is None or hash_value(item["target_entity_id"]),
             "assertion target",
         )
-        require(item["relation"] in REFERENCE_RELATIONS, "relation")
+        require(item["relation"] in ASSERTION_RELATIONS, "relation")
+        if item["relation"] == COVERAGE_RELATION:
+            require(
+                item["resolution"] == "EXTRACTED"
+                and re.fullmatch(r".+:[1-9][0-9]*", item["raw_target"] or "") is not None,
+                "test_executes assertion",
+            )
         require(
             item["relation"] != "jsx" or item["resolution"] == "UNRESOLVED",
             "jsx assertion must be unresolved",
@@ -601,6 +650,71 @@ def _validate_scip_fingerprint(value: Any, basis: str) -> None:
     require(value["position_encoding"] in SCIP_ENCODINGS, "scip position encoding")
 
 
+def coverage_run_id(artifact_sha256: str, manifest_sha256: str) -> str:
+    return hashlib.sha256(
+        canonical(
+            {
+                "format": COVERAGE_RUN_FORMAT,
+                "artifact_sha256": artifact_sha256,
+                "manifest_sha256": manifest_sha256,
+            }
+        ).encode()
+    ).hexdigest()
+
+
+def _validate_coverage_fingerprint(value: Any, basis: str) -> None:
+    """Coverage producer identity: one run = artifact + sidecar + environment + importer."""
+    require(basis == "parsed", "coverage producer basis")
+    require(
+        isinstance(value, dict)
+        and set(value)
+        == {
+            "run_id",
+            "tool",
+            "report_format",
+            "context_mode",
+            "report_timestamp",
+            "artifact_sha256",
+            "manifest_sha256",
+            "environment",
+            "commit",
+            "importer_sha256",
+        },
+        "coverage producer fields",
+    )
+    tool = value["tool"]
+    environment = value["environment"]
+    require(
+        isinstance(tool, dict)
+        and set(tool) == {"name", "version"}
+        and all(isinstance(tool[key], str) and tool[key] for key in tool)
+        and type(value["report_format"]) is int
+        and all(isinstance(value[key], str) and value[key] for key in ("context_mode",))
+        and isinstance(value["report_timestamp"], str)
+        and bool(value["report_timestamp"])
+        and value["commit"] == {"state": "unavailable"},
+        "coverage producer values",
+    )
+    require(
+        all(hash_value(value[key]) for key in ("artifact_sha256", "manifest_sha256"))
+        and hash_value(value["importer_sha256"])
+        and value["run_id"] == coverage_run_id(value["artifact_sha256"], value["manifest_sha256"]),
+        "coverage producer hashes",
+    )
+    require(
+        isinstance(environment, dict)
+        and set(environment) == {"format", "python", "platform", "packages"}
+        and environment["format"] == COVERAGE_ENVIRONMENT_FORMAT
+        and all(
+            isinstance(environment[group], dict)
+            and bool(environment[group])
+            and all(isinstance(v, str) and v for v in environment[group].values())
+            for group in ("python", "platform", "packages")
+        ),
+        "coverage producer environment",
+    )
+
+
 def validate_record(item: Any) -> None:
     try:
         _validate_record(item)
@@ -650,6 +764,10 @@ def validate_database(conn: sqlite3.Connection) -> None:
                 "occurrence/entity location",
             )
             require(
+                (item["kind"] == COVERAGE_EXECUTION_KIND) <= (entity["kind"] == "file"),
+                "execution occurrence entity",
+            )
+            require(
                 (item["provenance_state"] == "source") == (entity["identity_basis"] == "parsed"),
                 "occurrence/entity identity basis",
             )
@@ -660,6 +778,11 @@ def validate_database(conn: sqlite3.Connection) -> None:
                 (item["provenance_state"] == "source")
                 == (producer_record["identity_basis"] == "parsed"),
                 "evidence/producer identity basis",
+            )
+            require(
+                (set(producer_record["fingerprint"] or ()) == {"coverage"})
+                == (occurrence["kind"] == COVERAGE_EXECUTION_KIND),
+                "coverage evidence/execution occurrence",
             )
             for key in (
                 "source_sha256",
@@ -673,11 +796,37 @@ def validate_database(conn: sqlite3.Connection) -> None:
             source = get(conn, "entity", item["source_entity_id"])
             evidence = get(conn, "evidence", item["evidence_id"])
             occurrence = get(conn, "occurrence", evidence["occurrence_id"])
+            producer_record = get(conn, "producer", evidence["producer_id"])
+            coverage = item["relation"] == COVERAGE_RELATION
             require(
-                source["path"] == occurrence["path"]
-                and source["language"] == occurrence["language"],
-                "assertion source location",
+                coverage
+                == (set(producer_record["fingerprint"] or ()) == {"coverage"})
+                == (occurrence["kind"] == COVERAGE_EXECUTION_KIND),
+                "coverage assertion discrimination",
             )
+            if coverage:
+                # Observed test execution: the source is a test (path of the TEST file), the
+                # occurrence lives in the executed source file, so the generic same-path
+                # source-location rule is replaced by this exact shape.
+                target = get(conn, "entity", item["target_entity_id"])
+                require(
+                    source["kind"] == COVERAGE_TEST_KIND
+                    and target["kind"] == "file"
+                    and target["id"] == occurrence["entity_id"]
+                    and target["path"] == occurrence["path"]
+                    and target["language"] == occurrence["language"] == "python"
+                    and occurrence["line"] == occurrence["end_line"]
+                    and not item["candidate_ids"]
+                    and item["resolution"] == "EXTRACTED"
+                    and item["raw_target"] == f"{occurrence['path']}:{occurrence['line']}",
+                    "test_executes assertion shape",
+                )
+            else:
+                require(
+                    source["path"] == occurrence["path"]
+                    and source["language"] == occurrence["language"],
+                    "assertion source location",
+                )
             legacy = evidence["provenance_state"] == "legacy_unavailable"
             require(
                 legacy == (source["identity_basis"] == "legacy_projection"),

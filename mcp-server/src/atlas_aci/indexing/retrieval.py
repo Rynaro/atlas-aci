@@ -86,18 +86,29 @@ def expected(conn, source, source_policy):
     source_bytes = 0
     docs = []
     # References remain real canonical IDs; no invented assertion for a phrase.
+    # Only definition occurrences (and their evidence) are ever looked up below; other kinds,
+    # notably ACI-S21 `execution` rows, are filtered in SQL so their volume never costs a
+    # JSON parse here (condition 2a).
     definitions = {}
-    for row in conn.execute("SELECT payload FROM occurrences ORDER BY id"):
+    for row in conn.execute(
+        "SELECT payload FROM occurrences WHERE json_extract(payload,'$.kind')='definition' "
+        "ORDER BY id"
+    ):
         item = json.loads(row[0])
-        if item["kind"] == "definition":
-            definitions.setdefault(item["entity_id"], item)
+        definitions.setdefault(item["entity_id"], item)
     proofs = {}
-    for row in conn.execute("SELECT payload FROM evidence ORDER BY id"):
+    for row in conn.execute(
+        "SELECT payload FROM evidence WHERE json_extract(payload,'$.occurrence_id') IN "
+        "(SELECT id FROM occurrences WHERE json_extract(payload,'$.kind')='definition') "
+        "ORDER BY id"
+    ):
         item = json.loads(row[0])
         proofs.setdefault(item["occurrence_id"], item)
     for row in conn.execute("SELECT payload FROM entities ORDER BY id"):
         entity = json.loads(row[0])
         ev.validate_record(entity)
+        if entity["kind"] == ev.COVERAGE_TEST_KIND:
+            continue  # observed test executions are not retrievable code entities (ACI-S21)
         label = qualified_label(entity)
         occurrence = definitions.get(entity["id"])
         proof = proofs.get(occurrence["id"]) if occurrence else None

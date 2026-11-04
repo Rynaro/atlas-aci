@@ -919,6 +919,7 @@ digest never changes. Each release's notes include the exact
 | [`scripts/`](scripts/) | Guards for the augmentation workstreams (canary orchestrator, probe/export-size verifiers) — not shipped project code |
 | [`docs/`](docs/) | Deep reference — the `graph_query` DSL |
 | [`atlas/docs/scip-import.md`](atlas/docs/scip-import.md) | Importing an official scip-typescript index (`atlas-aci scip-manifest` / `import-scip`) |
+| [`atlas/docs/coverage-import.md`](atlas/docs/coverage-import.md) | Importing per-test Python coverage observations (`atlas-aci coverage-probe` / `coverage-manifest` / `import-coverage`) |
 | [`atlas/docs/symbol-diff.md`](atlas/docs/symbol-diff.md) | Comparing two indexed snapshots at symbol and contract boundaries (`atlas-aci diff`) |
 | [`atlas/docs/change-impact.md`](atlas/docs/change-impact.md) | Potential change impact through typed reverse paths (`graph_query op=impact`, `atlas-aci impact`) |
 | [`SETUP.md`](SETUP.md) | End-to-end playbook: install → host wiring → canaries → hardening |

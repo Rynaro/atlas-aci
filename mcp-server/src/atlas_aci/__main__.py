@@ -1,4 +1,4 @@
-"""CLI entry point: `atlas-aci serve | index | export | import | import-scip | diff | ...`."""
+"""CLI entry point: `atlas-aci serve | index | export | import | import-scip | ...`."""
 
 from __future__ import annotations
 
@@ -388,6 +388,107 @@ def import_scip(
         graph.close()
     click.echo(json.dumps(stats, sort_keys=True, separators=(",", ":")))
     log.info("import_scip_done", **stats)
+
+
+@cli.command(name="coverage-probe")
+def coverage_probe() -> None:
+    """Print the environment probe for the TEST interpreter (it prints nothing else).
+
+    Atlas never spawns your interpreter. Pipe the probe into the environment that produced
+    the coverage report: ``atlas-aci coverage-probe | <venv>/bin/python -I - > env.json``.
+    """
+    click.echo(
+        (Path(__file__).parent / "providers" / "coverage_probe.py").read_text("utf-8"), nl=False
+    )
+
+
+@cli.command(name="coverage-manifest")
+@click.option(
+    "--repo",
+    required=True,
+    type=click.Path(exists=True, file_okay=False, path_type=Path),
+    help="The producer's working tree (the pytest rootdir the coverage run measured)",
+)
+@click.option(
+    "--environment",
+    required=True,
+    type=click.Path(exists=True, dir_okay=False, path_type=Path),
+    help="The probe output captured in the test environment (`atlas-aci coverage-probe`)",
+)
+@click.option("--output", required=True, type=click.Path(dir_okay=False, path_type=Path))
+@click.argument(
+    "report_path",
+    metavar="COVERAGE_JSON",
+    type=click.Path(exists=True, dir_okay=False, path_type=Path),
+)
+def coverage_manifest(repo: Path, environment: Path, output: Path, report_path: Path) -> None:
+    """Write the producer-time `atlas-coverage-manifest.v1` sidecar for a coverage report.
+
+    Records the exact report digest, the probe's environment attestation and the SHA-256 of
+    every measured file and test file as it is on disk now. Reads only; writes only OUTPUT,
+    which may not lie inside the repository. Never an MCP tool.
+    """
+    from atlas_aci.providers import coverage_py
+
+    log = structlog.get_logger()
+    try:
+        resolved = output.resolve()
+        if resolved == repo.resolve() or repo.resolve() in resolved.parents:
+            raise click.ClickException("--output must not be inside --repo")
+        raw = coverage_py.build_manifest(
+            repo.resolve(), report_path.resolve(), environment.resolve()
+        )
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_bytes(raw)
+    except (ValueError, OSError) as exc:
+        raise click.ClickException(str(exc)) from exc
+    log.info("coverage_manifest_written", output=str(output), bytes=len(raw))
+
+
+@cli.command(name="import-coverage")
+@click.option(
+    "--graph-root",
+    default=None,
+    type=click.Path(file_okay=False, path_type=Path),
+    help="External graph storage root (default: <repo>/.atlas; independent of memex)",
+)
+@click.option(
+    "--repo", required=True, type=click.Path(exists=True, file_okay=False, path_type=Path)
+)
+@click.option(
+    "--manifest",
+    required=True,
+    type=click.Path(exists=True, dir_okay=False, path_type=Path),
+    help="The `atlas-coverage-manifest.v1` sidecar written by `atlas-aci coverage-manifest`",
+)
+@click.argument(
+    "report_path",
+    metavar="COVERAGE_JSON",
+    type=click.Path(exists=True, dir_okay=False, path_type=Path),
+)
+def import_coverage(
+    repo: Path, manifest: Path, report_path: Path, graph_root: Path | None = None
+) -> None:
+    """Import one per-test coverage.py run onto the current published graph.
+
+    Validates everything (strict report, sidecar, producer, source and test-file identity,
+    line mapping, bounds) before taking the writer lock; on any rejection the published
+    graph is untouched. On success publishes a derived `coverage_import` generation
+    atomically. Records OBSERVED EXECUTION only: never a verdict about behavior. WRITES to
+    the selected graph directory only; never an MCP tool.
+    """
+    log = structlog.get_logger()
+    repo = repo.resolve()
+    log.info("import_coverage_start", repo=str(repo), report=str(report_path))
+    graph = _open_graph(repo, graph_root)
+    try:
+        stats = graph.import_coverage(report_path.resolve(), manifest.resolve())
+    except (ValueError, RuntimeError) as exc:
+        raise click.ClickException(str(exc)) from exc
+    finally:
+        graph.close()
+    click.echo(json.dumps(stats, sort_keys=True, separators=(",", ":")))
+    log.info("import_coverage_done", **stats)
 
 
 def _graph_root_option(name: str, help_text: str):

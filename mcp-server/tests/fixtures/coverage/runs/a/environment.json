@@ -1,0 +1,1 @@
+{"format":"atlas-coverage-environment.v1","packages":{"coverage":"7.16.2","pytest":"9.1.1","pytest-cov":"7.1.0"},"platform":{"machine":"aarch64","system":"Linux"},"python":{"cache_tag":"cpython-312","implementation":"cpython","version":"3.12.16"}}

@@ -47,7 +47,8 @@ AMBIGUOUS_SQL = (
 )
 ENTITY_PATHS_SQL = (
     "SELECT DISTINCT path FROM entities WHERE json_extract(payload,'$.kind')<>'file' "
-    "AND json_extract(payload,'$.kind') NOT LIKE 'scip\\_%' ESCAPE '\\'"
+    "AND json_extract(payload,'$.kind') NOT LIKE 'scip\\_%' ESCAPE '\\' "
+    "AND json_extract(payload,'$.kind')<>'coverage_test'"
 )
 
 
@@ -134,6 +135,11 @@ def _observations(reader: Any) -> dict[str, dict[str, Any]]:
     return {r["path"]: r for r in records if r.get("type") == "observation"}
 
 
+def _is_coverage_import(reader: Any) -> bool:
+    row = reader.db.execute("SELECT value FROM manifest WHERE key='generation_inputs'").fetchone()
+    return row is not None and json.loads(row[0]).get("kind") == "coverage_import"
+
+
 def _admit_diff(before: Any, after: Any, limits: dict[str, int]) -> dict[str, int]:
     """Bound the unmetered diff work BEFORE any entity load or parse."""
     counts = {}
@@ -144,6 +150,18 @@ def _admit_diff(before: Any, after: Any, limits: dict[str, int]) -> dict[str, in
         counts[name + "_occurrences"] = reader.db.execute(
             "SELECT COUNT(*) FROM occurrences"
         ).fetchone()[0]
+        if _is_coverage_import(reader):
+            # ACI-S21 observed test executions are not code entities and never enter a
+            # change set: exclude them here so a large coverage import cannot trip the
+            # operator's `diff_entity_limit` / `diff_occurrence_limit` (checker condition 8).
+            counts[name + "_entities"] -= reader.db.execute(
+                "SELECT COUNT(*) FROM entities WHERE json_extract(payload,'$.kind')=?",
+                (ev.COVERAGE_TEST_KIND,),
+            ).fetchone()[0]
+            counts[name + "_occurrences"] -= reader.db.execute(
+                "SELECT COUNT(*) FROM occurrences WHERE json_extract(payload,'$.kind')=?",
+                (ev.COVERAGE_EXECUTION_KIND,),
+            ).fetchone()[0]
     if max(counts["before_entities"], counts["after_entities"]) > limits["max_entities"]:
         raise ImpactError(
             "IMPACT_DIFF_TOO_LARGE",

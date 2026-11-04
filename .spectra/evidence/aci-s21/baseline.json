@@ -1,0 +1,10 @@
+{
+ "base_commit": "e818a57d36df5a4bc8fe88bc581cabd1216b65df",
+ "source": "CI run 41724188283 (PR #84 head = base tree content)",
+ "pytest": "1149 passed, 10 skipped",
+ "local_known": [
+  "tests/slices/test_s01_contract.py::test_call_deadline_after_initialization fails under uid 1000 (pre-existing)",
+  "tests/slices/test_s08_integration.py::test_nonregular_pack_does_not_block_acquisition flaky on base (readline/communicate race)"
+ ],
+ "dev_image": "atlas-aci-dev-s16 sha256:783f2210c3d12ae25c567c76366b6b6dd09d4aa0c93ea1aee4fb03d8f17e859a (lock unchanged since base)"
+}

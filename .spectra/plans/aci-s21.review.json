@@ -1,0 +1,76 @@
+{
+ "slice_id": "ACI-S21",
+ "plan": ".spectra/plans/aci-s21.md",
+ "author": "orchestrator-ramza-plan-s21",
+ "checker": "atlas-s21-plan-checker",
+ "verdict": "APPROVE_WITH_CONDITIONS",
+ "method": "independent read-only code review; no commands executed",
+ "findings": [
+  {
+   "n": 1,
+   "severity": "MAJOR",
+   "summary": "coverage_test reachable via entity_id seed in graph_query neighborhood/path (IndexedReader.record has no kind filter)",
+   "disposition": "accepted as plan condition 1"
+  },
+  {
+   "n": 2,
+   "severity": "MAJOR",
+   "summary": "per-lease and validation cost under-counted; bounds unmeasured and too high",
+   "disposition": "accepted as plan condition 2"
+  },
+  {
+   "n": 3,
+   "severity": "MAJOR",
+   "summary": "context lines may lie outside executed_lines on real suites; would reject whole artifact",
+   "disposition": "accepted as plan condition 3"
+  },
+  {
+   "n": 4,
+   "severity": "MAJOR",
+   "summary": "pytest nodeids are rootdir-relative; rootdir must equal repo root",
+   "disposition": "accepted as plan condition 4"
+  },
+  {
+   "n": 5,
+   "severity": "MINOR",
+   "summary": "commit enters run_id transitively via manifest sha",
+   "disposition": "accepted as plan condition 5"
+  },
+  {
+   "n": 6,
+   "severity": "MINOR",
+   "summary": "producers==block check runs against staged old manifest during accumulation",
+   "disposition": "accepted as plan condition 6"
+  },
+  {
+   "n": 7,
+   "severity": "MINOR",
+   "summary": "validate_database tightening must be biconditional and exact",
+   "disposition": "accepted as plan condition 7"
+  },
+  {
+   "n": 8,
+   "severity": "MINOR",
+   "summary": "S20 impact occurrence admission counts coverage occurrences",
+   "disposition": "accepted as plan condition 8"
+  },
+  {
+   "n": 9,
+   "severity": "MINOR",
+   "summary": "fixture files with CRLF/FF/U+2028 must pass ruff without pyproject edits",
+   "disposition": "accepted as plan condition 9"
+  },
+  {
+   "n": 10,
+   "severity": "MINOR",
+   "summary": "AST deny-list for execution primitives; manifest output must be outside repo",
+   "disposition": "accepted as plan condition 10"
+  },
+  {
+   "n": 11,
+   "severity": "MINOR",
+   "summary": "line oracle should include tokenize/compile line numbers",
+   "disposition": "accepted as plan condition 11"
+  }
+ ]
+}

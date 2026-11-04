@@ -271,6 +271,16 @@ run the producer, write the sidecar with `atlas-aci scip-manifest`, then
 `atlas-aci index` supersedes it. See
 [`atlas/docs/scip-import.md`](atlas/docs/scip-import.md).
 
+### D2 — Optional: import per-test Python coverage observations
+
+For Python test suites you can record which tests were *observed executing* which
+source lines of the indexed snapshot from one coverage.py 7.16.2 /
+pytest-cov 7.1.0 run (`--cov-context=test`, pytest rootdir = the repository
+root): `atlas-aci coverage-probe`, `atlas-aci coverage-manifest`, then
+`atlas-aci import-coverage`. Observed execution is not an assertion about
+behavior; it is all-or-nothing, never an MCP tool, and the next `atlas-aci index`
+supersedes it. See [`atlas/docs/coverage-import.md`](atlas/docs/coverage-import.md).
+
 ### E — Optional: compare two snapshots
 
 After indexing a checkout into one graph root, edit and index again into a second
@@ -527,6 +537,8 @@ A successful `gh attestation verify` confirms that:
 - [`SETUP.md`](SETUP.md) — end-to-end install → canaries → hardening
 - [`atlas/docs/scip-import.md`](atlas/docs/scip-import.md) — importing an official
   scip-typescript index
+- [`atlas/docs/coverage-import.md`](atlas/docs/coverage-import.md) — importing per-test
+  Python coverage observations
 - [`atlas/docs/symbol-diff.md`](atlas/docs/symbol-diff.md) — comparing two snapshots at
   symbol and contract boundaries
 - [`hosts/claude-code.md`](hosts/claude-code.md),
