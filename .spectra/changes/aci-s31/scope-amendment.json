@@ -1,0 +1,107 @@
+{
+  "slice_id": "ACI-S31",
+  "base_commit": "69e9a46cef413420f50294a9decf5ed806de965b",
+  "recorded_before_implementation": true,
+  "declared_by_issue": [
+    "mcp-server/src/atlas_aci/architecture/rules.py",
+    "mcp-server/src/atlas_aci/architecture/checker.py",
+    "mcp-server/src/atlas_aci/__main__.py",
+    "mcp-server/tests/slices/test_s31_architecture_rules.py",
+    "mcp-server/tests/fixtures/architecture_rules/",
+    "docs/architecture-rules.md"
+  ],
+  "glob_depth_clarifications": [
+    {
+      "path": "mcp-server/tests/fixtures/architecture_rules/*",
+      "reason": "Flat rule JSON documents (valid-*.json, invalid-*.json) directly under the declared fixture directory; source trees are built in-test from dicts, so no .py fixture files are added"
+    }
+  ],
+  "added": [
+    {
+      "path": "mcp-server/src/atlas_aci/architecture/__init__.py",
+      "reason": "Package marker required for the new architecture package to be importable; docstring only (hatch packages=['src/atlas_aci'] ships it)"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "reason": "Unreleased entry for the atlas-aci check-architecture command (no release tag)"
+    },
+    {
+      "path": "README.md",
+      "reason": "One root docs-table row linking docs/architecture-rules.md (first cut item)"
+    },
+    {
+      "path": ".spectra/plans/aci-s31.*",
+      "reason": "Ramza plan, criteria, state, scope, review, issue snapshot"
+    },
+    {
+      "path": ".spectra/plans/ramza-calibration.jsonl",
+      "reason": "Ramza calibration append"
+    },
+    {
+      "path": ".spectra/changes/aci-s31/*",
+      "reason": "This amendment"
+    },
+    {
+      "path": ".spectra/evidence/aci-s31/*",
+      "reason": "Day-1 qualification, base invariants, gate logs"
+    },
+    {
+      "path": ".spectra/state/aci-s31.execution.json",
+      "reason": "Authoritative execution receipt (AC-RUN-01/02)"
+    },
+    {
+      "path": ".spectra/backlog/execution.json",
+      "reason": "Backlog status update"
+    },
+    {
+      "path": ".spectra/backlog/order.md",
+      "reason": "Backlog order update"
+    }
+  ],
+  "not_touched_follow_up": [
+    {
+      "path": "mcp-server/src/atlas_aci/providers/python_imports.py",
+      "reason": "Absolute/submodule import resolution would reduce unknown results but changes the producer fingerprint; separate follow-up slice"
+    },
+    {
+      "path": "mcp-server/src/atlas_aci/protocol/",
+      "reason": "MCP exposure of architecture checks is out of scope (tools JSON and budget pins unchanged)"
+    },
+    {
+      "path": "atlas/docs/",
+      "reason": "S31 keeps the issue-declared docs/architecture-rules.md and links it from the root README only"
+    },
+    {
+      "path": "INTEGRATION.md",
+      "reason": "No host wiring changes; operator CLI only"
+    }
+  ],
+  "explicitly_untouched_gated": [
+    "mcp-server/src/atlas_aci/server.py",
+    "mcp-server/src/atlas_aci/protocol/",
+    "mcp-server/src/atlas_aci/query/",
+    "mcp-server/src/atlas_aci/tools/",
+    "mcp-server/src/atlas_aci/storage/",
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/src/atlas_aci/extractors/",
+    "mcp-server/src/atlas_aci/providers/",
+    "mcp-server/src/atlas_aci/indexing/",
+    "mcp-server/src/atlas_aci/resolvers/",
+    "mcp-server/src/atlas_aci/reports/",
+    "mcp-server/src/atlas_aci/enforcement.py",
+    "mcp-server/src/atlas_aci/config.py",
+    "mcp-server/pyproject.toml",
+    "mcp-server/uv.lock",
+    ".github/workflows/"
+  ],
+  "invariants": {
+    "tools_json_sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+    "tools_json_bytes": 1631472,
+    "READ_ONLY_TOOLS_count": 7,
+    "MINIMUM_BUDGET": 3436,
+    "COLLECTION_MINIMUM_BUDGET": 3448,
+    "FIXED_ERROR_ENVELOPE_CAP": 797,
+    "IMPACT_MINIMUM_BUDGET": 7730,
+    "criteria_sha256": "7491b64310b6763d3c0416069e5ee9ca79b5dc88a9bd6befb92d905710600d64"
+  }
+}

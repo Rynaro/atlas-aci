@@ -1,0 +1,7 @@
+{
+ "format": "atlas-architecture-rules.v1",
+ "rules": [
+  {"id": "same-id", "relation": "import", "from": ["pkg/domain/a.py"], "to": ["pkg/infra/**"]},
+  {"id": "same-id", "relation": "import", "from": ["pkg/domain/b.py"], "to": ["pkg/infra/**"]}
+ ]
+}

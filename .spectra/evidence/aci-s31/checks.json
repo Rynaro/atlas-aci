@@ -1,0 +1,74 @@
+{
+  "harness": {
+    "wrapper": "dk31.sh = docker run --rm --user 1000:1000 -e HOME=/hc -e PYTHONPATH=/ws/mcp-server/src -v <scratch>/home:/hc -v <repo>:/ws -w /ws/mcp-server atlas-aci-dev-s16",
+    "dev_image": "atlas-aci-dev-s16 sha256:783f2210c3d12ae25c567c76366b6b6dd09d4aa0c93ea1aee4fb03d8f17e859a (lock unchanged since base)"
+  },
+  "s31_contract": {
+    "exit_code": 0,
+    "summary": "101 passed",
+    "log": "s31-contract.log.gz"
+  },
+  "regression": {
+    "exit_code": 0,
+    "summary": "377 passed, 1 skipped (test_s12_*, test_s19_*, test_s20_*, test_s22_*, test_thesis_negatives, test_export)",
+    "log": "regression.log.gz"
+  },
+  "orchestrator_rerun": [
+    {
+      "command": "dk31.sh pytest -p no:cacheprovider tests/slices/test_s31_architecture_rules.py",
+      "exit_code": 0,
+      "summary": "101 passed"
+    },
+    {
+      "command": "dk31.sh exact CI lint/type steps (ruff check+format src/ tests/, mypy src/, ruff check+format ../scripts/ --exclude fingerprint-fixture, mypy ../scripts/)",
+      "exit_code": 0
+    }
+  ],
+  "ruff": {
+    "exit_code": 0
+  },
+  "format": {
+    "exit_code": 0
+  },
+  "mypy": {
+    "exit_code": 0,
+    "summary": "no issues in 68 files"
+  },
+  "full_suite": {
+    "exit_code": 1,
+    "summary": "1 failed, 1497 passed, 10 skipped",
+    "failed": [
+      "tests/slices/test_s01_contract.py::test_call_deadline_after_initialization"
+    ],
+    "classification": "pre-existing under uid 1000",
+    "log": "full-suite.log.gz"
+  },
+  "g_src": {
+    "exit_code": 0,
+    "note": "server.py, enforcement.py, config.py, codegraph.py, protocol/, query/, tools/, storage/, extractors/, providers/, pyproject.toml, uv.lock, .github/workflows byte-unchanged vs 69e9a46; src changes limited to architecture/* and __main__.py (orchestrator re-checked on the staged tree)"
+  },
+  "g_mcp": {
+    "exit_code": 0,
+    "tools_json_sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+    "tools_json_bytes": 1631472
+  },
+  "g_envelope": {
+    "MINIMUM_BUDGET": 3436,
+    "COLLECTION_MINIMUM_BUDGET": 3448,
+    "FIXED_ERROR_ENVELOPE_CAP": 797,
+    "IMPACT_MINIMUM_BUDGET": 7730,
+    "source": "unchanged: protocol/query byte-unchanged; pinned by test_s31 isolation"
+  },
+  "drift": "ramza-drift --staged: 55 changed files, all within declared scope",
+  "production_image": {
+    "build": "docker build -t atlas-aci:s31 mcp-server",
+    "image_id": "sha256:cda37bf5cb9d06c2eb706e1919b342297f52a9a5133f859983f52e3dad0c876d",
+    "tools": "7 tools, sha256 94f9567a... unchanged",
+    "scenario": "pkg/domain/a.py -> pkg/svc/b.py -> pkg/infra/c.py relative-import chain indexed with --network none; check-architecture with tests/fixtures/architecture_rules/valid-domain-infra.json run --read-only --network none, repo/graph/rules :ro",
+    "result": "both rules violated, counterexample nodes [pkg/domain/a.py, pkg/svc/b.py, pkg/infra/c.py] with 2 import:INFERRED hops; non-null snapshot_id; report 15006 bytes",
+    "replay": "two runs byte-identical (report_id 9f63e269...)",
+    "read_only": "sha256 inventory of repo and graph root unchanged after both runs",
+    "invalid_rule": "duplicate id -> exit 1 'Architecture rules rejected: invalid_rule: duplicate_rule_id (rule 1)'"
+  },
+  "day1_qualification": "qualification.json: file-level chain facts, unresolved reasons as observed, observation states incl. failed-with-history, query plans use idx_assertions_path, epoch gate, dynamic-call raw_target spelling, null snapshot on imported generation, hydrate"
+}

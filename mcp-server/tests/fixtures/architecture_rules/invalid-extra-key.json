@@ -1,0 +1,6 @@
+{
+ "format": "atlas-architecture-rules.v1",
+ "rules": [
+  {"id": "r1", "relation": "import", "from": ["pkg/domain/a.py"], "to": ["pkg/infra/**"], "severity": "high"}
+ ]
+}

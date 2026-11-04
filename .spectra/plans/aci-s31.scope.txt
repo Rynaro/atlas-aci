@@ -1,0 +1,16 @@
+mcp-server/src/atlas_aci/architecture/__init__.py
+mcp-server/src/atlas_aci/architecture/rules.py
+mcp-server/src/atlas_aci/architecture/checker.py
+mcp-server/src/atlas_aci/__main__.py
+mcp-server/tests/slices/test_s31_architecture_rules.py
+mcp-server/tests/fixtures/architecture_rules/*
+docs/architecture-rules.md
+CHANGELOG.md
+README.md
+.spectra/plans/aci-s31.*
+.spectra/plans/ramza-calibration.jsonl
+.spectra/changes/aci-s31/*
+.spectra/evidence/aci-s31/*
+.spectra/state/aci-s31.execution.json
+.spectra/backlog/execution.json
+.spectra/backlog/order.md
