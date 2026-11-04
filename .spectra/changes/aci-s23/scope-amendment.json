@@ -1,0 +1,91 @@
+{
+  "slice_id": "ACI-S23",
+  "base_commit": "1cedf60331ef892f1fb2b3a68eb942bf2dac894b",
+  "recorded_before_implementation": true,
+  "declared_by_issue": [
+    "atlas/evals/*",
+    "scripts/run-canaries.py",
+    "scripts/eval/*",
+    "mcp-server/tests/slices/test_s23_*.py",
+    "docs/evidence/*",
+    "README.md"
+  ],
+  "glob_depth_clarifications": [
+    {
+      "path": "atlas/evals/v3/*",
+      "reason": "Frozen manifest atlas/evals/v3/manifest.v1.json; nested under declared atlas/evals/*"
+    },
+    {
+      "path": "docs/evidence/v3/*",
+      "reason": "Release report and evidence README; nested under declared docs/evidence/*"
+    },
+    {
+      "path": "docs/evidence/v3/raw/*",
+      "reason": "Immutable gzipped raw run records; nested under declared docs/evidence/*"
+    }
+  ],
+  "added": [
+    {
+      "path": "CHANGELOG.md",
+      "reason": "ACI-S23 Unreleased entry pointing at docs/evidence/v3 (no release tag)"
+    },
+    {
+      "path": "SETUP.md",
+      "reason": "Optional: \u00a77 repeats the README --canaries/unimplemented-dispatcher drift; same minimal correction. If the orchestrator drops it, it becomes a listed follow-up"
+    },
+    {
+      "path": ".spectra/plans/aci-s23.*",
+      "reason": "Ramza plan, criteria, state, scope, review"
+    },
+    {
+      "path": ".spectra/plans/ramza-calibration.jsonl",
+      "reason": "Ramza calibration append"
+    },
+    {
+      "path": ".spectra/changes/aci-s23/*",
+      "reason": "This amendment"
+    },
+    {
+      "path": ".spectra/evidence/aci-s23/*",
+      "reason": "Day-1 qualification, base invariants, gate logs"
+    },
+    {
+      "path": ".spectra/state/aci-s23.execution.json",
+      "reason": "Authoritative execution receipt (AC-RUN-01/02)"
+    },
+    {
+      "path": ".spectra/backlog/execution.json",
+      "reason": "Backlog status update"
+    },
+    {
+      "path": ".spectra/backlog/order.md",
+      "reason": "Backlog order update"
+    }
+  ],
+  "not_touched_follow_up": [
+    {
+      "path": "CLAUDE.md",
+      "reason": "Lines 42-44 cite nonexistent atlas/evals/canary-missions.md and --canaries; out of scope by orchestrator decision 6"
+    },
+    {
+      "path": "atlas/evals/baseline/result.json",
+      "reason": "Stale S01 sample; left unchanged, noted in report limitations"
+    }
+  ],
+  "explicitly_untouched_gated": [
+    "mcp-server/src/",
+    "mcp-server/pyproject.toml",
+    "mcp-server/uv.lock",
+    "mcp-server/tests/fixtures/",
+    ".github/workflows/",
+    "atlas/evals/capture_context_baseline.py"
+  ],
+  "invariants": {
+    "tools_json_sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+    "tools_json_bytes": 1631472,
+    "READ_ONLY_TOOLS_count": 7,
+    "s18_fixture_sha256": "07553bd3d51be01a1d522fc59c240bf41ecf312a051c413c609585c60999b507",
+    "self_source_fixture_compressed_sha256": "dcf0e79f0bfed5b774911ebd9dc9c7d8026e36ee74272e3fc767ec4e37734426",
+    "v0_image": "ghcr.io/rynaro/atlas-aci@sha256:e2542ef8d569882c560065f0bcaed9ef2a7398e7e61765e25b142a3c93ec7cf7"
+  }
+}

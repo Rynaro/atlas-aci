@@ -833,18 +833,32 @@ check src/ tests/ && uv run mypy src/`.
 ```bash
 uv run python scripts/run-canaries.py \
     --repo /path/to/your/repo \
-    --canaries atlas/evals/canary-missions.md \
+    --canaries-dir /path/to/tasks \
+    --host stdio \
     --output /tmp/canary-results.json
 ```
 
-**Status: the host dispatcher is not implemented yet.** `--host stub` is
-the only wired option; `StubDispatcher.dispatch()` raises
-`NotImplementedError`, and any other `--host` value raises the same in
-`main()`. There is no canary pass-rate to quote until a real dispatcher
-(Claude Code API, Copilot Action, Cursor headless) is implemented — see
-the deferred note in
-[`scripts/run-canaries.py`](scripts/run-canaries.py); tracked as
-follow-up work in [`SETUP.md §7`](SETUP.md#7-run-the-canary-suite).
+`--canaries-dir` is a directory holding a `tasks.json` task manifest (see
+[`atlas/evals/README.md`](atlas/evals/README.md)); the older `--canaries <file>` spelling
+never existed. `--host stdio` is the default and a **real** MCP SDK host: it starts the
+server over stdio, initializes a session per task and replays the manifest's ordered
+tool calls, recording a transport ledger. No model runs, so model tokens, cost and
+coding-task success stay `null`. `--server-json '["docker","run","--rm","-i",...]'` (inline
+JSON, or a file path) runs the same manifest against another server command, for example a
+container image, instead of the default in-process `python -m atlas_aci serve`.
+
+**Status of the other hosts:** the legacy scout-report dispatchers are not implemented.
+`--host stub` raises `NotImplementedError` from `StubDispatcher.dispatch()`, and
+`claude-code-api`, `copilot` and `cursor` raise the same in `main()`; there is no
+agent pass-rate to quote until one exists (see the deferred note in
+[`scripts/run-canaries.py`](scripts/run-canaries.py), tracked in
+[`SETUP.md §7`](SETUP.md#7-run-the-canary-suite)).
+
+**v3 evidence:** a reproducible, paired evaluation of the v3 context packer against the
+pre-v3 server and a search-then-read baseline, with the P0 binding/snapshot regression gate,
+indexing and query cost counters and a host/SDK matrix, is published under
+[`docs/evidence/v3/`](docs/evidence/v3/README.md). It measures fixture accounting only; the live
+agent outcomes are explicitly `unmeasured`.
 
 **Production hardening** — before letting `atlas-aci` run unattended on
 shared infrastructure, work through the full checklist in

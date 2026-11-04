@@ -1,0 +1,187 @@
+{
+ "slice_id": "ACI-S23",
+ "step0_topology_preflight": {
+  "result": "pass",
+  "recorder_image": "atlas-aci-dev-s23-recorder (FROM atlas-aci-dev-s16 + static docker CLI 29.8.2 aarch64, ADD --checksum=sha256:76a624e4a8e5da654d1150e808175125efb5a6f1b6aa1cbd9caee18f51047a50)",
+  "launcher": ".spectra/evidence/aci-s23/rec23.sh",
+  "uid": "1000:1000 with --group-add 0 (socket is root:root 0660; without the group the socket is not accessible)",
+  "mounts": "/var/run/docker.sock; repo and scratch at identical host absolute paths",
+  "import_mcp_atlas_aci": "ok (mcp from /opt/venv, CPython 3.12; atlas_aci from repo mcp-server/src)",
+  "docker_daemon": "Docker Desktop 29.8.2 arm64",
+  "v0_image_inspect": "present locally; Id sha256:e2542ef8...cf7; RepoDigests matches manifest digest; Architecture arm64",
+  "nested_bind_mount_round_trip": "ok: docker run -v <scratch>/rt:/repo:ro --entrypoint cat <V0> /repo/f.txt printed the host file"
+ },
+ "a_v0": {
+  "image": "ghcr.io/rynaro/atlas-aci@sha256:e2542ef8d569882c560065f0bcaed9ef2a7398e7e61765e25b142a3c93ec7cf7",
+  "image_labels": {
+   "version": "2.0.0",
+   "revision": "91e060f6a639bf867b9ecd29f9722a4b7f5d3cd3"
+  },
+  "image_config": {
+   "user": "atlas",
+   "home": "/tmp",
+   "entrypoint": [
+    "atlas-aci"
+   ],
+   "cmd": [
+    "serve",
+    "--repo",
+    "/repo",
+    "--memex-root",
+    "/memex"
+   ],
+   "python": "3.12.13"
+  },
+  "packages": {
+   "atlas-aci": "2.0.0",
+   "tree-sitter": "0.25.2",
+   "tree-sitter-language-pack": "1.6.0"
+  },
+  "cli_help_offline": "ok: commands export, import, index, serve, tools",
+  "index_offline": {
+   "argv": "docker run --rm --pull never --network none -v <repo>:/repo ghcr.io/rynaro/atlas-aci@sha256:e2542ef8... index --repo /repo",
+   "corpus": "S18 useful-spans fixture, 7 files materialized from source_files",
+   "exit_code": 0,
+   "observed": "every one of the 7 files logged parse_failed: tree-sitter-language-pack 1.6.0 tried to fetch https://github.com/kreuzberg-dev/tree-sitter-language-pack/releases/download/v1.6.0/parsers.json ('failed to lookup address information')",
+   "index_done": "files_indexed=0 symbols=0 refs=0 edges=0 rationale=0 files_skipped=0 files_removed=0 schema_epoch=5 unsupported_skipped={}",
+   "grammar_cache": "none: /tmp (HOME) is empty in the image and no parsers.json or grammar library is present; the v2.0.0 image does not prefetch grammars (the HEAD Dockerfile does)",
+   "consequence": "the index is empty although the command exits 0; V0 search_symbol returns definitions=[] and references=[] for every term (observed for process_payment). This would be a silent zero yield, not evidence."
+  },
+  "serve_offline": {
+   "argv": "docker run --rm -i --pull never --network none -v <repo>:/repo:ro <image> serve --repo /repo",
+   "negotiated_protocol": "2025-11-25",
+   "serverInfo": "name=atlas-aci version=1.27.0 (the mcp SDK version, not the atlas-aci version)",
+   "tools": [
+    "view_file",
+    "list_dir",
+    "search_text",
+    "search_symbol",
+    "graph_query",
+    "test_dry_run",
+    "memex_read"
+   ],
+   "legacy_schemas": {
+    "view_file": "path, start_line, end_line (required)",
+    "search_text": "pattern, scope (required); regex default true; limit <= 50",
+    "search_symbol": "name (required); kind enum"
+   },
+   "notes": "memex root /repo/.atlas/memex is not writable under :ro and logs memex_root_not_writable (non-fatal). Result text is indent=2 pretty JSON, so the client length differs from compact serialization.",
+   "view_file": "works offline and returns exact lines"
+  }
+ },
+ "options_for_orchestrator": [
+  "1. Permit network for the V0 index step only (run index without --network none, serve still --network none), recorded in the manifest and release report as an explicit deviation.",
+  "2. Prefetch the pinned tree-sitter-language-pack 1.6.0 grammars once with network on the host into a cache directory that is recorded by digest and mounted into the offline V0 index container at HOME=/tmp/...; V0 index and serve remain --network none, the cache is a declared input.",
+  "3. Record V0 as not_run (docker_unavailable/image_absent do not apply; a new reason would be needed) and accept that the release goal 'V0 included' is unmet."
+ ],
+ "base_invariants": "see base-invariants.json",
+ "first_attempt": {
+  "day1_status": "BLOCKED",
+  "stop_rule": "(a) V0 offline index fails on a grammar fetch -> stop and escalate; never substitute another build",
+  "note": "offline V0 index without a grammar cache exited 0 with files_indexed=0 (see a_v0.index_offline); escalated and resolved by the orchestrator (option A)"
+ },
+ "day1_status": "PASS",
+ "orchestrator_decision": "option A: prefetch the pinned grammar set once with network in a separate recorded step; V0 index and serve run --network none --pull never with the cache mounted read-only",
+ "a_v0_resolved": {
+  "fetch": {
+   "step": "docker run --rm --pull never -v <cache>:/tmp/.cache --entrypoint python <V0 image> -c 'import tree_sitter_language_pack as t; t.download([ruby, python, typescript, javascript, scss, html, yaml, markdown, bash])'",
+   "network": "enabled for this one step only",
+   "url": "https://github.com/kreuzberg-dev/tree-sitter-language-pack/releases/download/v1.6.0/parsers.json (and the per-grammar assets it lists)",
+   "exit": 0,
+   "returned": 9,
+   "declared_by": ".spectra/evidence/aci-s23/v0-grammar-cache.json (10 files, tree_sha256 7544239ace3c6bdf...; binaries not committed)"
+  },
+  "index_offline_with_cache": {
+   "argv": "docker run --rm --pull never --network none -v <cache>:/tmp/.cache:ro -v <repo>:/repo <V0> index --repo /repo",
+   "exit": 0,
+   "index_done": "files_indexed=7 symbols=11 refs=7 edges=4 rationale=0 files_skipped=0 files_removed=0 schema_epoch=5 unsupported_skipped={}",
+   "cache_unchanged_after_run": true,
+   "passes_guard": "files_indexed == 7 (corpus files) and symbols > 0"
+  },
+  "search_symbol_process_payment": "definitions at app/payments.py 1-4 and other/payments.py 1-3 (non-empty)",
+  "serve_offline_with_cache": "initialize 2025-11-25, 7 tools, search_symbol and view_file succeed",
+  "fallback_option_B_used": false
+ },
+ "b_v0_under_sdk_dispatch": {
+  "result": "pass",
+  "detail": "stdio_runner.run_manifest(server=<V0 docker argv>) ran search_symbol and view_file to success in 1.9 s for two sessions (deadline 60 s); docker works under the SDK env merge, so no stdio_runner.dispatch env patch was needed",
+  "git_note": "repository_identity needs git safe.directory because the V0 container writes into the repo copy as another uid; the recorder sets GIT_CONFIG_COUNT/KEY/VALUE for that"
+ },
+ "c_span_metrics_parity": {
+  "result": "pass",
+  "context_rows": 48,
+  "baseline_rows": 24,
+  "note": "baseline rows read from baseline-checkpoint.json (local-yield.json holds no bytes for them); metrics and selected counts equal the committed ones; asserted non-vacuously in test_s23_metrics.py against span_metrics.py"
+ },
+ "d_head_v1": {
+  "context_calls": 24,
+  "budgets_max_bytes": [
+   8000,
+   32000,
+   64000
+  ],
+  "outcomes": {
+   "success": 22,
+   "tool_error": 2
+  },
+  "negotiated_protocol": "2025-11-25",
+  "client_len_ne_server_result_bytes": 0,
+  "result_text_rule": "deterministic re-serialisation of the ledger dict (sorted keys, compact separators, ensure_ascii=False); its length equals the server result_bytes on all 24 calls",
+  "legacy": "all search_symbol/search_text calls succeed; search_text for noise-heavy terms returns ~9.8 KB (match cap)",
+  "view_file_equals_frozen_bytes": true,
+  "view_file_path": "relative (echoes the argument)"
+ },
+ "e_p0": {
+  "ids": 30,
+  "testcases": 50,
+  "all_passed": true,
+  "runtime_seconds_pytest": 11.4,
+  "runtime_seconds_via_recorder": 12.3,
+  "limit_seconds": 300,
+  "env": "atlas-aci-dev-s16, uid 1000, CPython 3.12",
+  "extra_ci_cost": "about 12 s on the dev container"
+ },
+ "f_counters": {
+  "s18": {
+   "cold": {
+    "files_indexed": 6,
+    "parser_invocations": 7
+   },
+   "warm_full": {
+    "parser_invocations": 1,
+    "disk_hits": 6
+   },
+   "incremental_noop": {
+    "parser_invocations": 1,
+    "predecessor_reused": 6
+   },
+   "refresh_after_edit": {
+    "parser_invocations": 2
+   }
+  },
+  "self_source": {
+   "cold": {
+    "files_indexed": 23,
+    "parser_invocations": 23
+   },
+   "warm_full": {
+    "parser_invocations": 0,
+    "disk_hits": 23
+   },
+   "incremental_noop": {
+    "parser_invocations": 0,
+    "predecessor_reused": 23
+   },
+   "refresh_after_edit": {
+    "parser_invocations": 1
+   }
+  },
+  "semantics": "On S18 the deliberately broken app/incomplete.py is never indexed (files_indexed 6 of 7) and is re-parsed by every later build, so warm_full/noop show 1 parser invocation and refresh 2; self-source (23 indexed files) and a 2-file tmp repo show the clean 0/0/1 semantics. Counters are recorded as observed; no reuse claim is made on S18. warm_full does not parse on every corpus, so no stop."
+ },
+ "release_run": {
+  "recorder_wall_seconds": 126,
+  "units": "probe(V0,V1), retrieval(5 arms), cost(3 corpora V1 + S18 V0), p0, offline",
+  "v0_cache_mounted_ro": true,
+  "recorder_runtime": "CPython 3.12 container (rec23.sh, --group-add 0 for the root:root 0660 socket)"
+ }
+}

@@ -1,0 +1,7 @@
+# ACI-S23 recorder image: the dev image plus a pinned static Linux docker CLI.
+# Release-run topology only; contract tests never need it.
+FROM atlas-aci-dev-s16
+ADD --checksum=sha256:76a624e4a8e5da654d1150e808175125efb5a6f1b6aa1cbd9caee18f51047a50 \
+    https://download.docker.com/linux/static/stable/aarch64/docker-29.8.2.tgz /tmp/docker.tgz
+RUN tar -xzf /tmp/docker.tgz -C /usr/local/bin --strip-components=1 docker/docker \
+    && rm /tmp/docker.tgz && docker --version

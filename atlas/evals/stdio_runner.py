@@ -425,13 +425,24 @@ def run_manifest(
     return result
 
 
+def parse_server_json(value: str) -> list[str]:
+    """A server argv as inline JSON (`["docker","run",...]`) or the path of a JSON file."""
+    text = value if value.lstrip().startswith("[") else Path(value).read_text()
+    argv = json.loads(text)
+    if not isinstance(argv, list) or not argv or not all(isinstance(a, str) and a for a in argv):
+        raise ValueError("--server-json must be a nonempty JSON array of nonempty strings")
+    return argv
+
+
 def run_cli(args: Any) -> int:
     """The stdio mode consumes CANARIES_DIR/tasks.json and writes OUTPUT ledger."""
     try:
+        server_json = getattr(args, "server_json", None)
         result = run_manifest(
             args.repo,
             read_json(args.canaries_dir / "tasks.json"),
             args.output.parent / f"{args.output.stem}.ledger",
+            server=parse_server_json(server_json) if server_json else None,
             deadline=args.deadline,
         )
         atomic_json(args.output, result)

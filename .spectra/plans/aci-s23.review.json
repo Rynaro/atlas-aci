@@ -1,0 +1,106 @@
+{
+ "slice_id": "ACI-S23",
+ "plan": ".spectra/plans/aci-s23.md",
+ "author": "orchestrator-ramza-plan-s23",
+ "checker": "atlas-s23-plan-checker",
+ "verdict": "APPROVE_WITH_CONDITIONS",
+ "method": "independent read-only code review; no commands executed",
+ "findings": [
+  {
+   "n": 1,
+   "severity": "MAJOR",
+   "summary": "executor topology: S22 ran tests in the uid-1000 dev image with no host venv; recorder needs mcp+atlas_aci and docker with host-path bind mounts in one process; add a Day-1 step-0 preflight, else BLOCKED",
+   "disposition": "accepted as plan condition 1"
+  },
+  {
+   "n": 2,
+   "severity": "MAJOR",
+   "summary": "result_text cannot be the exact model_dump_json string because run_manifest stores a sorted-key dict; define deterministic re-serialization or a capture hook and prove client length equals server result_bytes",
+   "disposition": "accepted as plan condition 2"
+  },
+  {
+   "n": 3,
+   "severity": "MAJOR",
+   "summary": "10 s default deadline and docker start can yield timeout or transport_error that looks like zero yield; use a long V0 deadline, abort on transport failures, record the image digest, and prove docker env under dispatch",
+   "disposition": "accepted as plan condition 3"
+  },
+  {
+   "n": 4,
+   "severity": "MAJOR",
+   "summary": "P0 id count is 30, not 33; assert the manifest count against junit testcases",
+   "disposition": "accepted as plan condition 4"
+  },
+  {
+   "n": 5,
+   "severity": "MAJOR",
+   "summary": "Day-1(c): the 24 baseline rows in local-yield.json have no result_base64; read baseline-checkpoint.json lexical_results",
+   "disposition": "accepted as plan condition 5"
+  },
+  {
+   "n": 6,
+   "severity": "MAJOR",
+   "summary": "span_metrics refactor edits measure_context_yield.py (sha pinned in S18/S22 receipts) with no importing test and no CI ruff/mypy on atlas/evals; leave it untouched with a parity test, or add an import-identity test and explicit lint",
+   "disposition": "accepted as plan condition 6"
+  },
+  {
+   "n": 7,
+   "severity": "MINOR",
+   "summary": "view_file echoes its path argument and search/symbol paths are repo-relative, so paths are not absolute host paths; call with relative paths, accept both forms, add a normalization non-vacuity test",
+   "disposition": "accepted as plan condition 7"
+  },
+  {
+   "n": 8,
+   "severity": "MINOR",
+   "summary": "search_symbol is exact-name, so the phrase task yields nothing in the legacy arms; document it as policy behaviour",
+   "disposition": "accepted as plan condition 8"
+  },
+  {
+   "n": 9,
+   "severity": "MINOR",
+   "summary": "v2.0.0 tag and CHANGELOG exist, so read the v2 CLI flags and tool signatures with git show before Day 1; mirror the CI docker invocation, avoid --user without verification",
+   "disposition": "accepted as plan condition 9"
+  },
+  {
+   "n": 10,
+   "severity": "MAJOR",
+   "summary": "docker_unavailable vs image_absent must be classified by exit/stderr; recorder tests use a fake docker shim; rg-dependent smoke skips if absent and stays small",
+   "disposition": "accepted as plan condition 10"
+  },
+  {
+   "n": 11,
+   "severity": "MINOR",
+   "summary": "P0 subprocess needs --basetemp, timeout, env scrub and a pre-decided over-300s response; CI cost estimated 60-150 s",
+   "disposition": "accepted as plan condition 11"
+  },
+  {
+   "n": 12,
+   "severity": "MINOR",
+   "summary": "cost counters verified; add unsupported_skipped/binding_resolution or drop explicitly; state the self-source materialization rule; V0 counters expected unmeasured",
+   "disposition": "accepted as plan condition 12"
+  },
+  {
+   "n": 13,
+   "severity": "MINOR",
+   "summary": "run the exact CI ruff/mypy commands on Day 2; ruff config for ../scripts is unclear; handle spec None; check sibling-import resolution",
+   "disposition": "accepted as plan condition 13"
+  },
+  {
+   "n": 14,
+   "severity": "MINOR",
+   "summary": "define zero-denominator ratio value; Decimal local context; pin every git env and config for a deterministic corpus_commit",
+   "disposition": "accepted as plan condition 14"
+  },
+  {
+   "n": 15,
+   "severity": "MINOR",
+   "summary": "host matrix honesty: 3.12 is server-runtime only; make the macOS row static; protocol tests cover op=context only; add an evidence-anchor test",
+   "disposition": "accepted as plan condition 15"
+  },
+  {
+   "n": 16,
+   "severity": "MINOR",
+   "summary": "scope.txt is sufficient; run_cli uses getattr for server_json; cap committed raw size in the isolation test; no mcp-server/src edits",
+   "disposition": "accepted as plan condition 16"
+  }
+ ]
+}
