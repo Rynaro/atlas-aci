@@ -1,0 +1,27 @@
+{
+  "COLLECTION_MINIMUM_BUDGET": 3448,
+  "FIXED_ERROR_ENVELOPE_CAP": 797,
+  "IMPACT_MINIMUM_BUDGET": 7730,
+  "MINIMUM_BUDGET": 3436,
+  "READ_ONLY_TOOLS_count": 7,
+  "atlas_contract_in_tools_json": false,
+  "base_commit": "981a897322936ea3b460e44459081e9d76a050f2",
+  "base_full_pytest": {
+    "command": "pytest -q -p no:cacheprovider (dev image, uid 1000, python 3.12.16)",
+    "exit": 1,
+    "failed": [
+      "tests/slices/test_s01_contract.py::test_call_deadline_after_initialization"
+    ],
+    "note": "the single failure is the known pre-existing uid-1000 failure; 1538 passed, 10 skipped",
+    "summary": "1 failed, 1538 passed, 10 skipped in 511.93s (0:08:31)"
+  },
+  "ci_reference": {
+    "base_commit": "981a897322936ea3b460e44459081e9d76a050f2",
+    "ci_result": "1539 passed, 10 skipped",
+    "ci_run": "41797672592",
+    "source": "gh run view 41797672592 (PR #90 pytest / ruff / mypy)"
+  },
+  "openapi_in_tools_json": false,
+  "tools_json_bytes": 1631472,
+  "tools_json_sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56"
+}

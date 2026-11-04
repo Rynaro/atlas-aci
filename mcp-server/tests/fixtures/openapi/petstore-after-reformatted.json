@@ -1,0 +1,283 @@
+{
+    "components": {
+        "securitySchemes": {
+            "api_key": {
+                "in": "header",
+                "name": "X-Api-Key",
+                "type": "apiKey"
+            }
+        },
+        "pathItems": {
+            "Store": {
+                "get": {
+                    "responses": {
+                        "200": {
+                            "description": "A store"
+                        }
+                    },
+                    "operationId": "getStore"
+                },
+                "parameters": [
+                    {
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true,
+                        "in": "path",
+                        "name": "storeId"
+                    }
+                ]
+            }
+        },
+        "responses": {
+            "NotFound": {
+                "description": "Not found"
+            },
+            "Error": {
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Error"
+                        }
+                    }
+                },
+                "description": "Error"
+            }
+        },
+        "requestBodies": {
+            "PetBody": {
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Pet"
+                        }
+                    }
+                },
+                "required": true
+            }
+        },
+        "parameters": {
+            "Page": {
+                "schema": {
+                    "type": "integer"
+                },
+                "required": true,
+                "in": "query",
+                "name": "page"
+            }
+        },
+        "schemas": {
+            "Error": {
+                "properties": {
+                    "message": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "Pet": {
+                "properties": {
+                    "children": {
+                        "items": {
+                            "$ref": "#/components/schemas/Pet"
+                        },
+                        "type": "array"
+                    },
+                    "tag": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "id": {
+                        "type": "integer"
+                    }
+                },
+                "required": [
+                    "id",
+                    "name"
+                ],
+                "type": "object"
+            }
+        }
+    },
+    "webhooks": {
+        "newPet": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "Received"
+                    }
+                },
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Pet"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "paths": {
+        "/stores/{storeId}": {
+            "$ref": "#/components/pathItems/Store"
+        },
+        "/pets/{petId}": {
+            "patch": {
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Pet"
+                                }
+                            }
+                        },
+                        "description": "Patched"
+                    }
+                },
+                "parameters": [
+                    {
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true,
+                        "in": "path",
+                        "name": "petId"
+                    }
+                ],
+                "operationId": "patchPet"
+            },
+            "get": {
+                "responses": {
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Pet"
+                                }
+                            }
+                        },
+                        "description": "One pet"
+                    }
+                },
+                "parameters": [
+                    {
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true,
+                        "in": "path",
+                        "name": "petId"
+                    }
+                ],
+                "operationId": "getPet"
+            }
+        },
+        "/pets": {
+            "post": {
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Pet"
+                                }
+                            }
+                        },
+                        "description": "Created"
+                    }
+                },
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/PetBody"
+                },
+                "operationId": "createPet"
+            },
+            "get": {
+                "responses": {
+                    "default": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/Pet"
+                                    },
+                                    "type": "array"
+                                }
+                            }
+                        },
+                        "description": "A list"
+                    }
+                },
+                "parameters": [
+                    {
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "required": true,
+                        "in": "query",
+                        "name": "limit"
+                    },
+                    {
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true,
+                        "in": "header",
+                        "name": "X-Tenant"
+                    },
+                    {
+                        "$ref": "#/components/parameters/Page"
+                    }
+                ],
+                "tags": [
+                    "pets"
+                ],
+                "summary": "List all pets",
+                "operationId": "listPets"
+            },
+            "parameters": [
+                {
+                    "schema": {
+                        "type": "string"
+                    },
+                    "required": false,
+                    "in": "header",
+                    "name": "x-tenant"
+                }
+            ],
+            "summary": "Pets, revised"
+        }
+    },
+    "security": [
+        {
+            "api_key": []
+        }
+    ],
+    "tags": [
+        {
+            "name": "pets"
+        }
+    ],
+    "servers": [
+        {
+            "url": "https://pets.example.com/v1"
+        }
+    ],
+    "info": {
+        "description": "Demo",
+        "version": "1.1.0",
+        "title": "Petstore"
+    },
+    "openapi": "3.1.0"
+}
+

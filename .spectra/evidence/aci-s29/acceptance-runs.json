@@ -1,0 +1,44 @@
+[
+  {
+    "ac_id": "AC-S29-001",
+    "test": "mcp-server/tests/slices/test_s29_openapi_diff.py::test_openapi_operation_identity",
+    "exit_code": 0,
+    "tail": "1 passed in 0.94s"
+  },
+  {
+    "ac_id": "AC-S29-002",
+    "test": "mcp-server/tests/slices/test_s29_openapi_diff.py::test_openapi_element_provenance",
+    "exit_code": 0,
+    "tail": "3 passed in 0.94s"
+  },
+  {
+    "ac_id": "AC-S29-003",
+    "test": "mcp-server/tests/slices/test_s29_openapi_diff.py::test_openapi_removed_operation_finding",
+    "exit_code": 0,
+    "tail": "1 passed in 0.91s"
+  },
+  {
+    "ac_id": "AC-S29-004",
+    "test": "mcp-server/tests/slices/test_s29_openapi_diff.py::test_openapi_new_required_parameter_finding",
+    "exit_code": 0,
+    "tail": "1 passed in 0.90s"
+  },
+  {
+    "ac_id": "AC-S29-005",
+    "test": "mcp-server/tests/slices/test_s29_openapi_diff.py::test_openapi_unresolved_reference_is_visible",
+    "exit_code": 0,
+    "tail": "1 passed in 0.97s"
+  },
+  {
+    "ac_id": "AC-S29-006",
+    "test": "mcp-server/tests/slices/test_s29_openapi_diff.py::test_openapi_reimport_diff_is_idempotent",
+    "exit_code": 0,
+    "tail": "1 passed in 2.04s"
+  },
+  {
+    "ac_id": "AC-S29-007",
+    "test": "mcp-server/tests/slices/test_s29_openapi_diff.py::test_openapi_unsupported_change_requires_review",
+    "exit_code": 0,
+    "tail": "1 passed in 0.92s"
+  }
+]

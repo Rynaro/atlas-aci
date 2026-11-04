@@ -1,0 +1,60 @@
+{
+  "authored": "hand-authored for ACI-S29; no external source",
+  "files": {
+    "identity-after.json": {
+      "sha256": "d60c9a9729f180937935f4cd10a77fbf85f47c979f4458848d4e0d82a36d4e9c",
+      "bytes": 2975,
+      "purpose": "renamed path variable, changed or removed operationId, ambiguity kept"
+    },
+    "identity-before.json": {
+      "sha256": "e9d565d8ec4a6a530d79ebdb0b529656629735a54d6814befc63b6a7db6f7cba",
+      "bytes": 2993,
+      "purpose": "operation identity cases: repeated or absent operationId, templates"
+    },
+    "petstore-after-reformatted.json": {
+      "sha256": "a0e5f62d95a60942f0e61b36b3ed073f33ffc0ae0998fc7795958f1cd64b0d93",
+      "bytes": 8354,
+      "purpose": "petstore-after.json value with other whitespace/key order"
+    },
+    "petstore-after.json": {
+      "sha256": "1e25925b41002552555c70e61670fa84a122d7ae09acd79d3e673cf7c8ecbff9",
+      "bytes": 5789,
+      "purpose": "after contract: removed DELETE, new required parameters, added PATCH"
+    },
+    "petstore-before.json": {
+      "sha256": "ae96720cde76cd46e0096950f8eb89879b59c5835fdef6a160932c07f51cde4e",
+      "bytes": 5223,
+      "purpose": "realistic 3.1.0 document used as the before contract (AC-001..007)"
+    },
+    "refs.json": {
+      "sha256": "eb5414a732a0295bdb6c0e4b01e65093abb0bf3b4603dfc3b4bfa0be12d6df06",
+      "bytes": 6877,
+      "purpose": "reference cases: remote, outside, missing, cyclic, depth, positive controls"
+    },
+    "rejected-openapi303.json": {
+      "sha256": "cfaed0c61be05071d60dcf6ef576aa01cf5a10806e8671c2b812eb12831f6615",
+      "bytes": 96,
+      "purpose": "unsupported profile: openapi 3.0.3"
+    },
+    "rejected-openapi320.json": {
+      "sha256": "1630ff5ef3af6b56ec998d53756aa14af9623a58d6821e8613af20052e13d080",
+      "bytes": 96,
+      "purpose": "unsupported profile: openapi 3.2.0"
+    },
+    "rejected-swagger20.json": {
+      "sha256": "1919daa53b293a99355cb2b50fc2eb9551bf6d6d0a6aa3ba2284edd99cb02ae1",
+      "bytes": 94,
+      "purpose": "unsupported profile: swagger 2.0"
+    },
+    "review-after.json": {
+      "sha256": "0def74877f21166f8c960e5cb599dff3d4f80090d4e7afe7c289b8ad73f4e6e3",
+      "bytes": 4285,
+      "purpose": "one unsupported change per operation, after"
+    },
+    "review-before.json": {
+      "sha256": "c9306691691b7adf47235718bad6224a863329299655bbacec4f7b509f7748f0",
+      "bytes": 4140,
+      "purpose": "one unsupported change per operation, before"
+    }
+  }
+}

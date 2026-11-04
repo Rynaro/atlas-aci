@@ -1,0 +1,33 @@
+{
+  "schema": "atlas-aci/slice-execution.v1",
+  "slice_id": "ACI-S29",
+  "issue_url": "https://github.com/Rynaro/atlas-aci/issues/50",
+  "criteria_sha256": "7c017111001f65be8237f420e0175f7bda7b2724a9f39b2e8053247b0c6f8563",
+  "base_commit": "981a897322936ea3b460e44459081e9d76a050f2",
+  "output_commit": null,
+  "declared_paths": [
+    "mcp-server/src/atlas_aci/importers/__init__.py",
+    "mcp-server/src/atlas_aci/importers/openapi31.py",
+    "mcp-server/src/atlas_aci/contracts/__init__.py",
+    "mcp-server/src/atlas_aci/contracts/openapi_diff.py",
+    "mcp-server/src/atlas_aci/__main__.py",
+    "mcp-server/tests/slices/test_s29_openapi_diff.py",
+    "mcp-server/tests/fixtures/openapi/*",
+    "docs/importers/openapi.md",
+    "CHANGELOG.md",
+    "README.md",
+    ".spectra/plans/aci-s29.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/changes/aci-s29/*",
+    ".spectra/evidence/aci-s29/*",
+    ".spectra/state/aci-s29.execution.json",
+    ".spectra/backlog/execution.json",
+    ".spectra/backlog/order.md"
+  ],
+  "output_digests": {},
+  "status": "IN_PROGRESS",
+  "started_at": "2026-11-04T08:44:46Z",
+  "planning_state": ".spectra/plans/aci-s29.state.json",
+  "plan": ".spectra/plans/aci-s29.md",
+  "results": []
+}

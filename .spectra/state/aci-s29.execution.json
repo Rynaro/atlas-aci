@@ -1,0 +1,182 @@
+{
+  "schema": "atlas-aci/slice-execution.v1",
+  "slice_id": "ACI-S29",
+  "issue_url": "https://github.com/Rynaro/atlas-aci/issues/50",
+  "criteria_sha256": "7c017111001f65be8237f420e0175f7bda7b2724a9f39b2e8053247b0c6f8563",
+  "base_commit": "981a897322936ea3b460e44459081e9d76a050f2",
+  "output_commit": "4c91e29f38bed49f8625456332c80d58ee161ab1",
+  "declared_paths": [
+    "mcp-server/src/atlas_aci/importers/__init__.py",
+    "mcp-server/src/atlas_aci/importers/openapi31.py",
+    "mcp-server/src/atlas_aci/contracts/__init__.py",
+    "mcp-server/src/atlas_aci/contracts/openapi_diff.py",
+    "mcp-server/src/atlas_aci/__main__.py",
+    "mcp-server/tests/slices/test_s29_openapi_diff.py",
+    "mcp-server/tests/fixtures/openapi/*",
+    "docs/importers/openapi.md",
+    "CHANGELOG.md",
+    "README.md",
+    ".spectra/plans/aci-s29.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/changes/aci-s29/*",
+    ".spectra/evidence/aci-s29/*",
+    ".spectra/state/aci-s29.execution.json",
+    ".spectra/backlog/execution.json",
+    ".spectra/backlog/order.md"
+  ],
+  "output_digests": {
+    ".spectra/backlog/execution.json": "7e047e33d9a998f496c27b55095e2bcdd404c3876f6418fad2b13020d69ec884",
+    ".spectra/backlog/order.md": "e0f62baff4fbc8737e1cd560e60be52597c4c2764ef991d2fe6142a17b46a5ec",
+    ".spectra/changes/aci-s29/scope-amendment.json": "1de4a8e182bc73302e4af795eae532e27da4df1212233ceb87591d5a4b2a867d",
+    ".spectra/evidence/aci-s29/base-invariants.json": "1cf12d9c953b18195583e2bc313f5cfd9a27dfad5842e92d5a384378d399c868",
+    ".spectra/evidence/aci-s29/baseline.json": "c6e4a525fc672aab272e7fd6cc58560d8f9dd03da3b9d38d5fcad7a21bfffc26",
+    ".spectra/evidence/aci-s29/checks.json": "e7546718e7b4c004e19a1b8c4e091d244a996f25895a7856d26e0d7b4fbf10bb",
+    ".spectra/evidence/aci-s29/dk29.sh": "3b80291a6212f50e75b66455c070728e5d71a96a46401a193c9cf5f0b6619bed",
+    ".spectra/evidence/aci-s29/format.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    ".spectra/evidence/aci-s29/format.log.gz": "e2d9901d0f36cb94916d4a62c59bee4ad13fd6bb405695c2dda982963da3cb25",
+    ".spectra/evidence/aci-s29/full-suite.exit": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+    ".spectra/evidence/aci-s29/full-suite.log.gz": "71f9500245f99ddce9c70652ee9fb549a8c10b3b27446dd69fed25f603592bac",
+    ".spectra/evidence/aci-s29/g-mcp.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    ".spectra/evidence/aci-s29/g-mcp.log.gz": "f83b2d0d0fa315d5a351ca17775cb1f6545256245cd30b9bd7ecd5751aee1573",
+    ".spectra/evidence/aci-s29/g-src.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    ".spectra/evidence/aci-s29/g-src.log.gz": "d81781d320fd822aa1cfa770fcc13232d5d9112a96fe9a04311962c7ce096a47",
+    ".spectra/evidence/aci-s29/interrupted-execution.json": "7733ee83662339069c9dfe5c4a88fba7da72d7654609a643eb49c3072e2110ee",
+    ".spectra/evidence/aci-s29/mypy.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    ".spectra/evidence/aci-s29/mypy.log.gz": "db6a1291cafbdf69cd48215ee77c8156f3be419d964fc9ae7683944e17b819cc",
+    ".spectra/evidence/aci-s29/qualification.json": "78232b1ae72215285a1b66ca402ccaf3010a7f472dc53693a053d1bcb5774985",
+    ".spectra/evidence/aci-s29/regression.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    ".spectra/evidence/aci-s29/regression.log.gz": "68cf0ecd4ab9e95fae784cefb4d3c33bb855b527b42c4448abc7a63a47c1b3ec",
+    ".spectra/evidence/aci-s29/ruff.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    ".spectra/evidence/aci-s29/ruff.log.gz": "9cdea0da634f62eb84132ad5bd13485395c47d17e159f4585dc913dd9d07a20e",
+    ".spectra/evidence/aci-s29/s29-contract.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    ".spectra/evidence/aci-s29/s29-contract.log.gz": "492be907230f36f3bcf10a6c9f549d504057a6fab9d3be640853596b44b04585",
+    ".spectra/plans/aci-s29.criteria.md": "7c017111001f65be8237f420e0175f7bda7b2724a9f39b2e8053247b0c6f8563",
+    ".spectra/plans/aci-s29.issue.json": "46c71c7f08d28c2e8e5c66fc9dfe0c5268253389b0d4edd28bff3d56e13d38de",
+    ".spectra/plans/aci-s29.md": "c4d639e138c62d483f32f2d0c31137a024b9335ef586a23e4fd257605a644003",
+    ".spectra/plans/aci-s29.review.json": "8f181f231cb954db6a28c4606db89f7732e46bd7bc95facbc7d658ec4c6cb3a7",
+    ".spectra/plans/aci-s29.scope.txt": "a2c842d8cf523c42af434539328ad2bf2cf80f9425c95352846c618332895f35",
+    ".spectra/plans/aci-s29.state.json": "8cb7975d815122bb8ec607171bacbd424ff8a480ed3d99928843c8bf53512a3f",
+    ".spectra/plans/ramza-calibration.jsonl": "e034a7d2d2c3697e976620b341b57b8626e7b84ff4dc2dcacebc555f7f42228a",
+    "CHANGELOG.md": "3b41d3d12d1c469280eeacc2b6921f4575ad0b64fbfcf91ea1d51e98b43d4153",
+    "README.md": "9f09e4b3419becf4a016794821e6187e8cbb7cb49c9734cdb02992d0d0994804",
+    "docs/importers/openapi.md": "b4fc8919194a96c3fabf4763561f83d66da3eaac34252cfe40e05011eca5862b",
+    "mcp-server/src/atlas_aci/__main__.py": "9c60f1d91f618e3b81dc26c4e7f26b586a2ad67084864802576b0c3ac324dc68",
+    "mcp-server/src/atlas_aci/contracts/__init__.py": "614ec7f676bdfd135136ece2beee29428e50cfa6ca85d5423fc061d57e46e63a",
+    "mcp-server/src/atlas_aci/contracts/openapi_diff.py": "fdcdcd3f38819c4710341bdb19c969466dfc020f041ebb06e9b1994b714dce85",
+    "mcp-server/src/atlas_aci/importers/__init__.py": "709f35cba8bddf9617ba3f900474b5a786b59e4154ac2496148f8cbdf48a6260",
+    "mcp-server/src/atlas_aci/importers/openapi31.py": "384bfc191bff4fc42350958efd400c894644ff925008c46d3a7ee1fb52f47485",
+    "mcp-server/tests/fixtures/openapi/identity-after.json": "d60c9a9729f180937935f4cd10a77fbf85f47c979f4458848d4e0d82a36d4e9c",
+    "mcp-server/tests/fixtures/openapi/identity-before.json": "e9d565d8ec4a6a530d79ebdb0b529656629735a54d6814befc63b6a7db6f7cba",
+    "mcp-server/tests/fixtures/openapi/petstore-after-reformatted.json": "a0e5f62d95a60942f0e61b36b3ed073f33ffc0ae0998fc7795958f1cd64b0d93",
+    "mcp-server/tests/fixtures/openapi/petstore-after.json": "1e25925b41002552555c70e61670fa84a122d7ae09acd79d3e673cf7c8ecbff9",
+    "mcp-server/tests/fixtures/openapi/petstore-before.json": "ae96720cde76cd46e0096950f8eb89879b59c5835fdef6a160932c07f51cde4e",
+    "mcp-server/tests/fixtures/openapi/provenance.json": "02ef91e2ea27128f1ce6154b9ad6cc7d111358287f2db535be92d458d24dbadb",
+    "mcp-server/tests/fixtures/openapi/refs.json": "eb5414a732a0295bdb6c0e4b01e65093abb0bf3b4603dfc3b4bfa0be12d6df06",
+    "mcp-server/tests/fixtures/openapi/rejected-openapi303.json": "cfaed0c61be05071d60dcf6ef576aa01cf5a10806e8671c2b812eb12831f6615",
+    "mcp-server/tests/fixtures/openapi/rejected-openapi320.json": "1630ff5ef3af6b56ec998d53756aa14af9623a58d6821e8613af20052e13d080",
+    "mcp-server/tests/fixtures/openapi/rejected-swagger20.json": "1919daa53b293a99355cb2b50fc2eb9551bf6d6d0a6aa3ba2284edd99cb02ae1",
+    "mcp-server/tests/fixtures/openapi/review-after.json": "0def74877f21166f8c960e5cb599dff3d4f80090d4e7afe7c289b8ad73f4e6e3",
+    "mcp-server/tests/fixtures/openapi/review-before.json": "c9306691691b7adf47235718bad6224a863329299655bbacec4f7b509f7748f0",
+    "mcp-server/tests/slices/test_s29_openapi_diff.py": "b265baaa3d7bbb2d017c8065c4b810f78458a2f6719c60387b21c8386bfe222c"
+  },
+  "status": "COMPLETE",
+  "started_at": "2026-11-04T08:44:46Z",
+  "planning_state": ".spectra/plans/aci-s29.state.json",
+  "plan": ".spectra/plans/aci-s29.md",
+  "results": [
+    {
+      "ac_id": "AC-S29-001",
+      "command": "docker run --rm --user 1000:1000 -e HOME=/hc -e PYTHONPATH=/ws/mcp-server/src -v <scratch>/home:/hc -v <reentry-worktree>:/ws -w /ws/mcp-server atlas-aci-dev-s16 /opt/venv/bin/python -m pytest -q -p no:cacheprovider tests/slices/test_s29_openapi_diff.py::test_openapi_operation_identity",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s29/acceptance-runs.json"
+    },
+    {
+      "ac_id": "AC-S29-002",
+      "command": "docker run --rm --user 1000:1000 -e HOME=/hc -e PYTHONPATH=/ws/mcp-server/src -v <scratch>/home:/hc -v <reentry-worktree>:/ws -w /ws/mcp-server atlas-aci-dev-s16 /opt/venv/bin/python -m pytest -q -p no:cacheprovider tests/slices/test_s29_openapi_diff.py::test_openapi_element_provenance",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s29/acceptance-runs.json"
+    },
+    {
+      "ac_id": "AC-S29-003",
+      "command": "docker run --rm --user 1000:1000 -e HOME=/hc -e PYTHONPATH=/ws/mcp-server/src -v <scratch>/home:/hc -v <reentry-worktree>:/ws -w /ws/mcp-server atlas-aci-dev-s16 /opt/venv/bin/python -m pytest -q -p no:cacheprovider tests/slices/test_s29_openapi_diff.py::test_openapi_removed_operation_finding",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s29/acceptance-runs.json"
+    },
+    {
+      "ac_id": "AC-S29-004",
+      "command": "docker run --rm --user 1000:1000 -e HOME=/hc -e PYTHONPATH=/ws/mcp-server/src -v <scratch>/home:/hc -v <reentry-worktree>:/ws -w /ws/mcp-server atlas-aci-dev-s16 /opt/venv/bin/python -m pytest -q -p no:cacheprovider tests/slices/test_s29_openapi_diff.py::test_openapi_new_required_parameter_finding",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s29/acceptance-runs.json"
+    },
+    {
+      "ac_id": "AC-S29-005",
+      "command": "docker run --rm --user 1000:1000 -e HOME=/hc -e PYTHONPATH=/ws/mcp-server/src -v <scratch>/home:/hc -v <reentry-worktree>:/ws -w /ws/mcp-server atlas-aci-dev-s16 /opt/venv/bin/python -m pytest -q -p no:cacheprovider tests/slices/test_s29_openapi_diff.py::test_openapi_unresolved_reference_is_visible",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s29/acceptance-runs.json"
+    },
+    {
+      "ac_id": "AC-S29-006",
+      "command": "docker run --rm --user 1000:1000 -e HOME=/hc -e PYTHONPATH=/ws/mcp-server/src -v <scratch>/home:/hc -v <reentry-worktree>:/ws -w /ws/mcp-server atlas-aci-dev-s16 /opt/venv/bin/python -m pytest -q -p no:cacheprovider tests/slices/test_s29_openapi_diff.py::test_openapi_reimport_diff_is_idempotent",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s29/acceptance-runs.json"
+    },
+    {
+      "ac_id": "AC-S29-007",
+      "command": "docker run --rm --user 1000:1000 -e HOME=/hc -e PYTHONPATH=/ws/mcp-server/src -v <scratch>/home:/hc -v <reentry-worktree>:/ws -w /ws/mcp-server atlas-aci-dev-s16 /opt/venv/bin/python -m pytest -q -p no:cacheprovider tests/slices/test_s29_openapi_diff.py::test_openapi_unsupported_change_requires_review",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s29/acceptance-runs.json"
+    },
+    {
+      "ac_id": "AC-S29-RUN-01",
+      "command": "manifest.py before/after clean detached worktree re-entry; git status --porcelain; git diff --exit-code output",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s29/final-reentry-summary.json"
+    },
+    {
+      "ac_id": "AC-S29-RUN-02",
+      "command": "compare slice_id + criteria_sha256 of interrupted snapshot and resumed receipt",
+      "exit_code": 0,
+      "evidence": ".spectra/evidence/aci-s29/final-resume-identity.json"
+    }
+  ],
+  "output_digest_exclusions": [
+    ".spectra/evidence/aci-s29/acceptance-runs.json",
+    ".spectra/evidence/aci-s29/final-reentry-after.json",
+    ".spectra/evidence/aci-s29/final-reentry-before.json",
+    ".spectra/evidence/aci-s29/final-reentry-summary.json",
+    ".spectra/evidence/aci-s29/final-resume-identity.json",
+    ".spectra/evidence/aci-s29/manifest.py",
+    ".spectra/state/aci-s29.execution.json"
+  ],
+  "completed_at": "2026-11-04T09:35:47Z",
+  "scope_amendments": [
+    ".spectra/changes/aci-s29/scope-amendment.json"
+  ],
+  "operator_decision": "Orchestrator decisions under the user's autonomous-execution instruction (2026-11-04): standalone content-addressed contract snapshot plus a differ that reuses S19's change-set shape and vocabulary (graph-backed import rejected: it would edit producer-fingerprint inputs); strict interpreter-independent JSON parsing; method + normalized path template identity; same-document bounded references only; findings operation_removed, newly_required_parameter, review_required, informational operation_added, no global verdict; checker conditions 9 (walk resolved targets) and 10 (max_operations 20000) resolved to the stricter options",
+  "interpretation": {
+    "approach_4": "S19 is not invoked; only its change-set shape and vocabulary are reused (atlas-contract-diff.v1)",
+    "ac_002_snapshot_identity": "contract snapshot_id = digest of artifact bytes, profile and options; not a source/graph snapshot; source binding is a follow-up"
+  },
+  "validation": {
+    "checks": ".spectra/evidence/aci-s29/checks.json",
+    "baseline": ".spectra/evidence/aci-s29/baseline.json",
+    "qualification": ".spectra/evidence/aci-s29/qualification.json",
+    "full_suite": "1 failed, 1588 passed, 10 skipped (single failure pre-existing under uid 1000)",
+    "invariance": "G-SRC, G-MCP exit 0; envelope minimums unchanged",
+    "production_image": "atlas-aci:s29 snapshot and diff replay byte-identical, petstore findings as designed, swagger 2.0 rejected typed, inputs unchanged"
+  },
+  "limitations": [
+    "S19 is not invoked; contract snapshots are not bound to source snapshots (follow-up)",
+    "OpenAPI 3.1 JSON only; 2.0, 3.0, 3.2 and YAML are rejected",
+    "Only same-document references are resolved; remote, outside-document, cyclic and over-deep references mark regions incomplete",
+    "Edits inside components surface as document_region_changed; no JSON Schema implication is computed",
+    "Integer and float literals differ (1 vs 1.0) and decimals collapse to floats; both produce review_required at most",
+    "schema $id/$anchor base URIs are not applied",
+    "No global compatible/incompatible verdict"
+  ],
+  "plan_review": ".spectra/plans/aci-s29.review.json",
+  "publication": {
+    "pull_request": null,
+    "note": "pushed after receipt commit"
+  }
+}

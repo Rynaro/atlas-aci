@@ -1,0 +1,167 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "Identity",
+    "version": "1"
+  },
+  "paths": {
+    "/plain": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        },
+        "operationId": "plainGet"
+      },
+      "post": {
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      }
+    },
+    "/a": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      }
+    },
+    "/b": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        },
+        "operationId": "dup2"
+      }
+    },
+    "/files/{name}~v": {
+      "parameters": [
+        {
+          "name": "name",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        },
+        "operationId": "getFile"
+      }
+    },
+    "/users/": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        },
+        "operationId": "listUsers"
+      }
+    },
+    "/shout": {
+      "GET": {
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        },
+        "operationId": "shout"
+      },
+      "post": {
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        },
+        "operationId": "quiet"
+      }
+    },
+    "/stores/{storeId}": {
+      "$ref": "#/components/pathItems/Store"
+    },
+    "/x/{a}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        },
+        "operationId": "xa"
+      }
+    },
+    "/x/{b}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        },
+        "operationId": "xb"
+      }
+    },
+    "/users/{userId}": {
+      "parameters": [
+        {
+          "name": "userId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        },
+        "operationId": "fetchUser"
+      },
+      "delete": {
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "pathItems": {
+      "Store": {
+        "parameters": [
+          {
+            "name": "storeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "get": {
+          "responses": {
+            "200": {
+              "description": "ok"
+            }
+          },
+          "operationId": "getStore"
+        }
+      }
+    }
+  }
+}

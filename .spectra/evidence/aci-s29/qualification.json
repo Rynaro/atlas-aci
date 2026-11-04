@@ -1,0 +1,264 @@
+{
+  "d_real_world_import": {
+    "fixture": "petstore-before.json",
+    "ordering_note": "run after the D1-D5 importer was written (it needs the importer); no profile change was required",
+    "result": {
+      "diagnostics_total": 0,
+      "document_regions": 11,
+      "operations": 5,
+      "parameters": 6,
+      "path_items": 3,
+      "pointers_checked": 68,
+      "pointers_failing_oracle": [],
+      "status": "complete"
+    },
+    "verdict": "pass: status complete, 5 operations, every emitted pointer resolves through the reports.evidence oracle"
+  },
+  "interpreters": {
+    "3.12.16": "atlas-aci-dev-s16 image, uid 1000 (with ev.canonical and the reports.evidence pointer oracle)",
+    "3.13.18": "python:3.13-slim (offline, no atlas_aci deps: local canonical copy, no oracle)",
+    "3.14": "unavailable offline; CI is the 3.14 evidence"
+  },
+  "notes": [
+    "bare json.loads at depth 100000 raises RecursionError on 3.12: rationale for the byte scan",
+    "float handling: 1 vs 1.0 stay distinct (canonical [1] vs [1.0]); 1.00000000000000001 collapses to 1.0",
+    "integer tokens longer than 4300 digits are rejected by the parse_int hook; 4300 digits is accepted"
+  ],
+  "py312": {
+    "a_strict_parser": {
+      "array": {
+        "100000": "nesting_too_deep",
+        "63": "ok",
+        "64": "ok",
+        "65": "nesting_too_deep"
+      },
+      "bare_json_loads_100000": "RecursionError",
+      "brackets_in_strings": "ok",
+      "canonical_depth64": true,
+      "escaped_quote_then_brackets": "ok",
+      "float_1_vs_1.0_canonical": [
+        "[1.0]",
+        "[1]"
+      ],
+      "float_collapse": "[1.0,1.0]",
+      "mixed": {
+        "100000": "nesting_too_deep",
+        "63": "ok",
+        "64": "ok",
+        "65": "nesting_too_deep"
+      },
+      "object": {
+        "100000": "nesting_too_deep",
+        "63": "ok",
+        "64": "ok",
+        "65": "nesting_too_deep"
+      },
+      "petstore_depth": 10,
+      "petstore_wrapped_64": {
+        "depth": 64,
+        "verdict": "ok"
+      },
+      "petstore_wrapped_64_canonical": true,
+      "petstore_wrapped_65": {
+        "depth": 65,
+        "verdict": "nesting_too_deep"
+      },
+      "rejections": {
+        "-Infinity": "invalid_json",
+        "1e999": "invalid_json",
+        "Infinity": "invalid_json",
+        "NaN": "invalid_json",
+        "bom": "invalid_json",
+        "duplicate": "invalid_json",
+        "empty": "invalid_json",
+        "escaped_duplicate": "invalid_json",
+        "float_1.0_vs_1": "ok",
+        "huge_int_4301": "invalid_json",
+        "int_4300": "ok",
+        "nested_duplicate": "invalid_json",
+        "non_utf8": "invalid_json",
+        "surrogate": "invalid_json",
+        "surrogate_key": "invalid_json",
+        "trailing": "invalid_json",
+        "valid_pair": "ok",
+        "yaml": "invalid_json"
+      },
+      "string_brace": "ok"
+    },
+    "b_pointers": {
+      "agree_on_emitted_forms": [
+        [
+          "/a~0b",
+          1,
+          1,
+          true
+        ],
+        [
+          "/a~1b",
+          2,
+          2,
+          true
+        ],
+        [
+          "/a%b",
+          3,
+          3,
+          true
+        ],
+        [
+          "/\u00e9",
+          4,
+          4,
+          true
+        ],
+        [
+          "/",
+          5,
+          5,
+          true
+        ],
+        [
+          "/a~00b",
+          6,
+          6,
+          true
+        ],
+        [
+          "/k",
+          [
+            10,
+            20,
+            30
+          ],
+          [
+            10,
+            20,
+            30
+          ],
+          true
+        ],
+        [
+          "/~0",
+          7,
+          7,
+          true
+        ],
+        [
+          "/~1",
+          8,
+          8,
+          true
+        ],
+        [
+          "/k",
+          [
+            10,
+            20,
+            30
+          ],
+          [
+            10,
+            20,
+            30
+          ],
+          true
+        ],
+        [
+          "/k/0",
+          10,
+          10,
+          true
+        ],
+        [
+          "/k/1",
+          20,
+          20,
+          true
+        ],
+        [
+          "/k/2",
+          30,
+          30,
+          true
+        ]
+      ],
+      "all_agree": true,
+      "percent_decode": {
+        "%": null,
+        "%00": "\u0000",
+        "%25": "%",
+        "%7B": "{",
+        "%7e": "~",
+        "%C3": null,
+        "%E2%82%AC": "\u20ac",
+        "%G1": null,
+        "a%2": null,
+        "plain": "plain",
+        "\u00e9": "\u00e9"
+      },
+      "pointer_forms_match_oracle": true,
+      "strict": {
+        "": {
+          "": 5,
+          "/": 8,
+          "a%b": 3,
+          "a/b": 2,
+          "a~0b": 6,
+          "a~b": 1,
+          "k": [
+            10,
+            20,
+            30
+          ],
+          "~": 7,
+          "\u00e9": 4
+        },
+        "/%7B": "MISSING",
+        "/a~2b": "MISSING",
+        "/k/-1": "MISSING",
+        "/k/01": "MISSING",
+        "/k/1": 20,
+        "/k/3": "MISSING",
+        "/k/99999999999999999": "MISSING",
+        "/k/~2": "MISSING",
+        "/k/\u0661": "MISSING",
+        "/x": "MISSING",
+        "x": "MISSING"
+      }
+    },
+    "c_profile": {
+      " 3.1.0": false,
+      "3.0.3": false,
+      "3.1": false,
+      "3.1.": false,
+      "3.1.0": true,
+      "3.1.0-rc1": false,
+      "3.1.1": true,
+      "3.1.10": true,
+      "3.2.0": false,
+      "arabic": false,
+      "empty": false,
+      "newline": false,
+      "none": false,
+      "numeric 3.1": false,
+      "swagger2.0": false
+    },
+    "have_ev_canonical": true,
+    "have_pointer_oracle": true,
+    "python": "3.12.16"
+  },
+  "py313_parser_and_pointer_results_equal_py312": {
+    "a_strict_parser": true,
+    "b_percent_decode": true,
+    "b_strict": true,
+    "c_profile": true
+  },
+  "slice_id": "ACI-S29",
+  "stage": "Day-1 qualification (helpers qualified before product code)",
+  "stop_rule": {
+    "a": "not triggered: depth 64 imports and canonicalizes for arrays, objects, mixed and the wrapped petstore fixture (petstore depth 10); depth 65 and 100000 give nesting_too_deep with no RecursionError; MAX_NESTING_DEPTH stays 64",
+    "b": "not triggered: local pointer/resolve_pointer agree with reports.evidence on every emitted form; strict table rejects -1, 01, ~2, out-of-range, Arabic-Indic digit index and a 5000-digit index",
+    "c": "not triggered: every profile row matches D1 (3.1.0 and trailing-newline and Arabic-Indic digit cases included)",
+    "d": "not triggered: petstore-before imports complete with 5 operations; all 68 emitted pointers resolve through the oracle"
+  }
+}
