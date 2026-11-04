@@ -1,0 +1,44 @@
+[
+  {
+    "ac_id": "AC-S24-001",
+    "test": "mcp-server/tests/slices/test_s24_rails_routes.py::test_rails_literal_route_fact",
+    "exit_code": 0,
+    "tail": "1 passed in 1.10s"
+  },
+  {
+    "ac_id": "AC-S24-002",
+    "test": "mcp-server/tests/slices/test_s24_rails_routes.py::test_rails_exact_controller_action_mapping",
+    "exit_code": 0,
+    "tail": "1 passed in 1.11s"
+  },
+  {
+    "ac_id": "AC-S24-003",
+    "test": "mcp-server/tests/slices/test_s24_rails_routes.py::test_rails_ambiguous_target_is_unresolved",
+    "exit_code": 0,
+    "tail": "1 passed in 1.07s"
+  },
+  {
+    "ac_id": "AC-S24-004",
+    "test": "mcp-server/tests/slices/test_s24_rails_routes.py::test_rails_dynamic_route_diagnostic",
+    "exit_code": 0,
+    "tail": "1 passed in 1.07s"
+  },
+  {
+    "ac_id": "AC-S24-005",
+    "test": "mcp-server/tests/slices/test_s24_rails_routes.py::test_rails_removed_route_retracts_mapping",
+    "exit_code": 0,
+    "tail": "1 passed in 4.48s"
+  },
+  {
+    "ac_id": "AC-S24-006",
+    "test": "mcp-server/tests/slices/test_s24_rails_routes.py::test_rails_route_reindex_is_idempotent",
+    "exit_code": 0,
+    "tail": "1 passed in 3.86s"
+  },
+  {
+    "ac_id": "AC-S24-007",
+    "test": "mcp-server/tests/slices/test_s24_rails_routes.py::test_rails_routes_never_execute_application",
+    "exit_code": 0,
+    "tail": "1 passed in 1.80s"
+  }
+]
