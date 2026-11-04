@@ -301,6 +301,19 @@ reachability only, never a breakage claim, and unresolved or ambiguous reference
 are reported as incomplete coverage. The before snapshot is operator configuration;
 requests carry no paths. See [`atlas/docs/change-impact.md`](atlas/docs/change-impact.md).
 
+### G — Optional: plan which tests to run for a change
+
+With the same two snapshots (and, optionally, per-test coverage imported into the before
+graph root as in D2), `atlas-aci validation-plan --repo R --before-graph-root B
+--after-graph-root A [--coverage-graph-root C ...]` prints a ranked, **advisory** list of
+tests with the exact evidence for each: tests observed executing the changed span in a
+byte-identical before or after snapshot (`observed_execution`, with
+`post_change_validation` true only for the after snapshot) and tests found only through
+static relationships (`structural`). Changed spans nothing maps to are explicit `gaps`;
+coverage matching neither snapshot is reported as `stale` and never used. Nothing is run or
+imported, the plan never replaces CI, and it is a CLI/library result only (no MCP op,
+no paths in requests). See [`atlas/docs/validation-plan.md`](atlas/docs/validation-plan.md).
+
 ---
 
 ## Step 7 — Wire your editor
@@ -541,6 +554,8 @@ A successful `gh attestation verify` confirms that:
   Python coverage observations
 - [`atlas/docs/symbol-diff.md`](atlas/docs/symbol-diff.md) — comparing two snapshots at
   symbol and contract boundaries
+- [`atlas/docs/validation-plan.md`](atlas/docs/validation-plan.md) — advisory,
+  evidence-backed validation plan from impact and observed coverage
 - [`hosts/claude-code.md`](hosts/claude-code.md),
   [`hosts/copilot.md`](hosts/copilot.md),
   [`hosts/cursor.md`](hosts/cursor.md) — per-editor wiring

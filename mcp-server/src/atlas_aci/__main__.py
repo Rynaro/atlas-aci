@@ -679,6 +679,158 @@ def impact(
     stream.flush()
 
 
+@cli.command("validation-plan")
+@click.option(
+    "--repo",
+    default=None,
+    type=click.Path(exists=True, file_okay=False, path_type=Path),
+    help="Repository for both sides (overridden per side by --before-repo/--after-repo)",
+)
+@click.option(
+    "--before-repo",
+    default=None,
+    type=click.Path(exists=True, file_okay=False, path_type=Path),
+    help="Repository of the before snapshot",
+)
+@click.option(
+    "--after-repo",
+    default=None,
+    type=click.Path(exists=True, file_okay=False, path_type=Path),
+    help="Repository of the after snapshot",
+)
+@_graph_root_option(
+    "--graph-root", "External graph root for both sides (default: <repo>/.atlas per side)"
+)
+@_graph_root_option("--before-graph-root", "Graph root of the before snapshot")
+@_graph_root_option("--after-graph-root", "Graph root of the after snapshot")
+@click.option(
+    "--coverage-graph-root",
+    "coverage_graph_roots",
+    multiple=True,
+    type=click.Path(file_okay=False, path_type=Path),
+    help="Extra coverage source: a graph root built for the same repository",
+)
+@click.option("--relations", default=None, help="Comma-separated propagation relations")
+@click.option("--confidence", default=None, help="Comma-separated: EXTRACTED,INFERRED")
+@click.option("--max-seeds", default=None, type=int)
+@click.option("--max-depth", default=None, type=int)
+@click.option("--max-visited-nodes", default=None, type=int)
+@click.option("--max-examined-edges", default=None, type=int)
+@click.option("--max-vm-operations", default=None, type=int)
+@click.option("--deadline-ms", default=None, type=int)
+@click.option("--max-diff-entities", default=None, type=click.IntRange(min=0))
+@click.option("--max-diff-occurrences", default=None, type=click.IntRange(min=0))
+@click.option("--max-changed-files", default=None, type=click.IntRange(min=0))
+@click.option("--max-spans", default=None, type=int)
+@click.option("--max-recommendations", default=None, type=int)
+@click.option("--max-gaps", default=None, type=int)
+@click.option("--max-evidence-per-recommendation", default=None, type=int)
+@click.option("--max-matched-lines", default=None, type=int)
+@click.option("--max-observation-rows", default=None, type=int)
+@click.option("--max-reference-probes", default=None, type=int)
+@click.option("--max-reference-rows", default=None, type=int)
+@click.option("--max-coverage-sources", default=None, type=int)
+def validation_plan(
+    repo: Path | None,
+    before_repo: Path | None,
+    after_repo: Path | None,
+    graph_root: Path | None,
+    before_graph_root: Path | None,
+    after_graph_root: Path | None,
+    coverage_graph_roots: tuple[Path, ...],
+    relations: str | None,
+    confidence: str | None,
+    max_seeds: int | None,
+    max_depth: int | None,
+    max_visited_nodes: int | None,
+    max_examined_edges: int | None,
+    max_vm_operations: int | None,
+    deadline_ms: int | None,
+    max_diff_entities: int | None,
+    max_diff_occurrences: int | None,
+    max_changed_files: int | None,
+    max_spans: int | None,
+    max_recommendations: int | None,
+    max_gaps: int | None,
+    max_evidence_per_recommendation: int | None,
+    max_matched_lines: int | None,
+    max_observation_rows: int | None,
+    max_reference_probes: int | None,
+    max_reference_rows: int | None,
+    max_coverage_sources: int | None,
+) -> None:
+    """Plan which tests to run for a change: ranked, evidence-backed, ADVISORY only.
+
+    Composes `impact` with imported per-test coverage (`import-coverage`): observed
+    execution matches a changed span only through a byte-identical file snapshot of the
+    before or after side; stale coverage is reported and never used. Uncovered spans are
+    explicit gaps. Nothing is executed, imported or collected; READ-ONLY. Nothing is
+    printed on rejection (exit 1) or invalid usage (exit 2).
+    """
+    from atlas_aci.enforcement import ToolError
+    from atlas_aci.query import diff as symbol_diff
+    from atlas_aci.query import validation
+    from atlas_aci.query.impact import Settings
+    from atlas_aci.query.impact_limits import DEFAULT_DIFF_LIMITS
+
+    first = before_repo or repo
+    second = after_repo or repo
+    if first is None or second is None:
+        raise click.UsageError("Give --repo, or both --before-repo and --after-repo.")
+    chosen = {
+        "relations": _csv(relations),
+        "confidence": _csv(confidence),
+        "max_seeds": max_seeds,
+        "max_depth": max_depth,
+        "max_visited_nodes": max_visited_nodes,
+        "max_examined_edges": max_examined_edges,
+        "max_vm_operations": max_vm_operations,
+        "deadline_ms": deadline_ms,
+        "max_spans": max_spans,
+        "max_recommendations": max_recommendations,
+        "max_gaps": max_gaps,
+        "max_evidence_per_recommendation": max_evidence_per_recommendation,
+        "max_matched_lines": max_matched_lines,
+        "max_observation_rows": max_observation_rows,
+        "max_reference_probes": max_reference_probes,
+        "max_reference_rows": max_reference_rows,
+        "max_coverage_sources": max_coverage_sources,
+    }
+    arguments = {k: v for k, v in chosen.items() if v is not None}
+    limits = {
+        "max_entities": max_diff_entities,
+        "max_occurrences": max_diff_occurrences,
+        "max_changed_files": max_changed_files,
+    }
+    settings = Settings(
+        diff_limits={**DEFAULT_DIFF_LIMITS, **{k: v for k, v in limits.items() if v is not None}}
+    )
+    try:
+        plan = validation.run(
+            symbol_diff.Side(first.resolve(), before_graph_root or graph_root),
+            symbol_diff.Side(second.resolve(), after_graph_root or graph_root),
+            arguments,
+            settings,
+            [root.resolve() for root in coverage_graph_roots],
+        )
+    except symbol_diff.DiffUsageError as exc:
+        # Fixed text: the underlying message may spell a path.
+        raise click.UsageError("A snapshot side cannot be opened as a graph namespace.") from exc
+    except ToolError as exc:
+        if exc.code in {"INVALID_INPUT", "INVALID_BUDGET"}:
+            raise click.UsageError(f"{exc.code}: {exc.message}") from exc
+        reason = getattr(exc, "reason", None)
+        raise click.ClickException(
+            f"Validation plan rejected: {exc.code}" + (f": {reason}" if reason else "")
+        ) from exc
+    except (ValueError, OSError) as exc:
+        # Never `str(exc)`: a message may carry a repository or graph-root path.
+        raise click.ClickException("Validation plan failed: " + type(exc).__name__) from exc
+    stream = click.get_binary_stream("stdout")
+    stream.write(validation.canonical_bytes(plan))
+    stream.flush()
+
+
 @cli.command()
 @click.option(
     "--repo", required=True, type=click.Path(exists=True, file_okay=False, path_type=Path)

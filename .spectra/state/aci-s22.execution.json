@@ -1,0 +1,32 @@
+{
+  "schema": "atlas-aci/slice-execution.v1",
+  "slice_id": "ACI-S22",
+  "issue_url": "https://github.com/Rynaro/atlas-aci/issues/43",
+  "criteria_sha256": "bf2e698f1ae1fc7f418674eccda6a44a57fb2609d7af4e45e969fead4c383cab",
+  "base_commit": "4843ddc8e6d7fc57716cd76f72f38435a0919846",
+  "output_commit": null,
+  "declared_paths": [
+    "mcp-server/src/atlas_aci/query/validation*",
+    "mcp-server/src/atlas_aci/tools/graph_query.py",
+    "mcp-server/tests/slices/test_s22_*.py",
+    "atlas/evals/*",
+    "mcp-server/src/atlas_aci/__main__.py",
+    "atlas/docs/*",
+    "README.md",
+    "INTEGRATION.md",
+    "CHANGELOG.md",
+    ".spectra/plans/aci-s22.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/changes/aci-s22/*",
+    ".spectra/evidence/aci-s22/*",
+    ".spectra/state/aci-s22.execution.json",
+    ".spectra/backlog/execution.json",
+    ".spectra/backlog/order.md"
+  ],
+  "output_digests": {},
+  "status": "IN_PROGRESS",
+  "started_at": "2026-11-04T00:56:47Z",
+  "planning_state": ".spectra/plans/aci-s22.state.json",
+  "plan": ".spectra/plans/aci-s22.md",
+  "results": []
+}

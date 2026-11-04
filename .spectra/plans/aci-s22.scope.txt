@@ -1,0 +1,16 @@
+mcp-server/src/atlas_aci/query/validation*
+mcp-server/src/atlas_aci/tools/graph_query.py
+mcp-server/tests/slices/test_s22_*.py
+atlas/evals/*
+mcp-server/src/atlas_aci/__main__.py
+atlas/docs/*
+README.md
+INTEGRATION.md
+CHANGELOG.md
+.spectra/plans/aci-s22.*
+.spectra/plans/ramza-calibration.jsonl
+.spectra/changes/aci-s22/*
+.spectra/evidence/aci-s22/*
+.spectra/state/aci-s22.execution.json
+.spectra/backlog/execution.json
+.spectra/backlog/order.md

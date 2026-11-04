@@ -1,0 +1,70 @@
+{
+ "slice_id": "ACI-S22",
+ "plan": ".spectra/plans/aci-s22.md",
+ "author": "orchestrator-ramza-plan-s22",
+ "checker": "atlas-s22-plan-checker",
+ "verdict": "APPROVE_WITH_CONDITIONS",
+ "method": "independent read-only code review; no commands executed",
+ "findings": [
+  {
+   "n": 1,
+   "severity": "MAJOR",
+   "summary": "AC-005 'no id present in C DB' oracle unsatisfiable: native test call assertion/evidence/occurrence ids are content-addressed and identical in C and after; restrict to coverage-record ids and C generation/snapshot ids",
+   "disposition": "accepted as plan condition 1"
+  },
+  {
+   "n": 2,
+   "severity": "MAJOR",
+   "summary": "same bytes + same run in a second root yields an identical generation_id, so the positive control and AC-006 externals trip duplicate_source unless before is build-only and externals are distinct generations",
+   "disposition": "accepted as plan condition 2"
+  },
+  {
+   "n": 3,
+   "severity": "MAJOR",
+   "summary": "unmetered bulk evidence/occurrence path loads, unbounded refs sort, index-expression exactness and deadline-free post-propagation phases; separate counters needed (ImpactWork.counts is closed)",
+   "disposition": "accepted as plan condition 3"
+  },
+  {
+   "n": 4,
+   "severity": "MINOR",
+   "summary": "match by byte overlap, not line numbers: tree-sitter and coverage line_spans disagree on lone CR; indented def header start byte excludes indentation",
+   "disposition": "accepted as plan condition 4"
+  },
+  {
+   "n": 5,
+   "severity": "MINOR",
+   "summary": "private coupling understated: impact._probe_relations and diff._check_compatible used; reimplement/pin with tests and list in docstring",
+   "disposition": "accepted as plan condition 5"
+  },
+  {
+   "n": 6,
+   "severity": "MINOR",
+   "summary": "CLI/error mapping must mirror impact.run (DiffUsageError exit 2 for sides), impact flag names, no str(exc) leaks, sync tests because of asyncio.run",
+   "disposition": "accepted as plan condition 6"
+  },
+  {
+   "n": 7,
+   "severity": "MINOR",
+   "summary": "G-VOCAB needs whole-token scan over keys/enums only; diff.UNKNOWN_REASONS uncovered_source_text collides by substring",
+   "disposition": "accepted as plan condition 7"
+  },
+  {
+   "n": 8,
+   "severity": "MINOR",
+   "summary": "method precedence for mixed A/B structural evidence undefined; D11 'no timestamps' contradicts emitted report_timestamp",
+   "disposition": "accepted as plan condition 8"
+  },
+  {
+   "n": 9,
+   "severity": "MINOR",
+   "summary": "eval 'S20 precedent' is wrong (S20 comparison is a test); load script via importlib spec; state ruff/mypy coverage of atlas/evals",
+   "disposition": "accepted as plan condition 9"
+  },
+  {
+   "n": 10,
+   "severity": "MINOR",
+   "summary": "AC-004 spy hygiene: catch raising liveness control, assert spy installed, install after builds/git init, extend spied primitives, sentinel placed before R0 build",
+   "disposition": "accepted as plan condition 10"
+  }
+ ]
+}

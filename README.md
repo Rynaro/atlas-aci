@@ -922,6 +922,7 @@ digest never changes. Each release's notes include the exact
 | [`atlas/docs/coverage-import.md`](atlas/docs/coverage-import.md) | Importing per-test Python coverage observations (`atlas-aci coverage-probe` / `coverage-manifest` / `import-coverage`) |
 | [`atlas/docs/symbol-diff.md`](atlas/docs/symbol-diff.md) | Comparing two indexed snapshots at symbol and contract boundaries (`atlas-aci diff`) |
 | [`atlas/docs/change-impact.md`](atlas/docs/change-impact.md) | Potential change impact through typed reverse paths (`graph_query op=impact`, `atlas-aci impact`) |
+| [`atlas/docs/validation-plan.md`](atlas/docs/validation-plan.md) | Evidence-backed, advisory validation plan from impact plus observed coverage (`atlas-aci validation-plan`; CLI only, no MCP op) |
 | [`SETUP.md`](SETUP.md) | End-to-end playbook: install → host wiring → canaries → hardening |
 | [`INTEGRATION.md`](INTEGRATION.md) | Onboarding an existing codebase: indexing, skip tuning, freshness, multi-repo |
 | [`CLAUDE.md`](CLAUDE.md) | How Claude Code should navigate this repo when opened in an agent loop |

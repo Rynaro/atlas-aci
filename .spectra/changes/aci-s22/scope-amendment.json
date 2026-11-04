@@ -1,0 +1,63 @@
+{
+  "slice_id": "ACI-S22",
+  "base_commit": "4843ddc",
+  "recorded_before_implementation": true,
+  "declared_by_issue": [
+    "mcp-server/src/atlas_aci/query/validation*",
+    "mcp-server/src/atlas_aci/tools/graph_query.py",
+    "mcp-server/tests/slices/test_s22_*.py",
+    "atlas/evals/*"
+  ],
+  "added": [
+    {"path": "mcp-server/src/atlas_aci/__main__.py", "reason": "Orchestrator decision 1: operator CLI `atlas-aci validation-plan` mirroring `impact` Side flags plus repeatable --coverage-graph-root; no MCP surface"},
+    {"path": "atlas/docs/*", "reason": "New atlas/docs/validation-plan.md (record shape, matching rule, enums, ranker, limits, limitations); S20/S21 doc precedent"},
+    {"path": "README.md", "reason": "Pointer to validation-plan command and doc"},
+    {"path": "INTEGRATION.md", "reason": "Operator workflow: build before/after, import coverage, run validation-plan; advisory-only semantics"},
+    {"path": "CHANGELOG.md", "reason": "ACI-S22 entry"},
+    {"path": ".spectra/plans/aci-s22.*", "reason": "Ramza plan, criteria, state, review"},
+    {"path": ".spectra/plans/ramza-calibration.jsonl", "reason": "Ramza calibration append"},
+    {"path": ".spectra/changes/aci-s22/*", "reason": "This amendment"},
+    {"path": ".spectra/evidence/aci-s22/*", "reason": "Day-1 qualification, base invariants, plan-comparison eval output"},
+    {"path": ".spectra/state/aci-s22.execution.json", "reason": "Authoritative execution receipt (AC-RUN-01/02)"},
+    {"path": ".spectra/backlog/execution.json", "reason": "Backlog status update"},
+    {"path": ".spectra/backlog/order.md", "reason": "Backlog order update"}
+  ],
+  "declared_but_must_remain_unchanged": [
+    {"path": "mcp-server/src/atlas_aci/tools/graph_query.py", "reason": "No MCP op this slice (orchestrator decision 1); G-SURFACE asserts byte-unchanged"}
+  ],
+  "explicitly_untouched_gated": [
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/src/atlas_aci/storage/",
+    "mcp-server/src/atlas_aci/extractors/",
+    "mcp-server/src/atlas_aci/providers/",
+    "mcp-server/src/atlas_aci/indexing/",
+    "mcp-server/src/atlas_aci/resolvers/",
+    "mcp-server/src/atlas_aci/query/impact.py",
+    "mcp-server/src/atlas_aci/query/impact_limits.py",
+    "mcp-server/src/atlas_aci/query/impact_work.py",
+    "mcp-server/src/atlas_aci/query/impact_admission.py",
+    "mcp-server/src/atlas_aci/query/diff.py",
+    "mcp-server/src/atlas_aci/query/diff_syntax.py",
+    "mcp-server/src/atlas_aci/query/indexed.py",
+    "mcp-server/src/atlas_aci/query/traversal.py",
+    "mcp-server/src/atlas_aci/query/admission.py",
+    "mcp-server/src/atlas_aci/query/paging.py",
+    "mcp-server/src/atlas_aci/protocol/",
+    "mcp-server/src/atlas_aci/tools/",
+    "mcp-server/src/atlas_aci/server.py",
+    "mcp-server/src/atlas_aci/enforcement.py",
+    "mcp-server/src/atlas_aci/config.py",
+    "mcp-server/pyproject.toml",
+    "mcp-server/uv.lock",
+    "mcp-server/tests/fixtures/"
+  ],
+  "invariants": {
+    "tools_json_sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+    "tools_json_bytes": 1631472,
+    "MINIMUM_BUDGET": 3436,
+    "COLLECTION_MINIMUM_BUDGET": 3448,
+    "FIXED_ERROR_ENVELOPE_CAP": 797,
+    "IMPACT_MINIMUM_BUDGET": 7730,
+    "READ_ONLY_TOOLS_count": 7
+  }
+}
