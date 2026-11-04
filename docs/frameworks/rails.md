@@ -357,3 +357,187 @@ and snapshot ids differ from the previous release and existing indexes rebuild i
 first `--since` run; entity ids, occurrence ids and projection row contents are unchanged. On
 the same code, the flag-on graph minus the rails_models-owned records equals the flag-off graph on
 every record id.
+
+# Jobs and enqueue argument paths (ACI-S26)
+
+A third opt-in, build-time adapter, `rails_jobs`, records **direct** job enqueues of a
+repository: a literal `Worker.perform_async(...)` or `Job.perform_later(...)` is linked to the one
+explicit `perform` method of the class it names, and, when the argument boundary is simple enough
+to state exactly, positional argument `i` is mapped to parameter `i` of that `perform`. Like the
+other adapters it never boots Rails, runs Ruby, touches Redis, Sidekiq or ActiveJob, enqueues or
+runs a job, or evaluates an argument, and it adds shared-store evidence records only: **no** MCP
+operation, tool, enum, traversal, `edges` row or entity kind.
+
+```sh
+atlas-aci index --repo /path/to/rails/app --frameworks rails_jobs
+atlas-aci index --repo /path/to/rails/app --frameworks rails,rails_jobs,rails_models
+```
+
+```python
+CodeGraph(repo, frameworks=("rails_jobs",))
+```
+
+`rails_jobs` needs the `ruby` language and has no other option. The adapters are independent:
+each has its own producer (`{"rails_jobs": {adapter, adapter_sha256, graph_producer_id}}`), its
+own manifest key (`rails_jobs`, format `atlas-rails-jobs.v1`) and its own records, and each build
+purges and recomputes only the records of the adapters that are enabled. Toggling `rails_jobs`
+leaves the route and model records byte-identical.
+
+## What is read
+
+Every indexed `.rb` file whose bytes mention one of `perform_async`, `perform_later`,
+`perform_in`, `perform_at`, `Sidekiq::Worker`, `Sidekiq::Job`, `ApplicationJob`,
+`ActiveJob::Base` or `def perform` (specs included) is captured and re-parsed with tree-sitter;
+other Ruby files are not retained. The adapter reads exactly the files the build indexed: a path
+under a skip pattern (a path component such as `tmp`, `storage` or `build`) is not indexed and
+therefore not read either.
+
+* **Enqueue sites** are found through the build's `refs` rows for the four method names and
+  located by the byte span of the method identifier in a per-file parse; a row that does not
+  locate a `call` node is counted (`sites.unlocated`) and never guessed.
+* **Direct constant receivers only:** `Foo.perform_async(...)`, `A::B.perform_later(...)`,
+  `::Foo.perform_later(...)`.
+* **Recognition:** `perform_async` needs a class with a direct `include Sidekiq::Worker` or
+  `include Sidekiq::Job` (an optional leading `::`); `perform_later` needs a direct superclass
+  `ApplicationJob`, `ActiveJob::Base` or `::ActiveJob::Base`. Custom base classes, mixins
+  (`ApplicationWorker`, `< BaseJob`), `include` inside a conditional and an inherited `perform`
+  are **not** recognised and yield `target_not_recognized_job`.
+* **The target** is an explicit instance `def perform` that is a direct statement of the class
+  body. `def self.perform`, `class << self`, `private def perform` and any inherited or
+  module-provided `perform` are never read.
+* `perform_now`, `perform_sync`, `perform_inline`, `.new.perform`, `delay`, `perform_bulk`,
+  `send`/`public_send`, comments and string literals are silent: no record and no diagnostic.
+
+## Resolution
+
+The candidate names of a receiver `R` are the lexical ones, innermost first: for every enclosing
+class or module `S` in `Module.nesting` order, `S::R`, then `R` itself (a rooted `::R` names
+exactly `R`; with no enclosing scope the only candidate is `R`). Existence is checked over every
+class and module of the repository. Then:
+
+* exactly one existing name with exactly one recognised `perform`: `INFERRED` to that method;
+* two or more recognised `perform` methods (two files declaring the same class, or two lexical
+  candidates): `AMBIGUOUS` with the sorted candidate method ids, reason `ambiguous_job_target`;
+* no existing name: `UNRESOLVED` `job_class_not_found`; a recognised class without an explicit
+  `perform`: `perform_not_found`; anything else (not a job, wrong mechanism for the method,
+  several existing names but one `perform`, an inherited job): `target_not_recognized_job`.
+
+A site whose enclosing classes or modules cannot be stated lexically is `UNRESOLVED` with the
+`unbound_namespace` diagnostic: a class that is not a plain `constant` or `A::B` name, a rooted
+`class ::A`, or a compact name such as `class Inner::Thing` **inside** another class or module
+(Ruby may define it outside the lexical parent). A top-level compact `class A::B` is bound, and
+`module Billing; class Nightly` resolves through `Billing::Nightly` then `Billing`. A name that
+has a class or module definition in a file the adapter could not read (a file over a size or
+count cap, a file that fails to parse, an unbound or unmatched class) never resolves to
+`INFERRED` or `AMBIGUOUS`; it is `target_not_recognized_job`.
+
+Atlas does **not** evaluate Ruby constant lookup: Ruby picks the first lexical candidate, then
+the ancestors of the innermost scope, then top level; Atlas evaluates neither precedence nor
+ancestor lookup, it reports. A reopened job with two `def perform` is `AMBIGUOUS` although Ruby
+keeps the last one.
+
+## Records
+
+Per enqueue and per argument, in the shared store (path = the enqueuing file): a `rails_job`
+**occurrence** (the exact `call` span, or the argument expression span), evidence from the
+`rails_jobs` producer and one assertion. The assertion source is the enclosing method, class or
+module entity of the site (the file entity at top level, in a spec block or under an uncaptured
+wrapper); the occurrence entity is the same entity.
+
+| Relation | role | resolution | target | `unresolved_reason` |
+| --- | --- | --- | --- | --- |
+| `async_enqueue` | `rails_job:enqueue:perform_async` / `perform_later` | `INFERRED` | the `perform` method | none |
+| `async_enqueue` | same | `AMBIGUOUS` | none (sorted candidate ids) | `ambiguous_job_target` |
+| `async_enqueue` | same | `UNRESOLVED` | none | `job_class_not_found`, `perform_not_found`, `target_not_recognized_job` |
+| `async_enqueue` | `rails_job:enqueue:unsupported:<construct>` | `UNRESOLVED` | none | `unsupported_argument_mapping` |
+| `async_argument` | `rails_job:argument:mapped` | `INFERRED` | the same `perform` method | none |
+| `async_argument` | `rails_job:argument:unsupported:<construct>` | `UNRESOLVED` | none | `unsupported_argument_mapping` |
+
+An enqueue's canonical `raw_target` is `{"arguments","arity","kind","mapping":"rails_job_receiver.v1",
+"mechanism","receiver"}` plus `"construct"` when `arguments` is `unsupported`; `arguments` is
+`mapped`, `none` (no argument), `unbound` (no single target) or `unsupported`; `mechanism` is
+`sidekiq` for `perform_async` and `active_job` for `perform_later`; diagnostics use the mapping
+label `unexpanded`. A mapped argument
+is `{"arg","enqueue","mapping":"rails_job_positional.v1","param","param_name"}` with
+`arg == param`; `enqueue` is the id of the enqueue occurrence. Values are never evaluated or
+copied: no `raw_target` holds argument source text.
+
+**What a mapping says:** positional argument `i` of the enqueue is delivered to parameter `i` of
+the `perform`, by span. The fixed positional part of a `perform` is its leading required
+parameters then its optional ones; the arity is compatible when it lies between the number of
+required and the number of required plus optional parameters. Serialisation of arguments (JSON,
+GlobalID), keyword transformation and middleware are **not** modelled, and the mapping is not
+proof that anything ran. A heredoc argument spans only its opener.
+
+### Unsupported forms (`unsupported_argument_mapping`)
+
+* **The enqueue itself is the diagnostic** (role `rails_job:enqueue:unsupported:<construct>`,
+  `UNRESOLVED` `unsupported_argument_mapping`, no argument records): `dynamic_receiver` (a
+  non-constant receiver, a call or `self.class` receiver, or a **receiverless** call such as
+  `perform_async(x)` inside the job class), `set_chain` (`Job.set(...).perform_later`),
+  `delayed_enqueue` (`perform_in`, `perform_at`), `unbound_namespace` and `site_limit`.
+* **The enqueue keeps its resolution** when the receiver resolves but the arguments cannot be
+  mapped: splat, hash splat, bare keyword arguments, a block argument, a block, forwarded
+  arguments (`...`), more than 16 arguments, a `perform` signature the mapping cannot state
+  (`*args`, a required keyword, a required parameter after an optional one, destructuring or
+  forwarding) and an incompatible arity. Its `raw_target` carries `"arguments":"unsupported"` and
+  the construct code (`forwarded_arguments`, `splat`, `hash_splat`, `keyword_arguments`,
+  `block_argument`, `block`, `argument_limit`, `unsupported_signature`, `arity_mismatch`) and
+  **no partial mapping is emitted**. An `INFERRED` assertion must keep a null reason, so the
+  `unsupported_argument_mapping` reason lives on exactly one `async_argument` diagnostic that
+  references the enqueue occurrence (span: the offending argument node, the argument list or the
+  call). An `AMBIGUOUS` or `UNRESOLVED` enqueue with a call-side construct keeps its candidate
+  set and reason and also carries that one diagnostic.
+
+## Async boundary
+
+`async_enqueue` is an **asynchronous boundary**, not a call, and not proof that the job ran. The
+relations are only in the evidence store's assertion relation set: they are in none of
+`RELATIONS`, `REFERENCE_RELATIONS` or `EDGE_RELATIONS`, never produce an `edges` row, are not
+traversable and are not MCP enum values, so MCP traversal never reaches a `perform` through an
+enqueue. The native call graph is unchanged (`HardWorker.new.perform(1)` stays an ordinary
+`call`). Inspect the records with the evidence export (`atlas-aci export`) and the manifest key
+`rails_jobs`: `format`, `adapter`, `adapter_sha256`, `files`
+(`captured scanned failed limited`), `classes` (`jobs unbound`), `performs`, `sites`
+(`located unlocated skipped limited`), `facts` per relation and resolution, `truncated`,
+`producer_id`.
+
+## Limitations
+
+* Out of scope: Redis, Sidekiq and ActiveJob runtime behaviour, enqueue execution, scheduler
+  inspection, app boot, serialisation, middleware, retries, interprocedural dataflow,
+  `perform_bulk`, `.rake` files and Ruby ancestor-chain constant lookup.
+* **Silent limits** (no record, no diagnostic, or a diagnostic that says less than the truth):
+  a receiverless self-enqueue is `dynamic_receiver`; `send` and `public_send` are invisible;
+  class definitions in skip-pattern files are invisible (the name is `job_class_not_found`) and in
+  files that fail to parse make the name `target_not_recognized_job`; constant assignment
+  (`Worker = Class.new`) and `Class.new` shadows are not modelled; for a multi-segment receiver
+  `A::B` only the first segment `A` is resolved lexically by Ruby, then `B` is looked up inside
+  `A` and its ancestors: Atlas looks up the whole joined name once per lexical scope and does not
+  model that ancestor lookup.
+* **Bounds:** at most 10000 captured files, 1 MiB per file and 64 MiB in total (`files.limited`),
+  5000 enqueue sites (the next one is a single `site_limit` diagnostic, the rest are counted in
+  `sites.limited`) and 16 arguments per enqueue (`argument_limit`). Any of these sets `truncated`.
+* A file that fails to parse yields no facts for that generation (`files.failed`) and its
+  earlier facts are never resurrected from history.
+* **Cost:** the captured bytes are retained only when the adapter is on, and every enabled build
+  re-parses the captured files outside `cache_stats` and the extraction cache. A build without
+  the flag parses nothing extra. `rails_job` occurrences count toward `graph_query op=impact`
+  diff admission (at most 5001 sites times 17 records).
+
+## Incremental builds, identity and churn
+
+The facts are a derived global function of the captured bytes, the Ruby `symbols` and `refs`
+tables and the adapter. They are rebuilt by the adapter on every enabled build, not republished
+per file through the S10 plan: S10 contributes the per-file `remove_path` for changed or removed
+files and the `affected` classification. This slice does not claim that editing a job file puts
+the enqueuing file in `affected_paths` (a parameters-only edit leaves every `symbols` row
+unchanged); the facts are nevertheless exact, because the recompute is global. A build without
+the flag purges every `rails_jobs` record (gated on a producer or manifest-key probe).
+
+Adapter identity lives in the producer fingerprint and the manifest key, not in the generation
+configuration. Editing `codegraph.py` and `storage/evidence.py` changes the native producer id
+again, so for **every** graph, flag on or off, evidence, assertion, link, generation and snapshot
+ids differ from the previous release and existing indexes rebuild in full on the first `--since`
+run; entity ids, occurrence ids and projection row contents are unchanged. On the same code, the
+flag-on graph minus the rails_jobs-owned records equals the flag-off graph on every record id.

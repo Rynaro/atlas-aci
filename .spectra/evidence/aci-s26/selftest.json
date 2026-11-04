@@ -1,0 +1,36 @@
+{
+ "all_manifest_keys": true,
+ "class_collisions": [],
+ "counts": {
+  "rails": {
+   "assertions": 35,
+   "evidence": 35,
+   "occurrences": 35
+  },
+  "rails_jobs": {
+   "assertions": 69,
+   "evidence": 69,
+   "occurrences": 69
+  },
+  "rails_models": {
+   "assertions": 58,
+   "evidence": 58,
+   "occurrences": 58
+  }
+ },
+ "each_adapter_equals_its_single_build": true,
+ "no_class_collision_between_fixtures": true,
+ "no_path_collision_between_fixtures": true,
+ "ok": true,
+ "one_producer_each": true,
+ "owned_occurrence_sets_disjoint": true,
+ "path_collisions": [],
+ "rails_jobs_nonzero": true,
+ "rails_models_nonzero": true,
+ "rails_nonzero": true,
+ "s24_s25_shared_namespaces_not_involving_s26": [
+  "Admin",
+  "Legacy"
+ ],
+ "union_excluded_from_native": true
+}

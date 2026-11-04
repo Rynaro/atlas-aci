@@ -233,6 +233,8 @@ def test_envelope_minimums_and_relation_sets_are_the_base_values():
         | {
             "test_executes",
             "routes_to",
+            "async_enqueue",
+            "async_argument",
             *RELATIONS3,
         }
         == ev.ASSERTION_RELATIONS

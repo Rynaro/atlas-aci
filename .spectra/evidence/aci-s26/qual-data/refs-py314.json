@@ -1,0 +1,2467 @@
+{
+ "definitions": [
+  {
+   "line": 1,
+   "name": "ApplicationJob",
+   "node": "class",
+   "path": "app/jobs/application_job.rb",
+   "rows": [
+    {
+     "binding": {
+      "byte": 0,
+      "category": "class",
+      "identity": "ruby:app/jobs/application_job.rb:class:0:42",
+      "namespace": "ApplicationJob",
+      "owner": null,
+      "receiver": null,
+      "scope": "ruby:app/jobs/application_job.rb:root",
+      "scopes": [
+       "ruby:app/jobs/application_job.rb:root"
+      ],
+      "self_name": null,
+      "self_scope": null,
+      "source_kind": null,
+      "source_name": null,
+      "this_allowed": false,
+      "unsupported": false
+     },
+     "kind": "class",
+     "name": "ApplicationJob"
+    }
+   ],
+   "starts_with": "class Applic"
+  },
+  {
+   "line": 1,
+   "name": "Billing",
+   "node": "module",
+   "path": "app/jobs/billing/sync_job.rb",
+   "rows": [
+    {
+     "binding": {
+      "byte": 0,
+      "category": "class",
+      "identity": "ruby:app/jobs/billing/sync_job.rb:module:0:104",
+      "namespace": "Billing",
+      "owner": null,
+      "receiver": null,
+      "scope": "ruby:app/jobs/billing/sync_job.rb:root",
+      "scopes": [
+       "ruby:app/jobs/billing/sync_job.rb:root"
+      ],
+      "self_name": null,
+      "self_scope": null,
+      "source_kind": null,
+      "source_name": null,
+      "this_allowed": false,
+      "unsupported": false
+     },
+     "kind": "module",
+     "name": "Billing"
+    }
+   ],
+   "starts_with": "module Billi"
+  },
+  {
+   "line": 2,
+   "name": "SyncJob",
+   "node": "class",
+   "path": "app/jobs/billing/sync_job.rb",
+   "rows": [
+    {
+     "binding": {
+      "byte": 17,
+      "category": "class",
+      "identity": "ruby:app/jobs/billing/sync_job.rb:class:17:100",
+      "namespace": "Billing::SyncJob",
+      "owner": "ruby:Billing",
+      "receiver": null,
+      "scope": "ruby:app/jobs/billing/sync_job.rb:module:0:104",
+      "scopes": [
+       "ruby:app/jobs/billing/sync_job.rb:module:0:104",
+       "ruby:app/jobs/billing/sync_job.rb:root"
+      ],
+      "self_name": null,
+      "self_scope": null,
+      "source_kind": "module",
+      "source_name": "Billing",
+      "this_allowed": false,
+      "unsupported": false
+     },
+     "kind": "class",
+     "name": "SyncJob"
+    }
+   ],
+   "starts_with": "class SyncJo"
+  },
+  {
+   "line": 3,
+   "name": "perform",
+   "node": "method",
+   "path": "app/jobs/billing/sync_job.rb",
+   "rows": [
+    {
+     "binding": {
+      "byte": 52,
+      "category": "instance",
+      "identity": "ruby:app/jobs/billing/sync_job.rb:method:52:94",
+      "namespace": "Billing::SyncJob",
+      "owner": "ruby:Billing::SyncJob",
+      "receiver": null,
+      "scope": "ruby:app/jobs/billing/sync_job.rb:class:17:100",
+      "scopes": [
+       "ruby:app/jobs/billing/sync_job.rb:class:17:100",
+       "ruby:app/jobs/billing/sync_job.rb:module:0:104",
+       "ruby:app/jobs/billing/sync_job.rb:root"
+      ],
+      "self_name": null,
+      "self_scope": null,
+      "source_kind": "class",
+      "source_name": "SyncJob",
+      "this_allowed": false,
+      "unsupported": false
+     },
+     "kind": "method",
+     "name": "perform"
+    }
+   ],
+   "starts_with": "def perform("
+  },
+  {
+   "line": 1,
+   "name": "ExportJob",
+   "node": "class",
+   "path": "app/jobs/export_job.rb",
+   "rows": [
+    {
+     "binding": {
+      "byte": 0,
+      "category": "class",
+      "identity": "ruby:app/jobs/export_job.rb:class:0:67",
+      "namespace": "ExportJob",
+      "owner": null,
+      "receiver": null,
+      "scope": "ruby:app/jobs/export_job.rb:root",
+      "scopes": [
+       "ruby:app/jobs/export_job.rb:root"
+      ],
+      "self_name": null,
+      "self_scope": null,
+      "source_kind": null,
+      "source_name": null,
+      "this_allowed": false,
+      "unsupported": false
+     },
+     "kind": "class",
+     "name": "ExportJob"
+    }
+   ],
+   "starts_with": "class Export"
+  },
+  {
+   "line": 2,
+   "name": "perform",
+   "node": "method",
+   "path": "app/jobs/export_job.rb",
+   "rows": [
+    {
+     "binding": {
+      "byte": 35,
+      "category": "instance",
+      "identity": "ruby:app/jobs/export_job.rb:method:35:63",
+      "namespace": "ExportJob",
+      "owner": "ruby:ExportJob",
+      "receiver": null,
+      "scope": "ruby:app/jobs/export_job.rb:class:0:67",
+      "scopes": [
+       "ruby:app/jobs/export_job.rb:class:0:67",
+       "ruby:app/jobs/export_job.rb:root"
+      ],
+      "self_name": null,
+      "self_scope": null,
+      "source_kind": "class",
+      "source_name": "ExportJob",
+      "this_allowed": false,
+      "unsupported": false
+     },
+     "kind": "method",
+     "name": "perform"
+    }
+   ],
+   "starts_with": "def perform("
+  },
+  {
+   "line": 1,
+   "name": "InheritedJob",
+   "node": "class",
+   "path": "app/jobs/inherited_job.rb",
+   "rows": [
+    {
+     "binding": {
+      "byte": 0,
+      "category": "class",
+      "identity": "ruby:app/jobs/inherited_job.rb:class:0:34",
+      "namespace": "InheritedJob",
+      "owner": null,
+      "receiver": null,
+      "scope": "ruby:app/jobs/inherited_job.rb:root",
+      "scopes": [
+       "ruby:app/jobs/inherited_job.rb:root"
+      ],
+      "self_name": null,
+      "self_scope": null,
+      "source_kind": null,
+      "source_name": null,
+      "this_allowed": false,
+      "unsupported": false
+     },
+     "kind": "class",
+     "name": "InheritedJob"
+    }
+   ],
+   "starts_with": "class Inheri"
+  },
+  {
+   "line": 1,
+   "name": "NoPerformJob",
+   "node": "class",
+   "path": "app/jobs/no_perform_job.rb",
+   "rows": [
+    {
+     "binding": {
+      "byte": 0,
+      "category": "class",
+      "identity": "ruby:app/jobs/no_perform_job.rb:class:0:131",
+      "namespace": "NoPerformJob",
+      "owner": null,
+      "receiver": null,
+      "scope": "ruby:app/jobs/no_perform_job.rb:root",
+      "scopes": [
+       "ruby:app/jobs/no_perform_job.rb:root"
+      ],
+      "self_name": null,
+      "self_scope": null,
+      "source_kind": null,
+      "source_name": null,
+      "this_allowed": false,
+      "unsupported": false
+     },
+     "kind": "class",
+     "name": "NoPerformJob"
+    }
+   ],
+   "starts_with": "class NoPerf"
+  },
+  {
+   "line": 2,
+   "name": "perform",
+   "node": "singleton_method",
+   "path": "app/jobs/no_perform_job.rb",
+   "rows": [
+    {
+     "binding": {
+      "byte": 38,
+      "category": "static",
+      "identity": "ruby:app/jobs/no_perform_job.rb:singleton_method:38:69",
+      "namespace": "NoPerformJob",
+      "owner": "ruby:NoPerformJob",
+      "receiver": null,
+      "scope": "ruby:app/jobs/no_perform_job.rb:class:0:131",
+      "scopes": [
+       "ruby:app/jobs/no_perform_job.rb:class:0:131",
+       "ruby:app/jobs/no_perform_job.rb:root"
+      ],
+      "self_name": null,
+      "self_scope": null,
+      "source_kind": "class",
+      "source_name": "NoPerformJob",
+      "this_allowed": false,
+      "unsupported": false
+     },
+     "kind": "method",
+     "name": "perform"
+    }
+   ],
+   "starts_with": "def self.per"
+  },
+  {
+   "line": 7,
+   "name": "perform",
+   "node": "method",
+   "path": "app/jobs/no_perform_job.rb",
+   "rows": [
+    {
+     "binding": {
+      "byte": 91,
+      "category": "static",
+      "identity": "ruby:app/jobs/no_perform_job.rb:method:91:121",
+      "namespace": "NoPerformJob",
+      "owner": "ruby:NoPerformJob",
+      "receiver": null,
+      "scope": "ruby:app/jobs/no_perform_job.rb:singleton_class:73:127",
+      "scopes": [
+       "ruby:app/jobs/no_perform_job.rb:singleton_class:73:127",
+       "ruby:app/jobs/no_perform_job.rb:class:0:131",
+       "ruby:app/jobs/no_perform_job.rb:root"
+      ],
+      "self_name": null,
+      "self_scope": null,
+      "source_kind": "class",
+      "source_name": "NoPerformJob",
+      "this_allowed": false,
+      "unsupported": true
+     },
+     "kind": "method",
+     "name": "perform"
+    }
+   ],
+   "starts_with": "def perform("
+  },
+  {
+   "line": 1,
+   "name": "ReportJob",
+   "node": "class",
+   "path": "app/jobs/report_job.rb",
+   "rows": [
+    {
+     "binding": {
+      "byte": 0,
+      "category": "class",
+      "identity": "ruby:app/jobs/report_job.rb:class:0:93",
+      "namespace": "ReportJob",
+      "owner": null,
+      "receiver": null,
+      "scope": "ruby:app/jobs/report_job.rb:root",
+      "scopes": [
+       "ruby:app/jobs/report_job.rb:root"
+      ],
+      "self_name": null,
+      "self_scope": null,
+      "source_kind": null,
+      "source_name": null,
+      "this_allowed": false,
+      "unsupported": false
+     },
+     "kind": "class",
+     "name": "ReportJob"
+    }
+   ],
+   "starts_with": "class Report"
+  },
+  {
+   "line": 2,
+   "name": "perform",
+   "node": "method",
+   "path": "app/jobs/report_job.rb",
+   "rows": [
+    {
+     "binding": {
+      "byte": 35,
+      "category": "instance",
+      "identity": "ruby:app/jobs/report_job.rb:method:35:89",
+      "namespace": "ReportJob",
+      "owner": "ruby:ReportJob",
+      "receiver": null,
+      "scope": "ruby:app/jobs/report_job.rb:class:0:93",
+      "scopes": [
+       "ruby:app/jobs/report_job.rb:class:0:93",
+       "ruby:app/jobs/report_job.rb:root"
+      ],
+      "self_name": null,
+      "self_scope": null,
+      "source_kind": "class",
+      "source_name": "ReportJob",
+      "this_allowed": false,
+      "unsupported": false
+     },
+     "kind": "method",
+     "name": "perform"
+    }
+   ],
+   "starts_with": "def perform("
+  },
+  {
+   "line": 1,
+   "name": "SentinelJob",
+   "node": "class",
+   "path": "app/jobs/sentinel_job.rb",
+   "rows": [
+    {
+     "binding": {
+      "byte": 0,
+      "category": "class",
+      "identity": "ruby:app/jobs/sentinel_job.rb:class:0:237",
+      "namespace": "SentinelJob",
+      "owner": null,
+      "receiver": null,
+      "scope": "ruby:app/jobs/sentinel_job.rb:root",
+      "scopes": [
+       "ruby:app/jobs/sentinel_job.rb:root"
+      ],
+      "self_name": null,
+      "self_scope": null,
+      "source_kind": null,
+      "source_name": null,
+      "this_allowed": false,
+      "unsupported": false
+     },
+     "kind": "class",
+     "name": "SentinelJob"
+    }
+   ],
+   "starts_with": "class Sentin"
+  },
+  {
+   "line": 5,
+   "name": "perform",
+   "node": "method",
+   "path": "app/jobs/sentinel_job.rb",
+   "rows": [
+    {
+     "binding": {
+      "byte": 184,
+      "category": "instance",
+      "identity": "ruby:app/jobs/sentinel_job.rb:method:184:233",
+      "namespace": "SentinelJob",
+      "owner": "ruby:SentinelJob",
+      "receiver": null,
+      "scope": "ruby:app/jobs/sentinel_job.rb:class:0:237",
+      "scopes": [
+       "ruby:app/jobs/sentinel_job.rb:class:0:237",
+       "ruby:app/jobs/sentinel_job.rb:root"
+      ],
+      "self_name": null,
+      "self_scope": null,
+      "source_kind": "class",
+      "source_name": "SentinelJob",
+      "this_allowed": false,
+      "unsupported": false
+     },
+     "kind": "method",
+     "name": "perform"
+    }
+   ],
+   "starts_with": "def perform("
+  },
+  {
+   "line": 1,
+   "name": "SyncJob",
+   "node": "class",
+   "path": "app/jobs/sync_job.rb",
+   "rows": [
+    {
+     "binding": {
+      "byte": 0,
+      "category": "class",
+      "identity": "ruby:app/jobs/sync_job.rb:class:0:92",
+      "namespace": "SyncJob",
+      "owner": null,
+      "receiver": null,
+      "scope": "ruby:app/jobs/sync_job.rb:root",
+      "scopes": [
+       "ruby:app/jobs/sync_job.rb:root"
+      ],
+      "self_name": null,
+      "self_scope": null,
+      "source_kind": null,
+      "source_name": null,
+      "this_allowed": false,
+      "unsupported": false
+     },
+     "kind": "class",
+     "name": "SyncJob"
+    }
+   ],
+   "starts_with": "class SyncJo"
+  },
+  {
+   "line": 2,
+   "name": "perform",
+   "node": "method",
+   "path": "app/jobs/sync_job.rb",
+   "rows": [
+    {
+     "binding": {
+      "byte": 36,
+      "category": "instance",
+      "identity": "ruby:app/jobs/sync_job.rb:method:36:88",
+      "namespace": "SyncJob",
+      "owner": "ruby:SyncJob",
+      "receiver": null,
+      "scope": "ruby:app/jobs/sync_job.rb:class:0:92",
+      "scopes": [
+       "ruby:app/jobs/sync_job.rb:class:0:92",
+       "ruby:app/jobs/sync_job.rb:root"
+      ],
+      "self_name": null,
+      "self_scope": null,
+      "source_kind": "class",
+      "source_name": "SyncJob",
+      "this_allowed": false,
+      "unsupported": false
+     },
+     "kind": "method",
+     "name": "perform"
+    }
+   ],
+   "starts_with": "def perform("
+  },
+  {
+   "line": 1,
+   "name": "Billing",
+   "node": "module",
+   "path": "app/services/billing/nightly.rb",
+   "rows": [
+    {
+     "binding": {
+      "byte": 0,
+      "category": "class",
+      "identity": "ruby:app/services/billing/nightly.rb:module:0:127",
+      "namespace": "Billing",
+      "owner": null,
+      "receiver": null,
+      "scope": "ruby:app/services/billing/nightly.rb:root",
+      "scopes": [
+       "ruby:app/services/billing/nightly.rb:root"
+      ],
+      "self_name": null,
+      "self_scope": null,
+      "source_kind": null,
+      "source_name": null,
+      "this_allowed": false,
+      "unsupported": false
+     },
+     "kind": "module",
+     "name": "Billing"
+    }
+   ],
+   "starts_with": "module Billi"
+  },
+  {
+   "line": 2,
+   "name": "Nightly",
+   "node": "class",
+   "path": "app/services/billing/nightly.rb",
+   "rows": [
+    {
+     "binding": {
+      "byte": 17,
+      "category": "class",
+      "identity": "ruby:app/services/billing/nightly.rb:class:17:123",
+      "namespace": "Billing::Nightly",
+      "owner": "ruby:Billing",
+      "receiver": null,
+      "scope": "ruby:app/services/billing/nightly.rb:module:0:127",
+      "scopes": [
+       "ruby:app/services/billing/nightly.rb:module:0:127",
+       "ruby:app/services/billing/nightly.rb:root"
+      ],
+      "self_name": null,
+      "self_scope": null,
+      "source_kind": "module",
+      "source_name": "Billing",
+      "this_allowed": false,
+      "unsupported": false
+     },
+     "kind": "class",
+     "name": "Nightly"
+    }
+   ],
+   "starts_with": "class Nightl"
+  },
+  {
+   "line": 1,
+   "name": "Enqueuer",
+   "node": "class",
+   "path": "app/services/enqueuer.rb",
+   "rows": [
+    {
+     "binding": {
+      "byte": 0,
+      "category": "class",
+      "identity": "ruby:app/services/enqueuer.rb:class:0:1701",
+      "namespace": "Enqueuer",
+      "owner": null,
+      "receiver": null,
+      "scope": "ruby:app/services/enqueuer.rb:root",
+      "scopes": [
+       "ruby:app/services/enqueuer.rb:root"
+      ],
+      "self_name": null,
+      "self_scope": null,
+      "source_kind": null,
+      "source_name": null,
+      "this_allowed": false,
+      "unsupported": false
+     },
+     "kind": "class",
+     "name": "Enqueuer"
+    }
+   ],
+   "starts_with": "class Enqueu"
+  },
+  {
+   "line": 1,
+   "name": "Outer",
+   "node": "module",
+   "path": "app/services/outer.rb",
+   "rows": [
+    {
+     "binding": {
+      "byte": 0,
+      "category": "class",
+      "identity": "ruby:app/services/outer.rb:module:0:98",
+      "namespace": "Outer",
+      "owner": null,
+      "receiver": null,
+      "scope": "ruby:app/services/outer.rb:root",
+      "scopes": [
+       "ruby:app/services/outer.rb:root"
+      ],
+      "self_name": null,
+      "self_scope": null,
+      "source_kind": null,
+      "source_name": null,
+      "this_allowed": false,
+      "unsupported": false
+     },
+     "kind": "module",
+     "name": "Outer"
+    }
+   ],
+   "starts_with": "module Outer"
+  },
+  {
+   "line": 2,
+   "name": "Inner::Thing",
+   "node": "class",
+   "path": "app/services/outer.rb",
+   "rows": [
+    {
+     "binding": {
+      "byte": 15,
+      "category": "class",
+      "identity": "ruby:app/services/outer.rb:class:15:94",
+      "namespace": "Outer::Inner::Thing",
+      "owner": "ruby:Outer",
+      "receiver": null,
+      "scope": "ruby:app/services/outer.rb:module:0:98",
+      "scopes": [
+       "ruby:app/services/outer.rb:module:0:98",
+       "ruby:app/services/outer.rb:root"
+      ],
+      "self_name": null,
+      "self_scope": null,
+      "source_kind": "module",
+      "source_name": "Outer",
+      "this_allowed": false,
+      "unsupported": false
+     },
+     "kind": "class",
+     "name": "Inner::Thing"
+    }
+   ],
+   "starts_with": "class Inner:"
+  },
+  {
+   "line": 9,
+   "name": "::Rooted",
+   "node": "class",
+   "path": "app/services/outer.rb",
+   "rows": [],
+   "starts_with": "class ::Root"
+  },
+  {
+   "line": 1,
+   "name": "PlainTask",
+   "node": "class",
+   "path": "app/services/plain_task.rb",
+   "rows": [
+    {
+     "binding": {
+      "byte": 0,
+      "category": "class",
+      "identity": "ruby:app/services/plain_task.rb:class:0:48",
+      "namespace": "PlainTask",
+      "owner": null,
+      "receiver": null,
+      "scope": "ruby:app/services/plain_task.rb:root",
+      "scopes": [
+       "ruby:app/services/plain_task.rb:root"
+      ],
+      "self_name": null,
+      "self_scope": null,
+      "source_kind": null,
+      "source_name": null,
+      "this_allowed": false,
+      "unsupported": false
+     },
+     "kind": "class",
+     "name": "PlainTask"
+    }
+   ],
+   "starts_with": "class PlainT"
+  },
+  {
+   "line": 2,
+   "name": "perform",
+   "node": "method",
+   "path": "app/services/plain_task.rb",
+   "rows": [
+    {
+     "binding": {
+      "byte": 18,
+      "category": "instance",
+      "identity": "ruby:app/services/plain_task.rb:method:18:44",
+      "namespace": "PlainTask",
+      "owner": "ruby:PlainTask",
+      "receiver": null,
+      "scope": "ruby:app/services/plain_task.rb:class:0:48",
+      "scopes": [
+       "ruby:app/services/plain_task.rb:class:0:48",
+       "ruby:app/services/plain_task.rb:root"
+      ],
+      "self_name": null,
+      "self_scope": null,
+      "source_kind": "class",
+      "source_name": "PlainTask",
+      "this_allowed": false,
+      "unsupported": false
+     },
+     "kind": "method",
+     "name": "perform"
+    }
+   ],
+   "starts_with": "def perform("
+  },
+  {
+   "line": 1,
+   "name": "Reports::Daily",
+   "node": "class",
+   "path": "app/services/reports/daily.rb",
+   "rows": [
+    {
+     "binding": {
+      "byte": 0,
+      "category": "class",
+      "identity": "ruby:app/services/reports/daily.rb:class:0:73",
+      "namespace": "Reports::Daily",
+      "owner": null,
+      "receiver": null,
+      "scope": "ruby:app/services/reports/daily.rb:root",
+      "scopes": [
+       "ruby:app/services/reports/daily.rb:root"
+      ],
+      "self_name": null,
+      "self_scope": null,
+      "source_kind": null,
+      "source_name": null,
+      "this_allowed": false,
+      "unsupported": false
+     },
+     "kind": "class",
+     "name": "Reports::Daily"
+    }
+   ],
+   "starts_with": "class Report"
+  },
+  {
+   "line": 1,
+   "name": "HardWorker",
+   "node": "class",
+   "path": "app/workers/hard_worker.rb",
+   "rows": [
+    {
+     "binding": {
+      "byte": 0,
+      "category": "class",
+      "identity": "ruby:app/workers/hard_worker.rb:class:0:170",
+      "namespace": "HardWorker",
+      "owner": null,
+      "receiver": null,
+      "scope": "ruby:app/workers/hard_worker.rb:root",
+      "scopes": [
+       "ruby:app/workers/hard_worker.rb:root"
+      ],
+      "self_name": null,
+      "self_scope": null,
+      "source_kind": null,
+      "source_name": null,
+      "this_allowed": false,
+      "unsupported": false
+     },
+     "kind": "class",
+     "name": "HardWorker"
+    }
+   ],
+   "starts_with": "class HardWo"
+  },
+  {
+   "line": 4,
+   "name": "perform",
+   "node": "method",
+   "path": "app/workers/hard_worker.rb",
+   "rows": [
+    {
+     "binding": {
+      "byte": 43,
+      "category": "instance",
+      "identity": "ruby:app/workers/hard_worker.rb:method:43:138",
+      "namespace": "HardWorker",
+      "owner": "ruby:HardWorker",
+      "receiver": null,
+      "scope": "ruby:app/workers/hard_worker.rb:class:0:170",
+      "scopes": [
+       "ruby:app/workers/hard_worker.rb:class:0:170",
+       "ruby:app/workers/hard_worker.rb:root"
+      ],
+      "self_name": null,
+      "self_scope": null,
+      "source_kind": "class",
+      "source_name": "HardWorker",
+      "this_allowed": false,
+      "unsupported": false
+     },
+     "kind": "method",
+     "name": "perform"
+    }
+   ],
+   "starts_with": "def perform("
+  },
+  {
+   "line": 1,
+   "name": "OrderedWorker",
+   "node": "class",
+   "path": "app/workers/ordered_worker.rb",
+   "rows": [
+    {
+     "binding": {
+      "byte": 0,
+      "category": "class",
+      "identity": "ruby:app/workers/ordered_worker.rb:class:0:97",
+      "namespace": "OrderedWorker",
+      "owner": null,
+      "receiver": null,
+      "scope": "ruby:app/workers/ordered_worker.rb:root",
+      "scopes": [
+       "ruby:app/workers/ordered_worker.rb:root"
+      ],
+      "self_name": null,
+      "self_scope": null,
+      "source_kind": null,
+      "source_name": null,
+      "this_allowed": false,
+      "unsupported": false
+     },
+     "kind": "class",
+     "name": "OrderedWorker"
+    }
+   ],
+   "starts_with": "class Ordere"
+  },
+  {
+   "line": 4,
+   "name": "perform",
+   "node": "method",
+   "path": "app/workers/ordered_worker.rb",
+   "rows": [
+    {
+     "binding": {
+      "byte": 49,
+      "category": "instance",
+      "identity": "ruby:app/workers/ordered_worker.rb:method:49:93",
+      "namespace": "OrderedWorker",
+      "owner": "ruby:OrderedWorker",
+      "receiver": null,
+      "scope": "ruby:app/workers/ordered_worker.rb:class:0:97",
+      "scopes": [
+       "ruby:app/workers/ordered_worker.rb:class:0:97",
+       "ruby:app/workers/ordered_worker.rb:root"
+      ],
+      "self_name": null,
+      "self_scope": null,
+      "source_kind": "class",
+      "source_name": "OrderedWorker",
+      "this_allowed": false,
+      "unsupported": false
+     },
+     "kind": "method",
+     "name": "perform"
+    }
+   ],
+   "starts_with": "def perform("
+  },
+  {
+   "line": 1,
+   "name": "PingWorker",
+   "node": "class",
+   "path": "app/workers/ping_worker.rb",
+   "rows": [
+    {
+     "binding": {
+      "byte": 0,
+      "category": "class",
+      "identity": "ruby:app/workers/ping_worker.rb:class:0:79",
+      "namespace": "PingWorker",
+      "owner": null,
+      "receiver": null,
+      "scope": "ruby:app/workers/ping_worker.rb:root",
+      "scopes": [
+       "ruby:app/workers/ping_worker.rb:root"
+      ],
+      "self_name": null,
+      "self_scope": null,
+      "source_kind": null,
+      "source_name": null,
+      "this_allowed": false,
+      "unsupported": false
+     },
+     "kind": "class",
+     "name": "PingWorker"
+    }
+   ],
+   "starts_with": "class PingWo"
+  },
+  {
+   "line": 4,
+   "name": "perform",
+   "node": "method",
+   "path": "app/workers/ping_worker.rb",
+   "rows": [
+    {
+     "binding": {
+      "byte": 48,
+      "category": "instance",
+      "identity": "ruby:app/workers/ping_worker.rb:method:48:75",
+      "namespace": "PingWorker",
+      "owner": "ruby:PingWorker",
+      "receiver": null,
+      "scope": "ruby:app/workers/ping_worker.rb:class:0:79",
+      "scopes": [
+       "ruby:app/workers/ping_worker.rb:class:0:79",
+       "ruby:app/workers/ping_worker.rb:root"
+      ],
+      "self_name": null,
+      "self_scope": null,
+      "source_kind": "class",
+      "source_name": "PingWorker",
+      "this_allowed": false,
+      "unsupported": false
+     },
+     "kind": "method",
+     "name": "perform"
+    }
+   ],
+   "starts_with": "def perform\n"
+  },
+  {
+   "line": 1,
+   "name": "SentinelWorker",
+   "node": "class",
+   "path": "app/workers/sentinel_worker.rb",
+   "rows": [
+    {
+     "binding": {
+      "byte": 0,
+      "category": "class",
+      "identity": "ruby:app/workers/sentinel_worker.rb:class:0:152",
+      "namespace": "SentinelWorker",
+      "owner": null,
+      "receiver": null,
+      "scope": "ruby:app/workers/sentinel_worker.rb:root",
+      "scopes": [
+       "ruby:app/workers/sentinel_worker.rb:root"
+      ],
+      "self_name": null,
+      "self_scope": null,
+      "source_kind": null,
+      "source_name": null,
+      "this_allowed": false,
+      "unsupported": false
+     },
+     "kind": "class",
+     "name": "SentinelWorker"
+    }
+   ],
+   "starts_with": "class Sentin"
+  },
+  {
+   "line": 6,
+   "name": "perform",
+   "node": "method",
+   "path": "app/workers/sentinel_worker.rb",
+   "rows": [
+    {
+     "binding": {
+      "byte": 99,
+      "category": "instance",
+      "identity": "ruby:app/workers/sentinel_worker.rb:method:99:148",
+      "namespace": "SentinelWorker",
+      "owner": "ruby:SentinelWorker",
+      "receiver": null,
+      "scope": "ruby:app/workers/sentinel_worker.rb:class:0:152",
+      "scopes": [
+       "ruby:app/workers/sentinel_worker.rb:class:0:152",
+       "ruby:app/workers/sentinel_worker.rb:root"
+      ],
+      "self_name": null,
+      "self_scope": null,
+      "source_kind": "class",
+      "source_name": "SentinelWorker",
+      "this_allowed": false,
+      "unsupported": false
+     },
+     "kind": "method",
+     "name": "perform"
+    }
+   ],
+   "starts_with": "def perform("
+  },
+  {
+   "line": 1,
+   "name": "SplatWorker",
+   "node": "class",
+   "path": "app/workers/splat_worker.rb",
+   "rows": [
+    {
+     "binding": {
+      "byte": 0,
+      "category": "class",
+      "identity": "ruby:app/workers/splat_worker.rb:class:0:84",
+      "namespace": "SplatWorker",
+      "owner": null,
+      "receiver": null,
+      "scope": "ruby:app/workers/splat_worker.rb:root",
+      "scopes": [
+       "ruby:app/workers/splat_worker.rb:root"
+      ],
+      "self_name": null,
+      "self_scope": null,
+      "source_kind": null,
+      "source_name": null,
+      "this_allowed": false,
+      "unsupported": false
+     },
+     "kind": "class",
+     "name": "SplatWorker"
+    }
+   ],
+   "starts_with": "class SplatW"
+  },
+  {
+   "line": 4,
+   "name": "perform",
+   "node": "method",
+   "path": "app/workers/splat_worker.rb",
+   "rows": [
+    {
+     "binding": {
+      "byte": 47,
+      "category": "instance",
+      "identity": "ruby:app/workers/splat_worker.rb:method:47:80",
+      "namespace": "SplatWorker",
+      "owner": "ruby:SplatWorker",
+      "receiver": null,
+      "scope": "ruby:app/workers/splat_worker.rb:class:0:84",
+      "scopes": [
+       "ruby:app/workers/splat_worker.rb:class:0:84",
+       "ruby:app/workers/splat_worker.rb:root"
+      ],
+      "self_name": null,
+      "self_scope": null,
+      "source_kind": "class",
+      "source_name": "SplatWorker",
+      "this_allowed": false,
+      "unsupported": false
+     },
+     "kind": "method",
+     "name": "perform"
+    }
+   ],
+   "starts_with": "def perform("
+  },
+  {
+   "line": 1,
+   "name": "StrictKwWorker",
+   "node": "class",
+   "path": "app/workers/strict_kw_worker.rb",
+   "rows": [
+    {
+     "binding": {
+      "byte": 0,
+      "category": "class",
+      "identity": "ruby:app/workers/strict_kw_worker.rb:class:0:89",
+      "namespace": "StrictKwWorker",
+      "owner": null,
+      "receiver": null,
+      "scope": "ruby:app/workers/strict_kw_worker.rb:root",
+      "scopes": [
+       "ruby:app/workers/strict_kw_worker.rb:root"
+      ],
+      "self_name": null,
+      "self_scope": null,
+      "source_kind": null,
+      "source_name": null,
+      "this_allowed": false,
+      "unsupported": false
+     },
+     "kind": "class",
+     "name": "StrictKwWorker"
+    }
+   ],
+   "starts_with": "class Strict"
+  },
+  {
+   "line": 4,
+   "name": "perform",
+   "node": "method",
+   "path": "app/workers/strict_kw_worker.rb",
+   "rows": [
+    {
+     "binding": {
+      "byte": 50,
+      "category": "instance",
+      "identity": "ruby:app/workers/strict_kw_worker.rb:method:50:85",
+      "namespace": "StrictKwWorker",
+      "owner": "ruby:StrictKwWorker",
+      "receiver": null,
+      "scope": "ruby:app/workers/strict_kw_worker.rb:class:0:89",
+      "scopes": [
+       "ruby:app/workers/strict_kw_worker.rb:class:0:89",
+       "ruby:app/workers/strict_kw_worker.rb:root"
+      ],
+      "self_name": null,
+      "self_scope": null,
+      "source_kind": "class",
+      "source_name": "StrictKwWorker",
+      "this_allowed": false,
+      "unsupported": false
+     },
+     "kind": "method",
+     "name": "perform"
+    }
+   ],
+   "starts_with": "def perform("
+  },
+  {
+   "line": 1,
+   "name": "ExportJob",
+   "node": "class",
+   "path": "lib/legacy/export_job.rb",
+   "rows": [
+    {
+     "binding": {
+      "byte": 0,
+      "category": "class",
+      "identity": "ruby:lib/legacy/export_job.rb:class:0:67",
+      "namespace": "ExportJob",
+      "owner": null,
+      "receiver": null,
+      "scope": "ruby:lib/legacy/export_job.rb:root",
+      "scopes": [
+       "ruby:lib/legacy/export_job.rb:root"
+      ],
+      "self_name": null,
+      "self_scope": null,
+      "source_kind": null,
+      "source_name": null,
+      "this_allowed": false,
+      "unsupported": false
+     },
+     "kind": "class",
+     "name": "ExportJob"
+    }
+   ],
+   "starts_with": "class Export"
+  },
+  {
+   "line": 2,
+   "name": "perform",
+   "node": "method",
+   "path": "lib/legacy/export_job.rb",
+   "rows": [
+    {
+     "binding": {
+      "byte": 35,
+      "category": "instance",
+      "identity": "ruby:lib/legacy/export_job.rb:method:35:63",
+      "namespace": "ExportJob",
+      "owner": "ruby:ExportJob",
+      "receiver": null,
+      "scope": "ruby:lib/legacy/export_job.rb:class:0:67",
+      "scopes": [
+       "ruby:lib/legacy/export_job.rb:class:0:67",
+       "ruby:lib/legacy/export_job.rb:root"
+      ],
+      "self_name": null,
+      "self_scope": null,
+      "source_kind": "class",
+      "source_name": "ExportJob",
+      "this_allowed": false,
+      "unsupported": false
+     },
+     "kind": "method",
+     "name": "perform"
+    }
+   ],
+   "starts_with": "def perform("
+  }
+ ],
+ "extra": {
+  "incremental_after_edit_site_rows_equal": true,
+  "incremental_all_ruby_refs_equal": true,
+  "incremental_site_refs_equal": true,
+  "producer_count": 1,
+  "refs_rows_without_a_call_node": [],
+  "site_rows": 41
+ },
+ "problems": [],
+ "sites": [
+  {
+   "ancestor_chain": [
+    "method",
+    "class",
+    "module"
+   ],
+   "binding_byte": 57,
+   "binding_category": "instance",
+   "binding_namespace": "Billing::Nightly",
+   "binding_owner": "ruby:Billing::Nightly",
+   "line": 4,
+   "located": true,
+   "method": "perform_later",
+   "namespace_equals_nesting_join": true,
+   "nesting_join": "Billing::Nightly",
+   "occ_kind_role": [
+    "reference",
+    "reference:call"
+   ],
+   "owner": [
+    "method",
+    "run",
+    "app/services/billing/nightly.rb"
+   ],
+   "owner_non_null": true,
+   "path": "app/services/billing/nightly.rb",
+   "refs_rows": 1,
+   "skip_path": false,
+   "uncaptured_scope_resolution_ancestor": false,
+   "unsupported_source_owner": false
+  },
+  {
+   "ancestor_chain": [
+    "method",
+    "class",
+    "module"
+   ],
+   "binding_byte": 90,
+   "binding_category": "instance",
+   "binding_namespace": "Billing::Nightly",
+   "binding_owner": "ruby:Billing::Nightly",
+   "line": 5,
+   "located": true,
+   "method": "perform_later",
+   "namespace_equals_nesting_join": true,
+   "nesting_join": "Billing::Nightly",
+   "occ_kind_role": [
+    "reference",
+    "reference:call"
+   ],
+   "owner": [
+    "method",
+    "run",
+    "app/services/billing/nightly.rb"
+   ],
+   "owner_non_null": true,
+   "path": "app/services/billing/nightly.rb",
+   "refs_rows": 1,
+   "skip_path": false,
+   "uncaptured_scope_resolution_ancestor": false,
+   "unsupported_source_owner": false
+  },
+  {
+   "ancestor_chain": [
+    "method",
+    "class"
+   ],
+   "binding_byte": 84,
+   "binding_category": "instance",
+   "binding_namespace": "Enqueuer",
+   "binding_owner": "ruby:Enqueuer",
+   "line": 3,
+   "located": true,
+   "method": "perform_async",
+   "namespace_equals_nesting_join": true,
+   "nesting_join": "Enqueuer",
+   "occ_kind_role": [
+    "reference",
+    "reference:call"
+   ],
+   "owner": [
+    "method",
+    "run",
+    "app/services/enqueuer.rb"
+   ],
+   "owner_non_null": true,
+   "path": "app/services/enqueuer.rb",
+   "refs_rows": 1,
+   "skip_path": false,
+   "uncaptured_scope_resolution_ancestor": false,
+   "unsupported_source_owner": false
+  },
+  {
+   "ancestor_chain": [
+    "method",
+    "class"
+   ],
+   "binding_byte": 122,
+   "binding_category": "instance",
+   "binding_namespace": "Enqueuer",
+   "binding_owner": "ruby:Enqueuer",
+   "line": 4,
+   "located": true,
+   "method": "perform_async",
+   "namespace_equals_nesting_join": true,
+   "nesting_join": "Enqueuer",
+   "occ_kind_role": [
+    "reference",
+    "reference:call"
+   ],
+   "owner": [
+    "method",
+    "run",
+    "app/services/enqueuer.rb"
+   ],
+   "owner_non_null": true,
+   "path": "app/services/enqueuer.rb",
+   "refs_rows": 1,
+   "skip_path": false,
+   "uncaptured_scope_resolution_ancestor": false,
+   "unsupported_source_owner": false
+  },
+  {
+   "ancestor_chain": [
+    "method",
+    "class"
+   ],
+   "binding_byte": 167,
+   "binding_category": "instance",
+   "binding_namespace": "Enqueuer",
+   "binding_owner": "ruby:Enqueuer",
+   "line": 5,
+   "located": true,
+   "method": "perform_later",
+   "namespace_equals_nesting_join": true,
+   "nesting_join": "Enqueuer",
+   "occ_kind_role": [
+    "reference",
+    "reference:call"
+   ],
+   "owner": [
+    "method",
+    "run",
+    "app/services/enqueuer.rb"
+   ],
+   "owner_non_null": true,
+   "path": "app/services/enqueuer.rb",
+   "refs_rows": 1,
+   "skip_path": false,
+   "uncaptured_scope_resolution_ancestor": false,
+   "unsupported_source_owner": false
+  },
+  {
+   "ancestor_chain": [
+    "method",
+    "class"
+   ],
+   "binding_byte": 211,
+   "binding_category": "instance",
+   "binding_namespace": "Enqueuer",
+   "binding_owner": "ruby:Enqueuer",
+   "line": 6,
+   "located": true,
+   "method": "perform_later",
+   "namespace_equals_nesting_join": true,
+   "nesting_join": "Enqueuer",
+   "occ_kind_role": [
+    "reference",
+    "reference:call"
+   ],
+   "owner": [
+    "method",
+    "run",
+    "app/services/enqueuer.rb"
+   ],
+   "owner_non_null": true,
+   "path": "app/services/enqueuer.rb",
+   "refs_rows": 1,
+   "skip_path": false,
+   "uncaptured_scope_resolution_ancestor": false,
+   "unsupported_source_owner": false
+  },
+  {
+   "ancestor_chain": [
+    "method",
+    "class"
+   ],
+   "binding_byte": 253,
+   "binding_category": "instance",
+   "binding_namespace": "Enqueuer",
+   "binding_owner": "ruby:Enqueuer",
+   "line": 7,
+   "located": true,
+   "method": "perform_async",
+   "namespace_equals_nesting_join": true,
+   "nesting_join": "Enqueuer",
+   "occ_kind_role": [
+    "reference",
+    "reference:call"
+   ],
+   "owner": [
+    "method",
+    "run",
+    "app/services/enqueuer.rb"
+   ],
+   "owner_non_null": true,
+   "path": "app/services/enqueuer.rb",
+   "refs_rows": 1,
+   "skip_path": false,
+   "uncaptured_scope_resolution_ancestor": false,
+   "unsupported_source_owner": false
+  },
+  {
+   "ancestor_chain": [
+    "method",
+    "class"
+   ],
+   "binding_byte": 282,
+   "binding_category": "instance",
+   "binding_namespace": "Enqueuer",
+   "binding_owner": "ruby:Enqueuer",
+   "line": 8,
+   "located": true,
+   "method": "perform_async",
+   "namespace_equals_nesting_join": true,
+   "nesting_join": "Enqueuer",
+   "occ_kind_role": [
+    "reference",
+    "reference:call"
+   ],
+   "owner": [
+    "method",
+    "run",
+    "app/services/enqueuer.rb"
+   ],
+   "owner_non_null": true,
+   "path": "app/services/enqueuer.rb",
+   "refs_rows": 1,
+   "skip_path": false,
+   "uncaptured_scope_resolution_ancestor": false,
+   "unsupported_source_owner": false
+  },
+  {
+   "ancestor_chain": [
+    "method",
+    "class"
+   ],
+   "binding_byte": 319,
+   "binding_category": "instance",
+   "binding_namespace": "Enqueuer",
+   "binding_owner": "ruby:Enqueuer",
+   "line": 9,
+   "located": true,
+   "method": "perform_later",
+   "namespace_equals_nesting_join": true,
+   "nesting_join": "Enqueuer",
+   "occ_kind_role": [
+    "reference",
+    "reference:call"
+   ],
+   "owner": [
+    "method",
+    "run",
+    "app/services/enqueuer.rb"
+   ],
+   "owner_non_null": true,
+   "path": "app/services/enqueuer.rb",
+   "refs_rows": 1,
+   "skip_path": false,
+   "uncaptured_scope_resolution_ancestor": false,
+   "unsupported_source_owner": false
+  },
+  {
+   "ancestor_chain": [
+    "method",
+    "class"
+   ],
+   "binding_byte": 353,
+   "binding_category": "instance",
+   "binding_namespace": "Enqueuer",
+   "binding_owner": "ruby:Enqueuer",
+   "line": 10,
+   "located": true,
+   "method": "perform_later",
+   "namespace_equals_nesting_join": true,
+   "nesting_join": "Enqueuer",
+   "occ_kind_role": [
+    "reference",
+    "reference:call"
+   ],
+   "owner": [
+    "method",
+    "run",
+    "app/services/enqueuer.rb"
+   ],
+   "owner_non_null": true,
+   "path": "app/services/enqueuer.rb",
+   "refs_rows": 1,
+   "skip_path": false,
+   "uncaptured_scope_resolution_ancestor": false,
+   "unsupported_source_owner": false
+  },
+  {
+   "ancestor_chain": [
+    "method",
+    "class"
+   ],
+   "binding_byte": 383,
+   "binding_category": "instance",
+   "binding_namespace": "Enqueuer",
+   "binding_owner": "ruby:Enqueuer",
+   "line": 11,
+   "located": true,
+   "method": "perform_later",
+   "namespace_equals_nesting_join": true,
+   "nesting_join": "Enqueuer",
+   "occ_kind_role": [
+    "reference",
+    "reference:call"
+   ],
+   "owner": [
+    "method",
+    "run",
+    "app/services/enqueuer.rb"
+   ],
+   "owner_non_null": true,
+   "path": "app/services/enqueuer.rb",
+   "refs_rows": 1,
+   "skip_path": false,
+   "uncaptured_scope_resolution_ancestor": false,
+   "unsupported_source_owner": false
+  },
+  {
+   "ancestor_chain": [
+    "method",
+    "class"
+   ],
+   "binding_byte": 417,
+   "binding_category": "instance",
+   "binding_namespace": "Enqueuer",
+   "binding_owner": "ruby:Enqueuer",
+   "line": 12,
+   "located": true,
+   "method": "perform_later",
+   "namespace_equals_nesting_join": true,
+   "nesting_join": "Enqueuer",
+   "occ_kind_role": [
+    "reference",
+    "reference:call"
+   ],
+   "owner": [
+    "method",
+    "run",
+    "app/services/enqueuer.rb"
+   ],
+   "owner_non_null": true,
+   "path": "app/services/enqueuer.rb",
+   "refs_rows": 1,
+   "skip_path": false,
+   "uncaptured_scope_resolution_ancestor": false,
+   "unsupported_source_owner": false
+  },
+  {
+   "ancestor_chain": [
+    "method",
+    "class"
+   ],
+   "binding_byte": 448,
+   "binding_category": "instance",
+   "binding_namespace": "Enqueuer",
+   "binding_owner": "ruby:Enqueuer",
+   "line": 13,
+   "located": true,
+   "method": "perform_async",
+   "namespace_equals_nesting_join": true,
+   "nesting_join": "Enqueuer",
+   "occ_kind_role": [
+    "reference",
+    "reference:call"
+   ],
+   "owner": [
+    "method",
+    "run",
+    "app/services/enqueuer.rb"
+   ],
+   "owner_non_null": true,
+   "path": "app/services/enqueuer.rb",
+   "refs_rows": 1,
+   "skip_path": false,
+   "uncaptured_scope_resolution_ancestor": false,
+   "unsupported_source_owner": false
+  },
+  {
+   "ancestor_chain": [
+    "method",
+    "class"
+   ],
+   "binding_byte": 480,
+   "binding_category": "instance",
+   "binding_namespace": "Enqueuer",
+   "binding_owner": "ruby:Enqueuer",
+   "line": 14,
+   "located": true,
+   "method": "perform_later",
+   "namespace_equals_nesting_join": true,
+   "nesting_join": "Enqueuer",
+   "occ_kind_role": [
+    "reference",
+    "reference:call"
+   ],
+   "owner": [
+    "method",
+    "run",
+    "app/services/enqueuer.rb"
+   ],
+   "owner_non_null": true,
+   "path": "app/services/enqueuer.rb",
+   "refs_rows": 1,
+   "skip_path": false,
+   "uncaptured_scope_resolution_ancestor": false,
+   "unsupported_source_owner": false
+  },
+  {
+   "ancestor_chain": [
+    "method",
+    "class"
+   ],
+   "binding_byte": 511,
+   "binding_category": "instance",
+   "binding_namespace": "Enqueuer",
+   "binding_owner": "ruby:Enqueuer",
+   "line": 15,
+   "located": true,
+   "method": "perform_async",
+   "namespace_equals_nesting_join": true,
+   "nesting_join": "Enqueuer",
+   "occ_kind_role": [
+    "reference",
+    "reference:call"
+   ],
+   "owner": [
+    "method",
+    "run",
+    "app/services/enqueuer.rb"
+   ],
+   "owner_non_null": true,
+   "path": "app/services/enqueuer.rb",
+   "refs_rows": 1,
+   "skip_path": false,
+   "uncaptured_scope_resolution_ancestor": false,
+   "unsupported_source_owner": false
+  },
+  {
+   "ancestor_chain": [
+    "method",
+    "class"
+   ],
+   "binding_byte": 548,
+   "binding_category": "instance",
+   "binding_namespace": "Enqueuer",
+   "binding_owner": "ruby:Enqueuer",
+   "line": 16,
+   "located": true,
+   "method": "perform_later",
+   "namespace_equals_nesting_join": true,
+   "nesting_join": "Enqueuer",
+   "occ_kind_role": [
+    "reference",
+    "reference:call"
+   ],
+   "owner": [
+    "method",
+    "run",
+    "app/services/enqueuer.rb"
+   ],
+   "owner_non_null": true,
+   "path": "app/services/enqueuer.rb",
+   "refs_rows": 1,
+   "skip_path": false,
+   "uncaptured_scope_resolution_ancestor": false,
+   "unsupported_source_owner": false
+  },
+  {
+   "ancestor_chain": [
+    "method",
+    "class"
+   ],
+   "binding_byte": 587,
+   "binding_category": "instance",
+   "binding_namespace": "Enqueuer",
+   "binding_owner": "ruby:Enqueuer",
+   "line": 17,
+   "located": true,
+   "method": "perform_async",
+   "namespace_equals_nesting_join": true,
+   "nesting_join": "Enqueuer",
+   "occ_kind_role": [
+    "reference",
+    "reference:call"
+   ],
+   "owner": [
+    "method",
+    "run",
+    "app/services/enqueuer.rb"
+   ],
+   "owner_non_null": true,
+   "path": "app/services/enqueuer.rb",
+   "refs_rows": 1,
+   "skip_path": false,
+   "uncaptured_scope_resolution_ancestor": false,
+   "unsupported_source_owner": false
+  },
+  {
+   "ancestor_chain": [
+    "method",
+    "class"
+   ],
+   "binding_byte": 645,
+   "binding_category": "instance",
+   "binding_namespace": "Enqueuer",
+   "binding_owner": "ruby:Enqueuer",
+   "line": 18,
+   "located": true,
+   "method": "perform_later",
+   "namespace_equals_nesting_join": true,
+   "nesting_join": "Enqueuer",
+   "occ_kind_role": [
+    "reference",
+    "reference:call"
+   ],
+   "owner": [
+    "method",
+    "run",
+    "app/services/enqueuer.rb"
+   ],
+   "owner_non_null": true,
+   "path": "app/services/enqueuer.rb",
+   "refs_rows": 1,
+   "skip_path": false,
+   "uncaptured_scope_resolution_ancestor": false,
+   "unsupported_source_owner": false
+  },
+  {
+   "ancestor_chain": [
+    "method",
+    "class"
+   ],
+   "binding_byte": 702,
+   "binding_category": "instance",
+   "binding_namespace": "Enqueuer",
+   "binding_owner": "ruby:Enqueuer",
+   "line": 20,
+   "located": true,
+   "method": "perform_later",
+   "namespace_equals_nesting_join": true,
+   "nesting_join": "Enqueuer",
+   "occ_kind_role": [
+    "reference",
+    "reference:call"
+   ],
+   "owner": [
+    "method",
+    "run",
+    "app/services/enqueuer.rb"
+   ],
+   "owner_non_null": true,
+   "path": "app/services/enqueuer.rb",
+   "refs_rows": 1,
+   "skip_path": false,
+   "uncaptured_scope_resolution_ancestor": false,
+   "unsupported_source_owner": false
+  },
+  {
+   "ancestor_chain": [
+    "method",
+    "class"
+   ],
+   "binding_byte": 734,
+   "binding_category": "instance",
+   "binding_namespace": "Enqueuer",
+   "binding_owner": "ruby:Enqueuer",
+   "line": 21,
+   "located": true,
+   "method": "perform_async",
+   "namespace_equals_nesting_join": true,
+   "nesting_join": "Enqueuer",
+   "occ_kind_role": [
+    "reference",
+    "reference:call"
+   ],
+   "owner": [
+    "method",
+    "run",
+    "app/services/enqueuer.rb"
+   ],
+   "owner_non_null": true,
+   "path": "app/services/enqueuer.rb",
+   "refs_rows": 1,
+   "skip_path": false,
+   "uncaptured_scope_resolution_ancestor": false,
+   "unsupported_source_owner": false
+  },
+  {
+   "ancestor_chain": [
+    "method",
+    "class"
+   ],
+   "binding_byte": 779,
+   "binding_category": "instance",
+   "binding_namespace": "Enqueuer",
+   "binding_owner": "ruby:Enqueuer",
+   "line": 22,
+   "located": true,
+   "method": "perform_later",
+   "namespace_equals_nesting_join": true,
+   "nesting_join": "Enqueuer",
+   "occ_kind_role": [
+    "reference",
+    "reference:call"
+   ],
+   "owner": [
+    "method",
+    "run",
+    "app/services/enqueuer.rb"
+   ],
+   "owner_non_null": true,
+   "path": "app/services/enqueuer.rb",
+   "refs_rows": 1,
+   "skip_path": false,
+   "uncaptured_scope_resolution_ancestor": false,
+   "unsupported_source_owner": false
+  },
+  {
+   "ancestor_chain": [
+    "method",
+    "class"
+   ],
+   "binding_byte": 803,
+   "binding_category": "instance",
+   "binding_namespace": "Enqueuer",
+   "binding_owner": "ruby:Enqueuer",
+   "line": 23,
+   "located": true,
+   "method": "perform_async",
+   "namespace_equals_nesting_join": true,
+   "nesting_join": "Enqueuer",
+   "occ_kind_role": [
+    "reference",
+    "reference:call"
+   ],
+   "owner": [
+    "method",
+    "run",
+    "app/services/enqueuer.rb"
+   ],
+   "owner_non_null": true,
+   "path": "app/services/enqueuer.rb",
+   "refs_rows": 1,
+   "skip_path": false,
+   "uncaptured_scope_resolution_ancestor": false,
+   "unsupported_source_owner": false
+  },
+  {
+   "ancestor_chain": [
+    "method",
+    "class"
+   ],
+   "binding_byte": 849,
+   "binding_category": "instance",
+   "binding_namespace": "Enqueuer",
+   "binding_owner": "ruby:Enqueuer",
+   "line": 24,
+   "located": true,
+   "method": "perform_later",
+   "namespace_equals_nesting_join": true,
+   "nesting_join": "Enqueuer",
+   "occ_kind_role": [
+    "reference",
+    "reference:call"
+   ],
+   "owner": [
+    "method",
+    "run",
+    "app/services/enqueuer.rb"
+   ],
+   "owner_non_null": true,
+   "path": "app/services/enqueuer.rb",
+   "refs_rows": 1,
+   "skip_path": false,
+   "uncaptured_scope_resolution_ancestor": false,
+   "unsupported_source_owner": false
+  },
+  {
+   "ancestor_chain": [
+    "method",
+    "class"
+   ],
+   "binding_byte": 892,
+   "binding_category": "instance",
+   "binding_namespace": "Enqueuer",
+   "binding_owner": "ruby:Enqueuer",
+   "line": 25,
+   "located": true,
+   "method": "perform_in",
+   "namespace_equals_nesting_join": true,
+   "nesting_join": "Enqueuer",
+   "occ_kind_role": [
+    "reference",
+    "reference:call"
+   ],
+   "owner": [
+    "method",
+    "run",
+    "app/services/enqueuer.rb"
+   ],
+   "owner_non_null": true,
+   "path": "app/services/enqueuer.rb",
+   "refs_rows": 1,
+   "skip_path": false,
+   "uncaptured_scope_resolution_ancestor": false,
+   "unsupported_source_owner": false
+  },
+  {
+   "ancestor_chain": [
+    "method",
+    "class"
+   ],
+   "binding_byte": 932,
+   "binding_category": "instance",
+   "binding_namespace": "Enqueuer",
+   "binding_owner": "ruby:Enqueuer",
+   "line": 26,
+   "located": true,
+   "method": "perform_at",
+   "namespace_equals_nesting_join": true,
+   "nesting_join": "Enqueuer",
+   "occ_kind_role": [
+    "reference",
+    "reference:call"
+   ],
+   "owner": [
+    "method",
+    "run",
+    "app/services/enqueuer.rb"
+   ],
+   "owner_non_null": true,
+   "path": "app/services/enqueuer.rb",
+   "refs_rows": 1,
+   "skip_path": false,
+   "uncaptured_scope_resolution_ancestor": false,
+   "unsupported_source_owner": false
+  },
+  {
+   "ancestor_chain": [
+    "method",
+    "class"
+   ],
+   "binding_byte": 971,
+   "binding_category": "instance",
+   "binding_namespace": "Enqueuer",
+   "binding_owner": "ruby:Enqueuer",
+   "line": 28,
+   "located": true,
+   "method": "perform_async",
+   "namespace_equals_nesting_join": true,
+   "nesting_join": "Enqueuer",
+   "occ_kind_role": [
+    "reference",
+    "reference:call"
+   ],
+   "owner": [
+    "method",
+    "run",
+    "app/services/enqueuer.rb"
+   ],
+   "owner_non_null": true,
+   "path": "app/services/enqueuer.rb",
+   "refs_rows": 1,
+   "skip_path": false,
+   "uncaptured_scope_resolution_ancestor": false,
+   "unsupported_source_owner": false
+  },
+  {
+   "ancestor_chain": [
+    "method",
+    "class"
+   ],
+   "binding_byte": 1005,
+   "binding_category": "instance",
+   "binding_namespace": "Enqueuer",
+   "binding_owner": "ruby:Enqueuer",
+   "line": 29,
+   "located": true,
+   "method": "perform_later",
+   "namespace_equals_nesting_join": true,
+   "nesting_join": "Enqueuer",
+   "occ_kind_role": [
+    "reference",
+    "reference:call"
+   ],
+   "owner": [
+    "method",
+    "run",
+    "app/services/enqueuer.rb"
+   ],
+   "owner_non_null": true,
+   "path": "app/services/enqueuer.rb",
+   "refs_rows": 1,
+   "skip_path": false,
+   "uncaptured_scope_resolution_ancestor": false,
+   "unsupported_source_owner": false
+  },
+  {
+   "ancestor_chain": [
+    "method",
+    "class"
+   ],
+   "binding_byte": 1041,
+   "binding_category": "instance",
+   "binding_namespace": "Enqueuer",
+   "binding_owner": "ruby:Enqueuer",
+   "line": 30,
+   "located": true,
+   "method": "perform_later",
+   "namespace_equals_nesting_join": true,
+   "nesting_join": "Enqueuer",
+   "occ_kind_role": [
+    "reference",
+    "reference:call"
+   ],
+   "owner": [
+    "method",
+    "run",
+    "app/services/enqueuer.rb"
+   ],
+   "owner_non_null": true,
+   "path": "app/services/enqueuer.rb",
+   "refs_rows": 1,
+   "skip_path": false,
+   "uncaptured_scope_resolution_ancestor": false,
+   "unsupported_source_owner": false
+  },
+  {
+   "ancestor_chain": [
+    "method",
+    "class"
+   ],
+   "binding_byte": 1092,
+   "binding_category": "instance",
+   "binding_namespace": "Enqueuer",
+   "binding_owner": "ruby:Enqueuer",
+   "line": 31,
+   "located": true,
+   "method": "perform_async",
+   "namespace_equals_nesting_join": true,
+   "nesting_join": "Enqueuer",
+   "occ_kind_role": [
+    "reference",
+    "reference:call"
+   ],
+   "owner": [
+    "method",
+    "run",
+    "app/services/enqueuer.rb"
+   ],
+   "owner_non_null": true,
+   "path": "app/services/enqueuer.rb",
+   "refs_rows": 1,
+   "skip_path": false,
+   "uncaptured_scope_resolution_ancestor": false,
+   "unsupported_source_owner": false
+  },
+  {
+   "ancestor_chain": [
+    "method",
+    "class"
+   ],
+   "binding_byte": 1136,
+   "binding_category": "instance",
+   "binding_namespace": "Enqueuer",
+   "binding_owner": "ruby:Enqueuer",
+   "line": 32,
+   "located": true,
+   "method": "perform_async",
+   "namespace_equals_nesting_join": true,
+   "nesting_join": "Enqueuer",
+   "occ_kind_role": [
+    "reference",
+    "reference:call"
+   ],
+   "owner": [
+    "method",
+    "run",
+    "app/services/enqueuer.rb"
+   ],
+   "owner_non_null": true,
+   "path": "app/services/enqueuer.rb",
+   "refs_rows": 1,
+   "skip_path": false,
+   "uncaptured_scope_resolution_ancestor": false,
+   "unsupported_source_owner": false
+  },
+  {
+   "ancestor_chain": [
+    "method",
+    "class"
+   ],
+   "binding_byte": 1183,
+   "binding_category": "instance",
+   "binding_namespace": "Enqueuer",
+   "binding_owner": "ruby:Enqueuer",
+   "line": 33,
+   "located": true,
+   "method": "perform_later",
+   "namespace_equals_nesting_join": true,
+   "nesting_join": "Enqueuer",
+   "occ_kind_role": [
+    "reference",
+    "reference:call"
+   ],
+   "owner": [
+    "method",
+    "run",
+    "app/services/enqueuer.rb"
+   ],
+   "owner_non_null": true,
+   "path": "app/services/enqueuer.rb",
+   "refs_rows": 1,
+   "skip_path": false,
+   "uncaptured_scope_resolution_ancestor": false,
+   "unsupported_source_owner": false
+  },
+  {
+   "ancestor_chain": [
+    "method",
+    "class"
+   ],
+   "binding_byte": 1221,
+   "binding_category": "instance",
+   "binding_namespace": "Enqueuer",
+   "binding_owner": "ruby:Enqueuer",
+   "line": 34,
+   "located": true,
+   "method": "perform_async",
+   "namespace_equals_nesting_join": true,
+   "nesting_join": "Enqueuer",
+   "occ_kind_role": [
+    "reference",
+    "reference:call"
+   ],
+   "owner": [
+    "method",
+    "run",
+    "app/services/enqueuer.rb"
+   ],
+   "owner_non_null": true,
+   "path": "app/services/enqueuer.rb",
+   "refs_rows": 1,
+   "skip_path": false,
+   "uncaptured_scope_resolution_ancestor": false,
+   "unsupported_source_owner": false
+  },
+  {
+   "ancestor_chain": [
+    "method",
+    "class"
+   ],
+   "binding_byte": 1251,
+   "binding_category": "instance",
+   "binding_namespace": "Enqueuer",
+   "binding_owner": "ruby:Enqueuer",
+   "line": 35,
+   "located": true,
+   "method": "perform_async",
+   "namespace_equals_nesting_join": true,
+   "nesting_join": "Enqueuer",
+   "occ_kind_role": [
+    "reference",
+    "reference:call"
+   ],
+   "owner": [
+    "method",
+    "run",
+    "app/services/enqueuer.rb"
+   ],
+   "owner_non_null": true,
+   "path": "app/services/enqueuer.rb",
+   "refs_rows": 1,
+   "skip_path": false,
+   "uncaptured_scope_resolution_ancestor": false,
+   "unsupported_source_owner": false
+  },
+  {
+   "ancestor_chain": [
+    "method",
+    "class"
+   ],
+   "binding_byte": 1286,
+   "binding_category": "instance",
+   "binding_namespace": "Enqueuer",
+   "binding_owner": "ruby:Enqueuer",
+   "line": 36,
+   "located": true,
+   "method": "perform_async",
+   "namespace_equals_nesting_join": true,
+   "nesting_join": "Enqueuer",
+   "occ_kind_role": [
+    "reference",
+    "reference:call"
+   ],
+   "owner": [
+    "method",
+    "run",
+    "app/services/enqueuer.rb"
+   ],
+   "owner_non_null": true,
+   "path": "app/services/enqueuer.rb",
+   "refs_rows": 1,
+   "skip_path": false,
+   "uncaptured_scope_resolution_ancestor": false,
+   "unsupported_source_owner": false
+  },
+  {
+   "ancestor_chain": [
+    "method",
+    "class"
+   ],
+   "binding_byte": 1325,
+   "binding_category": "instance",
+   "binding_namespace": "Enqueuer",
+   "binding_owner": "ruby:Enqueuer",
+   "line": 37,
+   "located": true,
+   "method": "perform_async",
+   "namespace_equals_nesting_join": true,
+   "nesting_join": "Enqueuer",
+   "occ_kind_role": [
+    "reference",
+    "reference:call"
+   ],
+   "owner": [
+    "method",
+    "run",
+    "app/services/enqueuer.rb"
+   ],
+   "owner_non_null": true,
+   "path": "app/services/enqueuer.rb",
+   "refs_rows": 1,
+   "skip_path": false,
+   "uncaptured_scope_resolution_ancestor": false,
+   "unsupported_source_owner": false
+  },
+  {
+   "ancestor_chain": [
+    "method",
+    "class"
+   ],
+   "binding_byte": 1356,
+   "binding_category": "instance",
+   "binding_namespace": "Enqueuer",
+   "binding_owner": "ruby:Enqueuer",
+   "line": 38,
+   "located": true,
+   "method": "perform_later",
+   "namespace_equals_nesting_join": true,
+   "nesting_join": "Enqueuer",
+   "occ_kind_role": [
+    "reference",
+    "reference:call"
+   ],
+   "owner": [
+    "method",
+    "run",
+    "app/services/enqueuer.rb"
+   ],
+   "owner_non_null": true,
+   "path": "app/services/enqueuer.rb",
+   "refs_rows": 1,
+   "skip_path": false,
+   "uncaptured_scope_resolution_ancestor": false,
+   "unsupported_source_owner": false
+  },
+  {
+   "ancestor_chain": [
+    "method",
+    "class"
+   ],
+   "binding_byte": 1673,
+   "binding_category": "instance",
+   "binding_namespace": "Enqueuer",
+   "binding_owner": "ruby:Enqueuer",
+   "line": 51,
+   "located": true,
+   "method": "perform_async",
+   "namespace_equals_nesting_join": true,
+   "nesting_join": "Enqueuer",
+   "occ_kind_role": [
+    "reference",
+    "reference:call"
+   ],
+   "owner": [
+    "method",
+    "fwd",
+    "app/services/enqueuer.rb"
+   ],
+   "owner_non_null": true,
+   "path": "app/services/enqueuer.rb",
+   "refs_rows": 1,
+   "skip_path": false,
+   "uncaptured_scope_resolution_ancestor": false,
+   "unsupported_source_owner": false
+  },
+  {
+   "ancestor_chain": [
+    "method",
+    "class",
+    "module"
+   ],
+   "binding_byte": 61,
+   "binding_category": "instance",
+   "binding_namespace": "Outer::Inner::Thing",
+   "binding_owner": "ruby:Outer::Inner::Thing",
+   "line": 4,
+   "located": true,
+   "method": "perform_later",
+   "namespace_equals_nesting_join": true,
+   "nesting_join": "Outer::Inner::Thing",
+   "occ_kind_role": [
+    "reference",
+    "reference:call"
+   ],
+   "owner": [
+    "method",
+    "go",
+    "app/services/outer.rb"
+   ],
+   "owner_non_null": true,
+   "path": "app/services/outer.rb",
+   "refs_rows": 1,
+   "skip_path": false,
+   "uncaptured_scope_resolution_ancestor": false,
+   "unsupported_source_owner": false
+  },
+  {
+   "ancestor_chain": [
+    "method",
+    "class"
+   ],
+   "binding_byte": 138,
+   "binding_category": "instance",
+   "binding_namespace": "::Rooted",
+   "binding_owner": "ruby:::Rooted",
+   "line": 11,
+   "located": true,
+   "method": "perform_later",
+   "namespace_equals_nesting_join": true,
+   "nesting_join": "::Rooted",
+   "occ_kind_role": [
+    "reference",
+    "reference:call"
+   ],
+   "owner": [
+    "file",
+    "app/services/outer.rb",
+    "app/services/outer.rb"
+   ],
+   "owner_non_null": true,
+   "path": "app/services/outer.rb",
+   "refs_rows": 1,
+   "skip_path": false,
+   "uncaptured_scope_resolution_ancestor": true,
+   "unsupported_source_owner": true
+  },
+  {
+   "ancestor_chain": [
+    "method",
+    "class"
+   ],
+   "binding_byte": 44,
+   "binding_category": "instance",
+   "binding_namespace": "Reports::Daily",
+   "binding_owner": "ruby:Reports::Daily",
+   "line": 3,
+   "located": true,
+   "method": "perform_later",
+   "namespace_equals_nesting_join": true,
+   "nesting_join": "Reports::Daily",
+   "occ_kind_role": [
+    "reference",
+    "reference:call"
+   ],
+   "owner": [
+    "method",
+    "go",
+    "app/services/reports/daily.rb"
+   ],
+   "owner_non_null": true,
+   "path": "app/services/reports/daily.rb",
+   "refs_rows": 1,
+   "skip_path": false,
+   "uncaptured_scope_resolution_ancestor": false,
+   "unsupported_source_owner": false
+  },
+  {
+   "ancestor_chain": [],
+   "binding_byte": 54,
+   "binding_category": "free",
+   "binding_namespace": "",
+   "binding_owner": null,
+   "line": 3,
+   "located": true,
+   "method": "perform_later",
+   "namespace_equals_nesting_join": true,
+   "nesting_join": "",
+   "occ_kind_role": [
+    "reference",
+    "reference:call"
+   ],
+   "owner": [
+    "file",
+    "spec/jobs/report_job_spec.rb",
+    "spec/jobs/report_job_spec.rb"
+   ],
+   "owner_non_null": true,
+   "path": "spec/jobs/report_job_spec.rb",
+   "refs_rows": 1,
+   "skip_path": false,
+   "uncaptured_scope_resolution_ancestor": false,
+   "unsupported_source_owner": false
+  },
+  {
+   "indexed_refs": 0,
+   "line": 9,
+   "method": "perform_async",
+   "path": "tmp/stale/w.rb",
+   "refs_rows": 0,
+   "skip_path": true
+  },
+  {
+   "indexed_refs": 0,
+   "line": 10,
+   "method": "perform_async",
+   "path": "tmp/stale/w.rb",
+   "refs_rows": 0,
+   "skip_path": true
+  }
+ ]
+}

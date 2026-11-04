@@ -1,0 +1,71 @@
+{
+  "slice_id": "ACI-S26",
+  "criteria_changed": false,
+  "base_commit": "01947584046036ee4328eda03d23787ec7471a30",
+  "additional_paths": [
+    "mcp-server/src/atlas_aci/storage/evidence.py",
+    "mcp-server/src/atlas_aci/frameworks/__init__.py",
+    "mcp-server/tests/slices/test_s26_*.py",
+    "mcp-server/tests/slices/test_s24_rails_routes.py",
+    "mcp-server/tests/slices/test_s25_rails_models.py",
+    "mcp-server/tests/slices/test_s25_isolation.py",
+    "CHANGELOG.md",
+    "README.md",
+    ".spectra/evidence/aci-s26/compare_graphs.py",
+    ".spectra/evidence/aci-s26/g_image.sh"
+  ],
+  "narrowed_paths": {},
+  "not_edited": {
+    "mcp-server/src/atlas_aci/__main__.py": "Not declared and not edited: --frameworks help is built from frameworks.REGISTRY (__main__.py:186-187); G-SRC requires it byte-unchanged vs 0194758.",
+    "mcp-server/src/atlas_aci/frameworks/rails_routes.py": "Not edited; helpers are copied into rails_jobs.py so the S24 adapter_sha256 and route identity are untouched (G-ROUTES).",
+    "mcp-server/src/atlas_aci/frameworks/rails_models.py": "Not edited; Span/_classes/Capture/Resolver shapes are copied, so the S25 adapter_sha256 and model identity are untouched (G-MODELS)."
+  },
+  "reasons": {
+    "storage/evidence.py": "Minimal closed-set amendment EV1-EV5: async_enqueue/async_argument accepted only by ASSERTION_RELATIONS (never RELATIONS/REFERENCE_RELATIONS/EDGE_RELATIONS/KNOWN_EDGE_RELATIONS); occurrence kind rails_job bound 1:1 to role prefix rails_job: (source state, hash entity, ruby); async_enqueue resolution INFERRED/AMBIGUOUS/UNRESOLVED and async_argument INFERRED/UNRESOLVED; no target-less carve-out (resolved still requires a target); {rails_jobs} producer fingerprint branch (adapter rails-jobs.v1, adapter_sha256, graph_producer_id), format-checked and never pinned to the running adapter; validate_database rails_jobs evidence/assertion discrimination with source == occurrence entity of kind method/class/module/file. No new entity kind, FIELDS or COLUMNS change. Native producer churn for all graphs accepted (S16/S21/S24/S25 precedent).",
+    "frameworks/__init__.py": "Closed registry becomes {rails, rails_jobs, rails_models}; REQUIRED_LANGUAGE rails_jobs -> ruby; normalize unchanged; docstring names ACI-S26.",
+    "codegraph.py": "Declared path; edits CG1-CG8 only: import; flag-gated bounded byte-regex capture before every continue; rails_jobs.refresh after rails_models.refresh and before _validate_evidence_projections; dropped-set exclusion; role/relation projection carve-outs; rails_jobs.validate_records. QUERIES, constructor parameters, _producer_inputs, _build_inputs, configuration and generation-input shapes unchanged.",
+    "tests/slices/test_s26_*.py": "AC tests stay in the declared test_s26_rails_jobs.py; supporting isolation, validation, S10 and cap gates in test_s26_isolation.py; shared helpers in test_s26_support.py.",
+    "tests/slices/test_s24_rails_routes.py": "Exactly two statements: the frameworks/ file-set pin (:381) gains rails_jobs.py (ruff format may wrap the statement) and the adapter-read count (:418) becomes 3. No other S24 test edit.",
+    "tests/slices/test_s25_rails_models.py": "Exactly two statements: the frameworks/ file-set pin (:645) gains rails_jobs.py (ruff format may wrap the statement) and the adapter-read count (:687) becomes 3. No other edit.",
+    "tests/slices/test_s25_isolation.py": "Exactly one hunk (:231-239): the exact ASSERTION_RELATIONS pin gains async_enqueue and async_argument. The parametrized carve-out test (:244-267) is unchanged and auto-covers the new relations.",
+    "CHANGELOG.md/README.md": "[Unreleased] entry (including producer-id churn and the async-boundary wording) and an operator pointer to docs/frameworks/rails.md.",
+    ".spectra/evidence/aci-s26/compare_graphs.py": "Copy of the S25 G-IMAGE comparison with ADAPTERS extended by rails_jobs (separate ownership, manifest key, three-adapter self-test).",
+    ".spectra/evidence/aci-s26/g_image.sh": "Copy of the S25 image scenario with the base image built from 0194758 and the S26 fixture plus G-ROUTES/G-MODELS reruns."
+  },
+  "operator_decisions": {
+    "layout": "separate adapter rails_jobs (registry {rails, rails_jobs, rails_models}, requires ruby); producer fingerprint key rails_jobs {adapter rails-jobs.v1, adapter_sha256, graph_producer_id}; manifest key rails_jobs format atlas-rails-jobs.v1; occurrence kind rails_job, role prefix rails_job:; rails_routes.py/rails_models.py not edited; separately replaceable",
+    "records": "async_enqueue (INFERRED to the perform method entity / AMBIGUOUS with sorted perform candidates / UNRESOLVED closed reasons) and async_argument (INFERRED to the same perform with raw_target {arg, enqueue occurrence id, mapping, param, param_name} / UNRESOLVED diagnostic); only in ASSERTION_RELATIONS; no parameter entities, no QUERIES edit, no target-less carve-out; source = refs.source_entity_id owner; no call edge to perform",
+    "ac004": "stricter reading: dynamic_receiver/set_chain/delayed_enqueue/unbound_namespace/site_limit make the async_enqueue UNRESOLVED unsupported_argument_mapping; call-side splat/hash_splat/keyword_arguments/block_argument/block/forwarded_arguments, argument_limit, unsupported_signature and arity_mismatch keep the enqueue resolution with raw_target arguments=unsupported+construct, no partial mappings, exactly one UNRESOLVED async_argument diagnostic referencing the enqueue occurrence",
+    "syntax": "direct constant receivers (CLASS_NAME_RE); perform_async requires direct include Sidekiq::Worker|Job, perform_later requires direct superclass ApplicationJob|ActiveJob::Base|::ActiveJob::Base; explicit direct instance perform; fixed positional = leading identifier/optional_parameter run, R <= A <= R+O; perform_now/perform_sync/perform_inline/.new.perform/delay/perform_bulk silent; values never evaluated or copied",
+    "resolution": "existence over all indexed class/module namespaces; candidates from Module.nesting (cross-checked with refs binding.namespace; empty nesting -> [R]); exactly one existing name with exactly one recognised perform -> INFERRED; >=2 performs -> AMBIGUOUS ambiguous_job_target; else job_class_not_found / perform_not_found / target_not_recognized_job; no Ruby precedence or ancestor lookup",
+    "discovery": "flag-gated bounded byte-regex capture (MAX_FILES/MAX_FILE_BYTES/MAX_CAPTURE_BYTES); sites located by refs callee rows + occurrence byte span in a per-file parse; plain spans, trees released per file; MAX_SITES/MAX_ARGUMENTS with site_limit/argument_limit; all indexed Ruby files incl. specs; Day-1 probe decides refs vs iterative-walk fallback (STOP RULE)",
+    "invalidation": "probe-gated global purge and recompute on every build; rails_jobs ids join dropped; ON->OFF purge; AC-006 two fresh builds plus incremental",
+    "no_execution": "S25 spies plus redis/sidekiq absent from sys.modules, sentinel side-effect fixture workers, repo inventory unchanged, AST ban; ASCII, iterative, no \\d/\\w/$",
+    "churn": "native producer/evidence/assertion/generation/snapshot id churn for all graphs accepted; --frameworks rails and --frameworks rails_models facts unchanged in substance (G-ROUTES, G-MODELS)"
+  },
+  "invariance_gates": [
+    "G-OFF",
+    "G-ONOFF",
+    "G-IMAGE",
+    "G-ROUTES",
+    "G-MODELS",
+    "G-ENVELOPE",
+    "G-MCP",
+    "G-NOLEAK",
+    "G-QUERY",
+    "G-SRC",
+    "G-NOEXEC",
+    "G-RO",
+    "G-DEPS"
+  ],
+  "invariants": {
+    "tools_json_sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+    "tools_json_bytes": 1631472,
+    "MINIMUM_BUDGET": 3436,
+    "COLLECTION_MINIMUM_BUDGET": 3448,
+    "FIXED_ERROR": 797,
+    "IMPACT": 7730
+  },
+  "no_speculative_docker_ci_change": true,
+  "review": ".spectra/plans/aci-s26.review.json"
+}

@@ -33,7 +33,7 @@ import structlog
 from atlas_aci.config import DEFAULT_MAX_BOUND_FIELD_ELEMENTS, path_is_within
 from atlas_aci.extractors import rust, tsx
 from atlas_aci.frameworks import normalize as normalize_frameworks
-from atlas_aci.frameworks import rails_models, rails_routes
+from atlas_aci.frameworks import rails_jobs, rails_models, rails_routes
 from atlas_aci.indexing import extraction_cache as xc
 from atlas_aci.indexing import retrieval as ret
 from atlas_aci.label_propagation import label_propagation
@@ -2582,6 +2582,7 @@ class CodeGraph:
                             | coverage_py.record_ids(full)
                             | rails_routes.record_ids(full)
                             | rails_models.record_ids(full)
+                            | rails_jobs.record_ids(full)
                         )
                         self._proof_predecessor_records = [
                             r for r in full if r["id"] not in dropped
@@ -3181,6 +3182,10 @@ class CodeGraph:
         # offered when the adapter is on, so other builds retain nothing extra.
         model_capture = rails_models.Capture()
         capture_models = "rails_models" in self.frameworks
+        # Bounded Ruby bytes that mention a job construct for the opt-in rails_jobs adapter
+        # (ACI-S26); only offered when the adapter is on, so other builds retain nothing extra.
+        job_capture = rails_jobs.Capture()
+        capture_jobs = "rails_jobs" in self.frameworks
         symbols_added = 0
         refs_added = 0
         rationale_added = 0
@@ -3226,6 +3231,8 @@ class CodeGraph:
                 routes_capture = (source, source_hash)
             if capture_models and lang == "ruby":
                 model_capture.offer(rel, source, source_hash)
+            if capture_jobs and lang == "ruby":
+                job_capture.offer(rel, source, source_hash)
             if lang not in QUERIES:
                 observation.update(state="unsupported", reason="no_extraction_query")
                 unsupported_skipped[lang] = unsupported_skipped.get(lang, 0) + 1
@@ -3573,6 +3580,14 @@ class CodeGraph:
             enabled=capture_models,
             capture=model_capture,
             table_map=self._rails_table_map,
+            observations=all_observed,
+            get_parser=get_parser,
+            graph_producer_id=self._capture_producer["id"],
+        )
+        rails_jobs.refresh(
+            conn,
+            enabled=capture_jobs,
+            capture=job_capture,
             observations=all_observed,
             get_parser=get_parser,
             graph_producer_id=self._capture_producer["id"],
@@ -6432,7 +6447,12 @@ class CodeGraph:
             if record["type"] == "occurrence":
                 role = record["role"]
                 if role in {"file", "legacy_file"} or role.startswith(
-                    (ev.COVERAGE_ROLE_PREFIX, ev.RAILS_ROLE_PREFIX, ev.RAILS_MODEL_ROLE_PREFIX)
+                    (
+                        ev.COVERAGE_ROLE_PREFIX,
+                        ev.RAILS_ROLE_PREFIX,
+                        ev.RAILS_MODEL_ROLE_PREFIX,
+                        ev.RAILS_JOB_ROLE_PREFIX,
+                    )
                 ):
                     continue
                 if role.startswith(("definition:", "legacy_definition")):
@@ -6456,8 +6476,9 @@ class CodeGraph:
                 if (
                     record["relation"] in {ev.COVERAGE_RELATION, ev.RAILS_RELATION}
                     or record["relation"] in ev.RAILS_MODEL_RELATIONS
+                    or record["relation"] in ev.RAILS_JOB_RELATIONS
                 ):
-                    # observed execution / rails routes / rails models: no refs/edges projection
+                    # observed execution / rails routes / models / jobs: no refs/edges projection
                     continue
                 if record["relation"] == "import":
                     table = "import_bindings"
@@ -6478,6 +6499,7 @@ class CodeGraph:
         coverage_py.validate_records(conn)
         rails_routes.validate_records(conn)
         rails_models.validate_records(conn)
+        rails_jobs.validate_records(conn)
 
     def export_jsonl(self, out_path: Path) -> dict[str, Any]:
         """Export complete canonical evidence and coherent compatibility projections.

@@ -1,0 +1,563 @@
+{
+ "facts": {
+  "descendant_for_byte_range": true,
+  "descendant_probe": {
+   "method_field_matches": true,
+   "parent": "call",
+   "type": "identifier"
+  },
+  "fixture_all_clean": true,
+  "fixture_files": 22,
+  "include_shape": {
+   "argument_text": "Sidekiq::Job",
+   "argument_type": "scope_resolution",
+   "method": "include",
+   "receiver": null
+  },
+  "versions": {
+   "python": "3.12.16 (main, Oct 28 2026, 02:07:05) [GCC 14.2.0]",
+   "tree_sitter_binding": null
+  }
+ },
+ "has_error": {
+  "app/jobs/application_job.rb": false,
+  "app/jobs/billing/sync_job.rb": false,
+  "app/jobs/export_job.rb": false,
+  "app/jobs/inherited_job.rb": false,
+  "app/jobs/no_perform_job.rb": false,
+  "app/jobs/report_job.rb": false,
+  "app/jobs/sentinel_job.rb": false,
+  "app/jobs/sync_job.rb": false,
+  "app/services/billing/nightly.rb": false,
+  "app/services/enqueuer.rb": false,
+  "app/services/outer.rb": false,
+  "app/services/plain_task.rb": false,
+  "app/services/reports/daily.rb": false,
+  "app/workers/hard_worker.rb": false,
+  "app/workers/ordered_worker.rb": false,
+  "app/workers/ping_worker.rb": false,
+  "app/workers/sentinel_worker.rb": false,
+  "app/workers/splat_worker.rb": false,
+  "app/workers/strict_kw_worker.rb": false,
+  "lib/legacy/export_job.rb": false,
+  "spec/jobs/report_job_spec.rb": false,
+  "vendor/bundle/gems/x/lib/w.rb": false
+ },
+ "snippets": {
+  "call:bare": {
+   "call_fields": {
+    "argument_children": null,
+    "arguments": null,
+    "block": null,
+    "method": "identifier",
+    "receiver": "constant"
+   },
+   "has_error": false,
+   "sexp": "(program (call receiver: constant method: identifier))"
+  },
+  "call:block_argument": {
+   "call_fields": {
+    "argument_children": [
+     "identifier",
+     "block_argument"
+    ],
+    "arguments": "argument_list",
+    "block": null,
+    "method": "identifier",
+    "receiver": "constant"
+   },
+   "has_error": false,
+   "sexp": "(program (call receiver: constant method: identifier arguments: (argument_list identifier (block_argument identifier))))"
+  },
+  "call:brace_block": {
+   "call_fields": {
+    "argument_children": [
+     "identifier"
+    ],
+    "arguments": "argument_list",
+    "block": "block",
+    "method": "identifier",
+    "receiver": "constant"
+   },
+   "has_error": false,
+   "sexp": "(program (call receiver: constant method: identifier arguments: (argument_list identifier) block: (block parameters: (block_parameters identifier) body: (block_body identifier))))"
+  },
+  "call:braced_hash": {
+   "call_fields": {
+    "argument_children": [
+     "hash"
+    ],
+    "arguments": "argument_list",
+    "block": null,
+    "method": "identifier",
+    "receiver": "constant"
+   },
+   "has_error": false,
+   "sexp": "(program (call receiver: constant method: identifier arguments: (argument_list (hash (pair key: hash_key_symbol value: integer)))))"
+  },
+  "call:constant": {
+   "call_fields": {
+    "argument_children": [
+     "integer"
+    ],
+    "arguments": "argument_list",
+    "block": null,
+    "method": "identifier",
+    "receiver": "constant"
+   },
+   "has_error": false,
+   "sexp": "(program (call receiver: constant method: identifier arguments: (argument_list integer)))"
+  },
+  "call:delayed": {
+   "call_fields": {
+    "argument_children": [
+     "integer",
+     "integer"
+    ],
+    "arguments": "argument_list",
+    "block": null,
+    "method": "identifier",
+    "receiver": "constant"
+   },
+   "has_error": false,
+   "sexp": "(program (call receiver: constant method: identifier arguments: (argument_list integer integer)))"
+  },
+  "call:do_block": {
+   "call_fields": {
+    "argument_children": [
+     "identifier"
+    ],
+    "arguments": "argument_list",
+    "block": "do_block",
+    "method": "identifier",
+    "receiver": "constant"
+   },
+   "has_error": false,
+   "sexp": "(program (call receiver: constant method: identifier arguments: (argument_list identifier) block: (do_block parameters: (block_parameters identifier) body: (body_statement identifier))))"
+  },
+  "call:empty_parens": {
+   "call_fields": {
+    "argument_children": [],
+    "arguments": "argument_list",
+    "block": null,
+    "method": "identifier",
+    "receiver": "constant"
+   },
+   "has_error": false,
+   "sexp": "(program (call receiver: constant method: identifier arguments: argument_list))"
+  },
+  "call:forward": {
+   "call_fields": {
+    "argument_children": [
+     "forward_argument"
+    ],
+    "arguments": "argument_list",
+    "block": null,
+    "method": "identifier",
+    "receiver": "constant"
+   },
+   "has_error": false,
+   "sexp": "(program (method name: identifier parameters: (method_parameters forward_parameter) body: (body_statement (call receiver: constant method: identifier arguments: (argument_list forward_argument)))))"
+  },
+  "call:hash_splat": {
+   "call_fields": {
+    "argument_children": [
+     "hash_splat_argument"
+    ],
+    "arguments": "argument_list",
+    "block": null,
+    "method": "identifier",
+    "receiver": "constant"
+   },
+   "has_error": false,
+   "sexp": "(program (call receiver: constant method: identifier arguments: (argument_list (hash_splat_argument identifier))))"
+  },
+  "call:heredoc": {
+   "call_fields": {
+    "argument_children": [
+     "heredoc_beginning",
+     "integer"
+    ],
+    "arguments": "argument_list",
+    "block": null,
+    "method": "identifier",
+    "receiver": "constant"
+   },
+   "has_error": false,
+   "sexp": "(program (call receiver: constant method: identifier arguments: (argument_list heredoc_beginning integer)) (heredoc_body heredoc_content heredoc_end))"
+  },
+  "call:no_parens": {
+   "call_fields": {
+    "argument_children": [
+     "integer",
+     "integer"
+    ],
+    "arguments": "argument_list",
+    "block": null,
+    "method": "identifier",
+    "receiver": "constant"
+   },
+   "has_error": false,
+   "sexp": "(program (call receiver: constant method: identifier arguments: (argument_list integer integer)))"
+  },
+  "call:pair_rocket": {
+   "call_fields": {
+    "argument_children": [
+     "identifier",
+     "pair"
+    ],
+    "arguments": "argument_list",
+    "block": null,
+    "method": "identifier",
+    "receiver": "constant"
+   },
+   "has_error": false,
+   "sexp": "(program (call receiver: constant method: identifier arguments: (argument_list identifier (pair key: simple_symbol value: integer))))"
+  },
+  "call:pair_symbol": {
+   "call_fields": {
+    "argument_children": [
+     "identifier",
+     "pair"
+    ],
+    "arguments": "argument_list",
+    "block": null,
+    "method": "identifier",
+    "receiver": "constant"
+   },
+   "has_error": false,
+   "sexp": "(program (call receiver: constant method: identifier arguments: (argument_list identifier (pair key: hash_key_symbol value: integer))))"
+  },
+  "call:receiverless": {
+   "call_fields": {
+    "argument_children": [
+     "integer"
+    ],
+    "arguments": "argument_list",
+    "block": null,
+    "method": "identifier",
+    "receiver": null
+   },
+   "has_error": false,
+   "sexp": "(program (call method: identifier arguments: (argument_list integer)))"
+  },
+  "call:rooted": {
+   "call_fields": {
+    "argument_children": [
+     "integer"
+    ],
+    "arguments": "argument_list",
+    "block": null,
+    "method": "identifier",
+    "receiver": "scope_resolution"
+   },
+   "has_error": false,
+   "sexp": "(program (call receiver: (scope_resolution name: constant) method: identifier arguments: (argument_list integer)))"
+  },
+  "call:scope": {
+   "call_fields": {
+    "argument_children": [
+     "integer"
+    ],
+    "arguments": "argument_list",
+    "block": null,
+    "method": "identifier",
+    "receiver": "scope_resolution"
+   },
+   "has_error": false,
+   "sexp": "(program (call receiver: (scope_resolution scope: constant name: constant) method: identifier arguments: (argument_list integer)))"
+  },
+  "call:self_class": {
+   "call_fields": {
+    "argument_children": [
+     "integer"
+    ],
+    "arguments": "argument_list",
+    "block": null,
+    "method": "identifier",
+    "receiver": "call"
+   },
+   "has_error": false,
+   "sexp": "(program (call receiver: (call receiver: self method: identifier) method: identifier arguments: (argument_list integer)))"
+  },
+  "call:set_chain": {
+   "call_fields": {
+    "argument_children": [
+     "integer"
+    ],
+    "arguments": "argument_list",
+    "block": null,
+    "method": "identifier",
+    "receiver": "call"
+   },
+   "has_error": false,
+   "sexp": "(program (call receiver: (call receiver: constant method: identifier arguments: (argument_list (pair key: hash_key_symbol value: integer))) method: identifier arguments: (argument_list integer)))"
+  },
+  "call:splat": {
+   "call_fields": {
+    "argument_children": [
+     "splat_argument"
+    ],
+    "arguments": "argument_list",
+    "block": null,
+    "method": "identifier",
+    "receiver": "constant"
+   },
+   "has_error": false,
+   "sexp": "(program (call receiver: constant method: identifier arguments: (argument_list (splat_argument identifier))))"
+  },
+  "call:string_receiver": {
+   "call_fields": {
+    "argument_children": [
+     "integer"
+    ],
+    "arguments": "argument_list",
+    "block": null,
+    "method": "identifier",
+    "receiver": "call"
+   },
+   "has_error": false,
+   "sexp": "(program (call receiver: (call receiver: (string string_content) method: identifier) method: identifier arguments: (argument_list integer)))"
+  },
+  "call:trailing_comment": {
+   "call_fields": {
+    "argument_children": [
+     "integer",
+     "comment",
+     "integer"
+    ],
+    "arguments": "argument_list",
+    "block": null,
+    "method": "identifier",
+    "receiver": "constant"
+   },
+   "has_error": false,
+   "sexp": "(program (call receiver: constant method: identifier arguments: (argument_list integer comment integer)))"
+  },
+  "def:block": {
+   "children": [
+    {
+     "type": "identifier"
+    },
+    {
+     "type": "block_parameter"
+    }
+   ],
+   "has_error": false,
+   "parameters_type": "method_parameters",
+   "sexp": "(program (method name: identifier parameters: (method_parameters identifier (block_parameter name: identifier))))"
+  },
+  "def:destructured": {
+   "children": [
+    {
+     "type": "destructured_parameter"
+    },
+    {
+     "type": "identifier"
+    }
+   ],
+   "has_error": false,
+   "parameters_type": "method_parameters",
+   "sexp": "(program (method name: identifier parameters: (method_parameters (destructured_parameter identifier identifier) identifier)))"
+  },
+  "def:empty_parens": {
+   "children": [],
+   "has_error": false,
+   "parameters_type": "method_parameters",
+   "sexp": "(program (method name: identifier parameters: method_parameters))"
+  },
+  "def:forward": {
+   "children": [
+    {
+     "type": "forward_parameter"
+    }
+   ],
+   "has_error": false,
+   "parameters_type": "method_parameters",
+   "sexp": "(program (method name: identifier parameters: (method_parameters forward_parameter)))"
+  },
+  "def:hash_splat_nil": {
+   "children": [
+    {
+     "type": "identifier"
+    },
+    {
+     "type": "hash_splat_nil"
+    }
+   ],
+   "has_error": false,
+   "parameters_type": "method_parameters",
+   "sexp": "(program (method name: identifier parameters: (method_parameters identifier hash_splat_nil)))"
+  },
+  "def:mixed": {
+   "children": [
+    {
+     "type": "identifier"
+    },
+    {
+     "name_field": "b",
+     "type": "optional_parameter",
+     "value_field": true
+    },
+    {
+     "type": "splat_parameter"
+    },
+    {
+     "type": "keyword_parameter",
+     "value_field": false
+    },
+    {
+     "type": "keyword_parameter",
+     "value_field": true
+    },
+    {
+     "type": "hash_splat_parameter"
+    },
+    {
+     "type": "block_parameter"
+    }
+   ],
+   "has_error": false,
+   "parameters_type": "method_parameters",
+   "sexp": "(program (method name: identifier parameters: (method_parameters identifier (optional_parameter name: identifier value: integer) (splat_parameter name: identifier) (keyword_parameter name: identifier) (keyword_parameter name: identifier value: integer) (hash_splat_parameter name: identifier) (block_parameter name: identifier))))"
+  },
+  "def:none": {
+   "has_error": false,
+   "parameters_type": null,
+   "sexp": "(program (method name: identifier))"
+  },
+  "def:optional": {
+   "children": [
+    {
+     "type": "identifier"
+    },
+    {
+     "name_field": "b",
+     "type": "optional_parameter",
+     "value_field": true
+    }
+   ],
+   "has_error": false,
+   "parameters_type": "method_parameters",
+   "sexp": "(program (method name: identifier parameters: (method_parameters identifier (optional_parameter name: identifier value: integer))))"
+  },
+  "def:optional_kw": {
+   "children": [
+    {
+     "type": "identifier"
+    },
+    {
+     "type": "keyword_parameter",
+     "value_field": true
+    }
+   ],
+   "has_error": false,
+   "parameters_type": "method_parameters",
+   "sexp": "(program (method name: identifier parameters: (method_parameters identifier (keyword_parameter name: identifier value: integer))))"
+  },
+  "def:parenless": {
+   "children": [
+    {
+     "type": "identifier"
+    },
+    {
+     "type": "identifier"
+    }
+   ],
+   "has_error": false,
+   "parameters_type": "method_parameters",
+   "sexp": "(program (method name: identifier parameters: (method_parameters identifier identifier)))"
+  },
+  "def:post_optional": {
+   "children": [
+    {
+     "type": "identifier"
+    },
+    {
+     "name_field": "b",
+     "type": "optional_parameter",
+     "value_field": true
+    },
+    {
+     "type": "identifier"
+    }
+   ],
+   "has_error": false,
+   "parameters_type": "method_parameters",
+   "sexp": "(program (method name: identifier parameters: (method_parameters identifier (optional_parameter name: identifier value: integer) identifier)))"
+  },
+  "def:required": {
+   "children": [
+    {
+     "type": "identifier"
+    },
+    {
+     "type": "identifier"
+    }
+   ],
+   "has_error": false,
+   "parameters_type": "method_parameters",
+   "sexp": "(program (method name: identifier parameters: (method_parameters identifier identifier)))"
+  },
+  "def:required_kw": {
+   "children": [
+    {
+     "type": "identifier"
+    },
+    {
+     "type": "keyword_parameter",
+     "value_field": false
+    }
+   ],
+   "has_error": false,
+   "parameters_type": "method_parameters",
+   "sexp": "(program (method name: identifier parameters: (method_parameters identifier (keyword_parameter name: identifier))))"
+  },
+  "def:splat": {
+   "children": [
+    {
+     "type": "splat_parameter"
+    }
+   ],
+   "has_error": false,
+   "parameters_type": "method_parameters",
+   "sexp": "(program (method name: identifier parameters: (method_parameters (splat_parameter name: identifier))))"
+  },
+  "shape:compact_name": {
+   "has_error": false,
+   "sexp": "(program (class name: (scope_resolution scope: constant name: constant) superclass: (superclass constant)))"
+  },
+  "shape:include_job": {
+   "has_error": false,
+   "sexp": "(program (class name: constant body: (body_statement (call method: identifier arguments: (argument_list (scope_resolution scope: ... name: ...))))))"
+  },
+  "shape:include_rooted": {
+   "has_error": false,
+   "sexp": "(program (class name: constant body: (body_statement (call method: identifier arguments: (argument_list (scope_resolution scope: ... name: ...))))))"
+  },
+  "shape:nested_compact": {
+   "has_error": false,
+   "sexp": "(program (module name: constant body: (body_statement (class name: (scope_resolution scope: constant name: constant)))))"
+  },
+  "shape:rooted_name": {
+   "has_error": false,
+   "sexp": "(program (class name: (scope_resolution name: constant)))"
+  },
+  "shape:singleton_class": {
+   "has_error": false,
+   "sexp": "(program (class name: constant body: (body_statement (singleton_class value: self body: (body_statement (method name: ... parameters: ...))) (singleton_method object: self name: identifier parameters: (method_parameters identifier)))))"
+  },
+  "shape:super_active": {
+   "has_error": false,
+   "sexp": "(program (class name: constant superclass: (superclass (scope_resolution scope: constant name: constant))))"
+  },
+  "shape:super_app": {
+   "has_error": false,
+   "sexp": "(program (class name: constant superclass: (superclass constant)))"
+  },
+  "shape:super_rooted": {
+   "has_error": false,
+   "sexp": "(program (class name: constant superclass: (superclass (scope_resolution scope: (scope_resolution name: constant) name: constant))))"
+  }
+ }
+}

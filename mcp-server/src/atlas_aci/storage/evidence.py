@@ -90,8 +90,26 @@ RAILS_TARGETLESS_RELATIONS = frozenset({RAILS_TABLE_RELATION, RAILS_MIGRATION_RE
 RAILS_MODEL_KIND = "rails_model"
 RAILS_MODEL_ROLE_PREFIX = "rails_model:"
 RAILS_MODELS_ADAPTER = "rails-models.v1"
+# Direct Rails job enqueues and positional argument paths (ACI-S26). Both relations follow the
+# same rule as `routes_to`: they are in NONE of RELATIONS / REFERENCE_RELATIONS /
+# EDGE_RELATIONS, never produce an `edges` row, are not traversable and are never an MCP enum
+# value. `async_enqueue` is an asynchronous boundary (never a call) to the unique `perform`
+# method entity (INFERRED, AMBIGUOUS or UNRESOLVED); `async_argument` maps one positional
+# argument to the same `perform` (INFERRED) or is a diagnostic (UNRESOLVED). Neither is ever
+# EXTRACTED and a resolved one always carries its target: there is no target-less carve-out.
+# Only the closed assertion-record check accepts them, in the shape `validate_database` and
+# `frameworks.rails_jobs.validate_records` pin.
+ASYNC_ENQUEUE_RELATION = "async_enqueue"
+ASYNC_ARGUMENT_RELATION = "async_argument"
+RAILS_JOB_RELATIONS = frozenset({ASYNC_ENQUEUE_RELATION, ASYNC_ARGUMENT_RELATION})
+RAILS_JOB_KIND = "rails_job"
+RAILS_JOB_ROLE_PREFIX = "rails_job:"
+RAILS_JOBS_ADAPTER = "rails-jobs.v1"
 ASSERTION_RELATIONS = (
-    REFERENCE_RELATIONS | {COVERAGE_RELATION, RAILS_RELATION} | RAILS_MODEL_RELATIONS
+    REFERENCE_RELATIONS
+    | {COVERAGE_RELATION, RAILS_RELATION}
+    | RAILS_MODEL_RELATIONS
+    | RAILS_JOB_RELATIONS
 )
 COVERAGE_TEST_KIND = "coverage_test"
 COVERAGE_EXECUTION_KIND = "execution"
@@ -318,6 +336,9 @@ def _validate_record(item: Any) -> None:
                     fingerprint["rails_models"], item["identity_basis"]
                 )
                 return
+            if set(fingerprint) == {"rails_jobs"}:
+                _validate_rails_jobs_fingerprint(fingerprint["rails_jobs"], item["identity_basis"])
+                return
             require(
                 set(fingerprint)
                 in (
@@ -439,6 +460,7 @@ def _validate_record(item: Any) -> None:
                     COVERAGE_EXECUTION_KIND,
                     RAILS_ROUTE_KIND,
                     RAILS_MODEL_KIND,
+                    RAILS_JOB_KIND,
                 },
                 "occurrence kind",
             )
@@ -479,6 +501,17 @@ def _validate_record(item: Any) -> None:
                     and hash_value(item["entity_id"])
                     and item["language"] == "ruby",
                     "rails model occurrence shape",
+                )
+            require(
+                (item["kind"] == RAILS_JOB_KIND) == item["role"].startswith(RAILS_JOB_ROLE_PREFIX),
+                "rails job occurrence role",
+            )
+            if item["kind"] == RAILS_JOB_KIND:
+                require(
+                    state == "source"
+                    and hash_value(item["entity_id"])
+                    and item["language"] == "ruby",
+                    "rails job occurrence shape",
                 )
             if item["kind"] == COVERAGE_EXECUTION_KIND:
                 phases = item["role"][len(COVERAGE_ROLE_PREFIX) :].split("+")
@@ -535,6 +568,13 @@ def _validate_record(item: Any) -> None:
                 item["resolution"] in {"INFERRED", "AMBIGUOUS", "UNRESOLVED"},
                 "association assertion",
             )
+        if item["relation"] == ASYNC_ENQUEUE_RELATION:
+            require(
+                item["resolution"] in {"INFERRED", "AMBIGUOUS", "UNRESOLVED"},
+                "async_enqueue assertion",
+            )
+        if item["relation"] == ASYNC_ARGUMENT_RELATION:
+            require(item["resolution"] in {"INFERRED", "UNRESOLVED"}, "async_argument assertion")
         if item["relation"] in RAILS_TARGETLESS_RELATIONS:
             require(
                 item["resolution"] in {"EXTRACTED", "UNRESOLVED"}
@@ -845,6 +885,22 @@ def _validate_rails_models_fingerprint(value: Any, basis: str) -> None:
     )
 
 
+def _validate_rails_jobs_fingerprint(value: Any, basis: str) -> None:
+    """Rails jobs adapter identity; hashes are format-checked, never pinned to the running
+    adapter (a predecessor may legitimately carry another build's hash)."""
+    require(basis == "parsed", "rails_jobs producer basis")
+    require(
+        isinstance(value, dict)
+        and set(value) == {"adapter", "adapter_sha256", "graph_producer_id"},
+        "rails_jobs producer fields",
+    )
+    require(value["adapter"] == RAILS_JOBS_ADAPTER, "rails_jobs producer values")
+    require(
+        hash_value(value["adapter_sha256"]) and hash_value(value["graph_producer_id"]),
+        "rails_jobs producer hashes",
+    )
+
+
 def validate_record(item: Any) -> None:
     try:
         _validate_record(item)
@@ -903,6 +959,11 @@ def validate_database(conn: sqlite3.Connection) -> None:
                 "rails model occurrence entity",
             )
             require(
+                (item["kind"] == RAILS_JOB_KIND)
+                <= (entity["kind"] in {"method", "class", "module", "file"}),
+                "rails job occurrence entity",
+            )
+            require(
                 (item["provenance_state"] == "source") == (entity["identity_basis"] == "parsed"),
                 "occurrence/entity identity basis",
             )
@@ -928,6 +989,11 @@ def validate_database(conn: sqlite3.Connection) -> None:
                 (set(producer_record["fingerprint"] or ()) == {"rails_models"})
                 == (occurrence["kind"] == RAILS_MODEL_KIND),
                 "rails_models evidence/occurrence",
+            )
+            require(
+                (set(producer_record["fingerprint"] or ()) == {"rails_jobs"})
+                == (occurrence["kind"] == RAILS_JOB_KIND),
+                "rails_jobs evidence/occurrence",
             )
             for key in (
                 "source_sha256",
@@ -974,6 +1040,19 @@ def validate_database(conn: sqlite3.Connection) -> None:
                     and source["kind"]
                     == ("file" if item["relation"] == RAILS_MIGRATION_RELATION else "class"),
                     "rails_models assertion source",
+                )
+            rails_jobs = item["relation"] in RAILS_JOB_RELATIONS
+            require(
+                rails_jobs
+                == (set(producer_record["fingerprint"] or ()) == {"rails_jobs"})
+                == (occurrence["kind"] == RAILS_JOB_KIND),
+                "rails_jobs assertion discrimination",
+            )
+            if rails_jobs:
+                require(
+                    source["id"] == occurrence["entity_id"]
+                    and source["kind"] in {"method", "class", "module", "file"},
+                    "rails_jobs assertion source",
                 )
             if coverage:
                 # Observed test execution: the source is a test (path of the TEST file), the

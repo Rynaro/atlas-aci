@@ -1,0 +1,131 @@
+{
+ "description": "Rails jobs fixture for ACI-S26. All files are ASCII, written for this slice. No file is under app/models/, config/routes.rb or db/migrate/, so the S24 and S25 adapters yield no records here. tmp/stale/w.rb sits under a skip-pattern component and is never indexed.",
+ "expected": {
+  "classes": {
+   "jobs": 13,
+   "unbound": 2
+  },
+  "derivation": "enqueues: 35 sites in enqueuer.rb + 2 nightly + 1 daily + 2 outer + 1 spec = 41; INFERRED 23 (9 + 11 argument-diagnostic + B2 + daily + spec), AMBIGUOUS 3 (E8, U11, B1), UNRESOLVED 15 (E9-E14, D1-D4, S1, L1, L2, 2 unbound_namespace); arguments: 16 mapped (E1 1, E2 2, E3 2, E4 2, E7 1, E15 1, E16 1, B2 2, daily 2, spec 2) and 12 diagnostics (U1-U11 and fwd).",
+  "facts": {
+   "async_argument": {
+    "INFERRED": 16,
+    "UNRESOLVED": 12
+   },
+   "async_enqueue": {
+    "AMBIGUOUS": 3,
+    "INFERRED": 23,
+    "UNRESOLVED": 15
+   }
+  },
+  "files": {
+   "captured": 20,
+   "failed": 0,
+   "limited": 0,
+   "scanned": 20
+  },
+  "performs": 13,
+  "records": {
+   "assertion": 69,
+   "evidence": 69,
+   "occurrence": 69,
+   "producer": 1
+  },
+  "sites": {
+   "limited": 0,
+   "located": 41,
+   "skipped": 0,
+   "unlocated": 0
+  },
+  "truncated": false
+ },
+ "files": {
+  "app/jobs/application_job.rb": {
+   "bytes": 43,
+   "sha256": "c839c6f54930cc031c9b72dc880557fc572184b777a9f9b9bf300003deaa34e6"
+  },
+  "app/jobs/billing/sync_job.rb": {
+   "bytes": 105,
+   "sha256": "5b5ddd56d633f13a1cb96f6cc17a5e73916301eddfedcdce930917c5621d2a49"
+  },
+  "app/jobs/export_job.rb": {
+   "bytes": 68,
+   "sha256": "951ebb53343accfebf7d4e0e2fe24920f0dab6166f4836567830713167fa2a87"
+  },
+  "app/jobs/inherited_job.rb": {
+   "bytes": 35,
+   "sha256": "a693eaebbe0eba4c89e19d00273d786b9af4d1bb280177924024c6c5b29445a4"
+  },
+  "app/jobs/no_perform_job.rb": {
+   "bytes": 132,
+   "sha256": "0d63115968a543dcd59509ff29b13ded103d73b035152d733f1825ec974701da"
+  },
+  "app/jobs/report_job.rb": {
+   "bytes": 94,
+   "sha256": "da1ec9653a5887381f8368db5eee795e451c3643ebfaf142a2874bbff857e2b7"
+  },
+  "app/jobs/sentinel_job.rb": {
+   "bytes": 238,
+   "sha256": "a3363a5e5aef00f519825693d2ae21b29beb7a6e39c096577a57edaa864472a1"
+  },
+  "app/jobs/sync_job.rb": {
+   "bytes": 93,
+   "sha256": "9e4db7f33142019cca626591b2da028e102bf055d1cbc05a2bca6a6aadd5cb05"
+  },
+  "app/services/billing/nightly.rb": {
+   "bytes": 128,
+   "sha256": "79876b995b3e1a3d47e740511026bd9500d82fbf10d6d118840e5080e49660db"
+  },
+  "app/services/enqueuer.rb": {
+   "bytes": 1702,
+   "sha256": "4179d3d31d7fa11191fc2a79f371c14e1fcbb9b377ceec9ac1e305368faae898"
+  },
+  "app/services/outer.rb": {
+   "bytes": 168,
+   "sha256": "a0649b91c25a8bc45b0c4300a664febc86040373715aec31818ffc7cf13cd2e4"
+  },
+  "app/services/plain_task.rb": {
+   "bytes": 49,
+   "sha256": "b6ad9fc8a31d02ac8cb477b9b73786718f53c9b40d7d53157435c2e8946f9bb1"
+  },
+  "app/services/reports/daily.rb": {
+   "bytes": 74,
+   "sha256": "99a8722087162f30f69f784e12152a159cb5f2bc4cf5dfabf8496bb5f415acf9"
+  },
+  "app/workers/hard_worker.rb": {
+   "bytes": 171,
+   "sha256": "1a6724bb57059424ab5ae90023d41c9e794bf48a0c5022176697b63844a523ca"
+  },
+  "app/workers/ordered_worker.rb": {
+   "bytes": 98,
+   "sha256": "ba102d409ca5b49108e004c3e4b62d270cdb999d97d72918ffd98c1753843917"
+  },
+  "app/workers/ping_worker.rb": {
+   "bytes": 80,
+   "sha256": "8175bd5242694e4d07cac56f551ae56c5007b36fdcfaf7d82db55e2c51b6d00d"
+  },
+  "app/workers/sentinel_worker.rb": {
+   "bytes": 153,
+   "sha256": "941545c21b5c2e1745f7377dd25debaa7e91669cdecfb56a239cb062b0c37c62"
+  },
+  "app/workers/splat_worker.rb": {
+   "bytes": 85,
+   "sha256": "24814b7911adfa96828cdf21a4ba6411c5971de2c2de2c75c346146b744ca58f"
+  },
+  "app/workers/strict_kw_worker.rb": {
+   "bytes": 90,
+   "sha256": "d83bb4bcadf9bbdf7a5ad3ffb1fc47175396797fe4282c99abd71b82e9e6efb7"
+  },
+  "lib/legacy/export_job.rb": {
+   "bytes": 68,
+   "sha256": "951ebb53343accfebf7d4e0e2fe24920f0dab6166f4836567830713167fa2a87"
+  },
+  "spec/jobs/report_job_spec.rb": {
+   "bytes": 84,
+   "sha256": "3be3771cc1445b7196bbcc6a66a2a104b6e9914f0c7dec3ea35aac7590f115e7"
+  },
+  "tmp/stale/w.rb": {
+   "bytes": 139,
+   "sha256": "f9918aa94a6de2cecf98f9edc4cd12c232d4f1f62a1828fda43f653ffabcafce"
+  }
+ }
+}
