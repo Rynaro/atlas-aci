@@ -1,0 +1,135 @@
+{
+  "slice_id": "ACI-S29",
+  "base_commit": "981a897322936ea3b460e44459081e9d76a050f2",
+  "recorded_before_implementation": true,
+  "declared_by_issue": [
+    "mcp-server/src/atlas_aci/importers/openapi31.py",
+    "mcp-server/src/atlas_aci/contracts/openapi_diff.py",
+    "mcp-server/src/atlas_aci/__main__.py",
+    "mcp-server/tests/slices/test_s29_openapi_diff.py",
+    "mcp-server/tests/fixtures/openapi/",
+    "docs/importers/openapi.md"
+  ],
+  "glob_depth_clarifications": [
+    {
+      "path": "mcp-server/tests/fixtures/openapi/*",
+      "reason": "Flat hand-authored JSON fixtures directly under the declared directory (petstore-before/after/after-reformatted, identity-before/after, refs, review-before/after, rejected-swagger20/openapi303/openapi320) plus provenance.json; deep-nesting, NaN, duplicate-key and other rejection inputs are generated in-test"
+    },
+    {
+      "path": "docs/importers/openapi.md",
+      "reason": "New docs/importers/ subdirectory exactly as declared by the issue; no other file under it"
+    }
+  ],
+  "added": [
+    {
+      "path": "mcp-server/src/atlas_aci/importers/__init__.py",
+      "reason": "Package marker required for the new importers package; docstring only (hatch packages=['src/atlas_aci'] ships it)"
+    },
+    {
+      "path": "mcp-server/src/atlas_aci/contracts/__init__.py",
+      "reason": "Package marker required for the new contracts package; docstring only"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "reason": "Unreleased entry for the openapi-snapshot and openapi-diff commands (no release tag)"
+    },
+    {
+      "path": "README.md",
+      "reason": "One root docs-table row linking docs/importers/openapi.md (first cut item)"
+    },
+    {
+      "path": ".spectra/plans/aci-s29.*",
+      "reason": "Ramza plan, criteria, state, scope, review, issue snapshot"
+    },
+    {
+      "path": ".spectra/plans/ramza-calibration.jsonl",
+      "reason": "Ramza calibration append"
+    },
+    {
+      "path": ".spectra/changes/aci-s29/*",
+      "reason": "This amendment"
+    },
+    {
+      "path": ".spectra/evidence/aci-s29/*",
+      "reason": "Day-1 qualification, base invariants, gate logs, production-image scenario"
+    },
+    {
+      "path": ".spectra/state/aci-s29.execution.json",
+      "reason": "Authoritative execution receipt (AC-RUN-01/02)"
+    },
+    {
+      "path": ".spectra/backlog/execution.json",
+      "reason": "Backlog status update"
+    },
+    {
+      "path": ".spectra/backlog/order.md",
+      "reason": "Backlog order update"
+    }
+  ],
+  "interpretations": [
+    {
+      "topic": "Approach step 4: compare the two imported contract snapshots through S19",
+      "decision": "Reuse of the S19 change-set contract by shape and vocabulary (format string, content id sha256(FORMAT + ':' + canonical(rest)), before/after refs, summary by kind, limitations, canonical bytes plus LF, stable sort); graph-backed import (option A) rejected because it edits producer-fingerprint inputs (codegraph.py, storage/evidence.py, query/diff.py)"
+    },
+    {
+      "topic": "AC-S29-002 snapshot identity",
+      "decision": "Contract snapshot_id = sha256('atlas-contract-snapshot.v1:' + canonical({artifact_sha256, profile, options})); documented as distinct from source and graph snapshots; binding to a repository snapshot is a follow-up"
+    },
+    {
+      "topic": "AC-S29-005 cyclic beyond the configured bound",
+      "decision": "Any revisit in a followed reference chain is unbounded expansion, reported as cyclic_reference at first revisit; acyclic or long-cycle chains beyond max_ref_depth are reported as reference_depth_exceeded; both are unresolved_reference diagnostics marking the region incomplete"
+    }
+  ],
+  "not_touched_follow_up": [
+    {
+      "path": "mcp-server/src/atlas_aci/codegraph.py",
+      "reason": "Graph-backed contract entities and binding a contract snapshot to a source snapshot change the producer fingerprint; follow-up slice only"
+    },
+    {
+      "path": "mcp-server/src/atlas_aci/storage/evidence.py",
+      "reason": "Imported read-only for canonical(); no new entity kinds or producers"
+    },
+    {
+      "path": "mcp-server/src/atlas_aci/query/diff.py",
+      "reason": "S19 contract reused by shape only; no contract entity handling added"
+    },
+    {
+      "path": "mcp-server/src/atlas_aci/protocol/",
+      "reason": "MCP exposure of contract snapshots or diffs is out of scope (tools JSON and budget pins unchanged)"
+    },
+    {
+      "path": "INTEGRATION.md",
+      "reason": "No host wiring changes; operator CLI only"
+    }
+  ],
+  "explicitly_untouched_gated": [
+    "mcp-server/src/atlas_aci/server.py",
+    "mcp-server/src/atlas_aci/protocol/",
+    "mcp-server/src/atlas_aci/query/",
+    "mcp-server/src/atlas_aci/tools/",
+    "mcp-server/src/atlas_aci/storage/",
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/src/atlas_aci/extractors/",
+    "mcp-server/src/atlas_aci/providers/",
+    "mcp-server/src/atlas_aci/indexing/",
+    "mcp-server/src/atlas_aci/resolvers/",
+    "mcp-server/src/atlas_aci/reports/",
+    "mcp-server/src/atlas_aci/architecture/",
+    "mcp-server/src/atlas_aci/counterfactual/",
+    "mcp-server/src/atlas_aci/enforcement.py",
+    "mcp-server/src/atlas_aci/config.py",
+    "mcp-server/pyproject.toml",
+    "mcp-server/uv.lock",
+    ".github/workflows/"
+  ],
+  "invariants": {
+    "tools_json_sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+    "tools_json_bytes": 1631472,
+    "READ_ONLY_TOOLS_count": 7,
+    "MINIMUM_BUDGET": 3436,
+    "COLLECTION_MINIMUM_BUDGET": 3448,
+    "FIXED_ERROR_ENVELOPE_CAP": 797,
+    "IMPACT_MINIMUM_BUDGET": 7730,
+    "criteria_sha256": "7c017111001f65be8237f420e0175f7bda7b2724a9f39b2e8053247b0c6f8563"
+  }
+}

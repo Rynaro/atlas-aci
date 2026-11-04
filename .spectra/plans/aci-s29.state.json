@@ -1,0 +1,143 @@
+{
+  "schema": "ramza/plan-state.v1",
+  "plan": "aci-s29",
+  "created_at": "2026-11-04T08:25:08Z",
+  "tier": "lite",
+  "phase": "DONE",
+  "phases_done": [
+    "RS",
+    "S",
+    "P",
+    "E",
+    "C",
+    "T",
+    "A",
+    "DONE"
+  ],
+  "rightsize": {
+    "score": 4,
+    "computed_tier": "lite",
+    "inputs": {
+      "files_est": 8,
+      "new_dep": false,
+      "public_api": true,
+      "migration": false,
+      "security": false,
+      "novel": true,
+      "stakes": "med"
+    }
+  },
+  "refine_cycles": 0,
+  "skips": [],
+  "gates": [
+    {
+      "rubric": "complexity",
+      "total": 7,
+      "dims": {
+        "scope": 2,
+        "ambiguity": 2,
+        "dependencies": 1,
+        "risk": 2
+      },
+      "verdict": "extended",
+      "at": "2026-11-04T08:39:44Z",
+      "label": "openapi-diff"
+    },
+    {
+      "rubric": "explore",
+      "total": 79,
+      "dims": {
+        "alignment": 8,
+        "correctness": 8,
+        "maintainability": 8,
+        "performance": 8,
+        "simplicity": 8,
+        "risk": 8,
+        "innovation": 6
+      },
+      "verdict": "solid",
+      "at": "2026-11-04T08:39:44Z",
+      "label": "standalone-contract-snapshot"
+    },
+    {
+      "rubric": "confidence",
+      "total": 83.25,
+      "dims": {
+        "pattern_match": 85,
+        "requirement_clarity": 78,
+        "decomposition_stability": 82,
+        "constraint_compliance": 88
+      },
+      "verdict": "VALIDATE",
+      "at": "2026-11-04T08:39:44Z",
+      "label": "openapi-diff"
+    },
+    {
+      "rubric": "refine",
+      "cycle": 1,
+      "total": 4.4,
+      "min": 4,
+      "dims": {
+        "clarity": 4,
+        "completeness": 4,
+        "actionability": 5,
+        "efficiency": 4,
+        "testability": 5
+      },
+      "verdict": "pass",
+      "at": "2026-11-04T08:39:44Z",
+      "label": "pre-checker"
+    },
+    {
+      "rubric": "refine",
+      "cycle": 1,
+      "total": 3.8,
+      "min": 3,
+      "dims": {
+        "clarity": 4,
+        "completeness": 4,
+        "actionability": 4,
+        "efficiency": 3,
+        "testability": 4
+      },
+      "verdict": "pass",
+      "at": "2026-11-04T08:44:46Z",
+      "label": "post-checker"
+    }
+  ],
+  "amendments": [],
+  "declared_scope": [
+    "mcp-server/src/atlas_aci/importers/__init__.py",
+    "mcp-server/src/atlas_aci/importers/openapi31.py",
+    "mcp-server/src/atlas_aci/contracts/__init__.py",
+    "mcp-server/src/atlas_aci/contracts/openapi_diff.py",
+    "mcp-server/src/atlas_aci/__main__.py",
+    "mcp-server/tests/slices/test_s29_openapi_diff.py",
+    "mcp-server/tests/fixtures/openapi/*",
+    "docs/importers/openapi.md",
+    "CHANGELOG.md",
+    "README.md",
+    ".spectra/plans/aci-s29.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/changes/aci-s29/*",
+    ".spectra/evidence/aci-s29/*",
+    ".spectra/state/aci-s29.execution.json",
+    ".spectra/backlog/execution.json",
+    ".spectra/backlog/order.md"
+  ],
+  "criteria_sha256": "7c017111001f65be8237f420e0175f7bda7b2724a9f39b2e8053247b0c6f8563",
+  "critic": {
+    "author": null,
+    "checker": null
+  },
+  "criteria_frozen_at": "2026-11-04T08:44:46Z",
+  "scope_declared_at": "2026-11-04T08:44:46Z",
+  "drift_reports": [
+    {
+      "at": "2026-11-04T09:34:19Z",
+      "range": "staged",
+      "files_changed": 53,
+      "uncovered": []
+    }
+  ]
+}

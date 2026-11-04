@@ -1094,6 +1094,112 @@ def counterfactual(
         click.echo(f"Counterfactual timing: elapsed_ms={elapsed}", err=True)
 
 
+_OPENAPI_LIMITS = (
+    ("max_document_bytes", "Artifact size in bytes (1..33554432)"),
+    ("max_operations", "Path keys and operations, each (1..20000)"),
+    ("max_parameters_per_operation", "Parameter entries per operation (1..1024)"),
+    ("max_ref_depth", "Hops in one reference chain (1..64)"),
+    ("max_ref_expansions", "Pointer resolutions per import (0..1000000)"),
+    ("max_diagnostics", "Emitted diagnostics (0..100000)"),
+)
+
+
+def _openapi_limit_options(command):
+    for name, help_text in reversed(_OPENAPI_LIMITS):
+        command = click.option(
+            "--" + name.replace("_", "-"), name, default=None, type=int, help=help_text
+        )(command)
+    return command
+
+
+def _read_openapi(path: Path, limit: int, side: str) -> bytes:
+    try:
+        with path.open("rb") as handle:
+            return handle.read(limit + 1)
+    except OSError:
+        # Fixed text: the underlying message spells the path.
+        raise click.ClickException("OpenAPI document cannot be read" + side + ".") from None
+
+
+@cli.command("openapi-snapshot")
+@click.argument("document", type=click.Path(path_type=Path))
+@_openapi_limit_options
+def openapi_snapshot(document: Path, **chosen: int | None) -> None:
+    """Import one OpenAPI 3.1 JSON document into a contract snapshot.
+
+    Prints the canonical `atlas-contract-snapshot.v1` (JSON) on stdout. The snapshot is a
+    contract snapshot, not a source snapshot: its id binds the artifact bytes, the profile and
+    the limits. Exit 0 means the import ran; read `status` and `diagnostics` for incomplete
+    regions. READ-ONLY: nothing is written; nothing is printed on rejection (exit 1) or invalid
+    usage (exit 2).
+    """
+    from atlas_aci.importers import openapi31
+
+    try:
+        options = openapi31.normalize_options(chosen)
+    except openapi31.OpenAPIUsageError as exc:
+        raise click.UsageError("Invalid OpenAPI limit: " + exc.limit) from None
+    raw = _read_openapi(document, options.max_document_bytes, "")
+    try:
+        snapshot = openapi31.import_document(raw, options)
+        openapi31.validate_snapshot(snapshot)
+    except openapi31.OpenAPIRejected as exc:
+        raise click.ClickException("OpenAPI document rejected: " + exc.reason) from None
+    except (OSError, ValueError) as exc:
+        # Never `str(exc)`: a message may carry document text or a path.
+        raise click.ClickException("OpenAPI import failed: " + type(exc).__name__) from None
+    stream = click.get_binary_stream("stdout")
+    stream.write(openapi31.canonical_bytes(snapshot))
+    stream.flush()
+
+
+@cli.command("openapi-diff")
+@click.option("--before", "before_path", required=True, type=click.Path(path_type=Path))
+@click.option("--after", "after_path", required=True, type=click.Path(path_type=Path))
+@click.option("--max-findings", "max_findings", default=None, type=int, help="Emitted findings")
+@_openapi_limit_options
+def openapi_diff(
+    before_path: Path, after_path: Path, max_findings: int | None, **chosen: int | None
+) -> None:
+    """Explain contract changes between two OpenAPI 3.1 JSON documents.
+
+    Imports both documents with the same limits, then prints the canonical
+    `atlas-contract-diff.v1` (JSON) on stdout. The change set reuses the shape of the S19 change
+    set; S19 is not invoked. Exit 0 means the comparison ran, not that nothing changed: an empty
+    finding list is not evidence that the API is unaffected. READ-ONLY: nothing is written;
+    nothing is printed on rejection (exit 1) or invalid usage (exit 2).
+    """
+    from atlas_aci.contracts import openapi_diff as contract_diff
+    from atlas_aci.importers import openapi31
+
+    try:
+        options = openapi31.normalize_options(chosen)
+        diff_options = contract_diff.normalize_diff_options({"max_findings": max_findings})
+    except openapi31.OpenAPIUsageError as exc:
+        raise click.UsageError("Invalid OpenAPI limit: " + exc.limit) from None
+    snapshots = []
+    for label, path in (("before", before_path), ("after", after_path)):
+        raw = _read_openapi(path, options.max_document_bytes, ": " + label)
+        try:
+            snapshots.append(openapi31.import_document(raw, options))
+        except openapi31.OpenAPIRejected as exc:
+            raise click.ClickException(
+                "OpenAPI document rejected: " + exc.reason + " (" + label + ")"
+            ) from None
+        except (OSError, ValueError) as exc:
+            raise click.ClickException("OpenAPI import failed: " + type(exc).__name__) from None
+    try:
+        change_set = contract_diff.diff(snapshots[0], snapshots[1], diff_options)
+        contract_diff.validate_diff(change_set)
+    except contract_diff.ContractDiffRejected as exc:
+        raise click.ClickException("OpenAPI diff rejected: " + exc.reason) from None
+    except (OSError, ValueError) as exc:
+        raise click.ClickException("OpenAPI import failed: " + type(exc).__name__) from None
+    stream = click.get_binary_stream("stdout")
+    stream.write(contract_diff.canonical_bytes(change_set))
+    stream.flush()
+
+
 @cli.command()
 @click.option(
     "--repo", required=True, type=click.Path(exists=True, file_okay=False, path_type=Path)

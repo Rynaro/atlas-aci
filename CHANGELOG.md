@@ -9,6 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **OpenAPI 3.1 contract import and contract diff (ACI-S29).** New operator commands
+  `atlas-aci openapi-snapshot DOCUMENT` and `atlas-aci openapi-diff --before F --after F`
+  (libraries `atlas_aci.importers.openapi31` and `atlas_aci.contracts.openapi_diff`) import one
+  OpenAPI 3.1 JSON document into a canonical `atlas-contract-snapshot.v1` and explain contract
+  changes between two such snapshots as `atlas-contract-diff.v1`. Operations are identified by
+  uppercase method plus normalised path template (`operationId` is metadata only); every element
+  carries the artifact digest, the snapshot id and a JSON pointer. Findings: `operation_removed`,
+  `newly_required_parameter`, informational `operation_added`, and `review_required` with a closed
+  reason for everything unsupported, unresolved (remote, outside-document, cyclic, over-deep or
+  over-budget references) or ambiguous; there is no global verdict. S19 is not invoked: only its
+  change-set shape is reused. The `snapshot_id` is a contract identity that binds the artifact
+  bytes, the profile and the options; it is a contract snapshot, not a source snapshot, and the
+  provenance is artifact digest plus JSON pointer. Binding a contract snapshot to a source snapshot
+  is a follow-up. Documented in `docs/importers/openapi.md`. No MCP operation, graph, producer,
+  schema or dependency change; the tools JSON is byte-identical.
 - **Counterfactual patch analysis (ACI-S32).** New operator command
   `atlas-aci counterfactual --repo R --base-snapshot ID --patch P [--rules F]` (library
   `atlas_aci.counterfactual`) applies a proposed unified diff to the base snapshot's own source

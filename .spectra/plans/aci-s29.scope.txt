@@ -1,0 +1,17 @@
+mcp-server/src/atlas_aci/importers/__init__.py
+mcp-server/src/atlas_aci/importers/openapi31.py
+mcp-server/src/atlas_aci/contracts/__init__.py
+mcp-server/src/atlas_aci/contracts/openapi_diff.py
+mcp-server/src/atlas_aci/__main__.py
+mcp-server/tests/slices/test_s29_openapi_diff.py
+mcp-server/tests/fixtures/openapi/*
+docs/importers/openapi.md
+CHANGELOG.md
+README.md
+.spectra/plans/aci-s29.*
+.spectra/plans/ramza-calibration.jsonl
+.spectra/changes/aci-s29/*
+.spectra/evidence/aci-s29/*
+.spectra/state/aci-s29.execution.json
+.spectra/backlog/execution.json
+.spectra/backlog/order.md

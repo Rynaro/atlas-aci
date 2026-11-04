@@ -1,0 +1,365 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Refs",
+    "version": "1"
+  },
+  "paths": {
+    "/remote": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "https://x.example/p.json#/a"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      }
+    },
+    "/netpath": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "//h/p"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      }
+    },
+    "/outside": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "other.json#/components/parameters/X"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      }
+    },
+    "/anchor": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#Anchor"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      }
+    },
+    "/root": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      }
+    },
+    "/missing": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Missing"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      }
+    },
+    "/badescape": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/a%G1"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      }
+    },
+    "/cycle-ab": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/CycA"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      }
+    },
+    "/cycle-self": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Self"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      }
+    },
+    "/cycle-three": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/T1"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      }
+    },
+    "/deep-chain": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/H1"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      }
+    },
+    "/ok": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Ok"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      }
+    },
+    "/ok-percent": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/a%20b"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      }
+    },
+    "/ok-tilde": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/a~1b"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      }
+    },
+    "/closure-param": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RemoteSchemaParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      }
+    },
+    "/closure-body": {
+      "post": {
+        "requestBody": {
+          "$ref": "#/components/requestBodies/RemoteBody"
+        },
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      }
+    },
+    "/body-remote": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "https://x.example/s.json"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      }
+    },
+    "/remote-item": {
+      "$ref": "https://x.example/item.json"
+    }
+  },
+  "components": {
+    "schemas": {
+      "S": {
+        "type": "object",
+        "properties": {
+          "r": {
+            "$ref": "https://x.example/s.json#/S"
+          }
+        }
+      },
+      "Hop": {
+        "type": "object",
+        "properties": {
+          "next": {
+            "$ref": "#/components/schemas/Hop"
+          },
+          "far": {
+            "$ref": "https://x.example/far.json"
+          }
+        }
+      }
+    },
+    "parameters": {
+      "Ok": {
+        "name": "ok",
+        "in": "query",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "a b": {
+        "name": "spaced",
+        "in": "query",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "a/b": {
+        "name": "slashed",
+        "in": "query",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "CycA": {
+        "$ref": "#/components/parameters/CycB"
+      },
+      "CycB": {
+        "$ref": "#/components/parameters/CycA"
+      },
+      "Self": {
+        "$ref": "#/components/parameters/Self"
+      },
+      "T1": {
+        "$ref": "#/components/parameters/T2"
+      },
+      "T2": {
+        "$ref": "#/components/parameters/T3"
+      },
+      "T3": {
+        "$ref": "#/components/parameters/T1"
+      },
+      "H1": {
+        "$ref": "#/components/parameters/H2"
+      },
+      "H2": {
+        "$ref": "#/components/parameters/H3"
+      },
+      "H3": {
+        "$ref": "#/components/parameters/H4"
+      },
+      "H4": {
+        "$ref": "#/components/parameters/H5"
+      },
+      "H5": {
+        "$ref": "#/components/parameters/H6"
+      },
+      "H6": {
+        "$ref": "#/components/parameters/H7"
+      },
+      "H7": {
+        "$ref": "#/components/parameters/H8"
+      },
+      "H8": {
+        "$ref": "#/components/parameters/H9"
+      },
+      "H9": {
+        "name": "ok",
+        "in": "query",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "RemoteSchemaParam": {
+        "name": "rs",
+        "in": "query",
+        "schema": {
+          "$ref": "#/components/schemas/Hop"
+        }
+      }
+    },
+    "requestBodies": {
+      "RemoteBody": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Hop"
+            }
+          }
+        }
+      }
+    }
+  }
+}

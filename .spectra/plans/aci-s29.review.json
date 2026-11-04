@@ -1,0 +1,88 @@
+{
+ "slice_id": "ACI-S29",
+ "plan": ".spectra/plans/aci-s29.md",
+ "author": "orchestrator-ramza-plan-s29",
+ "checker": "atlas-s29-plan-checker",
+ "verdict": "APPROVE_WITH_CONDITIONS",
+ "method": "independent read-only code review; no commands executed",
+ "findings": [
+  {
+   "n": 1,
+   "severity": "MAJOR",
+   "summary": "Option B deviates from Approach 4 and the title's source provenance (query/diff.py:33 is atlas-symbol-diff.v1, graph-only); docs, CHANGELOG, README, receipt and PR must state S19 is not invoked, only its shape is reused, snapshot_id is a contract identity not a source snapshot, and provenance is artifact digest plus pointer; never say 'through S19' unqualified; docs test asserts phrases",
+   "disposition": "accepted as plan condition 1"
+  },
+  {
+   "n": 2,
+   "severity": "MAJOR",
+   "summary": "profile regex ^3\\.1\\.\\d+$ and index regex with re.match accept trailing newline and Unicode digits; use re.fullmatch with [0-9] everywhere; add '3.1.0\\n' and Arabic-digit rejection cases",
+   "disposition": "accepted as plan condition 2"
+  },
+  {
+   "n": 3,
+   "severity": "MAJOR",
+   "summary": "header name case difference (x-tenant vs X-Tenant) changes sha256_without_required and yields a spurious parameter_changed; lowercase header name in digests and assert exact finding set in AC-004 test",
+   "disposition": "accepted as plan condition 3"
+  },
+  {
+   "n": 4,
+   "severity": "MAJOR",
+   "summary": "added required reserved header is labelled parameter_added_optional; rename reason to parameter_added and update enums, docs and AC-004 assertion",
+   "disposition": "accepted as plan condition 4"
+  },
+  {
+   "n": 5,
+   "severity": "MAJOR",
+   "summary": "closure holes: path items with no supported operations have no region so their changes are silent; non-object operations may vanish and produce false operation_removed; add path_item content digest and region_changed, keep invalid operations as incomplete records, add tests",
+   "disposition": "accepted as plan condition 5"
+  },
+  {
+   "n": 6,
+   "severity": "MAJOR",
+   "summary": "shared path-item cache conflicts with template-dependent ordinal keys and path_parameter_not_in_template; cache only template-independent results and add a shared pathItems test",
+   "disposition": "accepted as plan condition 6"
+  },
+  {
+   "n": 7,
+   "severity": "MINOR",
+   "summary": "x- extension keys in paths are flagged malformed_template causing false incompleteness; skip x-* in paths and components types and list in IGNORED_FIELDS",
+   "disposition": "accepted as plan condition 7"
+  },
+  {
+   "n": 8,
+   "severity": "MINOR",
+   "summary": "Reference Object siblings other than summary/description/x-* are silently ignored in parameter positions; fold into use-site digest and define reference_with_siblings precisely",
+   "disposition": "accepted as plan condition 8"
+  },
+  {
+   "n": 9,
+   "severity": "MINOR",
+   "summary": "probes do not walk resolved targets so operation regions stay complete when a referenced component has a remote ref; walk resolved targets or add limitation and test; document that component edits surface only as document_region_changed",
+   "disposition": "accepted as plan condition 9"
+  },
+  {
+   "n": 10,
+   "severity": "MINOR",
+   "summary": "add parse_int digit guard independent of PYTHONINTMAXSTRDIGITS, document float literal collapse and 1 vs 1.0, bound or document snapshot output size at max_operations high bound",
+   "disposition": "accepted as plan condition 10"
+  },
+  {
+   "n": 11,
+   "severity": "MINOR",
+   "summary": "refs inside schemas with $id rebase in JSON Schema 2020-12 but are classified local; add limitation 14 and docs entry",
+   "disposition": "accepted as plan condition 11"
+  },
+  {
+   "n": 12,
+   "severity": "MINOR",
+   "summary": "AST ban on compile must be bare-name only (re.compile); ASCII-only for thesis/export read_text scans; avoid alter table and nx.compose( strings; keep long limitation tokens under E501",
+   "disposition": "accepted as plan condition 12"
+  },
+  {
+   "n": 13,
+   "severity": "MINOR",
+   "summary": "build AC-003/004 variants by in-test mutation, assert exact per-operation finding sets, require a non-null before/after ref on every finding, state region pointers inherit operation provenance",
+   "disposition": "accepted as plan condition 13"
+  }
+ ]
+}

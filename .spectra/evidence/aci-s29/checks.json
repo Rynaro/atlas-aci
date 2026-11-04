@@ -1,0 +1,77 @@
+{
+  "harness": {
+    "wrapper": "dk29.sh = docker run --rm --user 1000:1000 -e HOME=/hc -e PYTHONPATH=/ws/mcp-server/src -v <scratch>/home:/hc -v <repo>:/ws -w /ws/mcp-server atlas-aci-dev-s16",
+    "dev_image": "atlas-aci-dev-s16 sha256:783f2210c3d12ae25c567c76366b6b6dd09d4aa0c93ea1aee4fb03d8f17e859a (lock unchanged since base)"
+  },
+  "s29_contract": {
+    "exit_code": 0,
+    "summary": "50 passed",
+    "log": "s29-contract.log.gz"
+  },
+  "regression": {
+    "exit_code": 0,
+    "summary": "329 passed (test_s19_*, test_s31_*, test_s32_*, test_s37_*, test_thesis_negatives, test_export)",
+    "log": "regression.log.gz"
+  },
+  "orchestrator_rerun": [
+    {
+      "command": "dk29.sh pytest -p no:cacheprovider tests/slices/test_s29_openapi_diff.py",
+      "exit_code": 0,
+      "summary": "50 passed"
+    },
+    {
+      "command": "dk29.sh exact CI lint/type steps (ruff check+format src/ tests/, mypy src/, ruff check+format ../scripts/ --exclude fingerprint-fixture, mypy ../scripts/)",
+      "exit_code": 0
+    }
+  ],
+  "ruff": {
+    "exit_code": 0
+  },
+  "format": {
+    "exit_code": 0
+  },
+  "mypy": {
+    "exit_code": 0,
+    "summary": "no issues in 75 source files"
+  },
+  "full_suite": {
+    "exit_code": 1,
+    "summary": "1 failed, 1588 passed, 10 skipped",
+    "failed": [
+      "tests/slices/test_s01_contract.py::test_call_deadline_after_initialization"
+    ],
+    "classification": "pre-existing under uid 1000",
+    "log": "full-suite.log.gz"
+  },
+  "g_src": {
+    "exit_code": 0,
+    "note": "all gated src paths, pyproject.toml, uv.lock, .github/workflows byte-unchanged vs 981a897; src changes limited to importers/*, contracts/* and __main__.py (orchestrator re-checked on the staged tree)"
+  },
+  "g_mcp": {
+    "exit_code": 0,
+    "tools_json_sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+    "tools_json_bytes": 1631472
+  },
+  "g_envelope": {
+    "MINIMUM_BUDGET": 3436,
+    "COLLECTION_MINIMUM_BUDGET": 3448,
+    "FIXED_ERROR_ENVELOPE_CAP": 797,
+    "IMPACT_MINIMUM_BUDGET": 7730,
+    "source": "unchanged: protocol/query byte-unchanged; pinned by test_s29 isolation"
+  },
+  "drift": "ramza-drift --staged: 53 changed files, all within declared scope",
+  "interpretation": "S19 is not invoked; the contract diff reuses only S19's change-set shape and vocabulary. snapshot_id is a contract identity binding artifact bytes, profile and options, not a source snapshot; provenance is artifact digest plus JSON pointer; binding to a source snapshot is a follow-up (checker condition 1)",
+  "production_image": {
+    "build": "docker build -t atlas-aci:s29 mcp-server",
+    "image_id": "sha256:d037f0e20996ffc127ac206bcf7d770e329d824cb74136932f04d0e690b509b5",
+    "tools": "7 tools, sha256 94f9567a... unchanged",
+    "scenario": "fixtures mounted :ro, --read-only --network none, uid 1000",
+    "snapshot": "openapi-snapshot petstore-before: exit 0, 5 operations, two runs byte-identical",
+    "diff": "openapi-diff petstore-before -> petstore-after: exit 0; operation_removed DELETE /pets/{}, 3 newly_required_parameter on GET /pets, operation_added PATCH /pets/{}, 1 review_required document_region_changed; two runs byte-identical; no compatible/incompatible/breaking verdict",
+    "reformatted": "petstore-after-reformatted gives a different diff id but identical projected findings",
+    "rejection": "swagger 2.0 document -> exit 1 'OpenAPI document rejected: unsupported_profile', empty stdout",
+    "references": "refs.json vs itself: 17 review_required (incomplete regions on both sides), no definitive findings",
+    "inputs_unchanged": "fixture sha256 inventory unchanged"
+  },
+  "day1_qualification": "qualification.json: nesting bound 64/65 and 100000 typed without RecursionError; strict RFC 6901 pointers agree with the oracle; profile table incl. '3.1.0\\n' and Arabic-Indic digits; petstore imports complete with 68 resolvable pointers; also re-run on python 3.13-slim with identical results"
+}
