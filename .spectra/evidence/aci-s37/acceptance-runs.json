@@ -1,0 +1,44 @@
+[
+  {
+    "ac_id": "AC-S37-001",
+    "test": "mcp-server/tests/slices/test_s37_evidence_report.py::test_evidence_json_preserves_response_identity",
+    "exit_code": 0,
+    "tail": "1 passed in 2.98s"
+  },
+  {
+    "ac_id": "AC-S37-002",
+    "test": "mcp-server/tests/slices/test_s37_evidence_report.py::test_evidence_html_has_source_paths",
+    "exit_code": 0,
+    "tail": "1 passed in 2.61s"
+  },
+  {
+    "ac_id": "AC-S37-003",
+    "test": "mcp-server/tests/slices/test_s37_evidence_report.py::test_evidence_report_preserves_incompleteness",
+    "exit_code": 0,
+    "tail": "1 passed in 2.83s"
+  },
+  {
+    "ac_id": "AC-S37-004",
+    "test": "mcp-server/tests/slices/test_s37_evidence_report.py::test_evidence_html_escapes_source_content",
+    "exit_code": 0,
+    "tail": "1 passed in 2.64s"
+  },
+  {
+    "ac_id": "AC-S37-005",
+    "test": "mcp-server/tests/slices/test_s37_evidence_report.py::test_evidence_report_is_self_contained",
+    "exit_code": 0,
+    "tail": "1 passed in 2.93s"
+  },
+  {
+    "ac_id": "AC-S37-006",
+    "test": "mcp-server/tests/slices/test_s37_evidence_report.py::test_evidence_report_replay_is_idempotent",
+    "exit_code": 0,
+    "tail": "1 passed in 6.02s"
+  },
+  {
+    "ac_id": "AC-S37-007",
+    "test": "mcp-server/tests/slices/test_s37_evidence_report.py::test_evidence_mixed_snapshot_rejected",
+    "exit_code": 0,
+    "tail": "1 passed in 2.88s"
+  }
+]
