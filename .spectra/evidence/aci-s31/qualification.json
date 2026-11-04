@@ -1,0 +1,284 @@
+{
+ "a_chain_resolves_at_file_level": {
+  "epoch": 9,
+  "facts": [
+   {
+    "path": "pkg/domain/a.py",
+    "raw_target": "fb",
+    "reason": null,
+    "resolution": "INFERRED",
+    "src": [
+     "file",
+     "pkg/domain/a.py",
+     "pkg/domain/a.py"
+    ],
+    "tgt": [
+     "function",
+     "pkg/domain/b.py",
+     "fb"
+    ]
+   },
+   {
+    "path": "pkg/domain/b.py",
+    "raw_target": "fc",
+    "reason": "unsupported_import_alias",
+    "resolution": "UNRESOLVED",
+    "src": [
+     "function",
+     "pkg/domain/b.py",
+     "fb"
+    ],
+    "tgt": null
+   },
+   {
+    "path": "pkg/domain/b.py",
+    "raw_target": "fc",
+    "reason": null,
+    "resolution": "INFERRED",
+    "src": [
+     "file",
+     "pkg/domain/b.py",
+     "pkg/domain/b.py"
+    ],
+    "tgt": [
+     "function",
+     "pkg/infra/c.py",
+     "fc"
+    ]
+   }
+  ],
+  "note": "assertions.path is the importing file; INFERRED edges carry a target entity whose path is the imported module; the source entity is the file entity, or the enclosing def for an in-function import (an in-function import with an alias is UNRESOLVED unsupported_import_alias)",
+  "pass": true,
+  "snapshot_id_non_null": true
+ },
+ "b_unresolved_reasons": {
+  "differs_from_plan": [
+   "CONST import reason is relative_import_blocked_export",
+   "a try/except whose handler rebinds the name is shadowed_noncallable; the fixture uses 'pass'"
+  ],
+  "observed_unresolved_reason_by_spelling": {
+   "failed target module (syntax error) imported by a good file": "relative_import_missing_module (UNRESOLVED, target null)",
+   "from .. import infra": "relative_import_missing_target",
+   "from ..infra.c import CONST": "relative_import_blocked_export (differs from the plan, which said relative_import_missing_target)",
+   "from ..infra.c import fc as other": "unsupported_import_alias",
+   "if True: from ..infra.c import fc": "unsupported_import_control",
+   "import importlib": "unsupported_absolute_import",
+   "import json": "unsupported_absolute_import",
+   "try/except (with 'pass' in the handler)": "unsupported_import_control",
+   "try/except with 'fc = None' in the handler": "shadowed_noncallable (not control)"
+  }
+ },
+ "base_commit": "69e9a46cef413420f50294a9decf5ed806de965b",
+ "c_observations": {
+  "default_build": {
+   "pkg/__init__.py": [
+    "python",
+    "indexed",
+    null
+   ],
+   "pkg/bad.py": [
+    "python",
+    "failed",
+    "parse_error"
+   ],
+   "pkg/ok.py": [
+    "python",
+    "indexed",
+    null
+   ],
+   "pkg/readme.md": [
+    "markdown",
+    "indexed",
+    null
+   ],
+   "pkg/view.tsx": [
+    "tsx",
+    "indexed",
+    null
+   ],
+   "pkg/x.rb": [
+    "ruby",
+    "indexed",
+    null
+   ]
+  },
+  "failed_file_with_history": {
+   "assertions_rows_under_failed_path": 0,
+   "constructible": true,
+   "construction": "build a valid file, replace it with a syntax error, rebuild into the same graph root",
+   "note": "stale facts live in the history record, not in the assertions table, so they are never reachable by the adjacency query; a failed file is still a file_not_indexed boundary when selected",
+   "observation_detail": [
+    {
+     "historical_id": "e8ed909301feb8b22e01b95b3cdca2379c2a76200d783008e81dd5b8e5365f55",
+     "path": "pkg/n.py",
+     "reason": "parse_error",
+     "retained_record_ids": 15,
+     "state": "failed"
+    }
+   ],
+   "types_in_manifest_list": [
+    "history",
+    "observation"
+   ]
+  },
+  "ruby_with_langs_python": {
+   "pkg/__init__.py": [
+    "python",
+    "indexed",
+    null
+   ],
+   "pkg/ok.py": [
+    "python",
+    "indexed",
+    null
+   ],
+   "pkg/x.rb": [
+    "ruby",
+    "disabled",
+    "language_disabled"
+   ]
+  },
+  "syntax_error": "python parse failure -> state failed, reason parse_error",
+  "tsx_import": "observed state indexed; import fact UNRESOLVED (always)",
+  "txt_and_pyi_and_skipped_dirs": "pkg/notes.txt, pkg/t.pyi and node_modules/** are NOT observed (outside LANG_BY_EXT or skipped)",
+  "types_in_clean_build": [
+   "observation"
+  ]
+ },
+ "d_query_plans": {
+  "epoch8_fixture_indexes_include_idx_path": {
+   "idx_assertions_path": true,
+   "idx_entities_path": true
+  },
+  "epoch8_fixture_manifest_epoch": [
+   "8"
+  ],
+  "file_entity_choice": "computed-id PK lookup ev.file_entity(path, language)[id] (condition 6); FILE_ENTITY_SQL is not shipped",
+  "file_entity_rows": {
+   "pkg/__init__.py": {
+    "computed_id_matches": [
+     true
+    ],
+    "pk_row": true,
+    "rows": 1
+   },
+   "pkg/domain/a.py": {
+    "computed_id_matches": [
+     true
+    ],
+    "pk_row": true,
+    "rows": 1
+   },
+   "pkg/domain/b.py": {
+    "computed_id_matches": [
+     true
+    ],
+    "pk_row": true,
+    "rows": 1
+   },
+   "pkg/infra/c.py": {
+    "computed_id_matches": [
+     true
+    ],
+    "pk_row": true,
+    "rows": 1
+   }
+  },
+  "pass": true,
+  "plans": {
+   "ADJACENCY_SQL": [
+    "SEARCH assertions USING INDEX idx_assertions_path (path=?)",
+    "USE TEMP B-TREE FOR ORDER BY"
+   ],
+   "DYNAMIC_SQL": [
+    "SEARCH assertions USING INDEX idx_assertions_path (path=?)",
+    "USE TEMP B-TREE FOR ORDER BY"
+   ],
+   "ENTITY_SQL": [
+    "SEARCH entities USING INDEX sqlite_autoindex_entities_1 (id=?)"
+   ],
+   "FILE_ENTITY_SQL": [
+    "SEARCH entities USING INDEX idx_entities_path (path=?)",
+    "USE TEMP B-TREE FOR ORDER BY"
+   ],
+   "HYDRATE_SQL": [
+    "SEARCH assertions USING INDEX sqlite_autoindex_assertions_1 (id=?)"
+   ],
+   "OBSERVATIONS_SQL": [
+    "SEARCH manifest USING INDEX sqlite_autoindex_manifest_1 (key=?)"
+   ]
+  }
+ },
+ "e_dynamic_call_spelling": {
+  "note": "attribute calls spell the last segment: importlib.import_module -> import_module; __import__ -> __import__; D9 probe kept",
+  "observed_call_raw_targets": [
+   {
+    "raw_target": "__import__",
+    "resolution": "UNRESOLVED"
+   },
+   {
+    "raw_target": "import_module",
+    "resolution": "UNRESOLVED"
+   }
+  ]
+ },
+ "environment": "docker atlas-aci-dev-s16, python 3.12.16, click 8.3.2, jsonschema 4.26.0, uid 1000",
+ "extra_probes": {
+  "native7_fixture_lease": "epoch 7 lease succeeds; checker rejects it as index_upgrade_required (tests/fixtures/s12/native7.json.gz)",
+  "native8_fixture_lease": "epoch 8 lease accepted by the checker (tests/fixtures/s17/native8.json.gz)"
+ },
+ "f_imported_generation": {
+  "epoch": 9,
+  "export": true,
+  "has_idx_assertions_path": true,
+  "import_error": null,
+  "lease_ok": true,
+  "null_snapshot": true,
+  "snapshot_id": null
+ },
+ "g_hydration": {
+  "pass": true,
+  "projection": "canonical_assertion_proof",
+  "source_availability": "available"
+ },
+ "recorded_before_product_code": true,
+ "scope_echo_source": {
+  "languages": [
+   "bash",
+   "html",
+   "javascript",
+   "markdown",
+   "python",
+   "ruby",
+   "rust",
+   "scss",
+   "tsx",
+   "typescript",
+   "yaml"
+  ],
+  "skip_patterns": [
+   "node_modules",
+   "vendor/bundle",
+   "vendor/cache",
+   "tmp",
+   "log",
+   ".git",
+   "dist",
+   "build",
+   "public/assets",
+   "public/packs",
+   "public/packs-test",
+   "coverage",
+   ".bundle",
+   "__pycache__",
+   ".venv",
+   ".atlas",
+   "storage",
+   "_site",
+   ".jekyll-cache",
+   ".sass-cache"
+  ]
+ },
+ "slice_id": "ACI-S31",
+ "stop_rule_outcome": "no STOP: (a),(d),(g) pass; (b),(c) differ only in spelling (fixtures follow observed facts); (e) both names spelled; (f) null snapshot observed"
+}

@@ -1,0 +1,33 @@
+{
+ "base_commit": "69e9a46cef413420f50294a9decf5ed806de965b",
+ "full_pytest_at_base": {
+  "command": "dk31.sh /opt/venv/bin/python -m pytest -q -p no:cacheprovider (docker atlas-aci-dev-s16, uid 1000, started before any S31 test file existed; only src/architecture and __main__ additions had been written, none exercised by the suite)",
+  "exit": 1,
+  "failed": [
+   "FAILED tests/slices/test_s01_contract.py::test_call_deadline_after_initialization",
+   "FAILED tests/slices/test_s08_integration.py::test_nonregular_pack_does_not_block_acquisition"
+  ],
+  "note": "both failures are the known pre-existing ones (test_s01_contract::test_call_deadline_after_initialization under uid 1000; flaky test_s08_integration::test_nonregular_pack_does_not_block_acquisition); CI at base: 1397 passed, 10 skipped",
+  "summary": "2 failed, 1395 passed, 10 skipped in 495.25s (0:08:15)"
+ },
+ "pins": {
+  "COLLECTION_MINIMUM_BUDGET": 3448,
+  "FIXED_ERROR_ENVELOPE_CAP": 797,
+  "IMPACT_MINIMUM_BUDGET": 7730,
+  "MINIMUM_BUDGET": 3436
+ },
+ "pins_expected": {
+  "COLLECTION_MINIMUM_BUDGET": 3448,
+  "FIXED_ERROR_ENVELOPE_CAP": 797,
+  "IMPACT_MINIMUM_BUDGET": 7730,
+  "MINIMUM_BUDGET": 3436
+ },
+ "tools_json": {
+  "bytes": 1631472,
+  "expected_bytes": 1631472,
+  "expected_sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+  "match": true,
+  "sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+  "tool_count": 7
+ }
+}

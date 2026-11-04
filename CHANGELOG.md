@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Forbidden-import architecture rules (ACI-S31).** New operator command
+  `atlas-aci check-architecture --repo R --rules rules.json` (library `atlas_aci.architecture`)
+  evaluates a closed `atlas-architecture-rules.v1` document (`import` relation, closed selector
+  grammar) against one exact, read-only graph snapshot and prints a canonical
+  `atlas-architecture-report.v1`. Each rule is `violated` (with the shortest, deterministic
+  import chain and per-hop canonical provenance), `incomplete_due_to_budget` (count-based bounds
+  only, no clock), `unknown` (unresolved, dynamic or unsupported-language boundaries, listed) or
+  `satisfied_within_scope`. An invalid document is rejected with a structured `invalid_rule`
+  error before the graph is opened. The command reports and never enforces (exit 0 is not a
+  compliance verdict); `satisfied_within_scope` is not a proof of absence, and real repositories
+  mostly yield `unknown` because only package-local relative imports resolve. Documented in
+  `docs/architecture-rules.md`. No MCP operation, producer, schema or dependency change; the
+  tools JSON is byte-identical.
+
 - **Offline evidence report (ACI-S37).** New operator command
   `atlas-aci evidence-report ENVELOPE --html OUT.html --json OUT.json` (library
   `atlas_aci.reports.evidence`) exports one recorded `graph_query op=context` envelope as a

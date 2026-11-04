@@ -831,6 +831,99 @@ def validation_plan(
     stream.flush()
 
 
+@cli.command("check-architecture")
+@click.option(
+    "--repo",
+    required=True,
+    type=click.Path(exists=True, file_okay=False, path_type=Path),
+    help="Repository whose indexed snapshot is checked",
+)
+@click.option(
+    "--graph-root",
+    default=None,
+    type=click.Path(path_type=Path),
+    help="External graph root (default: <repo>/.atlas)",
+)
+@click.option(
+    "--rules",
+    "rules_path",
+    required=True,
+    type=click.Path(path_type=Path),
+    help="atlas-architecture-rules.v1 JSON document",
+)
+@click.option("--max-depth", default=None, type=int, help="Hops per source search (1..32)")
+@click.option("--max-visited-nodes", default=None, type=int, help="Files per search (1..1000)")
+@click.option("--max-examined-edges", default=None, type=int, help="Import rows per search")
+@click.option(
+    "--max-total-examined-edges", default=None, type=int, help="Import rows per run (0..2000000)"
+)
+@click.option("--max-sources-per-rule", default=None, type=int, help="Sources per rule (1..4096)")
+@click.option(
+    "--max-counterexamples-per-rule", default=None, type=int, help="Emitted witnesses (1..64)"
+)
+@click.option("--max-boundaries-per-rule", default=None, type=int, help="Emitted boundaries")
+def check_architecture(
+    repo: Path,
+    graph_root: Path | None,
+    rules_path: Path,
+    max_depth: int | None,
+    max_visited_nodes: int | None,
+    max_examined_edges: int | None,
+    max_total_examined_edges: int | None,
+    max_sources_per_rule: int | None,
+    max_counterexamples_per_rule: int | None,
+    max_boundaries_per_rule: int | None,
+) -> None:
+    """Check declarative forbidden-import rules against one indexed snapshot.
+
+    Prints the canonical `atlas-architecture-report.v1` (JSON) on stdout. Exit 0 means the
+    check ran, not that the repository complies: read each rule's `outcome` and `reasons`.
+    READ-ONLY: nothing is written under the repository or graph root; nothing is printed on
+    rejection (exit 1) or invalid usage (exit 2).
+    """
+    import sqlite3
+
+    from atlas_aci.architecture import checker, rules
+    from atlas_aci.query import diff as symbol_diff
+
+    chosen = {
+        "max_depth": max_depth,
+        "max_visited_nodes": max_visited_nodes,
+        "max_examined_edges": max_examined_edges,
+        "max_total_examined_edges": max_total_examined_edges,
+        "max_sources_per_rule": max_sources_per_rule,
+        "max_counterexamples_per_rule": max_counterexamples_per_rule,
+        "max_boundaries_per_rule": max_boundaries_per_rule,
+    }
+    try:
+        limits = checker.normalize_limits(chosen)
+    except checker.ArchitectureUsageError as exc:
+        raise click.UsageError("Invalid architecture check limit: " + exc.limit) from None
+    try:
+        with rules_path.open("rb") as handle:
+            raw = handle.read(rules.MAX_DOCUMENT_BYTES + 1)
+    except OSError:
+        # Fixed text: the underlying message spells the path.
+        raise click.ClickException("Architecture rules file cannot be read.") from None
+    try:
+        report = checker.run(symbol_diff.Side(repo.resolve(), graph_root), raw, limits)
+    except rules.InvalidRule as exc:
+        where = "" if exc.rule_index is None else f" (rule {exc.rule_index})"
+        raise click.ClickException(
+            f"Architecture rules rejected: invalid_rule: {exc.reason}{where}"
+        ) from None
+    except checker.ArchitectureRejected as exc:
+        raise click.ClickException(f"Architecture check rejected: {exc.reason}") from None
+    except symbol_diff.DiffUsageError:
+        raise click.UsageError("The repository cannot be opened as a graph namespace.") from None
+    except (OSError, ValueError, sqlite3.Error) as exc:
+        # Never `str(exc)`: a message may carry a repository or graph-root path.
+        raise click.ClickException("Architecture check failed: " + type(exc).__name__) from None
+    stream = click.get_binary_stream("stdout")
+    stream.write(checker.canonical_bytes(report))
+    stream.flush()
+
+
 @cli.command()
 @click.option(
     "--repo", required=True, type=click.Path(exists=True, file_okay=False, path_type=Path)

@@ -1,0 +1,11 @@
+{
+ "format": "atlas-architecture-rules.v1",
+ "rules": [
+  {
+   "id": "r1",
+   "relation": "call",
+   "from": ["pkg/domain/a.py"],
+   "to": ["pkg/infra/**"]
+  }
+ ]
+}

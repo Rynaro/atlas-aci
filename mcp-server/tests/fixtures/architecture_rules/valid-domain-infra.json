@@ -1,0 +1,18 @@
+{
+ "format": "atlas-architecture-rules.v1",
+ "rules": [
+  {
+   "id": "domain-a-not-infra",
+   "description": "The domain entry module must not reach infrastructure.",
+   "relation": "import",
+   "from": ["pkg/domain/a.py"],
+   "to": ["pkg/infra/**"]
+  },
+  {
+   "id": "domain-not-infra",
+   "relation": "import",
+   "from": ["pkg/domain/**"],
+   "to": ["pkg/infra/**"]
+  }
+ ]
+}

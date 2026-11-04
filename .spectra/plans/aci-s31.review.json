@@ -1,0 +1,94 @@
+{
+ "slice_id": "ACI-S31",
+ "plan": ".spectra/plans/aci-s31.md",
+ "author": "orchestrator-ramza-plan-s31",
+ "checker": "atlas-s31-plan-checker",
+ "verdict": "APPROVE_WITH_CONDITIONS",
+ "method": "independent read-only code review; no commands executed",
+ "findings": [
+  {
+   "n": 1,
+   "severity": "MAJOR",
+   "summary": "source_observations holds observation and history records (codegraph.py:3494-3496, 4936-4938); filter type==observation keyed by path, hash field is observed_source_sha256; add failed-with-history test or record unconstructible",
+   "disposition": "accepted as plan condition 1"
+  },
+  {
+   "n": 2,
+   "severity": "MAJOR",
+   "summary": "adapter must replicate IndexedReader lease/epoch gate (indexed.py:55-64: closed, _validated_lease, epoch in {8,9}); new reason index_upgrade_required in closed vocabulary, docs and CLI; Day-1 records idx_*_path at epoch 8",
+   "disposition": "accepted as plan condition 2"
+  },
+  {
+   "n": 3,
+   "severity": "MAJOR",
+   "summary": "jsonschema re.search lets '$' accept a trailing newline in rule id; re-check with re.fullmatch (also rule_id echo guard); add 'a\\n' invalid fixture",
+   "disposition": "accepted as plan condition 3"
+  },
+  {
+   "n": 4,
+   "severity": "MAJOR",
+   "summary": "lone surrogates in selectors/description pass validation then crash canonical_bytes with UnicodeEncodeError after graph open; reject in validation, add test, document exact code-point matching",
+   "disposition": "accepted as plan condition 4"
+  },
+  {
+   "n": 5,
+   "severity": "MINOR",
+   "summary": "ADJACENCY_SQL is SEARCH idx_assertions_path plus temp b-tree and json_extract is residual (index not defeated) but decodes all path assertions uncharged; document, G-PLAN asserts SEARCH/TEMP B-TREE not SCAN, cache minimal tuples only",
+   "disposition": "accepted as plan condition 5"
+  },
+  {
+   "n": 6,
+   "severity": "MINOR",
+   "summary": "prefer computed-id PK file-entity lookup ev.file_entity(path,language); None from entity()/record() (coverage_test) must raise ValueError not AttributeError",
+   "disposition": "accepted as plan condition 6"
+  },
+  {
+   "n": 7,
+   "severity": "MINOR",
+   "summary": "IndexedReader._record reuse needs drift guard (staticmethod check plus equality test) or preferably local public-API decode with equality test",
+   "disposition": "accepted as plan condition 7"
+  },
+  {
+   "n": 8,
+   "severity": "MINOR",
+   "summary": "universe includes md/yaml/html/scss (codegraph.py:62-84) so broad selectors are always unknown via import_language_unsupported; pin with test and document narrower selectors",
+   "disposition": "accepted as plan condition 8"
+  },
+  {
+   "n": 9,
+   "severity": "MINOR",
+   "summary": "files in skip patterns or non-LANG_BY_EXT extensions are never observed; add support.scope {languages, skip_patterns} from generation_inputs and name it in limitation 9",
+   "disposition": "accepted as plan condition 9"
+  },
+  {
+   "n": 10,
+   "severity": "MINOR",
+   "summary": "violated-over-unknown/budget precedence differs from literal AC-003/004 wording; document that violated with non-empty reasons is not exhaustive and exit 0 is not compliance",
+   "disposition": "accepted as plan condition 10"
+  },
+  {
+   "n": 11,
+   "severity": "MINOR",
+   "summary": "conservative depth stop reports depth_limit for a leaf at exactly max_depth (traversal.py:241-242 quirk); do exact probe or pin test and docs; LIMITS reuse is subset not identical",
+   "disposition": "accepted as plan condition 11"
+  },
+  {
+   "n": 12,
+   "severity": "MINOR",
+   "summary": "CHAIN fixtures must define each imported name as a top-level unrebound def with all __init__.py; D9 probe false-positives on local names like reload/exec must be documented",
+   "disposition": "accepted as plan condition 12"
+  },
+  {
+   "n": 13,
+   "severity": "MINOR",
+   "summary": "CLI: except ArchitectureRejected/InvalidRule before generic ValueError; click.Path(exists=True) for --rules echoes path, use dir_okay=False with fixed read-error text or pin it",
+   "disposition": "accepted as plan condition 13"
+  },
+  {
+   "n": 14,
+   "severity": "MINOR",
+   "summary": "ruff RUF001-003 flags ambiguous non-ASCII; ASCII only in src and tests with \\u escapes; avoid 'alter table' and 'nx.compose(' in src",
+   "disposition": "accepted as plan condition 14"
+  }
+ ]
+}
