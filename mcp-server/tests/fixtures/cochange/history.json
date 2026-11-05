@@ -1,0 +1,57 @@
+{
+  "format": "atlas-s33-history-spec.v1",
+  "worlds": {
+    "main": {
+      "repository_id": "s33-main",
+      "start": "C0",
+      "end": "C14",
+      "source": "C14",
+      "bulk_threshold": 5,
+      "commits": [
+        {"label": "C0", "parents": [], "touch": ["src/a.py", "src/b.py", "src/c.py", "src/d.py", "src/e.py", "src/f.py", "README.md", "uv.lock", "dist/app.js", "web/app.min.js"]},
+        {"label": "C1", "parents": ["C0"], "touch": ["src/a.py", "src/b.py"]},
+        {"label": "C2", "parents": ["C1"], "touch": ["src/a.py", "src/b.py", "src/c.py"]},
+        {"label": "C3", "parents": ["C2"], "touch": ["src/b.py", "src/c.py"]},
+        {"label": "C4", "parents": ["C2"], "touch": ["src/a.py", "src/d.py"]},
+        {"label": "M5", "parents": ["C4", "C3"], "copy_from": {"C3": ["src/b.py", "src/c.py"]}, "touch": ["src/a.py", "src/e.py"]},
+        {"label": "C6", "parents": ["M5"], "touch": ["src/a.py", "uv.lock", "dist/app.js", "web/app.min.js"]},
+        {"label": "C7", "parents": ["C6"], "touch": ["src/a.py", "src/b.py", "src/c.py", "src/d.py", "src/e.py", "src/f.py"]},
+        {"label": "C8", "parents": ["C7"], "touch": ["src/a.py"], "delete": ["src/c.py"]},
+        {"label": "C9", "parents": ["C8"], "touch": ["src/a.py", "src/b.py"], "gitlink": {"vendor/mod": "C1"}},
+        {"label": "C10", "parents": ["C9"], "touch": ["src/a.py", "docs/naïve.txt"], "touch_hex": ["6261642fff2e747874"]},
+        {"label": "C11", "parents": ["C10"], "touch": ["src/b.py", "src/f.py"], "delete_hex": ["6261642fff2e747874"]},
+        {"label": "C12", "parents": ["C11"], "touch": ["src/d.py"], "rename": {"src/e.py": "src/e2.py"}},
+        {"label": "C13", "parents": ["C12"]},
+        {"label": "C14", "parents": ["C13"], "touch": ["README.md"]}
+      ]
+    },
+    "future": {
+      "repository_id": "s33-future",
+      "start": "F0",
+      "end": "F2",
+      "source": "F2",
+      "bulk_threshold": 5,
+      "commits": [
+        {"label": "F0", "parents": [], "touch": ["src/x.py", "src/y.py", "README.md"]},
+        {"label": "F1", "parents": ["F0"], "touch": ["src/x.py", "src/y.py"]},
+        {"label": "F2", "parents": ["F1"], "touch": ["src/x.py", "src/y.py"]},
+        {"label": "S1", "parents": ["F1"], "touch": ["src/x.py", "src/y.py"]},
+        {"label": "F3", "parents": ["F2"], "touch": ["src/x.py"]},
+        {"label": "F2r", "parents": ["F2"], "touch": ["README.md"]}
+      ]
+    },
+    "shallow_merge": {
+      "repository_id": "s33-merge",
+      "start": "X1",
+      "end": "X2",
+      "source": "X2",
+      "bulk_threshold": 5,
+      "commits": [
+        {"label": "X0", "parents": [], "touch": ["src/p.py", "src/q.py"]},
+        {"label": "X1", "parents": ["X0"], "touch": ["src/p.py", "src/q.py"]},
+        {"label": "Y1", "parents": ["X0"], "touch": ["src/p.py", "src/q.py"]},
+        {"label": "X2", "parents": ["X1", "Y1"], "copy_from": {"Y1": ["src/q.py"]}, "touch": ["src/p.py"]}
+      ]
+    }
+  }
+}

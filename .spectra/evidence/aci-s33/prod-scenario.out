@@ -1,0 +1,35 @@
+image: atlas-aci:s33-wip  volume: s33-prod-7357  out: /var/folders/z5/grxl_h6977g51gyzg_qlfzh00000gn/T//s33-prod.JAOd0z
+git: git version 2.47.3
+user: uid=10001(atlas) gid=10001(atlas) groups=10001(atlas)
+PASS  C14 equals the fixture's golden commit id = dad6091d939cea8157a31024734d6e6e76e0f04a
+PASS  indexed snapshot id length = 64
+PASS  a commit newer than the snapshot exists (object only) = 40
+git version 2.47.3
+/w/repo
+PASS  cochange exit (first) = 0
+PASS  cochange exit (second) = 0
+PASS  overlay bytes identical across two runs = same
+PASS  summary stdout identical across two runs = same
+PASS  coverage state = complete
+PASS  records = 9
+PASS  pair observations = 13
+PASS  summary evidence kind = co_change_correlation
+PASS  summary coverage state = complete
+PASS  files compared (indexed blobs bound to the commit tree) = 5
+PASS  future window exit = 1
+PASS  future window stdout bytes = 0
+PASS  future window text = Error: History co-change rejected: outside_snapshot_history
+PASS  no overlay written by a rejection = absent
+PASS  budget exit = 0
+PASS  budget coverage state = incomplete_history
+PASS  budget reasons = commit_budget_exhausted
+PASS  budget records withheld = withheld
+PASS  budget summary records = 0
+PASS  foreign-owned repository exit = 1
+PASS  foreign-owned repository stdout bytes = 0
+PASS  foreign-owned repository text = Error: History co-change rejected: history_unavailable
+PASS  repository (.git included) and graph inventory unchanged = same
+PASS  no temporary overlay file remains = 0
+PASS  tools JSON sha256 = 94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56
+PASS  tools JSON bytes = 1631472
+RESULT: all checks passed

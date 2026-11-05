@@ -1,0 +1,82 @@
+{
+ "slice_id": "ACI-S33",
+ "plan": ".spectra/plans/aci-s33.md",
+ "author": "orchestrator-ramza-plan-s33",
+ "checker": "atlas-s33-plan-checker",
+ "verdict": "APPROVE_WITH_CONDITIONS",
+ "method": "independent read-only code review; no commands executed",
+ "findings": [
+  {
+   "n": 1,
+   "severity": "MAJOR",
+   "summary": "merge-base --is-ancestor rc is untrustworthy under missing objects; run the rev-list listing first, derive start<end from listed parents, use merge-base only for end<=source (rc 0/1), skip derivation when truncated",
+   "disposition": "accepted as plan condition 1"
+  },
+  {
+   "n": 2,
+   "severity": "MAJOR",
+   "summary": "coverage reasons from a budget-truncated listing are order dependent and D1/D4 contradict; stage 4/5 incompleteness means no listing, truncation means reasons exactly commit_budget_exhausted, raw-parent and diff only on a full listing",
+   "disposition": "accepted as plan condition 2"
+  },
+  {
+   "n": 3,
+   "severity": "MAJOR",
+   "summary": "promisor/partial-clone lazy fetch can run repo-local uploadpack/sshCommand; GIT_NO_LAZY_FETCH needs git 2.44+; add Day-1 promisor plus uploadpack-sentinel fixture and refuse extensions.partialClone as history_unavailable",
+   "disposition": "accepted as plan condition 3"
+  },
+  {
+   "n": 4,
+   "severity": "MAJOR",
+   "summary": "cut #1 (blob binding) makes AC-007 operator-evadable; D6 is never cut, STOP and report instead of operator_declared",
+   "disposition": "accepted as plan condition 4"
+  },
+  {
+   "n": 5,
+   "severity": "MINOR",
+   "summary": "add an overall git deadline (default 600 s, outside digest, reject never truncate); document that huge windows time out before reporting budget exhaustion",
+   "disposition": "accepted as plan condition 5"
+  },
+  {
+   "n": 6,
+   "severity": "MINOR",
+   "summary": "add --ignore-submodules=none to diff-tree and a .gitmodules ignore=all hostile variant",
+   "disposition": "accepted as plan condition 6"
+  },
+  {
+   "n": 7,
+   "severity": "MINOR",
+   "summary": "set GIT_GRAFT_FILE=/dev/null and add an info/grafts hostile variant to narrow limitation 12",
+   "disposition": "accepted as plan condition 7"
+  },
+  {
+   "n": 8,
+   "severity": "MINOR",
+   "summary": "name the identity accessor (manifest context identity), require identity root to equal the toplevel, hold one lease and one reader through stages 3-6",
+   "disposition": "accepted as plan condition 8"
+  },
+  {
+   "n": 9,
+   "severity": "MINOR",
+   "summary": "carry evidence_kind in the atlas-history-summary.v1 stdout document and validate it",
+   "disposition": "accepted as plan condition 9"
+  },
+  {
+   "n": 10,
+   "severity": "MINOR",
+   "summary": "py314 gate needs uv run --extra dev; add a git contract probe test and print git --version because ubuntu-latest git is outside the Day-1 matrix",
+   "disposition": "accepted as plan condition 10"
+  },
+  {
+   "n": 11,
+   "severity": "MINOR",
+   "summary": "specify overflow check before rc check; cat-file commit header within the cap is success even when the message overflows",
+   "disposition": "accepted as plan condition 11"
+  },
+  {
+   "n": 12,
+   "severity": "MINOR",
+   "summary": "document that the indexer ignores .gitignore so untracked indexable files cause snapshot_commit_mismatch, that files added after the snapshot are undetected, that repository_id is a label (start/end shas bind content), and that AC-006 identity is per snapshot id",
+   "disposition": "accepted as plan condition 12"
+  }
+ ]
+}

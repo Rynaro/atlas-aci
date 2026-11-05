@@ -1,0 +1,270 @@
+{
+  "slice_id": "ACI-S33",
+  "base_commit": "890e181e2271a8d91306c9acba8e30c6b2bf4d5d",
+  "stop_rule_triggered": false,
+  "git_versions": {
+    "macos_host": "git version 2.50.1 (Apple Git-155)",
+    "dev_image_atlas_aci_dev_s16": "git version 2.47.3",
+    "production_image_atlas_aci_s33_base": "git version 2.47.3",
+    "python_3_14_image": "git version 2.47.3",
+    "note": "all three images are Debian trixie git 2.47.3; the ubuntu-latest CI git is NOT in the matrix (test_git_contract_probe prints its version in CI)"
+  },
+  "environments": {
+    "dev": {
+      "python": "3.12.16",
+      "uid": 1000
+    },
+    "prod": {
+      "python": "3.12.16",
+      "uid": 10001
+    },
+    "py314": {
+      "python": "3.14.10",
+      "uid": 1000
+    }
+  },
+  "b_commit_ids": {
+    "identical_across_dev_prod_py314": true,
+    "host_git_recreates_all_15_commit_ids": true,
+    "ids": {
+      "C0": "85fe42de22d2f068c358f8607a70a53b78cf0c75",
+      "C1": "315348e5bdf3b4738409d77624aa59244a1bd3e1",
+      "C10": "c4d125f80066632bdaa931f7ba761db6b5361408",
+      "C11": "b1c2fdb6be5cef8a0c222b52c0f2e9b0cb041878",
+      "C12": "4bd94745d4651744ed3788ffff94f69de14c9b34",
+      "C13": "2016ed69d4194a5140d02f81e68a76700a2021b2",
+      "C14": "dad6091d939cea8157a31024734d6e6e76e0f04a",
+      "C2": "1c8ae31d4224d8abfc4bf06b645b67e6794dd3e7",
+      "C3": "f7ca2b8d4025a633dd72ea82a2eaadf25d0e8ff9",
+      "C4": "2d33bf3d2b04d0862bf812d9d8a27aa358b648c2",
+      "C6": "c1147af0fd5038c3f4d10491b7c7991a8ac6e843",
+      "C7": "f4dd91bd754365753b2a8a05b73d7b046bbc9951",
+      "C8": "007eaa114b3a39de8bdf9a524e17445dcd73d0ed",
+      "C9": "4c480bbb631063d5d09734139f14d522d185d40c",
+      "M5": "6080ef261c354f0170daab92b84039f2055ba9b1"
+    }
+  },
+  "c_d_e_h_normalised_digest_of_every_argv_result": {
+    "dev": "eabb96872d9fc3a54287da8383e1237954cf077b0768ff2700e37656ec81d587",
+    "prod": "eabb96872d9fc3a54287da8383e1237954cf077b0768ff2700e37656ec81d587",
+    "py314": "eabb96872d9fc3a54287da8383e1237954cf077b0768ff2700e37656ec81d587",
+    "all_equal": true
+  },
+  "c_argv": {
+    "end_of_options_accepted_on": [
+      "cat-file -e",
+      "merge-base --is-ancestor",
+      "ls-tree",
+      "rev-list (^start still negated: 1 line for END ^C13)",
+      "diff-tree"
+    ],
+    "empty_tree_without_object_ok": true,
+    "diff_external_empty_config_ok": true,
+    "stderr_note": "stderr is discarded by the runner; git 2.47 prints a graft deprecation hint on stderr when GIT_GRAFT_FILE is set (harmless)",
+    "rc_sets": {
+      "cat_file_e_missing": 128,
+      "cat_file_e_tree_as_commit": 128,
+      "merge_base_is_ancestor": {
+        "yes": 0,
+        "no": 1,
+        "missing_object": 128
+      },
+      "rev_list_missing_commit": 128,
+      "diff_tree_missing_tree": 128,
+      "rev_list_missing_tree_only": 0,
+      "promisor_probe": {
+        "hit": 0,
+        "none": 1
+      }
+    }
+  },
+  "d_missing_and_types": {
+    "missing": {
+      "missing_commit_cat_e": {
+        "bytes": 0,
+        "rc": 128,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_empty": false,
+        "stderr_head": "fatal: Not a valid object name f7ca2b8d4025a633dd72ea82a2eaadf25d0e8ff9^{commit}\n"
+      },
+      "missing_commit_merge_base": {
+        "bytes": 0,
+        "rc": 128,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_empty": false,
+        "stderr_head": "hint: Support for <GIT_DIR>/info/grafts is deprecated\nhint: and will be removed in a future Git version.\nhint:\nhint: Ple"
+      },
+      "missing_commit_merge_base_across": {
+        "bytes": 0,
+        "rc": 128,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_empty": false,
+        "stderr_head": "hint: Support for <GIT_DIR>/info/grafts is deprecated\nhint: and will be removed in a future Git version.\nhint:\nhint: Ple"
+      },
+      "missing_commit_rev_list": {
+        "bytes": 0,
+        "rc": 128,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_empty": false,
+        "stderr_head": "hint: Support for <GIT_DIR>/info/grafts is deprecated\nhint: and will be removed in a future Git version.\nhint:\nhint: Ple"
+      },
+      "missing_tree_diff_parent_side": {
+        "bytes": 0,
+        "rc": 128,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_empty": false,
+        "stderr_head": "hint: Support for <GIT_DIR>/info/grafts is deprecated\nhint: and will be removed in a future Git version.\nhint:\nhint: Ple"
+      },
+      "missing_tree_diff_tree": {
+        "bytes": 0,
+        "rc": 128,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_empty": false,
+        "stderr_head": "hint: Support for <GIT_DIR>/info/grafts is deprecated\nhint: and will be removed in a future Git version.\nhint:\nhint: Ple"
+      },
+      "missing_tree_rev_list": {
+        "bytes": 1189,
+        "rc": 0,
+        "sha256": "8dfe255ee10e181aca51cab10faf0f7bcd9ea211e7709c4215d1f3e7ceb66f58",
+        "stderr_empty": false,
+        "stderr_head": "hint: Support for <GIT_DIR>/info/grafts is deprecated\nhint: and will be removed in a future Git version.\nhint:\nhint: Ple"
+      }
+    },
+    "gitlink_blob_type_change": {
+      "G1": ":100644 160000 3ec6129b0f161779990fe0ad0ba982a129ee9035 4834d15ac211c153577ac4333cfd91a4d80cb42e T|src/m.py|",
+      "G2": ":160000 000000 4834d15ac211c153577ac4333cfd91a4d80cb42e 0000000000000000000000000000000000000000 D|src/m.py|"
+    },
+    "note": "a blob<->gitlink change is ONE raw entry with type T (modes 100644/160000); the parser treats either mode 160000 as a gitlink"
+  },
+  "e_shallow": {
+    "cat_commit_boundary_has_parent": true,
+    "is_shallow": "true",
+    "merge_base_across": {
+      "bytes": 0,
+      "rc": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_empty": false,
+      "stderr_head": "hint: Support for <GIT_DIR>/info/grafts is deprecated\nhint: and will be removed in a future Git version.\nhint:\nhint: Ple"
+    },
+    "merge_base_start_missing": {
+      "bytes": 0,
+      "rc": 128,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_empty": false,
+      "stderr_head": "fatal: Not a valid commit name 85fe42de22d2f068c358f8607a70a53b78cf0c75\n"
+    },
+    "merge_boundary_raw_has_parent": true,
+    "merge_rev_list_labels": [
+      [
+        "X2",
+        "X1",
+        "Y1"
+      ],
+      [
+        "Y1"
+      ]
+    ],
+    "rev_list_boundary": "C14 C13\nC13\n",
+    "rev_list_start_missing": {
+      "bytes": 0,
+      "rc": 128,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_empty": false,
+      "stderr_head": "hint: Support for <GIT_DIR>/info/grafts is deprecated\nhint: and will be removed in a future Git version.\nhint:\nhint: Ple"
+    },
+    "start_missing_exists": {
+      "bytes": 0,
+      "rc": 128,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_empty": false,
+      "stderr_head": "fatal: Not a valid object name 85fe42de22d2f068c358f8607a70a53b78cf0c75^{commit}\n"
+    },
+    "window_c13_c14": {
+      "bytes": 82,
+      "rc": 0,
+      "sha256": "8e2ddfbd166a81b09c63f7dcecb76c85f062bf56a14100176681833477c30605",
+      "stderr_empty": false,
+      "stderr_head": "hint: Support for <GIT_DIR>/info/grafts is deprecated\nhint: and will be removed in a future Git version.\nhint:\nhint: Ple"
+    }
+  },
+  "f_binding": {
+    "library": {
+      "cochange_seconds": 0.03,
+      "counts": {
+        "bulk_commits": 1,
+        "commits_in_window": 14,
+        "empty_commits": 1,
+        "generated_paths": 3,
+        "gitlink_paths": 1,
+        "merge_commits": 1,
+        "oversized_commits": 0,
+        "pair_commits": 9,
+        "pair_observations": 13,
+        "pairs": 9,
+        "single_path_commits": 2,
+        "unrepresentable_paths": 2
+      },
+      "files_compared": 5,
+      "hostile_env_same_overlay": true,
+      "lib_env_equals_qualify_env": true,
+      "lib_prefix_equals_qualify_prefix": true,
+      "overlay_bytes": 7391,
+      "overlay_sha256": "48f6b136200b3955a5ecaae829a3406f5d32ed81a3e1fc846697404be500eb6d",
+      "records": 9,
+      "sentinel_after_hostile_env": false,
+      "snapshot_id_len": 64,
+      "state": "complete"
+    },
+    "prod_overlay_sha256_equal": true,
+    "result": "every indexed observation read through the lease; blob ids equal ls-tree on a clean checkout (files_compared 5); identity common_dir/worktree_root equal the probe"
+  },
+  "g_dubious_ownership": {
+    "observed": "as root:\n/tmp/dub\nrc=0\nas uid 10001:\nuid 10001 rc 128 b\"fatal: detected dubious ownership in repository at '/tmp/dub'\\nTo add an exceptio\"\nidentity {'kind': 'git_unavailable', 'root': '/tmp/dub'}\n",
+    "result": "git rejects (rc 128) a root-owned repository as uid 10001; snapshots.identity() degrades to git_unavailable; the analyzer maps the probe failure to history_unavailable; also reproduced on a Docker Desktop bind mount (dev image, uid 1000)"
+  },
+  "h_hostile": {
+    "result": {
+      "diff_c12_same": true,
+      "diff_c9_gitlink_same": true,
+      "gitmodules_only_same": true,
+      "graft_note": "hint: Support for <GIT_DIR>/info/grafts is deprecated\nhint: and will be removed in a future Git version.\nhint:\nhint: Please use \"git replace --convert-graft-file\"\nhint: to convert the grafts into repl",
+      "promisor_cat_commit_missing": {
+        "bytes": 0,
+        "rc": 128,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "promisor_diff_missing": {
+        "bytes": 0,
+        "rc": 128,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "promisor_probe": {
+        "bytes": 59,
+        "rc": 0,
+        "sha256": "635a93ec627838e3026cda12fdcac4ec7693e340a2f919e0f7c8d4a703e9df84"
+      },
+      "promisor_rev_list": {
+        "bytes": 0,
+        "rc": 128,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "rev_list_graft_unneutralised_differs": true,
+      "rev_list_same_with_replace_and_grafts": true,
+      "sentinel_created": false,
+      "uploadpack_sentinel_created": false
+    },
+    "library_hostile_process_env": {
+      "same_overlay": true,
+      "sentinel_created": false
+    },
+    "note": "GIT_GRAFT_FILE=/dev/null neutralises .git/info/grafts (without it the output differs); replace refs, local diff.renames=copies, core.fsmonitor/diff.external scripts, diff.ignoreSubmodules=all and .gitmodules ignore=all do not change any output; the promisor remote with an uploadpack/sshCommand/gitProxy sentinel and a missing object never runs the sentinel; the probe refuses it"
+  },
+  "host_git_leg": "host: git version 2.50.1 (Apple Git-155)\nhost commit-tree reproduces the commit ids: ok=15 bad=0\nrev_list      8dfe255ee10e181aca51cab10faf0f7bcd9ea211e7709c4215d1f3e7ceb66f58  dev=8dfe255ee10e181aca51cab10faf0f7bcd9ea211e7709c4215d1f3e7ceb66f58\nls_tree       70c6a7cbeac07798ce8a5841e369ebc4528837dd99d121484aa4d61865b98d12  dev=70c6a7cbeac07798ce8a5841e369ebc4528837dd99d121484aa4d61865b98d12\nrev_list_max1 c7c70cff14639fc9232ace5793c0f19e7f06c5c2a9b9ee944bbd772d61462af1  dev=c7c70cff14639fc9232ace5793c0f19e7f06c5c2a9b9ee944bbd772d61462af1\nexists_missing_rc=128 (dev 128)\nancestor_no_rc=1 (dev 1)\nancestor_missing_rc=128 (dev 128)\npromisor_rc=1 (dev 1)\nprobe: /private/tmp/claude-501/-Users-henrique-workspace-oss-agents-atlas-aci/694bbcf4-4624-4586-978b-245709fb6cab/scratchpad/s33/hostw/main /private/tmp/claude-501/-Users-henrique-workspace-oss-agents-atlas-aci/694bbcf4-4624-4586-978b-245709fb6cab/scratchpad/s33/hostw/main/.git .git false false sha1 \ndiff_tree sha256 per commit (host, label order of dev JSON):\ndiff_tree outputs: identical for all commits\n",
+  "i_timing": {
+    "linear_1000_commit_walk_seconds": 0.89,
+    "commits": 1000,
+    "build_1000_commits_seconds": 4.22,
+    "default_max_commits_kept": 1000,
+    "cochange_main_world_seconds": 0.03
+  }
+}

@@ -1,0 +1,12 @@
+host: git version 2.50.1 (Apple Git-155)
+host commit-tree reproduces the commit ids: ok=15 bad=0
+rev_list      8dfe255ee10e181aca51cab10faf0f7bcd9ea211e7709c4215d1f3e7ceb66f58  dev=8dfe255ee10e181aca51cab10faf0f7bcd9ea211e7709c4215d1f3e7ceb66f58
+ls_tree       70c6a7cbeac07798ce8a5841e369ebc4528837dd99d121484aa4d61865b98d12  dev=70c6a7cbeac07798ce8a5841e369ebc4528837dd99d121484aa4d61865b98d12
+rev_list_max1 c7c70cff14639fc9232ace5793c0f19e7f06c5c2a9b9ee944bbd772d61462af1  dev=c7c70cff14639fc9232ace5793c0f19e7f06c5c2a9b9ee944bbd772d61462af1
+exists_missing_rc=128 (dev 128)
+ancestor_no_rc=1 (dev 1)
+ancestor_missing_rc=128 (dev 128)
+promisor_rc=1 (dev 1)
+probe: /private/tmp/claude-501/-Users-henrique-workspace-oss-agents-atlas-aci/694bbcf4-4624-4586-978b-245709fb6cab/scratchpad/s33/hostw/main /private/tmp/claude-501/-Users-henrique-workspace-oss-agents-atlas-aci/694bbcf4-4624-4586-978b-245709fb6cab/scratchpad/s33/hostw/main/.git .git false false sha1 
+diff_tree sha256 per commit (host, label order of dev JSON):
+diff_tree outputs: identical for all commits

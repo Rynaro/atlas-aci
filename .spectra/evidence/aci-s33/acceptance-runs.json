@@ -1,0 +1,44 @@
+[
+  {
+    "ac_id": "AC-S33-001",
+    "test": "mcp-server/tests/slices/test_s33_cochange.py::test_cochange_support_matches_commits",
+    "exit_code": 0,
+    "tail": "1 passed in 0.62s"
+  },
+  {
+    "ac_id": "AC-S33-002",
+    "test": "mcp-server/tests/slices/test_s33_cochange.py::test_cochange_window_provenance",
+    "exit_code": 0,
+    "tail": "1 passed in 0.56s"
+  },
+  {
+    "ac_id": "AC-S33-003",
+    "test": "mcp-server/tests/slices/test_s33_cochange.py::test_cochange_excluded_commits_do_not_contribute",
+    "exit_code": 0,
+    "tail": "1 passed in 0.58s"
+  },
+  {
+    "ac_id": "AC-S33-004",
+    "test": "mcp-server/tests/slices/test_s33_cochange.py::test_cochange_is_correlation_only",
+    "exit_code": 0,
+    "tail": "1 passed in 1.24s"
+  },
+  {
+    "ac_id": "AC-S33-005",
+    "test": "mcp-server/tests/slices/test_s33_cochange.py::test_cochange_missing_history_is_incomplete",
+    "exit_code": 0,
+    "tail": "1 passed in 1.32s"
+  },
+  {
+    "ac_id": "AC-S33-006",
+    "test": "mcp-server/tests/slices/test_s33_cochange.py::test_cochange_replay_is_idempotent",
+    "exit_code": 0,
+    "tail": "1 passed in 2.55s"
+  },
+  {
+    "ac_id": "AC-S33-007",
+    "test": "mcp-server/tests/slices/test_s33_cochange.py::test_cochange_future_window_rejected",
+    "exit_code": 0,
+    "tail": "1 passed in 0.54s"
+  }
+]

@@ -1,0 +1,155 @@
+{
+ "slice_id": "ACI-S33",
+ "base_commit": "890e181e2271a8d91306c9acba8e30c6b2bf4d5d",
+ "recorded_before_implementation": true,
+ "declared_by_issue": [
+  "mcp-server/src/atlas_aci/history/cochange.py",
+  "mcp-server/src/atlas_aci/__main__.py",
+  "mcp-server/tests/slices/test_s33_cochange.py",
+  "mcp-server/tests/fixtures/cochange/",
+  "docs/history-signals.md"
+ ],
+ "glob_depth_clarifications": [
+  {
+   "path": "mcp-server/tests/fixtures/cochange/**",
+   "reason": "Flat directory, JSON only (no .py, no nested .git): history.json (world specs by label) and expected-records.json (golden records by label, pinned to shas only if Day-1 shows identical commit ids across gits); repositories are built in tmp_path with git plumbing; no golden overlay because snapshot ids depend on absolute paths"
+  },
+  {
+   "path": "docs/history-signals.md",
+   "reason": "Flat at docs/ root beside docs/cross-repository-links.md; no other docs file is touched"
+  }
+ ],
+ "added": [
+  {
+   "path": "mcp-server/src/atlas_aci/history/__init__.py",
+   "reason": "Package marker for the new history package; docstring only"
+  },
+  {
+   "path": "mcp-server/tests/slices/test_s33_*.py",
+   "reason": "test_s33_support.py (plumbing world builder, git env, PATH shims, spec oracle), test_s33_rejections.py, test_s33_isolation.py beside the declared test file"
+  },
+  {
+   "path": "CHANGELOG.md",
+   "reason": "Separate '- **Git co-change correlation (ACI-S33).**' bullet placed SECOND under Unreleased/Added, directly after the S30 bullet, because test_s30_isolation.py:563-565 pins the S30 bullet as the first; it contains none of the locator titles 'Cross-repository package links', 'Python dependency surface', 'OpenTelemetry trace import', 'OpenAPI 3.1 contract import'"
+  },
+  {
+   "path": "README.md",
+   "reason": "One docs-table row directly after the docs/cross-repository-links.md row (outside the TSX section); it contains none of docs/importers/openapi.md, docs/importers/opentelemetry.md, docs/importers/python-dependencies.md, docs/frameworks/rails.md, docs/cross-repository-links.md, evidence-reports.md, canary-missions.md; the S28 ordering pin (test_s28_isolation.py:345) is unaffected; cut item 2"
+  },
+  {
+   "path": ".spectra/plans/aci-s33.*",
+   "reason": "Ramza plan, criteria, state, scope, review, issue snapshot"
+  },
+  {
+   "path": ".spectra/plans/ramza-calibration.jsonl",
+   "reason": "Ramza calibration append"
+  },
+  {
+   "path": ".spectra/changes/aci-s33/*",
+   "reason": "This amendment"
+  },
+  {
+   "path": ".spectra/evidence/aci-s33/**",
+   "reason": "Day-1 qualify.sh and qualification.json, base invariants, gate logs, py314 log, make-history.sh, prod-image.sh and outputs"
+  },
+  {
+   "path": ".spectra/state/aci-s33.execution.json",
+   "reason": "Authoritative execution receipt (AC-RUN-01/02)"
+  },
+  {
+   "path": ".spectra/backlog/execution.json",
+   "reason": "Backlog status update"
+  },
+  {
+   "path": ".spectra/backlog/order.md",
+   "reason": "Backlog order update"
+  }
+ ],
+ "prior_test_edits": [],
+ "interpretations": [
+  {
+   "topic": "AC-001 exact eligible-commit support",
+   "decision": "support = number of eligible commits in start..end (start exclusive, end inclusive) whose eligible path set contains both paths; equal to an independent spec-level oracle and to golden records"
+  },
+  {
+   "topic": "AC-002 repository identity and provenance",
+   "decision": "Every record literally carries repository_id (operator label, S30 grammar, bound to the leased snapshot's git common_dir and worktree_root), start_commit, end_commit, filter_digest and sorted supporting_commits; validate_overlay requires equality with the header"
+  },
+  {
+   "topic": "AC-003 declared filters",
+   "decision": "Merge commits (more than one parent) excluded; generated paths by three typed lists (prefixes, exact names, suffixes) with documented defaults; bulk = eligible paths after generated removal > bulk_threshold; oversized raw diff > diff_output_cap excluded; gitlinks and unrepresentable paths skipped and counted; deletes kept; renames not followed; policy canonical document hashed into filter_digest"
+  },
+  {
+   "topic": "AC-004 evidence kind",
+   "decision": "Every record and the header evidence block carry co_change_correlation; no relation key, no ev.RELATIONS value, no MCP or graph surface"
+  },
+  {
+   "topic": "AC-005 incomplete_history",
+   "decision": "Reasons start_commit_missing (shallow), shallow_boundary_in_window (listed zero parents vs raw parents), object_missing (rev-list/merge-base/diff-tree/cat-file failure), commit_budget_exhausted (more than max_commits listed); the overlay is written with coverage.state incomplete_history and records withheld (records [], counts null)"
+  },
+  {
+   "topic": "AC-006 replay",
+   "decision": "No ordering dependence (no --topo-order; sorted by path and sha), explicit env and -c overrides make outputs independent of the caller environment, replace refs and packing; byte identity across runs, CLI orders, hash seeds, hostile env and git gc"
+  },
+  {
+   "topic": "AC-007 selected source snapshot",
+   "decision": "Mandatory read-only lease of the active snapshot named by --snapshot-id (epoch == max), identity git with equal common_dir and worktree_root, operator-declared --source-commit bound mechanically by sha1 blob ids of every indexed observation against ls-tree of that commit; end must equal or be an ancestor of the source (merge-base --is-ancestor) else outside_snapshot_history"
+  },
+  {
+   "topic": "Topo-order truncation",
+   "decision": "Not replay-stable by documentation (only the topological constraint is specified); stricter option: never truncate, withhold records on budget exhaustion"
+  }
+ ],
+ "not_touched_follow_up": [
+  {
+   "path": "mcp-server/src/atlas_aci/storage/snapshots.py",
+   "reason": "Snapshots do not record a commit and identity() degrades silently; recording HEAD at index time is a follow-up"
+  },
+  {
+   "path": "mcp-server/src/atlas_aci/overlays/runtime.py",
+   "reason": "Imported read-only (open_active, OverlayRejected, resolve_output, OverlayUsageError, OBSERVATIONS_SQL, SCHEMA_EPOCHS, canonical_bytes); write_atomic not reused (S27 temp prefix); not modified"
+  },
+  {
+   "path": "mcp-server/src/atlas_aci/query/diff.py",
+   "reason": "Side and DiffUsageError imported; not modified"
+  }
+ ],
+ "explicitly_untouched_gated": [
+  "mcp-server/src/atlas_aci/server.py",
+  "mcp-server/src/atlas_aci/enforcement.py",
+  "mcp-server/src/atlas_aci/config.py",
+  "mcp-server/src/atlas_aci/codegraph.py",
+  "mcp-server/src/atlas_aci/protocol/",
+  "mcp-server/src/atlas_aci/query/",
+  "mcp-server/src/atlas_aci/tools/",
+  "mcp-server/src/atlas_aci/storage/",
+  "mcp-server/src/atlas_aci/extractors/",
+  "mcp-server/src/atlas_aci/providers/",
+  "mcp-server/src/atlas_aci/indexing/",
+  "mcp-server/src/atlas_aci/resolvers/",
+  "mcp-server/src/atlas_aci/frameworks/",
+  "mcp-server/src/atlas_aci/architecture/",
+  "mcp-server/src/atlas_aci/counterfactual/",
+  "mcp-server/src/atlas_aci/contracts/",
+  "mcp-server/src/atlas_aci/importers/",
+  "mcp-server/src/atlas_aci/overlays/",
+  "mcp-server/src/atlas_aci/dependencies/",
+  "mcp-server/src/atlas_aci/cross_repo/",
+  "mcp-server/src/atlas_aci/reports/",
+  "mcp-server/pyproject.toml",
+  "mcp-server/uv.lock",
+  "mcp-server/Dockerfile",
+  "mcp-server/Dockerfile.dev",
+  ".github/workflows/"
+ ],
+ "invariants": {
+  "tools_json_sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+  "tools_json_bytes": 1631472,
+  "READ_ONLY_TOOLS_count": 7,
+  "MINIMUM_BUDGET": 3436,
+  "COLLECTION_MINIMUM_BUDGET": 3448,
+  "FIXED_ERROR_ENVELOPE_CAP": 797,
+  "IMPACT_MINIMUM_BUDGET": 7730,
+  "criteria_sha256": "7cf8c8efa698489f77fef050eabf544f6bfb6ce405a92cda9aeaf7e81159a521"
+ }
+}
