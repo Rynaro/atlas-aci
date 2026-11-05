@@ -7,7 +7,9 @@ requires-python = ">=3.11"
 license = {text = "Apache-2.0"}
 
 dependencies = [
-  "mcp>=1.2.0",
+  # >=1.28.1: CVE-2026-52869, CVE-2026-52870, CVE-2026-59950. <2: the 2.x SDK is a
+  # breaking major — an unbounded floor lets a fresh resolve jump straight onto it.
+  "mcp>=1.28.1,<2",
   "tree-sitter>=0.23",
   # 1.6.3 ships only a `_native/` subpackage and removed the top-level
   # `tree_sitter_language_pack` module that codegraph.py imports.
@@ -47,8 +49,10 @@ atlas-aci = "atlas_aci.__main__:cli"
 # regressing below a known CVE fix. This keeps the release workflow's Trivy
 # HIGH/CRITICAL gate green. Drop an entry once `mcp` floors it for us.
 constraint-dependencies = [
-  "cryptography>=48.0.1",     # GHSA-537c-gmf6-5ccf — vulnerable OpenSSL in wheels
-  "pyjwt>=2.13.0",            # CVE-2026-48526 — auth bypass via forged tokens
+  "anyio>=4.14.2",            # CVE-2026-63374
+  "certifi>=2026.10.18",      # GHSA-6q48-6c7w-9gw2 — removed compromised root CA
+  "cryptography>=50.0.0",     # CVE-2026-69247; supersedes GHSA-537c-gmf6-5ccf floor
+  "pyjwt>=2.15.1",            # CVE-2026-102268 + GHSA-pxh4-856f-4h89 family; supersedes CVE-2026-48526 floor
   "python-multipart>=0.0.30", # CVE-2026-42561, CVE-2026-53539 — parser DoS
   "starlette>=1.3.1",         # CVE-2026-48818 (SSRF/NTLM), CVE-2026-54283
 ]

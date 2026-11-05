@@ -1,8 +1,8 @@
 {
  "base_commit": "2db6dd1a3cba6589bf4efc9ad83620e39bacb289",
  "captured_with": [
-  "docker run --rm (base worktree at 2db6dd1 mounted at /t, PYTHONPATH=/t/mcp-server/src, fixture /fx)",
-  "/opt/venv/bin/python /drv/test_s38_support.py capture --out /out --fixture /fx --label base --seed 0"
+  "docker run --rm atlas-aci-dev-relock (this checkout mounted at /ws, PYTHONPATH=/ws/mcp-server/src, fixture /fx; security re-lock, mcp 1.30.0)",
+  "/opt/venv/bin/python /ws/mcp-server/tests/slices/test_s38_support.py capture --out /out --fixture /fx --label sec-relock --seed 0"
  ],
  "files": [
   {
@@ -13,7 +13,7 @@
   {
    "bytes": 3254,
    "path": "PROVENANCE.v1.json",
-   "sha256": "b6c283500a69952d69468b684b196b253d2aa48004cb17218dd8db5f5d5c78e2"
+   "sha256": "7725e615acaeea40101c132e93228d84544857c050c78922bb541639b4ebac0b"
   },
   {
    "bytes": 87877,
@@ -38,46 +38,46 @@
   {
    "bytes": 23525,
    "path": "transcripts/legacy.2024-11-05.v1.json",
-   "sha256": "b90f916428acd108211617ed9ced7d4334c2b8e922797be4b0d549a3453650c8"
+   "sha256": "c2ecbe29cbddfda755058508ab169eabd9e284fd0ee2c1fc201a7d8a9c7bf2fc"
   },
   {
    "bytes": 23525,
    "path": "transcripts/legacy.2025-03-26.v1.json",
-   "sha256": "c4d4fcd358c5c14bba442fb6c3675bb3c2a66648c5c956d5c607345be0fdeff1"
+   "sha256": "bc635033e41ab3d9c4779a3d56cdda05c6d83390b7860b733fcfef91c31fb35e"
   },
   {
    "bytes": 804,
    "path": "transcripts/malformed.missing-version.v1.json",
-   "sha256": "0dfde3355c1c98ebdd16247932533c6aed09e70794e2f6be536de0a4816340fc"
+   "sha256": "5a3baca2b259cf75a5ec73c0eda1827cc8361b3690ce693c6555f6fd5b522b90"
   },
   {
    "bytes": 549,
    "path": "transcripts/malformed.pre-initialize.v1.json",
-   "sha256": "47dae7232faecf1447383793c0fa6a153397cf057a27ee11414035c59e53a9d2"
+   "sha256": "b75b823ac36f54aca8f1de35a0d79850aee82ccc6cb2363cf713ea9e60a65fee"
   },
   {
    "bytes": 41170,
    "path": "transcripts/modern.2025-06-18.v1.json",
-   "sha256": "8ef70bcecfd943ff8c90664cf0a22be33ff62579d2419fccfe9dfa9380ff31d6"
+   "sha256": "f078d7bdbe048fea64501f1c870eae9e11bab0084f83916e14d824d49c5f57eb"
   },
   {
    "bytes": 41170,
    "path": "transcripts/modern.2025-11-25.v1.json",
-   "sha256": "814cffdcef0fb6b8c83492bcb2f4bf82fa7aa96215f61278bb845f3881e20f5b"
+   "sha256": "59841d91fa4e3c605c1d301e899e491e114dfce06f2a6741e093c17817f91165"
   },
   {
    "bytes": 1353,
    "path": "transcripts/unsupported.2099-01-01.v1.json",
-   "sha256": "e0f567ab8cd4fd550232080cceeff801fb592c0f2d0aa3d1f9b8bb476a2cdfbb"
+   "sha256": "ad0d32cc7bfb7ba9d851728680685e55aa5535348aa0ec4790efbb65c32e8e76"
   },
   {
    "bytes": 1342,
    "path": "transcripts/unsupported.integer.v1.json",
-   "sha256": "edeee9f38d89949d14d5b57c0ec5a0fb790ec399205f6d788815017f81eb65a5"
+   "sha256": "be990c2633b09a71521cd2d4c8adc48eeeec509e50d4b6b6ae5413988d5be43f"
   }
  ],
  "format": "atlas-s38-fixtures.v1",
  "sdk": {
-  "mcp": "1.27.0"
+  "mcp": "1.30.0"
  }
 }

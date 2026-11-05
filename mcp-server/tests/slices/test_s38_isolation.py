@@ -24,8 +24,10 @@ DOC = ROOT / "hosts" / "protocol-compatibility.md"
 TOOLS_SHA = "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56"
 TOOLS_BYTES = 1631472
 GRAPH_OUTPUT_SHA = "713ec5b6b2af963d556ddc3829dfd6919d52b3be2a9d70d918a5a6e270d4cf60"
-PYPROJECT_SHA = "c0cfa084bb005c49229181defeb8b27273e0bb1f5a0ac2d0eb82f85d534cb36d"
-UV_LOCK_SHA = "6b820f14327cd71951abe8d4a41b2d1962af21b33b492469de82553a31ca2962"
+# These whole-file pins change only through a receipted re-lock
+# (see .spectra/evidence/sec-relock/): the CVE-floor re-lock moved both files.
+PYPROJECT_SHA = "981f0784d6bc5c1502c91ab27657beb483460b97e066cd8846f51e98f1d7d92f"
+UV_LOCK_SHA = "87ba265e76f382aaa4387da7ca5d89dc85eb3699b35ee4315e981302b19646fd"
 MARKERS = re.compile(
     r"EXTRACTED|INFERRED|AMBIGUOUS|god_node|label_propagation|rationale_for"
     r"|CREATE TABLE IF NOT EXISTS edges"
@@ -61,12 +63,12 @@ def test_sdk_matrix_tripwire():
     import mcp.shared.version as shared_version
     from mcp import types
 
-    assert importlib.metadata.version("mcp") == "1.27.0" == rev.VERIFIED_SDK[1]
+    assert importlib.metadata.version("mcp") == "1.30.0" == rev.VERIFIED_SDK[1]
     assert list(rev.REVISION_IDS) == shared_version.SUPPORTED_PROTOCOL_VERSIONS
     assert types.LATEST_PROTOCOL_VERSION == rev.SELECTED == "2025-11-25"
     assert server_session.SUPPORTED_PROTOCOL_VERSIONS is shared_version.SUPPORTED_PROTOCOL_VERSIONS
     lock = (ROOT / "mcp-server" / "uv.lock").read_text()
-    assert re.search(r'name = "mcp"\nversion = "1\.27\.0"\n', lock)
+    assert re.search(r'name = "mcp"\nversion = "1\.30\.0"\n', lock)
     assert {r.status for r in rev.REVISIONS} == set(rev.STATUSES)
     assert [r.id for r in rev.REVISIONS if r.status == "selected"] == [rev.SELECTED]
 
@@ -218,7 +220,7 @@ def test_fixture_tree_equals_the_manifest_exactly():
     assert (
         manifest["format"] == "atlas-s38-fixtures.v1" and manifest["base_commit"] == sup.BASE_COMMIT
     )
-    assert manifest["sdk"] == {"mcp": "1.27.0"} and manifest["captured_with"]
+    assert manifest["sdk"] == {"mcp": "1.30.0"} and manifest["captured_with"]
     listed = {row["path"]: row for row in manifest["files"]}
     actual = {
         p.relative_to(FIXTURES).as_posix()
@@ -236,7 +238,7 @@ def test_fixture_tree_equals_the_manifest_exactly():
     for case in sup.CASES:
         transcript = json.loads((FIXTURES / "transcripts" / f"{case}.v1.json").read_text())
         assert transcript["format"] == sup.TRANSCRIPT_FORMAT and transcript["case"] == case
-        assert transcript["sdk"] == {"mcp": "1.27.0"} and transcript["notifications"] == []
+        assert transcript["sdk"] == {"mcp": "1.30.0"} and transcript["notifications"] == []
         assert transcript["exit"] == {"code": 0, "closed_by": "client"}
         assert transcript["fixture"] == "s38-mini.v1" and transcript["host"] == "raw-line"
         assert "/tmp/" not in json.dumps(transcript) and "/private/" not in json.dumps(transcript)
@@ -253,7 +255,7 @@ def test_the_hosts_document_states_what_was_observed():
     for name, _ in sup.NORMALISATION_RULES:
         assert re.search(rf"\b{name}\b", text), name
     for token in (
-        "1.27.0",
+        "1.30.0",
         "HTTP",
         "SSE",
         "batching",
@@ -268,7 +270,7 @@ def test_the_hosts_document_states_what_was_observed():
         "completions",
         "pagination",
         "strict-schema",
-        "not supported: mcp 1.27.0 does not offer it",
+        "not supported: mcp 1.30.0 does not offer it",
         "selected = newest SDK-supported",
         "The server emits no negotiation record",
         "Unsupported protocol version",

@@ -1,6 +1,6 @@
 """Atlas-owned MCP protocol-revision table and the pure negotiation model.
 
-The SDK (mcp 1.27.0) decides what the wire says: a supported revision is echoed, anything else
+The SDK (mcp 1.30.0) decides what the wire says: a supported revision is echoed, anything else
 is answered with its latest revision. This module only names that behaviour, so the shaping of
 tool manifests and tool results never depends on an unverified revision.
 
@@ -40,7 +40,7 @@ SELECTED = "2025-11-25"
 LEGACY = ("2024-11-05", "2025-03-26")
 MODERN = ("2025-06-18", "2025-11-25")
 CONSERVATIVE = "2024-11-05"
-VERIFIED_SDK = ("mcp", "1.27.0")
+VERIFIED_SDK = ("mcp", "1.30.0")
 STRUCTURED_VERSIONS = frozenset(
     revision.id for revision in REVISIONS if revision.structured_results
 )

@@ -1,0 +1,27 @@
+# S38 golden regeneration diff (mcp 1.27.0 committed -> mcp 1.30.0 regenerated in atlas-aci-dev-relock)
+# stop rule: only the sdk.mcp and serverInfo.version strings may differ; byte counts equal; old.replace(1.27.0,1.30.0)==new
+old=/old
+new=/new
+legacy.2024-11-05.v1.json: old 23525B b90f916428acd108 -> new 23525B c2ecbe29cbddfda7; json diffs=2; only-version-paths=True; bytes==old.replace(version)=True
+    /exchanges[0]/response/result/serverInfo/version: '1.27.0' -> '1.30.0'
+    /sdk/mcp: '1.27.0' -> '1.30.0'
+legacy.2025-03-26.v1.json: old 23525B c4d4fcd358c5c14b -> new 23525B bc635033e41ab3d9; json diffs=2; only-version-paths=True; bytes==old.replace(version)=True
+    /exchanges[0]/response/result/serverInfo/version: '1.27.0' -> '1.30.0'
+    /sdk/mcp: '1.27.0' -> '1.30.0'
+malformed.missing-version.v1.json: old 804B 0dfde3355c1c98eb -> new 804B 5a3baca2b259cf75; json diffs=1; only-version-paths=True; bytes==old.replace(version)=True
+    /sdk/mcp: '1.27.0' -> '1.30.0'
+malformed.pre-initialize.v1.json: old 549B 47dae7232faecf14 -> new 549B b75b823ac36f54ac; json diffs=1; only-version-paths=True; bytes==old.replace(version)=True
+    /sdk/mcp: '1.27.0' -> '1.30.0'
+modern.2025-06-18.v1.json: old 41170B 8ef70bcecfd943ff -> new 41170B f078d7bdbe048fea; json diffs=2; only-version-paths=True; bytes==old.replace(version)=True
+    /exchanges[0]/response/result/serverInfo/version: '1.27.0' -> '1.30.0'
+    /sdk/mcp: '1.27.0' -> '1.30.0'
+modern.2025-11-25.v1.json: old 41170B 814cffdcef0fb6b8 -> new 41170B 59841d91fa4e3c60; json diffs=2; only-version-paths=True; bytes==old.replace(version)=True
+    /exchanges[0]/response/result/serverInfo/version: '1.27.0' -> '1.30.0'
+    /sdk/mcp: '1.27.0' -> '1.30.0'
+unsupported.2099-01-01.v1.json: old 1353B e0f567ab8cd4fd55 -> new 1353B ad0d32cc7bfb7ba9; json diffs=2; only-version-paths=True; bytes==old.replace(version)=True
+    /exchanges[0]/response/result/serverInfo/version: '1.27.0' -> '1.30.0'
+    /sdk/mcp: '1.27.0' -> '1.30.0'
+unsupported.integer.v1.json: old 1342B edeee9f38d89949d -> new 1342B be990c2633b09a71; json diffs=2; only-version-paths=True; bytes==old.replace(version)=True
+    /exchanges[0]/response/result/serverInfo/version: '1.27.0' -> '1.30.0'
+    /sdk/mcp: '1.27.0' -> '1.30.0'
+files differing beyond the version string: 0; total version diffs: 14

@@ -226,7 +226,7 @@ def test_reexports_and_s11_values():
     assert results.negotiated_version("2099-01-01") == "2025-11-25"
     assert results.negotiated_version("2024-11-05") == "2024-11-05"
     assert results.negotiated_version("") == "2025-11-25"
-    assert rev.VERIFIED_SDK == ("mcp", "1.27.0") and rev.CONSERVATIVE == "2024-11-05"
+    assert rev.VERIFIED_SDK == ("mcp", "1.30.0") and rev.CONSERVATIVE == "2024-11-05"
 
 
 def test_session_version_has_exactly_two_call_sites():
@@ -405,7 +405,7 @@ PATHS = sup.Paths(Path("/p/repo"), Path("/p/memex"), Path("/p/graphs"))
 
 
 def _norm(frames_by_step, paths=PATHS):
-    return sup.normalise_run(_run(frames_by_step), paths, "1.27.0")
+    return sup.normalise_run(_run(frames_by_step), paths, "1.30.0")
 
 
 def test_n1_response_ids_become_first_appearance_ordinals():
@@ -542,7 +542,7 @@ def test_n8_n9_notifications_are_separate_and_the_bytes_are_canonical():
     run.notifications = [
         {"jsonrpc": "2.0", "method": "notifications/message", "params": {"p": "/p/repo"}}
     ]
-    t = sup.normalise_run(run, PATHS, "1.27.0")
+    t = sup.normalise_run(run, PATHS, "1.30.0")
     assert t["notifications"] == [
         {"jsonrpc": "2.0", "method": "notifications/message", "params": {"p": "<repo>"}}
     ]
@@ -600,9 +600,10 @@ def test_mutations_of_a_recorded_conversation_are_not_hidden_by_the_normaliser(l
 
     # (a) one changed text byte
     assert regenerate(10, lambda raw: raw.replace(b"return 1", b"return 2")) != golden
-    # (b) a changed serverInfo.version
+    # (b) a changed serverInfo.version; derived from the SDK so the edit always lands
+    old_version = b'"version":"' + version.encode() + b'"'
     assert (
-        regenerate(1, lambda raw: raw.replace(b'"version":"1.27.0"', b'"version":"1.27.1"'))
+        regenerate(1, lambda raw: raw.replace(old_version, old_version[:-1] + b".1" + b'"'))
         != golden
     )
 

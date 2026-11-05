@@ -41,7 +41,7 @@ legacy skill paths and an obsolete ATLAS schema link in the upstream packages.
 
 | Component | Choice | Why |
 |-----------|--------|-----|
-| MCP SDK | Python `mcp>=1.2` | Mature, async, stdio + SSE transports |
+| MCP SDK | Python `mcp>=1.28.1,<2` | Mature, async, stdio + SSE transports |
 | Project mgmt | `uv` | Fast, lockfile, single-binary distribution |
 | Filesystem search | `ripgrep` (binary) | Already canonical, faster than any Python equivalent |
 | Universal AST | `tree-sitter` + `tree-sitter-language-pack` | Vendor-neutral, multi-language, low overhead; also covers Ruby — no separate specialist mode ships today |

@@ -5,6 +5,11 @@ pre-v3 server and a search-then-read baseline, plus the release-integrity gate a
 matrix. Everything in `release-report.json` / `release-report.md` is **derived** from the
 immutable records in `raw/` and the frozen manifest `atlas/evals/v3/manifest.v1.json`.
 
+The SDK row of the host/SDK matrix records mcp 1.27.0 as observed at eval time; the shipped
+`uv.lock` moved afterwards (the security re-lock), and this v3 evidence was not re-recorded, so the
+`uv.lock` evidence anchor is checked against the frozen eval-time copy
+(`mcp-server/tests/fixtures/s23/uv.lock.as-recorded.gz`), not the live lock.
+
 What this is not: it is **not** a live agent evaluation. No model ran, so
 `coding_task_success`, `model_tokens`, `model_cost` and `agent_turns` are `unmeasured`
 (`no_operator_budget`). Policies are deterministic transcripts, byte-quarter tokens are not

@@ -3,11 +3,15 @@
 from __future__ import annotations
 
 import ast
+import gzip
 import hashlib
 import json
 import re
+import subprocess
 from pathlib import Path
+from typing import Any
 
+import pytest
 from click.testing import CliRunner
 from test_s23_support import EVIDENCE, RAW, ROOT, agg, manifest, rec
 
@@ -16,6 +20,15 @@ from atlas_aci.enforcement import READ_ONLY_TOOLS
 
 BASE_TOOLS_SHA256 = "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56"
 BASE_TOOLS_BYTES = 1631472
+MANIFEST_SHA256 = "3b901b99607d3db95d02a79794792cc8fb0df142901dc35fb502a1fa8e49b1ce"
+# The `mcp-server/uv.lock` anchor is checked against the lock as it was recorded at eval time, not
+# against the live file: dependency bumps stop tripping it while every other anchor stays live.
+FROZEN_LOCK_PATH = "mcp-server/uv.lock"
+FROZEN_ROUTED = frozenset({FROZEN_LOCK_PATH})
+FROZEN_LOCK = ROOT / "mcp-server/tests/fixtures/s23/uv.lock.as-recorded.gz"
+FROZEN_LOCK_SHA256 = "6b820f14327cd71951abe8d4a41b2d1962af21b33b492469de82553a31ca2962"
+RECEIPT = ROOT / ".spectra/evidence/aci-s23/base-invariants.json"
+RECEIPT_BASE_COMMIT = "1cedf60331ef892f1fb2b3a68eb942bf2dac894b"
 ALLOWED_IMPORTS = {
     "__future__", "argparse", "gzip", "hashlib", "importlib", "json", "re", "sys",
     "decimal", "pathlib", "typing",
@@ -144,8 +157,7 @@ def test_manifest_anchors_declared_inputs_and_p0_ids_still_exist():
     m, _ = manifest()
     assert len(m["evidence_anchors"]) >= 8
     for anchor in m["evidence_anchors"]:  # line numbers rot: each anchor still holds its token
-        lines = (ROOT / anchor["path"]).read_text().splitlines()
-        assert anchor["token"] in lines[anchor["line"] - 1], anchor
+        check_anchor(anchor)
     declared = m["inputs"]["v0_grammar_cache"]
     cache = json.loads((ROOT / declared["path"]).read_bytes())
     assert hashlib.sha256((ROOT / declared["path"]).read_bytes()).hexdigest() == declared["sha256"]
@@ -167,6 +179,99 @@ def test_manifest_anchors_declared_inputs_and_p0_ids_still_exist():
     matrix = {(h["dimension"], h["value"]): h["status"] for h in m["host_matrix"]}
     assert matrix[("OS", "macOS")] == "tested (partial)"
     assert any("recorder" in dim for dim, _ in matrix)
+
+
+# ----------------------------------------------------------------------------- anchor routing
+def frozen_lock_bytes() -> bytes:
+    return gzip.decompress(FROZEN_LOCK.read_bytes())
+
+
+def frozen_source(path: str) -> str:
+    """The frozen eval-time text for `path`; only the lock has one."""
+    if path not in FROZEN_ROUTED:
+        raise ValueError(f"no frozen eval-time copy for {path}")
+    return frozen_lock_bytes().decode()
+
+
+def anchor_source(anchor: dict[str, Any], root: Path) -> tuple[str, list[str]]:
+    """(route, lines) an anchor is checked against: the frozen copy or the live file."""
+    path = anchor["path"]
+    if path in FROZEN_ROUTED:
+        return "frozen", frozen_source(path).splitlines()
+    return "live", (root / path).read_text().splitlines()
+
+
+def check_anchor(anchor: dict[str, Any], root: Path = ROOT) -> str:
+    """The anchor's token is on its line in its source; returns the route used."""
+    route, lines = anchor_source(anchor, root)
+    assert 1 <= anchor["line"] <= len(lines), anchor
+    assert anchor["token"] in lines[anchor["line"] - 1], anchor
+    return route
+
+
+def test_the_frozen_lock_is_the_lock_recorded_at_eval_time():
+    data = frozen_lock_bytes()
+    assert hashlib.sha256(data).hexdigest() == FROZEN_LOCK_SHA256
+    receipt = json.loads(RECEIPT.read_text())
+    recorded = receipt["src_pyproject_uvlock_sha_manifest"]["files"]["mcp-server/uv.lock"]
+    assert recorded == FROZEN_LOCK_SHA256 and receipt["base_commit"] == RECEIPT_BASE_COMMIT
+    assert FROZEN_LOCK.read_bytes()[4:8] == b"\0\0\0\0"  # gzip header carries no mtime
+    assert FROZEN_LOCK.name != "uv.lock" and FROZEN_LOCK.stat().st_size < 100_000
+    # Optional extra: the recorded base commit holds the same bytes when history is present
+    # (a shallow CI checkout has no such commit; only this extra is skipped there).
+    try:
+        have = subprocess.run(
+            ["git", "-C", str(ROOT), "cat-file", "-e", f"{RECEIPT_BASE_COMMIT}^{{commit}}"],
+            capture_output=True,
+            timeout=60,
+        ).returncode
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        have = 1
+    if have == 0:
+        shown = subprocess.run(
+            ["git", "-C", str(ROOT), "show", f"{RECEIPT_BASE_COMMIT}:mcp-server/uv.lock"],
+            capture_output=True,
+            timeout=60,
+        )
+        assert shown.returncode == 0
+        assert hashlib.sha256(shown.stdout).hexdigest() == FROZEN_LOCK_SHA256
+
+
+def test_anchor_routing_freezes_only_the_lock_and_checks_the_rest_live():
+    m, sha = manifest()
+    assert sha == MANIFEST_SHA256  # the anchors (and their paths) cannot change unnoticed
+    anchors = m["evidence_anchors"]
+    routes = [(a["path"], check_anchor(a)) for a in anchors]
+    frozen = {path for path, route in routes if route == "frozen"}
+    assert frozen == set(FROZEN_ROUTED) == {"mcp-server/uv.lock"}
+    live = [path for path, route in routes if route == "live"]
+    assert len(live) == len(anchors) - 1 == 8
+    assert "mcp-server/uv.lock" not in live
+
+
+def test_negative_controls_a_rotted_anchor_fails_and_the_frozen_route_is_exclusive(tmp_path):
+    (tmp_path / "f.txt").write_text("a\nb token c\nd\n")
+    good = {"path": "f.txt", "line": 2, "token": "token"}
+    assert check_anchor(good, tmp_path) == "live"
+    for rotted in ({**good, "token": "tokex"}, {**good, "line": 3}, {**good, "line": 99}):
+        with pytest.raises(AssertionError):
+            check_anchor(rotted, tmp_path)
+    (tmp_path / "f.txt").write_text("new first line\na\nb token c\nd\n")  # a line moves
+    with pytest.raises(AssertionError):
+        check_anchor(good, tmp_path)
+    # The frozen route refuses every other path and does not fall back to the live file.
+    for other in ("mcp-server/Dockerfile", "f.txt", ".github/workflows/ci.yml", "mcp-server/uv"):
+        with pytest.raises(ValueError):
+            frozen_source(other)
+    with pytest.raises(FileNotFoundError):  # a non-lock anchor is live: no file, no pass
+        check_anchor({"path": "mcp-server/Dockerfile", "line": 55, "token": "x"}, tmp_path)
+    # The lock anchor ignores the live file: it passes in an empty root, fails on a rotted token.
+    lock = next(a for a in manifest()[0]["evidence_anchors"] if a["path"] == FROZEN_LOCK_PATH)
+    assert check_anchor(lock, tmp_path) == "frozen"
+    for rotted in ({**lock, "token": "1.27.1"}, {**lock, "line": lock["line"] + 1}):
+        with pytest.raises(AssertionError):
+            check_anchor(rotted, tmp_path)
+    assert frozen_lock_bytes().decode().splitlines()[lock["line"] - 2] == 'name = "mcp"'
 
 
 def test_the_evidence_readme_exists_and_states_the_replay_commands():
