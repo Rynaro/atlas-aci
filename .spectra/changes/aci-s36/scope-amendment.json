@@ -1,0 +1,226 @@
+{
+ "slice_id": "ACI-S36",
+ "base_commit": "53032fe6f2ddb48ce3ed0c1891a168106d578714",
+ "recorded_before_implementation": true,
+ "declared_by_issue": [
+  "scripts/experiment-leiden-vs-lpa.py",
+  "scripts/verify-community-experiment.py",
+  "mcp-server/tests/slices/test_s36_community_experiment.py",
+  "mcp-server/tests/fixtures/community_experiment/",
+  "docs/experiments/community-comparison.md"
+ ],
+ "glob_depth_clarifications": [
+  {
+   "path": "mcp-server/tests/fixtures/community_experiment/**",
+   "reason": "manifest.v1.json (production, provider kind real), manifest.fixture.v1.json (provider kind fixture, 0.0.0+atlas.fixture), s18-task-graph.v1.json (frozen export of the S18 useful-spans source_files via the unchanged scripts/probe-export-confident-graph.py), graphs/synthetic-cliques.v1.json (fixture-only graph, never in the production manifest), fixture_site/igraph/__init__.py, fixture_site/leidenalg/__init__.py and their two *.dist-info/METADATA; the fixture provider implements only the pinned API subset with a real deterministic partitioner and is placed on a subprocess PYTHONPATH only"
+  },
+  {
+   "path": "docs/experiments/community-comparison.md",
+   "reason": "New docs/experiments/ directory holding only this file; no other docs file touched"
+  }
+ ],
+ "added": [
+  {
+   "path": "mcp-server/tests/slices/test_s36_*.py",
+   "reason": "test_s36_support.py (independent canonical/projection/reseal helpers, runner/verifier invocation, S18 materialisation), test_s36_semantics.py (projection, metric oracles, strict JSON, every rejection and usage reason, decision table, S18 export reproduction, importorskip real-provider replay), test_s36_isolation.py (hygiene AST scans, pins, docs/CHANGELOG/README checks, evidence size cap) beside the declared test file"
+  },
+  {
+   "path": "CHANGELOG.md",
+   "reason": "One '- **Leiden community experiment (ACI-S36).**' bullet at Unreleased/Added index 4, directly after the S35 bullet (CHANGELOG.md:66-82) and before S28 (:83); bullets[0..3] stay S30/S33/S34/S35 (test_s35_isolation.py:403-421 slices bullets[3]:bullets[4], which stays the S35 entry); no continuation line starting '- **'; none of the prior titles or locators; no banned token"
+  },
+  {
+   "path": "README.md",
+   "reason": "One two-cell docs-table row directly after the docs/verified-feedback.md row (README.md:949), so rationale-drift is still followed by verified-feedback (test_s35_isolation.py:430-431) and history-signals by rationale-drift (test_s34_isolation.py:562-563); rails row keeps its own pins (test_s26_isolation.py:1705); no prior locator, evidence-reports.md or canary-missions.md"
+  },
+  {
+   "path": ".spectra/plans/aci-s36.*",
+   "reason": "Ramza plan, criteria, state, issue snapshot, review"
+  },
+  {
+   "path": ".spectra/plans/ramza-calibration.jsonl",
+   "reason": "Ramza calibration append"
+  },
+  {
+   "path": ".spectra/changes/aci-s36/*",
+   "reason": "This amendment"
+  },
+  {
+   "path": ".spectra/evidence/aci-s36/**",
+   "reason": "qualification.json, base-invariants.json, real-run/ (partitions.json.gz, result.json, telemetry.json, replay.json, environment.json, run.log; total <= 4 MiB; solidus/spree referenced by bundle sha, never copied), production-scenario.sh, py314.log, gate logs"
+  },
+  {
+   "path": ".spectra/state/aci-s36.execution.json",
+   "reason": "Authoritative execution receipt (AC-RUN-01/02)"
+  },
+  {
+   "path": ".spectra/backlog/execution.json",
+   "reason": "Backlog status update"
+  },
+  {
+   "path": ".spectra/backlog/order.md",
+   "reason": "Backlog order update"
+  }
+ ],
+ "prior_test_edits": [],
+ "interpretations": [
+  {
+   "topic": "AC-001 frozen manifest",
+   "decision": "manifest_sha256 = sha256 of S23-style canonical manifest bytes; the operator passes it as --manifest-sha256 and the runner rejects a mismatch; it is stamped on the partitions doc, every partition run, the result, every graph/run/usefulness row and total, the decision and telemetry; the verifier hard-codes PRODUCTION_MANIFEST_SHA256 and the frozen projection, seeds, budgets, decision thresholds and bounds, and never reads them from the audited files"
+  },
+  {
+   "topic": "AC-002 shared projection",
+   "decision": "atlas-community-projection.v1 (undirected, unweighted, self-loops dropped, multi-edges collapsed, nodes sorted by (path,line,name), isolated nodes retained); every run executes in a fresh child that records input_projection_sha256 over the exact objects it passes; evidence is independent: the fixture provider writes the {n, edges} it received and the test hashes it against its own projection"
+  },
+  {
+   "topic": "AC-003 re-derivation",
+   "decision": "The verifier recomputes projection, partition validity, LPA (re-run by file path), exact-Fraction quality, exact ARI stability, offline_community_expansion_proxy.v1 usefulness from the S18 useful spans, and the decision from retained partitions only; telemetry is bound by digest but never judged; Leiden partitions are validated and scored, not regenerated"
+  },
+  {
+   "topic": "AC-004 replay",
+   "decision": "Canonical result and decompressed partitions are byte-identical across reruns and PYTHONHASHSEED values for identical inputs, provider versions, seeds and manifest; timing and memory live only in telemetry.json"
+  },
+  {
+   "topic": "AC-005 skipped state",
+   "decision": "Provider detected by find_spec/import_module/importlib.metadata at call time; either distribution absent gives status and outcome skipped_missing_provider with exit 0 and LPA rows retained; --require-provider gives exit 1 provider_required_missing; a version different from the manifest pin is the typed rejection provider_version_mismatch; nothing is ever installed"
+  },
+  {
+   "topic": "AC-006 partition validation",
+   "decision": "Closed precedence partition_invalid_type, partition_node_unknown (invented or out-of-range identity), partition_node_duplicated, partition_node_omitted, partition_noncanonical, plus partition_node_table_mismatch for a foreign nodes_sha256"
+  },
+  {
+   "topic": "AC-007 production default",
+   "decision": "No src, pyproject or uv.lock change; tests pin codegraph.label_propagation identity, _LPA_MAX_ITERATIONS == 100, unchanged communities() output across runner invocations, unchanged lock bytes and the absence of leidenalg/igraph/graspologic/networkx; the runner refuses an --out under mcp-server/"
+  },
+  {
+   "topic": "Fixture provider",
+   "decision": "A fixture implementation of the provider interface (igraph.Graph, leidenalg.find_partition, ModularityVertexPartition, dist-info versions 0.0.0+atlas.fixture) with a real deterministic seeded greedy-modularity partitioner; everything under test (detection, projection, child isolation, adapter, canonicalisation, metrics, artifacts, decision, verifier) is real; results are tagged provider_kind fixture and are never reported as Leiden measurements"
+  },
+  {
+   "topic": "Real measured run",
+   "decision": "Pinned wheels downloaded once with network into a scratch dir, then installed and run in python:3.12-slim --rm --network none, time-bounded; run twice for replay; evidence verified in the dev image without a provider; an install failure is recorded as skipped_missing_provider, not a stop; the docs report the computed outcome token only"
+  }
+ ],
+ "not_touched_follow_up": [
+  {
+   "path": "mcp-server/src/atlas_aci/label_propagation.py",
+   "reason": "Loaded by file path and pinned by sha in the manifest; not modified"
+  },
+  {
+   "path": "scripts/probe-export-confident-graph.py",
+   "reason": "Used unchanged to produce and re-check the S18 task-graph fixture; editing it would flip the S17 behavioural fingerprint"
+  },
+  {
+   "path": "scripts/verify-probe-verdict.py",
+   "reason": "_modularity loaded by path in a parity test only; not modified"
+  },
+  {
+   "path": "scripts/eval/v3_aggregate.py",
+   "reason": "canonical/ratio loaded by path in a byte-parity test only; not modified"
+  },
+  {
+   "path": "atlas/evals/v3/manifest.v1.json",
+   "reason": "Task anchor task_input_sha256 read only; not modified"
+  },
+  {
+   "path": ".spectra/changes/aci-s17/probe/probe-graphs.json.gz",
+   "reason": "Read by sha c5bfe09753acccb2652e1ea730079e3269ed47b2ed58ee6d3ea642fc08ff1ffe; never copied; no aci-s17-probe-lpa-vs-louvain.* file created"
+  }
+ ],
+ "explicitly_untouched_gated": [
+  "mcp-server/src/",
+  "mcp-server/pyproject.toml",
+  "mcp-server/uv.lock",
+  "mcp-server/Dockerfile",
+  ".github/workflows/",
+  "atlas/evals/",
+  "scripts/probe-export-confident-graph.py",
+  "scripts/probe-modularity.py",
+  "scripts/verify-probe-verdict.py",
+  "scripts/resolve-probe-artifact.sh",
+  "scripts/run-canaries.py",
+  "scripts/eval/",
+  "scripts/fingerprint-fixture/",
+  "scripts/test-harden-gate-classify.sh",
+  "scripts/test-verify-probe-verdict.sh",
+  "scripts/test-verify-export-size.sh",
+  "mcp-server/tests/fixtures/s18/",
+  ".spectra/changes/aci-s17/"
+ ],
+ "invariants": {
+  "tools_json_sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+  "tools_json_bytes": 1631472,
+  "READ_ONLY_TOOLS_count": 7,
+  "MINIMUM_BUDGET": 3436,
+  "COLLECTION_MINIMUM_BUDGET": 3448,
+  "FIXED_ERROR_ENVELOPE_CAP": 797,
+  "IMPACT_MINIMUM_BUDGET": 7730,
+  "ev_RELATIONS": [
+   "call",
+   "construct",
+   "extend",
+   "import",
+   "include",
+   "prepend",
+   "rationale_for",
+   "superclass"
+  ],
+  "lpa_max_iterations": 100,
+  "probe_bundle_sha256": "c5bfe09753acccb2652e1ea730079e3269ed47b2ed58ee6d3ea642fc08ff1ffe",
+  "s18_useful_spans_sha256": "07553bd3d51be01a1d522fc59c240bf41ecf312a051c413c609585c60999b507",
+  "s23_task_input_sha256": "236c0def27a416dd93a411a4e40d2666510320c4d9f9cfff08f29a1145cc8fe6",
+  "criteria_sha256": "85f3c4758e6c24ab3926439212851d038d4587ac194319418871f23d12ed77fd"
+ },
+ "executor_interpretations": [
+  {
+   "topic": "USAGE_NAMES",
+   "decision": "Runner and verifier add the name `arguments` (unknown or malformed arguments such as `--bogus` or `--require-provider=yes`) so every USAGE_NAMES entry, unknown arguments included, prints `Usage error: <name>` and exits 2 (checker condition 3). Runner: command, manifest, manifest_sha256, out, out_exists, out_inside_mcp_server, repo_root, arguments. Verifier: results, manifest, manifest_sha256, repo_root, max_artifact_bytes, arguments."
+  },
+  {
+   "topic": "LIMITATIONS",
+   "decision": "Twelve entries: the ten of D12 plus `seeding_restates_the_s17_tiers_offline_and_does_not_call_graph_query_retrieve` and `lexical_seeding_is_a_case_sensitive_whole_file_substring` (checker condition 11)."
+  },
+  {
+   "topic": "decide() primitives",
+   "decision": "decide(provider_available, gold_total, seeded_tasks, leiden_differs, lpa_scores, leiden_scores, mean_ari, lpa_q, leiden_q) takes plain booleans, ints and Fractions (or None for a null ratio) and reads only the module's FROZEN thresholds; the condition is named recall_gain_budgets and the manifest key min_budgets_with_recall_gain (checker conditions 2 and 8)."
+  },
+  {
+   "topic": "internal bound overrides",
+   "decision": "Bounds can be lowered only through the keyword arguments of internal functions: _measure_run(timeout_seconds, max_output_bytes), run_experiment(overrides), main(argv, overrides=...) on both scripts (closed key set), verify(bounds=...). The CLIs expose none; the tests reach them through a child process that calls main(argv, overrides=...) so no test touches sys.path or sys.modules (condition 3 and 6). self_check and make_temp are the only two callable overrides, used to reach self_check_failed and output_write_failed."
+  },
+  {
+   "topic": "staging directory",
+   "decision": "The .s36-run-* staging directory is created before any measurement so an unwritable parent fails fast as output_write_failed; the projection scratch directory lives in the system temp directory and is removed in a finally block; no failure leaves either behind."
+  },
+  {
+   "topic": "fixture FAULT vocabulary",
+   "decision": "ATLAS_S36_FIXTURE_FAULT = omit | sleep | exit1 | version_skew | import_error; the Leiden child reports the module __version__ attributes while the parent reads importlib.metadata, so version_skew is a real provider_changed_during_run; a site without dist-info gives provider_import_failed through PackageNotFoundError (conditions 3 and 12)."
+  },
+  {
+   "topic": "metric cuts",
+   "decision": "None. Cut order items 2 and 3 (disconnected_*, size_p90/size_median) were not taken, decided before the Day-1 (f) freeze (condition 5). Cut 4 (host leg of Day-1 (d)) was taken: no host python is used for project code; 3.12 (dev image) and 3.14 (python:3.14 container) digests are equal."
+  },
+  {
+   "topic": "provider pin and real run",
+   "decision": "leidenalg 0.12.0 and igraph 1.0.0 (newest releases with linux aarch64 binary wheels whose Requires-Dist agree), pinned at Day-1 (f) before any measured run and never changed. The real run executed in python:3.12-slim --rm --network none with the pre-downloaded wheels installed into the container's /tmp/site; the test_real_provider_replay test was additionally exercised once with the same unpacked wheels on PYTHONPATH in the dev image (a read-only scratch mount, nothing installed)."
+  },
+  {
+   "topic": "docs and README wording",
+   "decision": "The docs contain only copied outcome, reasons, conditions, digests and tables; every quoted phrase of the plan appears on one line so the phrase scans hold. The README row and CHANGELOG bullet each contain one locator, the docs path, and keep S35/S34 ordering pins."
+  }
+ ],
+ "added_evidence_files": [
+  "gate.sh",
+  "g-mcp.py",
+  "g-src.sh",
+  "py314.sh",
+  "real-run-inner.sh",
+  "prod-scenario.sh (the plan names it production-scenario.sh; the task asked for prod-scenario.sh)",
+  "prod-scenario.dry-run-1.out",
+  "prod-scenario.dry-run-2.out",
+  "dk36.sh",
+  "qualification.json",
+  "base-invariants.json",
+  "real-run/**",
+  "<gate>.log.gz and <gate>.exit"
+ ]
+}

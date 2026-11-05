@@ -80,6 +80,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `--overlay` the order is the unchanged baseline ranker's. Results are standalone,
   content-addressed documents; feedback processing does not write the graph.
   See [`docs/verified-feedback.md`](docs/verified-feedback.md).
+- **Leiden community experiment (ACI-S36).** New offline operator scripts
+  `scripts/experiment-leiden-vs-lpa.py run --manifest M --manifest-sha256 HEX --out DIR
+  [--repo-root R] [--require-provider]` and `scripts/verify-community-experiment.py --results DIR`
+  (no MCP op, no change under `mcp-server/src`). The shipped label propagation and an optional,
+  version-pinned Leiden provider (`leidenalg`, `igraph`; never installed automatically) are run over
+  identical frozen inputs named by a preregistered manifest digest: the S18 task graph and the two
+  S17 probe graphs. Each run is a fresh process fed the same canonical projected graph. The verifier
+  recomputes modularity, coverage, size and connectivity statistics, adjusted Rand stability and an
+  offline node-budget usefulness proxy from the retained partitions in exact arithmetic, re-runs the
+  shipped LPA and recomputes the decision; timing and memory are telemetry and not canonical. The
+  outcome is one of `retain_lpa`, `leiden_candidate_for_review` (at most a
+  candidate for a separately reviewed decision, never a deployment), `inconclusive` or
+  `skipped_missing_provider` (the provider is absent, exit 0). The production default remains
+  label propagation, and `pyproject.toml` and `uv.lock` are unchanged. See
+  [`docs/experiments/community-comparison.md`](docs/experiments/community-comparison.md).
 - **Python dependency surface from a uv lock and a local wheel (ACI-S28).** New operator command
   `atlas-aci import-python-dependency --lock uv.lock --package NAME [--env KEY=VALUE]...
   [--wheel PATH]... --output OUT [limits]` (CLI only, no MCP op) and the libraries

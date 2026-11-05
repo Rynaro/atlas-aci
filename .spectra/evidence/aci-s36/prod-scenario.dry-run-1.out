@@ -1,0 +1,23 @@
+image: atlas-aci:s36  results under test: .spectra/evidence/aci-s36/real-run
+PASS  verifier exits 0 on the real-run evidence
+PASS  production_manifest is true
+PASS  status is pass
+committed outcome: 'inconclusive'
+PASS  the verifier reports an outcome from the closed vocabulary (inconclusive)
+PASS  the committed docs name the same outcome (inconclusive)
+PASS  fixture run a exits 0 and wrote its artifacts
+PASS  fixture run b exits 0 and wrote its artifacts
+PASS  fixture result.json is byte-identical across two runs (different PYTHONHASHSEED)
+PASS  decompressed partitions are non-empty and byte-identical (e920d5dab21e5d3fb226250e2d9217da08675478ef0d9def7be9e71423b5b643)
+PASS  run summaries are non-empty and identical
+PASS  verifier passes on fixture run a (production_manifest false)
+PASS  verifier passes on fixture run b (production_manifest false)
+PASS  runner without a provider exits 0 and wrote its artifacts
+PASS  outcome and status are skipped_missing_provider
+PASS  verifier passes on the skipped run
+PASS  skipped run carries production_manifest true
+PASS  --require-provider exits 1 with exactly 'Community experiment rejected: provider_required_missing'
+PASS  the rejected run left no output directory
+PASS  pyproject.toml and uv.lock unchanged
+PASS  mcp-server/src tree hash unchanged (09c247dbb55c28608871f6b1a81ce7bbf050498cda1524ef0be07aea9a513a3d)
+RESULT: all checks passed

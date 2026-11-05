@@ -1,0 +1,44 @@
+[
+  {
+    "ac_id": "AC-S36-001",
+    "test": "mcp-server/tests/slices/test_s36_community_experiment.py::test_community_experiment_uses_frozen_manifest",
+    "exit_code": 0,
+    "tail": "1 passed in 6.08s"
+  },
+  {
+    "ac_id": "AC-S36-002",
+    "test": "mcp-server/tests/slices/test_s36_community_experiment.py::test_community_algorithms_share_input_projection",
+    "exit_code": 0,
+    "tail": "1 passed in 6.78s"
+  },
+  {
+    "ac_id": "AC-S36-003",
+    "test": "mcp-server/tests/slices/test_s36_community_experiment.py::test_community_metrics_are_rederived",
+    "exit_code": 0,
+    "tail": "1 passed in 7.41s"
+  },
+  {
+    "ac_id": "AC-S36-004",
+    "test": "mcp-server/tests/slices/test_s36_community_experiment.py::test_community_replay_preserves_deterministic_results",
+    "exit_code": 0,
+    "tail": "1 passed in 14.82s"
+  },
+  {
+    "ac_id": "AC-S36-005",
+    "test": "mcp-server/tests/slices/test_s36_community_experiment.py::test_community_missing_provider_is_skipped",
+    "exit_code": 0,
+    "tail": "1 passed in 4.54s"
+  },
+  {
+    "ac_id": "AC-S36-006",
+    "test": "mcp-server/tests/slices/test_s36_community_experiment.py::test_community_invalid_partition_rejected",
+    "exit_code": 0,
+    "tail": "6 passed in 6.96s"
+  },
+  {
+    "ac_id": "AC-S36-007",
+    "test": "mcp-server/tests/slices/test_s36_community_experiment.py::test_community_experiment_preserves_default",
+    "exit_code": 0,
+    "tail": "1 passed in 15.21s"
+  }
+]
