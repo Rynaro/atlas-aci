@@ -155,3 +155,8 @@
 {"rubric":"confidence","total":84,"dims":{"pattern_match":86,"requirement_clarity":80,"decomposition_stability":82,"constraint_compliance":88},"verdict":"VALIDATE","at":"2026-11-05T03:26:21Z","label":"otel-import"}
 {"rubric":"refine","cycle":1,"total":4.6,"min":4,"dims":{"clarity":4,"completeness":5,"actionability":5,"efficiency":4,"testability":5},"verdict":"pass","at":"2026-11-05T03:26:21Z","label":"pre-checker"}
 {"rubric":"refine","cycle":1,"total":3.8,"min":3,"dims":{"clarity":4,"completeness":4,"actionability":4,"efficiency":3,"testability":4},"verdict":"pass","at":"2026-11-05T03:34:48Z","label":"post-checker"}
+{"rubric":"complexity","total":8,"dims":{"scope":2,"ambiguity":2,"dependencies":1,"risk":3},"verdict":"extended","at":"2026-11-05T05:50:15Z"}
+{"rubric":"explore","total":83,"dims":{"alignment":9,"correctness":9,"maintainability":8,"performance":8,"simplicity":8,"risk":8,"innovation":5},"verdict":"solid","at":"2026-11-05T05:50:16Z"}
+{"rubric":"confidence","total":81,"dims":{"pattern_match":82,"requirement_clarity":76,"decomposition_stability":80,"constraint_compliance":86},"verdict":"VALIDATE","at":"2026-11-05T05:50:16Z"}
+{"rubric":"refine","cycle":1,"total":4.6,"min":4,"dims":{"clarity":4,"completeness":5,"actionability":5,"efficiency":4,"testability":5},"verdict":"pass","at":"2026-11-05T05:50:16Z","label":"pre-checker"}
+{"rubric":"refine","cycle":1,"total":4.2,"min":3,"dims":{"clarity":4,"completeness":5,"actionability":4,"efficiency":3,"testability":5},"verdict":"pass","at":"2026-11-05T06:00:00Z","label":"post-checker"}

@@ -1,0 +1,146 @@
+{
+ "slice_id": "ACI-S28",
+ "base_commit": "8d7dd73a932cd9d54c10c1cebba32c348b178f13",
+ "recorded_before_implementation": true,
+ "declared_by_issue": [
+  "mcp-server/src/atlas_aci/dependencies/uv_lock.py",
+  "mcp-server/src/atlas_aci/dependencies/python_wheel.py",
+  "mcp-server/src/atlas_aci/__main__.py",
+  "mcp-server/tests/slices/test_s28_python_dependency.py",
+  "mcp-server/tests/fixtures/python_dependencies/",
+  "docs/importers/python-dependencies.md"
+ ],
+ "glob_depth_clarifications": [
+  {
+   "path": "mcp-server/tests/fixtures/python_dependencies/**",
+   "reason": "Flat directory: .gitattributes ('* -text'), generate.py (stdlib-only deterministic generator; wheel members embedded as bytes literals), s28_demo_pkg-1.2.0-py3-none-any.whl, single.uv.lock, forked.uv.lock, s28_demo_pkg-1.2.0.snapshot.json (golden produced by the importer), provenance.json; crafted archives and lock variants are built in-test"
+  },
+  {
+   "path": "docs/importers/python-dependencies.md",
+   "reason": "Next to docs/importers/openapi.md and opentelemetry.md; no other docs file is touched"
+  }
+ ],
+ "added": [
+  {
+   "path": "mcp-server/src/atlas_aci/dependencies/__init__.py",
+   "reason": "Package marker for the new dependencies package; docstring only (hatch ships src/atlas_aci wholesale)"
+  },
+  {
+   "path": "mcp-server/tests/slices/test_s28_*.py",
+   "reason": "test_s28_lock.py, test_s28_archive.py, test_s28_cli.py, test_s28_isolation.py, test_s28_support.py beside the declared test file"
+  },
+  {
+   "path": "CHANGELOG.md",
+   "reason": "Separate '- **' Unreleased bullet at the top of '### Added'; the S27/S29 split('\\n- **') slices are unaffected"
+  },
+  {
+   "path": "README.md",
+   "reason": "One docs-table row after the opentelemetry row, outside the TSX section; it contains none of docs/importers/openapi.md, docs/importers/opentelemetry.md, docs/frameworks/rails.md, canary-missions.md; first cut item"
+  },
+  {
+   "path": ".spectra/plans/aci-s28.*",
+   "reason": "Ramza plan, criteria, state, scope, review, issue snapshot"
+  },
+  {
+   "path": ".spectra/plans/ramza-calibration.jsonl",
+   "reason": "Ramza calibration append"
+  },
+  {
+   "path": ".spectra/changes/aci-s28/*",
+   "reason": "This amendment"
+  },
+  {
+   "path": ".spectra/evidence/aci-s28/**",
+   "reason": "Day-1 qualification, base invariants, gate logs, prod-image.sh and its outputs"
+  },
+  {
+   "path": ".spectra/state/aci-s28.execution.json",
+   "reason": "Authoritative execution receipt (AC-RUN-01/02)"
+  },
+  {
+   "path": ".spectra/backlog/execution.json",
+   "reason": "Backlog status update"
+  },
+  {
+   "path": ".spectra/backlog/order.md",
+   "reason": "Backlog order update"
+  }
+ ],
+ "prior_test_edits": [],
+ "interpretations": [
+  {
+   "topic": "Use S08 snapshot identities (Approach 1)",
+   "decision": "Mirror S08's canonical-JSON + sha256 identity construction (ev.canonical + hashlib.sha256, as storage/snapshots.py digest and the S29 snapshot_identity precedent); no SourceLease, since uv.lock is not part of the consumer lease. The lock is bound by its sha256; consumer-snapshot binding is a follow-up (limitation lock_bound_by_digest_not_to_a_source_snapshot)"
+  },
+  {
+   "topic": "S16 normalized external-evidence boundary (Approach 1)",
+   "decision": "External package facts use their own closed vocabularies (declaration kinds, import_path, diagnostic codes), never ev.RELATIONS edges, live only in a standalone snapshot, and declare coverage declaration_only / completeness incomplete / call_binding not_claimed"
+  },
+  {
+   "topic": "AC-002 attach to the verified package snapshot",
+   "decision": "Every member/module/declaration/import/export/diagnostic record carries package_snapshot_id, member and member_sha256; validate_snapshot recomputes every id and derived field. The artifact check is recorded as digest_check equals_lock_entry (no banned vocabulary)"
+  },
+  {
+   "topic": "AC-006 selected locked coordinate",
+   "decision": "Selection (variant, registry source, locked pure-wheel set) completes before matching; the rejection carries pypi:<name>@<version> plus expected artifacts (filename, sha256); supplied wheels match only by exact locked basename and are never opened unless matched"
+  },
+  {
+   "topic": "AC-007 exclusively by parsing supplied local artifacts",
+   "decision": "Library takes bytes; the python grammar is loaded only if already in the local language-pack cache (else python_parser_unavailable, never a download); proven by a subprocess audit hook, S26 spies, an os.open read set equal to {lock, matched wheel}, a sentinel with a positive control, an empty-cache no-download test, a static scan, and the production image under --network none"
+  },
+  {
+   "topic": "AC-005 importer version",
+   "decision": "Constant atlas-python-dependency-importer.v1 plus the extractor identity (grammar version, ABI) in the identity basis; limits are reject-only and not in the id"
+  }
+ ],
+ "not_touched_follow_up": [
+  {
+   "path": "mcp-server/src/atlas_aci/codegraph.py",
+   "reason": "No graph persistence of package facts; consumer-snapshot binding and call binding to dependency declarations are follow-ups"
+  },
+  {
+   "path": "mcp-server/src/atlas_aci/protocol/",
+   "reason": "No MCP exposure; tools JSON and budget pins unchanged"
+  },
+  {
+   "path": "mcp-server/Dockerfile.dev",
+   "reason": "Not changed; whether the dev image prefetches the python grammar is recorded informationally"
+  }
+ ],
+ "explicitly_untouched_gated": [
+  "mcp-server/src/atlas_aci/server.py",
+  "mcp-server/src/atlas_aci/enforcement.py",
+  "mcp-server/src/atlas_aci/config.py",
+  "mcp-server/src/atlas_aci/codegraph.py",
+  "mcp-server/src/atlas_aci/protocol/",
+  "mcp-server/src/atlas_aci/query/",
+  "mcp-server/src/atlas_aci/tools/",
+  "mcp-server/src/atlas_aci/storage/",
+  "mcp-server/src/atlas_aci/extractors/",
+  "mcp-server/src/atlas_aci/providers/",
+  "mcp-server/src/atlas_aci/indexing/",
+  "mcp-server/src/atlas_aci/resolvers/",
+  "mcp-server/src/atlas_aci/frameworks/",
+  "mcp-server/src/atlas_aci/architecture/",
+  "mcp-server/src/atlas_aci/counterfactual/",
+  "mcp-server/src/atlas_aci/contracts/",
+  "mcp-server/src/atlas_aci/importers/",
+  "mcp-server/src/atlas_aci/overlays/",
+  "mcp-server/src/atlas_aci/reports/",
+  "mcp-server/pyproject.toml",
+  "mcp-server/uv.lock",
+  "mcp-server/Dockerfile",
+  "mcp-server/Dockerfile.dev",
+  ".github/workflows/"
+ ],
+ "invariants": {
+  "tools_json_sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+  "tools_json_bytes": 1631472,
+  "READ_ONLY_TOOLS_count": 7,
+  "MINIMUM_BUDGET": 3436,
+  "COLLECTION_MINIMUM_BUDGET": 3448,
+  "FIXED_ERROR_ENVELOPE_CAP": 797,
+  "IMPACT_MINIMUM_BUDGET": 7730,
+  "criteria_sha256": "bf6704d7bbabcbd14c6d14513096d01647955923b467986add40d3d5303f0524"
+ }
+}

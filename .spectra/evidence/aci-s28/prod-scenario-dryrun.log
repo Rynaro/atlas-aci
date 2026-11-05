@@ -1,0 +1,9 @@
+tools: cmp=/usr/bin/cmp sha=sha256sum image=atlas-aci:s28-wip
+extractor {'abi_version': 15, 'grammar_version': '1.6.0', 'language': 'python', 'parser': 'tree-sitter'}
+PASS: import twice: identical snapshot and stdout, equal to the golden (b832ce34c1395a8d7c2bc91d4f96f96b52871fd419a9c8494194a3b9c163799f)
+PASS: AC-003 artifact_digest_mismatch (exit 1, empty stdout, output untouched)
+PASS: AC-004 unresolved_lock_variant
+PASS: AC-006 missing_dependency_source
+PASS: usage error exit 2
+PASS: tools JSON pin (94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56, 1631472 bytes)
+ALL PASS

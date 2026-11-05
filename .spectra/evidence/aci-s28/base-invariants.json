@@ -1,0 +1,25 @@
+{
+ "base_commit": "8d7dd73a932cd9d54c10c1cebba32c348b178f13",
+ "budgets": {
+  "COLLECTION_MINIMUM_BUDGET": 3448,
+  "FIXED_ERROR_ENVELOPE_CAP": 797,
+  "IMPACT_MINIMUM_BUDGET": 7730,
+  "MINIMUM_BUDGET": 3436,
+  "READ_ONLY_TOOLS": 7
+ },
+ "full_pytest_at_base": {
+  "command": "pytest -q -p no:cacheprovider --deselect tests/slices/test_s08_integration.py::test_nonregular_pack_does_not_block_acquisition",
+  "exit": 1,
+  "failed": [
+   "tests/slices/test_s01_contract.py::test_call_deadline_after_initialization"
+  ],
+  "note": "the one failure is the known pre-existing uid-1000 failure; CI at base: 2030 passed, 10 skipped (run 41971135808)",
+  "summary": "1 failed, 2028 passed, 10 skipped, 1 deselected in 690.02s",
+  "where": "git archive 8d7dd73 in the dev image atlas-aci-dev-s16 (uid 1000, python 3.12.16)"
+ },
+ "tools_json": {
+  "bytes": 1631472,
+  "exit": 0,
+  "sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56"
+ }
+}

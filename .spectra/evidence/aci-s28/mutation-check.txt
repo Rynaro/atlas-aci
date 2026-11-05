@@ -1,0 +1,14 @@
+Mutation sanity check of the S28 contract tests (each mutation applied to src one at a time,
+tests/slices/test_s28_*.py run, file restored). 27 mutations:
+KILLED (26): overlap check removed, file/dir prefix check removed, digest check removed, lock size
+check removed, flag-bit mask removed, orig_filename check removed, ASCII name check removed,
+empty-base relative import rule weakened, any __all__ mention counted as literal, __all__
+holder check removed, compression-ratio check removed, rstrip('/') instead of one trailing slash,
+has_error check removed, directory-with-data check removed, two dist-info allowed, async token
+ignored, odd-run backslash rule removed, unmarked-variant rule removed, multiple-matching rule
+removed, unsupported-source rule removed, LF-in-inline-table rule removed, a marker operator added,
+output-equals-lock name rule removed, output identity rule removed, temp cleanup removed, pack
+version hard-coded.
+SURVIVED (1, equivalent): own CRC comparison removed - zipfile verifies the CRC itself when the
+member is read to EOF, so the second check is redundant belt-and-braces (kept on purpose: it does
+not rely on zipfile EOF behaviour).

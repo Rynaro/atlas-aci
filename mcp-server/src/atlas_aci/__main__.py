@@ -7,6 +7,7 @@ import json
 import os
 import stat
 import sys
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
@@ -1384,6 +1385,182 @@ def import_otel(
         runtime.write_atomic(target, data)
     except OSError:
         raise click.ClickException("Runtime overlay cannot be written.") from None
+    stream = click.get_binary_stream("stdout")
+    stream.write(summary)
+    stream.flush()
+
+
+_DEPENDENCY_LIMITS = (
+    ("max_lock_bytes", "uv.lock size in bytes (1..268435456)"),
+    ("max_wheel_bytes", "Wheel size in bytes (1..268435456)"),
+    ("max_members", "Archive members (1..100000)"),
+    ("max_total_uncompressed_bytes", "Total uncompressed bytes (1..1073741824)"),
+    ("max_member_bytes", "Uncompressed bytes per member (1..268435456)"),
+    ("max_records", "Declaration, import, export and diagnostic records (1..1000000)"),
+    ("max_compression_ratio", "Uncompressed/compressed ratio per member (1..10000)"),
+)
+
+
+def _dependency_limit_options(command):
+    for name, help_text in reversed(_DEPENDENCY_LIMITS):
+        command = click.option(
+            "--" + name.replace("_", "-"), name, default=None, type=int, help=help_text
+        )(command)
+    return command
+
+
+def _read_dependency_input(path: Path, limit: int, message: str) -> bytes:
+    """Bounded read of one operator input: opened without blocking, regular files only.
+
+    A FIFO or a directory is refused instead of waiting on or enumerating it. The messages are
+    fixed text: the path is never echoed.
+    """
+    try:
+        descriptor = os.open(path, os.O_RDONLY | getattr(os, "O_NONBLOCK", 0))
+    except OSError:
+        raise click.ClickException(message) from None
+    try:
+        with os.fdopen(descriptor, "rb") as stream:
+            if not stat.S_ISREG(os.fstat(stream.fileno()).st_mode):
+                raise click.ClickException(message)
+            return stream.read(limit + 1)
+    except OSError:
+        raise click.ClickException(message) from None
+
+
+def _dependency_identity(path: Path | str) -> tuple[int, int] | None:
+    try:
+        info = os.stat(path)
+    except OSError:
+        return None
+    return (info.st_dev, info.st_ino)
+
+
+def _dependency_output(output: Path, inputs: list[Path]) -> Path:
+    """The write target: its parent resolved once; it must differ from every input file."""
+    parent = Path(os.path.realpath(output.parent))
+    target = parent / output.name
+    own = _dependency_identity(target)
+    named = {os.path.realpath(item) for item in inputs}
+    if str(target) in named or (
+        own is not None and any(own == _dependency_identity(item) for item in inputs)
+    ):
+        raise click.UsageError("--output must differ from the lock and every wheel.")
+    return target
+
+
+def _write_dependency_atomic(target: Path, data: bytes) -> None:
+    """Write beside `target` (same directory) and `os.replace` it; no partial output remains."""
+    import tempfile
+    from contextlib import suppress
+
+    descriptor, name = tempfile.mkstemp(prefix=".atlas-python-dependency-", dir=target.parent)
+    try:
+        with os.fdopen(descriptor, "wb") as stream:
+            stream.write(data)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(name, target)
+    except BaseException:
+        with suppress(OSError):
+            os.unlink(name)
+        raise
+
+
+@cli.command("import-python-dependency")
+@click.option(
+    "--lock",
+    "lock_path",
+    required=True,
+    type=click.Path(path_type=Path),
+    help="The uv.lock that pins the dependency (profile atlas-uv-lock-profile.v1)",
+)
+@click.option("--package", "package", required=True, help="Package name (PEP 503 normalised)")
+@click.option(
+    "--env",
+    "env_items",
+    multiple=True,
+    help="Target environment KEY=VALUE (repeatable); needed only when the lock is forked",
+)
+@click.option(
+    "--wheel",
+    "wheel_paths",
+    multiple=True,
+    type=click.Path(path_type=Path),
+    help="A local wheel (repeatable); only the one named like a locked pure wheel is opened",
+)
+@click.option(
+    "--output",
+    "output_path",
+    required=True,
+    type=click.Path(path_type=Path),
+    help="Where the package snapshot is written (the only file written)",
+)
+@_dependency_limit_options
+def import_python_dependency(
+    lock_path: Path,
+    package: str,
+    env_items: tuple[str, ...],
+    wheel_paths: tuple[Path, ...],
+    output_path: Path,
+    **chosen: int | None,
+) -> None:
+    """Index one uv-locked pure-Python dependency from a supplied local wheel.
+
+    The wheel is selected by the lock for the declared environment, matched by its locked
+    filename, checked against the locked sha256 and then read as an archive in memory: nothing
+    is installed, downloaded, imported or executed. The result is a standalone, declaration-only
+    `atlas-python-package-snapshot.v1` written to --output; the code graph is not touched.
+    Prints the canonical `atlas-python-dependency-import-summary.v1` on stdout; nothing is
+    printed on rejection (exit 1) or invalid usage (exit 2).
+    """
+    from atlas_aci.dependencies import python_wheel as wheel
+    from atlas_aci.dependencies import uv_lock
+
+    try:
+        limits = uv_lock.normalize_limits(chosen)
+        environment = uv_lock.parse_environment(env_items)
+        uv_lock.parse_package_argument(package)
+    except uv_lock.DependencyUsageError as exc:
+        if exc.what == "env":
+            raise click.UsageError("Invalid --env value.") from None
+        if exc.what == "package":
+            raise click.UsageError("Invalid --package name.") from None
+        raise click.UsageError("Invalid Python dependency limit: " + exc.what) from None
+    target = _dependency_output(output_path, [lock_path, *wheel_paths])
+    lock_raw = _read_dependency_input(
+        lock_path, limits.max_lock_bytes, "uv lock file cannot be read."
+    )
+
+    def reader(path: Path) -> Callable[[], bytes]:
+        def read() -> bytes:
+            return _read_dependency_input(
+                path, limits.max_wheel_bytes, "Wheel file cannot be read."
+            )
+
+        return read
+
+    supplied = [(path.name, reader(path)) for path in wheel_paths]
+    try:
+        snapshot = wheel.import_dependency(lock_raw, package, environment, supplied, limits)
+        data = wheel.canonical_bytes(snapshot)
+        summary = wheel.canonical_bytes(wheel.summary_document(snapshot, len(supplied) - 1))
+    except uv_lock.DependencyRejected as exc:
+        text = "Python dependency rejected: " + exc.reason
+        if exc.coordinate is not None:
+            text += " " + exc.coordinate["coordinate"]
+        raise click.ClickException(text) from None
+    except click.ClickException:
+        raise
+    except Exception as exc:
+        # Never `str(exc)`: a message may carry a path or input text.
+        raise click.ClickException(
+            "Python dependency import failed: " + type(exc).__name__
+        ) from None
+    try:
+        _write_dependency_atomic(target, data)
+    except OSError:
+        raise click.ClickException("Python dependency snapshot cannot be written.") from None
     stream = click.get_binary_stream("stdout")
     stream.write(summary)
     stream.flush()
