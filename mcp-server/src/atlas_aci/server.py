@@ -38,8 +38,8 @@ from atlas_aci.protocol.results import (
     STRUCTURED_VERSIONS,
     bounded_result,
     failure_payload,
-    negotiated_version,
 )
+from atlas_aci.protocol.revisions import negotiate
 from atlas_aci.query.admission import MINIMUM_BUDGET
 from atlas_aci.query.impact_admission import IMPACT_MINIMUM_BUDGET
 from atlas_aci.query.leases import LeaseRegistry
@@ -689,12 +689,7 @@ async def run_stdio(config: Config) -> None:
         params = server.request_context.session.client_params
         if params is None:
             raise RuntimeError("MCP session is not initialized.")
-        requested = params.protocolVersion
-        return (
-            negotiated_version(requested)
-            if isinstance(requested, str)
-            else types.LATEST_PROTOCOL_VERSION
-        )
+        return negotiate(params.protocolVersion).revision()
 
     @server.list_tools()
     async def _list_tools() -> list[Tool]:

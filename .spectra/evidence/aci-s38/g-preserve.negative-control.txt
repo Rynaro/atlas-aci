@@ -1,0 +1,10 @@
+ACI-S38 G-PRESERVE negative control (2026-11-05).
+A copy of mcp-server with ONE deliberate mutation in protocol/revisions.py
+(Revision("2025-06-18", "modern", structured_results=False)) was captured with the same driver
+and compared with preserve/base:
+  frames.json       DIFFERENT (per-frame digests of the 2025-06-18 conversation changed)
+  inprocess.json    DIFFERENT (build_tool_manifest("2025-06-18") digest and call_tool_result bytes)
+  case-sha256.json  DIFFERENT
+  transcript modern.2025-06-18 differs from the committed golden; modern.2025-11-25 and
+  legacy.2024-11-05 stay equal.
+The real branch capture (preserve/after) is equal to preserve/base (g-preserve.sh: all PASS).

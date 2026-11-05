@@ -1,0 +1,12 @@
+{
+ "base_commit": "2db6dd1a3cba6589bf4efc9ad83620e39bacb289",
+ "ci_run": "42092307209",
+ "ci_result": "2609 passed, 11 skipped",
+ "local_full_suite_at_base": "2607 passed, 11 skipped, 2 deselected (878.91s)",
+ "tools_json_sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+ "tools_json_bytes": 1631472,
+ "invariants": {"COLLECTION_MINIMUM_BUDGET": 3448, "FIXED_ERROR_ENVELOPE_CAP": 797, "GRAPH_INPUT_SCHEMA_canon_sha256": "2e7affb98d42093937d0f35f63cbdc61797d90cf6b7d2184b0bb2e8d5d89690c", "GRAPH_OUTPUT_SCHEMA_canon_sha256": "713ec5b6b2af963d556ddc3829dfd6919d52b3be2a9d70d918a5a6e270d4cf60", "IMPACT_MINIMUM_BUDGET": 7730, "LATEST": "2025-11-25", "MINIMUM_BUDGET": 3436, "READ_ONLY_TOOLS": 7, "STRUCTURED_VERSIONS": ["2025-06-18", "2025-11-25"], "SUPPORTED": ["2024-11-05", "2025-03-26", "2025-06-18", "2025-11-25"], "atlas_aci_file": "/t/mcp-server/src/atlas_aci/__init__.py", "ev_RELATIONS": ["call", "construct", "extend", "import", "include", "prepend", "rationale_for", "superclass"], "mcp": "1.27.0", "negotiated_version": {"": "2025-11-25", "2024-10-07": "2025-11-25", "2024-11-05": "2024-11-05", "2025-03-26": "2025-03-26", "2025-06-18": "2025-06-18", "2025-11-25": "2025-11-25", "2099-01-01": "2025-11-25"}},
+ "pyproject_sha256": "c0cfa084bb005c49229181defeb8b27273e0bb1f5a0ac2d0eb82f85d534cb36d",
+ "uv_lock_sha256": "6b820f14327cd71951abe8d4a41b2d1962af21b33b492469de82553a31ca2962",
+ "known_failures_not_fixed": ["tests/slices/test_s01_contract.py::test_call_deadline_after_initialization (uid 1000)", "tests/slices/test_s08_integration.py::test_nonregular_pack_does_not_block_acquisition (flaky, deselected)"]
+}

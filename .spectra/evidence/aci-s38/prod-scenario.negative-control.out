@@ -1,0 +1,32 @@
+PASS  S0 image atlas-aci:s38 exists (sha256:277b44df7266ae576c95974522dcf375410130ee1ce2b4c41419bdf2c5e2ed48)
+PASS  S1 mcp, SDK matrix, REVISIONS and STRUCTURED_VERSIONS equal the expected text
+PASS  S1 classify_initialize(2024-11-05) -> supported/listed_revision
+PASS  S1 classify_initialize(2025-11-25) -> supported/listed_revision
+PASS  S1 classify_initialize(2099-01-01) -> counter_offer/unknown_revision
+PASS  S1 classify_initialize(20241105) -> counter_offer/integer_revision
+PASS  S1 classify_initialize(empty) -> malformed/missing_revision
+PASS  S1 server.py, revisions.py and results.py in the image equal this checkout
+PASS  S2 index exit 0, 6 graph file(s)
+PASS  S3 legacy.2024-11-05 match:true digest b90f916428ac...
+PASS  S3 legacy.2025-03-26 match:true digest c4d4fcd358c5...
+PASS  S3 modern.2025-06-18 match:true digest 8ef70bcecfd9...
+FAIL  S3 modern.2025-11-25 rc=1 match=0 traceback=0 digest='814cffdcef0fb6b8c83492bcb2f4bf82fa7aa96215f61278bb845f3881e20f5b' golden='d8898875386ddb1d7f22ea870a3a7ca721439bc8b5929afca56e7c5390f108ca': 
+PASS  S3 unsupported.2099-01-01 match:true digest e0f567ab8cd4...
+PASS  S3 unsupported.integer match:true digest edeee9f38d89...
+PASS  S3 malformed.missing-version match:true digest 0dfde3355c1c...
+PASS  S3 malformed.pre-initialize match:true digest 47dae7232fae...
+PASS  S4 legacy.2024-11-05 second fresh replay has the same digest
+FAIL  S4 modern.2025-11-25 rc=1 digests '814cffdcef0fb6b8c83492bcb2f4bf82fa7aa96215f61278bb845f3881e20f5b' vs '814cffdcef0fb6b8c83492bcb2f4bf82fa7aa96215f61278bb845f3881e20f5b'
+PASS  S4 the legacy and modern transcripts differ
+PASS  S5 legacy conversation against the modern golden exits 1 with match:false
+PASS  S5 the raw 2099-01-01 initialize response is the 2025-11-25 counter-offer
+PASS  S5 the raw missing-version response is -32602
+PASS  S6 atlas-aci tools sha256 94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56, 1631472 bytes
+PASS  S7 2 passed in 11.90s
+PASS  S8 pyproject.toml and uv.lock are byte-identical to the pins
+PASS  S8 gated source paths are byte-identical to the base commit
+PASS  S8 changed source files are exactly protocol/results.py, protocol/revisions.py and server.py
+image: atlas-aci:s38 (sha256:277b44df7266ae576c95974522dcf375410130ee1ce2b4c41419bdf2c5e2ed48)  mcp: 1.27.0
+checks: 26 passed, 2 failed
+RESULT: 2 check(s) failed
+exit=1

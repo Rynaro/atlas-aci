@@ -1,0 +1,100 @@
+{
+ "slice_id": "ACI-S38",
+ "plan": ".spectra/plans/aci-s38.md",
+ "author": "orchestrator-ramza-plan-s38",
+ "checker": "atlas-s38-plan-checker",
+ "verdict": "APPROVE_WITH_CONDITIONS",
+ "method": "independent read-only code review; SDK mcp 1.27.0 source read; no commands executed",
+ "findings": [
+  {
+   "n": 1,
+   "severity": "MAJOR",
+   "summary": "preserve set must cover every AC-004 case, tools/list for 2099/int, in-process build_tool_manifest and call_tool_result digests per version, with a recorded base-tree identity header for the capture",
+   "disposition": "accepted as plan condition 1"
+  },
+  {
+   "n": 2,
+   "severity": "MAJOR",
+   "summary": "stderr log in session_version can raise and turn tools/list or tools/call into code 0 errors; set the flag first, wrap in try/except Exception, raw client rejects non-JSON stdout, or cut",
+   "disposition": "accepted as plan condition 2"
+  },
+  {
+   "n": 3,
+   "severity": "MAJOR",
+   "summary": "record().requested echoes unbounded client input; bound it before oracle literals are written and test a 1 MiB and a newline-bearing version",
+   "disposition": "accepted as plan condition 3"
+  },
+  {
+   "n": 4,
+   "severity": "MAJOR",
+   "summary": "no server-side diagnostic is emitted in the counter-offer-then-disconnect case; doc must say the record appears on first tools/list or tools/call only, plus a test asserting this",
+   "disposition": "accepted as plan condition 4"
+  },
+  {
+   "n": 5,
+   "severity": "MAJOR",
+   "summary": "N3 hides text bytes, N2 must handle resolved and unresolved macOS paths; add text digest, raw N2-only AC-006 compare, mutation negative controls, duration N-class, larger deadline_ms",
+   "disposition": "accepted as plan condition 5"
+  },
+  {
+   "n": 6,
+   "severity": "MAJOR",
+   "summary": "production parity deferred to Day 3; add Day-1 CLI-path capture comparison and require the golden to pass in G-PY314 Linux",
+   "disposition": "accepted as plan condition 6"
+  },
+  {
+   "n": 7,
+   "severity": "MAJOR",
+   "summary": "AC-003 schema fetch: record newer official revisions at commit C, explicit licence rule, dialect and definitions/$defs handling, negative control, no 'verified' label for legacy with deviations, 1 h time-box",
+   "disposition": "accepted as plan condition 7"
+  },
+  {
+   "n": 8,
+   "severity": "MINOR",
+   "summary": "C1 legacy-only unknown-label client is contrived; add a future-only client, same-process and fresh-process C2 recovery, and spec example-error note",
+   "disposition": "accepted as plan condition 8"
+  },
+  {
+   "n": 9,
+   "severity": "MINOR",
+   "summary": "doc claims for unknown method and batching have no test; add tests or word as not exercised; 2025-03-26 row states batching unsupported",
+   "disposition": "accepted as plan condition 9"
+  },
+  {
+   "n": 10,
+   "severity": "MINOR",
+   "summary": "pin GRAPH_OUTPUT_SCHEMA sha and a fresh-interpreter import-order test; assert exactly two session_version call sites",
+   "disposition": "accepted as plan condition 10"
+  },
+  {
+   "n": 11,
+   "severity": "MINOR",
+   "summary": "tripwire and re-export tests: STRUCTURED_VERSIONS members, s11 values, importability, D9 end-to-end verified:false and no structuredContent",
+   "disposition": "accepted as plan condition 11"
+  },
+  {
+   "n": 12,
+   "severity": "MINOR",
+   "summary": "raw client keeps draining after stderr cap, joins threads, records kill outcome, per-process memex, sequential servers",
+   "disposition": "accepted as plan condition 12"
+  },
+  {
+   "n": 13,
+   "severity": "MINOR",
+   "summary": "AC-005 set is honest but thin; add retrieve/page if non-error and not framing-dependent; record exclusions",
+   "disposition": "accepted as plan condition 13"
+  },
+  {
+   "n": 14,
+   "severity": "MINOR",
+   "summary": "production-scenario.sh: wait/rc under set -e, unique names, trap cleanup, S7 fails on skips",
+   "disposition": "accepted as plan condition 14"
+  },
+  {
+   "n": 15,
+   "severity": "MINOR",
+   "summary": "Day-1 checkpoint, cut-decision timestamp, cut 3 first; pins/scope/CHANGELOG/README placement verified as stated",
+   "disposition": "accepted as plan condition 15"
+  }
+ ]
+}
