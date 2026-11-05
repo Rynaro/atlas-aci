@@ -1,0 +1,83 @@
+{
+ "base_commit": "2db6dd1a3cba6589bf4efc9ad83620e39bacb289",
+ "captured_with": [
+  "docker run --rm (base worktree at 2db6dd1 mounted at /t, PYTHONPATH=/t/mcp-server/src, fixture /fx)",
+  "/opt/venv/bin/python /drv/test_s38_support.py capture --out /out --fixture /fx --label base --seed 0"
+ ],
+ "files": [
+  {
+   "bytes": 12227,
+   "path": "LICENSE.mcp-specification",
+   "sha256": "0382b0057770ca05e9c350a50aa3b1c1fea84da0bc81d723bf00b9aa841be58a"
+  },
+  {
+   "bytes": 3254,
+   "path": "PROVENANCE.v1.json",
+   "sha256": "b6c283500a69952d69468b684b196b253d2aa48004cb17218dd8db5f5d5c78e2"
+  },
+  {
+   "bytes": 87877,
+   "path": "schemas/2024-11-05.schema.json",
+   "sha256": "61cea2392d4f284092d09bc84b9ac488c0d5618ac2b38a56942fc5b99fd960ce"
+  },
+  {
+   "bytes": 89428,
+   "path": "schemas/2025-03-26.schema.json",
+   "sha256": "e720669548c8100a4282c49e580efd6ddf7f28899ea786fc8db251dbdb356131"
+  },
+  {
+   "bytes": 108234,
+   "path": "schemas/2025-06-18.schema.json",
+   "sha256": "af845e7e5b9d27107d1690f0936022546177a1403e63ffb11470135b296a2e01"
+  },
+  {
+   "bytes": 174323,
+   "path": "schemas/2025-11-25.schema.json",
+   "sha256": "268a5f82ba70fd7e4b6dc4aa1e64f116f74b4d0edcb69dc046829c79dd4e97e7"
+  },
+  {
+   "bytes": 23525,
+   "path": "transcripts/legacy.2024-11-05.v1.json",
+   "sha256": "b90f916428acd108211617ed9ced7d4334c2b8e922797be4b0d549a3453650c8"
+  },
+  {
+   "bytes": 23525,
+   "path": "transcripts/legacy.2025-03-26.v1.json",
+   "sha256": "c4d4fcd358c5c14bba442fb6c3675bb3c2a66648c5c956d5c607345be0fdeff1"
+  },
+  {
+   "bytes": 804,
+   "path": "transcripts/malformed.missing-version.v1.json",
+   "sha256": "0dfde3355c1c98ebdd16247932533c6aed09e70794e2f6be536de0a4816340fc"
+  },
+  {
+   "bytes": 549,
+   "path": "transcripts/malformed.pre-initialize.v1.json",
+   "sha256": "47dae7232faecf1447383793c0fa6a153397cf057a27ee11414035c59e53a9d2"
+  },
+  {
+   "bytes": 41170,
+   "path": "transcripts/modern.2025-06-18.v1.json",
+   "sha256": "8ef70bcecfd943ff8c90664cf0a22be33ff62579d2419fccfe9dfa9380ff31d6"
+  },
+  {
+   "bytes": 41170,
+   "path": "transcripts/modern.2025-11-25.v1.json",
+   "sha256": "814cffdcef0fb6b8c83492bcb2f4bf82fa7aa96215f61278bb845f3881e20f5b"
+  },
+  {
+   "bytes": 1353,
+   "path": "transcripts/unsupported.2099-01-01.v1.json",
+   "sha256": "e0f567ab8cd4fd550232080cceeff801fb592c0f2d0aa3d1f9b8bb476a2cdfbb"
+  },
+  {
+   "bytes": 1342,
+   "path": "transcripts/unsupported.integer.v1.json",
+   "sha256": "edeee9f38d89949d14d5b57c0ec5a0fb790ec399205f6d788815017f81eb65a5"
+  }
+ ],
+ "format": "atlas-s38-fixtures.v1",
+ "sdk": {
+  "mcp": "1.27.0"
+ }
+}

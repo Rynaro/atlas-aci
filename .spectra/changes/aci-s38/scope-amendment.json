@@ -1,0 +1,163 @@
+{
+ "slice_id": "ACI-S38",
+ "base_commit": "2db6dd1a3cba6589bf4efc9ad83620e39bacb289",
+ "recorded_before_implementation": true,
+ "declared_by_issue": [
+  "mcp-server/src/atlas_aci/protocol/*",
+  "mcp-server/src/atlas_aci/server.py",
+  "mcp-server/pyproject.toml",
+  "mcp-server/uv.lock",
+  "mcp-server/tests/slices/test_s38_*.py",
+  "hosts/*"
+ ],
+ "glob_depth_clarifications": [
+  {
+   "path": "mcp-server/src/atlas_aci/protocol/*",
+   "reason": "Adds protocol/revisions.py (pure Atlas-owned revision table and negotiation model) and edits protocol/results.py only to re-export STRUCTURED_VERSIONS and negotiated_version; protocol/{__init__,graph,resources,context,impact}.py stay byte-unchanged"
+  },
+  {
+   "path": "mcp-server/pyproject.toml, mcp-server/uv.lock",
+   "reason": "Declared by the issue but intentionally byte-unchanged (orchestrator decision 1); pinned by test_s36_isolation shas, the uv.lock:408 S23 anchor and the S38 tripwire"
+  },
+  {
+   "path": "hosts/*",
+   "reason": "New hosts/protocol-compatibility.md; hosts/cursor.md:100 edited only if the stale token claim can be replaced by a measured byte statement (cut item 2); claude-code.md and copilot.md untouched"
+  }
+ ],
+ "added": [
+  {
+   "path": "mcp-server/tests/fixtures/s38/**",
+   "reason": "Golden normalised transcripts (8 cases, atlas-s38-transcript.v1) captured from a base 2db6dd1 worktree, MANIFEST.v1.json with sha256 per file, official MCP schema.json files at a pinned modelcontextprotocol commit with PROVENANCE.v1.json and the upstream LICENSE copy; total <= 2 MiB; the 1.6 MB tools/list frame is stored as a digest only"
+  },
+  {
+   "path": "CHANGELOG.md",
+   "reason": "One '- **MCP protocol-revision compatibility adapter (ACI-S38).**' bullet at Unreleased/Added index 6, directly after the 'Python dependency surface' bullet (index 5, CHANGELOG.md:98) and before S27 (:116); bullets[0..5] unchanged (test_s36_isolation.py:449-459, test_s35/s34/s33/s30 pins); no '- **' continuation line; no prior title or docs locator"
+  },
+  {
+   "path": "README.md",
+   "reason": "One two-cell docs-table row for hosts/protocol-compatibility.md directly after the docs/experiments/community-comparison.md row (README.md:950), before the rails row; S36/S35/S34 adjacency pins (README.md:947-950) untouched; no prior locator and no canary-missions.md"
+  },
+  {
+   "path": ".spectra/plans/aci-s38.*",
+   "reason": "Ramza plan, criteria, state, issue snapshot, review, scope"
+  },
+  {
+   "path": ".spectra/plans/ramza-calibration.jsonl",
+   "reason": "Ramza calibration append"
+  },
+  {
+   "path": ".spectra/changes/aci-s38/*",
+   "reason": "This amendment"
+  },
+  {
+   "path": ".spectra/evidence/aci-s38/**",
+   "reason": "qualification.json, base-invariants.json, preserve/{base,after}/*.frames.json (per-frame sha256/bytes only), schema fetch log, production-scenario.sh and production-scenario.json, py314.log, gate logs"
+  },
+  {
+   "path": ".spectra/state/aci-s38.execution.json",
+   "reason": "Authoritative execution receipt (AC-RUN-01/02)"
+  },
+  {
+   "path": ".spectra/backlog/execution.json",
+   "reason": "Backlog status update"
+  },
+  {
+   "path": ".spectra/backlog/order.md",
+   "reason": "Backlog order update"
+  }
+ ],
+ "prior_test_edits": [],
+ "interpretations": [
+  {
+   "topic": "Revision pin and matrix",
+   "decision": "Atlas-owned REVISIONS table (2024-11-05 and 2025-03-26 retained legacy, 2025-06-18 verified modern, 2025-11-25 selected); SDK stays mcp 1.27.0; a tripwire asserts the installed version, SUPPORTED_PROTOCOL_VERSIONS == table and LATEST == selected"
+  },
+  {
+   "topic": "AC-001/002 fixture hosts",
+   "decision": "Declared fixture hosts only: an independent stdlib raw JSON-RPC line client and the mcp 1.27.0 ClientSession (raw initialize plus plain initialize()), over a real run_stdio subprocess; the documented lifecycle.v1 conversation is identical across revisions; real hosts are documented as untested"
+  },
+  {
+   "topic": "AC-003 selected contract schema",
+   "decision": "structuredContent validated against the advertised outputSchema (Draft 2020-12), check_schema on every advertised schema, and every frame validated against the official MCP schema.json of its negotiated revision at a pinned commit; the failure set must equal KNOWN_DEVIATIONS exactly; fallback label 'SDK-modelled protocol conformance (mcp 1.27.0)' if the fetch or licence fails"
+  },
+  {
+   "topic": "AC-004 incompatibility response",
+   "decision": "Spec lifecycle behaviour unchanged: a well-formed unsupported revision (string or integer) receives an InitializeResult with 2025-11-25 and the client decides; missing or invalid params and pre-initialize requests receive JSON-RPC -32602 'Invalid request parameters'; the adapter's classify_initialize/negotiate produce a deterministic atlas-protocol-negotiation.v1 record consistent with the wire; a legacy-only client detects the counter-offer and disconnects; no custom error payload"
+  },
+  {
+   "topic": "AC-005 equivalence",
+   "decision": "Canonical set = legacy DSL, search_symbol, view_file and structured status/neighborhood/path; text bytes identical across 2024-11-05 and 2025-11-25; context/continue/impact excluded and documented because their byte admission depends on framing by design"
+  },
+  {
+   "topic": "AC-006 replay",
+   "decision": "Two fresh run_stdio processes per supported revision with different PYTHONHASHSEED give byte-identical normalised transcripts equal to the base goldens; closed normalisation rules N1-N9"
+  },
+  {
+   "topic": "Unlisted SDK revision",
+   "decision": "Shaped as 2024-11-05 (no outputSchema, no structuredContent), verified false in the stderr protocol_negotiated record; proven end to end by appending a revision to the SDK list in a server child"
+  }
+ ],
+ "not_touched_follow_up": [
+  {
+   "path": "hosts/cursor.md",
+   "reason": "Line 100 '~1500 token' claim is stale given the 1.6 MB tools JSON; fixed only if trivially correct, otherwise listed as a follow-up"
+  },
+  {
+   "path": "mcp-server/src/atlas_aci/__main__.py",
+   "reason": "No --protocol-version on the tools command; the default tools JSON stays the 2025-11-25 shaping"
+  }
+ ],
+ "explicitly_untouched_gated": [
+  "mcp-server/src/atlas_aci/__main__.py",
+  "mcp-server/src/atlas_aci/codegraph.py",
+  "mcp-server/src/atlas_aci/config.py",
+  "mcp-server/src/atlas_aci/enforcement.py",
+  "mcp-server/src/atlas_aci/query/",
+  "mcp-server/src/atlas_aci/tools/",
+  "mcp-server/src/atlas_aci/storage/",
+  "mcp-server/src/atlas_aci/protocol/__init__.py",
+  "mcp-server/src/atlas_aci/protocol/graph.py",
+  "mcp-server/src/atlas_aci/protocol/resources.py",
+  "mcp-server/src/atlas_aci/protocol/context.py",
+  "mcp-server/src/atlas_aci/protocol/impact.py",
+  "mcp-server/pyproject.toml",
+  "mcp-server/uv.lock",
+  "mcp-server/Dockerfile",
+  ".github/workflows/",
+  "scripts/",
+  "atlas/",
+  "docs/"
+ ],
+ "invariants": {
+  "tools_json_sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+  "tools_json_bytes": 1631472,
+  "READ_ONLY_TOOLS_count": 7,
+  "MINIMUM_BUDGET": 3436,
+  "COLLECTION_MINIMUM_BUDGET": 3448,
+  "FIXED_ERROR_ENVELOPE_CAP": 797,
+  "IMPACT_MINIMUM_BUDGET": 7730,
+  "ev_RELATIONS": [
+   "call",
+   "construct",
+   "extend",
+   "import",
+   "include",
+   "prepend",
+   "rationale_for",
+   "superclass"
+  ],
+  "pyproject_sha256": "c0cfa084bb005c49229181defeb8b27273e0bb1f5a0ac2d0eb82f85d534cb36d",
+  "uv_lock_sha256": "6b820f14327cd71951abe8d4a41b2d1962af21b33b492469de82553a31ca2962",
+  "mcp_version": "1.27.0",
+  "sdk_supported_protocol_versions": [
+   "2024-11-05",
+   "2025-03-26",
+   "2025-06-18",
+   "2025-11-25"
+  ],
+  "selected_revision": "2025-11-25",
+  "server_py_line_20": "from mcp.server.stdio import stdio_server",
+  "server_py_harden_marker_count": 3,
+  "criteria_sha256": "d197ecdf9438db653eaacddc4e4d199f5c38d57133beb674546bd5f1564ac279"
+ }
+}

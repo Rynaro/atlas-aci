@@ -97,8 +97,10 @@ naturally with the ATLAS Phase A → T → L → A → S progression.
   put each ATLAS phase skill (Traverse, Locate, Abstract, Synthesize) as
   a separate `.mdc` rule with `alwaysApply: false` and clear description
   text. Cursor activates rules by description match.
-- **MCP tool manifest serializes per session.** ~1500 token overhead
-  per chat. Acceptable; don't worry about it.
+- **MCP tool manifest serializes per session.** Measured, not estimated:
+  the `tools/list` result is 347091 bytes of canonical JSON under protocol
+  revision 2025-11-25 and 12923 bytes under 2024-11-05 (no `outputSchema`).
+  Tokens were not counted. See [protocol-compatibility.md](protocol-compatibility.md).
 
 ## Ranking of host fit for ATLAS
 

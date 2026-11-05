@@ -1,0 +1,14 @@
+{
+ "label": "after",
+ "tree": "this checkout (mounted read-only at /t)",
+ "git_head": "2db6dd1a3cba6589bf4efc9ad83620e39bacb289",
+ "dirty_files_under_src_or_tree": 3,
+ "atlas_aci_file_in_container": "/t/mcp-server/src/atlas_aci/__init__.py",
+ "host_server_py_sha256": "21393e61dfbe9ec4ae93f55f7b9c0abf17029681b24f75395d143c955eeb13f7",
+ "host_results_py_sha256": "6dd2ec426d75cffb40637e659476fdbe3ece48b0f0b6d5024f863ca5a468fbdb",
+ "git_show_base_server_py_sha256": "7fa2d6cb3bb401479a79b354fe06a48bbcd8eda54de351b65be4de2f0576989b",
+ "git_show_base_results_py_sha256": "06f486e376bc0188d6b97524d78a81f7ecbf90d47b57e73f09cb14c587752946",
+ "pythonhashseed": 4242,
+ "dev_image": "atlas-aci-dev-s16",
+ "captured_at_utc": "2026-11-05T21:15:00Z"
+}

@@ -1,0 +1,88 @@
+3c4d91b7e832d9b74338d56eed03403ccc662123	refs/heads/main
+3c4d91b7e832d9b74338d56eed03403ccc662123
+== root
+.claude-plugin
+.gitattributes
+.github
+.gitignore
+.npmrc
+.nvmrc
+.prettierignore
+.prettierrc.json
+.prototools
+AGENTS.md
+AI_POLICY.md
+ANTITRUST.md
+CLAUDE.md
+CODE_OF_CONDUCT.md
+CONTRIBUTING.md
+GOVERNANCE.md
+LICENSE
+MAINTAINERS.md
+README.md
+SECURITY.md
+blog
+docs
+eslint.config.mjs
+migrate_seps.js
+package-lock.json
+package.json
+plugins
+schema
+scripts
+seps
+tools
+tsconfig.json
+typedoc.config.mjs
+typedoc.plugin.mjs
+== schema/
+schema/2024-11-05
+schema/2025-03-26
+schema/2025-06-18
+schema/2025-11-25
+schema/2026-07-28
+schema/draft
+-- schema/2024-11-05
+schema/2024-11-05/schema.json
+schema/2024-11-05/schema.ts
+-- schema/2025-03-26
+schema/2025-03-26/schema.json
+schema/2025-03-26/schema.ts
+-- schema/2025-06-18
+schema/2025-06-18/schema.json
+schema/2025-06-18/schema.mdx
+schema/2025-06-18/schema.ts
+-- schema/2025-11-25
+schema/2025-11-25/schema.json
+schema/2025-11-25/schema.mdx
+schema/2025-11-25/schema.ts
+-- schema/2026-07-28
+schema/2026-07-28/examples
+schema/2026-07-28/schema.json
+schema/2026-07-28/schema.mdx
+schema/2026-07-28/schema.ts
+-- schema/draft
+schema/draft/examples
+schema/draft/schema.json
+schema/draft/schema.mdx
+schema/draft/schema.ts
+rc=0
+NOTICE http 404
+0382b0057770ca05e9c350a50aa3b1c1fea84da0bc81d723bf00b9aa841be58a  LICENSE
+61cea2392d4f284092d09bc84b9ac488c0d5618ac2b38a56942fc5b99fd960ce  schemas/2024-11-05.schema.json
+e720669548c8100a4282c49e580efd6ddf7f28899ea786fc8db251dbdb356131  schemas/2025-03-26.schema.json
+af845e7e5b9d27107d1690f0936022546177a1403e63ffb11470135b296a2e01  schemas/2025-06-18.schema.json
+268a5f82ba70fd7e4b6dc4aa1e64f116f74b4d0edcb69dc046829c79dd4e97e7  schemas/2025-11-25.schema.json
+    12227 LICENSE
+    87877 schemas/2024-11-05.schema.json
+    89428 schemas/2025-03-26.schema.json
+   108234 schemas/2025-06-18.schema.json
+   174323 schemas/2025-11-25.schema.json
+   472089 total
+The MCP project is undergoing a licensing transition from the MIT License to the Apache License, Version 2.0 ("Apache-2.0"). All new code and specification contributions to the project are licensed under Apache-2.0. Documentation contributions (excluding specifications) are licensed under CC-BY-4.0.
+
+Contributions for which relicensing consent has been obtained are licensed under Apache-2.0. Contributions made by authors who originally licensed their work under the MIT License and who have not yet granted explicit permission to relicense remain licensed under the MIT License.
+
+No rights beyond those granted by the applicable original license are conveyed for such contributions.
+curl 8.23.0 (aarch64-alpine-linux-musl) libcurl/8.23.0 OpenSSL/3.5.9 zlib/1.3.2 brotli/1.2.1 zstd/1.5.7 c-ares/1.34.9 libidn2/2.3.8 libpsl/0.21.5 nghttp2/1.70.0
+rc=0

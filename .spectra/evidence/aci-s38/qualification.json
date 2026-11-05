@@ -1,0 +1,175 @@
+{
+ "slice_id": "ACI-S38",
+ "recorded_before_implementation": true,
+ "recorded_at_utc": "2026-11-05T20:17:31Z",
+ "started_at_utc": "2026-11-05T20:00:32Z",
+ "base_commit": "2db6dd1a3cba6589bf4efc9ad83620e39bacb289",
+ "stop_rule": {
+  "triggered": false,
+  "checked": [
+   "a: mcp/SUPPORTED/LATEST",
+   "b: listed tests and pins",
+   "c: captures identical",
+   "d: 2099/missing/pre-init wire",
+   "goldens from base worktree only"
+  ]
+ },
+ "a_environment": {
+  "git_diff_quiet_2db6dd1_mcp_server_src": true,
+  "mcp": "1.27.0",
+  "sdk_supported": [
+   "2024-11-05",
+   "2025-03-26",
+   "2025-06-18",
+   "2025-11-25"
+  ],
+  "sdk_latest": "2025-11-25",
+  "pyproject_sha256": "c0cfa084bb005c49229181defeb8b27273e0bb1f5a0ac2d0eb82f85d534cb36d",
+  "uv_lock_sha256": "6b820f14327cd71951abe8d4a41b2d1962af21b33b492469de82553a31ca2962",
+  "dev_image": "atlas-aci-dev-s16 python 3.12.16, jsonschema 4.26.0, referencing 0.37.0"
+ },
+ "b_listed_tests": {
+  "files": [
+   "test_s11_stdio",
+   "test_s11_protocol",
+   "test_s13_stdio",
+   "test_s18_stdio"
+  ],
+  "result": "37 passed",
+  "pins": "see base-invariants.json (tools sha 94f9567a... / 1631472, budgets 3436/3448/797/7730)"
+ },
+ "c_base_capture": {
+  "tree": "git worktree at 2db6dd1 mounted read-only at /t, PYTHONPATH=/t/mcp-server/src, driver = branch tests/slices/test_s38_support.py (stdlib + lazy atlas_aci)",
+  "identity": {
+   "atlas_aci_file": "/t/mcp-server/src/atlas_aci/__init__.py",
+   "git_head": "2db6dd1a3cba6589bf4efc9ad83620e39bacb289",
+   "worktree_clean": true,
+   "server_py_sha256": "7fa2d6cb3bb401479a79b354fe06a48bbcd8eda54de351b65be4de2f0576989b",
+   "results_py_sha256": "06f486e376bc0188d6b97524d78a81f7ecbf90d47b57e73f09cb14c587752946",
+   "equals_git_show_2db6dd1": true
+  },
+  "double_capture": "PYTHONHASHSEED 0 and 4242 in fresh containers with different host fixture dirs mounted at /fx: transcripts, frames.json, inprocess.json, ac004.json byte-identical (diff -r)",
+  "isError_vector_steps_7_to_16": [
+   false,
+   false,
+   false,
+   false,
+   false,
+   false,
+   false,
+   true,
+   true,
+   true
+  ],
+  "named_n_class_additions": "none: the only varying field found was list_dir entries[].mtime (in-process dump only, not in the conversation); removed by pinning the fixture file mtime to 1700000000 instead of adding an N-class",
+  "raw_N2_only_frames_equal_across_processes": true,
+  "tools_list_wire_bytes_digest": {
+   "2025-11-25": 347091,
+   "2024-11-05": 12923
+  }
+ },
+ "c2_cli_parity": {
+  "method": "api = CodeGraph(repo).build() + run_stdio(Config(repo, memex)); cli = 'atlas-aci index --graph-root' + 'atlas-aci serve --graph-root --memex-root', both at base",
+  "result": "byte-identical transcripts, per-frame N2-only digests, in-process dump",
+  "decision": "goldens are captured through the CLI path (production parity); Linux production image parity is asserted by prod-scenario.sh"
+ },
+ "d_ac004_wire": {
+  "U1_2099-01-01": "InitializeResult protocolVersion 2025-11-25",
+  "U2_2024-10-07": "InitializeResult 2025-11-25",
+  "U3_empty": "InitializeResult 2025-11-25",
+  "U4_integer_20241105": "InitializeResult 2025-11-25",
+  "M1_missing": "-32602 Invalid request parameters data ''",
+  "M2_null_and_list": "-32602",
+  "M3_no_capabilities": "-32602",
+  "P1_tools_list_pre_init": "-32602",
+  "P2_ping_pre_init": "{}",
+  "R1_M1_then_valid_2024-11-05": "-32602 then InitializeResult 2024-11-05, ping {}, legacy tools/list",
+  "matches_s11_s13_s18_expectation": true,
+  "stderr_tracebacks": 0,
+  "detail": "frames.json and ac004.json under preserve/base"
+ },
+ "e_official_schema": {
+  "repository": "https://github.com/modelcontextprotocol/modelcontextprotocol",
+  "commit": "3c4d91b7e832d9b74338d56eed03403ccc662123",
+  "ls_schema": [
+   "2024-11-05",
+   "2025-03-26",
+   "2025-06-18",
+   "2025-11-25",
+   "2026-07-28",
+   "draft"
+  ],
+  "newer_than_selected": "2026-07-28 (and draft): not supported: mcp 1.27.0 does not offer it; matrix says 'selected = newest SDK-supported'",
+  "licence": "root LICENSE: Apache-2.0 text, statement of a transition from MIT; accepted as Apache-2.0 (MIT for not-yet-relicensed contributions); no NOTICE file (HTTP 404); LICENSE copied beside the fixtures",
+  "dialects": {
+   "2024-11-05": "draft-07 (definitions)",
+   "2025-03-26": "draft-07 (definitions)",
+   "2025-06-18": "draft-07 (definitions)",
+   "2025-11-25": "2020-12 ($defs)"
+  },
+  "sha256": {
+   "2024-11-05": "61cea2392d4f284092d09bc84b9ac488c0d5618ac2b38a56942fc5b99fd960ce",
+   "2025-03-26": "e720669548c8100a4282c49e580efd6ddf7f28899ea786fc8db251dbdb356131",
+   "2025-06-18": "af845e7e5b9d27107d1690f0936022546177a1403e63ffb11470135b296a2e01",
+   "2025-11-25": "268a5f82ba70fd7e4b6dc4aa1e64f116f74b4d0edcb69dc046829c79dd4e97e7",
+   "LICENSE": "0382b0057770ca05e9c350a50aa3b1c1fea84da0bc81d723bf00b9aa841be58a"
+  },
+  "fetch_minutes": 6,
+  "base_frames_validated": "all 4 lifecycle conversations (request-response frames: InitializeResult, EmptyResult, ListToolsResult, ListResourcesResult, ListResourceTemplatesResult, CallToolResult, response/error envelopes) plus 2099/missing/pre-init frames validate with ZERO failures under their own revision schema",
+  "KNOWN_DEVIATIONS": [],
+  "negative_control": "a corrupted InitializeResult fails under each of the 4 schemas (required, type)"
+ },
+ "f_wire_vs_cli_tools": {
+  "canonical_sha256_wire_tools_2025-11-25": "8ba17cb99281c71ef4790be12db19e52801d5f10ff0013523dc819fe7eaaa223",
+  "canonical_sha256_cli_tools_json": "8ba17cb99281c71ef4790be12db19e52801d5f10ff0013523dc819fe7eaaa223",
+  "relation": "equal"
+ },
+ "g_structured_ops_at_2025-11-25_on_s38-mini": {
+  "non_error": [
+   "status",
+   "neighborhood",
+   "path",
+   "page",
+   "retrieve",
+   "context"
+  ],
+  "error_only": {
+   "continue": "no next_cursor on this 4-line fixture",
+   "impact": "IMPACT_UNCONFIGURED (operator-only before snapshot)"
+  },
+  "page_has_resources": false,
+  "recorded_adaptation": "the live page/continue/resources.read step runs on a second fixture (s38-live.v1, the s13 A/B repo) instead of s38-mini",
+  "retrieve_added_to_AC-003_AC-005": true,
+  "excluded_from_AC-005_framing_dependent_by_design": [
+   "context",
+   "continue",
+   "impact"
+  ]
+ },
+ "h_full_suite_at_base": {
+  "command": "pytest -q -p no:cacheprovider with the two known deselects, base worktree",
+  "result": "2607 passed, 11 skipped, 2 deselected in 878.91s",
+  "ci_reference": "2609 passed, 11 skipped (the 2 deselected run in CI)"
+ },
+ "plan_deviation": "steps 12-13 use deadline_ms 2000, not >= 30000: the published input schema caps deadline_ms at 2000 (30000 yields INVALID_INPUT); the 4-line fixture completes in milliseconds and the test asserts outcome 'complete'",
+ "day1_checkpoint": {
+  "stop_rule_triggered": false,
+  "fetch_outcome": "official schemas fetched and committed (Apache-2.0), 0 known deviations",
+  "cli_parity": "identical",
+  "decision": "proceed to implementation",
+  "recorded_at_utc": "2026-11-05T20:17:31Z"
+ },
+ "cut_decision": {
+  "recorded_at_utc": "2026-11-05T20:55:00Z",
+  "elapsed_wall_clock": "about 55 minutes since 2026-11-05T20:00:32Z (timebox 3 engineering days)",
+  "cuts_taken": [],
+  "decision": "no cut item taken; conditions 1, 2, 3, 5 and 10 are met in full"
+ },
+ "implementation_notes": {
+  "revisions_py_extra_import": "json (for Negotiation.record_bytes); the isolation test allow-list includes it",
+  "no_request_path_io": "session_version() is `return negotiate(params.protocolVersion).revision()`; no logging, no stderr record (orchestrator resolution of checker condition 2); the stderr/no-record and no-Traceback tests cover a 2099 session, a normal modern session and a legacy session",
+  "fixture_hosts": "raw line client over `python -m atlas_aci serve --graph-root` (production path) and mcp 1.27.0 ClientSession (raw initialize and plain initialize())",
+  "live_step_fixture": "s38-live.v1 (the test_s13 A/B repo) because the 4-line s38-mini repo has no resources and no next_cursor",
+  "tests_py314_note": "the CLI `index` fetches tree-sitter grammars on a cold HOME (about 77 s once on the dev image); a warm cache makes the whole s38 gate 75 s"
+ }
+}

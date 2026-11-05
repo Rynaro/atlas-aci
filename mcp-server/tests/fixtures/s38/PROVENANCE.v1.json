@@ -1,0 +1,29 @@
+{
+ "format": "atlas-s38-provenance.v1",
+ "repository": "https://github.com/modelcontextprotocol/modelcontextprotocol",
+ "commit": "3c4d91b7e832d9b74338d56eed03403ccc662123",
+ "commit_resolved_from": "git ls-remote refs/heads/main",
+ "schema_directory_listing": ["2024-11-05", "2025-03-26", "2025-06-18", "2025-11-25", "2026-07-28", "draft"],
+ "not_supported": {"2026-07-28": "not supported: mcp 1.27.0 does not offer it", "draft": "unreleased draft; not a revision"},
+ "selection_rule": "selected = newest SDK-supported revision (mcp 1.27.0 offers 2025-11-25), not the newest official revision",
+ "license": {
+  "spdx": "Apache-2.0",
+  "note": "repository root LICENSE is the Apache License, Version 2.0 with a statement that the project is transitioning from MIT; contributions not yet relicensed stay MIT. Documentation (not schemas) is CC-BY-4.0 and is not copied.",
+  "file": "LICENSE.mcp-specification",
+  "sha256": "0382b0057770ca05e9c350a50aa3b1c1fea84da0bc81d723bf00b9aa841be58a",
+  "notice_file": "none (HTTP 404 at the repository root)"
+ },
+ "files": [
+  {"revision": "2024-11-05", "url": "https://raw.githubusercontent.com/modelcontextprotocol/modelcontextprotocol/3c4d91b7e832d9b74338d56eed03403ccc662123/schema/2024-11-05/schema.json", "path": "schemas/2024-11-05.schema.json", "sha256": "61cea2392d4f284092d09bc84b9ac488c0d5618ac2b38a56942fc5b99fd960ce", "bytes": 87877, "dialect": "http://json-schema.org/draft-07/schema#", "definitions_key": "definitions"},
+  {"revision": "2025-03-26", "url": "https://raw.githubusercontent.com/modelcontextprotocol/modelcontextprotocol/3c4d91b7e832d9b74338d56eed03403ccc662123/schema/2025-03-26/schema.json", "path": "schemas/2025-03-26.schema.json", "sha256": "e720669548c8100a4282c49e580efd6ddf7f28899ea786fc8db251dbdb356131", "bytes": 89428, "dialect": "http://json-schema.org/draft-07/schema#", "definitions_key": "definitions"},
+  {"revision": "2025-06-18", "url": "https://raw.githubusercontent.com/modelcontextprotocol/modelcontextprotocol/3c4d91b7e832d9b74338d56eed03403ccc662123/schema/2025-06-18/schema.json", "path": "schemas/2025-06-18.schema.json", "sha256": "af845e7e5b9d27107d1690f0936022546177a1403e63ffb11470135b296a2e01", "bytes": 108234, "dialect": "http://json-schema.org/draft-07/schema#", "definitions_key": "definitions"},
+  {"revision": "2025-11-25", "url": "https://raw.githubusercontent.com/modelcontextprotocol/modelcontextprotocol/3c4d91b7e832d9b74338d56eed03403ccc662123/schema/2025-11-25/schema.json", "path": "schemas/2025-11-25.schema.json", "sha256": "268a5f82ba70fd7e4b6dc4aa1e64f116f74b4d0edcb69dc046829c79dd4e97e7", "bytes": 174323, "dialect": "https://json-schema.org/draft/2020-12/schema", "definitions_key": "$defs"}
+ ],
+ "fetched_with": {
+  "image": "alpine@sha256:be2656061b536c1883c4034790e21d0a09c5aaaf51968b89368a3c0371ea2c9a",
+  "tools": "apk add git curl inside a throwaway --rm container (curl 8.23.0); nothing installed on the host or in the dev image",
+  "argv": ["git ls-remote https://github.com/modelcontextprotocol/modelcontextprotocol refs/heads/main", "git clone --depth 1 --no-checkout --filter=blob:none (listing only)", "curl -fsS -o <file> <url>"]
+ },
+ "fetched_at_utc": "2026-11-05T20:13:00Z",
+ "sha256_verified_on_host_before_commit": true
+}

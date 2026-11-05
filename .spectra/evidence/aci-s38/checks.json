@@ -1,0 +1,61 @@
+{
+ "slice": "ACI-S38",
+ "base_commit": "2db6dd1a3cba6589bf4efc9ad83620e39bacb289",
+ "environment": "atlas-aci-dev-s16 (uid 1000, Python 3.12, mcp 1.27.0); CI is Python 3.14 (S38 tests: 103 passed on python:3.14.10)",
+ "gates": {
+  "s38-contract": {
+   "exit": 0,
+   "summary": "76 passed (16 contract, 48 semantics, 12 isolation) in 74.3s; orchestrator rerun after the final doc edit with s36_isolation, s11_stdio and s13_stdio: 103 passed; the six AC tests rerun verbosely: 15 passed (parametrised)"
+  },
+  "regression": {
+   "exit": 0,
+   "summary": "1049 passed, 5 skipped, 1 deselected after the final edits (s11-s14, s16-s18, s20, s21, s23-s28, s30-s37 isolation/contract, server tests, thesis_negatives, s01 minus the known failure)"
+  },
+  "ruff": {
+   "exit": 0
+  },
+  "format": {
+   "exit": 0
+  },
+  "mypy": {
+   "exit": 0,
+   "summary": "orchestrator reran the exact CI lint chain including ../scripts/: clean"
+  },
+  "full-suite": {
+   "exit": 0,
+   "summary": "2683 passed, 11 skipped, 2 deselected in 922.54s; deselected the pre-existing uid-1000 failure test_s01_contract::test_call_deadline_after_initialization and the known-flaky test_s08_integration::test_nonregular_pack_does_not_block_acquisition. Base at 2db6dd1: 2607 passed, 11 skipped (same deselections); no new skip."
+  },
+  "g-src": {
+   "exit": 0,
+   "summary": "every mcp-server/src path except protocol/results.py, protocol/revisions.py and server.py byte-identical vs 2db6dd1; pyproject.toml, uv.lock and .github/workflows unchanged; server.py line 20 anchor intact; no tracked test modified"
+  },
+  "g-mcp": {
+   "exit": 0,
+   "summary": "tools JSON sha256 94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56, 1631472 bytes, 7 tools"
+  },
+  "g-preserve": {
+   "exit": 0,
+   "summary": "base captures from a separate worktree at 2db6dd1 (identity header verified) equal the branch captures: N2-only frame digests for every AC-004 case and the 8 goldens, tools/list for 2099 and integer, build_tool_manifest digests for 4 revisions, 2099-01-01, '' and default, CLI tools sha, call_tool_result bytes for all 7 tools under legacy and modern shaping; a one-line mutation is detected"
+  },
+  "g-harden": {
+   "exit": 0,
+   "summary": "no added harden-gate marker in server.py (augmented=false, a3_touched=false)"
+  },
+  "py314": {
+   "exit": 0,
+   "summary": "S38 tests 103 passed on python:3.14.10"
+  },
+  "g-image": {
+   "exit": 0,
+   "summary": "orchestrator ran prod-scenario.sh against a freshly built atlas-aci:s38: 28 PASS, 0 FAIL. Image modules equal the checkout; 8 normalised transcripts (legacy 2024-11-05/2025-03-26, modern 2025-06-18/2025-11-25, unsupported 2099-01-01 and integer, malformed missing-version and pre-initialize) match the goldens captured at base; fresh replays identical; 2099 counter-offer is 2025-11-25 and missing version is -32602; atlas-aci tools pin; S7 test_s11_docker and test_s13_docker 2 passed with no skip (run from the dev container with a Linux docker CLI and the docker socket, no host Python); pyproject/uv.lock pins, gated paths and the changed-file set exact. The orchestrator's first run found a staging-dependent S8 file-set check and a host-pytest S7; both fixed by the implementer before this run."
+  }
+ },
+ "acceptance_tests": {
+  "AC-S38-001": "tests/slices/test_s38_contract.py::test_legacy_host_fixture (parametrised) PASSED",
+  "AC-S38-002": "tests/slices/test_s38_contract.py::test_modern_host_fixture (parametrised) PASSED",
+  "AC-S38-003": "tests/slices/test_s38_contract.py::test_schema_conformance PASSED",
+  "AC-S38-004": "tests/slices/test_s38_contract.py::test_unsupported_version PASSED",
+  "AC-S38-005": "tests/slices/test_s38_contract.py::test_engine_equivalence PASSED",
+  "AC-S38-006": "tests/slices/test_s38_contract.py::test_adapter_replay (parametrised) PASSED"
+ }
+}

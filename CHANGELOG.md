@@ -113,6 +113,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   ambiguous environment is `unresolved_lock_variant`. The snapshot is not written to the graph
   and the tools JSON and every tool budget are unchanged. See
   `docs/importers/python-dependencies.md`.
+- **MCP protocol-revision compatibility adapter (ACI-S38).** New pure module
+  `atlas_aci.protocol.revisions` holds an Atlas-owned table of four MCP revisions (2024-11-05
+  and 2025-03-26 retained legacy, 2025-06-18 verified modern, 2025-11-25 selected) and a
+  negotiation model (`negotiate`, `classify_initialize` and a closed-key
+  `atlas-protocol-negotiation.v1` record). `run_stdio` takes its shaping revision from it, and
+  `STRUCTURED_VERSIONS` and `negotiated_version` stay importable from `atlas_aci.protocol.results`.
+  The wire is byte-identical to the previous release for every revision, including the
+  counter-offer for an unsupported revision and the `-32602` answer to malformed or
+  pre-initialize requests; the tools JSON and every tool budget are unchanged, nothing new is
+  written to stdout or stderr, and no dependency changed (mcp 1.27.0). An SDK-supported revision
+  missing from the table is shaped as 2024-11-05, so it never enables structured results.
+  Golden transcripts captured from the base commit, official MCP schema files at a pinned commit
+  (Apache-2.0) and a tripwire test on the SDK matrix cover two declared fixture hosts only (a raw
+  line client and the mcp 1.27.0 `ClientSession`); real hosts are untested. See
+  `hosts/protocol-compatibility.md`.
 - **OpenTelemetry trace import into a runtime overlay (ACI-S27).** New operator command
   `atlas-aci import-otel --repo R [--graph-root G] --manifest M --output OUT [limits] OTLP_JSON`
   (CLI only, no MCP op) and the libraries `atlas_aci.importers.otel_json` (pure parser) and

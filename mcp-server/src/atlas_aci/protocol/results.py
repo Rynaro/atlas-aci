@@ -6,7 +6,6 @@ import json
 from typing import Any
 
 from mcp import types
-from mcp.shared.version import SUPPORTED_PROTOCOL_VERSIONS
 
 from atlas_aci.protocol.graph import (
     LEGACY_VALIDATOR,
@@ -18,8 +17,9 @@ from atlas_aci.protocol.graph import (
     validate_page,
     validate_retrieval,
 )
+from atlas_aci.protocol.revisions import STRUCTURED_VERSIONS as STRUCTURED_VERSIONS
+from atlas_aci.protocol.revisions import negotiated_version as negotiated_version
 
-STRUCTURED_VERSIONS = frozenset({"2025-06-18", "2025-11-25"})
 FIXED_MESSAGES = {
     "RESPONSE_TOO_LARGE": "Result exceeds cap.",
     "INVALID_BUDGET": "Configured budget cannot represent a bounded error.",
@@ -28,11 +28,6 @@ FIXED_MESSAGES = {
     "INVALID_INPUT": "Tool arguments do not match the published schema.",
     "FORBIDDEN": "The requested tool is not available in this server.",
 }
-
-
-def negotiated_version(requested: str) -> str:
-    """Mirror the public locked SDK initialization rule, not client identity."""
-    return requested if requested in SUPPORTED_PROTOCOL_VERSIONS else types.LATEST_PROTOCOL_VERSION
 
 
 def result_bytes(result: types.CallToolResult) -> bytes:
