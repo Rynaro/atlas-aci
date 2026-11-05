@@ -1,0 +1,44 @@
+[
+  {
+    "ac_id": "AC-S35-001",
+    "test": "mcp-server/tests/slices/test_s35_feedback_overlay.py::test_feedback_verified_event_requires_artifact",
+    "exit_code": 0,
+    "tail": "1 passed in 1.86s"
+  },
+  {
+    "ac_id": "AC-S35-002",
+    "test": "mcp-server/tests/slices/test_s35_feedback_overlay.py::test_feedback_forged_success_is_rejected",
+    "exit_code": 0,
+    "tail": "1 passed in 2.62s"
+  },
+  {
+    "ac_id": "AC-S35-003",
+    "test": "mcp-server/tests/slices/test_s35_feedback_overlay.py::test_feedback_overlay_preserves_canonical_facts",
+    "exit_code": 0,
+    "tail": "1 passed in 2.14s"
+  },
+  {
+    "ac_id": "AC-S35-004",
+    "test": "mcp-server/tests/slices/test_s35_feedback_overlay.py::test_feedback_opt_in_ranking_is_explained",
+    "exit_code": 0,
+    "tail": "1 passed in 2.09s"
+  },
+  {
+    "ac_id": "AC-S35-005",
+    "test": "mcp-server/tests/slices/test_s35_feedback_overlay.py::test_feedback_stale_source_is_excluded",
+    "exit_code": 0,
+    "tail": "1 passed in 2.06s"
+  },
+  {
+    "ac_id": "AC-S35-006",
+    "test": "mcp-server/tests/slices/test_s35_feedback_overlay.py::test_feedback_reimport_is_idempotent",
+    "exit_code": 0,
+    "tail": "1 passed in 7.67s"
+  },
+  {
+    "ac_id": "AC-S35-007",
+    "test": "mcp-server/tests/slices/test_s35_feedback_overlay.py::test_feedback_disabled_preserves_baseline",
+    "exit_code": 0,
+    "tail": "1 passed in 2.10s"
+  }
+]
