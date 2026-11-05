@@ -1,0 +1,20 @@
+{
+  "interrupted": {
+    "path": ".spectra/state/aci-s27.execution.json",
+    "snapshot": ".spectra/evidence/aci-s27/interrupted-execution.json",
+    "slice_id": "ACI-S27",
+    "criteria_sha256": "0ca0c0d79db9163d3c411358d6b88a2c9c1a58f97e7cf197be82197dace18cde",
+    "status": "IN_PROGRESS"
+  },
+  "resumed": {
+    "path": ".spectra/state/aci-s27.execution.json",
+    "slice_id": "ACI-S27",
+    "criteria_sha256": "0ca0c0d79db9163d3c411358d6b88a2c9c1a58f97e7cf197be82197dace18cde",
+    "status": "COMPLETE"
+  },
+  "frozen_criteria_sha256": "0ca0c0d79db9163d3c411358d6b88a2c9c1a58f97e7cf197be82197dace18cde",
+  "identity_equal": true,
+  "authoritative_receipt_paths": [
+    ".spectra/state/aci-s27.execution.json"
+  ]
+}
