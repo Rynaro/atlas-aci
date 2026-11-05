@@ -1,0 +1,19 @@
+{
+ "consumer": {
+  "app/__init__.py": "",
+  "app/area_tools.py": "def area():\n    pass\n",
+  "app/main.py": "from s30_shapes.geometry import area, Circle\nfrom s30_shapes.geometry import perimeter as per\nfrom s30_shapes.geometry import fetch_area\nfrom s30_shapes import area as reexported_area\nfrom s30_shapes.geometry import missing_name\nfrom s30_shapes.compat import hidden\nfrom s30_shapes.nothere import x\nfrom s30_shapes.dup import twice\nfrom s30_shapes import geometry\nfrom s30_shapes.geometry import *\nimport s30_shapes.geometry\nfrom s30_shapes.rebind import wrapped_area\nfrom s30_shapes.rebind import conditional\nfrom s30_shapes.rebind import imported\nfrom s30_shapes.g\u00e9ometry import area as accented\nfrom s30_shapes.geometry import (\n    Circle as c2,  # note\n)\nfrom s30_shapes.geometry import \\\n    perimeter as per2\nimport json\nfrom .local import y\n\n\ndef run():\n    from s30_shapes.geometry import area as inner_area\n\n\nif TYPE_CHECKING:\n    from s30_shapes.geometry import Circle as tc\n"
+ },
+ "package": {
+  "s30_shapes/__init__.py": "from .geometry import area\n\n\ndef describe():\n    pass\n",
+  "s30_shapes/_version.py": "version = '1.0.0'\n",
+  "s30_shapes/compat.py": "if TYPE_CHECKING:\n\n    def hidden():\n        pass\n",
+  "s30_shapes/dup.py": "def twice():\n    pass\n\n\ndef twice():\n    pass\n",
+  "s30_shapes/geometry.py": "import math\nimport functools\n\n\nclass Circle:\n    pass\n\n\ndef area(radius):\n    return radius\n\n\nasync def fetch_area():\n    pass\n\n\n@functools.cache\ndef perimeter():\n    pass\n\n\ndef _hidden_helper():\n    pass\n",
+  "s30_shapes/rebind.py": "import functools\n\n\ndef wrapped_area():\n    pass\n\n\nwrapped_area = functools.wraps(wrapped_area)\n\n\ndef conditional():\n    pass\n\n\nif functools:\n\n    def conditional():\n        pass\n\n\ndef imported():\n    pass\n\n\nfrom math import imported\n"
+ },
+ "provider_extra": {
+  "src/other_mod.py": "def area():\n    pass\n",
+  "tools/notes.py": "notes = 1\n"
+ }
+}

@@ -1,0 +1,202 @@
+{
+ "slice_id": "ACI-S30",
+ "base_commit": "dc57096f60c3810692acb1fb1b6fa2ad4e2e90e0",
+ "environment": "atlas-aci-dev-s16 (python 3.12.16, tree-sitter 0.25.2, tree-sitter-language-pack 1.6.0), uid 1000",
+ "stop_rule_triggered": false,
+ "a_import_bindings": {
+  "result": "matches D6; STOP rule (a) not triggered",
+  "schema_epoch": 9,
+  "columns": [
+   "path",
+   "local_name",
+   "scope",
+   "byte_start",
+   "description",
+   "lang",
+   "source_entity_id",
+   "occurrence_id",
+   "evidence_id",
+   "assertion_id"
+  ],
+  "description_keys": [
+   "level",
+   "local_name",
+   "module",
+   "name",
+   "reason"
+  ],
+  "description_example": {
+   "level": 0,
+   "local_name": "Circle",
+   "module": [
+    "s30_shapes",
+    "geometry"
+   ],
+   "name": "Circle",
+   "reason": "unsupported_absolute_import"
+  },
+  "occurrence_payload_keys": [
+   "column",
+   "end_byte",
+   "end_column",
+   "end_line",
+   "entity_id",
+   "id",
+   "kind",
+   "language",
+   "line",
+   "path",
+   "provenance_state",
+   "role",
+   "source_sha256",
+   "source_size",
+   "start_byte",
+   "type"
+  ],
+  "occurrence_column_base": "0-based; line 1-based; start_byte is the name token, row byte_start is the statement start",
+  "assertion_id_non_null": "true for every row (all forms)",
+  "owner_equals_file_entity": "true for module-level, if and try imports (scope python:<path>:root); function and class scopes carry the function/class entity (scope python:<path>:function_definition:<a>:<b>)",
+  "forms": {
+   "from a.b import X": {
+    "module": [
+     "a",
+     "b"
+    ],
+    "name": "X",
+    "local": "X",
+    "reason": "unsupported_absolute_import"
+   },
+   "from a.b import X as Y": {
+    "name": "X",
+    "local": "Y",
+    "reason": "unsupported_import_alias"
+   },
+   "from a.b import X as X": {
+    "local": "X",
+    "reason": "unsupported_import_alias (aliased flag false)"
+   },
+   "from x import *": {
+    "module": [
+     "x"
+    ],
+    "name": "*",
+    "local": "*",
+    "reason": "unsupported_import_star"
+   },
+   "import a.b": {
+    "module": [],
+    "name": "a.b",
+    "local": "a",
+    "reason": "unsupported_absolute_import"
+   },
+   "import a.b as g": {
+    "module": [],
+    "name": "a.b",
+    "local": "g",
+    "reason": "unsupported_import_alias"
+   },
+   "import a, b": "two rows, module []",
+   "from a import b (module)": {
+    "module": [
+     "a"
+    ],
+    "name": "b"
+   },
+   "from . import x": {
+    "level": 1,
+    "module": [],
+    "reason": null
+   },
+   "from .. import up": {
+    "level": 2,
+    "module": [],
+    "reason": null
+   },
+   "from .local import y": {
+    "level": 1,
+    "module": [
+     "local"
+    ],
+    "reason": null
+   },
+   "from __future__ import annotations": "no row",
+   "inside a def / class": "scope is the function or class scope",
+   "inside if / try at module level": "scope is root: conditionality is hidden (limitation 3)"
+  },
+  "comment_child_in_parenthesised_import": "bogus row: name and local_name are the comment text, e.g. '# note', module of the statement, reason unsupported_absolute_import (pinned: non_identifier_name)",
+  "line_continuation": "bogus row: name and local_name are a backslash + newline (pinned: non_identifier_name); the real name follows as its own row",
+  "non_ascii_module_part": "row kept as written (module part with a non-ASCII letter); pinned: non_ascii_identifier",
+  "multi_name_and_parenthesised_lists": "one row per name, all sharing the statement byte_start"
+ },
+ "b_provider_observations": {
+  "result": "state indexed and observed_source_sha256 == sha256(file bytes) for a src/ layout; the pre-authorised fallback is not needed",
+  "skip_patterns_dropped_paths": "src/log/*, src/build/* get NO observation (whole path components log, tmp, build, dist, coverage, node_modules ...); src/public/assets/* is indexed (multi-part patterns never match)",
+  "configuration_skip_patterns": [
+   "node_modules",
+   "vendor/bundle",
+   "vendor/cache",
+   "tmp",
+   "log",
+   ".git",
+   "dist",
+   "build",
+   "public/assets",
+   "public/packs",
+   "public/packs-test",
+   "coverage",
+   ".bundle",
+   "__pycache__",
+   ".venv",
+   ".atlas",
+   "storage",
+   "_site",
+   ".jekyll-cache",
+   ".sass-cache"
+  ]
+ },
+ "c_provider_symbols": {
+  "result": "kind map class->class, def/async def/decorated def -> function (adapt of D7 kind map is the identity on this)",
+  "symbols_columns": [
+   "id",
+   "name",
+   "kind",
+   "path",
+   "line_start",
+   "line_end",
+   "lang",
+   "binding",
+   "entity_id",
+   "occurrence_id"
+  ],
+  "binding_keys_used": [
+   "scope",
+   "import_export_safe"
+  ],
+  "root_scope": "python:<path>:root",
+  "entity_id_non_null": true,
+  "conditional_second_definition": "second row has the unconditional flag false while the first stays true",
+  "rebinding_facts": "assignment_targets rows at the root scope with binding_kind assignment or import (also a def followed by 'from x import name'); import_bindings rows; wildcard rows use name '*'"
+ },
+ "d_two_leases": {
+  "result": "silent: size, mode, mtime_ns and sha256 inventories of both repos and both graph roots are equal after consumer-first and provider-first double leases with SELECTs; no -journal appears; STOP rule (d) not triggered",
+  "nonexistent_graph_root": "OverlayRejected index_unavailable; the directory is not created; an empty root also index_unavailable; /dev/null/x is a DiffUsageError (usage)",
+  "old_epoch": "open_active accepts epochs (8, 9); the linker requires max(SCHEMA_EPOCHS) == 9"
+ },
+ "e_determinism": {
+  "same_repo_two_fresh_graph_roots": "equal snapshot_id",
+  "files_rewritten_in_reverse_order": "equal snapshot_id",
+  "reindex_without_change": "equal snapshot_id",
+  "result": "the AC-005 fresh-root variant is kept"
+ },
+ "f_package_snapshot": {
+  "result": "an in-test wheel imports and validates; members, modules and declarations (class, function, async_function with decorated flag) line up with provider symbols; validate_snapshot raises invalid_snapshot for a forged id",
+  "note": "the snapshot id does not cover dist-info members; module and declaration records tie python_source member digests"
+ },
+ "g_timing": {
+  "codegraph_build_tiny_repo_seconds": 0.08,
+  "full_world_seconds": 0.46,
+  "link_seconds": 0.02,
+  "result": "far below 10 s; module-scoped worlds used for read-only tests"
+ },
+ "h_base_invariants": "see base-invariants.json"
+}

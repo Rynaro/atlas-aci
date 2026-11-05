@@ -1,0 +1,54 @@
+{
+ "slice": "ACI-S30",
+ "base_commit": "dc57096f60c3810692acb1fb1b6fa2ad4e2e90e0",
+ "environment": "atlas-aci-dev-s16 (uid 1000, Python 3.12); CI is Python 3.14 (S30 contract: 127 passed on python:3.14.10)",
+ "gates": {
+  "s30-contract": {
+   "exit": 0,
+   "summary": "127 passed in ~28s; tests/slices/test_s30_{support,cross_repo,resolution,rejections,isolation}.py; orchestrator rerun with s27/s28 isolation and s29: 189 passed"
+  },
+  "regression": {
+   "exit": 0,
+   "summary": "492 passed (s19, s20, s27, s28, s29, thesis_negatives, export)"
+  },
+  "ruff": {
+   "exit": 0
+  },
+  "format": {
+   "exit": 0
+  },
+  "mypy": {
+   "exit": 0,
+   "summary": "88 source files clean; orchestrator reran the exact CI lint chain: clean"
+  },
+  "full-suite": {
+   "exit": 1,
+   "summary": "1 failed, 2219 passed, 10 skipped, 1 deselected in ~732s; single failure is the pre-existing tests/slices/test_s01_contract.py::test_call_deadline_after_initialization (uid 1000); deselected test_s08_integration::test_nonregular_pack_does_not_block_acquisition (known flaky). Base at dc57096: same single failure, 2092 passed."
+  },
+  "g-src": {
+   "exit": 0,
+   "summary": "gated paths byte-identical vs dc57096; changed src == {__main__.py, cross_repo/__init__.py, cross_repo/package_links.py, cross_repo/revision_vector.py}; no tracked test modified"
+  },
+  "g-mcp": {
+   "exit": 0,
+   "summary": "tools JSON sha256 94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56, 1631472 bytes, 7 tools"
+  },
+  "py314": {
+   "exit": 0,
+   "summary": "S30 contract 127 passed on python:3.14.10"
+  },
+  "g-image": {
+   "exit": 0,
+   "summary": "orchestrator ran prod-scenario.sh against atlas-aci:s30 (--network none --read-only, repos and graphs mounted read-only, git safe.directory via env): 52 PASS, 0 FAIL; two links byte-identical (7 links, bound); inventories unchanged across link, impact and rejections; provider re-index gives snapshot_not_active and 7 invalidated; refresh fixpoint equals a fresh build; impact missing_provider_snapshot boundary; allowlist and lock rejections exit 1 empty stdout; usage exit 2; tools pin"
+  }
+ },
+ "acceptance_tests": {
+  "AC-S30-001": "tests/slices/test_s30_cross_repo.py::test_cross_repo_link_has_exact_vector PASSED",
+  "AC-S30-002": "tests/slices/test_s30_cross_repo.py::test_cross_repo_wrong_version_is_unresolved PASSED",
+  "AC-S30-003": "tests/slices/test_s30_cross_repo.py::test_cross_repo_missing_snapshot_is_boundary PASSED",
+  "AC-S30-004": "tests/slices/test_s30_cross_repo.py::test_cross_repo_vector_change_invalidates_links PASSED",
+  "AC-S30-005": "tests/slices/test_s30_cross_repo.py::test_cross_repo_link_replay_is_idempotent PASSED",
+  "AC-S30-006": "tests/slices/test_s30_cross_repo.py::test_cross_repo_allowlist_bounds_traversal PASSED",
+  "AC-S30-007": "tests/slices/test_s30_cross_repo.py::test_cross_repo_overlay_preserves_source_graphs PASSED"
+ }
+}

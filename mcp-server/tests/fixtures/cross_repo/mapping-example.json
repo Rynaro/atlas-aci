@@ -1,0 +1,27 @@
+{
+  "format": "atlas-cross-repo-mapping.v1",
+  "repositories": [
+    {
+      "repository_id": "app",
+      "role": "consumer",
+      "snapshot_id": "1111111111111111111111111111111111111111111111111111111111111111"
+    },
+    {
+      "repository_id": "lib",
+      "role": "provider",
+      "snapshot_id": "2222222222222222222222222222222222222222222222222222222222222222"
+    }
+  ],
+  "consumer": {
+    "lock_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+    "environment": {}
+  },
+  "packages": [
+    {
+      "provider_repository_id": "lib",
+      "coordinate": "pypi:s30-shapes@1.0.0",
+      "package_snapshot_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+      "source_prefix": "src/"
+    }
+  ]
+}

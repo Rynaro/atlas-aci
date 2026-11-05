@@ -1566,6 +1566,318 @@ def import_python_dependency(
     stream.flush()
 
 
+_CROSS_REPO_LIMITS = (
+    ("max_mapping_bytes", "Mapping size in bytes (1..1048576)"),
+    ("max_lock_bytes", "uv.lock size in bytes (1..268435456)"),
+    ("max_package_snapshot_bytes", "Package snapshot size in bytes (1..268435456)"),
+    ("max_overlay_bytes", "Overlay size in bytes (1..268435456)"),
+    ("max_references", "Candidate import references (1..1000000)"),
+)
+_CROSS_REPO_IMPACT_LIMITS = (
+    ("max_results", "Impact results (1..100000)"),
+    ("max_links_examined", "Records examined (1..1000000)"),
+    ("max_boundaries", "Impact boundaries (1..100000)"),
+    ("max_overlay_bytes", "Overlay size in bytes (1..268435456)"),
+    ("max_mapping_bytes", "Mapping size in bytes (1..1048576)"),
+)
+
+
+def _cross_repo_options(table):
+    def decorate(command):
+        for name, help_text in reversed(table):
+            command = click.option(
+                "--" + name.replace("_", "-"), name, default=None, type=int, help=help_text
+            )(command)
+        return command
+
+    return decorate
+
+
+def _cross_repo_sides(command):
+    for role in ("provider", "consumer"):
+        command = _graph_root_option(
+            f"--{role}-graph-root", f"External graph root of the {role} (default: <repo>/.atlas)"
+        )(command)
+        command = click.option(
+            f"--{role}-repo",
+            f"{role}_repo",
+            required=True,
+            type=click.Path(exists=True, file_okay=False, path_type=Path),
+            help=f"Repository of the {role}",
+        )(command)
+    return command
+
+
+def _read_cross_repo_input(path: Path, limit: int, message: str) -> bytes:
+    """Bounded read of one operator input: opened without blocking, regular files only.
+
+    A FIFO or a directory is refused instead of waiting on or enumerating it. The messages are
+    fixed text: the path is never echoed.
+    """
+    try:
+        descriptor = os.open(path, os.O_RDONLY | getattr(os, "O_NONBLOCK", 0))
+    except OSError:
+        raise click.ClickException(message) from None
+    try:
+        with os.fdopen(descriptor, "rb") as stream:
+            if not stat.S_ISREG(os.fstat(stream.fileno()).st_mode):
+                raise click.ClickException(message)
+            return stream.read(limit + 1)
+    except OSError:
+        raise click.ClickException(message) from None
+
+
+def _write_cross_repo_atomic(target: Path, data: bytes) -> None:
+    """Write beside `target` (same directory) and `os.replace` it; no partial output remains."""
+    import tempfile
+    from contextlib import suppress
+
+    descriptor, name = tempfile.mkstemp(prefix=".atlas-cross-repo-overlay-", dir=target.parent)
+    try:
+        with os.fdopen(descriptor, "wb") as stream:
+            stream.write(data)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(name, target)
+    except BaseException:
+        with suppress(OSError):
+            os.unlink(name)
+        raise
+
+
+def _cross_repo_usage(what: str) -> click.UsageError:
+    """The fixed usage text of one `CrossRepoUsageError` (never the exception's own text)."""
+    texts = {
+        "graph_namespace": "A repository cannot be opened as a graph namespace.",
+        "repository_overlap": "The repositories and graph roots must not overlap.",
+        "seed": "Invalid --seed value.",
+        "direction": "Invalid --direction value.",
+    }
+    return click.UsageError(texts.get(what, "Invalid cross-repository limit: " + what))
+
+
+@cli.command("cross-repo-link")
+@click.option(
+    "--mapping",
+    "mapping_path",
+    required=True,
+    type=click.Path(path_type=Path),
+    help="Mapping (JSON, atlas-cross-repo-mapping.v1): two repositories, one package",
+)
+@click.option(
+    "--lock",
+    "lock_path",
+    required=True,
+    type=click.Path(path_type=Path),
+    help="The consumer's uv.lock; its sha256 must equal the mapping's lock_sha256",
+)
+@click.option(
+    "--package-snapshot",
+    "package_path",
+    required=True,
+    type=click.Path(path_type=Path),
+    help="The S28 package snapshot (import-python-dependency output)",
+)
+@click.option(
+    "--previous",
+    "previous_path",
+    default=None,
+    type=click.Path(path_type=Path),
+    help="The overlay being refreshed; the result records what it invalidated",
+)
+@click.option(
+    "--output",
+    "output_path",
+    required=True,
+    type=click.Path(path_type=Path),
+    help="Where the overlay is written; outside both repositories and both graph roots",
+)
+@_cross_repo_sides
+@_cross_repo_options(_CROSS_REPO_LIMITS)
+def cross_repo_link(
+    mapping_path: Path,
+    lock_path: Path,
+    package_path: Path,
+    previous_path: Path | None,
+    output_path: Path,
+    consumer_repo: Path,
+    consumer_graph_root: Path | None,
+    provider_repo: Path,
+    provider_graph_root: Path | None,
+    **chosen: int | None,
+) -> None:
+    """Link a consumer's imports of one locked package to the provider's declarations.
+
+    Both snapshots are the ACTIVE ones of their repositories (read-only leases) and must be the
+    ones the mapping names; the lock, the package snapshot and the provider's indexed sources
+    must agree byte for byte. A link joins an import reference to a declaration; it is not a
+    call. The overlay is standalone: the graphs are not written and the only file written is
+    --output. Prints the canonical `atlas-cross-repo-link-summary.v1` on stdout; nothing is
+    printed on rejection (exit 1) or invalid usage (exit 2).
+    """
+    from atlas_aci.cross_repo import package_links as links
+    from atlas_aci.cross_repo import revision_vector as vector
+    from atlas_aci.overlays import runtime
+    from atlas_aci.query.diff import Side
+
+    try:
+        limits = links.normalize_limits(chosen)
+    except vector.CrossRepoUsageError as exc:
+        raise _cross_repo_usage(exc.what) from None
+    first, second = consumer_repo.resolve(), provider_repo.resolve()
+    consumer = Side(first, consumer_graph_root)
+    provider = Side(second, provider_graph_root)
+    try:
+        vector.check_roots(consumer, provider)
+    except vector.CrossRepoUsageError as exc:
+        raise _cross_repo_usage(exc.what) from None
+    protected = [first, first / ".atlas", second, second / ".atlas"]
+    protected += [root for root in (consumer_graph_root, provider_graph_root) if root is not None]
+    inputs = [mapping_path, lock_path, package_path]
+    inputs += [] if previous_path is None else [previous_path]
+    try:
+        target = runtime.resolve_output(output_path, protected, inputs)
+    except runtime.OverlayUsageError as exc:
+        if exc.reason == "output_equals_input":
+            raise click.UsageError("--output must differ from every input file.") from None
+        raise click.UsageError(
+            "--output must be outside both repositories and both graph roots."
+        ) from None
+    mapping_raw = _read_cross_repo_input(
+        mapping_path, limits.max_mapping_bytes, "Cross-repository mapping cannot be read."
+    )
+    try:
+        # The mapping is judged before any other input is read.
+        vector.parse_mapping(mapping_raw, limits.max_mapping_bytes)
+        vector.check_distinct(consumer, provider)
+    except vector.CrossRepoRejected as exc:
+        raise click.ClickException("Cross-repository link rejected: " + exc.reason) from None
+    except vector.CrossRepoUsageError as exc:
+        raise _cross_repo_usage(exc.what) from None
+    lock_raw = _read_cross_repo_input(
+        lock_path, limits.max_lock_bytes, "uv lock file cannot be read."
+    )
+    package_raw = _read_cross_repo_input(
+        package_path, limits.max_package_snapshot_bytes, "Package snapshot cannot be read."
+    )
+    previous_raw = (
+        None
+        if previous_path is None
+        else _read_cross_repo_input(
+            previous_path, limits.max_overlay_bytes, "Previous overlay cannot be read."
+        )
+    )
+    try:
+        overlay = links.link(
+            mapping_raw, lock_raw, package_raw, consumer, provider, previous_raw, limits
+        )
+        data = links.canonical_bytes(overlay)
+        summary = links.canonical_bytes(links.summary_document(overlay))
+    except vector.CrossRepoRejected as exc:
+        raise click.ClickException("Cross-repository link rejected: " + exc.reason) from None
+    except vector.CrossRepoUsageError as exc:
+        raise _cross_repo_usage(exc.what) from None
+    except Exception as exc:
+        # Never `str(exc)`: a message may carry a path or input text.
+        raise click.ClickException("Cross-repository link failed: " + type(exc).__name__) from None
+    try:
+        _write_cross_repo_atomic(target, data)
+    except OSError:
+        raise click.ClickException("Cross-repository overlay cannot be written.") from None
+    stream = click.get_binary_stream("stdout")
+    stream.write(summary)
+    stream.flush()
+
+
+@cli.command("cross-repo-impact")
+@click.option(
+    "--overlay",
+    "overlay_path",
+    required=True,
+    type=click.Path(path_type=Path),
+    help="The overlay written by cross-repo-link",
+)
+@click.option(
+    "--mapping",
+    "mapping_path",
+    required=True,
+    type=click.Path(path_type=Path),
+    help="The mapping the overlay was built from",
+)
+@click.option("--seed", required=True, help="Entity id (64 hex) to start from")
+@click.option(
+    "--direction",
+    required=True,
+    type=click.Choice(["from_provider", "to_provider"]),
+    help="from_provider: consumers of a provider entity; to_provider: providers of a consumer file",
+)
+@_cross_repo_sides
+@_cross_repo_options(_CROSS_REPO_IMPACT_LIMITS)
+def cross_repo_impact(
+    overlay_path: Path,
+    mapping_path: Path,
+    seed: str,
+    direction: str,
+    consumer_repo: Path,
+    consumer_graph_root: Path | None,
+    provider_repo: Path,
+    provider_graph_root: Path | None,
+    **chosen: int | None,
+) -> None:
+    """Depth-one potential impact across the mapped revision vector; writes nothing.
+
+    Seeds are file entities for module-level imports: a consumer function entity returns nothing.
+    A provider snapshot that is not the mapped, active one yields a `missing_provider_snapshot`
+    boundary. Prints the canonical `atlas-cross-repo-impact.v1` on stdout; nothing is printed on
+    rejection (exit 1) or invalid usage (exit 2).
+    """
+    from atlas_aci.cross_repo import package_links as links
+    from atlas_aci.cross_repo import revision_vector as vector
+    from atlas_aci.query.diff import Side
+    from atlas_aci.storage import evidence as evidence
+
+    try:
+        limits = links.normalize_limits(
+            {name: value for name, value in chosen.items() if name in links.LIMITS}
+        )
+        budgets = links.normalize_budgets(
+            {name: value for name, value in chosen.items() if name in links.BUDGETS}
+        )
+    except vector.CrossRepoUsageError as exc:
+        raise _cross_repo_usage(exc.what) from None
+    if not evidence.hash_value(seed):
+        raise _cross_repo_usage("seed")
+    consumer = Side(consumer_repo.resolve(), consumer_graph_root)
+    provider = Side(provider_repo.resolve(), provider_graph_root)
+    try:
+        vector.check_roots(consumer, provider)
+    except vector.CrossRepoUsageError as exc:
+        raise _cross_repo_usage(exc.what) from None
+    overlay_raw = _read_cross_repo_input(
+        overlay_path, limits.max_overlay_bytes, "Cross-repository overlay cannot be read."
+    )
+    mapping_raw = _read_cross_repo_input(
+        mapping_path, limits.max_mapping_bytes, "Cross-repository mapping cannot be read."
+    )
+    try:
+        document = links.impact(
+            overlay_raw, mapping_raw, consumer, provider, seed, direction, budgets, limits
+        )
+        data = links.canonical_bytes(document)
+    except vector.CrossRepoRejected as exc:
+        raise click.ClickException("Cross-repository impact rejected: " + exc.reason) from None
+    except vector.CrossRepoUsageError as exc:
+        raise _cross_repo_usage(exc.what) from None
+    except Exception as exc:
+        # Never `str(exc)`: a message may carry a path or input text.
+        raise click.ClickException(
+            "Cross-repository impact failed: " + type(exc).__name__
+        ) from None
+    stream = click.get_binary_stream("stdout")
+    stream.write(data)
+    stream.flush()
+
+
 @cli.command()
 @click.option(
     "--repo", required=True, type=click.Path(exists=True, file_okay=False, path_type=Path)

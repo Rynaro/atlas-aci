@@ -1,0 +1,82 @@
+{
+ "slice_id": "ACI-S30",
+ "plan": ".spectra/plans/aci-s30.md",
+ "author": "orchestrator-ramza-plan-s30",
+ "checker": "atlas-s30-plan-checker",
+ "verdict": "APPROVE_WITH_CONDITIONS",
+ "method": "independent read-only code review; no commands executed",
+ "findings": [
+  {
+   "n": 1,
+   "severity": "MAJOR",
+   "summary": "supersedes refresh is not a fixpoint when the previous overlay already carries supersedes (overlay_id covers supersedes); compare a content_id with supersedes nulled, emit the fresh build when equal, and test O1 to O2 to unchanged rerun",
+   "disposition": "accepted as plan condition 1"
+  },
+  {
+   "n": 2,
+   "severity": "MAJOR",
+   "summary": "open_active accepts epoch 8 and the reader falls back to graph.8.db; require lease epoch == max(SCHEMA_EPOCHS) for both sides (consumer_index_upgrade_required / provider index_upgrade_required) and map sqlite3.Error to invalid_*_evidence",
+   "disposition": "accepted as plan condition 2"
+  },
+  {
+   "n": 3,
+   "severity": "MAJOR",
+   "summary": "linked_declaration false positive when the provider rebinds or conditionally redefines the name; require all same-name root symbol rows safe and exactly one, and no provider assignment_targets/import_bindings rebinding (new detail provider_name_rebound); add fixtures",
+   "disposition": "accepted as plan condition 3"
+  },
+  {
+   "n": 4,
+   "severity": "MINOR",
+   "summary": "unresolved_provider_declaration_not_indexed is unreachable via skip-pattern fixtures (bind fails first with source_member_missing); test via pure resolver or an indexer/S28 disagreement; document skip-pattern components under limitation 6",
+   "disposition": "accepted as plan condition 4"
+  },
+  {
+   "n": 5,
+   "severity": "MINOR",
+   "summary": "comment children inside parenthesised imports create bogus rows (python_imports.py:43-60); probe on Day 1 and rename/split the non_ascii_identifier detail; pin from-pkg-import-submodule and multi-name forms",
+   "disposition": "accepted as plan condition 5"
+  },
+  {
+   "n": 6,
+   "severity": "MINOR",
+   "summary": "shadow guard should count consumer observations of any state, not only indexed",
+   "disposition": "accepted as plan condition 6"
+  },
+  {
+   "n": 7,
+   "severity": "MINOR",
+   "summary": "define one strict JSON loader for overlay, previous and package snapshot (duplicate keys, NaN, bounded int digits, recursion) since they contain integers",
+   "disposition": "accepted as plan condition 7"
+  },
+  {
+   "n": 8,
+   "severity": "MINOR",
+   "summary": "keep the import_export_safe literal inline in a function, never a module constant, because the banned token safe is scanned in module-level constants; state the S30 scan scope",
+   "disposition": "accepted as plan condition 8"
+  },
+  {
+   "n": 9,
+   "severity": "MINOR",
+   "summary": "AC-006 spies: call open_active via module attribute, assert repo sets not counts (reader_lease builds a second CodeGraph), exempt Click usage-error path echo from the no-echo test",
+   "disposition": "accepted as plan condition 9"
+  },
+  {
+   "n": 10,
+   "severity": "MINOR",
+   "summary": "document same_repository for monorepo/worktree siblings via git common_dir and pin the outcome for nested repo/graph-root overlap",
+   "disposition": "accepted as plan condition 10"
+  },
+  {
+   "n": 11,
+   "severity": "MINOR",
+   "summary": "map validate_snapshot's invalid_snapshot to invalid_package_snapshot; passthrough only for select_package reasons",
+   "disposition": "accepted as plan condition 11"
+  },
+  {
+   "n": 12,
+   "severity": "MINOR",
+   "summary": "to_provider seeds are file-level for module-level imports; state in docs and confirm owner==file entity on Day 1",
+   "disposition": "accepted as plan condition 12"
+  }
+ ]
+}
