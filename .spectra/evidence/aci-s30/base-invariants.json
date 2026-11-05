@@ -1,0 +1,33 @@
+{
+ "base_commit": "dc57096f60c3810692acb1fb1b6fa2ad4e2e90e0",
+ "tools_json_sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+ "tools_json_bytes": 1631472,
+ "READ_ONLY_TOOLS_count": 7,
+ "MINIMUM_BUDGET": 3436,
+ "COLLECTION_MINIMUM_BUDGET": 3448,
+ "FIXED_ERROR_ENVELOPE_CAP": 797,
+ "IMPACT_MINIMUM_BUDGET": 7730,
+ "ev_RELATIONS": [
+  "call",
+  "construct",
+  "extend",
+  "import",
+  "include",
+  "prepend",
+  "rationale_for",
+  "superclass"
+ ],
+ "full_pytest_at_base": {
+  "where": "git archive of dc57096 in atlas-aci-dev-s16, uid 1000, test_s08 nonregular_pack deselected",
+  "result": "1 failed, 2092 passed, 10 skipped, 1 deselected in 691.09s",
+  "exit": 1,
+  "failed": [
+   "tests/slices/test_s01_contract.py::test_call_deadline_after_initialization (known, uid 1000)"
+  ],
+  "log": "base-pytest.log.gz"
+ },
+ "ci_reference": {
+  "run": "41983362217",
+  "result": "2094 passed, 10 skipped"
+ }
+}

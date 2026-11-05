@@ -1,0 +1,17 @@
+.spectra/plans/aci-s30.*
+.spectra/plans/ramza-calibration.jsonl
+.spectra/changes/aci-s30/*
+.spectra/evidence/aci-s30/**
+.spectra/state/aci-s30.execution.json
+.spectra/backlog/execution.json
+.spectra/backlog/order.md
+mcp-server/src/atlas_aci/cross_repo/__init__.py
+mcp-server/src/atlas_aci/cross_repo/package_links.py
+mcp-server/src/atlas_aci/cross_repo/revision_vector.py
+mcp-server/src/atlas_aci/__main__.py
+mcp-server/tests/slices/test_s30_cross_repo.py
+mcp-server/tests/slices/test_s30_*.py
+mcp-server/tests/fixtures/cross_repo/**
+docs/cross-repository-links.md
+CHANGELOG.md
+README.md

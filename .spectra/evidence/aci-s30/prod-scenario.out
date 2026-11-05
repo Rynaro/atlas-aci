@@ -1,0 +1,56 @@
+tools: cmp=/usr/bin/cmp sha256sum=/sbin/sha256sum shasum=/usr/bin/shasum
+image: atlas-aci:s30  scratch: /var/folders/z5/grxl_h6977g51gyzg_qlfzh00000gn/T//s30-prod.bWg6RP
+PASS  indexed app snapshot id length = 64
+PASS  indexed lib snapshot id length = 64
+PASS  indexed other snapshot id length = 64
+PASS  package snapshot written = yes
+PASS  link exit (first) = 0
+PASS  link exit (second) = 0
+PASS  overlay bytes identical across two runs = yes
+PASS  summary stdout identical across two runs = yes
+PASS  links = 7
+PASS  binding state = bound
+PASS  provider state = available
+PASS  mapped vector order = consumer,provider
+PASS  summary links = 7
+PASS  repo and graph inventory unchanged by two links = same
+PASS  impact (live provider) exit = 0
+PASS  impact (live provider) results = 7
+PASS  impact from_provider results = 1
+PASS  inventory unchanged by impact = same
+PASS  provider snapshot changed = yes
+PASS  refresh against the moved provider exit = 0
+PASS  provider unavailable detail = snapshot_not_active
+PASS  no links while unavailable = 0
+PASS  links invalidated (unavailable) = 7
+PASS  refresh exit = 0
+PASS  refreshed links = 7
+PASS  links invalidated (new vector) = 7
+PASS  summary names the invalidation = 7
+PASS  refresh with unchanged inputs exit = 0
+PASS  refresh is a fixpoint (equals a fresh build) = same
+PASS  impact (provider moved) exit = 0
+PASS  impact boundary kinds = missing_provider_snapshot
+PASS  impact results = 0
+PASS  impact status = potential_impact
+PASS  boundary detail = snapshot_not_active
+PASS  boundary at = reference
+PASS  from_provider boundary = missing_provider_snapshot
+PASS  overlay of another mapping refused (exit) = 1
+PASS  allowlist rejection exit = 1
+PASS  allowlist rejection stdout bytes = 0
+PASS  allowlist rejection text = Error: Cross-repository link rejected: repository_not_allowlisted
+PASS  lock rejection exit = 1
+PASS  lock rejection stdout bytes = 0
+PASS  lock rejection text = Error: Cross-repository link rejected: lock_digest_mismatch
+PASS  usage exit = 2
+PASS  usage stdout bytes = 0
+PASS  usage text = Error: Invalid cross-repository limit: max_references
+PASS  output inside a repository exit = 2
+PASS  no overlay written by a rejection = absent
+PASS  inventory unchanged by impact and rejections (after the provider moved) = same
+PASS  no temporary overlay file remains = 0
+2026-11-05T08:34:28.641595Z [warning  ] memex_root_not_writable        error="[Errno 30] Read-only file system: '/w/app/.atlas'" memex_root=/w/app/.atlas/memex
+PASS  tools JSON sha256 = 94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56
+PASS  tools JSON bytes = 1631472
+RESULT: all checks passed (scratch kept at /var/folders/z5/grxl_h6977g51gyzg_qlfzh00000gn/T//s30-prod.bWg6RP)

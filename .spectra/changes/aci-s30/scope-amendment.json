@@ -1,0 +1,155 @@
+{
+ "slice_id": "ACI-S30",
+ "base_commit": "dc57096f60c3810692acb1fb1b6fa2ad4e2e90e0",
+ "recorded_before_implementation": true,
+ "declared_by_issue": [
+  "mcp-server/src/atlas_aci/cross_repo/package_links.py",
+  "mcp-server/src/atlas_aci/cross_repo/revision_vector.py",
+  "mcp-server/src/atlas_aci/__main__.py",
+  "mcp-server/tests/slices/test_s30_cross_repo.py",
+  "mcp-server/tests/fixtures/cross_repo/",
+  "docs/cross-repository-links.md"
+ ],
+ "glob_depth_clarifications": [
+  {
+   "path": "mcp-server/tests/fixtures/cross_repo/**",
+   "reason": "Flat directory, JSON only (no .py, nothing collected or linted): mapping-example.json (D2 shape with zero-hex ids, embedded verbatim in the docs) and world.json (consumer/provider file texts); wheels, locks, package snapshots, repos and graphs are generated in tmp_path from the S28 generator; no golden overlays because snapshot ids depend on absolute paths"
+  },
+  {
+   "path": "docs/cross-repository-links.md",
+   "reason": "Flat beside docs/architecture-rules.md; no other docs file is touched"
+  }
+ ],
+ "added": [
+  {
+   "path": "mcp-server/src/atlas_aci/cross_repo/__init__.py",
+   "reason": "Package marker for the new cross_repo package; docstring only"
+  },
+  {
+   "path": "mcp-server/tests/slices/test_s30_*.py",
+   "reason": "test_s30_support.py, test_s30_rejections.py, test_s30_isolation.py beside the declared test file"
+  },
+  {
+   "path": "CHANGELOG.md",
+   "reason": "Separate '- **Cross-repository package links (ACI-S30).**' bullet at the top of '### Added'; it contains none of the locator titles 'Python dependency surface', 'OpenTelemetry trace import', 'OpenAPI 3.1 contract import'"
+  },
+  {
+   "path": "README.md",
+   "reason": "One docs-table row after the python-dependencies row; it contains none of docs/importers/openapi.md, docs/importers/opentelemetry.md, docs/importers/python-dependencies.md, docs/frameworks/rails.md, canary-missions.md; first cut item"
+  },
+  {
+   "path": ".spectra/plans/aci-s30.*",
+   "reason": "Ramza plan, criteria, state, scope, review, issue snapshot"
+  },
+  {
+   "path": ".spectra/plans/ramza-calibration.jsonl",
+   "reason": "Ramza calibration append"
+  },
+  {
+   "path": ".spectra/changes/aci-s30/*",
+   "reason": "This amendment"
+  },
+  {
+   "path": ".spectra/evidence/aci-s30/**",
+   "reason": "Day-1 qualification, base invariants, gate logs, py314 log, make-world.py, prod-image.sh and outputs"
+  },
+  {
+   "path": ".spectra/state/aci-s30.execution.json",
+   "reason": "Authoritative execution receipt (AC-RUN-01/02)"
+  },
+  {
+   "path": ".spectra/backlog/execution.json",
+   "reason": "Backlog status update"
+  },
+  {
+   "path": ".spectra/backlog/order.md",
+   "reason": "Backlog order update"
+  }
+ ],
+ "prior_test_edits": [],
+ "interpretations": [
+  {
+   "topic": "AC-001 validated snapshots",
+   "decision": "Strict three-way bind: consumer uv.lock bytes equal the mapping lock_sha256 and select_package yields the locked coordinate (lock-to-consumer binding recorded as operator_declared); the S28 package snapshot bytes equal the mapping sha256, pass validate_snapshot and equal canonical_bytes; the provider active snapshot equals the mapped id and every python_source member at source_prefix+path has an indexed observation whose observed_source_sha256 equals the member sha256; the consumer lease equals its mapped id"
+  },
+  {
+   "topic": "AC-001 exact ordered revision vector",
+   "decision": "[{role consumer, repository_id, snapshot_id}, {role provider, ...}] from the mapping (operator labels bound to concrete roots by the snapshot ids), copied in full into every link record; vector_digest is embedded in every link id"
+  },
+  {
+   "topic": "AC-002 different package version or source digest",
+   "decision": "A per-reference resolution unresolved_version_mismatch (never a whole-run rejection) with closed details coordinate_differs, artifact_digest_differs, lock_digest_differs, environment_differs, source_member_missing, source_digest_differs; rejections are reserved for malformed inputs, bytes that differ from a digest declared in the mapping, invalid snapshots and consumer lease failures"
+  },
+  {
+   "topic": "AC-003 exact provider snapshot unavailable",
+   "decision": "Single-generation graph: available only when the provider active snapshot id equals the mapped id; otherwise a missing_provider_snapshot boundary with detail snapshot_not_active, index_unavailable, source_snapshot_unavailable or index_upgrade_required, and no provider SQL after the lease"
+  },
+  {
+   "topic": "AC-004 invalidate links of the superseded vector",
+   "decision": "--previous refresh records supersedes {overlay_id, vector_digest, links_invalidated, invalidated_link_ids sorted, capped at the constant 10000 with a truncation flag}; equal fresh output gives supersedes null and byte identity (fixpoint); impact refuses an overlay whose consumer snapshot is no longer active (stale_revision_vector)"
+  },
+  {
+   "topic": "AC-005 different input load orders",
+   "decision": "The overlay records a canonical mapping digest (role-ordered, key-order and whitespace independent); variants: swapped repositories, reordered keys and environment, moved input files, permuted CLI options, PYTHONHASHSEED, fresh graph roots at the same repo paths (subject to Day-1 (e)), --previous fixpoint"
+  },
+  {
+   "topic": "AC-006 within the mapped repositories",
+   "decision": "Roots come only from role-keyed CLI options; a mapping or overlay naming any other repository id is rejected repository_not_allowlisted before any CodeGraph is constructed; proven with constructor and lease call counting and an indexed sentinel third repository"
+  },
+  {
+   "topic": "AC-007 canonical fact store unchanged",
+   "decision": "No graph write path is reachable (read-only leases, mode=ro); SHA-256, size, mode and mtime inventories of both repositories, both graph roots, the sentinel and the inputs are equal before and after every command, including every rejection path; only --output is written"
+  }
+ ],
+ "not_touched_follow_up": [
+  {
+   "path": "mcp-server/src/atlas_aci/codegraph.py",
+   "reason": "Conditional absolute imports stay indistinguishable (limitation 3); persisting cross-repository links is out of scope"
+  },
+  {
+   "path": "mcp-server/src/atlas_aci/overlays/runtime.py",
+   "reason": "Imported read-only (open_active, OverlayRejected, resolve_output, OverlayUsageError); not modified"
+  },
+  {
+   "path": "mcp-server/src/atlas_aci/dependencies/",
+   "reason": "S28 API consumed (select_package, validate_snapshot, canonical_bytes); exclude_members and generated-member handling are follow-ups"
+  }
+ ],
+ "explicitly_untouched_gated": [
+  "mcp-server/src/atlas_aci/server.py",
+  "mcp-server/src/atlas_aci/enforcement.py",
+  "mcp-server/src/atlas_aci/config.py",
+  "mcp-server/src/atlas_aci/codegraph.py",
+  "mcp-server/src/atlas_aci/protocol/",
+  "mcp-server/src/atlas_aci/query/",
+  "mcp-server/src/atlas_aci/tools/",
+  "mcp-server/src/atlas_aci/storage/",
+  "mcp-server/src/atlas_aci/extractors/",
+  "mcp-server/src/atlas_aci/providers/",
+  "mcp-server/src/atlas_aci/indexing/",
+  "mcp-server/src/atlas_aci/resolvers/",
+  "mcp-server/src/atlas_aci/frameworks/",
+  "mcp-server/src/atlas_aci/architecture/",
+  "mcp-server/src/atlas_aci/counterfactual/",
+  "mcp-server/src/atlas_aci/contracts/",
+  "mcp-server/src/atlas_aci/importers/",
+  "mcp-server/src/atlas_aci/overlays/",
+  "mcp-server/src/atlas_aci/dependencies/",
+  "mcp-server/src/atlas_aci/reports/",
+  "mcp-server/pyproject.toml",
+  "mcp-server/uv.lock",
+  "mcp-server/Dockerfile",
+  "mcp-server/Dockerfile.dev",
+  ".github/workflows/"
+ ],
+ "invariants": {
+  "tools_json_sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+  "tools_json_bytes": 1631472,
+  "READ_ONLY_TOOLS_count": 7,
+  "MINIMUM_BUDGET": 3436,
+  "COLLECTION_MINIMUM_BUDGET": 3448,
+  "FIXED_ERROR_ENVELOPE_CAP": 797,
+  "IMPACT_MINIMUM_BUDGET": 7730,
+  "criteria_sha256": "421bbc3c1ae66686eb7fc81a452cb684881a3bd2f17dcdde22ffd83693777df8"
+ }
+}

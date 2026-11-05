@@ -9,6 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Cross-repository package links (ACI-S30).** New operator commands
+  `atlas-aci cross-repo-link --mapping M --lock L --package-snapshot P --consumer-repo D
+  [--consumer-graph-root G] --provider-repo D [--provider-graph-root G] [--previous O]
+  --output OUT [limits]` and `atlas-aci cross-repo-impact --overlay O --mapping M --seed HEX
+  --direction {from_provider,to_provider} --consumer-repo D --provider-repo D [budgets]`
+  (CLI only, no MCP op) and the libraries `atlas_aci.cross_repo.revision_vector` and
+  `atlas_aci.cross_repo.package_links`. One Python consumer and one provider are linked by an
+  exact revision vector: an explicit mapping names both snapshot ids, the consumer's `uv.lock`,
+  the S28 package snapshot and the provider's indexed sources must agree byte for byte, and a
+  module-level `from pkg import name` of the locked package becomes a link to the one provider
+  declaration, carrying the ordered consumer/provider vector. A different package version or
+  source digest leaves the reference `unresolved_version_mismatch`; every other case is a closed,
+  typed state. The result is a standalone, content-addressed `atlas-cross-repo-overlay.v1` written
+  only to `--output` from read-only leases of both active snapshots: it does not write the graph
+  and never discovers, clones or fetches anything. A link is not a call
+  (`call_semantics: not_claimed`). `--previous` refreshes an overlay and records which links the
+  changed vector invalidated; `cross-repo-impact` walks one step in either direction and returns a
+  `missing_provider_snapshot` boundary when the mapped provider snapshot is not the active one.
+  See [`docs/cross-repository-links.md`](docs/cross-repository-links.md).
 - **Python dependency surface from a uv lock and a local wheel (ACI-S28).** New operator command
   `atlas-aci import-python-dependency --lock uv.lock --package NAME [--env KEY=VALUE]...
   [--wheel PATH]... --output OUT [limits]` (CLI only, no MCP op) and the libraries
