@@ -1,0 +1,184 @@
+{
+ "slice_id": "ACI-S35",
+ "base_commit": "bd6da8987f0ab902cf6cbc708b5b188b0ce1dd6b",
+ "recorded_before_implementation": true,
+ "declared_by_issue": [
+  "mcp-server/src/atlas_aci/feedback/outcomes.py",
+  "mcp-server/src/atlas_aci/feedback/ranking.py",
+  "mcp-server/src/atlas_aci/__main__.py",
+  "mcp-server/tests/slices/test_s35_feedback_overlay.py",
+  "mcp-server/tests/fixtures/feedback/",
+  "docs/verified-feedback.md"
+ ],
+ "glob_depth_clarifications": [
+  {
+   "path": "mcp-server/tests/fixtures/feedback/**",
+   "reason": "Flat directory: world.json (before/unrelated/after/removed file maps) and ASCII pytest-layout JUnit XML variants (junit-outcomes, junit-second, junit-doctype, junit-pi, junit-comment, junit-namespace, junit-depth, junit-nodecl, junit-misplaced); no .py, no nested .git; envelopes, records and stores are generated in tmp_path because ids embed absolute paths"
+  },
+  {
+   "path": "docs/verified-feedback.md",
+   "reason": "Flat at docs/ root beside docs/rationale-drift.md; no other docs file is touched"
+  }
+ ],
+ "added": [
+  {
+   "path": "mcp-server/src/atlas_aci/feedback/__init__.py",
+   "reason": "Package marker for the new feedback package; docstring only, no import token"
+  },
+  {
+   "path": "mcp-server/tests/slices/test_s35_*.py",
+   "reason": "test_s35_support.py (world builder over test_s19_support write_tree/build, MCP record producer, envelope builder with an independent run_id, reuse of test_s34_support stat_inventory/cli_run without editing it), test_s35_outcomes.py, test_s35_ranking.py, test_s35_isolation.py beside the declared test file"
+  },
+  {
+   "path": "CHANGELOG.md",
+   "reason": "Separate '- **Verified test-outcome feedback (ACI-S35).**' bullet placed FOURTH under Unreleased/Added, directly after the S34 bullet (CHANGELOG.md:49) and before S28 (:66): bullets[0..2] stay S30/S33/S34 (test_s30_isolation.py:563-565, test_s33_isolation.py:436-441, test_s34_isolation.py:534-540, which needs bullets[3] to exist); single bullet with no continuation line starting '- **'; contains none of 'Cross-repository package links', 'Git co-change correlation', 'ADR rationale review signals', 'Python dependency surface', 'OpenTelemetry trace import', 'OpenAPI 3.1 contract import'"
+  },
+  {
+   "path": "README.md",
+   "reason": "One two-cell docs-table row placed directly after the docs/rationale-drift.md row (README.md:948), so readme[history+1] stays the rationale row (test_s34_isolation.py:562-563) and the rails row keeps its own pins (test_s26_isolation.py:1705-1706); contains none of the prior docs locators, evidence-reports.md or canary-missions.md; outside the TSX section; cut item 5"
+  },
+  {
+   "path": ".spectra/plans/aci-s35.*",
+   "reason": "Ramza plan, criteria, state, scope, review, issue snapshot"
+  },
+  {
+   "path": ".spectra/plans/ramza-calibration.jsonl",
+   "reason": "Ramza calibration append"
+  },
+  {
+   "path": ".spectra/changes/aci-s35/*",
+   "reason": "This amendment"
+  },
+  {
+   "path": ".spectra/evidence/aci-s35/**",
+   "reason": "Day-1 qualify.py and qualification.json, pytest JUnit capture, expat cross-interpreter results, base invariants, gate logs, py314 log, make-record.py, prod-image.sh and outputs"
+  },
+  {
+   "path": ".spectra/state/aci-s35.execution.json",
+   "reason": "Authoritative execution receipt (AC-RUN-01/02)"
+  },
+  {
+   "path": ".spectra/backlog/execution.json",
+   "reason": "Backlog status update"
+  },
+  {
+   "path": ".spectra/backlog/order.md",
+   "reason": "Backlog order update"
+  }
+ ],
+ "prior_test_edits": [],
+ "interpretations": [
+  {
+   "topic": "AC-001 verified_artifact",
+   "decision": "An event is recorded only after D5 stages 1-17 pass: full S18 record validated by validate_context with id equality, record snapshot/generation equal to the leased active snapshot, artifact size and sha256 equal to the envelope, run_id re-derived from artifact/producer/snapshot independently of claims, results present in the record with (path, source_sha256) equal to the snapshot's indexed observations, outcome derived from atlas-junit-xml-profile.v1 equal to the claim; the event carries retrieval record id, run identity, artifact digest and snapshot ids; attestation operator_declared"
+  },
+  {
+   "topic": "AC-002 unverifiable_outcome",
+   "decision": "Disagreement (derived != claimed), non-objective outcome (skipped, error, duplicate, mixed), absent selector, and missing provenance (no artifact, run or selector, or claims without --artifact) all reject the import as unverifiable_outcome with a closed detail; import is all-or-nothing, exit 1, empty stdout, output and store untouched; free text never verifies"
+  },
+  {
+   "topic": "AC-003 canonical facts",
+   "decision": "Both commands only lease the graph read-only through open_active; nothing is written except --output by feedback-import (outside repo, repo/.atlas and graph root, atomic); feedback-rank writes nothing; inventories, db digests and table counts unchanged on success, rejection and usage paths"
+  },
+  {
+   "topic": "AC-004 explained overlay",
+   "decision": "Opt-in only via --overlay atlas-feedback-ranking-policy.v1 with --store; each adjusted entry exposes adjustment{delta, rule, supporting_event_ids sorted}; failed outcomes recorded with scored false; annotations counted, never scored; policy_id printed"
+  },
+  {
+   "topic": "AC-005 stale exclusion",
+   "decision": "Event active only if every referenced (path, source_sha256) equals the queried snapshot's indexed observation AND (snapshot_id, generation_id) equals the queried pair; closed reasons path_not_indexed, source_fingerprint_mismatch, generation_mismatch in that precedence; every excluded event listed"
+  },
+  {
+   "topic": "AC-006 idempotence",
+   "decision": "Content-addressed event ids excluding operator labels and envelope order; dedup key (retrieval_record_id, artifact_sha256, selector); identical reimport merges to byte-identical store; differing bytes under one key reject conflicting_duplicate; sidecar bytes identical for identical store, snapshot and policy"
+  },
+  {
+   "topic": "AC-007 disabled baseline",
+   "decision": "Without --overlay the store is not read and the ranking is the identity permutation of the unchanged S18 context() result, equal to the MCP graph_query op=context bundle order for the same request"
+  },
+  {
+   "topic": "S22 compatibility (checker condition 12)",
+   "decision": "Compatibility with S22 means field names and the selector kind only: run_id, selector kind pytest_nodeid, snapshot_id and generation_id. The S35 run_id is sha256('atlas-test-run.v1:' + canonical JSON of the artifact profile, digest and size, the producer and the snapshot pair): a different domain from the S22 coverage_run_id, never a consumed or shared run identity, and no S22 artifact is read"
+  },
+  {
+   "topic": "Checker conditions 1-12 (binding)",
+   "decision": "NODEID path grammar [A-Za-z0-9_/-]{1,512} plus one trailing .py; store is self-consistent, not authenticated (LIMITATION 12, attestation operator_declared echoed per active event); truncated baselines are never rejected and the sidecar carries collection_stop (LIMITATION 13, disabled means no --overlay only); request validated through request_mode and context_limits.normalize with text required first; baseline position 0 pinned (policy pinned baseline_position_0); passed means no direct failure, error or skipped child; load_record also catches RecursionError and MemoryError; scoring matches bundle ids against the live baseline only (LIMITATION 3 says records are self-consistent, not replayed); held-out evaluation folds by retrieval record id; a changed annotation note is a conflicting_duplicate; a junit error is not objective; the memex root sits outside every inventoried tree and the saved record is the tool result structuredContent"
+  },
+  {
+   "topic": "Allowed source import (checker condition 4)",
+   "decision": "feedback/ may also import atlas_aci.protocol.graph (request_mode and validate_context); atlas_aci.protocol.context is not imported directly because it must load after atlas_aci.protocol.graph"
+  }
+ ],
+ "not_touched_follow_up": [
+  {
+   "path": "mcp-server/src/atlas_aci/query/context.py",
+   "reason": "context() called as a library with a duck-typed BaselineSettings; not modified"
+  },
+  {
+   "path": "mcp-server/src/atlas_aci/protocol/context.py",
+   "reason": "validate_context imported; not modified"
+  },
+  {
+   "path": "mcp-server/src/atlas_aci/overlays/runtime.py",
+   "reason": "open_active, OBSERVATIONS_SQL, resolve_output, canonical_bytes, ATTESTATION, SCHEMA_EPOCHS, OverlayRejected, OverlayUsageError imported; write_atomic not reused (own temp prefix); not modified"
+  },
+  {
+   "path": "mcp-server/src/atlas_aci/cross_repo/revision_vector.py",
+   "reason": "load_strict imported; not modified"
+  },
+  {
+   "path": "mcp-server/src/atlas_aci/config.py",
+   "reason": "DEFAULT_MAX_RESPONSE_BYTES and DEFAULT_MAX_BOUND_FIELD_ELEMENTS imported; Config never constructed; not modified"
+  }
+ ],
+ "explicitly_untouched_gated": [
+  "mcp-server/src/atlas_aci/server.py",
+  "mcp-server/src/atlas_aci/enforcement.py",
+  "mcp-server/src/atlas_aci/config.py",
+  "mcp-server/src/atlas_aci/codegraph.py",
+  "mcp-server/src/atlas_aci/protocol/",
+  "mcp-server/src/atlas_aci/query/",
+  "mcp-server/src/atlas_aci/tools/",
+  "mcp-server/src/atlas_aci/storage/",
+  "mcp-server/src/atlas_aci/extractors/",
+  "mcp-server/src/atlas_aci/providers/",
+  "mcp-server/src/atlas_aci/indexing/",
+  "mcp-server/src/atlas_aci/resolvers/",
+  "mcp-server/src/atlas_aci/frameworks/",
+  "mcp-server/src/atlas_aci/architecture/",
+  "mcp-server/src/atlas_aci/counterfactual/",
+  "mcp-server/src/atlas_aci/contracts/",
+  "mcp-server/src/atlas_aci/importers/",
+  "mcp-server/src/atlas_aci/overlays/",
+  "mcp-server/src/atlas_aci/dependencies/",
+  "mcp-server/src/atlas_aci/cross_repo/",
+  "mcp-server/src/atlas_aci/history/",
+  "mcp-server/src/atlas_aci/rationale/",
+  "mcp-server/src/atlas_aci/reports/",
+  "mcp-server/pyproject.toml",
+  "mcp-server/uv.lock",
+  "mcp-server/Dockerfile",
+  "mcp-server/Dockerfile.dev",
+  ".github/workflows/"
+ ],
+ "invariants": {
+  "tools_json_sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+  "tools_json_bytes": 1631472,
+  "READ_ONLY_TOOLS_count": 7,
+  "MINIMUM_BUDGET": 3436,
+  "COLLECTION_MINIMUM_BUDGET": 3448,
+  "FIXED_ERROR_ENVELOPE_CAP": 797,
+  "IMPACT_MINIMUM_BUDGET": 7730,
+  "ev_RELATIONS": [
+   "call",
+   "construct",
+   "extend",
+   "import",
+   "include",
+   "prepend",
+   "rationale_for",
+   "superclass"
+  ],
+  "criteria_sha256": "f4d64ce3859e8ea711b23775a1e276204172ab5cf0b5fd8f5ab259f7484856c7"
+ }
+}

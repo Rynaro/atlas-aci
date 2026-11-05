@@ -1,7 +1,7 @@
 {
   "schema": "atlas-aci/backlog-execution.v1",
   "repository": "Rynaro/atlas-aci",
-  "updated_at": "2026-11-05T10:35:44.075480+00:00",
+  "updated_at": "2026-11-05T15:02:46.192872+00:00",
   "status": "IN_PROGRESS",
   "authorization": {
     "source": "Standing user instruction relayed by root: continue all open issues until cleared; validated merges and main sync automatically authorized",
@@ -62,10 +62,10 @@
     62,
     63
   ],
-  "current_issue": 55,
-  "next_issue": 56,
-  "completed_issue_count": 34,
-  "remaining_issue_count": 8,
+  "current_issue": 56,
+  "next_issue": 57,
+  "completed_issue_count": 35,
+  "remaining_issue_count": 7,
   "queue_basis": "Agreed serial priority and declared dependency DAG from authoritative root inventory; reverify each live issue contract at pickup",
   "selection_policy": "All initially open issues selected, including optional branches; S23 release-gate contract is not silently changed",
   "dependency_constraints": [
@@ -471,19 +471,20 @@
     {
       "issue": 55,
       "slice_id": "ACI-S34",
-      "status": "IN_PROGRESS",
+      "status": "MERGED",
       "plan_path": ".spectra/plans/aci-s34.md",
       "receipt_path": ".spectra/state/aci-s34.execution.json",
-      "pull_request": null,
-      "merge_commit": null,
-      "blockers": []
+      "pull_request": 100,
+      "merge_commit": "bd6da8987f0ab902cf6cbc708b5b188b0ce1dd6b",
+      "blockers": [],
+      "merge_evidence": "gh pr view 100: MERGED 2026-11-05T15:02:29Z after green CI (run 42047653138: 2333 passed, 10 skipped); COMPLETE receipt"
     },
     {
       "issue": 56,
-      "slice_id": null,
-      "status": "QUEUED",
-      "plan_path": null,
-      "receipt_path": null,
+      "slice_id": "ACI-S35",
+      "status": "IN_PROGRESS",
+      "plan_path": ".spectra/plans/aci-s35.md",
+      "receipt_path": ".spectra/state/aci-s35.execution.json",
       "pull_request": null,
       "merge_commit": null,
       "blockers": []

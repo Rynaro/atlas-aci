@@ -1,0 +1,48 @@
+{
+ "COLLECTION_MINIMUM_BUDGET": 3448,
+ "FIXED_ERROR_ENVELOPE_CAP": 797,
+ "IMPACT_MINIMUM_BUDGET": 7730,
+ "MINIMUM_BUDGET": 3436,
+ "READ_ONLY_TOOLS": [
+  "graph_query",
+  "list_dir",
+  "memex_read",
+  "search_symbol",
+  "search_text",
+  "test_dry_run",
+  "view_file"
+ ],
+ "READ_ONLY_TOOLS_count": 7,
+ "changelog_first_bullets": [
+  "- **Cross-repository package links (ACI-S30).** New operator",
+  "- **Git co-change correlation (ACI-S33).** New operator comm",
+  "- **ADR rationale review signals (ACI-S34).** New operator c",
+  "- **Verified test-outcome feedback (ACI-S35).** New operator",
+  "- **Python dependency surface from a uv lock and a local whe"
+ ],
+ "criteria_sha256": "f4d64ce3859e8ea711b23775a1e276204172ab5cf0b5fd8f5ab259f7484856c7",
+ "ev_RELATIONS": [
+  "call",
+  "construct",
+  "extend",
+  "import",
+  "include",
+  "prepend",
+  "rationale_for",
+  "superclass"
+ ],
+ "full_suite_at_base": {
+  "command": "pytest -q -p no:cacheprovider --deselect tests/slices/test_s08_integration.py::test_nonregular_pack_does_not_block_acquisition",
+  "failed": [
+   "tests/slices/test_s01_contract.py::test_call_deadline_after_initialization"
+  ],
+  "note": "the failure is the known pre-existing uid 1000 failure; CI at the base commit (run 42047653138): 2333 passed, 10 skipped",
+  "result": "1 failed, 2331 passed, 10 skipped, 1 deselected in 763.55s (0:12:43)"
+ },
+ "readme_history_row_line": 947,
+ "readme_row_after_history": "| [`docs/rationale-drift.md`](docs/rationale-drift.md) | Explicit ADR-to-source ",
+ "readme_row_after_that": "| [`docs/verified-feedback.md`](docs/verified-feedback.md) | Verified test-outco",
+ "tools_json_bytes": 1631472,
+ "tools_json_sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+ "tree": "git archive bd6da89 (read-only copy mounted at /ws in the dev image, uid 1000)"
+}

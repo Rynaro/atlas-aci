@@ -63,6 +63,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (`atlas-rationale-overlay.v1`, `atlas-rationale-drift.v1`) written only to `--output` from
   read-only leases; they do not write the graph or the ADRs.
   See [`docs/rationale-drift.md`](docs/rationale-drift.md).
+- **Verified test-outcome feedback (ACI-S35).** New operator commands `atlas-aci feedback-import
+  --repo D [--graph-root G] --envelope E --retrieval-record R [--artifact A] [--store S]
+  --output OUT [limits]` and `atlas-aci feedback-rank --repo D [--graph-root G] --request Q
+  [--overlay atlas-feedback-ranking-policy.v1 --store S] [limits]` (CLI only, no MCP op) and the
+  libraries `atlas_aci.feedback.outcomes` and `atlas_aci.feedback.ranking`. An operator claims
+  that a retrieved result was exercised by a pytest test that passed or failed; the claim becomes
+  a `verified_artifact` event only when the JUnit XML artifact (digest, size, declared run
+  identity), the saved retrieval record and the leased snapshot all bear it out, otherwise the
+  whole import is rejected as `unverifiable_outcome`.
+  The artifact digest proves bytes, not that a run occurred: producer and run are
+  `operator_declared`, and annotations stay unverified and are never scored. The optional overlay moves a bundle at most three slots up for each distinct
+  verified artifact and selector, lists the supporting event ids of every adjustment and keeps
+  failed outcomes recorded, not scored. An event is active only while its sources match the
+  queried snapshot and generation; events from another generation are never active. With no
+  `--overlay` the order is the unchanged baseline ranker's. Results are standalone,
+  content-addressed documents; feedback processing does not write the graph.
+  See [`docs/verified-feedback.md`](docs/verified-feedback.md).
 - **Python dependency surface from a uv lock and a local wheel (ACI-S28).** New operator command
   `atlas-aci import-python-dependency --lock uv.lock --package NAME [--env KEY=VALUE]...
   [--wheel PATH]... --output OUT [limits]` (CLI only, no MCP op) and the libraries

@@ -1,0 +1,54 @@
+{
+ "slice": "ACI-S35",
+ "base_commit": "bd6da8987f0ab902cf6cbc708b5b188b0ce1dd6b",
+ "environment": "atlas-aci-dev-s16 (uid 1000, Python 3.12); CI is Python 3.14 (S35 tests: 210 passed on python:3.14.10, expat_2.9.0)",
+ "gates": {
+  "s35-contract": {
+   "exit": 0,
+   "summary": "171 passed in 14.4s; tests/slices/test_s35_{feedback_overlay,support,outcomes,ranking,isolation}.py; orchestrator rerun with s33 and s34 isolation: 189 passed; the seven AC tests rerun verbosely: 7 passed"
+  },
+  "regression": {
+   "exit": 0,
+   "summary": "388 passed, 1 skipped (s14, s18, s22, s23, s26-s30, s33, s34, s37, thesis_negatives, export)"
+  },
+  "ruff": {
+   "exit": 0
+  },
+  "format": {
+   "exit": 0
+  },
+  "mypy": {
+   "exit": 0,
+   "summary": "orchestrator reran the exact CI lint chain: clean"
+  },
+  "full-suite": {
+   "exit": 1,
+   "summary": "1 failed, 2502 passed, 10 skipped, 1 deselected in 796.98s; single failure is the pre-existing tests/slices/test_s01_contract.py::test_call_deadline_after_initialization (uid 1000); deselected test_s08_integration::test_nonregular_pack_does_not_block_acquisition (known flaky). Base at bd6da89: same single failure, 2331 passed."
+  },
+  "g-src": {
+   "exit": 0,
+   "summary": "gated paths byte-identical vs bd6da89; changed src == {__main__.py, feedback/__init__.py, feedback/outcomes.py, feedback/ranking.py}; no tracked test modified"
+  },
+  "g-mcp": {
+   "exit": 0,
+   "summary": "tools JSON sha256 94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56, 1631472 bytes, 7 tools"
+  },
+  "py314": {
+   "exit": 0,
+   "summary": "S35 tests 210 passed on python:3.14.10 (pyexpat expat_2.9.0)"
+  },
+  "g-image": {
+   "exit": 0,
+   "summary": "orchestrator ran prod-scenario.sh against atlas-aci:s35: 54 PASS, 0 FAIL; record via the MCP code path (6 bundles, collection_stop None); two imports byte-identical (2 events, 1 annotation), re-import duplicate_events 2; forged claim exit 1 unverifiable_outcome claim_disagrees_with_artifact with empty stdout and no output; missing artifact missing_provenance; disabled ranking equals the record's bundle order and record id; overlay adjustment 5->4 citing the passed event, failed event active and unscored, annotation counted never scored; usage exit 2; after editing app/payments.py and re-indexing both events excluded as source_fingerprint_mismatch with baseline order; repository, .git and graph inventories unchanged; tools pin"
+  }
+ },
+ "acceptance_tests": {
+  "AC-S35-001": "tests/slices/test_s35_feedback_overlay.py::test_feedback_verified_event_requires_artifact PASSED",
+  "AC-S35-002": "tests/slices/test_s35_feedback_overlay.py::test_feedback_forged_success_is_rejected PASSED",
+  "AC-S35-003": "tests/slices/test_s35_feedback_overlay.py::test_feedback_overlay_preserves_canonical_facts PASSED",
+  "AC-S35-004": "tests/slices/test_s35_feedback_overlay.py::test_feedback_opt_in_ranking_is_explained PASSED",
+  "AC-S35-005": "tests/slices/test_s35_feedback_overlay.py::test_feedback_stale_source_is_excluded PASSED",
+  "AC-S35-006": "tests/slices/test_s35_feedback_overlay.py::test_feedback_reimport_is_idempotent PASSED",
+  "AC-S35-007": "tests/slices/test_s35_feedback_overlay.py::test_feedback_disabled_preserves_baseline PASSED"
+ }
+}

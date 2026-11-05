@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><?pi target?><testsuites><testsuite name="pytest"><testcase classname="tests.test_payments" name="test_process_payment_ok" time="0.001" /></testsuite></testsuites>

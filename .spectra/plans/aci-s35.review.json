@@ -1,0 +1,82 @@
+{
+ "slice_id": "ACI-S35",
+ "plan": ".spectra/plans/aci-s35.md",
+ "author": "orchestrator-ramza-plan-s35",
+ "checker": "atlas-s35-plan-checker",
+ "verdict": "APPROVE_WITH_CONDITIONS",
+ "method": "independent read-only code review; no commands executed",
+ "findings": [
+  {
+   "n": 1,
+   "severity": "MAJOR",
+   "summary": "nodeid to (classname,name) mapping differs from pytest mangle_test_address (replace('.py','') on every element) and is not injective (a/b.py vs a.b.py); restrict NODEID path grammar to one trailing .py with no other dot, add negative rows and a Day-1 case",
+   "disposition": "accepted as plan condition 1"
+  },
+  {
+   "n": 2,
+   "severity": "MAJOR",
+   "summary": "validate_store is self-consistency only, so a hand-authored store mints verified_artifact events at feedback-rank and via --store PREV; add LIMITATION store_is_self_consistent_not_authenticated, echo attestation on active events, pin with a test",
+   "disposition": "accepted as plan condition 2"
+  },
+  {
+   "n": 3,
+   "severity": "MAJOR",
+   "summary": "baseline is wall-clock bounded (context_deadline 2000 ms, context_work.py:52-54); assert collection_stop None in all fixture requests, 20-replay qualification, add a limitation; do not reject truncated baselines",
+   "disposition": "accepted as plan condition 3"
+  },
+  {
+   "n": 4,
+   "severity": "MINOR",
+   "summary": "parse_request omits request_mode and schema acceptance; missing text is an uncaught KeyError; catch and map to invalid_request and assert MCP accepts the same request",
+   "disposition": "accepted as plan condition 4"
+  },
+  {
+   "n": 5,
+   "severity": "MINOR",
+   "summary": "assert reader query_limit and repo string equality with the MCP reader; CLI/baseline tests must be sync because of asyncio.run",
+   "disposition": "accepted as plan condition 5"
+  },
+  {
+   "n": 6,
+   "severity": "MINOR",
+   "summary": "overlay can demote the exact-definition anchor pinned at position 0 (context_admission.py:37-41); pin baseline position 0 (stricter) or document the displacement",
+   "disposition": "accepted as plan condition 6"
+  },
+  {
+   "n": 7,
+   "severity": "MINOR",
+   "summary": "define passed as no direct failure/error/skipped child (properties/system-out are ignored); nested failure not direct; catch collector exceptions on feed and close",
+   "disposition": "accepted as plan condition 7"
+  },
+  {
+   "n": 8,
+   "severity": "MINOR",
+   "summary": "load_record must also catch RecursionError and MemoryError (revision_vector.py:139 precedent)",
+   "disposition": "accepted as plan condition 8"
+  },
+  {
+   "n": 9,
+   "severity": "MINOR",
+   "summary": "AC-004 R3 scenario needs bundle A present in both records by id and at position >=2; pin in Day-1 (a); document cross-query matching by bundle id",
+   "disposition": "accepted as plan condition 9"
+  },
+  {
+   "n": 10,
+   "severity": "MINOR",
+   "summary": "record authenticity is self-consistency only; scoring must use only bundle_id equality with the live baseline, never event positions; reword limitation 3; replay is the optional stricter form",
+   "disposition": "accepted as plan condition 10"
+  },
+  {
+   "n": 11,
+   "severity": "MINOR",
+   "summary": "D10 folds by event id but the issue says held-out records; fold by retrieval.record_id; if cut, record that approach step 4 is undelivered",
+   "disposition": "accepted as plan condition 11"
+  },
+  {
+   "n": 12,
+   "severity": "MINOR",
+   "summary": "docs: run_id is a distinct domain from S22 coverage_run_id; annotation note change conflicts; error not objective; memex root outside inventories; saved record is structuredContent",
+   "disposition": "accepted as plan condition 12"
+  }
+ ]
+}

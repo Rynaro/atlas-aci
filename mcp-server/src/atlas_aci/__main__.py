@@ -2303,5 +2303,273 @@ def rationale_drift(
     )
 
 
+def _write_feedback_atomic(target: Path, data: bytes) -> None:
+    """Write beside `target` (same directory) and `os.replace` it; no partial output remains."""
+    import tempfile
+    from contextlib import suppress
+
+    descriptor, name = tempfile.mkstemp(prefix=".atlas-feedback-", dir=target.parent)
+    try:
+        with os.fdopen(descriptor, "wb") as stream:
+            stream.write(data)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(name, target)
+    except BaseException:
+        with suppress(OSError):
+            os.unlink(name)
+        raise
+
+
+# (name, minimum, maximum, default); the library owns the same table and a test pins the two.
+_FEEDBACK_LIMITS = (
+    ("max_envelope_bytes", 1, 16777216, 1048576),
+    ("max_record_bytes", 1, 67108864, 16777216),
+    ("max_artifact_bytes", 1, 67108864, 8388608),
+    ("max_store_bytes", 1, 268435456, 67108864),
+    ("max_claims", 1, 10000, 1000),
+    ("max_testcases", 1, 1000000, 100000),
+    ("max_events", 1, 100000, 10000),
+    ("max_request_bytes", 1, 1048576, 65536),
+    ("max_output_bytes", 1, 268435456, 67108864),
+)
+
+
+def _feedback_limit_options(names: tuple[str, ...]):
+    table = {row[0]: row for row in _FEEDBACK_LIMITS}
+
+    def decorate(command):
+        for name in reversed(names):
+            _, low, high, default = table[name]
+            command = click.option(
+                "--" + name.replace("_", "-"),
+                name,
+                default=None,
+                type=int,
+                help=f"Limit {low}..{high} (default {default})",
+            )(command)
+        return command
+
+    return decorate
+
+
+def _feedback_usage(what: str) -> click.UsageError:
+    """The fixed usage text of one `FeedbackUsageError` (never the exception's own text)."""
+    texts = {
+        "output_location": "--output must be outside the repository and graph root.",
+        "output_equals_input": "--output must differ from every input.",
+        "graph_namespace": "The repository cannot be opened as a graph namespace.",
+        "store_without_overlay": "--store requires --overlay.",
+        "overlay_without_store": "--overlay requires --store.",
+        "unsupported_policy": "Unsupported ranking policy.",
+    }
+    return click.UsageError(texts.get(what, "Invalid feedback option: " + what))
+
+
+def _read_feedback_input(path: Path | None, limit: int, role: str) -> bytes | None:
+    if path is None:
+        return None
+    return _read_cross_repo_input(path, limit, "Feedback input cannot be read: " + role)
+
+
+@cli.command("feedback-import")
+@click.option(
+    "--repo",
+    required=True,
+    type=click.Path(exists=True, file_okay=False, path_type=Path),
+    help="The repository whose active snapshot the feedback names",
+)
+@_graph_root_option("--graph-root", "External graph root (default: <repo>/.atlas)")
+@click.option(
+    "--envelope",
+    "envelope_path",
+    required=True,
+    type=click.Path(path_type=Path),
+    help="Feedback envelope (JSON, atlas-feedback-envelope.v1)",
+)
+@click.option(
+    "--retrieval-record",
+    "record_path",
+    required=True,
+    type=click.Path(path_type=Path),
+    help="The saved context result (structuredContent) the envelope names",
+)
+@click.option(
+    "--artifact",
+    "artifact_path",
+    default=None,
+    type=click.Path(path_type=Path),
+    help="The pytest JUnit XML artifact; required when the envelope has claims",
+)
+@click.option(
+    "--store",
+    "store_path",
+    default=None,
+    type=click.Path(path_type=Path),
+    help="A previous atlas-feedback-events.v1 store to merge into",
+)
+@click.option(
+    "--output",
+    "output_path",
+    required=True,
+    type=click.Path(dir_okay=False, path_type=Path),
+    help="Where the store is written; outside the repository and graph root",
+)
+@_feedback_limit_options(
+    (
+        "max_envelope_bytes",
+        "max_record_bytes",
+        "max_artifact_bytes",
+        "max_store_bytes",
+        "max_claims",
+        "max_testcases",
+        "max_events",
+        "max_output_bytes",
+    )
+)
+def feedback_import(
+    repo: Path,
+    graph_root: Path | None,
+    envelope_path: Path,
+    record_path: Path,
+    artifact_path: Path | None,
+    store_path: Path | None,
+    output_path: Path,
+    **chosen: int | None,
+) -> None:
+    """Record test outcomes a JUnit artifact bears out as verified feedback events.
+
+    Each claimed outcome is checked against the artifact (digest, size, run identity), the saved
+    retrieval record and the leased snapshot; a claim that is not borne out rejects the whole
+    import (exit 1, empty stdout, nothing written). Annotations are stored as unverified and are
+    never scored. The graph and the repository are not written; the only file written is
+    --output. Prints the canonical `atlas-feedback-import-summary.v1` on stdout.
+    """
+    from atlas_aci.feedback import outcomes
+    from atlas_aci.overlays import runtime
+    from atlas_aci.query.diff import Side
+
+    try:
+        limits = outcomes.normalize_limits(chosen)
+    except outcomes.FeedbackUsageError as exc:
+        raise _feedback_usage(exc.what) from None
+    resolved = Path(str(repo)).resolve()
+    protected = [resolved, resolved / ".atlas"]
+    if graph_root is not None:
+        protected.append(graph_root)
+    inputs = [p for p in (envelope_path, record_path, artifact_path, store_path) if p is not None]
+    try:
+        target = runtime.resolve_output(output_path, protected, inputs)
+    except runtime.OverlayUsageError as exc:
+        what = "output_equals_input" if exc.reason == "output_equals_input" else "output_location"
+        raise _feedback_usage(what) from None
+    envelope_raw = _read_feedback_input(envelope_path, limits.max_envelope_bytes, "envelope")
+    record_raw = _read_feedback_input(record_path, limits.max_record_bytes, "retrieval-record")
+    artifact_raw = _read_feedback_input(artifact_path, limits.max_artifact_bytes, "artifact")
+    store_raw = _read_feedback_input(store_path, limits.max_store_bytes, "store")
+    assert envelope_raw is not None and record_raw is not None
+    try:
+        store, summary_data = outcomes.import_feedback(
+            envelope_raw, record_raw, artifact_raw, store_raw, Side(resolved, graph_root), limits
+        )
+        data = outcomes.canonical_bytes(store)
+        summary = outcomes.canonical_bytes(summary_data)
+    except outcomes.FeedbackRejected as exc:
+        raise click.ClickException("Feedback import rejected: " + str(exc)) from None
+    except outcomes.FeedbackUsageError as exc:
+        raise _feedback_usage(exc.what) from None
+    except Exception as exc:
+        # Never `str(exc)`: a message may carry a path or input text.
+        raise click.ClickException("Feedback import failed: " + type(exc).__name__) from None
+    try:
+        _write_feedback_atomic(target, data)
+    except OSError:
+        raise click.ClickException("Feedback output cannot be written.") from None
+    stream = click.get_binary_stream("stdout")
+    stream.write(summary)
+    stream.flush()
+
+
+@cli.command("feedback-rank")
+@click.option(
+    "--repo",
+    required=True,
+    type=click.Path(exists=True, file_okay=False, path_type=Path),
+    help="The repository whose active snapshot is queried",
+)
+@_graph_root_option("--graph-root", "External graph root (default: <repo>/.atlas)")
+@click.option(
+    "--request",
+    "request_path",
+    required=True,
+    type=click.Path(path_type=Path),
+    help="A graph_query context request (JSON): schema_version, op, text and optional fields",
+)
+@click.option(
+    "--overlay",
+    "overlay",
+    default=None,
+    help="Enable the overlay with this policy name (atlas-feedback-ranking-policy.v1)",
+)
+@click.option(
+    "--store",
+    "store_path",
+    default=None,
+    type=click.Path(path_type=Path),
+    help="The atlas-feedback-events.v1 store the overlay reads; only with --overlay",
+)
+@_feedback_limit_options(("max_request_bytes", "max_store_bytes", "max_events", "max_output_bytes"))
+def feedback_rank(
+    repo: Path,
+    graph_root: Path | None,
+    request_path: Path,
+    overlay: str | None,
+    store_path: Path | None,
+    **chosen: int | None,
+) -> None:
+    """Print the baseline context ordering, optionally adjusted by active verified feedback.
+
+    Without --overlay the ordering is the unchanged baseline ranker's and the store is never
+    read. With --overlay atlas-feedback-ranking-policy.v1 and --store, each adjustment lists
+    the ids of the events that support it, and stale events are listed as excluded. Nothing is
+    written; the canonical `atlas-feedback-ranking.v1` is printed on stdout, and nothing is
+    printed on rejection (exit 1) or invalid usage (exit 2).
+    """
+    from atlas_aci.feedback import outcomes, ranking
+    from atlas_aci.query.diff import Side
+
+    try:
+        limits = outcomes.normalize_limits(chosen)
+        if store_path is not None and overlay is None:
+            raise outcomes.FeedbackUsageError("store_without_overlay")
+        if overlay is not None and store_path is None:
+            raise outcomes.FeedbackUsageError("overlay_without_store")
+        if overlay is not None and overlay != ranking.POLICY_NAME:
+            raise outcomes.FeedbackUsageError("unsupported_policy")
+    except outcomes.FeedbackUsageError as exc:
+        raise _feedback_usage(exc.what) from None
+    request_raw = _read_feedback_input(request_path, limits.max_request_bytes, "request")
+    store_raw = _read_feedback_input(store_path, limits.max_store_bytes, "store")
+    assert request_raw is not None
+    try:
+        document = ranking.rank_feedback(
+            request_raw,
+            Side(Path(str(repo)).resolve(), graph_root),
+            store_raw,
+            overlay is not None,
+            limits,
+        )
+        data = outcomes.canonical_bytes(document)
+    except outcomes.FeedbackRejected as exc:
+        raise click.ClickException("Feedback ranking rejected: " + str(exc)) from None
+    except outcomes.FeedbackUsageError as exc:
+        raise _feedback_usage(exc.what) from None
+    except Exception as exc:
+        raise click.ClickException("Feedback ranking failed: " + type(exc).__name__) from None
+    stream = click.get_binary_stream("stdout")
+    stream.write(data)
+    stream.flush()
+
+
 if __name__ == "__main__":
     cli()
