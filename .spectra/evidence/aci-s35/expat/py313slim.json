@@ -1,0 +1,422 @@
+{
+ "expat": "expat_2.9.0",
+ "python": "3.13.18",
+ "results": {
+  "attr-lt-in-value": {
+   "result": "artifact_invalid",
+   "stage": "parse:ParseError"
+  },
+  "attr-no-quotes": {
+   "result": "artifact_invalid",
+   "stage": "parse:ParseError"
+  },
+  "bad-decl-latin1": {
+   "result": "artifact_invalid",
+   "stage": "prescan"
+  },
+  "bad-decl-single-quotes": {
+   "result": "artifact_invalid",
+   "stage": "prescan"
+  },
+  "bad-decl-standalone": {
+   "result": "artifact_invalid",
+   "stage": "prescan"
+  },
+  "bare-close-bracket-run": {
+   "result": "artifact_invalid",
+   "stage": "parse:ParseError"
+  },
+  "bom": {
+   "result": "artifact_invalid",
+   "stage": "prescan"
+  },
+  "case-in-case": {
+   "result": "artifact_invalid",
+   "stage": "parse:Invalid"
+  },
+  "case-under-properties": {
+   "result": "artifact_invalid",
+   "stage": "parse:Invalid"
+  },
+  "cdata-like-in-text": {
+   "names": [
+    "t.m::test_a"
+   ],
+   "result": "ok",
+   "table": {
+    "t.m::test_a": "passed"
+   },
+   "testcases": 1
+  },
+  "char-ref-big": {
+   "result": "artifact_invalid",
+   "stage": "parse:ParseError"
+  },
+  "char-ref-control": {
+   "result": "artifact_invalid",
+   "stage": "parse:ParseError"
+  },
+  "char-ref-nul": {
+   "result": "artifact_invalid",
+   "stage": "parse:ParseError"
+  },
+  "char-ref-ok": {
+   "names": [
+    "t.A::aB"
+   ],
+   "result": "ok",
+   "table": {
+    "t.A::aB": "passed"
+   },
+   "testcases": 1
+  },
+  "colon-tag": {
+   "result": "artifact_invalid",
+   "stage": "parse:ParseError"
+  },
+  "control-char": {
+   "result": "artifact_invalid",
+   "stage": "parse:ParseError"
+  },
+  "decl-only": {
+   "result": "artifact_invalid",
+   "stage": "parse:ParseError"
+  },
+  "depth-8": {
+   "names": [
+    "t::a"
+   ],
+   "result": "ok",
+   "table": {
+    "t::a": "passed"
+   },
+   "testcases": 1
+  },
+  "depth-9": {
+   "result": "artifact_invalid",
+   "stage": "parse:Invalid"
+  },
+  "doctype-after-decl": {
+   "result": "artifact_invalid",
+   "stage": "prescan"
+  },
+  "dup-attr": {
+   "result": "artifact_invalid",
+   "stage": "parse:ParseError"
+  },
+  "empty": {
+   "result": "artifact_invalid",
+   "stage": "prescan"
+  },
+  "entity-predefined": {
+   "names": [
+    "t.<>&\"'::a"
+   ],
+   "result": "ok",
+   "table": {
+    "t.<>&\"'::a": "passed"
+   },
+   "testcases": 1
+  },
+  "entity-undefined": {
+   "result": "artifact_invalid",
+   "stage": "parse:ParseError"
+  },
+  "entity-unterminated": {
+   "result": "artifact_invalid",
+   "stage": "parse:ParseError"
+  },
+  "failure-passed-mix": {
+   "names": [
+    "t::a"
+   ],
+   "result": "ok",
+   "table": {
+    "t::a": "outcome_not_objective"
+   },
+   "testcases": 1
+  },
+  "fixture:junit-comment.xml": {
+   "result": "artifact_invalid",
+   "stage": "prescan"
+  },
+  "fixture:junit-depth.xml": {
+   "result": "artifact_invalid",
+   "stage": "parse:Invalid"
+  },
+  "fixture:junit-doctype.xml": {
+   "result": "artifact_invalid",
+   "stage": "prescan"
+  },
+  "fixture:junit-misplaced.xml": {
+   "result": "artifact_invalid",
+   "stage": "parse:Invalid"
+  },
+  "fixture:junit-namespace.xml": {
+   "result": "artifact_invalid",
+   "stage": "parse:Invalid"
+  },
+  "fixture:junit-nodecl.xml": {
+   "result": "artifact_invalid",
+   "stage": "prescan"
+  },
+  "fixture:junit-outcomes.xml": {
+   "names": [
+    "tests.sub-dir.test_dash::test_a",
+    "tests.test_payments.TestCards.TestInner::test_deep",
+    "tests.test_payments.TestCards::test_declined",
+    "tests.test_payments::test_brand[master-card.v1]",
+    "tests.test_payments::test_dup",
+    "tests.test_payments::test_mixed",
+    "tests.test_payments::test_nested_failure",
+    "tests.test_payments::test_process_payment_ok",
+    "tests.test_payments::test_setup_error",
+    "tests.test_payments::test_skipped",
+    "tests.test_payments::test_with_logs",
+    "tests.test_payments::test_xfail"
+   ],
+   "result": "ok",
+   "table": {
+    "tests.sub-dir.test_dash::test_a": "passed",
+    "tests.test_payments.TestCards.TestInner::test_deep": "passed",
+    "tests.test_payments.TestCards::test_declined": "failed",
+    "tests.test_payments::test_brand[master-card.v1]": "passed",
+    "tests.test_payments::test_dup": "outcome_not_objective",
+    "tests.test_payments::test_mixed": "outcome_not_objective",
+    "tests.test_payments::test_nested_failure": "passed",
+    "tests.test_payments::test_process_payment_ok": "passed",
+    "tests.test_payments::test_setup_error": "outcome_not_objective",
+    "tests.test_payments::test_skipped": "outcome_not_objective",
+    "tests.test_payments::test_with_logs": "passed",
+    "tests.test_payments::test_xfail": "outcome_not_objective"
+   },
+   "testcases": 13
+  },
+  "fixture:junit-pi.xml": {
+   "result": "artifact_invalid",
+   "stage": "prescan"
+  },
+  "fixture:junit-second.xml": {
+   "names": [
+    "tests.test_payments.TestCards::test_declined",
+    "tests.test_payments::test_process_payment_ok"
+   ],
+   "result": "ok",
+   "table": {
+    "tests.test_payments.TestCards::test_declined": "failed",
+    "tests.test_payments::test_process_payment_ok": "passed"
+   },
+   "testcases": 2
+  },
+  "invalid-utf8": {
+   "result": "artifact_invalid",
+   "stage": "prescan"
+  },
+  "junk-after-root": {
+   "result": "artifact_invalid",
+   "stage": "parse:ParseError"
+  },
+  "mismatched": {
+   "result": "artifact_invalid",
+   "stage": "parse:ParseError"
+  },
+  "nested-failure": {
+   "names": [
+    "t::a"
+   ],
+   "result": "ok",
+   "table": {
+    "t::a": "passed"
+   },
+   "testcases": 1
+  },
+  "nul": {
+   "result": "artifact_invalid",
+   "stage": "prescan"
+  },
+  "ok": {
+   "names": [
+    "t.m::test_a"
+   ],
+   "result": "ok",
+   "table": {
+    "t.m::test_a": "passed"
+   },
+   "testcases": 1
+  },
+  "ok-leading-whitespace-after-decl": {
+   "names": [
+    "t.m::test_a"
+   ],
+   "result": "ok",
+   "table": {
+    "t.m::test_a": "passed"
+   },
+   "testcases": 1
+  },
+  "ok-testsuite-root": {
+   "names": [
+    "t.m::test_a"
+   ],
+   "result": "ok",
+   "table": {
+    "t.m::test_a": "passed"
+   },
+   "testcases": 1
+  },
+  "ok-trailing-newline": {
+   "names": [
+    "t.m::test_a"
+   ],
+   "result": "ok",
+   "table": {
+    "t.m::test_a": "passed"
+   },
+   "testcases": 1
+  },
+  "ok-upper-decl": {
+   "names": [
+    "t.m::test_a"
+   ],
+   "result": "ok",
+   "table": {
+    "t.m::test_a": "passed"
+   },
+   "testcases": 1
+  },
+  "overlong-utf8": {
+   "result": "artifact_invalid",
+   "stage": "prescan"
+  },
+  "pi-in-body": {
+   "result": "artifact_invalid",
+   "stage": "prescan"
+  },
+  "pytest-capture": {
+   "names": [
+    "tests.a.b::test_a",
+    "tests.my.pytools.test_dotdir::test_a",
+    "tests.sub-dir.test_dash::test_a",
+    "tests.test_dup_a::test_x",
+    "tests.test_nested.test_deep_mod::test_a",
+    "tests.test_pay.TestCards.TestInner::test_deep",
+    "tests.test_pay.TestCards::test_bad",
+    "tests.test_pay.TestCards::test_ok",
+    "tests.test_pay::test_dup[1]",
+    "tests.test_pay::test_dup[2]",
+    "tests.test_pay::test_fail",
+    "tests.test_pay::test_param[a b]",
+    "tests.test_pay::test_param[master-card]",
+    "tests.test_pay::test_param[v1.2]",
+    "tests.test_pay::test_param[visa]",
+    "tests.test_pay::test_param[x<y&z\"q]",
+    "tests.test_pay::test_pass",
+    "tests.test_pay::test_setup_error",
+    "tests.test_pay::test_skip",
+    "tests.test_pay::test_teardown_error",
+    "tests.test_pay::test_with_output",
+    "tests.test_pay::test_with_props",
+    "tests.test_pay::test_xfail",
+    "tests.test_pay::test_xpass"
+   ],
+   "result": "ok",
+   "table": {
+    "tests.a.b::test_a": "passed",
+    "tests.my.pytools.test_dotdir::test_a": "passed",
+    "tests.sub-dir.test_dash::test_a": "passed",
+    "tests.test_dup_a::test_x": "passed",
+    "tests.test_nested.test_deep_mod::test_a": "passed",
+    "tests.test_pay.TestCards.TestInner::test_deep": "passed",
+    "tests.test_pay.TestCards::test_bad": "failed",
+    "tests.test_pay.TestCards::test_ok": "passed",
+    "tests.test_pay::test_dup[1]": "passed",
+    "tests.test_pay::test_dup[2]": "passed",
+    "tests.test_pay::test_fail": "failed",
+    "tests.test_pay::test_param[a b]": "passed",
+    "tests.test_pay::test_param[master-card]": "passed",
+    "tests.test_pay::test_param[v1.2]": "passed",
+    "tests.test_pay::test_param[visa]": "passed",
+    "tests.test_pay::test_param[x<y&z\"q]": "passed",
+    "tests.test_pay::test_pass": "passed",
+    "tests.test_pay::test_setup_error": "outcome_not_objective",
+    "tests.test_pay::test_skip": "outcome_not_objective",
+    "tests.test_pay::test_teardown_error": "outcome_not_objective",
+    "tests.test_pay::test_with_output": "passed",
+    "tests.test_pay::test_with_props": "passed",
+    "tests.test_pay::test_xfail": "outcome_not_objective",
+    "tests.test_pay::test_xpass": "passed"
+   },
+   "testcases": 24
+  },
+  "suite-in-suite": {
+   "result": "artifact_invalid",
+   "stage": "parse:Invalid"
+  },
+  "surrogate-utf8": {
+   "result": "artifact_invalid",
+   "stage": "prescan"
+  },
+  "testcase-empty-attrs": {
+   "names": [
+    "::"
+   ],
+   "result": "ok",
+   "table": {
+    "::": "passed"
+   },
+   "testcases": 1
+  },
+  "testcase-missing-name": {
+   "result": "artifact_invalid",
+   "stage": "parse:Invalid"
+  },
+  "text-before-root": {
+   "result": "artifact_invalid",
+   "stage": "parse:ParseError"
+  },
+  "truncated": {
+   "result": "artifact_invalid",
+   "stage": "parse:ParseError"
+  },
+  "two-roots": {
+   "result": "artifact_invalid",
+   "stage": "prescan"
+  },
+  "unknown-root": {
+   "result": "artifact_invalid",
+   "stage": "parse:Invalid"
+  },
+  "wide": {
+   "names": [
+    "t.m::test_a"
+   ],
+   "result": "ok",
+   "table": {
+    "t.m::test_a": "outcome_not_objective"
+   },
+   "testcases": 2000
+  },
+  "xml-prefix-attr": {
+   "names": [
+    "t::a"
+   ],
+   "result": "ok",
+   "table": {
+    "t::a": "passed"
+   },
+   "testcases": 1
+  },
+  "xmlns-attr": {
+   "names": [
+    "t::a"
+   ],
+   "result": "ok",
+   "table": {
+    "t::a": "passed"
+   },
+   "testcases": 1
+  }
+ },
+ "results_sha256": "75580316b3fe711246683896dfd0c38c7daed8d1e05b3a958b9f3fac0626c5be",
+ "variants": 59
+}

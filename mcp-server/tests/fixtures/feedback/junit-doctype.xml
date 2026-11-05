@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE testsuites [<!ENTITY a "aaaaaaaaaa"><!ENTITY b "&a;&a;&a;&a;&a;&a;&a;&a;&a;&a;"><!ENTITY c "&b;&b;&b;&b;&b;&b;&b;&b;&b;&b;">]><testsuites><testsuite name="pytest"><testcase classname="tests.test_payments" name="test_process_payment_ok" time="&c;" /></testsuite></testsuites>

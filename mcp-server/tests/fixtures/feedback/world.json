@@ -1,0 +1,18 @@
+{
+ "after": {
+  "app/payments.py": "def process_payment(amount, card):\n    validate_card(card)\n    record_charge(amount)\n    return amount + 1\n\n\ndef validate_card(card):\n    if not card:\n        raise ValueError('card')\n    return card\n\n\ndef record_charge(amount):\n    return {'charge': amount, 'cents': amount * 100}\n"
+ },
+ "before": {
+  "app/cards.py": "def card_label(card):\n    return str(card)\n",
+  "app/ledger.py": "def ledger_total(items):\n    return sum(items)\n",
+  "app/payments.py": "def process_payment(amount, card):\n    validate_card(card)\n    record_charge(amount)\n    return amount\n\n\ndef validate_card(card):\n    if not card:\n        raise ValueError('card')\n    return card\n\n\ndef record_charge(amount):\n    return {'charge': amount}\n",
+  "app/unrelated.py": "def noop():\n    return 0\n",
+  "tests/test_payments.py": "from app.payments import process_payment\n\n\ndef test_process_payment_ok():\n    assert process_payment(1, 'visa') == 1\n"
+ },
+ "removed": {
+  "app/payments.py": null
+ },
+ "unrelated": {
+  "app/unrelated.py": "def noop():\n    return 1\n"
+ }
+}

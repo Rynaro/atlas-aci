@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="2" failures="2" skipped="2" tests="25" time="0.028" timestamp="2026-11-05T15:32:09.640845+00:00" hostname="e685f71e48f6"><testcase classname="tests.a.b" name="test_a" time="0.000" /><testcase classname="tests.my.pytools.test_dotdir" name="test_a" time="0.000" /><testcase classname="tests.sub-dir.test_dash" name="test_a" time="0.000" /><testcase classname="tests.test_dup_a" name="test_x" time="0.000" /><testcase classname="tests.test_nested.test_deep_mod" name="test_a" time="0.000" /><testcase classname="tests.test_pay" name="test_pass" time="0.000" /><testcase classname="tests.test_pay" name="test_fail" time="0.000"><failure message="assert 1 == 2">def test_fail():
+&gt;       assert 1 == 2
+E       assert 1 == 2
+
+tests/test_pay.py:7: AssertionError</failure></testcase><testcase classname="tests.test_pay" name="test_skip" time="0.000"><skipped type="pytest.skip" message="no">/tmp/suite/tests/test_pay.py:9: no</skipped></testcase><testcase classname="tests.test_pay" name="test_xfail" time="0.000"><skipped type="pytest.xfail" message="x" /></testcase><testcase classname="tests.test_pay" name="test_xpass" time="0.000" /><testcase classname="tests.test_pay" name="test_setup_error" time="0.000"><error message="failed on setup with &quot;RuntimeError: setup&quot;">@pytest.fixture
+    def broken():
+&gt;       raise RuntimeError("setup")
+E       RuntimeError: setup
+
+tests/test_pay.py:23: RuntimeError</error></testcase><testcase classname="tests.test_pay" name="test_teardown_error" time="0.000"><error message="failed on teardown with &quot;RuntimeError: teardown&quot;">@pytest.fixture
+    def bad_teardown():
+        yield 1
+&gt;       raise RuntimeError("teardown")
+E       RuntimeError: teardown
+
+tests/test_pay.py:31: RuntimeError</error></testcase><testcase classname="tests.test_pay.TestCards" name="test_ok" time="0.000" /><testcase classname="tests.test_pay.TestCards" name="test_bad" time="0.000"><failure message="assert False">self = &lt;tests.test_pay.TestCards object at 0xffff87e79af0&gt;
+
+    def test_bad(self):
+&gt;       assert False
+E       assert False
+
+tests/test_pay.py:41: AssertionError</failure></testcase><testcase classname="tests.test_pay.TestCards.TestInner" name="test_deep" time="0.000" /><testcase classname="tests.test_pay" name="test_param[visa]" time="0.000" /><testcase classname="tests.test_pay" name="test_param[master-card]" time="0.000" /><testcase classname="tests.test_pay" name="test_param[v1.2]" time="0.000" /><testcase classname="tests.test_pay" name="test_param[a b]" time="0.000" /><testcase classname="tests.test_pay" name="test_param[x&lt;y&amp;z&quot;q]" time="0.000" /><testcase classname="tests.test_pay" name="test_dup[1]" time="0.000" /><testcase classname="tests.test_pay" name="test_dup[2]" time="0.000" /><testcase classname="tests.test_pay" name="test_with_output" time="0.000" /><testcase classname="tests.test_pay" name="test_with_props" time="0.000"><properties><property name="k" value="v" /></properties></testcase></testsuite></testsuites>
