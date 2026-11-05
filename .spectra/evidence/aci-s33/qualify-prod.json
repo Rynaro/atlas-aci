@@ -1,0 +1,375 @@
+{
+ "calls": {
+  "ancestor_missing": {
+   "bytes": 0,
+   "rc": 128,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "ancestor_no": {
+   "bytes": 0,
+   "rc": 1,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "ancestor_side": {
+   "bytes": 0,
+   "rc": 1,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "ancestor_yes": {
+   "bytes": 0,
+   "rc": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "cat_commit": {
+   "bytes": 277,
+   "rc": 0,
+   "sha256": "fb6a8fd685631a3b662b088a3ff6efdb716c7990f60bc5f608ffde9c3f16ab22"
+  },
+  "diff_external_empty_ok": {
+   "bytes": 1089,
+   "rc": 0,
+   "sha256": "7b4008e2ab371ef63f07f146af8a2a82c93de107157b6b2d1c40e0e9b9915da2"
+  },
+  "diff_tree": {
+   "C0": {
+    "bytes": 1089,
+    "rc": 0,
+    "sha256": "16f7b758c0f6ca2d67ad3e6913f251f702e2b1ee4877ca1f353ace31ce26cce8"
+   },
+   "C1": {
+    "bytes": 216,
+    "rc": 0,
+    "sha256": "86d3126b6bf4fb038d7a9bc2525df97373d112d5a1ab022ba2dff5b34c3fc79f"
+   },
+   "C10": {
+    "bytes": 332,
+    "rc": 0,
+    "sha256": "2631a235a8a49c2846ff93bcd86a3d18a047690d4ab4cb785a1829736f94a791"
+   },
+   "C11": {
+    "bytes": 325,
+    "rc": 0,
+    "sha256": "dbbf881237d07aaf40bcace8b6966bb3414e0365bbd7b3e4572879ef90b4fdb7"
+   },
+   "C12": {
+    "bytes": 325,
+    "rc": 0,
+    "sha256": "2228afc54fbc1db74ebb8bae4ad6659b3efbba5d4da613522603e410bec2531f"
+   },
+   "C13": {
+    "bytes": 0,
+    "rc": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "C14": {
+    "bytes": 109,
+    "rc": 0,
+    "sha256": "65aaf2eb2870db85b9ee55d3c476ddbd390628f6fb176752753f488ef932d2cf"
+   },
+   "C2": {
+    "bytes": 324,
+    "rc": 0,
+    "sha256": "6e3ed8156efcd97d84550f458329097949c9766efef4e9033278b380af7cb321"
+   },
+   "C3": {
+    "bytes": 216,
+    "rc": 0,
+    "sha256": "a25a66887d2f041fdfc56d679cc9d3cedcc8d6126b2d480d05bd0a96007edfb1"
+   },
+   "C4": {
+    "bytes": 216,
+    "rc": 0,
+    "sha256": "97c302bbeeff9344c20af1b90d353f9e85f0765459359671caf93318367a01fe"
+   },
+   "C6": {
+    "bytes": 440,
+    "rc": 0,
+    "sha256": "0586297e0187d7e865f669aae88bd117b48332804cdf652230021bc25ccfa380"
+   },
+   "C7": {
+    "bytes": 648,
+    "rc": 0,
+    "sha256": "9f510ce7cb667ad5e6094f8969c57e562c5dd31ba108ddd1219a5f43e4dfec68"
+   },
+   "C8": {
+    "bytes": 216,
+    "rc": 0,
+    "sha256": "41f5b7575845a473d2b7fd0fe49f6f64cc80d6cc663b2f610abc8bea585d37ee"
+   },
+   "C9": {
+    "bytes": 326,
+    "rc": 0,
+    "sha256": "f2e4963ec7111c52361f785ce1a9aba66ca7d0f213a84d78caa1a695a3785645"
+   },
+   "M5": {
+    "bytes": 432,
+    "rc": 0,
+    "sha256": "25c2651de103f56d04dcfa33c1ca7faa9a97709d3fec818fead767b508690bc8"
+   }
+  },
+  "exists_end": {
+   "bytes": 0,
+   "rc": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "exists_missing": {
+   "bytes": 0,
+   "rc": 128,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "exists_tree_as_commit": {
+   "bytes": 0,
+   "rc": 128,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "ls_tree": {
+   "bytes": 703,
+   "rc": 0,
+   "sha256": "70c6a7cbeac07798ce8a5841e369ebc4528837dd99d121484aa4d61865b98d12"
+  },
+  "probe": {
+   "bytes": 57,
+   "rc": 0,
+   "sha256": "21d22ca86a9400077e138f009bb206f843252cef1f76f9551d1f27aa1fc487ee"
+  },
+  "promisor_config": {
+   "bytes": 0,
+   "rc": 1,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "rev_list": {
+   "bytes": 1189,
+   "rc": 0,
+   "sha256": "8dfe255ee10e181aca51cab10faf0f7bcd9ea211e7709c4215d1f3e7ceb66f58"
+  },
+  "rev_list_max1": {
+   "bytes": 164,
+   "rc": 0,
+   "sha256": "c7c70cff14639fc9232ace5793c0f19e7f06c5c2a9b9ee944bbd772d61462af1"
+  },
+  "rev_list_negation_after_eoo": {
+   "bytes": 41,
+   "rc": 0,
+   "sha256": "95cb09b61368008a6fa2c4392775ff3b5367c0de6651d1b59a91ae6b6a810475"
+  },
+  "rev_list_reversed": {
+   "bytes": 0,
+   "rc": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+ },
+ "commit_ids": {
+  "C0": "85fe42de22d2f068c358f8607a70a53b78cf0c75",
+  "C1": "315348e5bdf3b4738409d77624aa59244a1bd3e1",
+  "C10": "c4d125f80066632bdaa931f7ba761db6b5361408",
+  "C11": "b1c2fdb6be5cef8a0c222b52c0f2e9b0cb041878",
+  "C12": "4bd94745d4651744ed3788ffff94f69de14c9b34",
+  "C13": "2016ed69d4194a5140d02f81e68a76700a2021b2",
+  "C14": "dad6091d939cea8157a31024734d6e6e76e0f04a",
+  "C2": "1c8ae31d4224d8abfc4bf06b645b67e6794dd3e7",
+  "C3": "f7ca2b8d4025a633dd72ea82a2eaadf25d0e8ff9",
+  "C4": "2d33bf3d2b04d0862bf812d9d8a27aa358b648c2",
+  "C6": "c1147af0fd5038c3f4d10491b7c7991a8ac6e843",
+  "C7": "f4dd91bd754365753b2a8a05b73d7b046bbc9951",
+  "C8": "007eaa114b3a39de8bdf9a524e17445dcd73d0ed",
+  "C9": "4c480bbb631063d5d09734139f14d522d185d40c",
+  "M5": "6080ef261c354f0170daab92b84039f2055ba9b1"
+ },
+ "diff_tree_stderr_clean": false,
+ "git_version": "git version 2.47.3",
+ "gitlink_type_change": {
+  "G1": ":100644 160000 3ec6129b0f161779990fe0ad0ba982a129ee9035 4834d15ac211c153577ac4333cfd91a4d80cb42e T|src/m.py|",
+  "G2": ":160000 000000 4834d15ac211c153577ac4333cfd91a4d80cb42e 0000000000000000000000000000000000000000 D|src/m.py|"
+ },
+ "hostile": {
+  "diff_c12_same": true,
+  "diff_c9_gitlink_same": true,
+  "gitmodules_only_same": true,
+  "graft_note": "hint: Support for <GIT_DIR>/info/grafts is deprecated\nhint: and will be removed in a future Git version.\nhint:\nhint: Please use \"git replace --convert-graft-file\"\nhint: to convert the grafts into repl",
+  "promisor_cat_commit_missing": {
+   "bytes": 0,
+   "rc": 128,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "promisor_diff_missing": {
+   "bytes": 0,
+   "rc": 128,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "promisor_probe": {
+   "bytes": 59,
+   "rc": 0,
+   "sha256": "635a93ec627838e3026cda12fdcac4ec7693e340a2f919e0f7c8d4a703e9df84"
+  },
+  "promisor_rev_list": {
+   "bytes": 0,
+   "rc": 128,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "rev_list_graft_unneutralised_differs": true,
+  "rev_list_same_with_replace_and_grafts": true,
+  "sentinel_created": false,
+  "uploadpack_sentinel_created": false
+ },
+ "label": "prod",
+ "library": {
+  "cochange_seconds": 0.02,
+  "counts": {
+   "bulk_commits": 1,
+   "commits_in_window": 14,
+   "empty_commits": 1,
+   "generated_paths": 3,
+   "gitlink_paths": 1,
+   "merge_commits": 1,
+   "oversized_commits": 0,
+   "pair_commits": 9,
+   "pair_observations": 13,
+   "pairs": 9,
+   "single_path_commits": 2,
+   "unrepresentable_paths": 2
+  },
+  "files_compared": 5,
+  "hostile_env_same_overlay": true,
+  "lib_env_equals_qualify_env": true,
+  "lib_prefix_equals_qualify_prefix": true,
+  "overlay_bytes": 7391,
+  "overlay_sha256": "48f6b136200b3955a5ecaae829a3406f5d32ed81a3e1fc846697404be500eb6d",
+  "records": 9,
+  "sentinel_after_hostile_env": false,
+  "snapshot_id_len": 64,
+  "state": "complete"
+ },
+ "missing": {
+  "missing_commit_cat_e": {
+   "bytes": 0,
+   "rc": 128,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "stderr_empty": false,
+   "stderr_head": "fatal: Not a valid object name f7ca2b8d4025a633dd72ea82a2eaadf25d0e8ff9^{commit}\n"
+  },
+  "missing_commit_merge_base": {
+   "bytes": 0,
+   "rc": 128,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "stderr_empty": false,
+   "stderr_head": "hint: Support for <GIT_DIR>/info/grafts is deprecated\nhint: and will be removed in a future Git version.\nhint:\nhint: Ple"
+  },
+  "missing_commit_merge_base_across": {
+   "bytes": 0,
+   "rc": 128,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "stderr_empty": false,
+   "stderr_head": "hint: Support for <GIT_DIR>/info/grafts is deprecated\nhint: and will be removed in a future Git version.\nhint:\nhint: Ple"
+  },
+  "missing_commit_rev_list": {
+   "bytes": 0,
+   "rc": 128,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "stderr_empty": false,
+   "stderr_head": "hint: Support for <GIT_DIR>/info/grafts is deprecated\nhint: and will be removed in a future Git version.\nhint:\nhint: Ple"
+  },
+  "missing_tree_diff_parent_side": {
+   "bytes": 0,
+   "rc": 128,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "stderr_empty": false,
+   "stderr_head": "hint: Support for <GIT_DIR>/info/grafts is deprecated\nhint: and will be removed in a future Git version.\nhint:\nhint: Ple"
+  },
+  "missing_tree_diff_tree": {
+   "bytes": 0,
+   "rc": 128,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "stderr_empty": false,
+   "stderr_head": "hint: Support for <GIT_DIR>/info/grafts is deprecated\nhint: and will be removed in a future Git version.\nhint:\nhint: Ple"
+  },
+  "missing_tree_rev_list": {
+   "bytes": 1189,
+   "rc": 0,
+   "sha256": "8dfe255ee10e181aca51cab10faf0f7bcd9ea211e7709c4215d1f3e7ceb66f58",
+   "stderr_empty": false,
+   "stderr_head": "hint: Support for <GIT_DIR>/info/grafts is deprecated\nhint: and will be removed in a future Git version.\nhint:\nhint: Ple"
+  }
+ },
+ "python": "3.12.16",
+ "raw_diff_sample": {
+  "C0": ":000000 100644 0000000000000000000000000000000000000000 5a749635a87203cd367f22e1803e45659dc217e1 A|README.md|:000000 100644 0000000000000000000000000000000000000000 22350727400aeaeba219831ecb76f3fd20d5c082 A|dist/app.js|:000000 100644 0000000000000000000000000000000000000000 6fd8164ae046ac79c92994175c0998a0391859ef A|src/a.py|:000000 100644 0000000000000000000000000000000000000000 0d655191c9aa4eeca0158872d886db593fbec6bb A|src/b.py|:000000 100644 0000000000000000000000000000000000000000 bc5ada4ec8d7e63bfed9d9856079adfc8bf6c4a2 A|src/c.py|:000000 100644 0000000000000000000000000000000000000000 addb3e1a9cc16c522fa42ecaf9e98ade6c1ea57b A|src/d.py|:000000 100644 0000000000000000000000000000000000000000 89fd3147c4342ccb84c524c12b5926f97d5055c6 A|src/e.py|:000000 100644 0000000000000000000000000000000000000000 c358990b97a783e8d45af4058cfded114c524472 A|src/f.py|:000000 100644 0000000000000000000000000000000000000000 0acbf339af40103741c8dfcc65e38939dbf2b793 A|uv.lock|:000000 100644 0000000000000000000000000000000000000000 96e9e976f281fc9bd3c10265f7b96d5c8a6cda29 A|web/app.min.js|",
+  "C10": ":000000 100644 0000000000000000000000000000000000000000 7a8395557c917a864f3d65f213c439535071b10a A|bad/\ufffd.txt|:000000 100644 0000000000000000000000000000000000000000 4317db6919b19db9a464b5342bde310c22835ce3 A|docs/na\u00efve.txt|:100644 100644 e4262ea9c96e8bde8a00cf5dfb623be8ab3ca359 e992d0650ae5363efcae424fdf13e897440e1884 M|src/a.py|",
+  "C12": ":100644 100644 11bd4ac39c9fb96d0da33de06f45e26572baf245 05fb602b65a8ff24d60deccb44b743d844604999 M|src/d.py|:100644 000000 93edb74c510629cb6b8bfae49d0a86483188cf00 0000000000000000000000000000000000000000 D|src/e.py|:000000 100644 0000000000000000000000000000000000000000 93edb74c510629cb6b8bfae49d0a86483188cf00 A|src/e2.py|",
+  "C13": "",
+  "C9": ":100644 100644 4b5e546dab2c27ab5a08096cf2990e8173af3bed e4262ea9c96e8bde8a00cf5dfb623be8ab3ca359 M|src/a.py|:100644 100644 031f28f1f5b9cf971680f7d80f7415aedc0009fa ed338b869e0ba6446f6c680a33efea3c9bbfb925 M|src/b.py|:000000 160000 0000000000000000000000000000000000000000 315348e5bdf3b4738409d77624aa59244a1bd3e1 A|vendor/mod|"
+ },
+ "rev_list_negation_lines": 1,
+ "rev_list_text": 14,
+ "shallow": {
+  "cat_commit_boundary_has_parent": true,
+  "is_shallow": "true",
+  "merge_base_across": {
+   "bytes": 0,
+   "rc": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "stderr_empty": false,
+   "stderr_head": "hint: Support for <GIT_DIR>/info/grafts is deprecated\nhint: and will be removed in a future Git version.\nhint:\nhint: Ple"
+  },
+  "merge_base_start_missing": {
+   "bytes": 0,
+   "rc": 128,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "stderr_empty": false,
+   "stderr_head": "fatal: Not a valid commit name 85fe42de22d2f068c358f8607a70a53b78cf0c75\n"
+  },
+  "merge_boundary_raw_has_parent": true,
+  "merge_rev_list_labels": [
+   [
+    "X2",
+    "X1",
+    "Y1"
+   ],
+   [
+    "Y1"
+   ]
+  ],
+  "rev_list_boundary": "C14 C13\nC13\n",
+  "rev_list_start_missing": {
+   "bytes": 0,
+   "rc": 128,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "stderr_empty": false,
+   "stderr_head": "hint: Support for <GIT_DIR>/info/grafts is deprecated\nhint: and will be removed in a future Git version.\nhint:\nhint: Ple"
+  },
+  "start_missing_exists": {
+   "bytes": 0,
+   "rc": 128,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "stderr_empty": false,
+   "stderr_head": "fatal: Not a valid object name 85fe42de22d2f068c358f8607a70a53b78cf0c75^{commit}\n"
+  },
+  "window_c13_c14": {
+   "bytes": 82,
+   "rc": 0,
+   "sha256": "8e2ddfbd166a81b09c63f7dcecb76c85f062bf56a14100176681833477c30605",
+   "stderr_empty": false,
+   "stderr_head": "hint: Support for <GIT_DIR>/info/grafts is deprecated\nhint: and will be removed in a future Git version.\nhint:\nhint: Ple"
+  }
+ },
+ "stderr_clean": {
+  "ancestor_missing": false,
+  "ancestor_no": false,
+  "ancestor_side": false,
+  "ancestor_yes": false,
+  "cat_commit": true,
+  "exists_end": false,
+  "exists_missing": false,
+  "exists_tree_as_commit": false,
+  "ls_tree": false,
+  "probe": true,
+  "promisor_config": true,
+  "rev_list": false,
+  "rev_list_max1": false,
+  "rev_list_negation_after_eoo": false,
+  "rev_list_reversed": false
+ },
+ "timing_build_seconds": 4.7,
+ "timing_walk_commits": 1000,
+ "timing_walk_seconds_1000_commits": 0.96,
+ "uid": 10001
+}

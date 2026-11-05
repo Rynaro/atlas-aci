@@ -1,0 +1,32 @@
+{
+ "schema": "atlas-aci/slice-execution.v1",
+ "slice_id": "ACI-S33",
+ "issue_url": "https://github.com/Rynaro/atlas-aci/issues/54",
+ "criteria_sha256": "7cf8c8efa698489f77fef050eabf544f6bfb6ce405a92cda9aeaf7e81159a521",
+ "base_commit": "890e181e2271a8d91306c9acba8e30c6b2bf4d5d",
+ "output_commit": null,
+ "declared_paths": [
+  ".spectra/plans/aci-s33.*",
+  ".spectra/plans/ramza-calibration.jsonl",
+  ".spectra/changes/aci-s33/*",
+  ".spectra/evidence/aci-s33/**",
+  ".spectra/state/aci-s33.execution.json",
+  ".spectra/backlog/execution.json",
+  ".spectra/backlog/order.md",
+  "mcp-server/src/atlas_aci/history/__init__.py",
+  "mcp-server/src/atlas_aci/history/cochange.py",
+  "mcp-server/src/atlas_aci/__main__.py",
+  "mcp-server/tests/slices/test_s33_cochange.py",
+  "mcp-server/tests/slices/test_s33_*.py",
+  "mcp-server/tests/fixtures/cochange/**",
+  "docs/history-signals.md",
+  "CHANGELOG.md",
+  "README.md"
+ ],
+ "output_digests": {},
+ "status": "IN_PROGRESS",
+ "started_at": "2026-11-05T09:22:27Z",
+ "planning_state": ".spectra/plans/aci-s33.state.json",
+ "plan": ".spectra/plans/aci-s33.md",
+ "results": []
+}

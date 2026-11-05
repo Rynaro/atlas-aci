@@ -1,0 +1,16 @@
+.spectra/plans/aci-s33.*
+.spectra/plans/ramza-calibration.jsonl
+.spectra/changes/aci-s33/*
+.spectra/evidence/aci-s33/**
+.spectra/state/aci-s33.execution.json
+.spectra/backlog/execution.json
+.spectra/backlog/order.md
+mcp-server/src/atlas_aci/history/__init__.py
+mcp-server/src/atlas_aci/history/cochange.py
+mcp-server/src/atlas_aci/__main__.py
+mcp-server/tests/slices/test_s33_cochange.py
+mcp-server/tests/slices/test_s33_*.py
+mcp-server/tests/fixtures/cochange/**
+docs/history-signals.md
+CHANGELOG.md
+README.md

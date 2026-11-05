@@ -28,6 +28,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   changed vector invalidated; `cross-repo-impact` walks one step in either direction and returns a
   `missing_provider_snapshot` boundary when the mapped provider snapshot is not the active one.
   See [`docs/cross-repository-links.md`](docs/cross-repository-links.md).
+- **Git co-change correlation (ACI-S33).** New operator command `atlas-aci cochange --repo D
+  --repository-id LABEL --start HEX --end HEX --source-commit HEX --snapshot-id HEX
+  [--graph-root G] --output OUT [filters] [limits]` (CLI only, no MCP op) and the library
+  `atlas_aci.history.cochange`. For the explicit window `start..end`
+  (`start_exclusive_end_inclusive`) of one git repository it reports each pair of files that
+  changed together in the same eligible commit, with its exact support count and the supporting
+  commit ids. Merge, generated-path (typed prefix, name and suffix lists), bulk and
+  oversized-diff commits are filtered by a declared policy
+  whose digest is carried by every record. The active snapshot named by `--snapshot-id` is leased
+  read-only and bound to `--source-commit` by git blob ids; an `--end` that is not that commit or
+  one of its ancestors is `outside_snapshot_history`. A shallow cut, a missing object or an
+  exhausted commit budget is declared `incomplete_history` and the records are withheld. Every
+  record carries the evidence kind `co_change_correlation`: a correlation, not a dependency and not
+  causality. The result is a standalone, content-addressed `atlas-history-overlay.v1` written only
+  to `--output`; it does not write the graph. Git runs through one hardened runner (argument list,
+  from-scratch environment, bounded output, timeouts that reject), `safe.directory` is never
+  overridden and a repository owned by another user is `history_unavailable`.
+  See [`docs/history-signals.md`](docs/history-signals.md).
 - **Python dependency surface from a uv lock and a local wheel (ACI-S28).** New operator command
   `atlas-aci import-python-dependency --lock uv.lock --package NAME [--env KEY=VALUE]...
   [--wheel PATH]... --output OUT [limits]` (CLI only, no MCP op) and the libraries

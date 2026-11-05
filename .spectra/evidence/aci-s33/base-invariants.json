@@ -1,0 +1,24 @@
+{
+ "base_commit": "890e181e2271a8d91306c9acba8e30c6b2bf4d5d",
+ "tools_json_sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+ "tools_json_bytes": 1631472,
+ "READ_ONLY_TOOLS_count": 7,
+ "MINIMUM_BUDGET": 3436,
+ "COLLECTION_MINIMUM_BUDGET": 3448,
+ "FIXED_ERROR_ENVELOPE_CAP": 797,
+ "IMPACT_MINIMUM_BUDGET": 7730,
+ "ev_RELATIONS": ["call","construct","extend","import","include","prepend","rationale_for","superclass"],
+ "full_pytest_at_base": {
+  "where": "git archive of 890e181 in atlas-aci-dev-s16, uid 1000, test_s08 nonregular_pack deselected",
+  "result": "1 failed, 2219 passed, 10 skipped, 1 deselected in 730.65s",
+  "exit": 1,
+  "failed": ["tests/slices/test_s01_contract.py::test_call_deadline_after_initialization (known, uid 1000)"],
+  "log": "base-pytest.log.gz"
+ },
+ "ci_reference": {"run": "41995782483", "result": "2221 passed, 10 skipped"},
+ "readme_changelog_pins_read": {
+  "s30_bullet_first": "tests/slices/test_s30_isolation.py:563-565",
+  "s28_order": "tests/slices/test_s28_isolation.py:345 (python-dependencies row after opentelemetry row)",
+  "forbidden_in_new_row": ["docs/importers/openapi.md","docs/importers/opentelemetry.md","docs/importers/python-dependencies.md","docs/frameworks/rails.md","docs/cross-repository-links.md","evidence-reports.md","canary-missions.md"]
+ }
+}

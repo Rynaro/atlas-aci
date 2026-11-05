@@ -1,0 +1,6 @@
+as root:
+/tmp/dub
+rc=0
+as uid 10001:
+uid 10001 rc 128 b"fatal: detected dubious ownership in repository at '/tmp/dub'\nTo add an exceptio"
+identity {'kind': 'git_unavailable', 'root': '/tmp/dub'}

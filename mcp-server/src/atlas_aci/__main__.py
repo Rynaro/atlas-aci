@@ -1959,5 +1959,136 @@ def evidence_report(envelope: Path, html_out: Path, json_out: Path) -> None:
         raise click.ClickException("Evidence report failed: " + type(exc).__name__) from None
 
 
+def _write_history_atomic(target: Path, data: bytes) -> None:
+    """Write beside `target` (same directory) and `os.replace` it; no partial output remains."""
+    import tempfile
+    from contextlib import suppress
+
+    descriptor, name = tempfile.mkstemp(prefix=".atlas-history-overlay-", dir=target.parent)
+    try:
+        with os.fdopen(descriptor, "wb") as stream:
+            stream.write(data)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(name, target)
+    except BaseException:
+        with suppress(OSError):
+            os.unlink(name)
+        raise
+
+
+# (name, minimum, maximum, default); the library owns the same table and a test pins the two.
+_HISTORY_LIMITS = (
+    ("max_commits", 1, 20000, 1000),
+    ("max_pairs", 1, 1000000, 100000),
+    ("max_pair_observations", 1, 10000000, 1000000),
+    ("max_overlay_bytes", 1, 268435456, 67108864),
+    ("max_tree_bytes", 1, 268435456, 67108864),
+    ("git_timeout", 1, 600, 30),
+    ("git_deadline", 1, 86400, 600),
+)
+
+
+def _history_limit_options(command):
+    for name, low, high, default in reversed(_HISTORY_LIMITS):
+        command = click.option(
+            "--" + name.replace("_", "-"),
+            name,
+            default=None,
+            type=int,
+            help=f"Limit {low}..{high} (default {default})",
+        )(command)
+    return command
+
+
+@cli.command("cochange")
+@click.option(
+    "--repo",
+    required=True,
+    type=click.Path(exists=True, file_okay=False, path_type=Path),
+    help="The git repository (its top-level directory)",
+)
+@click.option("--repository-id", "repository_id", required=True, help="Operator label")
+@click.option("--start", required=True, help="Window start commit, excluded (40 hex)")
+@click.option("--end", required=True, help="Window end commit, included (40 hex)")
+@click.option(
+    "--source-commit",
+    "source_commit",
+    required=True,
+    help="The commit the indexed snapshot was taken from (40 hex)",
+)
+@click.option("--snapshot-id", "snapshot_id", required=True, help="The active snapshot (64 hex)")
+@_graph_root_option("--graph-root", "External graph root (default: <repo>/.atlas)")
+@click.option(
+    "--output",
+    "output_path",
+    required=True,
+    type=click.Path(dir_okay=False, path_type=Path),
+    help="Where the overlay is written; outside the repository and the graph root",
+)
+@click.option("--bulk-threshold", "bulk_threshold", default=None, type=int)
+@click.option("--diff-output-cap", "diff_output_cap", default=None, type=int)
+@click.option("--generated-prefix", "generated_prefix", multiple=True, help="Adds to the defaults")
+@click.option("--generated-name", "generated_name", multiple=True, help="Adds to the defaults")
+@click.option("--generated-suffix", "generated_suffix", multiple=True, help="Adds to the defaults")
+@click.option(
+    "--no-generated-defaults",
+    "no_generated_defaults",
+    is_flag=True,
+    help="Start every generated-path list empty",
+)
+@_history_limit_options
+def cochange(output_path: Path, **chosen: Any) -> None:
+    """Compute file-pair co-change correlations of one commit window (start..end).
+
+    A signal says two paths changed in the same eligible commit; it is a correlation, not a
+    dependency and not causality. The ACTIVE snapshot named by --snapshot-id is leased read-only
+    and bound to --source-commit by git blob ids; --end must be that commit or an ancestor.
+    The repository and the graph are never written; the only file written is --output.
+    Prints the canonical `atlas-history-summary.v1` on stdout; nothing is printed on rejection
+    (exit 1) or invalid usage (exit 2). Incomplete history is declared, with records withheld.
+    """
+    from atlas_aci.history import cochange as history
+    from atlas_aci.overlays import runtime
+    from atlas_aci.query.diff import DiffUsageError
+
+    raw = {
+        key: (list(value) if isinstance(value, tuple) else value)
+        for key, value in chosen.items()
+        if value is not None
+    }
+    try:
+        options = history.normalize_options(raw)
+    except history.HistoryUsageError as exc:
+        raise click.UsageError("Invalid co-change option: " + exc.what) from None
+    protected = [options.repo, options.repo / ".atlas"]
+    if options.graph_root is not None:
+        protected.append(options.graph_root)
+    try:
+        target = runtime.resolve_output(output_path, protected, [])
+    except runtime.OverlayUsageError:
+        raise click.UsageError("--output must be outside --repo and the graph root.") from None
+    try:
+        overlay = history.cochange(options)
+        data = history.canonical_bytes(overlay)
+        summary = history.canonical_bytes(history.summary_document(overlay))
+    except history.HistoryRejected as exc:
+        raise click.ClickException("History co-change rejected: " + exc.reason) from None
+    except history.HistoryUsageError as exc:
+        raise click.UsageError("Invalid co-change option: " + exc.what) from None
+    except DiffUsageError:
+        raise click.UsageError("The repository cannot be opened as a graph namespace.") from None
+    except Exception as exc:
+        # Never `str(exc)`: a message may carry a path.
+        raise click.ClickException("History co-change failed: " + type(exc).__name__) from None
+    try:
+        _write_history_atomic(target, data)
+    except OSError:
+        raise click.ClickException("History overlay cannot be written.") from None
+    stream = click.get_binary_stream("stdout")
+    stream.write(summary)
+    stream.flush()
+
+
 if __name__ == "__main__":
     cli()

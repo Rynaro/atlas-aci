@@ -1,0 +1,22 @@
+{
+  "format": "atlas-s33-expected-records.v1",
+  "world": "main",
+  "note": "Hand-derived from the spec table in the plan: support = eligible commits whose eligible path set holds both paths; commit_ids pin the plumbing builder (identical on git 2.47.3 and 2.50.1)",
+  "commit_ids": {"C0":"85fe42de22d2f068c358f8607a70a53b78cf0c75","C1":"315348e5bdf3b4738409d77624aa59244a1bd3e1","C10":"c4d125f80066632bdaa931f7ba761db6b5361408","C11":"b1c2fdb6be5cef8a0c222b52c0f2e9b0cb041878","C12":"4bd94745d4651744ed3788ffff94f69de14c9b34","C13":"2016ed69d4194a5140d02f81e68a76700a2021b2","C14":"dad6091d939cea8157a31024734d6e6e76e0f04a","C2":"1c8ae31d4224d8abfc4bf06b645b67e6794dd3e7","C3":"f7ca2b8d4025a633dd72ea82a2eaadf25d0e8ff9","C4":"2d33bf3d2b04d0862bf812d9d8a27aa358b648c2","C6":"c1147af0fd5038c3f4d10491b7c7991a8ac6e843","C7":"f4dd91bd754365753b2a8a05b73d7b046bbc9951","C8":"007eaa114b3a39de8bdf9a524e17445dcd73d0ed","C9":"4c480bbb631063d5d09734139f14d522d185d40c","M5":"6080ef261c354f0170daab92b84039f2055ba9b1"},
+  "pairs": [
+    {"a": "docs/naïve.txt", "b": "src/a.py", "support": 1, "commits": ["C10"]},
+    {"a": "src/a.py", "b": "src/b.py", "support": 3, "commits": ["C1", "C2", "C9"]},
+    {"a": "src/a.py", "b": "src/c.py", "support": 2, "commits": ["C2", "C8"]},
+    {"a": "src/a.py", "b": "src/d.py", "support": 1, "commits": ["C4"]},
+    {"a": "src/b.py", "b": "src/c.py", "support": 2, "commits": ["C2", "C3"]},
+    {"a": "src/b.py", "b": "src/f.py", "support": 1, "commits": ["C11"]},
+    {"a": "src/d.py", "b": "src/e.py", "support": 1, "commits": ["C12"]},
+    {"a": "src/d.py", "b": "src/e2.py", "support": 1, "commits": ["C12"]},
+    {"a": "src/e.py", "b": "src/e2.py", "support": 1, "commits": ["C12"]}
+  ],
+  "counts": {
+    "commits_in_window": 14, "merge_commits": 1, "bulk_commits": 1, "oversized_commits": 0,
+    "empty_commits": 1, "single_path_commits": 2, "pair_commits": 9, "generated_paths": 3,
+    "gitlink_paths": 1, "unrepresentable_paths": 2, "pairs": 9, "pair_observations": 13
+  }
+}
