@@ -1,0 +1,111 @@
+version = 1
+revision = 3
+requires-python = ">=3.9"
+resolution-markers = [
+    "python_full_version >= '3.12'",
+    "python_full_version < '3.12'",
+]
+
+[[package]]
+name = "extrapkg"
+version = "1.0.0"
+resolution-markers = [
+    "extra == 'extra-3-foo-cpu'",
+]
+source = { registry = "https://pypi.org/simple" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/00/11/22334455/extrapkg-1.0.0-py3-none-any.whl", hash = "sha256:4d6852d2189124a3e9a2e5cea43a2e0784938244d81221cbd621e21d658c7a1c", size = 100 },
+]
+
+[[package]]
+name = "overlap"
+version = "1.0.0"
+resolution-markers = [
+    "python_full_version >= '3.10'",
+]
+source = { registry = "https://pypi.org/simple" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/00/11/22334455/overlap-1.0.0-py3-none-any.whl", hash = "sha256:fb5cba734e697c35a57b627eba76b0cb375f2fb37629c6c2705f0d14c2da43e3", size = 100 },
+]
+
+[[package]]
+name = "overlap"
+version = "2.0.0"
+resolution-markers = [
+    "python_full_version >= '3.12'",
+]
+source = { registry = "https://pypi.org/simple" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/00/11/22334455/overlap-2.0.0-py3-none-any.whl", hash = "sha256:171e1f7593fa880391bae84dff818b5180ebd0142f39ec2fc60010bd008a7ca8", size = 100 },
+]
+
+[[package]]
+name = "s28-demo-pkg"
+version = "1.1.0"
+resolution-markers = [
+    "python_full_version < '3.12'",
+]
+source = { registry = "https://pypi.org/simple" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/00/11/22334455/s28_demo_pkg-1.1.0-py3-none-any.whl", hash = "sha256:1111111111111111111111111111111111111111111111111111111111111111", size = 2000 },
+]
+
+[[package]]
+name = "s28-demo-pkg"
+version = "1.2.0"
+resolution-markers = [
+    "python_full_version >= '3.12'",
+]
+source = { registry = "https://pypi.org/simple" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/00/11/22334455/s28_demo_pkg-1.2.0-py3-none-any.whl", hash = "sha256:9594e93a01e2e274ee71d5ad0be95b70ff5912314f98a4cc979e20f153ef5171", size = 5553 },
+]
+
+[[package]]
+name = "soloforked"
+version = "1.0.0"
+resolution-markers = [
+    "python_full_version < '3.10'",
+]
+source = { registry = "https://pypi.org/simple" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/00/11/22334455/soloforked-1.0.0-py3-none-any.whl", hash = "sha256:cf11873e40fa80be37e9ca9faf75d9ae193ada64344c21947bd8f67be965bb67", size = 100 },
+]
+
+[[package]]
+name = "splitpkg"
+version = "2.0.0"
+resolution-markers = [
+    "sys_platform == 'win32'",
+]
+source = { registry = "https://pypi.org/simple" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/00/11/22334455/splitpkg-2.0.0-py3-none-any.whl", hash = "sha256:e8f1a192f5dbd7315bdb629bd6ec5bc5c7db2f5b98b6bba0f7438c774b310f07", size = 100 },
+]
+
+[[package]]
+name = "splitpkg"
+version = "2.0.0"
+resolution-markers = [
+    "sys_platform != 'win32'",
+]
+source = { registry = "https://pypi.org/simple" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/00/11/22334455/splitpkg-2.0.0-py3-none-any.whl", hash = "sha256:e8f1a192f5dbd7315bdb629bd6ec5bc5c7db2f5b98b6bba0f7438c774b310f07", size = 100 },
+]
+
+[[package]]
+name = "unmarked"
+version = "1.0.0"
+source = { registry = "https://pypi.org/simple" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/00/11/22334455/unmarked-1.0.0-py3-none-any.whl", hash = "sha256:73f914b2df2912dedb256b875b214ee6e9d26309e2c706b075d1b1fb135de30d", size = 100 },
+]
+
+[[package]]
+name = "unmarked"
+version = "2.0.0"
+source = { registry = "https://pypi.org/simple" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/00/11/22334455/unmarked-2.0.0-py3-none-any.whl", hash = "sha256:1e5bbcf8e58385036d4543881f6f26f91e606609b1ded9461e93734bf2d1e9b5", size = 100 },
+]

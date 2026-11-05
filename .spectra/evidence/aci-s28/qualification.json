@@ -1,0 +1,198 @@
+{
+ "a_grammar": {
+  "cache_location": {
+   "dev": "/hc/.cache/tree-sitter-language-pack/v1.6.0/libs (HOME based; python was already present)",
+   "prod": "/tmp/.cache/tree-sitter-language-pack/v1.6.0/libs (HOME=/tmp, prefetched by the Dockerfile)",
+   "redirect": "pack.configure(cache_dir=D) makes cache_dir() return exactly D (not D/v1.6.0/libs)"
+  },
+  "downloaded_languages": {
+   "after_download_python_into_empty_cache": [
+    "python"
+   ],
+   "conclusion": "chosen predicate: 'python' in downloaded_languages(); it only lists the cache directory",
+   "default_dev_cache": [
+    "bash",
+    "html",
+    "javascript",
+    "markdown",
+    "python",
+    "ruby",
+    "rust",
+    "scss",
+    "tsx",
+    "typescript",
+    "yaml"
+   ],
+   "elapsed_s": 0.001,
+   "empty_cache_existing_dir": [],
+   "empty_cache_nonexistent_dir": [],
+   "files_created_by_cache_dir_or_downloaded_languages_or_has_language": 0
+  },
+  "empty_cache_network_blocked_dev": {
+   "download": "DownloadError in 0.0 s",
+   "get_parser": "LanguageNotFoundError in 0.0 s, nothing created",
+   "predicates": "return [] / False immediately"
+  },
+  "first_load_audit_events": "none of open / ctypes.dlopen / socket.* is visible to a Python audit hook for the native grammar load; the only Python-level events seen come from the lazy import of the tree_sitter module (open/compile/exec), so the AC-007 harness pre-imports tree_sitter and every module the CLI uses; the load is proved by non-empty declarations and an identical cache_dir listing before and after",
+  "has_language": {
+   "after_get_parser": true,
+   "after_local_download": true,
+   "cold_process_with_python_on_disk": false,
+   "conclusion": "has_language reports an in-process registry, not the on-disk cache: it is False for a grammar that is on disk until the first load, so it is NOT a usable local-only predicate",
+   "empty_cache": false
+  },
+  "language": {
+   "abi_version": 15,
+   "name": "python",
+   "semantic_version": [
+    0,
+    25,
+    0
+   ],
+   "version": "15 (deprecated alias of abi_version)"
+  },
+  "node_shapes": {
+   "assignment": "fields left, right, optional type; list/tuple of string(string_start, string_content?, string_end); escape_sequence/interpolation appear as children of string_content/string",
+   "async": "function_definition has an anonymous direct child of type 'async'",
+   "bom": "module node starts at byte 3, no error: offsets stay relative to the member bytes",
+   "class_definition": "fields name, body (block)",
+   "columns": "start_point.column is a byte column",
+   "decorated_definition": "field 'definition' is the class/function node (decorators are siblings)",
+   "expression_statement": "not present: assignment/call appear directly under module",
+   "future_import_statement": "SEPARATE node type for 'from __future__ import x' (found during tests; handled)",
+   "has_error": "true for broken input (MISSING nodes included)",
+   "import_from_statement": "field module_name = dotted_name | relative_import(import_prefix of '.' tokens, dotted_name?); names repeat as field 'name'; wildcard_import has no field",
+   "import_statement": "fields 'name' repeated: dotted_name | aliased_import(name, alias)",
+   "string_concatenation": "concatenated_string node",
+   "t_strings": "this grammar parses t'...' (string with interpolation) with no error"
+  },
+  "pack": {
+   "api": [
+    "download",
+    "download_all",
+    "configure",
+    "cache_dir",
+    "downloaded_languages",
+    "has_language",
+    "get_parser",
+    "get_language",
+    "manifest_languages",
+    "available_languages",
+    "clean_cache"
+   ],
+   "tree_sitter": "0.25.2",
+   "version": "1.6.0 (importlib.metadata; the module has no __version__)"
+  },
+  "prod_offline_read_only": {
+   "audit_events_in_first_load": [],
+   "downloaded_languages_has_python": true,
+   "get_parser_python": "ok"
+  },
+  "transient": "one DownloadError on a first provisioning attempt with network (0.27 s) was not reproducible in 3 reruns"
+ },
+ "b_tomllib": {
+  "pre_scan_rules_are_tested_directly": "tests/slices/test_s28_lock.py::test_lock_prescan_runs_before_and_independently_of_the_toml_parser",
+  "real_lock": {
+   "bytes": 184168,
+   "has_backslash": false,
+   "longest_line": 366,
+   "max_bracket_depth": 3,
+   "max_digit_run": 24,
+   "parses_on": [
+    "3.12.16",
+    "3.14.10"
+   ],
+   "path": "mcp-server/uv.lock",
+   "revision": 3,
+   "version": 1
+  },
+  "table_py312_and_py314_identical": {
+   "depth100000": "RecursionError",
+   "depth16": "accepted",
+   "depth17": "accepted by tomllib (rejected by the pre-scan)",
+   "digits5000": "ValueError (int max str digits)",
+   "escape_e": "TOMLDecodeError",
+   "escape_x41": "TOMLDecodeError",
+   "escaped_backslash_then_e": "accepted (so the pre-scan counts backslash runs: only an odd run triggers)",
+   "multiline_inline_table": "TOMLDecodeError on 3.12.16 AND 3.14.10"
+  },
+  "tree_sitter_language_pack_wheels_in_uv_lock": "four wheels, all cp310-abi3 and platform specific (macosx, manylinux aarch64/x86_64, win_amd64): no_locked_pure_wheel"
+ },
+ "c_zipfile": {
+  "central_local_name_mismatch": "BadZipFile on open",
+  "detail": "parity/toml-zip-py312.json and parity/toml-zip-py314.json",
+  "duplicates_kept_in_infolist": true,
+  "flag_bits_external_attr_header_offset_CRC_exposed": true,
+  "garbage_empty_truncated": "BadZipFile from the constructor",
+  "identical_on": [
+   "3.12.16",
+   "3.14.10"
+  ],
+  "orig_filename_keeps_nul_filename_truncates": true
+ },
+ "d_generator": {
+  "environments": [
+   "dev 3.12 aarch64",
+   "py3.14 aarch64",
+   "py3.14 x86_64",
+   "prod 3.12 aarch64"
+  ],
+  "equals_committed": true,
+  "files": "parity/par-*.json",
+  "repeatable_twice_each": true
+ },
+ "e_canonical_bytes": {
+  "bytes": 34138,
+  "extractor": {
+   "abi_version": 15,
+   "grammar_version": "1.6.0",
+   "identical_in_every_environment": true,
+   "language": "python",
+   "parser": "tree-sitter"
+  },
+  "identical_across": [
+   "dev 3.12 aarch64",
+   "py3.14 aarch64",
+   "py3.14 x86_64 (emulated)",
+   "production image 3.12 aarch64 --network none --read-only",
+   "PYTHONHASHSEED=1 and 2 in every environment"
+  ],
+  "snapshot_id": "3812a00d8266e52f0c05b565a9678371e841b93602131a3e67f7ed63b7b9996d",
+  "snapshot_sha256": "b832ce34c1395a8d7c2bc91d4f96f96b52871fd419a9c8494194a3b9c163799f"
+ },
+ "environments": {
+  "dev": "atlas-aci-dev-s16, python 3.12.16, linux/aarch64, uid 1000, HOME=/hc",
+  "prod": "atlas-aci:s28-base (built from 8d7dd73), python 3.12.16, --network none --read-only",
+  "py314_aarch64": "python:3.14 (3.14.10) + uv.lock deps, linux/aarch64, throwaway image atlas-s28-py314",
+  "py314_x86_64": "same Dockerfile built --platform linux/amd64 (emulated), python 3.14.10, x86_64 (the CI class)"
+ },
+ "f_base_invariants": "base-invariants.json",
+ "g_extractor_identity": "grammar_version = importlib.metadata.version('tree-sitter-language-pack') read once at module import; abi_version = Language.abi_version of the loaded grammar; no host file is read at run time. semantic_version (0,25,0) is recorded here but not used.",
+ "h_uv_fork_shape": {
+  "consequences": [
+   "the per-package resolution-markers shape matches the hand-authored forked.uv.lock",
+   "uv spells prefix markers with a wildcard (== '3.10.*'): the marker subset accepts == and != with a numeric .* prefix on version variables (a documented extension of D4 found here)",
+   "a current uv writes revision 5, which the strict profile rejects as unsupported_lock_profile: this repository's own lock is revision 3 (open risk)"
+  ],
+  "fixture_status": "forked.uv.lock stays hand-authored at revision 3 (no uv at revision 3 available): marked hand-authored in provenance.json and the docs",
+  "observed": {
+   "dependents": "dependency edges carry marker = \"python_full_version < '3.10'\"-style strings",
+   "lock_revision_written": 5,
+   "per_package": "each forked [[package]] entry (same name, different version) carries its own resolution-markers list and registry source",
+   "top_level": "resolution-markers = [\"python_full_version >= '3.12'\", \"python_full_version == '3.11.*'\", \"python_full_version == '3.10.*'\", \"python_full_version < '3.10'\"]"
+  },
+  "probe": "a project requiring numpy with requires-python >=3.9, uv lock with network",
+  "uv": "0.13.6 (dev image)"
+ },
+ "slice": "ACI-S28",
+ "stop_rule": {
+  "a_3_12_vs_3_14_grammar_difference": "not triggered: identical extraction on every environment",
+  "a_no_local_predicate": "not triggered: downloaded_languages() is local-only",
+  "a_prod_cannot_load_offline": "not triggered: the production image loads python with --network none --read-only",
+  "ast_fallback_applied": false,
+  "b_real_lock_fails_prescan": "not triggered",
+  "c_zipfile_surprise": "not triggered",
+  "d_e_non_identical_bytes": "not triggered"
+ },
+ "stop_rule_triggered": false
+}

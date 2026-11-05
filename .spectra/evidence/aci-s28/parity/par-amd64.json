@@ -1,0 +1,34 @@
+{
+ "python": "3.14.10",
+ "platform": "x86_64",
+ "gen1": {
+  "s28_demo_pkg-1.2.0-py3-none-any.whl": "9594e93a01e2e274ee71d5ad0be95b70ff5912314f98a4cc979e20f153ef5171",
+  "single.uv.lock": "0d387f5b825eedd42123d05c2358c23020bce9f4b2dac094fc226d01d508060d",
+  "forked.uv.lock": "de7843e9eca1008f73b5f332e011763c9d08a882ed2c95c4966a7e02faf435e3"
+ },
+ "gen2": {
+  "s28_demo_pkg-1.2.0-py3-none-any.whl": "9594e93a01e2e274ee71d5ad0be95b70ff5912314f98a4cc979e20f153ef5171",
+  "single.uv.lock": "0d387f5b825eedd42123d05c2358c23020bce9f4b2dac094fc226d01d508060d",
+  "forked.uv.lock": "de7843e9eca1008f73b5f332e011763c9d08a882ed2c95c4966a7e02faf435e3"
+ },
+ "generator_repeatable": true,
+ "generator_equals_committed": true,
+ "rc": [
+  0,
+  0
+ ],
+ "stderr": "",
+ "snapshot_sha": [
+  "b832ce34c1395a8d7c2bc91d4f96f96b52871fd419a9c8494194a3b9c163799f",
+  "b832ce34c1395a8d7c2bc91d4f96f96b52871fd419a9c8494194a3b9c163799f"
+ ],
+ "stdout_equal": true,
+ "extractor": {
+  "abi_version": 15,
+  "grammar_version": "1.6.0",
+  "language": "python",
+  "parser": "tree-sitter"
+ },
+ "snapshot_id": "3812a00d8266e52f0c05b565a9678371e841b93602131a3e67f7ed63b7b9996d",
+ "bytes": 34138
+}

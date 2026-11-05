@@ -1,0 +1,88 @@
+{
+ "slice_id": "ACI-S28",
+ "plan": ".spectra/plans/aci-s28.md",
+ "author": "orchestrator-ramza-plan-s28",
+ "checker": "atlas-s28-plan-checker",
+ "verdict": "APPROVE_WITH_CONDITIONS",
+ "method": "independent read-only code review; no commands executed",
+ "findings": [
+  {
+   "n": 1,
+   "severity": "MAJOR",
+   "summary": "AC-007 CLI path proven only by a bypassable os.open spy; run the audit-hook subprocess over the real CLI with open-event allowlist and never-opened unmatched wheel/FIFO paths",
+   "disposition": "accepted as plan condition 1"
+  },
+  {
+   "n": 2,
+   "severity": "MAJOR",
+   "summary": "extractor grammar_version/abi_version feeds snapshot_id and the golden; macOS-3.12 golden vs Linux-3.14 CI is a likely red; derive identity from pack version plus abi, confirm in the Linux image before committing the golden, compare extractor first",
+   "disposition": "accepted as plan condition 2"
+  },
+  {
+   "n": 3,
+   "severity": "MAJOR",
+   "summary": "__all__ in control blocks or non-literal forms silently yields no diagnostic; export span must be the element node; add a limitation for variables, aliases and type aliases",
+   "disposition": "accepted as plan condition 3"
+  },
+  {
+   "n": 4,
+   "severity": "MINOR",
+   "summary": "session fixture provisioning acceptable (existing CI already downloads grammars) but must fail not skip; empty-cache test redirects via configure(cache_dir); Day-1 predicate evidence; guard-then-get_parser errors map to python_parser_unavailable; docs give provisioning command",
+   "disposition": "accepted as plan condition 4"
+  },
+  {
+   "n": 5,
+   "severity": "MINOR",
+   "summary": "relative import from a top-level module must resolve to null",
+   "disposition": "accepted as plan condition 5"
+  },
+  {
+   "n": 6,
+   "severity": "MINOR",
+   "summary": "lock pre-scan backslash rule must count runs; absent revision gives unsupported_lock_profile; measure against real lock",
+   "disposition": "accepted as plan condition 6"
+  },
+  {
+   "n": 7,
+   "severity": "MINOR",
+   "summary": "canonicalise python_full_version components in env; pin AC-004 unsupported-source and AC-006 no-pure-wheel decisions in tests and docs",
+   "disposition": "accepted as plan condition 7"
+  },
+  {
+   "n": 8,
+   "severity": "MINOR",
+   "summary": "strip exactly one trailing slash (rstrip accepts dir//); define directory-entry and member counting; make the 200x ratio a limit or python_source-only",
+   "disposition": "accepted as plan condition 8"
+  },
+  {
+   "n": 9,
+   "severity": "MINOR",
+   "summary": "exact version equality rejects unnormalised legitimate wheels; record as limitation and test",
+   "disposition": "accepted as plan condition 9"
+  },
+  {
+   "n": 10,
+   "severity": "MINOR",
+   "summary": "every rejection test leaves a pre-existing --output byte-unchanged with no temp",
+   "disposition": "accepted as plan condition 10"
+  },
+  {
+   "n": 11,
+   "severity": "MINOR",
+   "summary": "audit design: dlopen/open events do not cover native grammar load, importlib.metadata read, pre-import completeness, harmless positive control",
+   "disposition": "accepted as plan condition 11"
+  },
+  {
+   "n": 12,
+   "severity": "MINOR",
+   "summary": "pin BOM outcome; document that one unparsed construct drops the whole member as syntax_error",
+   "disposition": "accepted as plan condition 12"
+  },
+  {
+   "n": 13,
+   "severity": "MINOR",
+   "summary": "prod-image.sh keeps /tmp unmasked (HOME=/tmp cache); record cmp/sha256sum; run ruff format on generate.py and mypy on pack calls early",
+   "disposition": "accepted as plan condition 13"
+  }
+ ]
+}

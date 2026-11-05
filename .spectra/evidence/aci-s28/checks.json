@@ -1,0 +1,58 @@
+{
+ "slice": "ACI-S28",
+ "base_commit": "8d7dd73a932cd9d54c10c1cebba32c348b178f13",
+ "environment": "atlas-aci-dev-s16 (uid 1000, Python 3.12); CI is Python 3.14 (S28 contract: 64 passed on python:3.14.10 aarch64 and emulated x86_64, --network none)",
+ "gates": {
+  "s28-contract": {
+   "exit": 0,
+   "summary": "64 passed in 3.57s; tests/slices/test_s28_{support,python_dependency,lock,archive,surface,cli,isolation}.py; orchestrator rerun with test_s29 + test_s27_isolation: 119 passed"
+  },
+  "regression": {
+   "exit": 0,
+   "summary": "430 passed, 1 skipped, 1 deselected in 114.35s (s08 minus flaky, s14, s16, s27, s29, thesis_negatives, export)"
+  },
+  "ruff": {
+   "exit": 0
+  },
+  "format": {
+   "exit": 0
+  },
+  "mypy": {
+   "exit": 0,
+   "summary": "85 source files clean; orchestrator reran the exact CI lint chain: clean"
+  },
+  "full-suite": {
+   "exit": 1,
+   "summary": "1 failed, 2092 passed, 10 skipped, 1 deselected in ~702s; single failure is the pre-existing tests/slices/test_s01_contract.py::test_call_deadline_after_initialization (uid 1000); deselected test_s08_integration::test_nonregular_pack_does_not_block_acquisition (known flaky). A docs-only edit followed this run; contract, regression and static gates were rerun after it."
+  },
+  "g-src": {
+   "exit": 0,
+   "summary": "gated paths byte-identical vs 8d7dd73; changed src == {__main__.py, dependencies/__init__.py, dependencies/uv_lock.py, dependencies/python_wheel.py}; no tracked test modified"
+  },
+  "g-mcp": {
+   "exit": 0,
+   "summary": "tools JSON sha256 94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56, 1631472 bytes; 3436/3448/797/7730 unchanged"
+  },
+  "py314": {
+   "exit": 0,
+   "summary": "S28 contract 64 passed on Python 3.14.10 aarch64"
+  },
+  "py314-amd64": {
+   "exit": 0,
+   "summary": "S28 contract 64 passed on Python 3.14.10 x86_64 (emulated)"
+  },
+  "g-image": {
+   "exit": 0,
+   "summary": "orchestrator ran prod-scenario.sh against atlas-aci:s28 (--network none --read-only): import twice byte-identical and equal to the golden b832ce34...799f; extractor tree-sitter/python/1.6.0/abi 15; AC-003/004/006 rejections exit 1, empty stdout, output untouched; usage exit 2; tools pin"
+  }
+ },
+ "acceptance_tests": {
+  "AC-S28-001": "tests/slices/test_s28_python_dependency.py::test_python_dependency_exact_coordinate PASSED",
+  "AC-S28-002": "tests/slices/test_s28_python_dependency.py::test_python_dependency_declarations_are_package_scoped PASSED",
+  "AC-S28-003": "tests/slices/test_s28_python_dependency.py::test_python_dependency_hash_mismatch_rejected PASSED",
+  "AC-S28-004": "tests/slices/test_s28_python_dependency.py::test_python_dependency_ambiguous_variant_rejected PASSED",
+  "AC-S28-005": "tests/slices/test_s28_python_dependency.py::test_python_dependency_reimport_is_idempotent PASSED",
+  "AC-S28-006": "tests/slices/test_s28_python_dependency.py::test_python_dependency_missing_source_is_explicit PASSED",
+  "AC-S28-007": "tests/slices/test_s28_python_dependency.py::test_python_dependency_import_is_offline_nonexecuting PASSED"
+ }
+}

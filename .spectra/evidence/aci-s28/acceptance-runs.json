@@ -1,0 +1,44 @@
+[
+  {
+    "ac_id": "AC-S28-001",
+    "test": "mcp-server/tests/slices/test_s28_python_dependency.py::test_python_dependency_exact_coordinate",
+    "exit_code": 0,
+    "tail": "1 passed in 0.35s"
+  },
+  {
+    "ac_id": "AC-S28-002",
+    "test": "mcp-server/tests/slices/test_s28_python_dependency.py::test_python_dependency_declarations_are_package_scoped",
+    "exit_code": 0,
+    "tail": "1 passed in 0.32s"
+  },
+  {
+    "ac_id": "AC-S28-003",
+    "test": "mcp-server/tests/slices/test_s28_python_dependency.py::test_python_dependency_hash_mismatch_rejected",
+    "exit_code": 0,
+    "tail": "1 passed in 0.32s"
+  },
+  {
+    "ac_id": "AC-S28-004",
+    "test": "mcp-server/tests/slices/test_s28_python_dependency.py::test_python_dependency_ambiguous_variant_rejected",
+    "exit_code": 0,
+    "tail": "1 passed in 0.30s"
+  },
+  {
+    "ac_id": "AC-S28-005",
+    "test": "mcp-server/tests/slices/test_s28_python_dependency.py::test_python_dependency_reimport_is_idempotent",
+    "exit_code": 0,
+    "tail": "1 passed in 1.44s"
+  },
+  {
+    "ac_id": "AC-S28-006",
+    "test": "mcp-server/tests/slices/test_s28_python_dependency.py::test_python_dependency_missing_source_is_explicit",
+    "exit_code": 0,
+    "tail": "1 passed in 0.33s"
+  },
+  {
+    "ac_id": "AC-S28-007",
+    "test": "mcp-server/tests/slices/test_s28_python_dependency.py::test_python_dependency_import_is_offline_nonexecuting",
+    "exit_code": 0,
+    "tail": "1 passed in 0.93s"
+  }
+]

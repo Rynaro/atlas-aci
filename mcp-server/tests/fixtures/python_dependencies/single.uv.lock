@@ -1,0 +1,73 @@
+version = 1
+revision = 3
+requires-python = ">=3.9"
+
+[[package]]
+name = "dirdep"
+version = "0.1.0"
+source = { directory = "../dirdep" }
+
+[[package]]
+name = "gitdep"
+version = "0.1.0"
+source = { git = "https://github.com/example/gitdep?rev=abc#aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" }
+
+[[package]]
+name = "localreg"
+version = "1.0.0"
+source = { registry = "../local-registry" }
+wheels = [
+    { url = "../local-registry/localreg-1.0.0-py3-none-any.whl", hash = "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", size = 10 },
+]
+
+[[package]]
+name = "md5only"
+version = "1.0.0"
+source = { registry = "https://pypi.org/simple" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/00/11/22334455/md5only-1.0.0-py3-none-any.whl", hash = "md5:abababababababababababababababab", size = 10 },
+]
+
+[[package]]
+name = "pathdep"
+version = "1.0.0"
+source = { path = "../pathdep-1.0.0-py3-none-any.whl" }
+
+[[package]]
+name = "platonly"
+version = "1.0.0"
+source = { registry = "https://pypi.org/simple" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/00/11/22334455/platonly-1.0.0-cp312-cp312-manylinux_2_17_x86_64.whl", hash = "sha256:abababababababababababababababababababababababababababababababab", size = 9 },
+]
+
+[[package]]
+name = "s28-demo-pkg"
+version = "1.2.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/00/11/22334455/s28_demo_pkg-1.2.0.tar.gz", hash = "sha256:abababababababababababababababababababababababababababababababab", size = 1234 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/00/11/22334455/s28_demo_pkg-1.2.0-py3-none-any.whl", hash = "sha256:9594e93a01e2e274ee71d5ad0be95b70ff5912314f98a4cc979e20f153ef5171", size = 5553 },
+    { url = "https://files.pythonhosted.org/packages/00/11/22334455/s28_demo_pkg-1.2.0-cp312-cp312-manylinux_2_17_x86_64.whl", hash = "sha256:cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd", size = 4321 },
+]
+
+[[package]]
+name = "s28-root"
+version = "0.1.0"
+source = { editable = "." }
+
+[[package]]
+name = "sdistonly"
+version = "1.0.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/00/11/22334455/sdistonly-1.0.0.tar.gz", hash = "sha256:abababababababababababababababababababababababababababababababab", size = 1234 }
+
+[[package]]
+name = "urldep"
+version = "1.0.0"
+source = { url = "https://example.com/urldep-1.0.0-py3-none-any.whl" }
+
+[[package]]
+name = "virtualdep"
+version = "1.0.0"
+source = { virtual = "." }

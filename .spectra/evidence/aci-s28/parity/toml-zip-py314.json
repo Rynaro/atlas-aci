@@ -1,0 +1,64 @@
+{
+ "py": "3.14.10",
+ "lock": {
+  "bytes": 184168,
+  "max_depth": 3,
+  "max_digit_run": 24,
+  "longest_line": 366,
+  "has_backslash": false,
+  "parse_ok": true,
+  "version": 1,
+  "revision": 3
+ },
+ "toml": {
+  "depth16": "accepted",
+  "depth17": "accepted",
+  "depth100000": "RecursionError",
+  "digits5000": "ValueError",
+  "multiline_inline": "TOMLDecodeError",
+  "esc_e": "TOMLDecodeError",
+  "esc_x41": "TOMLDecodeError",
+  "escaped_backslash_e": "accepted"
+ },
+ "zip": {
+  "names": [
+   [
+    "a\u0000b.py",
+    "a"
+   ],
+   [
+    "a/b.py",
+    "a/b.py"
+   ],
+   [
+    "a/b.py",
+    "a/b.py"
+   ]
+  ],
+  "flag_bits": [
+   0,
+   0,
+   0
+  ],
+  "external_attr": [
+   0,
+   2175008768,
+   0
+  ],
+  "header_offset": [
+   0,
+   40,
+   80
+  ],
+  "crc": [
+   2247413504,
+   375782310,
+   499868937
+  ],
+  "dups_in_infolist": 3,
+  "garbage": "BadZipFile",
+  "empty": "BadZipFile",
+  "trunc": "BadZipFile",
+  "name_mismatch": "BadZipFile"
+ }
+}

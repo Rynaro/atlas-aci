@@ -9,6 +9,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Python dependency surface from a uv lock and a local wheel (ACI-S28).** New operator command
+  `atlas-aci import-python-dependency --lock uv.lock --package NAME [--env KEY=VALUE]...
+  [--wheel PATH]... --output OUT [limits]` (CLI only, no MCP op) and the libraries
+  `atlas_aci.dependencies.uv_lock` (pure lock reading and variant selection) and
+  `atlas_aci.dependencies.python_wheel`. The `uv.lock` (version 1, revision 3, one registry pure
+  wheel) selects exactly one variant for the declared environment; a supplied local wheel is
+  matched by its locked filename and its sha256 (and size) must equal that lock entry before any
+  archive is opened. The archive is then read in memory (never extracted) and its python
+  declarations, import paths and literal `__all__` exports become one standalone,
+  content-addressed `atlas-python-package-snapshot.v1` written only to `--output`. Facts are
+  `declaration_only`: no call binding, dynamic exports and conditional definitions are named
+  diagnostics, and a member the grammar cannot parse contributes nothing. The importer
+  does not install, does not download and never executes package code; the python grammar must
+  already be in the local cache (`python_parser_unavailable` otherwise; the docs give the provisioning
+  command). A missing wheel is `missing_dependency_source` for the selected coordinate and an
+  ambiguous environment is `unresolved_lock_variant`. The snapshot is not written to the graph
+  and the tools JSON and every tool budget are unchanged. See
+  `docs/importers/python-dependencies.md`.
 - **OpenTelemetry trace import into a runtime overlay (ACI-S27).** New operator command
   `atlas-aci import-otel --repo R [--graph-root G] --manifest M --output OUT [limits] OTLP_JSON`
   (CLI only, no MCP op) and the libraries `atlas_aci.importers.otel_json` (pure parser) and
