@@ -1,6 +1,6 @@
 """ACI-S38 acceptance: declared fixture hosts over real stdio server subprocesses.
 
-Two declared fixture hosts: an independent raw JSON-RPC line client and the mcp 1.27.0
+Two declared fixture hosts: an independent raw JSON-RPC line client and the mcp 1.30.0
 ``ClientSession``. They are labelled fixtures, never Claude Code, Copilot or Cursor.
 """
 
@@ -193,7 +193,7 @@ def test_legacy_host_fixture(lab, host, revision):
     responses = bodies(run)
     init = responses[1]["result"]
     assert init["protocolVersion"] == revision
-    assert init["serverInfo"] == {"name": "atlas-aci", "version": "1.27.0"}
+    assert init["serverInfo"] == {"name": "atlas-aci", "version": "1.30.0"}
     assert init["capabilities"] == sup.RECORDED_CAPABILITIES
     assert responses[3]["result"] == {}
     tools = responses[4]["result"]["tools"]
@@ -508,7 +508,7 @@ def test_unsupported_version(lab):
         if kind == "result":
             assert first["result"]["protocolVersion"] == negotiation.offered == sup.SELECTED
             assert negotiation.wire == "initialize_result" and "error" not in first
-            assert first["result"]["serverInfo"] == {"name": "atlas-aci", "version": "1.27.0"}
+            assert first["result"]["serverInfo"] == {"name": "atlas-aci", "version": "1.30.0"}
         else:
             assert first["error"] == INVALID_PARAMS and "result" not in first, case
             assert negotiation.wire == "invalid_params_error"

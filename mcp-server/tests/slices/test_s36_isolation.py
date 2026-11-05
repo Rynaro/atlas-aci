@@ -40,8 +40,10 @@ from atlas_aci.storage import evidence as ev
 V = verifier()
 BASE_TOOLS_SHA256 = "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56"
 BASE_TOOLS_BYTES = 1631472
-PYPROJECT_SHA256 = "c0cfa084bb005c49229181defeb8b27273e0bb1f5a0ac2d0eb82f85d534cb36d"
-UV_LOCK_SHA256 = "6b820f14327cd71951abe8d4a41b2d1962af21b33b492469de82553a31ca2962"
+# These whole-file pins change only through a receipted re-lock
+# (see .spectra/evidence/sec-relock/): the CVE-floor re-lock moved both files.
+PYPROJECT_SHA256 = "981f0784d6bc5c1502c91ab27657beb483460b97e066cd8846f51e98f1d7d92f"
+UV_LOCK_SHA256 = "87ba265e76f382aaa4387da7ca5d89dc85eb3699b35ee4315e981302b19646fd"
 BANNED = {
     "safe", "proven", "guaranteed", "compliant", "compatible", "incompatible", "breaking",
     "applied", "trusted", "certified", "authentic", "superior", "optimal", "better", "improves",

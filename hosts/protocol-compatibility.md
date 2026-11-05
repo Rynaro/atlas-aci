@@ -7,8 +7,10 @@ behaviour only; nothing here changes what the server sends.
 ## 1. Summary
 
 - Transport: stdio only. The server is `atlas-aci serve`; there is no HTTP or SSE transport.
-- SDK: the locked Python SDK `mcp` 1.27.0 owns the wire. `pyproject.toml` and `uv.lock` are not
-  touched by this slice, so the supported set below is exactly what that SDK offers.
+- SDK: the locked Python SDK `mcp` 1.30.0 owns the wire. The dependency floors were raised by the
+  security re-lock (`pyproject.toml` and `uv.lock`; receipts in `.spectra/evidence/sec-relock/`),
+  after which every transcript was regenerated and differs from the mcp 1.27.0 recording only by
+  the SDK version string. The supported set below is exactly what that SDK offers.
 - Selected revision: `2025-11-25`, the newest revision the SDK offers (not the newest official
   revision; see section 10).
 - The Atlas-owned table lives in `mcp-server/src/atlas_aci/protocol/revisions.py`. It is pure data
@@ -19,10 +21,10 @@ behaviour only; nothing here changes what the server sends.
 
 | revision | family | status | outputSchema and structuredContent | verified with | golden file |
 | --- | --- | --- | --- | --- | --- |
-| 2024-11-05 | legacy | retained_legacy | none; text content only | raw line fixture host, mcp 1.27.0 ClientSession, official schema checks (draft-07), KNOWN_DEVIATIONS none | `tests/fixtures/s38/transcripts/legacy.2024-11-05.v1.json` |
-| 2025-03-26 | legacy | retained_legacy | none; text content only; JSON-RPC batching unsupported | raw line fixture host, mcp 1.27.0 ClientSession, official schema checks (draft-07), KNOWN_DEVIATIONS none | `tests/fixtures/s38/transcripts/legacy.2025-03-26.v1.json` |
-| 2025-06-18 | modern | verified_modern | `graph_query` advertises `outputSchema`; every `graph_query` result carries `structuredContent` | raw line fixture host, mcp 1.27.0 ClientSession, official schema checks (draft-07), KNOWN_DEVIATIONS none | `tests/fixtures/s38/transcripts/modern.2025-06-18.v1.json` |
-| 2025-11-25 | modern | selected | same as 2025-06-18 | raw line fixture host, mcp 1.27.0 ClientSession (raw initialize and plain `initialize()`), official schema checks (draft 2020-12), KNOWN_DEVIATIONS none | `tests/fixtures/s38/transcripts/modern.2025-11-25.v1.json` |
+| 2024-11-05 | legacy | retained_legacy | none; text content only | raw line fixture host, mcp 1.30.0 ClientSession, official schema checks (draft-07), KNOWN_DEVIATIONS none | `tests/fixtures/s38/transcripts/legacy.2024-11-05.v1.json` |
+| 2025-03-26 | legacy | retained_legacy | none; text content only; JSON-RPC batching unsupported | raw line fixture host, mcp 1.30.0 ClientSession, official schema checks (draft-07), KNOWN_DEVIATIONS none | `tests/fixtures/s38/transcripts/legacy.2025-03-26.v1.json` |
+| 2025-06-18 | modern | verified_modern | `graph_query` advertises `outputSchema`; every `graph_query` result carries `structuredContent` | raw line fixture host, mcp 1.30.0 ClientSession, official schema checks (draft-07), KNOWN_DEVIATIONS none | `tests/fixtures/s38/transcripts/modern.2025-06-18.v1.json` |
+| 2025-11-25 | modern | selected | same as 2025-06-18 | raw line fixture host, mcp 1.30.0 ClientSession (raw initialize and plain `initialize()`), official schema checks (draft 2020-12), KNOWN_DEVIATIONS none | `tests/fixtures/s38/transcripts/modern.2025-11-25.v1.json` |
 
 Families: `legacy` and `modern`. Structured results are enabled only for the two modern
 revisions, as before this slice. "Verified" means exactly the checks named in the fifth column
@@ -30,7 +32,7 @@ ran against the fixture repository `s38-mini.v1`; it does not extend to any real
 
 Facts that hold for every revision (measured): the same 7 tools; `test_dry_run` carries `_meta`
 and `annotations`; the resource template `atlas-source://`; `serverInfo` is `atlas-aci` with the
-SDK version `1.27.0`; `experimental` is `{}`; the capabilities are identical. The `tools/list`
+SDK version `1.30.0`; `experimental` is `{}`; the capabilities are identical. The `tools/list`
 result is 12923 bytes of canonical JSON for 2024-11-05 and 347091 bytes for 2025-11-25.
 
 ## 3. Negotiation
@@ -132,7 +134,7 @@ Two fixtures, labelled as fixtures and nothing more:
 
 - an independent raw JSON-RPC line client (standard library only) over a real `run_stdio`
   subprocess, one process per conversation;
-- the mcp 1.27.0 `ClientSession`, once with a raw `initialize` for the requested revision and once
+- the mcp 1.30.0 `ClientSession`, once with a raw `initialize` for the requested revision and once
   with plain `initialize()`, which requests `2025-11-25`.
 
 ## 6. Real hosts
@@ -183,7 +185,7 @@ is Apache-2.0 (the repository root states a transition from MIT; the license tex
 `LICENSE.mcp-specification`; there is no NOTICE file). Dialects: 2024-11-05, 2025-03-26 and
 2025-06-18 are draft-07 and use `definitions`; 2025-11-25 is draft 2020-12 and uses `$defs`.
 
-The repository also holds a newer revision, `2026-07-28` (not supported: mcp 1.27.0 does not offer it). The matrix therefore says "selected = newest SDK-supported", not "official latest".
+The repository also holds a newer revision, `2026-07-28` (not supported: mcp 1.30.0 does not offer it). The matrix therefore says "selected = newest SDK-supported", not "official latest".
 
 Every response and error frame of the four conversations, the unsupported and malformed cases, and
 a live page and resource-read run is validated against its negotiated revision's schema.

@@ -4,8 +4,8 @@
  "commit": "3c4d91b7e832d9b74338d56eed03403ccc662123",
  "commit_resolved_from": "git ls-remote refs/heads/main",
  "schema_directory_listing": ["2024-11-05", "2025-03-26", "2025-06-18", "2025-11-25", "2026-07-28", "draft"],
- "not_supported": {"2026-07-28": "not supported: mcp 1.27.0 does not offer it", "draft": "unreleased draft; not a revision"},
- "selection_rule": "selected = newest SDK-supported revision (mcp 1.27.0 offers 2025-11-25), not the newest official revision",
+ "not_supported": {"2026-07-28": "not supported: mcp 1.30.0 does not offer it", "draft": "unreleased draft; not a revision"},
+ "selection_rule": "selected = newest SDK-supported revision (mcp 1.30.0 offers 2025-11-25), not the newest official revision",
  "license": {
   "spdx": "Apache-2.0",
   "note": "repository root LICENSE is the Apache License, Version 2.0 with a statement that the project is transitioning from MIT; contributions not yet relicensed stay MIT. Documentation (not schemas) is CC-BY-4.0 and is not copied.",
