@@ -1,0 +1,424 @@
+{
+ "format": "atlas-rationale-mapping.v1",
+ "mappings": [
+  {
+   "decision_id": "adr-0001",
+   "document": {
+    "path": "docs/adr/0001-pricing.md",
+    "sha256": "930058f1241d2d7e96a985b0a468bf151b51d908ea335634e99b86fd632bd7ba"
+   },
+   "mapping_id": "charge",
+   "span": {
+    "end_byte": 243,
+    "sha256": "dcc58fd51db98f3da8ddb0c89c46559e2999cd16237a8c0581ee6ee24d75fb1a",
+    "start_byte": 42
+   },
+   "target": {
+    "entity_id": "ff391ab6e857967172def5eeac8e571734b868c8561beaf76c12077740607044",
+    "kind": "function",
+    "name": "charge",
+    "path": "src/pricing.py"
+   }
+  },
+  {
+   "decision_id": "adr-0001",
+   "document": {
+    "path": "docs/adr/0001-pricing.md",
+    "sha256": "930058f1241d2d7e96a985b0a468bf151b51d908ea335634e99b86fd632bd7ba"
+   },
+   "mapping_id": "refund",
+   "span": {
+    "end_byte": 243,
+    "sha256": "dcc58fd51db98f3da8ddb0c89c46559e2999cd16237a8c0581ee6ee24d75fb1a",
+    "start_byte": 42
+   },
+   "target": {
+    "entity_id": "33be256b8d08d62574f3d62793937e2f297d1e99f558fc4a5861d86b091de624",
+    "kind": "function",
+    "name": "refund",
+    "path": "src/refunds.py"
+   }
+  },
+  {
+   "decision_id": "adr-0002",
+   "document": {
+    "path": "docs/adr/0002-audit.md",
+    "sha256": "acbe1a62e9625e7abb52e750e804dd5590838d3ea438d7529e4897cc930e46bb"
+   },
+   "mapping_id": "charge-doc-edited",
+   "span": {
+    "end_byte": 79,
+    "sha256": "5aec76d108cf06c4b3f5b893db4cc6661e057cecbd982e6986a9d93a0661d840",
+    "start_byte": 19
+   },
+   "target": {
+    "entity_id": "ff391ab6e857967172def5eeac8e571734b868c8561beaf76c12077740607044",
+    "kind": "function",
+    "name": "charge",
+    "path": "src/pricing.py"
+   }
+  },
+  {
+   "decision_id": "adr-0001",
+   "document": {
+    "path": "docs/adr/0001-pricing.md",
+    "sha256": "930058f1241d2d7e96a985b0a468bf151b51d908ea335634e99b86fd632bd7ba"
+   },
+   "mapping_id": "audit",
+   "span": {
+    "end_byte": 243,
+    "sha256": "dcc58fd51db98f3da8ddb0c89c46559e2999cd16237a8c0581ee6ee24d75fb1a",
+    "start_byte": 42
+   },
+   "target": {
+    "entity_id": "02972e0257e1b21f5479a5b9423593b715ad416eaa6736f573dd24f3f93e6627",
+    "kind": "function",
+    "name": "audit",
+    "path": "src/audit.py"
+   }
+  },
+  {
+   "decision_id": "adr-0001",
+   "document": {
+    "path": "docs/adr/0001-pricing.md",
+    "sha256": "930058f1241d2d7e96a985b0a468bf151b51d908ea335634e99b86fd632bd7ba"
+   },
+   "mapping_id": "post",
+   "span": {
+    "end_byte": 243,
+    "sha256": "dcc58fd51db98f3da8ddb0c89c46559e2999cd16237a8c0581ee6ee24d75fb1a",
+    "start_byte": 42
+   },
+   "target": {
+    "entity_id": "e6b4f447be6e278335c5af13d30ed6f6495671f94d2b45e3b79ca06d85a32951",
+    "kind": "function",
+    "name": "post",
+    "path": "src/ledger.py"
+   }
+  },
+  {
+   "decision_id": "adr-0001",
+   "document": {
+    "path": "docs/adr/0001-pricing.md",
+    "sha256": "930058f1241d2d7e96a985b0a468bf151b51d908ea335634e99b86fd632bd7ba"
+   },
+   "mapping_id": "summary",
+   "span": {
+    "end_byte": 243,
+    "sha256": "dcc58fd51db98f3da8ddb0c89c46559e2999cd16237a8c0581ee6ee24d75fb1a",
+    "start_byte": 42
+   },
+   "target": {
+    "entity_id": "4bf40a994b709ed7c2a42ea5fb04e4a30d8f8f6388aba8766f016e1aa70a2020",
+    "kind": "function",
+    "name": "summary",
+    "path": "src/reports.py"
+   }
+  },
+  {
+   "decision_id": "adr-0002",
+   "document": {
+    "path": "docs/adr/0002-audit.md",
+    "sha256": "acbe1a62e9625e7abb52e750e804dd5590838d3ea438d7529e4897cc930e46bb"
+   },
+   "mapping_id": "summary-doc-edited",
+   "span": {
+    "end_byte": 79,
+    "sha256": "5aec76d108cf06c4b3f5b893db4cc6661e057cecbd982e6986a9d93a0661d840",
+    "start_byte": 19
+   },
+   "target": {
+    "entity_id": "4bf40a994b709ed7c2a42ea5fb04e4a30d8f8f6388aba8766f016e1aa70a2020",
+    "kind": "function",
+    "name": "summary",
+    "path": "src/reports.py"
+   }
+  },
+  {
+   "decision_id": "adr-0003",
+   "document": {
+    "path": "docs/adr/0003-legacy.md",
+    "sha256": "19a6937ef4485c9deaa5c77b2f265a5da244302c8e82f9368d102933e2de594b"
+   },
+   "mapping_id": "summary-legacy-doc",
+   "span": {
+    "end_byte": 80,
+    "sha256": "f3ae2ba0f9c966cceb26f69892f0f6a0ef0f4a9e828040a55b45cb3a584d66df",
+    "start_byte": 20
+   },
+   "target": {
+    "entity_id": "4bf40a994b709ed7c2a42ea5fb04e4a30d8f8f6388aba8766f016e1aa70a2020",
+    "kind": "function",
+    "name": "summary",
+    "path": "src/reports.py"
+   }
+  },
+  {
+   "decision_id": "adr-0003",
+   "document": {
+    "path": "docs/adr/0003-legacy.md",
+    "sha256": "19a6937ef4485c9deaa5c77b2f265a5da244302c8e82f9368d102933e2de594b"
+   },
+   "mapping_id": "charge-legacy-doc",
+   "span": {
+    "end_byte": 80,
+    "sha256": "f3ae2ba0f9c966cceb26f69892f0f6a0ef0f4a9e828040a55b45cb3a584d66df",
+    "start_byte": 20
+   },
+   "target": {
+    "entity_id": "ff391ab6e857967172def5eeac8e571734b868c8561beaf76c12077740607044",
+    "kind": "function",
+    "name": "charge",
+    "path": "src/pricing.py"
+   }
+  },
+  {
+   "decision_id": "adr-0001",
+   "document": {
+    "path": "docs/adr/0001-pricing.md",
+    "sha256": "930058f1241d2d7e96a985b0a468bf151b51d908ea335634e99b86fd632bd7ba"
+   },
+   "mapping_id": "retire",
+   "span": {
+    "end_byte": 243,
+    "sha256": "dcc58fd51db98f3da8ddb0c89c46559e2999cd16237a8c0581ee6ee24d75fb1a",
+    "start_byte": 42
+   },
+   "target": {
+    "entity_id": "60ac546f94cce626f582ad7af1d71bdd893f4797b3f7472614da6ee491c5b6e2",
+    "kind": "function",
+    "name": "retire",
+    "path": "src/legacy.py"
+   }
+  },
+  {
+   "decision_id": "adr-0003",
+   "document": {
+    "path": "docs/adr/0003-legacy.md",
+    "sha256": "19a6937ef4485c9deaa5c77b2f265a5da244302c8e82f9368d102933e2de594b"
+   },
+   "mapping_id": "retire-legacy-doc",
+   "span": {
+    "end_byte": 80,
+    "sha256": "f3ae2ba0f9c966cceb26f69892f0f6a0ef0f4a9e828040a55b45cb3a584d66df",
+    "start_byte": 20
+   },
+   "target": {
+    "entity_id": "60ac546f94cce626f582ad7af1d71bdd893f4797b3f7472614da6ee491c5b6e2",
+    "kind": "function",
+    "name": "retire",
+    "path": "src/legacy.py"
+   }
+  },
+  {
+   "decision_id": "adr-0001",
+   "document": {
+    "path": "docs/adr/0001-pricing.md",
+    "sha256": "930058f1241d2d7e96a985b0a468bf151b51d908ea335634e99b86fd632bd7ba"
+   },
+   "mapping_id": "rename",
+   "span": {
+    "end_byte": 243,
+    "sha256": "dcc58fd51db98f3da8ddb0c89c46559e2999cd16237a8c0581ee6ee24d75fb1a",
+    "start_byte": 42
+   },
+   "target": {
+    "entity_id": "732bd9883740e2b343529518619331c44372ff30dda06e313724d02d705b4b06",
+    "kind": "function",
+    "name": "compute_total",
+    "path": "src/rename.py"
+   }
+  },
+  {
+   "decision_id": "adr-0001",
+   "document": {
+    "path": "docs/adr/0001-pricing.md",
+    "sha256": "930058f1241d2d7e96a985b0a468bf151b51d908ea335634e99b86fd632bd7ba"
+   },
+   "mapping_id": "fragile",
+   "span": {
+    "end_byte": 243,
+    "sha256": "dcc58fd51db98f3da8ddb0c89c46559e2999cd16237a8c0581ee6ee24d75fb1a",
+    "start_byte": 42
+   },
+   "target": {
+    "entity_id": "4c8898b3c34f6a2ba4d1f3db6c78a7c0c73802dc1ed2e9e14e6fcae1cb26c4e5",
+    "kind": "function",
+    "name": "keep",
+    "path": "src/fragile.py"
+   }
+  },
+  {
+   "decision_id": "adr-0001",
+   "document": {
+    "path": "docs/adr/0001-pricing.md",
+    "sha256": "930058f1241d2d7e96a985b0a468bf151b51d908ea335634e99b86fd632bd7ba"
+   },
+   "mapping_id": "limits",
+   "span": {
+    "end_byte": 243,
+    "sha256": "dcc58fd51db98f3da8ddb0c89c46559e2999cd16237a8c0581ee6ee24d75fb1a",
+    "start_byte": 42
+   },
+   "target": {
+    "entity_id": "833c2bfe77314c4dec00ac82125ddf6068301d5ee9f56520cdc746775304ff2b",
+    "kind": "key",
+    "name": "max_charge",
+    "path": "config/limits.yml"
+   }
+  },
+  {
+   "decision_id": "adr-0001",
+   "document": {
+    "path": "docs/adr/0001-pricing.md",
+    "sha256": "930058f1241d2d7e96a985b0a468bf151b51d908ea335634e99b86fd632bd7ba"
+   },
+   "mapping_id": "settings-file",
+   "span": {
+    "end_byte": 243,
+    "sha256": "dcc58fd51db98f3da8ddb0c89c46559e2999cd16237a8c0581ee6ee24d75fb1a",
+    "start_byte": 42
+   },
+   "target": {
+    "entity_id": "c3465f3aa2f1446c1c823fbd92c6a0b03bc7e01ce7b69f22a82f859d7098a61c",
+    "kind": "file",
+    "name": "src/settings.py",
+    "path": "src/settings.py"
+   }
+  },
+  {
+   "decision_id": "adr-0001",
+   "document": {
+    "path": "docs/adr/0001-pricing.md",
+    "sha256": "930058f1241d2d7e96a985b0a468bf151b51d908ea335634e99b86fd632bd7ba"
+   },
+   "mapping_id": "constants-file",
+   "span": {
+    "end_byte": 243,
+    "sha256": "dcc58fd51db98f3da8ddb0c89c46559e2999cd16237a8c0581ee6ee24d75fb1a",
+    "start_byte": 42
+   },
+   "target": {
+    "entity_id": "9f4ced4443f80d41313b27eb2e45ef5247a9e36d2a9145d926bf160c635278cb",
+    "kind": "file",
+    "name": "src/constants.py",
+    "path": "src/constants.py"
+   }
+  },
+  {
+   "decision_id": "adr-0001",
+   "document": {
+    "path": "docs/adr/0001-pricing.md",
+    "sha256": "930058f1241d2d7e96a985b0a468bf151b51d908ea335634e99b86fd632bd7ba"
+   },
+   "mapping_id": "fragile-file",
+   "span": {
+    "end_byte": 243,
+    "sha256": "dcc58fd51db98f3da8ddb0c89c46559e2999cd16237a8c0581ee6ee24d75fb1a",
+    "start_byte": 42
+   },
+   "target": {
+    "entity_id": "d54ee140a5f5dac6e813d64bb19dd1963e14e26dc24dd41aa0e5e19f66cf7e54",
+    "kind": "file",
+    "name": "src/fragile.py",
+    "path": "src/fragile.py"
+   }
+  },
+  {
+   "decision_id": "adr-0001",
+   "document": {
+    "path": "docs/adr/0001-pricing.md",
+    "sha256": "930058f1241d2d7e96a985b0a468bf151b51d908ea335634e99b86fd632bd7ba"
+   },
+   "mapping_id": "legacy-file",
+   "span": {
+    "end_byte": 243,
+    "sha256": "dcc58fd51db98f3da8ddb0c89c46559e2999cd16237a8c0581ee6ee24d75fb1a",
+    "start_byte": 42
+   },
+   "target": {
+    "entity_id": "5c40223dac452045332c25cc551cb5088ae8c826b2344872692ad8ceef27a2d9",
+    "kind": "file",
+    "name": "src/legacy.py",
+    "path": "src/legacy.py"
+   }
+  },
+  {
+   "decision_id": "adr-0001",
+   "document": {
+    "path": "docs/adr/0001-pricing.md",
+    "sha256": "930058f1241d2d7e96a985b0a468bf151b51d908ea335634e99b86fd632bd7ba"
+   },
+   "mapping_id": "twin-first",
+   "span": {
+    "end_byte": 243,
+    "sha256": "dcc58fd51db98f3da8ddb0c89c46559e2999cd16237a8c0581ee6ee24d75fb1a",
+    "start_byte": 42
+   },
+   "target": {
+    "entity_id": "07d1c8e3bfc58bdb0bdbfe3142de0551fff67627ce40fe91e201d90615201c9d",
+    "kind": "function",
+    "name": "twin",
+    "path": "src/dupes.py"
+   }
+  },
+  {
+   "decision_id": "adr-0001",
+   "document": {
+    "path": "docs/adr/0001-pricing.md",
+    "sha256": "930058f1241d2d7e96a985b0a468bf151b51d908ea335634e99b86fd632bd7ba"
+   },
+   "mapping_id": "twin-second",
+   "span": {
+    "end_byte": 243,
+    "sha256": "dcc58fd51db98f3da8ddb0c89c46559e2999cd16237a8c0581ee6ee24d75fb1a",
+    "start_byte": 42
+   },
+   "target": {
+    "entity_id": "7a99d8b3b41716e6850566f71077cc6db7a9d6a730310b1f6e00d3678c0199fe",
+    "kind": "function",
+    "name": "twin",
+    "path": "src/dupes.py"
+   }
+  },
+  {
+   "decision_id": "adr-0001",
+   "document": {
+    "path": "docs/adr/0001-pricing.md",
+    "sha256": "930058f1241d2d7e96a985b0a468bf151b51d908ea335634e99b86fd632bd7ba"
+   },
+   "mapping_id": "dual-second",
+   "span": {
+    "end_byte": 243,
+    "sha256": "dcc58fd51db98f3da8ddb0c89c46559e2999cd16237a8c0581ee6ee24d75fb1a",
+    "start_byte": 42
+   },
+   "target": {
+    "entity_id": "5573196aaa03bb9d7d589942ba46bfef4b82c09c98ffce81d4a01430553bdd97",
+    "kind": "function",
+    "name": "dual",
+    "path": "src/twins.py"
+   }
+  },
+  {
+   "decision_id": "adr-0001",
+   "document": {
+    "path": "docs/adr/0001-pricing.md",
+    "sha256": "930058f1241d2d7e96a985b0a468bf151b51d908ea335634e99b86fd632bd7ba"
+   },
+   "mapping_id": "account-class",
+   "span": {
+    "end_byte": 243,
+    "sha256": "dcc58fd51db98f3da8ddb0c89c46559e2999cd16237a8c0581ee6ee24d75fb1a",
+    "start_byte": 42
+   },
+   "target": {
+    "entity_id": "2fdd268b097cd9ce8c5fac0eb0229051f0449754136ce53c15e46b33480388eb",
+    "kind": "class",
+    "name": "Account",
+    "path": "src/account.py"
+   }
+  }
+ ],
+ "snapshot_id": "@before@"
+}

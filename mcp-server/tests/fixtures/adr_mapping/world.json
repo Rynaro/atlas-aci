@@ -1,0 +1,41 @@
+{
+ "after": {
+  "config/limits.yml": "max_charge: 20\nmax_refund: 5\n",
+  "docs/adr/0001-pricing.md": "# ADR-0001: Pricing\n\n## Status\n\nAccepted\n\n## Decision\n\nCharges are computed by the charge function and doubled at the pricing tier.\nA caf\u00e9 surcharge is never added. Refunds follow the refund function, and the\naudit trail is written by audit.\n\n## Consequences\n\nTotals depend on the multiplier.\n",
+  "docs/adr/0002-audit.md": "# ADR-0002: Audit\n\n## Decision\n\nEvery posting is audited and the audit is kept.\n\n## Notes\n\nAdded after the decision.\n",
+  "docs/adr/0003-legacy.md": null,
+  "src/account.py": "class Account:\n    def open(self):\n        return 1\n\n    def close(self):\n        return 3\n",
+  "src/audit.py": "def audit(entry):\n    record = entry\n    # keep the trail\n    return record\n",
+  "src/constants.py": "def one():\n    return 1\n",
+  "src/dupes.py": "def twin(a):\n    return a + 2\n",
+  "src/fragile.py": "def keep(:\n    return a\n",
+  "src/ledger.py": "# ledger note\ndef post(entry):\n    return entry\n",
+  "src/legacy.py": null,
+  "src/legacy_v2.py": "def retire(item):\n    item.closed = True\n    return item\n",
+  "src/pricing.py": "def charge(amount):\n    total = amount * 3\n    return total\n",
+  "src/refunds.py": "def refund(amount, reason):\n    return amount\n",
+  "src/rename.py": "def calculate_total(items):\n    total = 0\n    for item in items:\n        total = total + item\n    return total\n",
+  "src/reports.py": "def summary(rows):\n    return len(rows)\n",
+  "src/settings.py": "def limit():\n    return 20\n",
+  "src/twins.py": "def dual(a):\n    return a + 1\n\n\ndef dual(a):\n    return a + 3\n"
+ },
+ "before": {
+  "config/limits.yml": "max_charge: 10\nmax_refund: 5\n",
+  "docs/adr/0001-pricing.md": "# ADR-0001: Pricing\n\n## Status\n\nAccepted\n\n## Decision\n\nCharges are computed by the charge function and doubled at the pricing tier.\nA caf\u00e9 surcharge is never added. Refunds follow the refund function, and the\naudit trail is written by audit.\n\n## Consequences\n\nTotals depend on the multiplier.\n",
+  "docs/adr/0002-audit.md": "# ADR-0002: Audit\n\n## Decision\n\nEvery posting is audited and the audit is kept.\n",
+  "docs/adr/0003-legacy.md": "# ADR-0003: Legacy\n\n## Decision\n\nThe legacy path is retired after the migration.\n",
+  "src/account.py": "class Account:\n    def open(self):\n        return 1\n\n    def close(self):\n        return 2\n",
+  "src/audit.py": "def audit(entry):\n    record = entry\n    return record\n",
+  "src/constants.py": "def one():\n    return 1\n",
+  "src/dupes.py": "def twin(a):\n    return a + 1\n\n\ndef twin(a):\n    return a + 2\n",
+  "src/fragile.py": "def keep(a):\n    return a\n",
+  "src/ledger.py": "def post(entry):\n    return entry\n",
+  "src/legacy.py": "def retire(item):\n    return None\n",
+  "src/pricing.py": "def charge(amount):\n    total = amount * 2\n    return total\n",
+  "src/refunds.py": "def refund(amount):\n    return amount\n",
+  "src/rename.py": "def compute_total(items):\n    total = 0\n    for item in items:\n        total = total + item\n    return total\n",
+  "src/reports.py": "def summary(rows):\n    return len(rows)\n",
+  "src/settings.py": "def limit():\n    return 10\n",
+  "src/twins.py": "def dual(a):\n    return a + 1\n\n\ndef dual(a):\n    return a + 2\n"
+ }
+}

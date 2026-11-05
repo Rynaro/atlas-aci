@@ -1,0 +1,158 @@
+{
+ "format": "atlas-rationale-mapping.v1",
+ "mappings": [
+  {
+   "decision_id": "adr-0001",
+   "document": {
+    "path": "docs/adr/9999.md",
+    "sha256": "5ad38304b535c2987dbd24657c1a11b884984ff600d9f389deb0d4e634fee792"
+   },
+   "mapping_id": "no-doc",
+   "span": {
+    "end_byte": 243,
+    "sha256": "dcc58fd51db98f3da8ddb0c89c46559e2999cd16237a8c0581ee6ee24d75fb1a",
+    "start_byte": 42
+   },
+   "target": {
+    "entity_id": "ff391ab6e857967172def5eeac8e571734b868c8561beaf76c12077740607044",
+    "kind": "function",
+    "name": "charge",
+    "path": "src/pricing.py"
+   }
+  },
+  {
+   "decision_id": "adr-0001",
+   "document": {
+    "path": "docs/adr/0001-pricing.md",
+    "sha256": "73a66372d5ab3706b79e8ba7de9db6236ee143e6226ea7062c5fb25e2949a97f"
+   },
+   "mapping_id": "bad-doc-digest",
+   "span": {
+    "end_byte": 243,
+    "sha256": "dcc58fd51db98f3da8ddb0c89c46559e2999cd16237a8c0581ee6ee24d75fb1a",
+    "start_byte": 42
+   },
+   "target": {
+    "entity_id": "ff391ab6e857967172def5eeac8e571734b868c8561beaf76c12077740607044",
+    "kind": "function",
+    "name": "charge",
+    "path": "src/pricing.py"
+   }
+  },
+  {
+   "decision_id": "adr-0001",
+   "document": {
+    "path": "docs/adr/0001-pricing.md",
+    "sha256": "930058f1241d2d7e96a985b0a468bf151b51d908ea335634e99b86fd632bd7ba"
+   },
+   "mapping_id": "past-eof",
+   "span": {
+    "end_byte": 299,
+    "sha256": "dcc58fd51db98f3da8ddb0c89c46559e2999cd16237a8c0581ee6ee24d75fb1a",
+    "start_byte": 42
+   },
+   "target": {
+    "entity_id": "ff391ab6e857967172def5eeac8e571734b868c8561beaf76c12077740607044",
+    "kind": "function",
+    "name": "charge",
+    "path": "src/pricing.py"
+   }
+  },
+  {
+   "decision_id": "adr-0001",
+   "document": {
+    "path": "docs/adr/0001-pricing.md",
+    "sha256": "930058f1241d2d7e96a985b0a468bf151b51d908ea335634e99b86fd632bd7ba"
+   },
+   "mapping_id": "split-accent",
+   "span": {
+    "end_byte": 146,
+    "sha256": "cabc2657919124ab0a377fe98e2e9c1b7b0125d3b69ca20ad3f616db4e0c221f",
+    "start_byte": 138
+   },
+   "target": {
+    "entity_id": "ff391ab6e857967172def5eeac8e571734b868c8561beaf76c12077740607044",
+    "kind": "function",
+    "name": "charge",
+    "path": "src/pricing.py"
+   }
+  },
+  {
+   "decision_id": "adr-0001",
+   "document": {
+    "path": "docs/adr/0001-pricing.md",
+    "sha256": "930058f1241d2d7e96a985b0a468bf151b51d908ea335634e99b86fd632bd7ba"
+   },
+   "mapping_id": "bad-span-digest",
+   "span": {
+    "end_byte": 243,
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "start_byte": 42
+   },
+   "target": {
+    "entity_id": "ff391ab6e857967172def5eeac8e571734b868c8561beaf76c12077740607044",
+    "kind": "function",
+    "name": "charge",
+    "path": "src/pricing.py"
+   }
+  },
+  {
+   "decision_id": "adr-0001",
+   "document": {
+    "path": "docs/adr/0001-pricing.md",
+    "sha256": "930058f1241d2d7e96a985b0a468bf151b51d908ea335634e99b86fd632bd7ba"
+   },
+   "mapping_id": "absent-id",
+   "span": {
+    "end_byte": 243,
+    "sha256": "dcc58fd51db98f3da8ddb0c89c46559e2999cd16237a8c0581ee6ee24d75fb1a",
+    "start_byte": 42
+   },
+   "target": {
+    "entity_id": "abababababababababababababababababababababababababababababababab",
+    "kind": "function",
+    "name": "charge",
+    "path": "src/pricing.py"
+   }
+  },
+  {
+   "decision_id": "adr-0001",
+   "document": {
+    "path": "docs/adr/0001-pricing.md",
+    "sha256": "930058f1241d2d7e96a985b0a468bf151b51d908ea335634e99b86fd632bd7ba"
+   },
+   "mapping_id": "name-mismatch",
+   "span": {
+    "end_byte": 243,
+    "sha256": "dcc58fd51db98f3da8ddb0c89c46559e2999cd16237a8c0581ee6ee24d75fb1a",
+    "start_byte": 42
+   },
+   "target": {
+    "entity_id": "ff391ab6e857967172def5eeac8e571734b868c8561beaf76c12077740607044",
+    "kind": "function",
+    "name": "charge2",
+    "path": "src/pricing.py"
+   }
+  },
+  {
+   "decision_id": "adr-0001",
+   "document": {
+    "path": "docs/adr/0001-pricing.md",
+    "sha256": "930058f1241d2d7e96a985b0a468bf151b51d908ea335634e99b86fd632bd7ba"
+   },
+   "mapping_id": "path-mismatch",
+   "span": {
+    "end_byte": 243,
+    "sha256": "dcc58fd51db98f3da8ddb0c89c46559e2999cd16237a8c0581ee6ee24d75fb1a",
+    "start_byte": 42
+   },
+   "target": {
+    "entity_id": "ff391ab6e857967172def5eeac8e571734b868c8561beaf76c12077740607044",
+    "kind": "function",
+    "name": "charge",
+    "path": "src/other.py"
+   }
+  }
+ ],
+ "snapshot_id": "@before@"
+}

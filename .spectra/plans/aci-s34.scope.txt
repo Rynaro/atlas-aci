@@ -1,0 +1,17 @@
+.spectra/plans/aci-s34.*
+.spectra/plans/ramza-calibration.jsonl
+.spectra/changes/aci-s34/*
+.spectra/evidence/aci-s34/**
+.spectra/state/aci-s34.execution.json
+.spectra/backlog/execution.json
+.spectra/backlog/order.md
+mcp-server/src/atlas_aci/rationale/__init__.py
+mcp-server/src/atlas_aci/rationale/adr_mapping.py
+mcp-server/src/atlas_aci/rationale/drift.py
+mcp-server/src/atlas_aci/__main__.py
+mcp-server/tests/slices/test_s34_adr_drift.py
+mcp-server/tests/slices/test_s34_*.py
+mcp-server/tests/fixtures/adr_mapping/**
+docs/rationale-drift.md
+CHANGELOG.md
+README.md

@@ -1,0 +1,45 @@
+{
+ "tree": "git archive 0a70041 (read-only copy mounted at /ws)",
+ "tools_json_sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+ "tools_json_bytes": 1631472,
+ "READ_ONLY_TOOLS": [
+  "graph_query",
+  "list_dir",
+  "memex_read",
+  "search_symbol",
+  "search_text",
+  "test_dry_run",
+  "view_file"
+ ],
+ "READ_ONLY_TOOLS_count": 7,
+ "MINIMUM_BUDGET": 3436,
+ "COLLECTION_MINIMUM_BUDGET": 3448,
+ "FIXED_ERROR_ENVELOPE_CAP": 797,
+ "IMPACT_MINIMUM_BUDGET": 7730,
+ "ev_RELATIONS": [
+  "call",
+  "construct",
+  "extend",
+  "import",
+  "include",
+  "prepend",
+  "rationale_for",
+  "superclass"
+ ],
+ "changelog_unreleased_added_first_bullets": [
+  "- **Cross-repository package links (ACI-S30).** New operator",
+  "- **Git co-change correlation (ACI-S33).** New operator comm",
+  "- **Python dependency surface from a uv lock and a local whe",
+  "- **OpenTelemetry trace import into a runtime overlay (ACI-S"
+ ],
+ "readme_history_row_line": 947,
+ "readme_row_after_history": "| [`docs/frameworks/rails.md`](docs/frameworks/rails.md) | O",
+ "full_suite_at_base": {
+  "command": "pytest -q -p no:cacheprovider --deselect tests/slices/test_s08_integration.py::test_nonregular_pack_does_not_block_acquisition",
+  "result": "1 failed, 2285 passed, 10 skipped, 1 deselected in 817.03s",
+  "failed": [
+   "tests/slices/test_s01_contract.py::test_call_deadline_after_initialization (known, uid 1000)"
+  ],
+  "note": "the dev image is python 3.12; CI baseline run 42009622407 was 2287 passed, 10 skipped"
+ }
+}

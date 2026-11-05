@@ -1,0 +1,1283 @@
+{
+ "a_categories": {
+  "candidates": [
+   {
+    "after": {
+     "name": "calculate_total",
+     "owners": [
+      {
+       "kind": "module",
+       "name": null,
+       "ordinal": 0
+      }
+     ],
+     "path": "src/rename.py"
+    },
+    "after_entity_id": "dd18b0947cc7c4fa5fdfbae6dd8921145f62f1a65b441a380f06a9a9b29845fa",
+    "before": {
+     "name": "compute_total",
+     "owners": [
+      {
+       "kind": "module",
+       "name": null,
+       "ordinal": 0
+      }
+     ],
+     "path": "src/rename.py"
+    },
+    "before_entity_id": "732bd9883740e2b343529518619331c44372ff30dda06e313724d02d705b4b06",
+    "id": "2ec1262e19586f5db0281d0ee3928d731dd72c22d7952d25441f2170a76d11d5",
+    "relation": "rename"
+   }
+  ],
+  "changes": [
+   {
+    "category": "unknown",
+    "entity_id": "833c2bfe77314c4dec00ac82125ddf6068301d5ee9f56520cdc746775304ff2b",
+    "id": "dcc9823998c07c2fa257c50cd9d7de4189d1f25aadf1fca272cfda841d0a3f1f",
+    "kind": "key",
+    "name": "max_charge",
+    "ordinal": 0,
+    "owners": [],
+    "path": "config/limits.yml",
+    "reason": "fingerprint_unsupported_kind"
+   },
+   {
+    "category": "added",
+    "entity_id": "3b2a0413a03cb13ae7eb96450e942ac1ded3e65cf47428823ff2f9081b2f894a",
+    "id": "b08824874a8fee5ea694dc81fa33df00ecae96ccdbbe3c6b4c82aac9feba012d",
+    "kind": "heading",
+    "name": "Notes",
+    "ordinal": 0,
+    "owners": [],
+    "path": "docs/adr/0002-audit.md",
+    "reason": null
+   },
+   {
+    "category": "removed",
+    "entity_id": "314eaaa8ada497c2a02a95ea4cf0dc591f3c5dd6139c80524a4e8c3fceb0ff91",
+    "id": "1c8ffea6ab4da472494e6a6cdc3b871ae81715f6c8cd557be03623c6c9e2c103",
+    "kind": "heading",
+    "name": "Decision",
+    "ordinal": 0,
+    "owners": [],
+    "path": "docs/adr/0003-legacy.md",
+    "reason": null
+   },
+   {
+    "category": "removed",
+    "entity_id": "5e52fc629be423b54845c57c36ed5d57149758ca2daa13589d1b24ec692d2257",
+    "id": "8a589a9c646dd4de01d476234894d10aca691af851534fa274f088d43ec4bedc",
+    "kind": "heading",
+    "name": "ADR-0003: Legacy",
+    "ordinal": 0,
+    "owners": [],
+    "path": "docs/adr/0003-legacy.md",
+    "reason": null
+   },
+   {
+    "category": "body",
+    "entity_id": "802e5fdabdd0fcf6ab10b1b41c4216dc3b355fe33ea21661194c061183d03982",
+    "id": "779643c42e09ca9507f844579da7e5b292b6c4ed68383c43157c3f4ec514088e",
+    "kind": "function",
+    "name": "close",
+    "ordinal": 0,
+    "owners": [
+     {
+      "kind": "module",
+      "name": null,
+      "ordinal": 0
+     },
+     {
+      "kind": "class",
+      "name": "Account",
+      "ordinal": 0
+     },
+     {
+      "kind": "block",
+      "name": null,
+      "ordinal": 0
+     }
+    ],
+    "path": "src/account.py",
+    "reason": null
+   },
+   {
+    "category": "format",
+    "entity_id": "02972e0257e1b21f5479a5b9423593b715ad416eaa6736f573dd24f3f93e6627",
+    "id": "4c1b73edd1b04711b201d0ce90a97fddd1b6d5ff2928a62b6c91e23496689e5a",
+    "kind": "function",
+    "name": "audit",
+    "ordinal": 0,
+    "owners": [
+     {
+      "kind": "module",
+      "name": null,
+      "ordinal": 0
+     }
+    ],
+    "path": "src/audit.py",
+    "reason": null
+   },
+   {
+    "category": "body",
+    "entity_id": "07d1c8e3bfc58bdb0bdbfe3142de0551fff67627ce40fe91e201d90615201c9d",
+    "id": "2dbd67f03257ed6a20a31f97166136be0cde4776469f87622ab976fa3dde96e5",
+    "kind": "function",
+    "name": "twin",
+    "ordinal": 0,
+    "owners": [
+     {
+      "kind": "module",
+      "name": null,
+      "ordinal": 0
+     }
+    ],
+    "path": "src/dupes.py",
+    "reason": null
+   },
+   {
+    "category": "removed",
+    "entity_id": "7a99d8b3b41716e6850566f71077cc6db7a9d6a730310b1f6e00d3678c0199fe",
+    "id": "7c07550bbc703c2588aea3c492202b825fd50152de461fafbf5a5fa381e6c4d2",
+    "kind": "function",
+    "name": "twin",
+    "ordinal": 1,
+    "owners": [
+     {
+      "kind": "module",
+      "name": null,
+      "ordinal": 0
+     }
+    ],
+    "path": "src/dupes.py",
+    "reason": null
+   },
+   {
+    "category": "unknown",
+    "entity_id": "4c8898b3c34f6a2ba4d1f3db6c78a7c0c73802dc1ed2e9e14e6fcae1cb26c4e5",
+    "id": "fd61c1873acbf8e42b673477888f816cad70bb2d569080080c525da2d74c3148",
+    "kind": "function",
+    "name": "keep",
+    "ordinal": 0,
+    "owners": [
+     {
+      "kind": "module",
+      "name": null,
+      "ordinal": 0
+     }
+    ],
+    "path": "src/fragile.py",
+    "reason": "extraction_failed_after"
+   },
+   {
+    "category": "location",
+    "entity_id": "e6b4f447be6e278335c5af13d30ed6f6495671f94d2b45e3b79ca06d85a32951",
+    "id": "4504f9afc23f4cd52719b6fa2ccad6f92a60f41e3619f34f68b6a30df89ee2f9",
+    "kind": "function",
+    "name": "post",
+    "ordinal": 0,
+    "owners": [
+     {
+      "kind": "module",
+      "name": null,
+      "ordinal": 0
+     }
+    ],
+    "path": "src/ledger.py",
+    "reason": null
+   },
+   {
+    "category": "removed",
+    "entity_id": "60ac546f94cce626f582ad7af1d71bdd893f4797b3f7472614da6ee491c5b6e2",
+    "id": "c19e37ffa57fed5bc471e9df1772fb0b666c2ae91f39e9b2eae2d6f3da820f06",
+    "kind": "function",
+    "name": "retire",
+    "ordinal": 0,
+    "owners": [
+     {
+      "kind": "module",
+      "name": null,
+      "ordinal": 0
+     }
+    ],
+    "path": "src/legacy.py",
+    "reason": null
+   },
+   {
+    "category": "added",
+    "entity_id": "fc7f9a95c427e14a42348ada26226cfb177f4ac0f99741d431eaf93f8da116da",
+    "id": "8082f86e139eb7a28299793e1961249b7adcf8bcfa98c8895707978961714ab3",
+    "kind": "function",
+    "name": "retire",
+    "ordinal": 0,
+    "owners": [
+     {
+      "kind": "module",
+      "name": null,
+      "ordinal": 0
+     }
+    ],
+    "path": "src/legacy_v2.py",
+    "reason": null
+   },
+   {
+    "category": "body",
+    "entity_id": "ff391ab6e857967172def5eeac8e571734b868c8561beaf76c12077740607044",
+    "id": "417c5b2a8541ef7e12b9fcb5bd0a41f1f6eaffafb491a137b927ccfd8888470d",
+    "kind": "function",
+    "name": "charge",
+    "ordinal": 0,
+    "owners": [
+     {
+      "kind": "module",
+      "name": null,
+      "ordinal": 0
+     }
+    ],
+    "path": "src/pricing.py",
+    "reason": null
+   },
+   {
+    "category": "signature",
+    "entity_id": "33be256b8d08d62574f3d62793937e2f297d1e99f558fc4a5861d86b091de624",
+    "id": "bc72d571124b19772c1eb9ea3c1efa54a592eaa5e349843abfa22abcecb1ad7b",
+    "kind": "function",
+    "name": "refund",
+    "ordinal": 0,
+    "owners": [
+     {
+      "kind": "module",
+      "name": null,
+      "ordinal": 0
+     }
+    ],
+    "path": "src/refunds.py",
+    "reason": null
+   },
+   {
+    "category": "removed",
+    "entity_id": "732bd9883740e2b343529518619331c44372ff30dda06e313724d02d705b4b06",
+    "id": "7ac4c4332dc39c811798bf4074f59c44b50c9ef55e96f4e901a218498fce8794",
+    "kind": "function",
+    "name": "compute_total",
+    "ordinal": 0,
+    "owners": [
+     {
+      "kind": "module",
+      "name": null,
+      "ordinal": 0
+     }
+    ],
+    "path": "src/rename.py",
+    "reason": null
+   },
+   {
+    "category": "added",
+    "entity_id": "dd18b0947cc7c4fa5fdfbae6dd8921145f62f1a65b441a380f06a9a9b29845fa",
+    "id": "6f66b7e691e0c87d0fba4887f08da0f6a70491edda0fcf4d5aa01f28484ed373",
+    "kind": "function",
+    "name": "calculate_total",
+    "ordinal": 0,
+    "owners": [
+     {
+      "kind": "module",
+      "name": null,
+      "ordinal": 0
+     }
+    ],
+    "path": "src/rename.py",
+    "reason": null
+   },
+   {
+    "category": "body",
+    "entity_id": "ee9b747aafbc23a77c5b667165a232fc9881cb16b059a85a4f2abe75201cb1ac",
+    "id": "6018f36ca6b6169de3cf08862b3672aa19cf51f366ea7c03e737e1790c23bce4",
+    "kind": "function",
+    "name": "limit",
+    "ordinal": 0,
+    "owners": [
+     {
+      "kind": "module",
+      "name": null,
+      "ordinal": 0
+     }
+    ],
+    "path": "src/settings.py",
+    "reason": null
+   },
+   {
+    "category": "body",
+    "entity_id": "5573196aaa03bb9d7d589942ba46bfef4b82c09c98ffce81d4a01430553bdd97",
+    "id": "8b54f0296abf02fbdc5d529cb48a67860c94341b1eb62849e53d8665b756b479",
+    "kind": "function",
+    "name": "dual",
+    "ordinal": 1,
+    "owners": [
+     {
+      "kind": "module",
+      "name": null,
+      "ordinal": 0
+     }
+    ],
+    "path": "src/twins.py",
+    "reason": null
+   }
+  ],
+  "partial_paths": [
+   "src/fragile.py"
+  ],
+  "summary": {
+   "added": 3,
+   "body": 5,
+   "candidates": 1,
+   "format": 1,
+   "location": 1,
+   "removed": 5,
+   "signature": 1,
+   "unchanged": 12,
+   "unknown": 2
+  }
+ },
+ "a_categories_ok": true,
+ "a_categories_seconds": 0.03,
+ "b_adr_in_snapshot": {
+  "after_0003_present": false,
+  "after_states": {
+   "src/fragile.py": "failed"
+  },
+  "any_nonindexed_before": [],
+  "docs/adr/0001-pricing.md": {
+   "observation_keys": [
+    "historical_id",
+    "id",
+    "language",
+    "location",
+    "observed_source_sha256",
+    "path",
+    "reason",
+    "retained_evidence_ids",
+    "retained_fact_source_sha256s",
+    "retained_producer_ids",
+    "retained_record_ids",
+    "state",
+    "type"
+   ],
+   "sha_equal": true,
+   "state": "indexed",
+   "world_equal": true
+  },
+  "docs/adr/0002-audit.md": {
+   "observation_keys": [
+    "historical_id",
+    "id",
+    "language",
+    "location",
+    "observed_source_sha256",
+    "path",
+    "reason",
+    "retained_evidence_ids",
+    "retained_fact_source_sha256s",
+    "retained_producer_ids",
+    "retained_record_ids",
+    "state",
+    "type"
+   ],
+   "sha_equal": true,
+   "state": "indexed",
+   "world_equal": true
+  },
+  "docs/adr/0003-legacy.md": {
+   "observation_keys": [
+    "historical_id",
+    "id",
+    "language",
+    "location",
+    "observed_source_sha256",
+    "path",
+    "reason",
+    "retained_evidence_ids",
+    "retained_fact_source_sha256s",
+    "retained_producer_ids",
+    "retained_record_ids",
+    "state",
+    "type"
+   ],
+   "sha_equal": true,
+   "state": "indexed",
+   "world_equal": true
+  },
+  "epoch": 9,
+  "max_epoch": 9,
+  "split_decodes": false
+ },
+ "b_adr_in_snapshot_ok": true,
+ "b_adr_in_snapshot_seconds": 0.02,
+ "c_path_independent_ids": {
+  "ENTITY_SQL_finds_file": true,
+  "count": 44,
+  "file_entities": {
+   "config/limits.yml": [
+    "7cdd961edd260ee9ac38688b6ea207ca4a6c6b82517c9c2b1dad4c54824163dc",
+    "yaml"
+   ],
+   "docs/adr/0001-pricing.md": [
+    "55a51ae9df0ddf3fc2803414a84e08912d50c1919c3b7577bf3969bcab64a50d",
+    "markdown"
+   ],
+   "docs/adr/0002-audit.md": [
+    "8124df9b9cf7b8eec6b89756a005124ecbc683e1316fdbf22fc2af92b8db81a8",
+    "markdown"
+   ],
+   "docs/adr/0003-legacy.md": [
+    "1a7ab518a05120385547b074a0aedab6e25f5cbee1a0d4be01aa2e52634fd288",
+    "markdown"
+   ],
+   "src/account.py": [
+    "759d8f12182965b4cb0deb6e4b4edafd3ca793e0aba5c8a392aa261e6019f80f",
+    "python"
+   ],
+   "src/audit.py": [
+    "9c4d951ec3ca509f754eb90f5792c2c07b6435a39181857c58e32780edbe362f",
+    "python"
+   ],
+   "src/constants.py": [
+    "9f4ced4443f80d41313b27eb2e45ef5247a9e36d2a9145d926bf160c635278cb",
+    "python"
+   ],
+   "src/dupes.py": [
+    "8183fdfa19981de8ce81be4dcb14896b5fe4a142a498fa357b31b82d2099a4e5",
+    "python"
+   ],
+   "src/fragile.py": [
+    "d54ee140a5f5dac6e813d64bb19dd1963e14e26dc24dd41aa0e5e19f66cf7e54",
+    "python"
+   ],
+   "src/ledger.py": [
+    "1ce3a8e78214f8d14597006d0029f2161a959bfe9ded614ee19ca10547468784",
+    "python"
+   ],
+   "src/legacy.py": [
+    "5c40223dac452045332c25cc551cb5088ae8c826b2344872692ad8ceef27a2d9",
+    "python"
+   ],
+   "src/pricing.py": [
+    "47fdd44bcbaf2ed6ebf6450354c19347c4adeb34b34303ed9395c0108c177d19",
+    "python"
+   ],
+   "src/refunds.py": [
+    "ddca8367b6e394521c6bf2cb8f0ed1be628c67deec8eae4d8cc9e7ead2639eb3",
+    "python"
+   ],
+   "src/rename.py": [
+    "597899aa23478d8868d0fec0a528100a1eff69a8c2ef64bc5705191c9e836c3b",
+    "python"
+   ],
+   "src/reports.py": [
+    "74902a3a54e37087ccd8cd4798613012fa6d9d0bbd10d08f95b3ca0e20b62e5b",
+    "python"
+   ],
+   "src/settings.py": [
+    "c3465f3aa2f1446c1c823fbd92c6a0b03bc7e01ce7b69f22a82f859d7098a61c",
+    "python"
+   ],
+   "src/twins.py": [
+    "784c9f5b60a501b95e4026a4a0009f4a9eb1189fd27438b820e56d23c34dfe05",
+    "python"
+   ]
+  },
+  "file_entity_rule_bad": [],
+  "ids_equal": true,
+  "snapshot_ids_differ": true
+ },
+ "c_path_independent_ids_ok": true,
+ "c_path_independent_ids_seconds": 0.48,
+ "d_file_targets": {
+  "src/constants.py": {
+   "after": {
+    "file_entity_present": true,
+    "n_entities": 2,
+    "observation": {
+     "sha": "973e6f8bbcc464997bc91f3a033ee9c317275760c1cd8a9581d76953acff8bf6",
+     "state": "indexed"
+    }
+   },
+   "before": {
+    "file_entity_present": true,
+    "n_entities": 2,
+    "observation": {
+     "sha": "973e6f8bbcc464997bc91f3a033ee9c317275760c1cd8a9581d76953acff8bf6",
+     "state": "indexed"
+    }
+   }
+  },
+  "src/fragile.py": {
+   "after": {
+    "file_entity_present": false,
+    "n_entities": 0,
+    "observation": {
+     "sha": "76a914e58e68e1f53b45a87e37443d01f107179971a60419960895eb5f8c9ee1",
+     "state": "failed"
+    }
+   },
+   "before": {
+    "file_entity_present": true,
+    "n_entities": 2,
+    "observation": {
+     "sha": "80d2a126a20de2aa8ae4922e12f2a8b6d7ce28f3ed2ecc38a6df136b5e0e9a28",
+     "state": "indexed"
+    }
+   }
+  },
+  "src/legacy.py": {
+   "after": {
+    "file_entity_present": false,
+    "n_entities": 0,
+    "observation": null
+   },
+   "before": {
+    "file_entity_present": true,
+    "n_entities": 2,
+    "observation": {
+     "sha": "09090c6fb189434fde2c0bb0b56b70f2770f35d9ee9ad8756d31718d4f0901c8",
+     "state": "indexed"
+    }
+   }
+  },
+  "src/settings.py": {
+   "after": {
+    "file_entity_present": true,
+    "n_entities": 2,
+    "observation": {
+     "sha": "5d437ab82fb409033c429c8b1d20e1a5dfbfde569905cf285d7c19198a530369",
+     "state": "indexed"
+    }
+   },
+   "before": {
+    "file_entity_present": true,
+    "n_entities": 2,
+    "observation": {
+     "sha": "3c14e578410365cb88f87ccdb05b9ee3c2f32e4832087eec93543fe2f8bd7963",
+     "state": "indexed"
+    }
+   }
+  }
+ },
+ "d_file_targets_ok": true,
+ "d_file_targets_seconds": 0.02,
+ "e_rejections": {
+  "configuration_mismatch": "configuration_mismatch",
+  "identity_kind_same_repo": "identity_kind_mismatch"
+ },
+ "e_rejections_ok": true,
+ "e_rejections_seconds": 0.47,
+ "f_predicate": {
+  "checked": 51,
+  "disagree": []
+ },
+ "f_predicate_ok": true,
+ "f_predicate_seconds": 0.02,
+ "g_concurrent_leases": {
+  "compare_after_gen_is_new": true,
+  "held_both": true,
+  "held_generation_unchanged": true,
+  "lease_reads_source": true,
+  "lease_still_reads": true
+ },
+ "g_concurrent_leases_ok": true,
+ "g_concurrent_leases_seconds": 0.67,
+ "h_rebuild_same_path": {
+  "after_equal": true,
+  "before_equal": true,
+  "change_set_equal": true
+ },
+ "h_rebuild_same_path_ok": true,
+ "h_rebuild_same_path_seconds": 0.96,
+ "i_timing": {
+  "compare_s": 0.03,
+  "pair_build_s": 0.43
+ },
+ "i_timing_ok": true,
+ "i_timing_seconds": 0.46,
+ "j_sibling_ordinal": {
+  "src/account.py": {
+   "after": [
+    [
+     "Account",
+     "class",
+     0,
+     "2fdd268b097c"
+    ],
+    [
+     "close",
+     "function",
+     0,
+     "802e5fdabdd0"
+    ],
+    [
+     "open",
+     "function",
+     0,
+     "aea3273fbb83"
+    ]
+   ],
+   "before": [
+    [
+     "Account",
+     "class",
+     0,
+     "2fdd268b097c"
+    ],
+    [
+     "close",
+     "function",
+     0,
+     "802e5fdabdd0"
+    ],
+    [
+     "open",
+     "function",
+     0,
+     "aea3273fbb83"
+    ]
+   ],
+   "s19": [
+    [
+     "close",
+     0,
+     "body",
+     null,
+     "779643c42e09"
+    ]
+   ]
+  },
+  "src/dupes.py": {
+   "after": [
+    [
+     "twin",
+     "function",
+     0,
+     "07d1c8e3bfc5"
+    ]
+   ],
+   "before": [
+    [
+     "twin",
+     "function",
+     0,
+     "07d1c8e3bfc5"
+    ],
+    [
+     "twin",
+     "function",
+     1,
+     "7a99d8b3b417"
+    ]
+   ],
+   "s19": [
+    [
+     "twin",
+     0,
+     "body",
+     null,
+     "2dbd67f03257"
+    ],
+    [
+     "twin",
+     1,
+     "removed",
+     null,
+     "7c07550bbc70"
+    ]
+   ]
+  },
+  "src/twins.py": {
+   "after": [
+    [
+     "dual",
+     "function",
+     0,
+     "a87a8a3d78f8"
+    ],
+    [
+     "dual",
+     "function",
+     1,
+     "5573196aaa03"
+    ]
+   ],
+   "before": [
+    [
+     "dual",
+     "function",
+     0,
+     "a87a8a3d78f8"
+    ],
+    [
+     "dual",
+     "function",
+     1,
+     "5573196aaa03"
+    ]
+   ],
+   "s19": [
+    [
+     "dual",
+     1,
+     "body",
+     null,
+     "8b54f0296abf"
+    ]
+   ]
+  }
+ },
+ "j_sibling_ordinal_ok": true,
+ "j_sibling_ordinal_seconds": 0.05,
+ "k_retire_candidates": {
+  "n_candidates": 1,
+  "retire_candidate": []
+ },
+ "k_retire_candidates_ok": true,
+ "k_retire_candidates_seconds": 0.03,
+ "l_container_targets": {
+  "class_attribute_added": [
+   [
+    "Account",
+    "class",
+    "body"
+   ]
+  ],
+  "member_body_edit": [
+   [
+    "close",
+    "function",
+    "body"
+   ]
+  ],
+  "member_shift_only": [
+   [
+    "Account",
+    "class",
+    "body"
+   ],
+   [
+    "close",
+    "function",
+    "location"
+   ],
+   [
+    "open",
+    "function",
+    "location"
+   ]
+  ]
+ },
+ "l_container_targets_ok": true,
+ "l_container_targets_seconds": 0.54,
+ "stop_rule": {
+  "adaptations": [
+   "(a) all categories as expected (body, signature, format, location, removed, candidate, raw_text yaml unknown, extraction_failed_after, unchanged): no fixture change",
+   "(h) rebuild at the same paths gives equal ids and change set: variant kept",
+   "(i) pair build 0.4 s: no sharing needed",
+   "C10 same-repo identity_kind_mismatch trigger works: no two-repo form needed",
+   "C2 two same-name defs, delete the first: S19 reports the survivor as body (false review) and the other as removed: sibling_ordinal_shift pins it",
+   "container: class compared by its own declaration, a member edit is not a class change"
+  ],
+  "checks": {
+   "b_adr_indexed_and_digests_agree": true,
+   "c_ids_path_independent_and_file_rule": true,
+   "e_real_rejected_triggers": true,
+   "f_predicate_agrees": true,
+   "g_concurrent_leases_hold": true
+  },
+  "triggered": false
+ },
+ "targets_before": [
+  {
+   "id": "7cdd961edd260ee9ac38688b6ea207ca4a6c6b82517c9c2b1dad4c54824163dc",
+   "kind": "file",
+   "language": "yaml",
+   "name": "config/limits.yml",
+   "path": "config/limits.yml"
+  },
+  {
+   "id": "833c2bfe77314c4dec00ac82125ddf6068301d5ee9f56520cdc746775304ff2b",
+   "kind": "key",
+   "language": "yaml",
+   "name": "max_charge",
+   "ordinal": 0,
+   "owners": [],
+   "path": "config/limits.yml"
+  },
+  {
+   "id": "78284d54b61cf59878605cb148f22feb75e7afdc6ce91d1cff39a158dba9e932",
+   "kind": "key",
+   "language": "yaml",
+   "name": "max_refund",
+   "ordinal": 0,
+   "owners": [],
+   "path": "config/limits.yml"
+  },
+  {
+   "id": "79c2cbd041b2bc02713eebc077e0f5ed279c61bd2642f7f99e406b3577094900",
+   "kind": "heading",
+   "language": "markdown",
+   "name": "ADR-0001: Pricing",
+   "ordinal": 0,
+   "owners": [],
+   "path": "docs/adr/0001-pricing.md"
+  },
+  {
+   "id": "2edb9770bf17fd16959904d271f13a1673812970da01e22581346f96ebd66d71",
+   "kind": "heading",
+   "language": "markdown",
+   "name": "Consequences",
+   "ordinal": 0,
+   "owners": [],
+   "path": "docs/adr/0001-pricing.md"
+  },
+  {
+   "id": "ac5c2df9187bd7cfaa65244e23ddc193a06ad462f6fb5a8f7089d865dc6b5462",
+   "kind": "heading",
+   "language": "markdown",
+   "name": "Decision",
+   "ordinal": 0,
+   "owners": [],
+   "path": "docs/adr/0001-pricing.md"
+  },
+  {
+   "id": "8f2995dbd06b60b66e8784c95691f0a5fd1f5ac38c2003aec98bfaabe7c9ee13",
+   "kind": "heading",
+   "language": "markdown",
+   "name": "Status",
+   "ordinal": 0,
+   "owners": [],
+   "path": "docs/adr/0001-pricing.md"
+  },
+  {
+   "id": "55a51ae9df0ddf3fc2803414a84e08912d50c1919c3b7577bf3969bcab64a50d",
+   "kind": "file",
+   "language": "markdown",
+   "name": "docs/adr/0001-pricing.md",
+   "path": "docs/adr/0001-pricing.md"
+  },
+  {
+   "id": "b827dee92b61e5bc60246edeb30c6cd1c60ca469878cd4e0c1cb7de9ca904b1f",
+   "kind": "heading",
+   "language": "markdown",
+   "name": "ADR-0002: Audit",
+   "ordinal": 0,
+   "owners": [],
+   "path": "docs/adr/0002-audit.md"
+  },
+  {
+   "id": "eb577b18d0bb37fb5fddba8236f267a8d634516bbbce35446809cd37bafa97ef",
+   "kind": "heading",
+   "language": "markdown",
+   "name": "Decision",
+   "ordinal": 0,
+   "owners": [],
+   "path": "docs/adr/0002-audit.md"
+  },
+  {
+   "id": "8124df9b9cf7b8eec6b89756a005124ecbc683e1316fdbf22fc2af92b8db81a8",
+   "kind": "file",
+   "language": "markdown",
+   "name": "docs/adr/0002-audit.md",
+   "path": "docs/adr/0002-audit.md"
+  },
+  {
+   "id": "5e52fc629be423b54845c57c36ed5d57149758ca2daa13589d1b24ec692d2257",
+   "kind": "heading",
+   "language": "markdown",
+   "name": "ADR-0003: Legacy",
+   "ordinal": 0,
+   "owners": [],
+   "path": "docs/adr/0003-legacy.md"
+  },
+  {
+   "id": "314eaaa8ada497c2a02a95ea4cf0dc591f3c5dd6139c80524a4e8c3fceb0ff91",
+   "kind": "heading",
+   "language": "markdown",
+   "name": "Decision",
+   "ordinal": 0,
+   "owners": [],
+   "path": "docs/adr/0003-legacy.md"
+  },
+  {
+   "id": "1a7ab518a05120385547b074a0aedab6e25f5cbee1a0d4be01aa2e52634fd288",
+   "kind": "file",
+   "language": "markdown",
+   "name": "docs/adr/0003-legacy.md",
+   "path": "docs/adr/0003-legacy.md"
+  },
+  {
+   "id": "2fdd268b097cd9ce8c5fac0eb0229051f0449754136ce53c15e46b33480388eb",
+   "kind": "class",
+   "language": "python",
+   "name": "Account",
+   "ordinal": 0,
+   "owners": [
+    {
+     "kind": "module",
+     "name": null,
+     "ordinal": 0
+    }
+   ],
+   "path": "src/account.py"
+  },
+  {
+   "id": "802e5fdabdd0fcf6ab10b1b41c4216dc3b355fe33ea21661194c061183d03982",
+   "kind": "function",
+   "language": "python",
+   "name": "close",
+   "ordinal": 0,
+   "owners": [
+    {
+     "kind": "module",
+     "name": null,
+     "ordinal": 0
+    },
+    {
+     "kind": "class",
+     "name": "Account",
+     "ordinal": 0
+    },
+    {
+     "kind": "block",
+     "name": null,
+     "ordinal": 0
+    }
+   ],
+   "path": "src/account.py"
+  },
+  {
+   "id": "aea3273fbb83bfe295ccbcc86ba87ba7f981467115c0b1c22465dd9e4fa5858f",
+   "kind": "function",
+   "language": "python",
+   "name": "open",
+   "ordinal": 0,
+   "owners": [
+    {
+     "kind": "module",
+     "name": null,
+     "ordinal": 0
+    },
+    {
+     "kind": "class",
+     "name": "Account",
+     "ordinal": 0
+    },
+    {
+     "kind": "block",
+     "name": null,
+     "ordinal": 0
+    }
+   ],
+   "path": "src/account.py"
+  },
+  {
+   "id": "759d8f12182965b4cb0deb6e4b4edafd3ca793e0aba5c8a392aa261e6019f80f",
+   "kind": "file",
+   "language": "python",
+   "name": "src/account.py",
+   "path": "src/account.py"
+  },
+  {
+   "id": "02972e0257e1b21f5479a5b9423593b715ad416eaa6736f573dd24f3f93e6627",
+   "kind": "function",
+   "language": "python",
+   "name": "audit",
+   "ordinal": 0,
+   "owners": [
+    {
+     "kind": "module",
+     "name": null,
+     "ordinal": 0
+    }
+   ],
+   "path": "src/audit.py"
+  },
+  {
+   "id": "9c4d951ec3ca509f754eb90f5792c2c07b6435a39181857c58e32780edbe362f",
+   "kind": "file",
+   "language": "python",
+   "name": "src/audit.py",
+   "path": "src/audit.py"
+  },
+  {
+   "id": "3f541a5cf1a4a1753fd02463d3044bc536c02bca43d496d51c0e2317e987113c",
+   "kind": "function",
+   "language": "python",
+   "name": "one",
+   "ordinal": 0,
+   "owners": [
+    {
+     "kind": "module",
+     "name": null,
+     "ordinal": 0
+    }
+   ],
+   "path": "src/constants.py"
+  },
+  {
+   "id": "9f4ced4443f80d41313b27eb2e45ef5247a9e36d2a9145d926bf160c635278cb",
+   "kind": "file",
+   "language": "python",
+   "name": "src/constants.py",
+   "path": "src/constants.py"
+  },
+  {
+   "id": "8183fdfa19981de8ce81be4dcb14896b5fe4a142a498fa357b31b82d2099a4e5",
+   "kind": "file",
+   "language": "python",
+   "name": "src/dupes.py",
+   "path": "src/dupes.py"
+  },
+  {
+   "id": "07d1c8e3bfc58bdb0bdbfe3142de0551fff67627ce40fe91e201d90615201c9d",
+   "kind": "function",
+   "language": "python",
+   "name": "twin",
+   "ordinal": 0,
+   "owners": [
+    {
+     "kind": "module",
+     "name": null,
+     "ordinal": 0
+    }
+   ],
+   "path": "src/dupes.py"
+  },
+  {
+   "id": "7a99d8b3b41716e6850566f71077cc6db7a9d6a730310b1f6e00d3678c0199fe",
+   "kind": "function",
+   "language": "python",
+   "name": "twin",
+   "ordinal": 1,
+   "owners": [
+    {
+     "kind": "module",
+     "name": null,
+     "ordinal": 0
+    }
+   ],
+   "path": "src/dupes.py"
+  },
+  {
+   "id": "4c8898b3c34f6a2ba4d1f3db6c78a7c0c73802dc1ed2e9e14e6fcae1cb26c4e5",
+   "kind": "function",
+   "language": "python",
+   "name": "keep",
+   "ordinal": 0,
+   "owners": [
+    {
+     "kind": "module",
+     "name": null,
+     "ordinal": 0
+    }
+   ],
+   "path": "src/fragile.py"
+  },
+  {
+   "id": "d54ee140a5f5dac6e813d64bb19dd1963e14e26dc24dd41aa0e5e19f66cf7e54",
+   "kind": "file",
+   "language": "python",
+   "name": "src/fragile.py",
+   "path": "src/fragile.py"
+  },
+  {
+   "id": "e6b4f447be6e278335c5af13d30ed6f6495671f94d2b45e3b79ca06d85a32951",
+   "kind": "function",
+   "language": "python",
+   "name": "post",
+   "ordinal": 0,
+   "owners": [
+    {
+     "kind": "module",
+     "name": null,
+     "ordinal": 0
+    }
+   ],
+   "path": "src/ledger.py"
+  },
+  {
+   "id": "1ce3a8e78214f8d14597006d0029f2161a959bfe9ded614ee19ca10547468784",
+   "kind": "file",
+   "language": "python",
+   "name": "src/ledger.py",
+   "path": "src/ledger.py"
+  },
+  {
+   "id": "60ac546f94cce626f582ad7af1d71bdd893f4797b3f7472614da6ee491c5b6e2",
+   "kind": "function",
+   "language": "python",
+   "name": "retire",
+   "ordinal": 0,
+   "owners": [
+    {
+     "kind": "module",
+     "name": null,
+     "ordinal": 0
+    }
+   ],
+   "path": "src/legacy.py"
+  },
+  {
+   "id": "5c40223dac452045332c25cc551cb5088ae8c826b2344872692ad8ceef27a2d9",
+   "kind": "file",
+   "language": "python",
+   "name": "src/legacy.py",
+   "path": "src/legacy.py"
+  },
+  {
+   "id": "ff391ab6e857967172def5eeac8e571734b868c8561beaf76c12077740607044",
+   "kind": "function",
+   "language": "python",
+   "name": "charge",
+   "ordinal": 0,
+   "owners": [
+    {
+     "kind": "module",
+     "name": null,
+     "ordinal": 0
+    }
+   ],
+   "path": "src/pricing.py"
+  },
+  {
+   "id": "47fdd44bcbaf2ed6ebf6450354c19347c4adeb34b34303ed9395c0108c177d19",
+   "kind": "file",
+   "language": "python",
+   "name": "src/pricing.py",
+   "path": "src/pricing.py"
+  },
+  {
+   "id": "33be256b8d08d62574f3d62793937e2f297d1e99f558fc4a5861d86b091de624",
+   "kind": "function",
+   "language": "python",
+   "name": "refund",
+   "ordinal": 0,
+   "owners": [
+    {
+     "kind": "module",
+     "name": null,
+     "ordinal": 0
+    }
+   ],
+   "path": "src/refunds.py"
+  },
+  {
+   "id": "ddca8367b6e394521c6bf2cb8f0ed1be628c67deec8eae4d8cc9e7ead2639eb3",
+   "kind": "file",
+   "language": "python",
+   "name": "src/refunds.py",
+   "path": "src/refunds.py"
+  },
+  {
+   "id": "732bd9883740e2b343529518619331c44372ff30dda06e313724d02d705b4b06",
+   "kind": "function",
+   "language": "python",
+   "name": "compute_total",
+   "ordinal": 0,
+   "owners": [
+    {
+     "kind": "module",
+     "name": null,
+     "ordinal": 0
+    }
+   ],
+   "path": "src/rename.py"
+  },
+  {
+   "id": "597899aa23478d8868d0fec0a528100a1eff69a8c2ef64bc5705191c9e836c3b",
+   "kind": "file",
+   "language": "python",
+   "name": "src/rename.py",
+   "path": "src/rename.py"
+  },
+  {
+   "id": "74902a3a54e37087ccd8cd4798613012fa6d9d0bbd10d08f95b3ca0e20b62e5b",
+   "kind": "file",
+   "language": "python",
+   "name": "src/reports.py",
+   "path": "src/reports.py"
+  },
+  {
+   "id": "4bf40a994b709ed7c2a42ea5fb04e4a30d8f8f6388aba8766f016e1aa70a2020",
+   "kind": "function",
+   "language": "python",
+   "name": "summary",
+   "ordinal": 0,
+   "owners": [
+    {
+     "kind": "module",
+     "name": null,
+     "ordinal": 0
+    }
+   ],
+   "path": "src/reports.py"
+  },
+  {
+   "id": "ee9b747aafbc23a77c5b667165a232fc9881cb16b059a85a4f2abe75201cb1ac",
+   "kind": "function",
+   "language": "python",
+   "name": "limit",
+   "ordinal": 0,
+   "owners": [
+    {
+     "kind": "module",
+     "name": null,
+     "ordinal": 0
+    }
+   ],
+   "path": "src/settings.py"
+  },
+  {
+   "id": "c3465f3aa2f1446c1c823fbd92c6a0b03bc7e01ce7b69f22a82f859d7098a61c",
+   "kind": "file",
+   "language": "python",
+   "name": "src/settings.py",
+   "path": "src/settings.py"
+  },
+  {
+   "id": "a87a8a3d78f856814682957fe535978f2ad8ec66e3e3018082c678e967f0bf45",
+   "kind": "function",
+   "language": "python",
+   "name": "dual",
+   "ordinal": 0,
+   "owners": [
+    {
+     "kind": "module",
+     "name": null,
+     "ordinal": 0
+    }
+   ],
+   "path": "src/twins.py"
+  },
+  {
+   "id": "5573196aaa03bb9d7d589942ba46bfef4b82c09c98ffce81d4a01430553bdd97",
+   "kind": "function",
+   "language": "python",
+   "name": "dual",
+   "ordinal": 1,
+   "owners": [
+    {
+     "kind": "module",
+     "name": null,
+     "ordinal": 0
+    }
+   ],
+   "path": "src/twins.py"
+  },
+  {
+   "id": "784c9f5b60a501b95e4026a4a0009f4a9eb1189fd27438b820e56d23c34dfe05",
+   "kind": "file",
+   "language": "python",
+   "name": "src/twins.py",
+   "path": "src/twins.py"
+  }
+ ],
+ "targets_before_ok": true,
+ "targets_before_seconds": 0.01
+}

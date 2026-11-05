@@ -1,0 +1,53 @@
+image: atlas-aci:s34-wip  volume: s34-prod-57346  out: /var/folders/z5/grxl_h6977g51gyzg_qlfzh00000gn/T//s34-prod.j7YSaa
+git: git version 2.47.3
+user: uid=10001(atlas) gid=10001(atlas) groups=10001(atlas)
+PASS  before snapshot id length = 64
+PASS  after snapshot id length = 64
+PASS  config-mismatch snapshot id length = 64
+git version 2.47.3
+/w/repo
+PASS  rationale-map exit (first) = 0
+PASS  rationale-map exit (second) = 0
+PASS  overlay bytes identical across two runs = same
+PASS  overlay summary stdout identical = same
+PASS  overlay summary command = rationale-map
+PASS  overlay resolved mappings = 22
+PASS  overlay unresolved mappings = 0
+PASS  rationale-drift exit (first) = 0
+PASS  rationale-drift exit (second) = 0
+PASS  drift bytes identical across two runs = same
+PASS  drift summary stdout identical = same
+PASS  drift overlay id equals the map id = 5a16912306d9e0f882050982bbc70c925aab86704a3fb2474fd878c7acebb26f
+PASS  comparison state = compared
+PASS  review findings = 4
+PASS  unknown_target_history = 5
+PASS  unresolved_mapping = 6
+PASS  no_finding = 7
+PASS  body-changed mapping raises rationale_review_needed = rationale_review_needed
+PASS  body-changed mapping has a finding = yes
+PASS  unchanged mapping has no finding = no
+PASS  unchanged mapping outcome = no_finding
+PASS  edited-document control has no finding = no
+PASS  removed target stays unresolved = target_removed
+PASS  renumbered sibling is unknown = sibling_ordinal_shift
+PASS  rejected comparison exit = 0
+PASS  rejected comparison state = rejected
+PASS  rejected comparison reason = configuration_mismatch
+PASS  rejected comparison: every mapping is unknown_target_history = 22
+PASS  rejected comparison result reason = comparison_rejected
+PASS  rejected comparison result detail = configuration_mismatch
+PASS  snapshot mismatch exit = 1
+PASS  snapshot mismatch stdout bytes = 0
+PASS  snapshot mismatch text = Error: Rationale drift rejected: mapping_snapshot_mismatch
+PASS  no document written by a rejection = absent
+PASS  usage exit = 2
+PASS  usage stdout bytes = 0
+PASS  usage text = Error: Give --repo, or both --before-repo and --after-repo.
+PASS  output inside the repository exit = 2
+PASS  output inside the repository text = Error: --output must be outside the repositories and graph roots.
+PASS  repository (.git included) and graph inventory unchanged = same
+PASS  the mapping file is unchanged = same
+PASS  no temporary document file remains = 0
+PASS  tools JSON sha256 = 94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56
+PASS  tools JSON bytes = 1631472
+RESULT: all checks passed

@@ -1,0 +1,172 @@
+{
+ "slice_id": "ACI-S34",
+ "base_commit": "0a70041dd96c4f082d09334931a7c756f8c98ad5",
+ "recorded_before_implementation": true,
+ "declared_by_issue": [
+  "mcp-server/src/atlas_aci/rationale/adr_mapping.py",
+  "mcp-server/src/atlas_aci/rationale/drift.py",
+  "mcp-server/src/atlas_aci/__main__.py",
+  "mcp-server/tests/slices/test_s34_adr_drift.py",
+  "mcp-server/tests/fixtures/adr_mapping/",
+  "docs/rationale-drift.md"
+ ],
+ "glob_depth_clarifications": [
+  {
+   "path": "mcp-server/tests/fixtures/adr_mapping/**",
+   "reason": "Flat directory, JSON only (no .md, .py or .yml files, no nested .git, no .gitattributes): world.json (before/after file maps including ADR markdown text), mapping.json and mapping-unresolved.json (literal Day-1 entity ids and digests, snapshot id placeholder @before@), expected.json (golden per-mapping outcomes); repositories and graph roots are built in tmp_path; no golden overlay or drift document because snapshot ids embed absolute paths"
+  },
+  {
+   "path": "docs/rationale-drift.md",
+   "reason": "Flat at docs/ root beside docs/history-signals.md; no other docs file is touched"
+  }
+ ],
+ "added": [
+  {
+   "path": "mcp-server/src/atlas_aci/rationale/__init__.py",
+   "reason": "Package marker for the new rationale package; docstring only"
+  },
+  {
+   "path": "mcp-server/tests/slices/test_s34_*.py",
+   "reason": "test_s34_support.py (world builder over test_s19_support same_path_pair/inventory, stat_inventory, CLI runner), test_s34_states.py, test_s34_rejections.py, test_s34_isolation.py beside the declared test file"
+  },
+  {
+   "path": "CHANGELOG.md",
+   "reason": "Separate '- **ADR rationale review signals (ACI-S34).**' bullet placed THIRD under Unreleased/Added, after the S30 bullet (test_s30_isolation.py:563-565) and the S33 bullet (test_s33_isolation.py:436-441, which also needs bullets[2] to exist); it contains none of the locator titles 'Cross-repository package links', 'Git co-change correlation', 'Python dependency surface', 'OpenTelemetry trace import', 'OpenAPI 3.1 contract import'"
+  },
+  {
+   "path": "README.md",
+   "reason": "One two-cell docs-table row placed directly after the docs/history-signals.md row (README.md:947), so readme[after_links+1] stays the history row (test_s33_isolation.py:461-464); it contains none of docs/importers/openapi.md, docs/importers/opentelemetry.md, docs/importers/python-dependencies.md, docs/frameworks/rails.md, docs/cross-repository-links.md, docs/history-signals.md, evidence-reports.md or canary-missions.md; outside the TSX section; cut item 4"
+  },
+  {
+   "path": ".spectra/plans/aci-s34.*",
+   "reason": "Ramza plan, criteria, state, scope, review, issue snapshot"
+  },
+  {
+   "path": ".spectra/plans/ramza-calibration.jsonl",
+   "reason": "Ramza calibration append"
+  },
+  {
+   "path": ".spectra/changes/aci-s34/*",
+   "reason": "This amendment"
+  },
+  {
+   "path": ".spectra/evidence/aci-s34/**",
+   "reason": "Day-1 qualify.py and qualification.json, base invariants, gate logs, py314 log, make-world.py, prod-image.sh and outputs"
+  },
+  {
+   "path": ".spectra/state/aci-s34.execution.json",
+   "reason": "Authoritative execution receipt (AC-RUN-01/02)"
+  },
+  {
+   "path": ".spectra/backlog/execution.json",
+   "reason": "Backlog status update"
+  },
+  {
+   "path": ".spectra/backlog/order.md",
+   "reason": "Backlog order update"
+  }
+ ],
+ "prior_test_edits": [],
+ "interpretations": [
+  {
+   "topic": "AC-001 exact evidence",
+   "decision": "rationale-map resolves each operator mapping against the leased mapped snapshot only: document bytes from the snapshot pack (sha256 declared and checked), byte span with declared span sha256, exact entity_id whose stored path/kind/name equal the declared descriptors; resolved records carry decision_id, span, document digest, full target identity and snapshot/generation ids"
+  },
+  {
+   "path_or_topic": "AC-002 review signal",
+   "topic": "AC-002 review signal",
+   "decision": "rationale_review_needed iff source_state in {signature_changed, body_changed, content_changed (file targets)} from S19 compare categories or per-side observed_source_sha256, and the whole ADR document digest is identical on both sides; a changed document records document_changed with no finding"
+  },
+  {
+   "topic": "AC-003 unchanged",
+   "decision": "No finding when the target is absent from S19 changes AND positively present on the after lease with exactly one definition (symbol) or equal indexed observation hashes (file); otherwise correspondence_not_confirmed"
+  },
+  {
+   "topic": "AC-004 unresolved_mapping",
+   "decision": "Import reasons document_not_in_snapshot, document_digest_mismatch, span_out_of_range, span_not_utf8, span_digest_mismatch, target_not_found, target_kind_unsupported, target_descriptor_mismatch, target_definition_ambiguous; drift reasons target_removed (after side) and document_not_in_snapshot; S19 candidates attached as candidate_ids only, never rebound"
+  },
+  {
+   "topic": "AC-005 idempotence",
+   "decision": "Canonical JSON plus LF, versioned content-addressed ids excluding mapping_digest for records, sorted by (decision_id, mapping_id), no timestamps or absolute paths beyond snapshot ids; byte identity at the same checkout path"
+  },
+  {
+   "topic": "AC-006 unknown_target_history",
+   "decision": "S19 unknown record reason, path_partial, correspondence_not_confirmed, or comparison_rejected with detail = DiffRejected reason (document still written, exit 0); unknown precedes removal; DiffUsageError is usage exit 2"
+  },
+  {
+   "topic": "AC-007 read-only",
+   "decision": "ADR bytes come only from snapshot packs; the package has no os/open/tempfile/subprocess; CLI writes only --output (outside repos, .atlas dirs and graph roots) atomically; stat inventories unchanged across success, rejection and usage paths"
+  },
+  {
+   "topic": "Concurrent re-index",
+   "decision": "Compared: change-set before/after ids must equal held open_active leases; DiffRejected: fresh-lease re-check of both sides; any mismatch rejects snapshot_changed"
+  }
+ ],
+ "not_touched_follow_up": [
+  {
+   "path": "mcp-server/src/atlas_aci/query/diff.py",
+   "reason": "compare, Side, DiffRejected, DiffUsageError, REJECTIONS, UNKNOWN_REASONS and _open/_lease (fresh-lease re-check) imported; not modified"
+  },
+  {
+   "path": "mcp-server/src/atlas_aci/overlays/runtime.py",
+   "reason": "open_active, OverlayRejected, OverlayUsageError, resolve_output, canonical_bytes, OBSERVATIONS_SQL, ENTITY_SQL, SCHEMA_EPOCHS imported; write_atomic not reused (S27 temp prefix); not modified"
+  },
+  {
+   "path": "mcp-server/src/atlas_aci/cross_repo/revision_vector.py",
+   "reason": "load_strict imported; not modified"
+  },
+  {
+   "path": "mcp-server/src/atlas_aci/codegraph.py",
+   "reason": "Existing rationale table and rationale_for relation untouched and not reused; an --adr-root or graph-stored link is a follow-up"
+  }
+ ],
+ "explicitly_untouched_gated": [
+  "mcp-server/src/atlas_aci/server.py",
+  "mcp-server/src/atlas_aci/enforcement.py",
+  "mcp-server/src/atlas_aci/config.py",
+  "mcp-server/src/atlas_aci/codegraph.py",
+  "mcp-server/src/atlas_aci/protocol/",
+  "mcp-server/src/atlas_aci/query/",
+  "mcp-server/src/atlas_aci/tools/",
+  "mcp-server/src/atlas_aci/storage/",
+  "mcp-server/src/atlas_aci/extractors/",
+  "mcp-server/src/atlas_aci/providers/",
+  "mcp-server/src/atlas_aci/indexing/",
+  "mcp-server/src/atlas_aci/resolvers/",
+  "mcp-server/src/atlas_aci/frameworks/",
+  "mcp-server/src/atlas_aci/architecture/",
+  "mcp-server/src/atlas_aci/counterfactual/",
+  "mcp-server/src/atlas_aci/contracts/",
+  "mcp-server/src/atlas_aci/importers/",
+  "mcp-server/src/atlas_aci/overlays/",
+  "mcp-server/src/atlas_aci/dependencies/",
+  "mcp-server/src/atlas_aci/cross_repo/",
+  "mcp-server/src/atlas_aci/history/",
+  "mcp-server/src/atlas_aci/reports/",
+  "mcp-server/pyproject.toml",
+  "mcp-server/uv.lock",
+  "mcp-server/Dockerfile",
+  "mcp-server/Dockerfile.dev",
+  ".github/workflows/"
+ ],
+ "invariants": {
+  "tools_json_sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+  "tools_json_bytes": 1631472,
+  "READ_ONLY_TOOLS_count": 7,
+  "MINIMUM_BUDGET": 3436,
+  "COLLECTION_MINIMUM_BUDGET": 3448,
+  "FIXED_ERROR_ENVELOPE_CAP": 797,
+  "IMPACT_MINIMUM_BUDGET": 7730,
+  "ev_RELATIONS": [
+   "call",
+   "construct",
+   "extend",
+   "import",
+   "include",
+   "prepend",
+   "rationale_for",
+   "superclass"
+  ],
+  "criteria_sha256": "3b760db2423318e36b574d32c556e9dbd442a0bc169f6777d520522086298a8b"
+ }
+}

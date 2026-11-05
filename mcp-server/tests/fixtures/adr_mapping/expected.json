@@ -1,0 +1,37 @@
+{
+ "drift": {
+  "account-class": ["no_finding", "unchanged", "document_unchanged", null],
+  "audit": ["no_finding", "formatting_only", "document_unchanged", null],
+  "charge": ["rationale_review_needed", "body_changed", "document_unchanged", null],
+  "charge-doc-edited": ["no_finding", "body_changed", "document_changed", null],
+  "charge-legacy-doc": ["unresolved_mapping", "body_changed", "document_missing", "document_not_in_snapshot"],
+  "constants-file": ["no_finding", "unchanged", "document_unchanged", null],
+  "dual-second": ["rationale_review_needed", "body_changed", "document_unchanged", null],
+  "fragile": ["unknown_target_history", "unknown", "document_unchanged", "extraction_failed_after"],
+  "fragile-file": ["unknown_target_history", "unknown", "document_unchanged", "extraction_failed_after"],
+  "legacy-file": ["unresolved_mapping", "removed", "document_unchanged", "target_removed"],
+  "limits": ["unknown_target_history", "unknown", "document_unchanged", "fingerprint_unsupported_kind"],
+  "post": ["no_finding", "location_only", "document_unchanged", null],
+  "refund": ["rationale_review_needed", "signature_changed", "document_unchanged", null],
+  "rename": ["unresolved_mapping", "removed", "document_unchanged", "target_removed"],
+  "retire": ["unresolved_mapping", "removed", "document_unchanged", "target_removed"],
+  "retire-legacy-doc": ["unresolved_mapping", "removed", "document_missing", "target_removed"],
+  "settings-file": ["rationale_review_needed", "content_changed", "document_unchanged", null],
+  "summary": ["no_finding", "unchanged", "document_unchanged", null],
+  "summary-doc-edited": ["no_finding", "unchanged", "document_changed", null],
+  "summary-legacy-doc": ["unresolved_mapping", "unchanged", "document_missing", "document_not_in_snapshot"],
+  "twin-first": ["unknown_target_history", "unknown", "document_unchanged", "sibling_ordinal_shift"],
+  "twin-second": ["unknown_target_history", "unknown", "document_unchanged", "sibling_ordinal_shift"]
+ },
+ "import": {
+  "absent-id": "target_not_found",
+  "bad-doc-digest": "document_digest_mismatch",
+  "bad-span-digest": "span_digest_mismatch",
+  "name-mismatch": "target_descriptor_mismatch",
+  "no-doc": "document_not_in_snapshot",
+  "past-eof": "span_out_of_range",
+  "path-mismatch": "target_descriptor_mismatch",
+  "split-accent": "span_not_utf8"
+ },
+ "candidates": {"rename": 1}
+}

@@ -1,0 +1,44 @@
+[
+  {
+    "ac_id": "AC-S34-001",
+    "test": "mcp-server/tests/slices/test_s34_adr_drift.py::test_adr_mapping_has_exact_evidence",
+    "exit_code": 0,
+    "tail": "1 passed in 1.45s"
+  },
+  {
+    "ac_id": "AC-S34-002",
+    "test": "mcp-server/tests/slices/test_s34_adr_drift.py::test_adr_source_change_requests_review",
+    "exit_code": 0,
+    "tail": "1 passed in 1.37s"
+  },
+  {
+    "ac_id": "AC-S34-003",
+    "test": "mcp-server/tests/slices/test_s34_adr_drift.py::test_adr_unchanged_source_has_no_drift_signal",
+    "exit_code": 0,
+    "tail": "1 passed in 1.44s"
+  },
+  {
+    "ac_id": "AC-S34-004",
+    "test": "mcp-server/tests/slices/test_s34_adr_drift.py::test_adr_missing_target_is_unresolved",
+    "exit_code": 0,
+    "tail": "1 passed in 1.40s"
+  },
+  {
+    "ac_id": "AC-S34-005",
+    "test": "mcp-server/tests/slices/test_s34_adr_drift.py::test_adr_reimport_is_idempotent",
+    "exit_code": 0,
+    "tail": "1 passed in 4.32s"
+  },
+  {
+    "ac_id": "AC-S34-006",
+    "test": "mcp-server/tests/slices/test_s34_adr_drift.py::test_adr_incomparable_snapshot_is_unknown",
+    "exit_code": 0,
+    "tail": "1 passed in 1.51s"
+  },
+  {
+    "ac_id": "AC-S34-007",
+    "test": "mcp-server/tests/slices/test_s34_adr_drift.py::test_adr_analysis_never_edits_decisions",
+    "exit_code": 0,
+    "tail": "1 passed in 1.58s"
+  }
+]
