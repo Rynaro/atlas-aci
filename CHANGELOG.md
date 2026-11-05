@@ -9,6 +9,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **OpenTelemetry trace import into a runtime overlay (ACI-S27).** New operator command
+  `atlas-aci import-otel --repo R [--graph-root G] --manifest M --output OUT [limits] OTLP_JSON`
+  (CLI only, no MCP op) and the libraries `atlas_aci.importers.otel_json` (pure parser) and
+  `atlas_aci.overlays.runtime`. One local OTLP JSON traces document plus an operator
+  provenance manifest (`atlas-otel-provenance.v1`: artifact digest, run, producer, the declared
+  build snapshot id, source roots) becomes one standalone, content-addressed
+  `atlas-runtime-overlay.v1`, written only to `--output` outside `--repo` and the graph root. The
+  import does not write the graph: it reads a read-only lease of the active generation, so the
+  snapshot id it binds to cannot change under it. A span is linked to the active snapshot only
+  when the declared id equals the leased id; otherwise it is `unlinked_build_mismatch`, and a
+  span without (or with a malformed) `code.file.path` / `code.line.number` is counted under
+  `missing_source_location` (or `malformed_source_location`) either way. Links carry the
+  innermost enclosing symbol; every other outcome is a closed `unlinked_*` reason. Parent spans
+  in the same trace become `observed_parent_of` relations: observed span nesting, not a call.
+  Every observation, relation, summary and `runtime_paths` result declares `observed_sample`
+  coverage with completeness unknown. Only ids, parent id, timestamps, `status.code` and the two
+  source attributes are read; no other attribute reaches the output. The tools JSON and every
+  tool budget are unchanged. See `docs/importers/opentelemetry.md`.
 - **Rails: direct job enqueues and positional argument paths (ACI-S26).** New opt-in adapter
   `rails_jobs` (`atlas-aci index --frameworks rails_jobs`, library
   `CodeGraph(repo, frameworks=("rails_jobs",))`; the closed registry is now `{rails, rails_jobs,

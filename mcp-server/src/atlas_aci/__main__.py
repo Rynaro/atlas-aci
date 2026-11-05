@@ -1263,6 +1263,132 @@ def openapi_diff(
     stream.flush()
 
 
+_OTEL_LIMITS = (
+    ("max_artifact_bytes", "Artifact size in bytes (1..268435456)"),
+    ("max_spans", "Spans per artifact (1..1000000)"),
+    ("max_attributes_per_span", "Attributes per span (1..4096)"),
+)
+
+
+def _otel_limit_options(command):
+    for name, help_text in reversed(_OTEL_LIMITS):
+        command = click.option(
+            "--" + name.replace("_", "-"), name, default=None, type=int, help=help_text
+        )(command)
+    return command
+
+
+def _read_otel_input(path: Path, limit: int, message: str) -> bytes:
+    """Bounded read of one operator input: opened without blocking, regular files only.
+
+    A FIFO or a directory is refused instead of waiting on or enumerating it. The messages are
+    fixed text: the path is never echoed.
+    """
+    try:
+        descriptor = os.open(path, os.O_RDONLY | getattr(os, "O_NONBLOCK", 0))
+    except OSError:
+        raise click.ClickException(message) from None
+    try:
+        with os.fdopen(descriptor, "rb") as stream:
+            if not stat.S_ISREG(os.fstat(stream.fileno()).st_mode):
+                raise click.ClickException(message)
+            return stream.read(limit + 1)
+    except OSError:
+        raise click.ClickException(message) from None
+
+
+@cli.command("import-otel")
+@click.option(
+    "--repo", required=True, type=click.Path(exists=True, file_okay=False, path_type=Path)
+)
+@click.option(
+    "--graph-root",
+    default=None,
+    type=click.Path(path_type=Path),
+    help="External graph storage root (default: <repo>/.atlas); read-only here",
+)
+@click.option(
+    "--manifest",
+    "manifest_path",
+    required=True,
+    type=click.Path(path_type=Path),
+    help="Provenance manifest (JSON, atlas-otel-provenance.v1)",
+)
+@click.option(
+    "--output",
+    "output_path",
+    required=True,
+    type=click.Path(path_type=Path),
+    help="Where the runtime overlay is written; outside --repo and the graph root",
+)
+@_otel_limit_options
+@click.argument("artifact", type=click.Path(path_type=Path))
+def import_otel(
+    repo: Path,
+    graph_root: Path | None,
+    manifest_path: Path,
+    output_path: Path,
+    artifact: Path,
+    **chosen: int | None,
+) -> None:
+    """Import one local OTLP JSON trace artifact into a separate runtime overlay.
+
+    The overlay is bound to the ACTIVE snapshot of --repo (read-only lease); it does not write
+    the graph, and the only file written is --output. Span nesting is recorded as
+    `observed_parent_of` (observed nesting, not a call) and every result carries the coverage
+    `observed_sample`. Prints the canonical `atlas-otel-import-summary.v1` on stdout; nothing is
+    printed on rejection (exit 1) or invalid usage (exit 2).
+    """
+    import sqlite3
+
+    from atlas_aci.importers import otel_json as otel
+    from atlas_aci.overlays import runtime
+    from atlas_aci.query.diff import DiffUsageError, Side
+
+    try:
+        limits = otel.normalize_limits(chosen)
+    except otel.OtelUsageError as exc:
+        raise click.UsageError("Invalid OpenTelemetry import limit: " + exc.limit) from None
+    repo = repo.resolve()
+    protected = [repo, repo / ".atlas"] + ([graph_root] if graph_root is not None else [])
+    try:
+        target = runtime.resolve_output(output_path, protected, [manifest_path, artifact])
+    except runtime.OverlayUsageError as exc:
+        if exc.reason == "output_equals_input":
+            raise click.UsageError(
+                "--output must differ from the manifest and the artifact."
+            ) from None
+        raise click.UsageError("--output must be outside --repo and the graph root.") from None
+    manifest_raw = _read_otel_input(
+        manifest_path, otel.MAX_MANIFEST_BYTES, "OpenTelemetry manifest cannot be read."
+    )
+    try:
+        otel.parse_manifest(manifest_raw)
+    except otel.OtelRejected as exc:
+        raise click.ClickException("OpenTelemetry import rejected: " + exc.reason) from None
+    artifact_raw = _read_otel_input(
+        artifact, limits.max_artifact_bytes, "OpenTelemetry artifact cannot be read."
+    )
+    try:
+        overlay = runtime.import_otel(Side(repo, graph_root), manifest_raw, artifact_raw, limits)
+        data = runtime.canonical_bytes(overlay)
+        summary = runtime.canonical_bytes(runtime.summary_document(overlay))
+    except (otel.OtelRejected, runtime.OverlayRejected) as exc:
+        raise click.ClickException("OpenTelemetry import rejected: " + exc.reason) from None
+    except DiffUsageError:
+        raise click.UsageError("The repository cannot be opened as a graph namespace.") from None
+    except (OSError, ValueError, sqlite3.Error) as exc:
+        # Never `str(exc)`: a message may carry a path or input text.
+        raise click.ClickException("OpenTelemetry import failed: " + type(exc).__name__) from None
+    try:
+        runtime.write_atomic(target, data)
+    except OSError:
+        raise click.ClickException("Runtime overlay cannot be written.") from None
+    stream = click.get_binary_stream("stdout")
+    stream.write(summary)
+    stream.flush()
+
+
 @cli.command()
 @click.option(
     "--repo", required=True, type=click.Path(exists=True, file_okay=False, path_type=Path)

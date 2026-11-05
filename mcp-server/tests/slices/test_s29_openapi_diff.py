@@ -1363,6 +1363,7 @@ def test_openapi_modules_are_pure_and_ascii():
     assert [f"{m.parent.name}/{m.name}" for m in modules] == [
         "importers/__init__.py",
         "importers/openapi31.py",
+        "importers/otel_json.py",
         "contracts/__init__.py",
         "contracts/openapi_diff.py",
     ]

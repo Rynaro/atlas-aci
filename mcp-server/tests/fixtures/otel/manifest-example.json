@@ -1,0 +1,29 @@
+{
+  "format": "atlas-otel-provenance.v1",
+  "profile": "atlas-otel-json-profile.v1",
+  "artifact": {
+    "sha256": "d9cc3126722f3239302f7ee2c544b0ab852166e13f65b96fab047fd205b748fb",
+    "bytes": 9947
+  },
+  "run": {
+    "id": "run-2026-11-05-001"
+  },
+  "producer": {
+    "name": "otel-sdk-fixture",
+    "version": "1.0.0"
+  },
+  "build": {
+    "id": "build-abc123",
+    "snapshot_id": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+  },
+  "source_roots": [
+    {
+      "from": "/srv/app",
+      "to": ""
+    },
+    {
+      "from": "",
+      "to": ""
+    }
+  ]
+}

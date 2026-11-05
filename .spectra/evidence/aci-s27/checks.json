@@ -1,0 +1,50 @@
+{
+ "slice": "ACI-S27",
+ "base_commit": "92e859700e9613f57526a875373ba0c4a1c8342b",
+ "environment": "atlas-aci-dev-s16 (uid 1000, Python 3.12); CI is Python 3.14 (S27 + S29 tests: 203 passed in a throwaway python:3.14 container)",
+ "gates": {
+  "s27-contract": {
+   "exit": 0,
+   "summary": "153 passed in 3.81s; tests/slices/test_s27_{otel_import,linkage,rejections,cli,isolation,support}.py; orchestrator rerun with test_s29: 203 passed"
+  },
+  "regression": {
+   "exit": 0,
+   "summary": "604 passed, 1 skipped, 1 deselected in 195.64s"
+  },
+  "ruff": {
+   "exit": 0
+  },
+  "format": {
+   "exit": 0
+  },
+  "mypy": {
+   "exit": 0,
+   "summary": "82 source files clean; orchestrator reran the exact CI lint chain: clean"
+  },
+  "full-suite": {
+   "exit": 1,
+   "summary": "1 failed, 2028 passed, 10 skipped, 1 deselected in 788.94s; single failure is the pre-existing tests/slices/test_s01_contract.py::test_call_deadline_after_initialization (uid 1000); deselected test_s08_integration::test_nonregular_pack_does_not_block_acquisition (known flaky). Run 1 additionally hit a deadline timeout in test_s17_stdio::test_native_retrieval_versions_and_old_page_resource[2025-06-18] that passed twice in isolation and in run 2 (timing flake). Base: same single failure, 1875 passed."
+  },
+  "g-src": {
+   "exit": 0,
+   "summary": "gated paths byte-identical vs 92e8597; changed src == {__main__.py, importers/otel_json.py, overlays/__init__.py, overlays/runtime.py}; only prior-test edit: one line in test_s29_openapi_diff.py"
+  },
+  "g-mcp": {
+   "exit": 0,
+   "summary": "tools JSON sha256 94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56, 1631472 bytes; 3436/3448/797/7730 unchanged"
+  },
+  "g-image": {
+   "exit": 0,
+   "summary": "orchestrator ran prod-scenario.sh against atlas-aci:s27 (--network none, read-only): index ok; overlay and stdout byte-identical across two runs; graph and source inventory unchanged; tools pin; matched summary 13 obs/2 traces/linked_symbol 4/linked_file 2/unlinked 7; stale manifest build_mismatch 10; digest mismatch exit 1 empty stdout; --output inside repo exit 2"
+  }
+ },
+ "acceptance_tests": {
+  "AC-S27-001": "tests/slices/test_s27_otel_import.py::test_otel_observation_has_snapshot_provenance PASSED",
+  "AC-S27-002": "tests/slices/test_s27_otel_import.py::test_otel_parent_relation_preserves_observed_semantics PASSED",
+  "AC-S27-003": "tests/slices/test_s27_otel_import.py::test_otel_build_mismatch_is_unlinked PASSED",
+  "AC-S27-004": "tests/slices/test_s27_otel_import.py::test_otel_missing_source_is_counted PASSED",
+  "AC-S27-005": "tests/slices/test_s27_otel_import.py::test_otel_reimport_is_idempotent PASSED",
+  "AC-S27-006": "tests/slices/test_s27_otel_import.py::test_otel_attributes_are_allowlisted PASSED",
+  "AC-S27-007": "tests/slices/test_s27_otel_import.py::test_otel_sampling_limits_are_explicit PASSED"
+ }
+}

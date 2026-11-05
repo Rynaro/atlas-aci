@@ -1,0 +1,112 @@
+{
+ "slice": "ACI-S27",
+ "recorded": "Day 1, before product code (scripts in the task scratchpad: q_a.py, q_b.py, q_scip.py, q_e8.py)",
+ "stop_rule_triggered": false,
+ "a_strict_parser": {
+  "interpreters": {
+   "3.12 (atlas-aci-dev-s16)": "3.12.16",
+   "3.14 (python:3.14 container, stdlib only)": "3.14.10"
+  },
+  "outputs_identical_across_interpreters": true,
+  "MAX_NESTING_DEPTH": 32,
+  "results": {
+   "strict": {
+    "depth32_parses": "ok",
+    "depth33": "nesting_too_deep",
+    "depth100000": "nesting_too_deep",
+    "brackets_in_strings": "ok",
+    "int4301": "invalid",
+    "int4300": "ok",
+    "int_neg4301": "invalid",
+    "bom": "invalid",
+    "nan": "invalid",
+    "inf": "invalid",
+    "1e999": "invalid",
+    "dupkey": "invalid",
+    "surrogate": "invalid",
+    "non_utf8": "invalid",
+    "json_lines": "invalid",
+    "trailing_data": "invalid"
+   },
+   "decimal_regex_matches": {
+    "+1": false,
+    "01": false,
+    "1_0": false,
+    " 1": false,
+    "1\\n": false,
+    "arabic3": false,
+    "ok0": true,
+    "ok": true,
+    "21digits": false
+   },
+   "u64max_ok": true,
+   "hex": {
+    "upper": true,
+    "lower_norm": true,
+    "zeros_rejected_by_rule": true,
+    "unicode_digit": false,
+    "trailing_nl": false
+   },
+   "intmax_env": null,
+   "int1001_under_interpreter_cap_640": "invalid"
+  },
+  "notes": "depth 32 parses, 33 and 100000 give nesting_too_deep with no RecursionError; bracket characters inside strings are not counted; a 4301-digit int is rejected and a 4300-digit int accepted, also with sys.set_int_max_str_digits(640); decimal regex rejects +1, 01, 1_0, ' 1', '1\\n', arabic-indic 3; 2^64-1 fits and 2^64 does not; uppercase hex normalises; BOM, NaN, -Infinity, 1e999, duplicate key, lone surrogate, non-UTF-8 and two-line JSON Lines are each rejected"
+ },
+ "b_lease_and_resolve": {
+  "fixture": "git repo built with langs=['python']: app/__init__.py, app/service.py (class Service l1-3, handle l2-3, helper l6-7), app/broken.py ('def (:'), web/page.js",
+  "open_active_read_only": true,
+  "schema_epoch": 9,
+  "reader_snapshot_id_equals_build_snapshot_id": true,
+  "validated_lease": true,
+  "service_py_in_lease_current_state_indexed": true,
+  "file_entity_present_for_service_py": true,
+  "symbols_columns": [
+   "id",
+   "name",
+   "kind",
+   "path",
+   "line_start",
+   "line_end",
+   "lang",
+   "binding",
+   "entity_id",
+   "occurrence_id"
+  ],
+  "symbols_rows_1_based_inclusive": [
+   [
+    "Service",
+    "class",
+    1,
+    3
+   ],
+   [
+    "handle",
+    "function",
+    2,
+    3
+   ],
+   [
+    "helper",
+    "function",
+    6,
+    7
+   ]
+  ],
+  "entity_id_non_null_epoch9": true,
+  "file_not_indexed_fixture": "web/page.js built with langs=['python']: in lease.current, observation state 'disabled', no file entity row (file_not_indexed). OBSERVED DIFFERENCE from the checker's finding 5: app/broken.py ('def (:') is also state 'failed' with no file entity row, so it is a second file_not_indexed fixture; both are used",
+  "set_trace_callback_works": true,
+  "inventory_unchanged_after_open": true,
+  "symbols_entity_id_at_epoch_8": "present: LINK_COLUMNS symbols entity_id predates epoch 8 (fb0a96e is an ancestor of the epoch 8 commit 9122fdf) and the committed epoch 8 fixture (s17/native8.json.gz) has symbols.entity_id populated; test_otel_epoch_eight_links_and_history_records_are_ignored links a.py line 1 to A with an entity_id. Epoch 8 and 9 are accepted; a missing column would surface as OperationalError -> index_upgrade_required",
+  "scip_import_generation": "constructible with the S16 fixtures (test_s16_support.imported): epoch 9, own snapshot id, symbols holds scip_* rows (e.g. scip_type Pessoa l2). The condition 1 filter is therefore implemented (no fallback) and tested",
+  "history_records": "source_observations of the epoch 8 fixture holds a 'history' record (no state) sharing a path with a failed observation; filtered by type; a unit test with a real sqlite table covers both orders"
+ },
+ "c_digest_gate_first": "non-JSON bytes, 100000 brackets, a BOM document and a flipped byte with a mismatching digest give artifact_digest_mismatch, never artifact_invalid_json / nesting_too_deep (test_otel_artifact_digest_is_checked_before_parsing)",
+ "d_determinism": "two in-process imports, CLI into two outputs and over an existing output, relocated inputs, and two python -m atlas_aci processes with PYTHONHASHSEED=1 and 2 give byte-identical overlay and stdout (test_otel_reimport_is_idempotent); the container scenario also gave identical files",
+ "e_base_invariants": "base-invariants.json",
+ "f_spec_wording": {
+  "otlp_json_hex_case": "opentelemetry-proto docs/specification.md: 'The traceId and spanId byte arrays are represented as case-insensitive hex-encoded strings ... not base64-encoded' -> decision 8 (accept uppercase, lowercase it) stands",
+  "otlp_json_int64": "64-bit integers are decimal strings, numbers or strings accepted",
+  "semconv": "semantic-conventions registry code.md: code.file.path (string, stable), code.line.number (int, stable); code.filepath and code.lineno are Deprecated (replaced by the former)",
+  "source": "fetched once from raw.githubusercontent.com (open-telemetry/opentelemetry-proto, open-telemetry/semantic-conventions) main branch"
+ }
+}

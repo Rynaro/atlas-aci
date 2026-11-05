@@ -1,0 +1,20 @@
+{
+  "authored": "hand-authored for ACI-S27; no external source",
+  "file": {
+    "trace-basic.json": {
+      "sha256": "d9cc3126722f3239302f7ee2c544b0ab852166e13f65b96fab047fd205b748fb",
+      "bytes": 9947,
+      "purpose": "two traces, 13 spans: every linkage class, nesting, legacy attrs, missing and malformed locations"
+    },
+    "trace-sentinels.json": {
+      "sha256": "df43825b59b42c49cb390563c4f96563bbc9a91ea3d7c67be02727bb7796324d",
+      "bytes": 3596,
+      "purpose": "one span carrying a unique sentinel in every field the importer must never persist"
+    },
+    "manifest-example.json": {
+      "sha256": "7381e0f41d74199a223a9f5540bc6ddfeb61321f3f526dcc719f2f6de0356c5e",
+      "bytes": 584,
+      "purpose": "valid provenance for trace-basic.json; build.snapshot_id is a fixed id no test graph produces"
+    }
+  }
+}

@@ -1,0 +1,146 @@
+{
+  "schema": "ramza/plan-state.v1",
+  "plan": "aci-s27",
+  "created_at": "2026-11-05T03:08:23Z",
+  "tier": "lite",
+  "phase": "DONE",
+  "phases_done": [
+    "RS",
+    "S",
+    "P",
+    "E",
+    "C",
+    "T",
+    "A",
+    "DONE"
+  ],
+  "rightsize": {
+    "score": 4,
+    "computed_tier": "lite",
+    "inputs": {
+      "files_est": 8,
+      "new_dep": false,
+      "public_api": true,
+      "migration": false,
+      "security": false,
+      "novel": true,
+      "stakes": "med"
+    }
+  },
+  "refine_cycles": 0,
+  "skips": [],
+  "gates": [
+    {
+      "rubric": "complexity",
+      "total": 8,
+      "dims": {
+        "scope": 2,
+        "ambiguity": 2,
+        "dependencies": 2,
+        "risk": 2
+      },
+      "verdict": "extended",
+      "at": "2026-11-05T03:26:21Z",
+      "label": "otel-import"
+    },
+    {
+      "rubric": "explore",
+      "total": 83.5,
+      "dims": {
+        "alignment": 9,
+        "correctness": 9,
+        "maintainability": 8,
+        "performance": 8,
+        "simplicity": 8,
+        "risk": 8,
+        "innovation": 6
+      },
+      "verdict": "solid",
+      "at": "2026-11-05T03:26:21Z",
+      "label": "standalone-runtime-overlay"
+    },
+    {
+      "rubric": "confidence",
+      "total": 84,
+      "dims": {
+        "pattern_match": 86,
+        "requirement_clarity": 80,
+        "decomposition_stability": 82,
+        "constraint_compliance": 88
+      },
+      "verdict": "VALIDATE",
+      "at": "2026-11-05T03:26:21Z",
+      "label": "otel-import"
+    },
+    {
+      "rubric": "refine",
+      "cycle": 1,
+      "total": 4.6,
+      "min": 4,
+      "dims": {
+        "clarity": 4,
+        "completeness": 5,
+        "actionability": 5,
+        "efficiency": 4,
+        "testability": 5
+      },
+      "verdict": "pass",
+      "at": "2026-11-05T03:26:21Z",
+      "label": "pre-checker"
+    },
+    {
+      "rubric": "refine",
+      "cycle": 1,
+      "total": 3.8,
+      "min": 3,
+      "dims": {
+        "clarity": 4,
+        "completeness": 4,
+        "actionability": 4,
+        "efficiency": 3,
+        "testability": 4
+      },
+      "verdict": "pass",
+      "at": "2026-11-05T03:34:48Z",
+      "label": "post-checker"
+    }
+  ],
+  "amendments": [],
+  "declared_scope": [
+    "mcp-server/src/atlas_aci/importers/otel_json.py",
+    "mcp-server/src/atlas_aci/overlays/__init__.py",
+    "mcp-server/src/atlas_aci/overlays/runtime.py",
+    "mcp-server/src/atlas_aci/__main__.py",
+    "mcp-server/tests/slices/test_s27_otel_import.py",
+    "mcp-server/tests/slices/test_s27_*.py",
+    "mcp-server/tests/slices/test_s29_openapi_diff.py",
+    "mcp-server/tests/fixtures/otel/*",
+    "mcp-server/tests/fixtures/otel/**",
+    "docs/importers/opentelemetry.md",
+    "CHANGELOG.md",
+    "README.md",
+    ".spectra/plans/aci-s27.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/changes/aci-s27/*",
+    ".spectra/evidence/aci-s27/*",
+    ".spectra/evidence/aci-s27/**",
+    ".spectra/state/aci-s27.execution.json",
+    ".spectra/backlog/execution.json",
+    ".spectra/backlog/order.md"
+  ],
+  "criteria_sha256": "0ca0c0d79db9163d3c411358d6b88a2c9c1a58f97e7cf197be82197dace18cde",
+  "critic": {
+    "author": null,
+    "checker": null
+  },
+  "criteria_frozen_at": "2026-11-05T03:34:48Z",
+  "scope_declared_at": "2026-11-05T03:34:48Z",
+  "drift_reports": [
+    {
+      "at": "2026-11-05T04:56:57Z",
+      "range": "staged",
+      "files_changed": 54,
+      "uncovered": []
+    }
+  ]
+}
