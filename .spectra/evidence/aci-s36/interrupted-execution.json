@@ -1,0 +1,31 @@
+{
+  "schema": "atlas-aci/slice-execution.v1",
+  "slice_id": "ACI-S36",
+  "issue_url": "https://github.com/Rynaro/atlas-aci/issues/57",
+  "criteria_sha256": "85f3c4758e6c24ab3926439212851d038d4587ac194319418871f23d12ed77fd",
+  "base_commit": "53032fe6f2ddb48ce3ed0c1891a168106d578714",
+  "output_commit": null,
+  "declared_paths": [
+    ".spectra/plans/aci-s36.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/changes/aci-s36/*",
+    ".spectra/evidence/aci-s36/**",
+    ".spectra/state/aci-s36.execution.json",
+    ".spectra/backlog/execution.json",
+    ".spectra/backlog/order.md",
+    "scripts/experiment-leiden-vs-lpa.py",
+    "scripts/verify-community-experiment.py",
+    "mcp-server/tests/slices/test_s36_community_experiment.py",
+    "mcp-server/tests/slices/test_s36_*.py",
+    "mcp-server/tests/fixtures/community_experiment/**",
+    "docs/experiments/community-comparison.md",
+    "CHANGELOG.md",
+    "README.md"
+  ],
+  "output_digests": {},
+  "status": "IN_PROGRESS",
+  "started_at": "2026-11-05T17:27:47Z",
+  "planning_state": ".spectra/plans/aci-s36.state.json",
+  "plan": ".spectra/plans/aci-s36.md",
+  "results": []
+}

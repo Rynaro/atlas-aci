@@ -1,0 +1,138 @@
+{
+  "schema": "ramza/plan-state.v1",
+  "plan": "aci-s36",
+  "created_at": "2026-11-05T17:01:56Z",
+  "tier": "lite",
+  "phase": "DONE",
+  "phases_done": [
+    "RS",
+    "S",
+    "P",
+    "E",
+    "C",
+    "T",
+    "A",
+    "DONE"
+  ],
+  "rightsize": {
+    "score": 4,
+    "computed_tier": "lite",
+    "inputs": {
+      "files_est": 6,
+      "new_dep": false,
+      "public_api": true,
+      "migration": false,
+      "security": false,
+      "novel": true,
+      "stakes": "med"
+    }
+  },
+  "refine_cycles": 0,
+  "skips": [],
+  "gates": [
+    {
+      "rubric": "complexity",
+      "total": 8,
+      "dims": {
+        "scope": 2,
+        "ambiguity": 2,
+        "dependencies": 2,
+        "risk": 2
+      },
+      "verdict": "extended",
+      "at": "2026-11-05T17:21:02Z"
+    },
+    {
+      "rubric": "explore",
+      "total": 83,
+      "dims": {
+        "alignment": 9,
+        "correctness": 9,
+        "maintainability": 8,
+        "performance": 8,
+        "simplicity": 7,
+        "risk": 8,
+        "innovation": 7
+      },
+      "verdict": "solid",
+      "at": "2026-11-05T17:21:02Z"
+    },
+    {
+      "rubric": "confidence",
+      "total": 85,
+      "dims": {
+        "pattern_match": 85,
+        "requirement_clarity": 85,
+        "decomposition_stability": 80,
+        "constraint_compliance": 90
+      },
+      "verdict": "AUTO_PROCEED",
+      "at": "2026-11-05T17:21:02Z"
+    },
+    {
+      "rubric": "refine",
+      "cycle": 1,
+      "total": 4.6,
+      "min": 4,
+      "dims": {
+        "clarity": 4,
+        "completeness": 5,
+        "actionability": 5,
+        "efficiency": 4,
+        "testability": 5
+      },
+      "verdict": "pass",
+      "at": "2026-11-05T17:21:03Z",
+      "label": "pre-checker"
+    },
+    {
+      "rubric": "refine",
+      "cycle": 1,
+      "total": 3.8,
+      "min": 3,
+      "dims": {
+        "clarity": 4,
+        "completeness": 4,
+        "actionability": 4,
+        "efficiency": 3,
+        "testability": 4
+      },
+      "verdict": "pass",
+      "at": "2026-11-05T17:27:32Z",
+      "label": "post-checker"
+    }
+  ],
+  "amendments": [],
+  "declared_scope": [
+    "scripts/experiment-leiden-vs-lpa.py",
+    "scripts/verify-community-experiment.py",
+    "mcp-server/tests/slices/test_s36_community_experiment.py",
+    "mcp-server/tests/slices/test_s36_*.py",
+    "mcp-server/tests/fixtures/community_experiment/**",
+    "docs/experiments/community-comparison.md",
+    "CHANGELOG.md",
+    "README.md",
+    ".spectra/plans/aci-s36.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/changes/aci-s36/*",
+    ".spectra/evidence/aci-s36/**",
+    ".spectra/state/aci-s36.execution.json",
+    ".spectra/backlog/execution.json",
+    ".spectra/backlog/order.md"
+  ],
+  "criteria_sha256": "85f3c4758e6c24ab3926439212851d038d4587ac194319418871f23d12ed77fd",
+  "critic": {
+    "author": null,
+    "checker": null
+  },
+  "criteria_frozen_at": "2026-11-05T17:27:32Z",
+  "scope_declared_at": "2026-11-05T17:27:32Z",
+  "drift_reports": [
+    {
+      "at": "2026-11-05T18:41:18Z",
+      "range": "staged",
+      "files_changed": 67,
+      "uncovered": []
+    }
+  ]
+}

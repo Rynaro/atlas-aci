@@ -1,0 +1,186 @@
+{
+ "a_lpa_by_file_path_equals_production": {
+  "bundle": {
+   "solidus": true,
+   "spree": true
+  },
+  "python": "3.12.16 (main, Oct 28 2026, 02:07:05) [GCC 14.2.0]",
+  "s18": {
+   "equals_exporter_lpa_labels": true,
+   "label_propagation_by_path_equals_CodeGraph_communities_by_member_identity": true,
+   "production_communities": 3
+  }
+ },
+ "b_task_graph_export": {
+  "build_seconds_per_export": [
+   0.63,
+   0.57
+  ],
+  "components": 3,
+  "exporter_sha256": "e479690d105d3a83ededec733fd3e52510ddf63c02eb135cb75962184dfeec0e",
+  "fixture": "mcp-server/tests/fixtures/community_experiment/s18-task-graph.v1.json",
+  "fixture_sha256": "c38002252b4750ef5839a41c943eb635d9a21f8dd5e1711ed2335257cc3f506f",
+  "isolated": 0,
+  "m": 4,
+  "n": 7,
+  "note": "build well under 30 s, so the fixture is reproduced by test_s18_task_graph_reproduces and also pinned by sha in the manifest",
+  "projection_is_identity": true,
+  "two_fresh_exports_identical": true
+ },
+ "base_commit": "53032fe6f2ddb48ce3ed0c1891a168106d578714",
+ "c_s23_anchors": {
+  "digest_of_tasks_equals_it": true,
+  "seeds_and_gold_equal_the_preregistered_expectation": true,
+  "source_hashes_match": true,
+  "table": {
+   "payment": {
+    "gold": [
+     "process_payment",
+     "validate_payment",
+     "write_ledger"
+    ],
+    "seeds": [
+     "process_payment@app/payments.py"
+    ],
+    "tier": "exact_name"
+   },
+   "phrase": {
+    "gold": [
+     "retry_request"
+    ],
+    "note": "lexical seeds are every graph node of a file that contains the text; both app/client.py nodes; noise/task.py has no node",
+    "seeds": [
+     "send_request@app/client.py",
+     "retry_request@app/client.py"
+    ],
+    "tier": "lexical_file"
+   },
+   "request": {
+    "gold": [
+     "send_request",
+     "retry_request"
+    ],
+    "seeds": [
+     "send_request@app/client.py"
+    ],
+    "tier": "exact_name"
+   },
+   "unicode": {
+    "gold": [
+     "render_text",
+     "escape_text"
+    ],
+    "seeds": [
+     "render_text@app/render.py"
+    ],
+    "tier": "exact_name"
+   }
+  },
+  "task_input_sha256": "236c0def27a416dd93a411a4e40d2666510320c4d9f9cfff08f29a1145cc8fe6",
+  "useful_spans_sha256": "07553bd3d51be01a1d522fc59c240bf41ecf312a051c413c609585c60999b507"
+ },
+ "d_projection_digests_equal_across_interpreters": {
+  "equal": true,
+  "host_leg": "cut (cut order 4): no host python is used for project code",
+  "nodes_sha256": {
+   "s18": "4d80a21f2e5cbdf848f9d00982d18ed827a0e1df5ef72e2c73202f5115bc16fe",
+   "solidus": "30b49a7e838ee8f7db48931ed2f840ee419e09a3659c47092386174f68b9d327",
+   "spree": "82070f9d456a287be1eae14af61828f68779eac8835c5ebf084ecff2ebdd7950"
+  },
+  "python_3.12.16_dev_image": {
+   "s18": "08798935c80925bc28fa2d6cfe264b03bcc58fa8a2d3a9f916960384de44b2cc",
+   "solidus": "2988bc18399118324b4391461e7decb56acc36e042d7820bebae692017a0c1b3",
+   "spree": "37e0eca005c2398a45292b9e1d715da18f9b36974d4d058c73831def1addbcfd"
+  },
+  "python_3.14.10_docker": {
+   "s18": "08798935c80925bc28fa2d6cfe264b03bcc58fa8a2d3a9f916960384de44b2cc",
+   "solidus": "2988bc18399118324b4391461e7decb56acc36e042d7820bebae692017a0c1b3",
+   "spree": "37e0eca005c2398a45292b9e1d715da18f9b36974d4d058c73831def1addbcfd"
+  }
+ },
+ "e_bundle": {
+  "decompressed_bytes": 953043,
+  "equals_pins": true,
+  "keys": [
+   "solidus",
+   "spree"
+  ],
+  "sha256": "c5bfe09753acccb2652e1ea730079e3269ed47b2ed58ee6d3ea642fc08ff1ffe",
+  "size": 126726,
+  "solidus": {
+   "isolated": 2,
+   "m": 1782,
+   "n": 1883
+  },
+  "spree": {
+   "isolated": 9,
+   "m": 5947,
+   "n": 5474
+  }
+ },
+ "f_provider_install_attempt": {
+  "download": "pip download --only-binary=:all: --dest /wheels leidenalg igraph (network on, --rm container)",
+  "extra_wheel": {
+   "texttable": "1.7.2"
+  },
+  "image": "python:3.12-slim",
+  "image_id": "sha256:b18b261e1b4974b4f321451ad5251ded85abb22c2b8b262da527dda1d031ab30",
+  "import_and_find_partition_on_two_triangles": "membership [0, 0, 0, 1, 1, 1], vcount 6, ecount 7; both __version__ attributes equal the distribution versions",
+  "offline_install": "pip install --no-index --find-links /wheels --target /tmp/site leidenalg==0.12.0 igraph==1.0.0 (--network none): installed",
+  "outcome": "installed and importable; no wheel or network problem",
+  "production_manifest_sha256": "3239ec59d9fce113a115ff4b27c42bfbf06715060e1b2cb7e7de8e2e435a2beb",
+  "python": "3.12.16",
+  "requires_dist": "leidenalg 0.12.0 requires igraph>=1.0.0,<2.0",
+  "uname_m": "aarch64",
+  "verifier_constant_equals_it": true,
+  "version_choice_basis": "newest releases with linux aarch64 binary wheels usable by CPython 3.12 whose Requires-Dist agree; pinned before any measured run and never re-pinned",
+  "versions": {
+   "igraph": "1.0.0",
+   "leidenalg": "0.12.0"
+  },
+  "wheels": [
+   {
+    "file": "igraph-1.0.0-cp39-abi3-manylinux_2_28_aarch64.whl",
+    "sha256": "a55dc3a2a4e3fc3eba42479910c1511bfc3ecb33cdf5f0406891fd85f14b5aee"
+   },
+   {
+    "file": "leidenalg-0.12.0-cp38-abi3-manylinux_2_26_aarch64.manylinux_2_28_aarch64.whl",
+    "sha256": "5f6a97f698f13a588e1ae7344908cddee9f87d33acc226fc5c5b99752ebd71f8"
+   },
+   {
+    "file": "texttable-1.7.2-py2.py3-none-any.whl",
+    "sha256": "a381e1ed30e4d4bd24cdacabe26463b7a570c0e964fc0b35d8d9276b2fcbe252"
+   }
+  ]
+ },
+ "g_fixture_partitioner_non_vacuity": {
+  "fixture_distinct_partitions_over_10_seeds": 4,
+  "fixture_seeds_differing_from_lpa": 10,
+  "graph": "mcp-server/tests/fixtures/community_experiment/graphs/synthetic-cliques.v1.json",
+  "lpa_communities": 2,
+  "one_fixture_manifest_runner_invocation_seconds": 7.1,
+  "required": "at least 1 seed differs from LPA, at least 2 distinct across seeds, under 15 s",
+  "sha256": "4424e0339ca968ec954ac9026d8c6a6a913d25ce45b5369ab61c1cc1cd7a8480",
+  "spec": "6 planted groups of 8 nodes (LCG 1664525/1013904223 seeded 36; intra-group p=0.6, inter-group p=0.06) plus iso_a, iso_b and a loop-only node; shuffled node order, reversed and duplicate edges, two self-loops (51 nodes, 140 raw edges)"
+ },
+ "h_metadata_sees_fixture_dist_info": {
+  "evidence": "the fixture-manifest run succeeded on both; canonical_sha256 fd8de0c72fe725884e53d0cc1ec1c50693c447c93f76f6e7c033219f6296e60f identical on 3.12.16 and 3.14.10",
+  "python_3.12": true,
+  "python_3.14": true
+ },
+ "i_ci_exact_lint_skeleton": "the two scripts pass ruff check, ruff format --check and mypy exactly as CI runs them (see ruff.exit, format.exit, mypy.exit)",
+ "metric_cuts_decided_before_freeze": "none; every metric of the plan is kept (cut order items 2 and 3 not taken)",
+ "recorded_before_product_code": true,
+ "slice_id": "ACI-S36",
+ "stop_rule": {
+  "evaluated": [
+   "a",
+   "b",
+   "c",
+   "d",
+   "e",
+   "i"
+  ],
+  "triggered": false
+ }
+}

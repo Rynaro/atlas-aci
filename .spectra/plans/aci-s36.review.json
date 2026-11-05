@@ -1,0 +1,94 @@
+{
+ "slice_id": "ACI-S36",
+ "plan": ".spectra/plans/aci-s36.md",
+ "author": "orchestrator-ramza-plan-s36",
+ "checker": "atlas-s36-plan-checker",
+ "verdict": "APPROVE_WITH_CONDITIONS",
+ "method": "independent read-only code review; no commands executed",
+ "findings": [
+  {
+   "n": 1,
+   "severity": "MAJOR",
+   "summary": "single shared metric implementation makes AC-003 integrity-only; add hand-computed literal oracles for every quality/stability field (disconnected, isolated, median/p90, coverage, singleton), expansion order/truncation, unequal-block ARI; keep sidecar lpa_q and probe _modularity parity",
+   "disposition": "accepted as plan condition 1"
+  },
+  {
+   "n": 2,
+   "severity": "MAJOR",
+   "summary": "S18 graph yields identical partitions so retain_lpa/candidate paths are never reached end-to-end; decide() takes primitives with hand table incl. exact 9/10 boundary, recall tie, null handling, one-seed-differs; thresholds pinned by value",
+   "disposition": "accepted as plan condition 2"
+  },
+  {
+   "n": 3,
+   "severity": "MAJOR",
+   "summary": "frozen bounds cannot be lowered so run_timeout, measurement_failed, provider_changed_during_run, provider_import_failed, input_too_large, graph_too_large, self_check_failed, output_write_failed lack a test path; extend fixture FAULT vocabulary, add function-level bound overrides, override argparse error to Usage error: <name>, assert no leftover output/temp dir",
+   "disposition": "accepted as plan condition 3"
+  },
+  {
+   "n": 4,
+   "severity": "MAJOR",
+   "summary": "input_projection_sha256 must be derived from the exact adjacency (LPA) and tuple edge list (igraph) actually passed; assert vcount/ecount in the Leiden adapter; test LPA adjacency path independently",
+   "disposition": "accepted as plan condition 4"
+  },
+  {
+   "n": 5,
+   "severity": "MAJOR",
+   "summary": "cut order items 2-3 alter frozen metric lists; decide metric cuts before the Day-1 (f) freeze or re-freeze before the real run; commit manifest before real run and record sha; no result-driven re-pin; runner rejection in real run recorded as failure log not skipped result; verifier output flags production_manifest",
+   "disposition": "accepted as plan condition 5"
+  },
+  {
+   "n": 6,
+   "severity": "MINOR",
+   "summary": "fixture isolation: -S in AC-005 and partial-provider tests, no sys.path/sys.modules mutation in tests, bytecode writes disabled, fixture-contents test ignores __pycache__",
+   "disposition": "accepted as plan condition 6"
+  },
+  {
+   "n": 7,
+   "severity": "MINOR",
+   "summary": "full-suite no-new-skip gate conflicts with importorskip real-provider test; allow exactly one named skip recorded in base-invariants",
+   "disposition": "accepted as plan condition 7"
+  },
+  {
+   "n": 8,
+   "severity": "MINOR",
+   "summary": "tokens() splits on non-alphanumerics so strictly_better_budgets / min_budgets_strictly_better contain banned token better; rename keys and scan all vocabulary names, manifest keys and docs before freeze",
+   "disposition": "accepted as plan condition 8"
+  },
+  {
+   "n": 9,
+   "severity": "MINOR",
+   "summary": "float/NaN/duplicate-key partition members surface as artifact_invalid_json at the CLI; document and test both CLI and validate_partition paths including empty community and duplicate within one community",
+   "disposition": "accepted as plan condition 9"
+  },
+  {
+   "n": 10,
+   "severity": "MINOR",
+   "summary": "mean_pairwise_ari may reach ~1.5k digits vs 4300 int-str limit; add spree-scale serialisation/quantise test on 3.12 and 3.14",
+   "disposition": "accepted as plan condition 10"
+  },
+  {
+   "n": 11,
+   "severity": "MINOR",
+   "summary": "S17 retrieval reuse is a restatement of tier semantics with whole-file substring lexical, not graph_query retrieve; add limitation wording; Day-1 (c) seeds/gold mismatch is a STOP",
+   "disposition": "accepted as plan condition 11"
+  },
+  {
+   "n": 12,
+   "severity": "MINOR",
+   "summary": "metadata.version PackageNotFoundError (legacy python-igraph) must map to a typed reason; Day-1 (f) pin choice must be recorded if network is unavailable",
+   "disposition": "accepted as plan condition 12"
+  },
+  {
+   "n": 13,
+   "severity": "MINOR",
+   "summary": "specify load locations for verifier and LPA module, resolve() for --out vs mcp-server, minimal tmp repo-root contents",
+   "disposition": "accepted as plan condition 13"
+  },
+  {
+   "n": 14,
+   "severity": "MINOR",
+   "summary": "3-day timebox tight; add further cuts (tamper breadth beyond one per reason, table-collapsed exact-text tests) and decide metric cuts pre-freeze",
+   "disposition": "accepted as plan condition 14"
+  }
+ ]
+}

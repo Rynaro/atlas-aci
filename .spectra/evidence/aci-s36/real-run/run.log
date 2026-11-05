@@ -1,0 +1,30 @@
+== install.log ==
+== uname -m: aarch64
+== python: Python 3.12.16
+== pip install --no-index --find-links /wheels --target /tmp/site leidenalg==0.12.0 igraph==1.0.0
+Looking in links: /wheels
+Processing /wheels/leidenalg-0.12.0-cp38-abi3-manylinux_2_26_aarch64.manylinux_2_28_aarch64.whl
+Processing /wheels/igraph-1.0.0-cp39-abi3-manylinux_2_28_aarch64.whl
+Processing /wheels/texttable-1.7.2-py2.py3-none-any.whl (from igraph==1.0.0)
+Installing collected packages: texttable, igraph, leidenalg
+Successfully installed igraph-1.0.0 leidenalg-0.12.0 texttable-1.7.2
+== pip exit: 0
+
+== run1 stdout ==
+{"canonical_sha256":"6c804b4c5870da1bf922c228a5f488614d605935f6f465e7ff1d09763ba07a67","format":"atlas-community-run-summary.v1","manifest_sha256":"3239ec59d9fce113a115ff4b27c42bfbf06715060e1b2cb7e7de8e2e435a2beb","outcome":"inconclusive","partitions_sha256":"4a92fb9e7972e4891794e13b432442daed1cf5b866c66a963bf98239d82f909e","status":"complete"}
+
+== run1 stderr ==
+
+== run1 exit ==
+0
+
+== run2 stdout ==
+{"canonical_sha256":"6c804b4c5870da1bf922c228a5f488614d605935f6f465e7ff1d09763ba07a67","format":"atlas-community-run-summary.v1","manifest_sha256":"3239ec59d9fce113a115ff4b27c42bfbf06715060e1b2cb7e7de8e2e435a2beb","outcome":"inconclusive","partitions_sha256":"4a92fb9e7972e4891794e13b432442daed1cf5b866c66a963bf98239d82f909e","status":"complete"}
+
+== run2 stderr ==
+
+== run2 exit ==
+0
+
+== facts ==
+{"igraph": "1.0.0", "leidenalg": "0.12.0", "machine": "aarch64", "python": "3.12.16", "system": "Linux", "texttable": "1.7.2"}

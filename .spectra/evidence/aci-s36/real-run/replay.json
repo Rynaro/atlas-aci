@@ -1,0 +1,16 @@
+{
+ "identical": true,
+ "note": "two fresh runs in one container; result.json and the decompressed partitions are byte-identical; telemetry differs and is not canonical",
+ "run1": {
+  "canonical_sha256": "6c804b4c5870da1bf922c228a5f488614d605935f6f465e7ff1d09763ba07a67",
+  "partitions_gz_sha256": "3df8046a98aa7a2f16889001cb13b23856f08253018e11267c388d4c72c196de",
+  "partitions_sha256": "4a92fb9e7972e4891794e13b432442daed1cf5b866c66a963bf98239d82f909e",
+  "result_json_sha256": "7c432622624bf3276d5406bdb93a8dbcdd8d2bfd099ed384ac9220c0fcf71309"
+ },
+ "run2": {
+  "canonical_sha256": "6c804b4c5870da1bf922c228a5f488614d605935f6f465e7ff1d09763ba07a67",
+  "partitions_gz_sha256": "3df8046a98aa7a2f16889001cb13b23856f08253018e11267c388d4c72c196de",
+  "partitions_sha256": "4a92fb9e7972e4891794e13b432442daed1cf5b866c66a963bf98239d82f909e",
+  "result_json_sha256": "7c432622624bf3276d5406bdb93a8dbcdd8d2bfd099ed384ac9220c0fcf71309"
+ }
+}

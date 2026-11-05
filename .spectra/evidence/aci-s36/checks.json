@@ -1,0 +1,58 @@
+{
+ "slice": "ACI-S36",
+ "base_commit": "53032fe6f2ddb48ce3ed0c1891a168106d578714",
+ "environment": "atlas-aci-dev-s16 (uid 1000, Python 3.12); CI is Python 3.14 (S36 tests: 117 passed, 1 skipped on python:3.14.10); real run python:3.12-slim aarch64 with leidenalg 0.12.0 / igraph 1.0.0, --network none",
+ "gates": {
+  "s36-contract": {
+   "exit": 0,
+   "summary": "105 passed, 1 skipped (test_real_provider_replay, importorskip) in 60.6s; tests/slices/test_s36_{support,community_experiment,semantics,isolation}.py; the seven AC tests rerun verbosely by the orchestrator: 12 passed (AC-006 parametrised)"
+  },
+  "regression": {
+   "exit": 0,
+   "summary": "orchestrator rerun after the final edits, together with the S36 tests: 352 passed, 2 skipped (s17, s22_eval, s23, s21/s26/s27/s28/s30/s33/s34/s35 isolation, test_communities, thesis_negatives, export)"
+  },
+  "ruff": {
+   "exit": 0
+  },
+  "format": {
+   "exit": 0
+  },
+  "mypy": {
+   "exit": 0,
+   "summary": "orchestrator reran the exact CI lint chain including ../scripts/ --exclude fingerprint-fixture: clean"
+  },
+  "full-suite": {
+   "exit": 1,
+   "summary": "1 failed, 2607 passed, 11 skipped, 1 deselected in 849.48s; single failure is the pre-existing tests/slices/test_s01_contract.py::test_call_deadline_after_initialization (uid 1000); the one new skip is test_s36_semantics::test_real_provider_replay (no provider in the dev image, recorded in base-invariants.json); deselected test_s08_integration::test_nonregular_pack_does_not_block_acquisition (known flaky). Base at 53032fe: same single failure, 2502 passed, 10 skipped."
+  },
+  "g-src": {
+   "exit": 0,
+   "summary": "mcp-server/src, pyproject.toml, uv.lock, .github/workflows, atlas/evals and every pre-existing scripts/ file byte-identical vs 53032fe; only scripts/experiment-leiden-vs-lpa.py and scripts/verify-community-experiment.py added; no tracked test modified"
+  },
+  "g-mcp": {
+   "exit": 0,
+   "summary": "tools JSON sha256 94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56, 1631472 bytes, 7 tools"
+  },
+  "py314": {
+   "exit": 0,
+   "summary": "S36 tests 117 passed, 1 skipped on python:3.14.10"
+  },
+  "real-run": {
+   "exit": 0,
+   "summary": "production manifest 3239ec59 frozen before the run; leidenalg 0.12.0 + igraph 1.0.0 in a --rm --network none python:3.12-slim container; run twice byte-identical; outcome inconclusive (task_graph_partitions_identical); solidus modularity LPA 0.928256 vs Leiden ~0.9606, spree 0.872670 vs ~0.9592; mean pairwise ARI 0.957187 / 0.966038; 116 KB evidence"
+  },
+  "g-image": {
+   "exit": 0,
+   "summary": "orchestrator ran prod-scenario.sh against atlas-aci:s36 (and atlas-aci-dev-s16): 20 PASS, 0 FAIL each; verifier passes on the committed real run with production_manifest true and the docs name the same outcome; two fixture-provider runs byte-identical (non-empty partitions digest); no-provider run skipped_missing_provider; --require-provider rejected with no output; pyproject/uv.lock and src tree hash unchanged. Orchestrator negative controls: digest-consistent forgeries of a modularity value and of the decision outcome are rejected as metric_mismatch and decision_mismatch. The first orchestrator run exposed an entrypoint/timeout dependency and vacuous checks in the script; fixed by the implementer before this run."
+  }
+ },
+ "acceptance_tests": {
+  "AC-S36-001": "tests/slices/test_s36_community_experiment.py::test_community_experiment_uses_frozen_manifest PASSED",
+  "AC-S36-002": "tests/slices/test_s36_community_experiment.py::test_community_algorithms_share_input_projection PASSED",
+  "AC-S36-003": "tests/slices/test_s36_community_experiment.py::test_community_metrics_are_rederived PASSED",
+  "AC-S36-004": "tests/slices/test_s36_community_experiment.py::test_community_replay_preserves_deterministic_results PASSED",
+  "AC-S36-005": "tests/slices/test_s36_community_experiment.py::test_community_missing_provider_is_skipped PASSED",
+  "AC-S36-006": "tests/slices/test_s36_community_experiment.py::test_community_invalid_partition_rejected[bool,duplicated,omitted,unknown_high,unknown_negative,unsorted] PASSED",
+  "AC-S36-007": "tests/slices/test_s36_community_experiment.py::test_community_experiment_preserves_default PASSED"
+ }
+}

@@ -1,0 +1,15 @@
+scripts/experiment-leiden-vs-lpa.py
+scripts/verify-community-experiment.py
+mcp-server/tests/slices/test_s36_community_experiment.py
+mcp-server/tests/slices/test_s36_*.py
+mcp-server/tests/fixtures/community_experiment/**
+docs/experiments/community-comparison.md
+CHANGELOG.md
+README.md
+.spectra/plans/aci-s36.*
+.spectra/plans/ramza-calibration.jsonl
+.spectra/changes/aci-s36/*
+.spectra/evidence/aci-s36/**
+.spectra/state/aci-s36.execution.json
+.spectra/backlog/execution.json
+.spectra/backlog/order.md

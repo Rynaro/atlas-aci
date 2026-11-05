@@ -1,0 +1,66 @@
+{
+ "argv": [
+  "python",
+  "/repo/scripts/experiment-leiden-vs-lpa.py",
+  "run",
+  "--repo-root",
+  "/repo",
+  "--manifest",
+  "/repo/mcp-server/tests/fixtures/community_experiment/manifest.v1.json",
+  "--manifest-sha256",
+  "3239ec59d9fce113a115ff4b27c42bfbf06715060e1b2cb7e7de8e2e435a2beb",
+  "--out",
+  "/out/run1|run2"
+ ],
+ "committed_before_run": "the production manifest and its digest existed in the working tree before the container was started",
+ "container": {
+  "flags": "--rm --network none --user 1000:1000 -e HOME=/tmp; repository mounted read-only at /repo, wheels read-only at /wheels, output at /out",
+  "image": "python:3.12-slim",
+  "image_id": "sha256:b18b261e1b4974b4f321451ad5251ded85abb22c2b8b262da527dda1d031ab30",
+  "repo_digest": "python@sha256:b18b261e1b4974b4f321451ad5251ded85abb22c2b8b262da527dda1d031ab30",
+  "script": ".spectra/evidence/aci-s36/real-run-inner.sh",
+  "timeout_seconds": 1700
+ },
+ "label_propagation_sha256": "c4bd26bc088c5b5ac49417275274655c4fc4476523182c4b51704e20a43000c0",
+ "outcome": {
+  "canonical_sha256": "6c804b4c5870da1bf922c228a5f488614d605935f6f465e7ff1d09763ba07a67",
+  "format": "atlas-community-run-summary.v1",
+  "manifest_sha256": "3239ec59d9fce113a115ff4b27c42bfbf06715060e1b2cb7e7de8e2e435a2beb",
+  "outcome": "inconclusive",
+  "partitions_sha256": "4a92fb9e7972e4891794e13b432442daed1cf5b866c66a963bf98239d82f909e",
+  "status": "complete"
+ },
+ "platform": {
+  "machine": "aarch64",
+  "python": "3.12.16",
+  "system": "Linux"
+ },
+ "production_manifest_path": "mcp-server/tests/fixtures/community_experiment/manifest.v1.json",
+ "production_manifest_sha256": "3239ec59d9fce113a115ff4b27c42bfbf06715060e1b2cb7e7de8e2e435a2beb",
+ "provider": {
+  "igraph": "1.0.0",
+  "installed_by": "pip install --no-index --find-links /wheels --target /tmp/site leidenalg==0.12.0 igraph==1.0.0 (inside the container only)",
+  "leidenalg": "0.12.0",
+  "texttable": "1.7.2",
+  "version_choice_basis": "newest releases with linux aarch64 cp312-compatible binary wheels whose Requires-Dist agree (leidenalg 0.12.0 requires igraph>=1.0.0,<2.0); chosen at qualification before any measured run; never re-pinned for results",
+  "wheels": [
+   {
+    "file": "igraph-1.0.0-cp39-abi3-manylinux_2_28_aarch64.whl",
+    "sha256": "a55dc3a2a4e3fc3eba42479910c1511bfc3ecb33cdf5f0406891fd85f14b5aee"
+   },
+   {
+    "file": "leidenalg-0.12.0-cp38-abi3-manylinux_2_26_aarch64.manylinux_2_28_aarch64.whl",
+    "sha256": "5f6a97f698f13a588e1ae7344908cddee9f87d33acc226fc5c5b99752ebd71f8"
+   },
+   {
+    "file": "texttable-1.7.2-py2.py3-none-any.whl",
+    "sha256": "a381e1ed30e4d4bd24cdacabe26463b7a570c0e964fc0b35d8d9276b2fcbe252"
+   }
+  ]
+ },
+ "purpose": "ACI-S36 real measured run of the committed production manifest",
+ "runner_exit_codes": {
+  "run1": 0,
+  "run2": 0
+ }
+}
