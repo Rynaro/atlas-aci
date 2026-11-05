@@ -1,0 +1,64 @@
+{
+ "adapters": {
+  "rails": {
+   "manifest_present": true,
+   "producer_ids": [
+    "8ed249e0a54d8fdb1948926cccc7140a619c58470d4b66e151ad23441f0cde3b"
+   ],
+   "records": {
+    "assertions": 35,
+    "evidence": 35,
+    "occurrences": 35
+   }
+  },
+  "rails_jobs": {
+   "manifest_present": false,
+   "producer_ids": [],
+   "records": {
+    "assertions": 0,
+    "evidence": 0,
+    "occurrences": 0
+   }
+  },
+  "rails_models": {
+   "manifest_present": false,
+   "producer_ids": [],
+   "records": {
+    "assertions": 0,
+    "evidence": 0,
+    "occurrences": 0
+   }
+  }
+ },
+ "exclusions": [
+  "files.indexed_at",
+  "files.mtime_ns (differs between mounts)",
+  "generation_inputs.producer/schema (base vs off only: the producer id churns by design)",
+  "manifest.generation_id",
+  "manifest.generation_inputs.snapshot",
+  "retrieval_fts*",
+  "retrieval_documents.candidate_id",
+  "refs.id, edges.id, symbols.id (autoincrement)",
+  "refs.evidence_id, edges.assertion_id (producer-derived link ids)"
+ ],
+ "native_producer_ids": [
+  "29c2aa3ed5ec84d3a88c0fc80ef7a35013f6ef5ec03becb4a29aa76014cd4d1b"
+ ],
+ "path": "/out/s24-rails/g/repos/2f5b918dfd484a0a0014f918e63539e5e4f6652e45d70f8b73df92ce7a6a3241/graph.9.db",
+ "row_counts": {
+  "assertion_ids": 45,
+  "assertions": 45,
+  "assignment_targets": 0,
+  "edges": 0,
+  "entity_ids": 32,
+  "evidence_ids": 77,
+  "files": 8,
+  "import_bindings": 0,
+  "occurrence_ids": 77,
+  "rationale": 0,
+  "refs": 45,
+  "retrieval_documents": 40,
+  "symbols": 24
+ },
+ "sha256": "0a030aed3d42b01d995d2291329a111582d140069dd29786d65daaf03dd4772a"
+}

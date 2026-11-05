@@ -1,0 +1,214 @@
+{
+ "a_grammar": {
+  "all_snippets_clean": true,
+  "data": [
+   "qual-data/grammar-py312.json",
+   "qual-data/grammar-py314.json"
+  ],
+  "descendant_for_byte_range": true,
+  "descendant_probe": {
+   "method_field_matches": true,
+   "parent": "call",
+   "type": "identifier"
+  },
+  "findings": [
+   "call fields receiver/method/arguments/block as planned; set chain is a call receiver; receiverless has no receiver; no-parens and empty-parens both give an argument_list (bare has none)",
+   "argument_list children: splat_argument, hash_splat_argument, block_argument, forward_argument, pair (hash_key_symbol and rocket both pair), hash for a braced hash, heredoc_beginning in the list with heredoc_body a sibling of the statement (never inside the list), comment inside the list",
+   "block field is `block` for braces and `do_block` for do/end",
+   "method parameters: method_parameters with identifier, optional_parameter(name,value), splat_parameter, keyword_parameter (value field only when defaulted), hash_splat_parameter, hash_splat_nil, block_parameter, forward_parameter, destructured_parameter; parenless def parses to the same node; `def perform` without parentheses or parameters has no parameters field",
+   "include Sidekiq::Job is a receiverless call `include` whose argument is a scope_resolution; superclass nodes are `superclass` holding constant or scope_resolution (`::ActiveJob::Base` is a nested scope_resolution whose text is the full bytes)",
+   "name-only differences: none that change D4"
+  ],
+  "fixture_all_clean_py312": true,
+  "fixture_all_clean_py314": true,
+  "fixture_files": 22,
+  "include_shape": {
+   "argument_text": "Sidekiq::Job",
+   "argument_type": "scope_resolution",
+   "method": "include",
+   "receiver": null
+  },
+  "py312_equals_py314": true,
+  "snippets": 45,
+  "stop_rule": "not triggered"
+ },
+ "b_refs_binding": {
+  "binding_namespace_equals_innermost_nesting_join": true,
+  "compact_probe": [
+   {
+    "binding_namespace": "Outer::Inner::Thing",
+    "line": 4,
+    "owner": [
+     "method",
+     "go",
+     "app/services/outer.rb"
+    ],
+    "path": "app/services/outer.rb"
+   },
+   {
+    "binding_namespace": "Reports::Daily",
+    "line": 3,
+    "owner": [
+     "method",
+     "go",
+     "app/services/reports/daily.rb"
+    ],
+    "path": "app/services/reports/daily.rb"
+   }
+  ],
+  "data": [
+   "qual-data/refs-py312.json",
+   "qual-data/refs-py314.json"
+  ],
+  "definitions": {
+   "one_to_one": true,
+   "perform_and_class_nodes": 39,
+   "rooted_class_has_no_symbol_row": true,
+   "singleton_performs_are_category_static": [
+    "static"
+   ]
+  },
+  "every_owner_non_null": true,
+  "every_site_exactly_one_refs_row": true,
+  "every_site_located_by_span": true,
+  "fallback_to_iterative_walk": false,
+  "fixture_site_rows_indexed": 41,
+  "incremental": {
+   "after_unrelated_edit_site_rows_equal": true,
+   "unchanged_since_x_all_ruby_refs_equal": true,
+   "unchanged_since_x_site_rows_equal": true
+  },
+  "owners": {
+   "file_owner_sites": [
+    {
+     "line": 11,
+     "path": "app/services/outer.rb",
+     "unsupported_source_owner": true
+    },
+    {
+     "line": 3,
+     "path": "spec/jobs/report_job_spec.rb",
+     "unsupported_source_owner": false
+    }
+   ],
+   "method_owner_sites": 39
+  },
+  "problems_py312": [],
+  "problems_py314": [],
+  "py312_equals_py314": true,
+  "refs_rows_without_a_call_node": [],
+  "rooted_probe": [
+   {
+    "ancestor_chain": [
+     "method",
+     "class"
+    ],
+    "binding_byte": 138,
+    "binding_category": "instance",
+    "binding_namespace": "::Rooted",
+    "binding_owner": "ruby:::Rooted",
+    "line": 11,
+    "located": true,
+    "method": "perform_later",
+    "namespace_equals_nesting_join": true,
+    "nesting_join": "::Rooted",
+    "occ_kind_role": [
+     "reference",
+     "reference:call"
+    ],
+    "owner": [
+     "file",
+     "app/services/outer.rb",
+     "app/services/outer.rb"
+    ],
+    "owner_non_null": true,
+    "path": "app/services/outer.rb",
+    "refs_rows": 1,
+    "skip_path": false,
+    "uncaptured_scope_resolution_ancestor": true,
+    "unsupported_source_owner": true
+   }
+  ],
+  "skip_pattern_sites": [
+   {
+    "path": "tmp/stale/w.rb",
+    "refs_rows": 0
+   },
+   {
+    "path": "tmp/stale/w.rb",
+    "refs_rows": 0
+   }
+  ],
+  "stop_rule": "not triggered (refs locate every site; owners non-null; definitions 1:1)"
+ },
+ "base_commit": "01947584046036ee4328eda03d23787ec7471a30",
+ "c_validity": {
+  "results": {
+   "ASSERTION_RELATIONS has both": true,
+   "EDGE_RELATIONS has no async relation": true,
+   "REFERENCE_RELATIONS has no async relation": true,
+   "_validate_evidence_projections on hand-built db (CG6/CG7)": "pass",
+   "async_argument AMBIGUOUS": "rejected: Invalid evidence: async_argument assertion",
+   "async_argument EXTRACTED no target": "rejected: Invalid evidence: async_argument assertion",
+   "async_argument EXTRACTED with target": "rejected: Invalid evidence: async_argument assertion",
+   "async_argument INFERRED no target": "rejected: Invalid evidence: resolved endpoints",
+   "async_argument INFERRED with target": "accepted",
+   "async_enqueue AMBIGUOUS": "accepted",
+   "async_enqueue EXTRACTED no target": "rejected: Invalid evidence: async_enqueue assertion",
+   "async_enqueue EXTRACTED with target": "rejected: Invalid evidence: async_enqueue assertion",
+   "async_enqueue INFERRED no target": "rejected: Invalid evidence: resolved endpoints",
+   "async_enqueue INFERRED with target": "accepted",
+   "async_enqueue UNRESOLVED": "accepted",
+   "ev.RELATIONS has no async relation": true,
+   "occurrence non-job kind with job role": "rejected: Invalid evidence: rails job occurrence role",
+   "occurrence on a class entity from another file (location check)": "accepted",
+   "occurrence rails_job with a foreign role prefix": "rejected: Invalid evidence: rails model occurrence role",
+   "producer bad adapter2": "rejected: Invalid evidence: rails_jobs producer fields",
+   "producer bad adapter3": "rejected: Invalid evidence: rails_jobs producer values",
+   "producer rails_jobs": "accepted",
+   "validate_database on hand-built db (6 records, all roles)": "pass",
+   "validate_database with the stray occurrence": "rejected: Invalid evidence: occurrence/entity location"
+  },
+  "s25_parametrized_carve_out_test": "test_s25_isolation.py:244-267 passes unchanged on the branch (see regression gate)",
+  "scratch_copy": "base tree + EV1-EV5 + CG6/CG7 (apply script identical to the product edit)"
+ },
+ "d_flag_off_baselines": {
+  "method": "git archive 0194758 run in atlas-aci-dev-s16; compare_graphs.py --digest (the S26 copy, ADAPTERS extended)",
+  "s24_fixture_rails": {
+   "file": "qual-data/base-digest-s24-rails.json",
+   "sha256": "0a030aed3d42b01d995d2291329a111582d140069dd29786d65daaf03dd4772a"
+  },
+  "s25_fixture_rails_models_map": {
+   "file": "qual-data/base-digest-s25-models.json",
+   "sha256": "55d6d6bec0077da2b87d1096c723e48067a6d8c1ed1c2af006942fbd22ebb86f"
+  },
+  "s26_fixture_off": {
+   "file": "qual-data/base-digest-s26-off.json",
+   "sha256": "46680c7347561bfd066c31bde547ded8fe7ef6517f7990f537fbc83bc0949684"
+  }
+ },
+ "environments": {
+  "dev_image": {
+   "image": "atlas-aci-dev-s16",
+   "pins_source": "mcp-server/uv.lock (tree-sitter 0.25.2, tree-sitter-language-pack 1.6.0)",
+   "sys.version": "3.12.16 (main, Oct 28 2026, 02:07:05) [GCC 14.2.0]",
+   "tree-sitter": "0.25.2",
+   "tree-sitter-language-pack": "1.6.0"
+  },
+  "python_3_14": {
+   "image": "python:3.14 (throwaway container, repo mounted read-only, network allowed for that container only)",
+   "install": "pip install tree-sitter==0.25.2 tree-sitter-language-pack==1.6.0 (plus mcp, click, pydantic, structlog for the (b) probe); pinned wheels were available for 3.14",
+   "never_on_host": true,
+   "sys.version": "3.14.10 (main, Oct 28 2026, 04:34:26) [GCC 14.2.0]",
+   "tree-sitter": "0.25.2",
+   "tree-sitter-language-pack": "1.6.0"
+  }
+ },
+ "f_fidelity": {
+  "decision": "docs/frameworks/rails.md states only what the adapter does (positional argument i to parameter i by span) and names serialisation, keyword transformation and middleware as not modelled; no version-specific claim about either library",
+  "reason": "the Sidekiq and Rails ActiveJob guides cannot be fetched at pinned revisions in this environment (network only for the python:3.14 probe container)",
+  "verifiable": false
+ },
+ "slice": "ACI-S26",
+ "stop_rule_triggered": false
+}

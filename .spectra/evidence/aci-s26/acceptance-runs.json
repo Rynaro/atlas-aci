@@ -1,0 +1,44 @@
+[
+  {
+    "ac_id": "AC-S26-001",
+    "test": "mcp-server/tests/slices/test_s26_rails_jobs.py::test_rails_direct_enqueue_target",
+    "exit_code": 0,
+    "tail": "1 passed in 5.65s"
+  },
+  {
+    "ac_id": "AC-S26-002",
+    "test": "mcp-server/tests/slices/test_s26_rails_jobs.py::test_rails_positional_argument_mapping",
+    "exit_code": 0,
+    "tail": "1 passed in 2.56s"
+  },
+  {
+    "ac_id": "AC-S26-003",
+    "test": "mcp-server/tests/slices/test_s26_rails_jobs.py::test_rails_enqueue_relation_is_not_synchronous",
+    "exit_code": 0,
+    "tail": "1 passed in 2.54s"
+  },
+  {
+    "ac_id": "AC-S26-004",
+    "test": "mcp-server/tests/slices/test_s26_rails_jobs.py::test_rails_transformed_arguments_are_unresolved",
+    "exit_code": 0,
+    "tail": "1 passed in 2.41s"
+  },
+  {
+    "ac_id": "AC-S26-005",
+    "test": "mcp-server/tests/slices/test_s26_rails_jobs.py::test_rails_job_collision_is_unresolved",
+    "exit_code": 0,
+    "tail": "1 passed in 2.52s"
+  },
+  {
+    "ac_id": "AC-S26-006",
+    "test": "mcp-server/tests/slices/test_s26_rails_jobs.py::test_rails_job_reindex_is_idempotent",
+    "exit_code": 0,
+    "tail": "1 passed in 4.66s"
+  },
+  {
+    "ac_id": "AC-S26-007",
+    "test": "mcp-server/tests/slices/test_s26_rails_jobs.py::test_rails_jobs_never_enqueue",
+    "exit_code": 0,
+    "tail": "1 passed in 3.90s"
+  }
+]

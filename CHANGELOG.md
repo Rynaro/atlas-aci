@@ -9,6 +9,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Rails: direct job enqueues and positional argument paths (ACI-S26).** New opt-in adapter
+  `rails_jobs` (`atlas-aci index --frameworks rails_jobs`, library
+  `CodeGraph(repo, frameworks=("rails_jobs",))`; the closed registry is now `{rails, rails_jobs,
+  rails_models}`, all need `ruby`; the three are independent and combinable). It reads the
+  build's captured Ruby bytes that mention a job construct, never runs Ruby, Rails, Sidekiq,
+  ActiveJob or Redis and never enqueues or runs a job. A direct `Const.perform_async(...)`
+  (a class with a direct `include Sidekiq::Worker|Job`) or `Const.perform_later(...)` (a direct
+  `ApplicationJob` / `ActiveJob::Base` subclass) is recorded as an `async_enqueue` assertion with
+  a `rails_job` occurrence and evidence from a `rails_jobs` producer: `INFERRED` to the one
+  explicit instance `perform` method of exactly one lexically resolved class, `AMBIGUOUS` with
+  the sorted candidates when several `perform` methods match, and `UNRESOLVED` with
+  `job_class_not_found`, `perform_not_found` or `target_not_recognized_job`. For a compatible
+  fixed positional arity each argument is an `async_argument` assertion mapping argument `i` to
+  parameter `i` of the same `perform`, by span; dynamic receivers, `set` chains, delayed
+  enqueues, unbound namespaces, splats, keyword arguments, blocks, forwarded arguments and
+  incompatible arities are closed-vocabulary diagnostics (`unsupported_argument_mapping`), never
+  partial mappings. `async_enqueue` is an asynchronous boundary, not a call and not proof that
+  the job ran. Both relations exist only in the evidence store's assertion relation set: no MCP
+  operation, enum, traversal, `edges` row, entity kind or dependency change; the tools JSON is
+  byte-identical. Editing `codegraph.py` and `storage/evidence.py` changes the native producer id
+  again: every evidence, assertion, link, generation and snapshot id differs from the previous
+  release for all graphs and existing indexes rebuild in full on the first `--since` run (entity
+  and occurrence ids are unchanged). Documented, with the limitations, in
+  `docs/frameworks/rails.md`.
+
 - **Rails: explicit associations, model tables and migration table references (ACI-S25).** New
   opt-in adapter `rails_models` (`atlas-aci index --frameworks rails_models`, library
   `CodeGraph(repo, frameworks=("rails_models",))`; the closed registry is now `{rails,

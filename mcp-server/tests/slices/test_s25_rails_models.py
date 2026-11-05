@@ -642,7 +642,12 @@ def regex_literals(tree):
 
 def test_adapter_sources_are_static_ascii_and_never_call_themselves():
     sources = sorted(SRC.glob("*.py"))
-    assert {p.name for p in sources} == {"__init__.py", "rails_models.py", "rails_routes.py"}
+    assert {p.name for p in sources} == {
+        "__init__.py",
+        "rails_jobs.py",
+        "rails_models.py",
+        "rails_routes.py",
+    }
     reads = 0
     for path in sources:
         text = path.read_text()
@@ -684,7 +689,7 @@ def test_adapter_sources_are_static_ascii_and_never_call_themselves():
         for literal in regex_literals(tree):
             assert "$" not in str(literal), (path, literal)
         assert "alter table" not in text.lower() and "nx.compose(" not in text
-    assert reads == 2  # one Path(__file__).read_bytes() per adapter, for adapter_sha256
+    assert reads == 3  # one Path(__file__).read_bytes() per adapter, for adapter_sha256
 
 
 def install_spies(monkeypatch, launches, connections, tmp_path):

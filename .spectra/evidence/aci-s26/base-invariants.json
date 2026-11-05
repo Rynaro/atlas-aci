@@ -1,0 +1,28 @@
+{
+ "base_commit": "01947584046036ee4328eda03d23787ec7471a30",
+ "method": "git archive 0194758 into a scratch tree, run in atlas-aci-dev-s16 (uid 1000, python 3.12.16)",
+ "tools_json": {
+  "sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+  "bytes": 1631472,
+  "matches_pin": true,
+  "command": "python -P -m atlas_aci tools --repo /ws"
+ },
+ "envelopes": {
+  "MINIMUM_BUDGET": 3436,
+  "COLLECTION_MINIMUM_BUDGET": 3448,
+  "FIXED_ERROR_ENVELOPE_CAP": 797,
+  "IMPACT_MINIMUM_BUDGET": 7730,
+  "source": "asserted by the base tests test_s21/test_s22/test_s24/test_s32 isolation (passed at base)"
+ },
+ "full_suite": {
+  "command": "pytest -q -p no:cacheprovider --deselect tests/slices/test_s08_integration.py::test_nonregular_pack_does_not_block_acquisition",
+  "result": "1 failed, 1825 passed, 10 skipped, 1 deselected in 648.09s (0:10:48)",
+  "failed": [
+   "tests/slices/test_s01_contract.py::test_call_deadline_after_initialization (known pre-existing failure under uid 1000)"
+  ],
+  "deselected": "test_s08_integration::test_nonregular_pack_does_not_block_acquisition (known flaky; hangs in the dev image)",
+  "ci_reference": "baseline.json: 1827 passed, 10 skipped on CI (Python 3.14)",
+  "log": "qual-data/base-full-suite.log.gz"
+ },
+ "stop_rule": "not triggered: the base is green apart from the two known pre-existing items"
+}

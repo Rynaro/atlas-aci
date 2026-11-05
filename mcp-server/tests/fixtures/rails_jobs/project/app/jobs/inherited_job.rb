@@ -1,0 +1,2 @@
+class InheritedJob < ReportJob
+end

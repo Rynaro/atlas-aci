@@ -1,0 +1,58 @@
+{
+ "slice_id": "ACI-S26",
+ "plan": ".spectra/plans/aci-s26.md",
+ "author": "orchestrator-ramza-plan-s26",
+ "checker": "atlas-s26-plan-checker",
+ "verdict": "APPROVE_WITH_CONDITIONS",
+ "method": "independent read-only code review; no commands executed",
+ "findings": [
+  {
+   "n": 1,
+   "severity": "MAJOR",
+   "summary": "compact class A::B nested in a module is treated as a bound site namespace (plan :219-223, fixture :575) although binding.namespace is raw text concatenation (codegraph.py:4106-4110) and S25 condition 3 made it unbound; false INFERRED possible; sites with a scope_resolution-named ancestor that has an enclosing class/module become unbound_namespace, fixture and test changed",
+   "disposition": "accepted as plan condition 1"
+  },
+  {
+   "n": 2,
+   "severity": "MAJOR",
+   "summary": "S10(iii)/D10 claim that editing ReportJob#perform puts enqueuer.rb in affected_paths is false: Ruby bucket digest is symbols rows only (dependencies.py:119-133, no Ruby assignment_targets) and a params-only edit leaves them unchanged; assert correctness against a fresh build instead, reword D10",
+   "disposition": "accepted as plan condition 2"
+  },
+  {
+   "n": 3,
+   "severity": "MINOR",
+   "summary": "namespaces come from all symbols but performs only from captured files; a limited/ineligible duplicate definition yields INFERRED instead of AMBIGUOUS; record limited paths and never INFERRED/AMBIGUOUS for tainted names; MAX_FILES test",
+   "disposition": "accepted as plan condition 3"
+  },
+  {
+   "n": 4,
+   "severity": "MINOR",
+   "summary": "regression set omits test_s14/s23/s29/s31/s32; README TSX matrix (test_s14:262-274) and CHANGELOG first-section OpenAPI slice (test_s29:1444-1448) are layout-sensitive; place edits outside and run those files",
+   "disposition": "accepted as plan condition 4"
+  },
+  {
+   "n": 5,
+   "severity": "MINOR",
+   "summary": "compare_graphs routes_pair/both_pair/selftest hard-code two adapters; add rails_jobs absent checks, jobs-alone pair, three-fixture merge collision check, g_image S26 runs and rejections",
+   "disposition": "accepted as plan condition 5"
+  },
+  {
+   "n": 6,
+   "severity": "MINOR",
+   "summary": "Day-1 probes must record interpreter and tree-sitter versions and run on the CI interpreter 3.14 or state why not; add unsupported_source_owner and compact-entity probes to (b)",
+   "disposition": "accepted as plan condition 6"
+  },
+  {
+   "n": 7,
+   "severity": "MINOR",
+   "summary": "docs must name receiverless self-enqueue as dynamic_receiver, send/public_send, skip-pattern and failed-file definitions, constant/Class.new shadows, first-segment lexical resolution, and that unsupported_argument_mapping lives on the async_argument diagnostic referencing the enqueue",
+   "disposition": "accepted as plan condition 7"
+  },
+  {
+   "n": 8,
+   "severity": "MINOR",
+   "summary": "Day 2 overloaded; add a checkpoint requiring AC-001/002/003/005 green before AC-004/006/007 and Day 3, else apply cut order",
+   "disposition": "accepted as plan condition 8"
+  }
+ ]
+}

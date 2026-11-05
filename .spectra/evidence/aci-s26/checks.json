@@ -1,0 +1,75 @@
+{
+ "slice": "ACI-S26",
+ "base_commit": "01947584046036ee4328eda03d23787ec7471a30",
+ "environment": "atlas-aci-dev-s16 (uid 1000, Python 3.12.16, tree-sitter 0.25.2, tree-sitter-language-pack 1.6.0); CI is Python 3.14",
+ "gates": {
+  "s26-contract": {
+   "exit": 0,
+   "summary": "48 passed in 52.40s (53s wall clock incl. container start); tests/slices/test_s26_{rails_jobs,isolation,support}.py"
+  },
+  "regression": {
+   "exit": 0,
+   "summary": "1240 passed in 415.18s (s07 s09 s10 s12_storage s14 s16 s19 s20 s21 s22 s23 s24 s25 s29 s31 s32 s37, test_schema_epoch, test_thesis_negatives, test_export)"
+  },
+  "ruff": {
+   "exit": 0
+  },
+  "format": {
+   "exit": 0
+  },
+  "mypy": {
+   "exit": 0,
+   "summary": "Success: no issues found in 79 source files"
+  },
+  "full-suite": {
+   "exit": 1,
+   "summary": "1 failed, 1875 passed, 10 skipped, 1 deselected in 691.23s; the single failure is the known pre-existing tests/slices/test_s01_contract.py::test_call_deadline_after_initialization (uid 1000); deselected tests/slices/test_s08_integration.py::test_nonregular_pack_does_not_block_acquisition (known flaky/hang). Base had 1 failed, 1825 passed, 10 skipped with the same two."
+  },
+  "g-src": {
+   "exit": 0,
+   "summary": "gated paths byte-identical vs 0194758; changed set == {codegraph.py, frameworks/__init__.py, frameworks/rails_jobs.py, storage/evidence.py}; tracked test edits == the three allowed prior-slice files"
+  },
+  "g-mcp": {
+   "exit": 0,
+   "summary": "tools JSON sha256 94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56, 1631472 bytes"
+  }
+ },
+ "acceptance_tests": {
+  "AC-S26-001": "tests/slices/test_s26_rails_jobs.py::test_rails_direct_enqueue_target PASSED",
+  "AC-S26-002": "tests/slices/test_s26_rails_jobs.py::test_rails_positional_argument_mapping PASSED",
+  "AC-S26-003": "tests/slices/test_s26_rails_jobs.py::test_rails_enqueue_relation_is_not_synchronous PASSED",
+  "AC-S26-004": "tests/slices/test_s26_rails_jobs.py::test_rails_transformed_arguments_are_unresolved PASSED",
+  "AC-S26-005": "tests/slices/test_s26_rails_jobs.py::test_rails_job_collision_is_unresolved PASSED",
+  "AC-S26-006": "tests/slices/test_s26_rails_jobs.py::test_rails_job_reindex_is_idempotent PASSED",
+  "AC-S26-007": "tests/slices/test_s26_rails_jobs.py::test_rails_jobs_never_enqueue PASSED"
+ },
+ "local_g_image_rehearsal": {
+  "note": "executor's offline shim rehearsal (atlas-aci:s26-shim) superseded by the orchestrator production-image run; its artifacts were removed in favour of g-image-orchestrator/"
+ },
+ "compare_graphs_selftest": "selftest.json (ok: true, three adapters non-zero, disjoint, no path or class collision between the S24/S25/S26 fixtures)",
+ "orchestrator_rerun": [
+  {
+   "command": "dk26.sh pytest -p no:cacheprovider tests/slices/test_s26_*.py test_s25_*.py test_s24_*.py",
+   "exit_code": 0,
+   "summary": "288 passed"
+  },
+  {
+   "command": "dk26.sh exact CI lint/type steps (ruff check+format src/ tests/, mypy src/, ruff check+format ../scripts/ --exclude fingerprint-fixture, mypy ../scripts/)",
+   "exit_code": 0
+  },
+  {
+   "command": "orchestrator staged-tree re-check: ramza-drift --staged 97 files in scope; gated paths byte-unchanged vs 0194758; src changes exactly frameworks/__init__.py, frameworks/rails_jobs.py, codegraph.py, storage/evidence.py; prior-slice test edits exactly the five permitted hunks",
+   "exit_code": 0
+  }
+ ],
+ "production_image": {
+  "base": "atlas-aci:s26-base sha256:d54869d2c3ebb84b32de36b8edf965bdbb3eff11254e6e6f3ffe1d9319d9dd82 (built from 0194758)",
+  "build": "docker build -t atlas-aci:s26 mcp-server -> sha256:669436d9c504f5265238b58db881c662fdd917d5c3a4c2a06a8008cf305524a1",
+  "scenario": ".spectra/evidence/aci-s26/g_image.sh atlas-aci:s26-base atlas-aci:s26 <out> (--network none, fixtures :ro, separate graph roots)",
+  "result": "G-IMAGE exit 0; all 7 comparisons ok (image-compare, image-compare-python, routes-compare, models-compare, routes-jobs, jobs-all, merged-jobs); rejections exit 2 (base rejects rails_jobs; new rejects django and a table map without rails_models)",
+  "rails_jobs_facts": "S26 fixture ON: async_enqueue 23 INFERRED (12 arguments mapped/none, 11 arguments unsupported with construct), 3 AMBIGUOUS ambiguous_job_target (2 candidates each), 4 target_not_recognized_job, 1 job_class_not_found, 1 perform_not_found, 9 UNRESOLVED unsupported_argument_mapping (dynamic_receiver x4, delayed_enqueue x2, set_chain, unbound_namespace x2); async_argument 16 INFERRED mappings, 12 unsupported_argument_mapping diagnostics",
+  "tools": "7 tools, sha256 94f9567a... 1631472 bytes unchanged",
+  "artifacts": "g-image-orchestrator/*.json"
+ },
+ "interpretation": "async_enqueue/async_argument are assertion-only relations, never call edges; an INFERRED enqueue means the receiver names one recognised job with an explicit perform, not that a job ran. For splat/keyword/block/arity/signature cases the INFERRED enqueue carries arguments=unsupported and one async_argument diagnostic with unsupported_argument_mapping references it (checker condition 7). Job-file edits are not claimed to put the enqueue file in S10 affected_paths; correctness comes from the adapter's global recompute (checker condition 2)."
+}
