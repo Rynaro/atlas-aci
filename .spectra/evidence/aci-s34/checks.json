@@ -1,0 +1,54 @@
+{
+ "slice": "ACI-S34",
+ "base_commit": "0a70041dd96c4f082d09334931a7c756f8c98ad5",
+ "environment": "atlas-aci-dev-s16 (uid 1000, Python 3.12); CI is Python 3.14 (S34 contract: 46 passed on python:3.14.10)",
+ "gates": {
+  "s34-contract": {
+   "exit": 0,
+   "summary": "46 passed in 15.58s; tests/slices/test_s34_{adr_drift,support,states,rejections,isolation}.py; orchestrator rerun with s14, s27, s28, s30, s33 isolation: 135 passed"
+  },
+  "regression": {
+   "exit": 0,
+   "summary": "550 passed (s14, s19, s23, s26-s30, s32, s33, s37, thesis_negatives, export)"
+  },
+  "ruff": {
+   "exit": 0
+  },
+  "format": {
+   "exit": 0
+  },
+  "mypy": {
+   "exit": 0,
+   "summary": "orchestrator reran the exact CI lint chain: clean"
+  },
+  "full-suite": {
+   "exit": 1,
+   "summary": "1 failed, 2331 passed, 10 skipped, 1 deselected in 924.71s; single failure is the pre-existing tests/slices/test_s01_contract.py::test_call_deadline_after_initialization (uid 1000); deselected test_s08_integration::test_nonregular_pack_does_not_block_acquisition (known flaky). Base at 0a70041: same single failure, 2285 passed."
+  },
+  "g-src": {
+   "exit": 0,
+   "summary": "gated paths byte-identical vs 0a70041; changed src == {__main__.py, rationale/__init__.py, rationale/adr_mapping.py, rationale/drift.py}; no tracked test modified"
+  },
+  "g-mcp": {
+   "exit": 0,
+   "summary": "tools JSON sha256 94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56, 1631472 bytes, 7 tools"
+  },
+  "py314": {
+   "exit": 0,
+   "summary": "S34 contract 46 passed on python:3.14.10"
+  },
+  "g-image": {
+   "exit": 0,
+   "summary": "orchestrator ran prod-scenario.sh against atlas-aci:s34 (fixture repo and snapshots built as the container user on a named volume; analysis --network none --read-only): 47 PASS, 0 FAIL; map and drift byte-identical across runs (22 mappings); 4 review, 5 unknown, 6 unresolved, 7 no_finding; body change raises rationale_review_needed, unchanged and edited-document controls do not; removed target unresolved target_removed; renumbered sibling sibling_ordinal_shift; configuration-mismatch pair exit 0 with every mapping unknown_target_history comparison_rejected; snapshot mismatch exit 1 empty stdout; usage exit 2; repository, .git, graph and mapping inventories unchanged; tools pin"
+  }
+ },
+ "acceptance_tests": {
+  "AC-S34-001": "tests/slices/test_s34_adr_drift.py::test_adr_mapping_has_exact_evidence PASSED",
+  "AC-S34-002": "tests/slices/test_s34_adr_drift.py::test_adr_source_change_requests_review PASSED",
+  "AC-S34-003": "tests/slices/test_s34_adr_drift.py::test_adr_unchanged_source_has_no_drift_signal PASSED",
+  "AC-S34-004": "tests/slices/test_s34_adr_drift.py::test_adr_missing_target_is_unresolved PASSED",
+  "AC-S34-005": "tests/slices/test_s34_adr_drift.py::test_adr_reimport_is_idempotent PASSED",
+  "AC-S34-006": "tests/slices/test_s34_adr_drift.py::test_adr_incomparable_snapshot_is_unknown PASSED",
+  "AC-S34-007": "tests/slices/test_s34_adr_drift.py::test_adr_analysis_never_edits_decisions PASSED"
+ }
+}

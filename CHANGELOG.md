@@ -46,6 +46,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   from-scratch environment, bounded output, timeouts that reject), `safe.directory` is never
   overridden and a repository owned by another user is `history_unavailable`.
   See [`docs/history-signals.md`](docs/history-signals.md).
+- **ADR rationale review signals (ACI-S34).** New operator commands `atlas-aci rationale-map
+  --mapping M --repo D [--graph-root G] --output OUT [limits]` and `atlas-aci rationale-drift
+  --mapping M [--repo D | --before-repo D --after-repo D] [--before-graph-root G]
+  [--after-graph-root G] --output OUT [limits]` (CLI only, no MCP op) and the libraries
+  `atlas_aci.rationale.adr_mapping` and `atlas_aci.rationale.drift`. An operator maps a byte span
+  of an architecture decision record to an exact indexed source endpoint (an entity id with its
+  path, kind and name, or a whole file). The mapping is resolved against the mapped snapshot only,
+  with the document bytes read from the snapshot and the span checked by digest; a mapping that
+  does not resolve is an `unresolved_mapping` and is never rebound to a candidate. Between two
+  snapshots the S19 diff is run once: a signature, body or file-content change of the mapped
+  source while the whole decision document is byte-identical is a `rationale_review_needed`
+  finding, an observation, not a verdict. A target the diff cannot match (extraction failure,
+  unsupported kind, a changed set of same-name siblings, a rejected comparison) is
+  `unknown_target_history`. Both results are standalone, content-addressed documents
+  (`atlas-rationale-overlay.v1`, `atlas-rationale-drift.v1`) written only to `--output` from
+  read-only leases; they do not write the graph or the ADRs.
+  See [`docs/rationale-drift.md`](docs/rationale-drift.md).
 - **Python dependency surface from a uv lock and a local wheel (ACI-S28).** New operator command
   `atlas-aci import-python-dependency --lock uv.lock --package NAME [--env KEY=VALUE]...
   [--wheel PATH]... --output OUT [limits]` (CLI only, no MCP op) and the libraries

@@ -1,0 +1,33 @@
+{
+  "schema": "atlas-aci/slice-execution.v1",
+  "slice_id": "ACI-S34",
+  "issue_url": "https://github.com/Rynaro/atlas-aci/issues/55",
+  "criteria_sha256": "3b760db2423318e36b574d32c556e9dbd442a0bc169f6777d520522086298a8b",
+  "base_commit": "0a70041dd96c4f082d09334931a7c756f8c98ad5",
+  "output_commit": null,
+  "declared_paths": [
+    ".spectra/plans/aci-s34.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/changes/aci-s34/*",
+    ".spectra/evidence/aci-s34/**",
+    ".spectra/state/aci-s34.execution.json",
+    ".spectra/backlog/execution.json",
+    ".spectra/backlog/order.md",
+    "mcp-server/src/atlas_aci/rationale/__init__.py",
+    "mcp-server/src/atlas_aci/rationale/adr_mapping.py",
+    "mcp-server/src/atlas_aci/rationale/drift.py",
+    "mcp-server/src/atlas_aci/__main__.py",
+    "mcp-server/tests/slices/test_s34_adr_drift.py",
+    "mcp-server/tests/slices/test_s34_*.py",
+    "mcp-server/tests/fixtures/adr_mapping/**",
+    "docs/rationale-drift.md",
+    "CHANGELOG.md",
+    "README.md"
+  ],
+  "output_digests": {},
+  "status": "IN_PROGRESS",
+  "started_at": "2026-11-05T11:02:05Z",
+  "planning_state": ".spectra/plans/aci-s34.state.json",
+  "plan": ".spectra/plans/aci-s34.md",
+  "results": []
+}

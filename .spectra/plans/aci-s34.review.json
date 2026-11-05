@@ -1,0 +1,88 @@
+{
+ "slice_id": "ACI-S34",
+ "plan": ".spectra/plans/aci-s34.md",
+ "author": "orchestrator-ramza-plan-s34",
+ "checker": "atlas-s34-plan-checker",
+ "verdict": "APPROVE_WITH_CONDITIONS",
+ "method": "independent read-only code review; no commands executed",
+ "findings": [
+  {
+   "n": 1,
+   "severity": "MAJOR",
+   "summary": "tools-JSON 'no rationale string' assertion is unsatisfiable (server.py:146/238, protocol/graph.py:238 already contain it); assert S34-specific absences and no rationale tool name instead",
+   "disposition": "accepted as plan condition 1"
+  },
+  {
+   "n": 2,
+   "severity": "MAJOR",
+   "summary": "S19 identity includes per-sibling ordinals, so deleting an earlier same-name sibling renumbers the survivor and gives a false body_changed review; limitation 4 and docs must name ordinal renumbering, add a Day-1 case, and document container-target noise",
+   "disposition": "accepted as plan condition 2"
+  },
+  {
+   "n": 3,
+   "severity": "MINOR",
+   "summary": "AC-004 'each reason exactly once' contradicts two descriptor-mismatch rows; assert per mapping_id and reason-set equality",
+   "disposition": "accepted as plan condition 3"
+  },
+  {
+   "n": 4,
+   "severity": "MINOR",
+   "summary": "document_missing/document_not_in_snapshot conflates absent with present-but-non-indexed; compute after-side decision_state from the observation hash in any state and document the wording",
+   "disposition": "accepted as plan condition 4"
+  },
+  {
+   "n": 5,
+   "severity": "MINOR",
+   "summary": "partial_paths holds every non-indexed observation so E3 precedes E5 for file targets and E5's non-indexed branch is dead; pin the real precedence",
+   "disposition": "accepted as plan condition 5"
+  },
+  {
+   "n": 6,
+   "severity": "MINOR",
+   "summary": "lone surrogates pass load_strict and crash canonical encoding as UnicodeEncodeError; strict-encode all strings at parse and reject as invalid_mapping",
+   "disposition": "accepted as plan condition 6"
+  },
+  {
+   "n": 7,
+   "severity": "MINOR",
+   "summary": "DRIFT_REJECTIONS has an ambiguous bare source_snapshot_unavailable; pin an exact 16-value tuple, each reachable in a test",
+   "disposition": "accepted as plan condition 7"
+  },
+  {
+   "n": 8,
+   "severity": "MINOR",
+   "summary": "D7 no_finding row ambiguous; restate as a matrix and add summary-doc-edited (unchanged source plus changed document) to the fixtures",
+   "disposition": "accepted as plan condition 8"
+  },
+  {
+   "n": 9,
+   "severity": "MINOR",
+   "summary": "grammar provisioning must fail, never skip, for python, markdown and yaml (S33 helper checks python only)",
+   "disposition": "accepted as plan condition 9"
+  },
+  {
+   "n": 10,
+   "severity": "MINOR",
+   "summary": "identity_kind_mismatch same-repo trigger is unproven; fall back to the S19 two-repo form without a STOP",
+   "disposition": "accepted as plan condition 10"
+  },
+  {
+   "n": 11,
+   "severity": "MINOR",
+   "summary": "legacy_v2.retire can produce an S19 move candidate and contradict candidate_ids []; make bodies differ or pin Day-1, and assert no replacement id appears anywhere",
+   "disposition": "accepted as plan condition 11"
+  },
+  {
+   "n": 12,
+   "severity": "MINOR",
+   "summary": "add the S14/S23/S26-S29/S37 doc-pin tests to the targeted regression run right after the CHANGELOG and README edits",
+   "disposition": "accepted as plan condition 12"
+  },
+  {
+   "n": 13,
+   "severity": "MINOR",
+   "summary": "timebox: apply the cut order at Day-2 midday if D5-D7 and validators are not complete",
+   "disposition": "accepted as plan condition 13"
+  }
+ ]
+}

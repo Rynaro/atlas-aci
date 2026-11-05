@@ -2090,5 +2090,218 @@ def cochange(output_path: Path, **chosen: Any) -> None:
     stream.flush()
 
 
+def _write_rationale_atomic(target: Path, data: bytes) -> None:
+    """Write beside `target` (same directory) and `os.replace` it; no partial output remains."""
+    import tempfile
+    from contextlib import suppress
+
+    descriptor, name = tempfile.mkstemp(prefix=".atlas-rationale-", dir=target.parent)
+    try:
+        with os.fdopen(descriptor, "wb") as stream:
+            stream.write(data)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(name, target)
+    except BaseException:
+        with suppress(OSError):
+            os.unlink(name)
+        raise
+
+
+# (name, minimum, maximum, default); the library owns the same table and a test pins the two.
+_RATIONALE_LIMITS = (
+    ("max_mapping_bytes", 1, 16777216, 1048576),
+    ("max_mappings", 1, 10000, 1000),
+    ("max_output_bytes", 1, 67108864, 16777216),
+)
+
+
+def _rationale_limit_options(command):
+    for name, low, high, default in reversed(_RATIONALE_LIMITS):
+        command = click.option(
+            "--" + name.replace("_", "-"),
+            name,
+            default=None,
+            type=int,
+            help=f"Limit {low}..{high} (default {default})",
+        )(command)
+    return command
+
+
+def _rationale_usage(what: str) -> click.UsageError:
+    """The fixed usage text of one `RationaleUsageError` (never the exception's own text)."""
+    texts = {
+        "repository": "Give --repo, or both --before-repo and --after-repo.",
+        "output_location": "--output must be outside the repositories and graph roots.",
+        "output_equals_input": "--output must differ from the mapping.",
+        "graph_namespace": "The repository cannot be opened as a graph namespace.",
+        "same_namespace": "Both sides resolve to the same graph namespace.",
+    }
+    return click.UsageError(texts.get(what, "Invalid rationale option: " + what))
+
+
+def _rationale_execute(
+    command: str,
+    mapping_path: Path,
+    output_path: Path,
+    sides: list[tuple[Path | None, Path | None]],
+    chosen: dict[str, int | None],
+) -> None:
+    from atlas_aci.overlays import runtime
+    from atlas_aci.query.diff import Side
+    from atlas_aci.rationale import adr_mapping as mapping
+    from atlas_aci.rationale import drift
+
+    mapped = command == "rationale-map"
+    label = "mapping" if mapped else "drift"
+    try:
+        limits = mapping.normalize_limits(chosen)
+        if any(repo is None for repo, _ in sides):
+            raise mapping.RationaleUsageError("repository")
+    except mapping.RationaleUsageError as exc:
+        raise _rationale_usage(exc.what) from None
+    checked = [(Path(str(repo)).resolve(), root) for repo, root in sides]
+    protected = [item for repo, _ in checked for item in (repo, repo / ".atlas")]
+    protected += [root for _, root in checked if root is not None]
+    try:
+        target = runtime.resolve_output(output_path, protected, [mapping_path])
+    except runtime.OverlayUsageError as exc:
+        what = "output_equals_input" if exc.reason == "output_equals_input" else "output_location"
+        raise _rationale_usage(what) from None
+    raw = _read_cross_repo_input(
+        mapping_path, limits.max_mapping_bytes, "Rationale mapping cannot be read."
+    )
+    try:
+        if mapped:
+            document = mapping.map_rationale(raw, Side(*checked[0]), limits)
+        else:
+            document = drift.rationale_drift(raw, Side(*checked[0]), Side(*checked[1]), limits)
+        data = mapping.canonical_bytes(document)
+        summary_data = mapping.summary_document(document)
+        mapping.validate_summary(summary_data)
+        summary = mapping.canonical_bytes(summary_data)
+    except mapping.RationaleRejected as exc:
+        raise click.ClickException(f"Rationale {label} rejected: " + exc.reason) from None
+    except mapping.RationaleUsageError as exc:
+        raise _rationale_usage(exc.what) from None
+    except Exception as exc:
+        # Never `str(exc)`: a message may carry a path or input text.
+        raise click.ClickException(f"Rationale {label} failed: " + type(exc).__name__) from None
+    try:
+        _write_rationale_atomic(target, data)
+    except OSError:
+        raise click.ClickException("Rationale output cannot be written.") from None
+    stream = click.get_binary_stream("stdout")
+    stream.write(summary)
+    stream.flush()
+
+
+_RATIONALE_MAPPING_OPTION = click.option(
+    "--mapping",
+    "mapping_path",
+    required=True,
+    type=click.Path(path_type=Path),
+    help="Mapping (JSON, atlas-rationale-mapping.v1): ADR spans to exact source endpoints",
+)
+_RATIONALE_OUTPUT_OPTION = click.option(
+    "--output",
+    "output_path",
+    required=True,
+    type=click.Path(dir_okay=False, path_type=Path),
+    help="Where the document is written; outside the repositories and graph roots",
+)
+
+
+@cli.command("rationale-map")
+@_RATIONALE_MAPPING_OPTION
+@click.option(
+    "--repo",
+    required=True,
+    type=click.Path(exists=True, file_okay=False, path_type=Path),
+    help="The repository whose active snapshot the mapping names",
+)
+@_graph_root_option("--graph-root", "External graph root (default: <repo>/.atlas)")
+@_RATIONALE_OUTPUT_OPTION
+@_rationale_limit_options
+def rationale_map(
+    mapping_path: Path,
+    repo: Path,
+    graph_root: Path | None,
+    output_path: Path,
+    **chosen: int | None,
+) -> None:
+    """Resolve explicit ADR-span-to-source mappings on the mapped snapshot.
+
+    The mapping names, by hand, a span of a decision document (an ADR) and an exact source
+    endpoint. Document bytes come from the snapshot, never from the checkout. A mapping that
+    does not resolve is reported as unresolved and is never rebound. The graph, the repository
+    and the documents are not written; the only file written is --output. Prints the canonical
+    `atlas-rationale-summary.v1` on stdout; nothing is printed on rejection (exit 1) or invalid
+    usage (exit 2).
+    """
+    _rationale_execute(
+        "rationale-map", mapping_path, output_path, [(repo, graph_root)], dict(chosen)
+    )
+
+
+@cli.command("rationale-drift")
+@_RATIONALE_MAPPING_OPTION
+@click.option(
+    "--repo",
+    default=None,
+    type=click.Path(exists=True, file_okay=False, path_type=Path),
+    help="Repository for both sides (overridden per side by --before-repo/--after-repo)",
+)
+@click.option(
+    "--before-repo",
+    default=None,
+    type=click.Path(exists=True, file_okay=False, path_type=Path),
+    help="Repository of the before (mapped) snapshot",
+)
+@click.option(
+    "--after-repo",
+    default=None,
+    type=click.Path(exists=True, file_okay=False, path_type=Path),
+    help="Repository of the after snapshot",
+)
+@_graph_root_option(
+    "--graph-root", "External graph root for both sides (default: <repo>/.atlas per side)"
+)
+@_graph_root_option("--before-graph-root", "Graph root of the before (mapped) snapshot")
+@_graph_root_option("--after-graph-root", "Graph root of the after snapshot")
+@_RATIONALE_OUTPUT_OPTION
+@_rationale_limit_options
+def rationale_drift(
+    mapping_path: Path,
+    repo: Path | None,
+    before_repo: Path | None,
+    after_repo: Path | None,
+    graph_root: Path | None,
+    before_graph_root: Path | None,
+    after_graph_root: Path | None,
+    output_path: Path,
+    **chosen: int | None,
+) -> None:
+    """Flag mapped source that changed between two snapshots while its ADR did not.
+
+    Compares the mapped (before) snapshot with the after snapshot through the snapshot diff.
+    A source change with an identical decision document is reported as rationale_review_needed:
+    an observation, not a verdict. Uncomparable targets are unknown_target_history and missing
+    endpoints stay unresolved. The graphs, the repositories and the documents are not written;
+    the only file written is --output. Prints the canonical `atlas-rationale-summary.v1` on
+    stdout; nothing is printed on rejection (exit 1) or invalid usage (exit 2).
+    """
+    _rationale_execute(
+        "rationale-drift",
+        mapping_path,
+        output_path,
+        [
+            (before_repo or repo, before_graph_root or graph_root),
+            (after_repo or repo, after_graph_root or graph_root),
+        ],
+        dict(chosen),
+    )
+
+
 if __name__ == "__main__":
     cli()
