@@ -1,0 +1,143 @@
+{
+  "slice_id": "ACI-S27",
+  "base_commit": "92e859700e9613f57526a875373ba0c4a1c8342b",
+  "recorded_before_implementation": true,
+  "declared_by_issue": [
+    "mcp-server/src/atlas_aci/importers/otel_json.py",
+    "mcp-server/src/atlas_aci/overlays/runtime.py",
+    "mcp-server/src/atlas_aci/__main__.py",
+    "mcp-server/tests/slices/test_s27_otel_import.py",
+    "mcp-server/tests/fixtures/otel/",
+    "docs/importers/opentelemetry.md"
+  ],
+  "glob_depth_clarifications": [
+    {
+      "path": "mcp-server/tests/fixtures/otel/**",
+      "reason": "Flat hand-authored fixtures under the declared directory (trace-basic.json, trace-sentinels.json, manifest-example.json, provenance.json, .gitattributes with '* -text'); rejection, nesting and matched-manifest inputs are generated in-test"
+    },
+    {
+      "path": "docs/importers/opentelemetry.md",
+      "reason": "Next to the existing docs/importers/openapi.md; no other file under docs/importers is touched"
+    }
+  ],
+  "added": [
+    {
+      "path": "mcp-server/src/atlas_aci/overlays/__init__.py",
+      "reason": "Package marker for the new overlays package; docstring only (hatch ships src/atlas_aci)"
+    },
+    {
+      "path": "mcp-server/tests/slices/test_s27_*.py",
+      "reason": "Optional test_s27_support.py helper module beside the declared test file"
+    },
+    {
+      "path": "mcp-server/tests/slices/test_s29_openapi_diff.py",
+      "reason": "One-statement edit: append \"importers/otel_json.py\" to the exact importers/contracts file-list pin at lines 1363-1368, so the new pure module falls under the S29 purity scan; no other line changes and no other prior test is edited"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "reason": "Separate '- **' Unreleased bullet for import-otel, placed at the top of '### Added' so the S29 split('\\n- **') slice is unaffected"
+    },
+    {
+      "path": "README.md",
+      "reason": "One docs-table row in 'What's in this repo' after the openapi row (outside the TSX section parsed by test_s14); the first cut item"
+    },
+    {
+      "path": ".spectra/plans/aci-s27.*",
+      "reason": "Ramza plan, criteria, state, scope, review, issue snapshot"
+    },
+    {
+      "path": ".spectra/plans/ramza-calibration.jsonl",
+      "reason": "Ramza calibration append"
+    },
+    {
+      "path": ".spectra/changes/aci-s27/*",
+      "reason": "This amendment"
+    },
+    {
+      "path": ".spectra/evidence/aci-s27/**",
+      "reason": "Day-1 qualification, base invariants, gate logs, production-image scenario"
+    },
+    {
+      "path": ".spectra/state/aci-s27.execution.json",
+      "reason": "Authoritative execution receipt (AC-RUN-01/02)"
+    },
+    {
+      "path": ".spectra/backlog/execution.json",
+      "reason": "Backlog status update"
+    },
+    {
+      "path": ".spectra/backlog/order.md",
+      "reason": "Backlog order update"
+    }
+  ],
+  "interpretations": [
+    {
+      "topic": "Separate runtime overlay and matched snapshot (AC-001, Approach 4)",
+      "decision": "Standalone content-addressed atlas-runtime-overlay.v1 written to an operator --output outside --repo and the graph root, built from a read-only lease of the active generation; the matched snapshot is the leased snapshot_id when it equals the manifest build.snapshot_id; graph-backed import rejected because any publish changes the snapshot id (graph_digest covers all records)"
+    },
+    {
+      "topic": "AC-003 supplied source snapshot / AC-004 precedence",
+      "decision": "Supplied snapshot = active snapshot leased from --repo/--graph-root. Span-intrinsic missing/malformed location checks precede the build-match check; every observation with a well-formed location under a mismatch is unlinked_build_mismatch; no source fact is read for any observation under a mismatch (planner refinement P1, pending orchestrator acceptance)"
+    },
+    {
+      "topic": "Build identity",
+      "decision": "Manifest-only (one build per artifact); OTLP resource attributes such as service.version are not read and are not treated as build identity"
+    },
+    {
+      "topic": "AC-007 runtime-path result",
+      "decision": "Every observed_parent_of relation, every observation, the overlay coverage block, the import summary (library and CLI stdout), and overlays.runtime.runtime_paths(overlay) plus each path in it carry evidence_coverage observed_sample; no CLI query command"
+    },
+    {
+      "topic": "AC-005 importer version",
+      "decision": "Constant atlas-otel-json-importer.v1, not a source-file hash"
+    }
+  ],
+  "not_touched_follow_up": [
+    {
+      "path": "mcp-server/src/atlas_aci/query/impact.py",
+      "reason": "S20 runtime_observation stays not_performed; combining overlays with static impact is a follow-up"
+    },
+    {
+      "path": "mcp-server/src/atlas_aci/codegraph.py",
+      "reason": "No graph persistence of runtime facts; per-resource builds and retained-snapshot linkage are follow-ups"
+    },
+    {
+      "path": "mcp-server/src/atlas_aci/protocol/",
+      "reason": "No MCP exposure; tools JSON and budget pins unchanged"
+    }
+  ],
+  "explicitly_untouched_gated": [
+    "mcp-server/src/atlas_aci/server.py",
+    "mcp-server/src/atlas_aci/enforcement.py",
+    "mcp-server/src/atlas_aci/config.py",
+    "mcp-server/src/atlas_aci/codegraph.py",
+    "mcp-server/src/atlas_aci/protocol/",
+    "mcp-server/src/atlas_aci/query/",
+    "mcp-server/src/atlas_aci/tools/",
+    "mcp-server/src/atlas_aci/storage/",
+    "mcp-server/src/atlas_aci/extractors/",
+    "mcp-server/src/atlas_aci/providers/",
+    "mcp-server/src/atlas_aci/indexing/",
+    "mcp-server/src/atlas_aci/resolvers/",
+    "mcp-server/src/atlas_aci/frameworks/",
+    "mcp-server/src/atlas_aci/architecture/",
+    "mcp-server/src/atlas_aci/counterfactual/",
+    "mcp-server/src/atlas_aci/contracts/",
+    "mcp-server/src/atlas_aci/reports/",
+    "mcp-server/src/atlas_aci/importers/openapi31.py",
+    "mcp-server/src/atlas_aci/importers/__init__.py",
+    "mcp-server/pyproject.toml",
+    "mcp-server/uv.lock",
+    ".github/workflows/"
+  ],
+  "invariants": {
+    "tools_json_sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+    "tools_json_bytes": 1631472,
+    "READ_ONLY_TOOLS_count": 7,
+    "MINIMUM_BUDGET": 3436,
+    "COLLECTION_MINIMUM_BUDGET": 3448,
+    "FIXED_ERROR_ENVELOPE_CAP": 797,
+    "IMPACT_MINIMUM_BUDGET": 7730,
+    "criteria_sha256": "0ca0c0d79db9163d3c411358d6b88a2c9c1a58f97e7cf197be82197dace18cde"
+  }
+}

@@ -1,0 +1,94 @@
+{
+ "slice_id": "ACI-S27",
+ "plan": ".spectra/plans/aci-s27.md",
+ "author": "orchestrator-ramza-plan-s27",
+ "checker": "atlas-s27-plan-checker",
+ "verdict": "APPROVE_WITH_CONDITIONS",
+ "method": "independent read-only code review; no commands executed",
+ "findings": [
+  {
+   "n": 1,
+   "severity": "MAJOR",
+   "summary": "symbols table also holds scip_* rows (providers/scip.py:794-801, codegraph.py:2106); D6 query without kind filter can pick them as innermost; add kind NOT LIKE 'scip\\_%' ESCAPE and a scip_import test, else reject derived generations",
+   "disposition": "accepted as plan condition 1"
+  },
+  {
+   "n": 2,
+   "severity": "MAJOR",
+   "summary": "AC-006 'no name/kind key anywhere' contradicts D7 symbol/producer/importer name,kind; scope the forbidden-key walk to observations minus linkage.symbol and relations, assert exact key sets",
+   "disposition": "accepted as plan condition 2"
+  },
+  {
+   "n": 3,
+   "severity": "MAJOR",
+   "summary": "source_observations includes history records without state (checker.py:252-253); filter type==observation keyed by path or KeyError; add history test or record unconstructible",
+   "disposition": "accepted as plan condition 3"
+  },
+  {
+   "n": 4,
+   "severity": "MAJOR",
+   "summary": "P1 accepted (faithful to AC-003/AC-004); add summary.source_locations counted from span location_state, in D7 closed keys, docs and tests, cross-checked in validate_overlay against unlinked_by_reason",
+   "disposition": "accepted as plan condition 4"
+  },
+  {
+   "n": 5,
+   "severity": "MINOR",
+   "summary": "syntax-error python file stays indexed (codegraph.py:3207-3252); s8 fixture must be a .js file under langs=[python] (state disabled), confirm presence in lease.current",
+   "disposition": "accepted as plan condition 5"
+  },
+  {
+   "n": 6,
+   "severity": "MINOR",
+   "summary": "define line count as LF-terminated lines (no splitlines); test CRLF, lone CR, no trailing newline",
+   "disposition": "accepted as plan condition 6"
+  },
+  {
+   "n": 7,
+   "severity": "MINOR",
+   "summary": "test_s29 pin edit goes between importers/openapi31.py and contracts/__init__.py (sorted glob); otel_json imports only the S29 allowlist incl. 'from atlas_aci.storage import evidence as ev'; runtime.py not under S29 scan",
+   "disposition": "accepted as plan condition 7"
+  },
+  {
+   "n": 8,
+   "severity": "MINOR",
+   "summary": "output containment via st_dev/st_ino ancestor walk including equality; resolve parent once and mkstemp/replace there (case-insensitive FS, TOCTOU)",
+   "disposition": "accepted as plan condition 8"
+  },
+  {
+   "n": 9,
+   "severity": "MINOR",
+   "summary": "bounded reads must use O_NONBLOCK + S_ISREG discipline (__main__.py:38-54) so a FIFO cannot hang the CLI",
+   "disposition": "accepted as plan condition 9"
+  },
+  {
+   "n": 10,
+   "severity": "MINOR",
+   "summary": "TO grammar is ev.relative_path only (evidence.py:263-272) and admits NUL/newline/unbounded length; apply FROM character class and 1024 cap",
+   "disposition": "accepted as plan condition 10"
+  },
+  {
+   "n": 11,
+   "severity": "MINOR",
+   "summary": "define paths_total (leaf count, independent of max_path_length), paths_truncated, node-count meaning of max_path_length; test empty artifact; validate runtime_paths output",
+   "disposition": "accepted as plan condition 11"
+  },
+  {
+   "n": 12,
+   "severity": "MINOR",
+   "summary": "validate_overlay recomputes matched, snapshot_id nullness, build_mismatch consistency and summary counts from observations",
+   "disposition": "accepted as plan condition 12"
+  },
+  {
+   "n": 13,
+   "severity": "MINOR",
+   "summary": "docs state whole-artifact rejection for unfinished spans (end 0), null values, all-zero parent ids, and that Windows/case/Unicode path variants never link",
+   "disposition": "accepted as plan condition 13"
+  },
+  {
+   "n": 14,
+   "severity": "MINOR",
+   "summary": "Day-1 checks symbols.entity_id at epoch 8 or restrict to epoch 9; cache lookups per (path,line); note unbounded output size is O(spans)",
+   "disposition": "accepted as plan condition 14"
+  }
+ ]
+}

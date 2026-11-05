@@ -150,3 +150,8 @@
 {"rubric":"confidence","total":82.75,"dims":{"pattern_match":86,"requirement_clarity":80,"decomposition_stability":80,"constraint_compliance":85},"verdict":"VALIDATE","at":"2026-11-04T20:59:04Z","label":"rails-jobs"}
 {"rubric":"refine","cycle":1,"total":4.6,"min":4,"dims":{"clarity":4,"completeness":5,"actionability":5,"efficiency":4,"testability":5},"verdict":"pass","at":"2026-11-04T20:59:04Z","label":"pre-checker"}
 {"rubric":"refine","cycle":1,"total":4,"min":3,"dims":{"clarity":4,"completeness":4,"actionability":4,"efficiency":3,"testability":5},"verdict":"pass","at":"2026-11-04T21:25:49Z","label":"post-checker"}
+{"rubric":"complexity","total":8,"dims":{"scope":2,"ambiguity":2,"dependencies":2,"risk":2},"verdict":"extended","at":"2026-11-05T03:26:21Z","label":"otel-import"}
+{"rubric":"explore","total":83.5,"dims":{"alignment":9,"correctness":9,"maintainability":8,"performance":8,"simplicity":8,"risk":8,"innovation":6},"verdict":"solid","at":"2026-11-05T03:26:21Z","label":"standalone-runtime-overlay"}
+{"rubric":"confidence","total":84,"dims":{"pattern_match":86,"requirement_clarity":80,"decomposition_stability":82,"constraint_compliance":88},"verdict":"VALIDATE","at":"2026-11-05T03:26:21Z","label":"otel-import"}
+{"rubric":"refine","cycle":1,"total":4.6,"min":4,"dims":{"clarity":4,"completeness":5,"actionability":5,"efficiency":4,"testability":5},"verdict":"pass","at":"2026-11-05T03:26:21Z","label":"pre-checker"}
+{"rubric":"refine","cycle":1,"total":3.8,"min":3,"dims":{"clarity":4,"completeness":4,"actionability":4,"efficiency":3,"testability":4},"verdict":"pass","at":"2026-11-05T03:34:48Z","label":"post-checker"}

@@ -1,0 +1,44 @@
+[
+  {
+    "ac_id": "AC-S27-001",
+    "test": "mcp-server/tests/slices/test_s27_otel_import.py::test_otel_observation_has_snapshot_provenance",
+    "exit_code": 0,
+    "tail": "1 passed in 0.46s"
+  },
+  {
+    "ac_id": "AC-S27-002",
+    "test": "mcp-server/tests/slices/test_s27_otel_import.py::test_otel_parent_relation_preserves_observed_semantics",
+    "exit_code": 0,
+    "tail": "1 passed in 0.43s"
+  },
+  {
+    "ac_id": "AC-S27-003",
+    "test": "mcp-server/tests/slices/test_s27_otel_import.py::test_otel_build_mismatch_is_unlinked",
+    "exit_code": 0,
+    "tail": "1 passed in 0.42s"
+  },
+  {
+    "ac_id": "AC-S27-004",
+    "test": "mcp-server/tests/slices/test_s27_otel_import.py::test_otel_missing_source_is_counted",
+    "exit_code": 0,
+    "tail": "1 passed in 0.42s"
+  },
+  {
+    "ac_id": "AC-S27-005",
+    "test": "mcp-server/tests/slices/test_s27_otel_import.py::test_otel_reimport_is_idempotent",
+    "exit_code": 0,
+    "tail": "1 passed in 1.55s"
+  },
+  {
+    "ac_id": "AC-S27-006",
+    "test": "mcp-server/tests/slices/test_s27_otel_import.py::test_otel_attributes_are_allowlisted",
+    "exit_code": 0,
+    "tail": "1 passed in 0.41s"
+  },
+  {
+    "ac_id": "AC-S27-007",
+    "test": "mcp-server/tests/slices/test_s27_otel_import.py::test_otel_sampling_limits_are_explicit",
+    "exit_code": 0,
+    "tail": "1 passed in 0.42s"
+  }
+]

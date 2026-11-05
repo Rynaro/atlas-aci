@@ -1,0 +1,27 @@
+{
+ "base_commit": "92e859700e9613f57526a875373ba0c4a1c8342b",
+ "tools_json": {
+  "sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+  "bytes": 1631472
+ },
+ "constants": {
+  "MINIMUM_BUDGET": 3436,
+  "COLLECTION_MINIMUM_BUDGET": 3448,
+  "FIXED_ERROR_ENVELOPE_CAP": 797,
+  "IMPACT_MINIMUM_BUDGET": 7730,
+  "READ_ONLY_TOOLS": 7
+ },
+ "full_suite_at_base": {
+  "where": "git archive 92e8597 extracted to a scratch tree, run in atlas-aci-dev-s16 (python 3.12, uid 1000)",
+  "command": "pytest -q -p no:cacheprovider --deselect tests/slices/test_s08_integration.py::test_nonregular_pack_does_not_block_acquisition",
+  "result": "1 failed, 1875 passed, 10 skipped, 1 deselected in 815.67s (0:13:35)",
+  "failed": [
+   "FAILED tests/slices/test_s01_contract.py::test_call_deadline_after_initialization"
+  ],
+  "known_preexisting": "test_s01_contract::test_call_deadline_after_initialization (uid 1000); test_s08_integration::test_nonregular_pack_does_not_block_acquisition deselected (flaky/hangs in the dev image)"
+ },
+ "ci_reference": {
+  "run": "41925063044",
+  "result": "1877 passed, 10 skipped"
+ }
+}

@@ -1,0 +1,129 @@
+{
+  "resourceSpans": [
+    {
+      "resource": {
+        "attributes": [
+          {
+            "key": "service.name",
+            "value": {
+              "stringValue": "S27SENTINEL16"
+            }
+          },
+          {
+            "key": "service.version",
+            "value": {
+              "stringValue": "S27SENTINEL17"
+            }
+          }
+        ]
+      },
+      "schemaUrl": "S27SENTINEL18",
+      "scopeSpans": [
+        {
+          "scope": {
+            "name": "S27SENTINEL19",
+            "version": "S27SENTINEL20",
+            "attributes": [
+              {
+                "key": "scope.attr",
+                "value": {
+                  "stringValue": "S27SENTINEL21"
+                }
+              }
+            ]
+          },
+          "spans": [
+            {
+              "traceId": "0af7651916cd43dd8448eb211c80319c",
+              "spanId": "a000000000000001",
+              "traceState": "S27SENTINEL01",
+              "name": "S27SENTINEL02",
+              "kind": "S27SENTINEL03",
+              "flags": "S27SENTINEL04",
+              "startTimeUnixNano": "1700000000000000000",
+              "endTimeUnixNano": "1700000000000001000",
+              "status": {
+                "code": 1,
+                "message": "S27SENTINEL05"
+              },
+              "attributes": [
+                {
+                  "key": "http.url",
+                  "value": {
+                    "stringValue": "S27SENTINEL06"
+                  }
+                },
+                {
+                  "key": "db.statement",
+                  "value": {
+                    "stringValue": "S27SENTINEL07"
+                  }
+                },
+                {
+                  "key": "code.function.name",
+                  "value": {
+                    "stringValue": "S27SENTINEL08"
+                  }
+                },
+                {
+                  "key": "code.filepath",
+                  "value": {
+                    "stringValue": "S27SENTINEL09"
+                  }
+                },
+                {
+                  "key": "code.lineno",
+                  "value": {
+                    "intValue": "S27SENTINEL10"
+                  }
+                },
+                {
+                  "key": "code.file.path",
+                  "value": {
+                    "stringValue": "/srv/app/S27ALLOWED/x.py"
+                  }
+                },
+                {
+                  "key": "code.line.number",
+                  "value": {
+                    "intValue": "3"
+                  }
+                }
+              ],
+              "events": [
+                {
+                  "name": "S27SENTINEL11",
+                  "timeUnixNano": "S27SENTINEL12",
+                  "attributes": [
+                    {
+                      "key": "event.attr",
+                      "value": {
+                        "stringValue": "S27SENTINEL13"
+                      }
+                    }
+                  ]
+                }
+              ],
+              "links": [
+                {
+                  "traceId": "0af7651916cd43dd8448eb211c80319c",
+                  "spanId": "a000000000000002",
+                  "traceState": "S27SENTINEL14",
+                  "attributes": [
+                    {
+                      "key": "link.attr",
+                      "value": {
+                        "stringValue": "S27SENTINEL15"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "unknownTopLevel": "S27SENTINEL22"
+}
