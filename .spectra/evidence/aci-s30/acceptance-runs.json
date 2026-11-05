@@ -1,0 +1,44 @@
+[
+  {
+    "ac_id": "AC-S30-001",
+    "test": "mcp-server/tests/slices/test_s30_cross_repo.py::test_cross_repo_link_has_exact_vector",
+    "exit_code": 0,
+    "tail": "1 passed in 0.90s"
+  },
+  {
+    "ac_id": "AC-S30-002",
+    "test": "mcp-server/tests/slices/test_s30_cross_repo.py::test_cross_repo_wrong_version_is_unresolved",
+    "exit_code": 0,
+    "tail": "5 passed in 2.77s"
+  },
+  {
+    "ac_id": "AC-S30-003",
+    "test": "mcp-server/tests/slices/test_s30_cross_repo.py::test_cross_repo_missing_snapshot_is_boundary",
+    "exit_code": 0,
+    "tail": "1 passed in 1.01s"
+  },
+  {
+    "ac_id": "AC-S30-004",
+    "test": "mcp-server/tests/slices/test_s30_cross_repo.py::test_cross_repo_vector_change_invalidates_links",
+    "exit_code": 0,
+    "tail": "1 passed in 1.30s"
+  },
+  {
+    "ac_id": "AC-S30-005",
+    "test": "mcp-server/tests/slices/test_s30_cross_repo.py::test_cross_repo_link_replay_is_idempotent",
+    "exit_code": 0,
+    "tail": "1 passed in 2.50s"
+  },
+  {
+    "ac_id": "AC-S30-006",
+    "test": "mcp-server/tests/slices/test_s30_cross_repo.py::test_cross_repo_allowlist_bounds_traversal",
+    "exit_code": 0,
+    "tail": "1 passed in 1.02s"
+  },
+  {
+    "ac_id": "AC-S30-007",
+    "test": "mcp-server/tests/slices/test_s30_cross_repo.py::test_cross_repo_overlay_preserves_source_graphs",
+    "exit_code": 0,
+    "tail": "1 passed in 1.09s"
+  }
+]
