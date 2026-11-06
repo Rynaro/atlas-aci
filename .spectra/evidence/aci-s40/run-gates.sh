@@ -1,0 +1,35 @@
+#!/bin/sh
+# ACI-S40 gates in the dev image. usage: run-gates.sh NAME...   (all when none is given)
+#   s40-contract regression ruff format mypy full-suite g-injection
+HERE=$(cd "$(dirname "$0")" && pwd)
+DESEL="--deselect tests/slices/test_s01_contract.py::test_call_deadline_after_initialization --deselect tests/slices/test_s08_integration.py::test_nonregular_pack_does_not_block_acquisition"
+run() {
+    case $1 in
+    s40-contract)
+        "$HERE/gate.sh" s40-contract sh -c '/opt/venv/bin/python -m pytest -q -p no:cacheprovider tests/slices/test_s40_contract.py && /opt/venv/bin/python -m pytest -q -p no:cacheprovider tests/slices/test_s40_*.py --durations=10' ;;
+    g-injection)
+        "$HERE/gate.sh" g-injection /opt/venv/bin/python -m pytest -q -p no:cacheprovider tests/slices/test_s40_injection.py ;;
+    regression)
+        "$HERE/gate.sh" regression sh -c "/opt/venv/bin/python -m pytest -q -p no:cacheprovider $DESEL \
+  tests/slices/test_s13_*.py tests/slices/test_s17_*.py tests/slices/test_s18_*.py \
+  tests/slices/test_s30_*.py tests/slices/test_s38_*.py tests/slices/test_s39_*.py \
+  tests/slices/test_s33_isolation.py tests/slices/test_s34_isolation.py tests/slices/test_s35_isolation.py \
+  tests/slices/test_s36_isolation.py tests/slices/test_s37_evidence_report.py \
+  tests/slices/test_s12_admission.py tests/test_thesis_negatives.py tests/test_server*.py \
+  tests/test_enforcement.py tests/slices/test_s05_contract.py tests/slices/test_s11_stdio.py \
+  tests/slices/test_s20_mcp.py tests/slices/test_s22_isolation.py tests/slices/test_s23_metrics.py \
+  tests/slices/test_s27_isolation.py tests/slices/test_s29_openapi_diff.py \
+  tests/slices/test_s31_architecture_rules.py" ;;
+    ruff)
+        "$HERE/gate.sh" ruff sh -c '/opt/venv/bin/ruff check src/ tests/ && /opt/venv/bin/ruff check ../scripts/ --exclude fingerprint-fixture' ;;
+    format)
+        "$HERE/gate.sh" format sh -c '/opt/venv/bin/ruff format --check src/ tests/ && /opt/venv/bin/ruff format --check ../scripts/ --exclude fingerprint-fixture' ;;
+    mypy)
+        "$HERE/gate.sh" mypy sh -c '/opt/venv/bin/mypy src/ && /opt/venv/bin/mypy ../scripts/' ;;
+    full-suite)
+        "$HERE/gate.sh" full-suite /opt/venv/bin/python -m pytest -q -p no:cacheprovider $DESEL ;;
+    *) echo "unknown gate $1"; return 2 ;;
+    esac
+}
+[ $# -gt 0 ] || set -- s40-contract g-injection regression ruff format mypy full-suite
+for g in "$@"; do run "$g"; done

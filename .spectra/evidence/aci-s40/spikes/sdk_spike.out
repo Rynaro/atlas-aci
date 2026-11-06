@@ -1,0 +1,76 @@
+{
+ "handlers": [
+  "CallToolRequest",
+  "ListResourceTemplatesRequest",
+  "ListResourcesRequest",
+  "ListToolsRequest",
+  "PingRequest",
+  "ReadResourceRequest"
+ ],
+ "notification_handlers": [],
+ "ping_is_sdk": true,
+ "scope_is_child": [
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true
+ ],
+ "tools_list_a": [
+  200,
+  7
+ ],
+ "page_a": [
+  false,
+  "ok",
+  true
+ ],
+ "p2_cont_a": [
+  true,
+  "SCOPE_MISMATCH"
+ ],
+ "p1_cont_a": [
+  false,
+  "ok"
+ ],
+ "res_p1_a": [
+  "jsonrpc",
+  "id",
+  "result"
+ ],
+ "res_p2_a": {
+  "code": -32602,
+  "message": "Resource request rejected.",
+  "data": {
+   "reason": "SCOPE_MISMATCH"
+  }
+ },
+ "list_none": [
+  "p1"
+ ],
+ "p1_cont_on_b": [
+  true,
+  "INVALID_REFERENCE"
+ ],
+ "usage_after_expiry": {
+  "pending": 0,
+  "active": 0,
+  "state_bytes": 0,
+  "referenced_pack_bytes": 0,
+  "sqlite_handles": 0,
+  "pack_fds": 0
+ },
+ "timer_scope_calls": 0,
+ "scope_calls_none_ctx": 0,
+ "gate": {
+  "limit": 8,
+  "active": 0,
+  "peak": 1,
+  "admitted": 7,
+  "rejected": 0
+ }
+}
+AUTH outside: None

@@ -195,3 +195,8 @@
 {"rubric":"confidence","total":81.75,"dims":{"pattern_match":80,"requirement_clarity":85,"decomposition_stability":76,"constraint_compliance":86},"verdict":"VALIDATE","at":"2026-11-05T23:26:06Z"}
 {"rubric":"refine","cycle":1,"total":4.6,"min":4,"dims":{"clarity":4,"completeness":5,"actionability":5,"efficiency":4,"testability":5},"verdict":"pass","at":"2026-11-05T23:26:06Z","label":"pre-checker"}
 {"rubric":"refine","cycle":1,"total":3.8,"min":3,"dims":{"clarity":4,"completeness":4,"actionability":4,"efficiency":3,"testability":4},"verdict":"pass","at":"2026-11-05T23:38:31Z","label":"post-checker"}
+{"rubric":"complexity","total":11,"dims":{"scope":3,"ambiguity":2,"dependencies":3,"risk":3},"verdict":"human_loop","at":"2026-11-06T02:24:07Z"}
+{"rubric":"explore","total":82,"dims":{"alignment":9,"correctness":9,"maintainability":8,"performance":8,"simplicity":6,"risk":8,"innovation":7},"verdict":"solid","at":"2026-11-06T02:24:07Z"}
+{"rubric":"confidence","total":80,"dims":{"pattern_match":80,"requirement_clarity":78,"decomposition_stability":76,"constraint_compliance":86},"verdict":"VALIDATE","at":"2026-11-06T02:24:07Z"}
+{"rubric":"refine","cycle":1,"total":4.4,"min":4,"dims":{"clarity":4,"completeness":4,"actionability":5,"efficiency":4,"testability":5},"verdict":"pass","at":"2026-11-06T02:24:08Z","label":"pre-checker"}
+{"rubric":"refine","cycle":1,"total":3.8,"min":3,"dims":{"clarity":4,"completeness":4,"actionability":4,"efficiency":3,"testability":4},"verdict":"pass","at":"2026-11-06T02:35:17Z","label":"post-checker"}

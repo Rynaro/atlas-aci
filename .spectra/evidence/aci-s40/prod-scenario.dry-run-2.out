@@ -1,0 +1,40 @@
+PASS  H0 image atlas-aci:s40-wip exists (sha256:d411c9d76cca60e5c3c32e71026cc7d6cca2a7b06b275ddf2ffb05c373d3677d)
+PASS  H1 locked dependency versions in the image
+PASS  H1 the six changed or new and five frozen source files in the image equal this tree
+PASS  H2 index of repos A, B and the S38 fixture exit 0, 12 + 6 graph file(s)
+      PASS E0 serve-shared starts shared_http_listening on 127.0.0.1:44111
+      PASS E1 missing token 401, valid token 200 no token 401 + resource_metadata before the body; valid token 200
+      PASS E2 invalid tokens 401 expired, alg=none and wrong-audience tokens 401; a valid token 200
+      PASS E3 403 without enumeration unauthorized and unknown repository 403 with identical bodies; granted 200
+      PASS E4 cursor bound to the principal p1 page; another principal's continue SCOPE_MISMATCH; p1's continue ok
+      PASS E5 revocation after a policy swap policy swap: p1's continue and page 403; another granted principal still 200
+      PASS E6 legacy tools denied test_dry_run and memex_read isError FORBIDDEN for a fully granted principal
+      PASS E7 test execution refuses serving ATLAS_ACI_ENABLE_TEST_EXECUTION=1 serve-shared exit 2, empty stdout
+      PASS E8 loopback only /proc/net/tcp LISTEN ['0100007F:AC4F']; tcp6 []; listen.host 0.0.0.0 exit 2
+      PASS E9 protected-resource metadata PRM 200 with resource == the route URL
+      PASS E10 SIGTERM stops cleanly SIGTERM exit 0 in 0.3s; shared_http_stopped; connection refused
+      DRIVER: 11 passed, 0 failed
+PASS  H3 E0 serve-shared starts shared_http_listening on 127.0.0.1:44111
+PASS  H3 E1 missing token 401, valid token 200 no token 401 + resource_metadata before the body; valid token 200
+PASS  H3 E2 invalid tokens 401 expired, alg=none and wrong-audience tokens 401; a valid token 200
+PASS  H3 E3 403 without enumeration unauthorized and unknown repository 403 with identical bodies; granted 200
+PASS  H3 E4 cursor bound to the principal p1 page; another principal's continue SCOPE_MISMATCH; p1's continue ok
+PASS  H3 E5 revocation after a policy swap policy swap: p1's continue and page 403; another granted principal still 200
+PASS  H3 E6 legacy tools denied test_dry_run and memex_read isError FORBIDDEN for a fully granted principal
+PASS  H3 E7 test execution refuses serving ATLAS_ACI_ENABLE_TEST_EXECUTION=1 serve-shared exit 2, empty stdout
+PASS  H3 E8 loopback only /proc/net/tcp LISTEN ['0100007F:AC4F']; tcp6 []; listen.host 0.0.0.0 exit 2
+PASS  H3 E9 protected-resource metadata PRM 200 with resource == the route URL
+PASS  H3 E10 SIGTERM stops cleanly SIGTERM exit 0 in 0.3s; shared_http_stopped; connection refused
+PASS  H3 driver exit 0: DRIVER: 11 passed, 0 failed
+PASS  H4 serve-shared without --shared-config exits 2 with Usage:, nothing on stdout
+PASS  H6 stdio modern.2025-11-25 still matches its golden (digest 59841d91fa4e3c605c1d301e899e491e114dfce06f2a6741e093c17817f91165)
+PASS  H6 negative control: the legacy conversation against the modern golden exits 1 with match:false
+PASS  H7 atlas-aci tools sha256 94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56, 1631472 bytes
+PASS  H5 repo and graph-root manifests are unchanged by every run
+PASS  H8 pyproject.toml and uv.lock are byte-identical to the pins
+PASS  H8 server.py, protocol/*, codegraph.py, enforcement.py, config.py, leases.py, pyproject, uv.lock, Dockerfile, workflows, scripts and atlas are byte-identical to the base commit
+PASS  H8 changed source files are exactly the six allowed ones
+PASS  H8 __main__.py has 0 deleted lines versus the base (additions only)
+image: atlas-aci:s40-wip (sha256:d411c9d76cca60e5c3c32e71026cc7d6cca2a7b06b275ddf2ffb05c373d3677d)
+checks: 25 passed, 0 failed
+RESULT: all checks passed

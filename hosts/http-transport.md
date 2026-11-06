@@ -200,6 +200,8 @@ These are measured and left for the shared-operation slice S40:
 - `uvicorn` is not a declared direct dependency. It is used as a locked transitive dependency of `mcp`
   (as are `starlette` and `sse-starlette`); `mcp` itself already imports `uvicorn` when `atlas_aci.server`
   is imported, so the HTTP module is the only importer of it on purpose, not the only way it loads.
+- Multi-principal shared operation (S40, `atlas-aci serve-shared`) keeps this loopback-only bind; see
+  `docs/operations/shared-http-deployment.md`.
 
 ## 9. Not supported
 
