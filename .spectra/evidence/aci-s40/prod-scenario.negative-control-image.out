@@ -1,0 +1,42 @@
+PASS  H0 image atlas-aci:relock exists (sha256:a0aa0b2c8aee8e99b5942e9fd30a4149f1f40b0541974d0700d7d0df6039ef77)
+FAIL  H1 identity container exit 1: Traceback (most recent call last):
+  File "/identity.py", line 15, in <module>
+    print("sha", name, hashlib.sha256((root / name).read_bytes()).hexdigest())
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    w
+FAIL  H1 skipped: identity container failed
+PASS  H2 index of repos A, B and the S38 fixture exit 0, 12 + 6 graph file(s)
+      FAIL E0 serve-shared starts AssertionError: no shared_http_listening line (exit=2): Usage: python -m atlas_aci [OPTIONS] COMMAND [ARGS]...
+      Try 'python -m atlas_aci --help' for help.
+      
+      Error: No such command 'serve-shared'.
+      
+      DRIVER: 0 passed, 1 failed
+FAIL  H3 E0 did not pass: FAIL E0 serve-shared starts AssertionError: no shared_http_listening line (exit=2): Usage: python -m atlas_aci [OPTIONS] COMMAND [ARGS]...
+FAIL  H3 E1 did not pass: 
+FAIL  H3 E2 did not pass: 
+FAIL  H3 E3 did not pass: 
+FAIL  H3 E4 did not pass: 
+FAIL  H3 E5 did not pass: 
+FAIL  H3 E6 did not pass: 
+FAIL  H3 E7 did not pass: 
+FAIL  H3 E8 did not pass: 
+FAIL  H3 E9 did not pass: 
+FAIL  H3 E10 did not pass: 
+FAIL  H3 driver rc=1:  DRIVER: 0 passed, 1 failed  
+FAIL  H4 serve-shared rc=2 stdout=0 stderr: Usage: atlas-aci [OPTIONS] COMMAND [ARGS]...
+Try 'atlas-aci --help' for help.
+
+Error: No such command 'serve-shared'.
+PASS  H6 stdio modern.2025-11-25 still matches its golden (digest 59841d91fa4e3c605c1d301e899e491e114dfce06f2a6741e093c17817f91165)
+PASS  H6 negative control: the legacy conversation against the modern golden exits 1 with match:false
+PASS  H7 atlas-aci tools sha256 94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56, 1631472 bytes
+PASS  H5 repo and graph-root manifests are unchanged by every run
+PASS  H8 pyproject.toml and uv.lock are byte-identical to the pins
+PASS  H8 server.py, protocol/*, codegraph.py, enforcement.py, config.py, leases.py, pyproject, uv.lock, Dockerfile, workflows, scripts and atlas are byte-identical to the base commit
+PASS  H8 changed source files are exactly the six allowed ones
+PASS  H8 __main__.py has 0 deleted lines versus the base (additions only)
+image: atlas-aci:relock (sha256:a0aa0b2c8aee8e99b5942e9fd30a4149f1f40b0541974d0700d7d0df6039ef77)
+checks: 10 passed, 15 failed
+RESULT: 15 check(s) failed

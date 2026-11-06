@@ -36,6 +36,9 @@ async def search_text(
         )
 
     # Build the rg command. --json gives us structured output; we'll parse line-by-line.
+    # The pattern is user data: it is passed as the value of `-e` and every path follows `--`, so
+    # no pattern or scope value can ever be parsed as a ripgrep option (`--pre=PROG` and
+    # `--hostname-bin=PROG` run programs; `-f FILE` reads a file as patterns).
     cmd = [
         "rg",
         "--json",
@@ -46,18 +49,16 @@ async def search_text(
     if not regex:
         cmd.append("--fixed-strings")
 
-    cmd.append(pattern)
-
     # Resolve scope relative to repo
     scope_path = Path(scope) if Path(scope).is_absolute() else config.repo / scope
     enforcement.assert_path_in_repo(scope_path)
 
     # rg accepts either a directory or a glob; if scope contains globbing chars,
-    # let the shell-side rg handle it via -g
+    # let the shell-side rg handle it via -g (a glob is the value of -g, never an option)
     if any(c in scope for c in "*?[]"):
-        cmd.extend(["-g", scope, str(config.repo)])
+        cmd.extend(["-g", scope, "-e", pattern, "--", str(config.repo)])
     else:
-        cmd.append(str(scope_path))
+        cmd.extend(["-e", pattern, "--", str(scope_path)])
 
     proc = await asyncio.create_subprocess_exec(
         *cmd,

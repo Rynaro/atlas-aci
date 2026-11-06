@@ -33,6 +33,10 @@ async def test_dry_run(
     start_t = time.monotonic()
     path_str = args["path"]
     case = args.get("case")
+    if case is not None and (not isinstance(case, str) or case.startswith("-")):
+        # `case` is the value of -k / -n / -t; a leading "-" would let a test runner parse it as an
+        # option of its own (for example a jest --globalSetup), so it is refused before any spawn.
+        raise ToolError("INVALID_INPUT", "The test case selector must not start with '-'.", "none")
 
     p = Path(path_str)
     abs_p = p if p.is_absolute() else config.repo / p

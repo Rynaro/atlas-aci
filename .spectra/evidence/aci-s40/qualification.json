@@ -1,0 +1,210 @@
+{
+ "slice_id": "ACI-S40",
+ "recorded_before_implementation": true,
+ "base_commit": "f4f9f9f2b3c41ecf4eb4f5b65a97c9ae31991502",
+ "a": {
+  "git_diff_quiet_src": true,
+  "versions": {
+   "mcp": "1.30.0",
+   "pyjwt": "2.15.1",
+   "cryptography": "50.0.2",
+   "uvicorn": "0.44.0",
+   "starlette": "1.3.1",
+   "sse-starlette": "3.3.4"
+  },
+  "requires_mcp_has_pyjwt_crypto": "pyjwt[crypto]>=2.10.1",
+  "shas": {
+   "pyproject": "981f0784d6bc5c1502c91ab27657beb483460b97e066cd8846f51e98f1d7d92f",
+   "uv_lock": "87ba265e76f382aaa4387da7ca5d89dc85eb3699b35ee4315e981302b19646fd",
+   "HTTP_PY_SHA": "6afbd23147c6304d9a1f646a82a2c27c937ffc1786b8f5500f8595b1fa0b7f5a",
+   "CONFIG_PY_SHA": "9593feb511711113b1c03885233a9da7615a9d7abdf8ab62a75cf345c9251871",
+   "ENFORCEMENT_PY_SHA": "000eeb5ef65a6d098354708405b5288ff9d6ce2718701ab0d318c60b6558fda9",
+   "SERVER_PY_SHA": "21393e61dfbe9ec4ae93f55f7b9c0abf17029681b24f75395d143c955eeb13f7"
+  },
+  "jwt_crypto_and_key_generation_in_production_image_network_none": "proved by the prod-scenario driver (E0-E10 generate RSA/EC/Ed25519 keys and mint/verify tokens inside atlas-aci:s40-wip under --network none)",
+  "python_3_14": "python:3.14.10 with the locked deps (mcp 1.30.0, pyjwt 2.15.1, cryptography 50.0.2, uvicorn 0.44.0, starlette 1.3.1, sse-starlette 3.3.4) and apt ripgrep: tests/slices/test_s40_*.py + test_s39_isolation.py = 303 passed, 0 skipped (py314.log.gz, py314.exit)",
+  "production_image_network_none": "atlas-aci:s40-wip (python 3.12): the driver generates RSA, EC and Ed25519 keys and mints/verifies tokens under --network none (prod-scenario.dry-run-1.out, -2.out: 25 passed, 0 failed)"
+ },
+ "b_pyjwt_2_15_1": {
+  "source": "spikes/jwt_spike.py -> spikes/jwt_spike.out",
+  "PyJWK_per_key": {
+   "rsa_no_alg_algorithm_name": "RS256",
+   "ec": "ES256",
+   "ed": "EdDSA",
+   "oct_loads_as": "loaded bytes alg=HS256",
+   "private_rsa_loads_as": "loaded RSAPrivateKey alg=RS256",
+   "unknown_kty": "InvalidKeyError",
+   "p384": "InvalidKeyError",
+   "empty": "InvalidKeyError"
+  },
+  "PyJWKSet_from_dict_silently_drops_an_unknown_kty": [
+   2,
+   [
+    "r",
+    "x"
+   ]
+  ],
+  "decision": "per-key PyJWK; any exception fails startup; oct and private members rejected by the S40 JWKS validator before loading",
+  "decode_exceptions": {
+   "expired": "jwt.exceptions.ExpiredSignatureError: Signature has expired",
+   "nbf_future": "jwt.exceptions.ImmatureSignatureError: The token is not yet valid (nbf)",
+   "iss_wrong": "jwt.exceptions.InvalidIssuerError: Invalid issuer",
+   "aud_wrong": "jwt.exceptions.InvalidAudienceError: Audience doesn't match",
+   "aud_list_wrong": "jwt.exceptions.InvalidAudienceError: Audience doesn't match",
+   "missing_exp": "jwt.exceptions.MissingRequiredClaimError: Token is missing the \"exp\" claim",
+   "missing_iss": "jwt.exceptions.MissingRequiredClaimError: Token is missing the \"iss\" claim",
+   "missing_aud": "jwt.exceptions.MissingRequiredClaimError: Token is missing the \"aud\" claim",
+   "missing_sub": "jwt.exceptions.MissingRequiredClaimError: Token is missing the \"sub\" claim",
+   "sub_int": "jwt.exceptions.InvalidSubjectError: Subject must be a string",
+   "jti_int": "jwt.exceptions.InvalidJTIError: JWT ID must be a string",
+   "iat_future": "jwt.exceptions.ImmatureSignatureError: The token is not yet valid (iat)"
+  },
+  "strict_aud": {
+   "exists": true,
+   "list_aud": "jwt.exceptions.InvalidAudienceError: Invalid claim format in token (strict)",
+   "str_ok": "OK",
+   "str_mismatch": "jwt.exceptions.InvalidAudienceError: Audience doesn't match (strict)"
+  },
+  "list_aud_without_strict": "OK",
+  "claim_type_edges": {
+   "decode_exp_list": "jwt.exceptions.DecodeError: Expiration Time claim (exp) must be an integer.",
+   "decode_exp_nan": "jwt.exceptions.DecodeError: Expiration Time claim (exp) must be an integer.",
+   "decode_exp_inf": "jwt.exceptions.DecodeError: Expiration Time claim (exp) must be an integer.",
+   "decode_exp_big": "jwt.exceptions.DecodeError: Expiration Time claim (exp) must be an integer.",
+   "decode_exp_bool": "jwt.exceptions.ExpiredSignatureError: Signature has expired",
+   "decode_exp_numstr": "OK {\"iss\": \"https://idp\", \"aud\": \"https://a/mcp/x\", \"sub\": \"alice\", \"exp\": \"1793935358\"}",
+   "decode_exp_float": "OK {\"iss\": \"https://idp\", \"aud\": \"https://a/mcp/x\", \"sub\": \"alice\", \"exp\": 1793935358.0}",
+   "decode_exp_neg": "jwt.exceptions.ExpiredSignatureError: Signature has expired",
+   "decode_nbf_list": "jwt.exceptions.DecodeError: Not Before claim (nbf) must be an integer.",
+   "decode_nbf_nan": "jwt.exceptions.DecodeError: Not Before claim (nbf) must be an integer.",
+   "decode_nbf_inf": "jwt.exceptions.DecodeError: Not Before claim (nbf) must be an integer.",
+   "decode_nbf_big": "jwt.exceptions.DecodeError: Not Before claim (nbf) must be an integer.",
+   "decode_nbf_bool": "OK {\"iss\": \"https://idp\", \"aud\": \"https://a/mcp/x\", \"sub\": \"alice\", \"exp\": 1793935358, \"nbf\": true}",
+   "decode_nbf_numstr": "jwt.exceptions.ImmatureSignatureError: The token is not yet valid (nbf)",
+   "decode_nbf_float": "jwt.exceptions.ImmatureSignatureError: The token is not yet valid (nbf)",
+   "decode_nbf_neg": "OK {\"iss\": \"https://idp\", \"aud\": \"https://a/mcp/x\", \"sub\": \"alice\", \"exp\": 1793935358, \"nbf\": -5}",
+   "decode_iat_list": "jwt.exceptions.InvalidIssuedAtError: Issued At claim (iat) must be an integer.",
+   "decode_iat_nan": "jwt.exceptions.InvalidIssuedAtError: Issued At claim (iat) must be an integer.",
+   "decode_iat_inf": "jwt.exceptions.InvalidIssuedAtError: Issued At claim (iat) must be an integer.",
+   "decode_iat_big": "jwt.exceptions.InvalidIssuedAtError: Issued At claim (iat) must be an integer.",
+   "decode_iat_bool": "OK {\"iss\": \"https://idp\", \"aud\": \"https://a/mcp/x\", \"sub\": \"alice\", \"exp\": 1793935358, \"iat\": true}",
+   "decode_iat_numstr": "jwt.exceptions.ImmatureSignatureError: The token is not yet valid (iat)",
+   "decode_iat_float": "jwt.exceptions.ImmatureSignatureError: The token is not yet valid (iat)",
+   "decode_iat_neg": "OK {\"iss\": \"https://idp\", \"aud\": \"https://a/mcp/x\", \"sub\": \"alice\", \"exp\": 1793935358, \"iat\": -5}"
+  },
+  "alg_none_and_hs256": {
+   "none_empty_sig": "jwt.exceptions.InvalidAlgorithmError: The specified alg value is not allowed",
+   "none_nonempty_sig": "jwt.exceptions.InvalidAlgorithmError: The specified alg value is not allowed",
+   "hs256_pem_decode_rs256_only": "jwt.exceptions.InvalidAlgorithmError: The specified alg value is not allowed",
+   "hs256_pem_decode_with_key_pem": "jwt.exceptions.InvalidAlgorithmError: The specified alg value is not allowed"
+  },
+  "rs256_token_with_ec_key": "builtins.TypeError: Expecting a PEM-formatted key.",
+  "ps256_with_rsa_jwk_without_alg": "OK",
+  "leeway_exp_edge": "OK",
+  "headers": {
+   "unverified_header_crit": "InvalidTokenError",
+   "hdr_jku": "zz",
+   "hdr_jwk": "zz",
+   "hdr_x5u": "zz",
+   "hdr_x5c": [
+    "a"
+   ],
+   "hdr_empty": "DecodeError",
+   "hdr_two_parts": "DecodeError",
+   "hdr_four": "DecodeError",
+   "hdr_nonb64": "DecodeError",
+   "hdr_hdr_notjson": "DecodeError",
+   "hdr_hdr_list": "DecodeError"
+  },
+  "adaptations": [
+   "strict_aud used: a token listing several audiences is audience_invalid (documented)",
+   "iat in the future beyond leeway: pyjwt raises ImmatureSignatureError (not_yet_valid), observed",
+   "pyjwt accepts exp as a numeric string or float and bool nbf/iat: S40 re-checks type is int after decode",
+   "an RS256 token verified with an EC key raises TypeError (not PyJWTError): contained by verify()"
+  ],
+  "stop_rule_b": "not triggered (none/HS256 rejected by decode(algorithms=[...]), require is supported, the silent drop is avoided by per-key PyJWK)"
+ },
+ "c_sdk": {
+  "source": "spikes/sdk_spike.py -> spikes/sdk_spike.out",
+  "request_handlers": [
+   "CallToolRequest",
+   "ListResourceTemplatesRequest",
+   "ListResourcesRequest",
+   "ListToolsRequest",
+   "PingRequest",
+   "ReadResourceRequest"
+  ],
+  "notification_handlers": [],
+  "ping_is_sdk_handler": true,
+  "replaced_handler_honoured_over_http": true,
+  "request_context_request_scope_is_the_router_child_dict": true,
+  "list_tools_none_runs_inside_call_tool": [
+   "p1"
+  ],
+  "contextvar_visible_in_pending_install_authenticate_for_page_continue_resources_read": true,
+  "stop_rule_c": "not triggered"
+ },
+ "d_registry": {
+  "p1_cursor_under_p2": [
+   true,
+   "SCOPE_MISMATCH"
+  ],
+  "p1_cursor_under_p1": [
+   false,
+   "ok"
+  ],
+  "p1_cursor_on_other_repo": [
+   true,
+   "INVALID_REFERENCE"
+  ],
+  "unset_context": "fails closed (scope() raised SCOPE_MISMATCH; zero calls with a None context)",
+  "timer_scope_calls_with_graph_lease_seconds_1": 0,
+  "lease_expired_after_timer": {
+   "pending": 0,
+   "active": 0,
+   "state_bytes": 0,
+   "referenced_pack_bytes": 0,
+   "sqlite_handles": 0,
+   "pack_fds": 0
+  },
+  "stop_rule_d": "not triggered"
+ },
+ "e_two_repositories_one_process": {
+  "gate": {
+   "limit": 8,
+   "active": 0,
+   "peak": 1,
+   "admitted": 7,
+   "rejected": 0
+  },
+  "tools_list_a": [
+   200,
+   7
+  ],
+  "page_a": [
+   false,
+   "ok",
+   true
+  ],
+  "stop_rule_e": "not triggered"
+ },
+ "f_same_path_pair": "passes validate_deployment (impact.validate_configuration) and shared impact gives leases on both namespaces (tests/slices/test_s40_contract.py::test_cross_repo_scope); no adaptation needed",
+ "g_base_green": {
+  "full_suite": {
+   "command": "pytest -q --deselect test_s08_integration::test_nonregular_pack_does_not_block_acquisition (git archive of f4f9f9f, dev image atlas-aci-dev-relock, uid 1000)",
+   "result": "1 failed, 2855 passed, 11 skipped, 1 deselected in 967.17s",
+   "failed": [
+    "tests/slices/test_s01_contract.py::test_call_deadline_after_initialization (known pre-existing under uid 1000)"
+   ],
+   "ci_reference": "gh run 42143616804: 2857 passed, 11 skipped"
+  },
+  "stop_rule_g": "not triggered (the only failure is the documented pre-existing uid-1000 test)"
+ },
+ "h_protected_resource_metadata": {
+  "source": "spikes/prm_spike.py -> spikes/prm_spike.out",
+  "normalization": "authorization_servers URLs gain a trailing slash through AnyHttpUrl; the resource URL is unchanged for a path with an id",
+  "adaptation": "tests compare the issuer after normalization (documented)"
+ },
+ "ripgrep_injection_reproduced": "ripgrep 14.1.1: the base argv (pattern positional) with --pre=PROG created the marker file; -f FILE read a file as patterns; the fixed argv does neither (tests/slices/test_s40_injection.py)",
+ "stop_rule": "no condition triggered; implementation proceeded"
+}

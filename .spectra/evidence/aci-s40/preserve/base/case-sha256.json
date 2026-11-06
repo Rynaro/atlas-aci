@@ -1,0 +1,10 @@
+{
+ "legacy.2024-11-05": "c2ecbe29cbddfda755058508ab169eabd9e284fd0ee2c1fc201a7d8a9c7bf2fc",
+ "legacy.2025-03-26": "bc635033e41ab3d9c4779a3d56cdda05c6d83390b7860b733fcfef91c31fb35e",
+ "malformed.missing-version": "5a3baca2b259cf75a5ec73c0eda1827cc8361b3690ce693c6555f6fd5b522b90",
+ "malformed.pre-initialize": "b75b823ac36f54aca8f1de35a0d79850aee82ccc6cb2363cf713ea9e60a65fee",
+ "modern.2025-06-18": "f078d7bdbe048fea64501f1c870eae9e11bab0084f83916e14d824d49c5f57eb",
+ "modern.2025-11-25": "59841d91fa4e3c605c1d301e899e491e114dfce06f2a6741e093c17817f91165",
+ "unsupported.2099-01-01": "ad0d32cc7bfb7ba9d851728680685e55aa5535348aa0ec4790efbb65c32e8e76",
+ "unsupported.integer": "be990c2633b09a71521cd2d4c8adc48eeeec509e50d4b6b6ae5413988d5be43f"
+}

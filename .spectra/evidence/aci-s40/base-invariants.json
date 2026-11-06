@@ -1,0 +1,48 @@
+{
+ "slice_id": "ACI-S40",
+ "base_commit": "f4f9f9f2b3c41ecf4eb4f5b65a97c9ae31991502",
+ "mcp_version": "1.30.0",
+ "pyjwt_version": "2.15.1",
+ "cryptography_version": "50.0.2",
+ "uvicorn_version": "0.44.0",
+ "starlette_version": "1.3.1",
+ "sse_starlette_version": "3.3.4",
+ "pyproject_sha256": "981f0784d6bc5c1502c91ab27657beb483460b97e066cd8846f51e98f1d7d92f",
+ "uv_lock_sha256": "87ba265e76f382aaa4387da7ca5d89dc85eb3699b35ee4315e981302b19646fd",
+ "frozen_src_sha256": {
+  "server.py": "21393e61dfbe9ec4ae93f55f7b9c0abf17029681b24f75395d143c955eeb13f7",
+  "protocol/http.py": "6afbd23147c6304d9a1f646a82a2c27c937ffc1786b8f5500f8595b1fa0b7f5a",
+  "config.py": "9593feb511711113b1c03885233a9da7615a9d7abdf8ab62a75cf345c9251871",
+  "enforcement.py": "000eeb5ef65a6d098354708405b5288ff9d6ce2718701ab0d318c60b6558fda9",
+  "codegraph.py": "5dbc8433d8a9bb3db80ebbe2d04d1bcfc3f6aa252ea9166e3c94e277e9527026",
+  "query/leases.py": "017e8c3ea847f37f0ad548049f50dc1438dc0bb2442fd76bc54598fae92e90aa",
+  "query/paging.py": "4924bbc6092e3204e1e805e6a5cc5255b524e55f90ce8260d9fa59d513c2801d",
+  "query/impact.py": "7e4233218f36be9b51ff11989382fa6c16be301b5a55679f676d2c36bc6d09e9",
+  "query/retrieval.py": "4b8d77c4db886cfe3501e21da2439e5cd3bc963a3e86c3cd9412fb0cf6fdbaa7",
+  "memex.py": "2a350d68b494bc7e324a6bad63181f046891b3caa4ae5d53de0eb6d84c96f458",
+  "protocol/resources.py": "e9857785d9b839301037c4d4c7cca39d44aa2b78d812d3abccb76648ebdf1744",
+  "protocol/results.py": "6dd2ec426d75cffb40637e659476fdbe3ece48b0f0b6d5024f863ca5a468fbdb"
+ },
+ "tools_json_sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+ "tools_json_bytes": 1631472,
+ "READ_ONLY_TOOLS_count": 7,
+ "MINIMUM_BUDGET": 3436,
+ "COLLECTION_MINIMUM_BUDGET": 3448,
+ "FIXED_ERROR_ENVELOPE_CAP": 797,
+ "IMPACT_MINIMUM_BUDGET": 7730,
+ "graph_output_schema_sha256": "713ec5b6b2af963d556ddc3829dfd6919d52b3be2a9d70d918a5a6e270d4cf60",
+ "criteria_sha256": "98cb89a8437eeb73ac0f70ccb2547db80fc2e050dd7293093c07bd8fb478ff16",
+ "base_full_suite": {
+  "command": "pytest -q --deselect test_s08_integration::test_nonregular_pack_does_not_block_acquisition (git archive of f4f9f9f, dev image atlas-aci-dev-relock, uid 1000)",
+  "result": "1 failed, 2855 passed, 11 skipped, 1 deselected in 967.17s",
+  "failed": [
+   "tests/slices/test_s01_contract.py::test_call_deadline_after_initialization (known pre-existing under uid 1000)"
+  ],
+  "ci_reference": "gh run 42143616804: 2857 passed, 11 skipped"
+ },
+ "base_checks_green": [
+  "ruff check",
+  "ruff format --check",
+  "mypy"
+ ]
+}

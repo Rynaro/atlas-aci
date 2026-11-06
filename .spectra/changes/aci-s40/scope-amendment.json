@@ -1,0 +1,183 @@
+{
+ "slice_id": "ACI-S40",
+ "base_commit": "f4f9f9f2b3c41ecf4eb4f5b65a97c9ae31991502",
+ "recorded_before_implementation": true,
+ "declared_by_issue": [
+  "mcp-server/src/atlas_aci/protocol/*",
+  "mcp-server/src/atlas_aci/query/*",
+  "mcp-server/src/atlas_aci/config.py",
+  "mcp-server/tests/slices/test_s40_*.py",
+  "docs/operations/*"
+ ],
+ "glob_depth_clarifications": [
+  {
+   "path": "mcp-server/src/atlas_aci/query/*",
+   "reason": "Adds query/authz.py (policy model and loader, decide, authorize_path, scope identity, PolicyStore, ScopedLeaseRegistry, PrincipalLimiter, SharedEnforcement), query/authn.py (offline JWT verifier, TokenVerifier adapter, RFC 9728 metadata, WWW-Authenticate) and query/shared_http.py (shared-config loader, SharedRouter, guard installation, build_shared, run_shared). Every existing query/*.py file, including leases.py, paging.py, retrieval.py and impact.py, stays byte-unchanged"
+  },
+  {
+   "path": "mcp-server/src/atlas_aci/protocol/*, mcp-server/src/atlas_aci/config.py",
+   "reason": "Declared by the issue but intentionally byte-unchanged. test_s39_isolation.py:322-325 pins the protocol/*.py set and :328-337 pins the Config tail, so the new modules live in query/ and the shared fields live in the shared-config document. protocol/http.py is reused through its public build_app/uvicorn_config/resolve_loopback/AtlasUvicornServer and the helpers _serve, _stop, _listening_addresses, _is_loopback_literal, _is_loopback_peer and AtlasHttpApp._reject/_host_allowed/_origin_allowed, guarded by a tripwire test"
+  },
+  {
+   "path": "docs/operations/*",
+   "reason": "New docs/operations/shared-http-deployment.md only (shared-config and policy formats, JWKS and rotation, token profile, router, guards, revocation, reverse-proxy trust boundary, not-isolated list)"
+  }
+ ],
+ "added": [
+  {
+   "path": "mcp-server/src/atlas_aci/__main__.py",
+   "reason": "A new 'serve-shared --shared-config PATH' command with a lazy import of atlas_aci.query.shared_http (test_s39_isolation.py:285-311 requires that importing __main__ loads neither atlas_aci.server nor protocol.http). Additions only (numstat deletions 0). 'serve' and its parameters (test_s39_isolation.py:314-319) are untouched. Usage errors V1-V5 exit 2; index or bind failures exit 1 with fixed text"
+  },
+  {
+   "path": "hosts/http-transport.md",
+   "reason": "One appended line in section 8 pointing to docs/operations/shared-http-deployment.md and stating that S40 keeps the loopback-only bind. Every S39-pinned token (test_s39_isolation.py:373-414) is kept; the line names no host product, so the untested-host rule is unaffected; 0 deletions"
+  },
+  {
+   "path": "CHANGELOG.md",
+   "reason": "One '- **Shared multi-principal HTTP mode (ACI-S40).**' bullet appended as the last Unreleased/Added bullet, after the ACI-S14 bullet (CHANGELOG.md:396) and before '### Changed' (:413). '### Security' stays first; bullets[0..9] and their pins (s30, s33-s36, s38, s39) are unchanged; no '(ACI-S39)' or other '(ACI-S' token; no '- **' continuation line"
+  },
+  {
+   "path": "README.md",
+   "reason": "One two-cell docs-table row for docs/operations/shared-http-deployment.md directly after the SETUP.md row (README.md:954). The S39 adjacency (rails, http-transport, SETUP.md) is untouched and the row does not contain hosts/http-transport.md (test_s39_isolation.py:457 requires it exactly once)"
+  },
+  {
+   "path": ".spectra/plans/aci-s40.*",
+   "reason": "Ramza plan, criteria, state, issue snapshot, review, scope"
+  },
+  {
+   "path": ".spectra/plans/ramza-calibration.jsonl",
+   "reason": "Ramza calibration append"
+  },
+  {
+   "path": ".spectra/changes/aci-s40/*",
+   "reason": "This amendment"
+  },
+  {
+   "path": ".spectra/evidence/aci-s40/**",
+   "reason": "qualification.json, base-invariants.json, the pyjwt/SDK/registry/router spike logs, preserve/{base,after} S38 captures, production-scenario.sh and production-scenario.json, py314.log, gate logs and exit files"
+  },
+  {
+   "path": ".spectra/state/aci-s40.execution.json",
+   "reason": "Authoritative execution receipt (AC-RUN-01/02)"
+  },
+  {
+   "path": ".spectra/backlog/execution.json",
+   "reason": "Backlog status update"
+  },
+  {
+   "path": ".spectra/backlog/order.md",
+   "reason": "Backlog order update"
+  },
+  {
+   "path": "mcp-server/src/atlas_aci/tools/search_text.py",
+   "reason": "Checker condition 1 (BLOCKER): ripgrep option injection via a positional pattern; root-cause fix '-e pattern --' on every transport"
+  },
+  {
+   "path": "mcp-server/src/atlas_aci/tools/test_dry_run.py, storage/snapshots.py, history/cochange.py",
+   "reason": "Checker condition 1(c): subprocess argv audit; edited only if a user-controlled value reaches option position, else recorded as none"
+  }
+ ],
+ "prior_test_edits": [],
+ "interpretations": [
+  {
+   "topic": "Selected identity-provider integration",
+   "decision": "Generic OIDC JWT access tokens (RFC 9068 shape) verified offline with the locked pyjwt 2.15.1 against an operator-pinned JWKS file (PyJWKSet.from_dict, never PyJWKClient). kid is required and in the set; the algorithm allow-list is RS256/PS256/ES256/EdDSA matched to the key type; exp, iss, aud and sub are required, nbf is honoured and leeway is at most 60 s; aud contains the per-route resource URL resource_base_url/<id> (RFC 8707); the token is at most 8 KiB, checked before decode; principal = (iss, sub). The verifier conforms to the SDK TokenVerifier protocol and is called from the Atlas router with closed fixed-text rejections. RFC 9728 metadata is served unauthenticated for any label-valid id (no enumeration)"
+  },
+  {
+   "topic": "Deployment and authorization unit",
+   "decision": "An operator-declared set of repositories (closed shared-config JSON), each served on /mcp/<repo_id> with its own derived Config, server state and S39 build_app behind one loopback listener and one shared in-flight gate. The operator policy file maps (issuer, subject) to repository ids and shareable tools; it is the authorization source of truth, reloaded at most once per interval, failing closed to deny-all. Token scopes only narrow (required_scope). Unknown and unauthorized repositories get the same 403; absent or invalid credentials get 401 with WWW-Authenticate resource_metadata"
+  },
+  {
+   "topic": "AC-001/AC-009 before access",
+   "decision": "The router rejects 401/403 from the ASGI scope before any body read (withheld-body responses and a receive counter prove it), so no lease, CodeGraph construction, traversal, retrieval or source read happens. A retrieve/context repository argument naming another repository is denied by the handler guard before any lease"
+  },
+  {
+   "topic": "AC-002/003/004/007 scope binding",
+   "decision": "The only evidence-bearing store is LeaseRegistry._leases. ScopedLeaseRegistry.scope() = digest({base, authz scope identity}), where the scope identity is sha256 of {principal, repository_id, grant_digest, policy_epoch}, read from a ContextVar set by the guard and failing closed when unset. It is bound into reservations, the token authority, install, authenticate and paging query_digest without changing the token key set. Another principal's cursor or resource gives SCOPE_MISMATCH; another repository's gives INVALID_REFERENCE. Any policy change increments the epoch, so old cursors never revive, and purge_revoked() closes stale leases. No result cache exists and none is added"
+  },
+  {
+   "topic": "AC-005 cross-repository expansion",
+   "decision": "The only served expansion is graph_query op=impact's before-repository, which is registered as its own repository id (before_repo_id). Impact requires a graph_query grant on every hop via authorize_path; otherwise it is denied before any lease on either repository. S30 cross_repo/* stays offline and unserved; a pure authorize_path test is driven by an S30 world's repository ids"
+  },
+  {
+   "topic": "AC-006 replay",
+   "decision": "decide() is a pure function of (credential, immutable policy snapshot (policy digest, registry digest, epoch), repository_id, classified request). Its canonical Decision digest is identical across repeats, shuffled policy order and a fresh interpreter"
+  },
+  {
+   "topic": "AC-008 legacy tools",
+   "decision": "test_dry_run and memex_read are never grantable or callable in shared mode (policy loader, guard and SharedEnforcement), and shared Configs force test_execution_enabled=False with a refusal when the environment enables it. Every other tool requires a per-repository grant, checked by the guard and re-checked by SharedEnforcement.assert_read_only/assert_rate_limit, the first calls of dispatch and read_resource"
+  }
+ ],
+ "not_touched_follow_up": [
+  {
+   "path": "mcp-server/src/atlas_aci/enforcement.py",
+   "reason": "Bounded records and a per-principal limiter are implemented in the SharedEnforcement subclass; the base class (records list, process-wide limiter) is unchanged for stdio and S39"
+  },
+  {
+   "path": "mcp-server/src/atlas_aci/protocol/http.py",
+   "reason": "Byte-identical; the shared router composes it. The S39 U2 message and doc sentence about S40 shared mode stay; S40 also keeps loopback only"
+  },
+  {
+   "path": "mcp-server/src/atlas_aci/cross_repo/",
+   "reason": "S30 stays offline-only; serving it is out of scope"
+  }
+ ],
+ "explicitly_untouched_gated": [
+  "mcp-server/src/atlas_aci/server.py",
+  "mcp-server/src/atlas_aci/protocol/",
+  "mcp-server/src/atlas_aci/config.py",
+  "mcp-server/src/atlas_aci/enforcement.py",
+  "mcp-server/src/atlas_aci/codegraph.py",
+  "mcp-server/src/atlas_aci/memex.py",
+  "mcp-server/src/atlas_aci/query/leases.py",
+  "mcp-server/src/atlas_aci/query/paging.py",
+  "mcp-server/src/atlas_aci/query/retrieval.py",
+  "mcp-server/src/atlas_aci/query/impact.py",
+  "mcp-server/src/atlas_aci/query/diff.py",
+  "mcp-server/src/atlas_aci/storage/",
+  "mcp-server/src/atlas_aci/tools/",
+  "mcp-server/src/atlas_aci/cross_repo/",
+  "mcp-server/pyproject.toml",
+  "mcp-server/uv.lock",
+  "mcp-server/Dockerfile",
+  "mcp-server/tests/slices/test_s39_isolation.py",
+  "mcp-server/tests/fixtures/s38/",
+  ".github/workflows/",
+  "scripts/",
+  "atlas/"
+ ],
+ "invariants": {
+  "tools_json_sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+  "tools_json_bytes": 1631472,
+  "READ_ONLY_TOOLS_count": 7,
+  "MINIMUM_BUDGET": 3436,
+  "COLLECTION_MINIMUM_BUDGET": 3448,
+  "FIXED_ERROR_ENVELOPE_CAP": 797,
+  "IMPACT_MINIMUM_BUDGET": 7730,
+  "ev_RELATIONS": [
+   "call",
+   "construct",
+   "extend",
+   "import",
+   "include",
+   "prepend",
+   "rationale_for",
+   "superclass"
+  ],
+  "graph_output_schema_sha256": "713ec5b6b2af963d556ddc3829dfd6919d52b3be2a9d70d918a5a6e270d4cf60",
+  "pyproject_sha256": "981f0784d6bc5c1502c91ab27657beb483460b97e066cd8846f51e98f1d7d92f",
+  "uv_lock_sha256": "87ba265e76f382aaa4387da7ca5d89dc85eb3699b35ee4315e981302b19646fd",
+  "server_py_sha256": "21393e61dfbe9ec4ae93f55f7b9c0abf17029681b24f75395d143c955eeb13f7",
+  "http_py_sha256": "recorded at Day-1 (a) from git show f4f9f9f:mcp-server/src/atlas_aci/protocol/http.py",
+  "config_py_sha256": "recorded at Day-1 (a)",
+  "enforcement_py_sha256": "recorded at Day-1 (a)",
+  "mcp_version": "1.30.0",
+  "pyjwt_version": "2.15.1",
+  "cryptography_version": "50.0.2",
+  "uvicorn_version": "0.44.0",
+  "starlette_version": "1.3.1",
+  "sse_starlette_version": "3.3.4",
+  "fixed_forbidden_message": "The requested tool is not available in this server.",
+  "criteria_sha256": "98cb89a8437eeb73ac0f70ccb2547db80fc2e050dd7293093c07bd8fb478ff16"
+ }
+}

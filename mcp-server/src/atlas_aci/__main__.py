@@ -306,6 +306,58 @@ def _serve_http(
         raise click.ClickException(str(exc)) from exc
 
 
+@cli.command("serve-shared")
+@click.option(
+    "--shared-config",
+    "shared_config",
+    required=True,
+    type=click.Path(dir_okay=False, path_type=Path),
+    help="Shared-deployment document (see docs/operations/shared-http-deployment.md)",
+)
+def serve_shared(shared_config: Path) -> None:
+    """Serve registered repositories to authenticated principals over loopback HTTP."""
+    from atlas_aci.protocol.http import LoopbackError, RefusedError
+    from atlas_aci.query.shared_http import (
+        DeploymentError,
+        SharedConfigError,
+        load_shared_config,
+        run_shared,
+        validate_deployment,
+    )
+
+    def loopback_usage(exc: LoopbackError) -> click.UsageError:
+        return click.UsageError(
+            "--shared-config: listen.host must resolve only to loopback addresses "
+            f"(reason: {exc.reason})"
+        )
+
+    try:
+        deployment = load_shared_config(shared_config, environ=os.environ)
+    except SharedConfigError as exc:
+        if exc.reason == "test_execution_enabled":
+            raise click.UsageError(
+                "shared serving is not available while test execution is enabled "
+                "(ATLAS_ACI_ENABLE_TEST_EXECUTION=1)"
+            ) from None
+        raise click.UsageError(f"--shared-config: {exc}") from None
+    except LoopbackError as exc:
+        raise loopback_usage(exc) from None
+    try:
+        validate_deployment(deployment)
+    except DeploymentError as exc:
+        raise click.ClickException(str(exc)) from None
+    try:
+        asyncio.run(run_shared(deployment))
+    except LoopbackError as exc:
+        raise loopback_usage(exc) from None
+    except RefusedError as exc:
+        raise click.UsageError(str(exc)) from None
+    except OSError as exc:
+        raise click.ClickException(str(exc)) from exc
+    except ValueError:
+        raise click.ClickException("The shared server could not start.") from None
+
+
 @cli.command()
 @click.option(
     "--graph-root",

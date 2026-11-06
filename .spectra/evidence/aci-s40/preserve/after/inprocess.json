@@ -1,0 +1,117 @@
+{
+ "call_tool_result": {
+  "2024-11-05:graph_query": {
+   "bytes": 1036,
+   "isError": false,
+   "sha256": "590913c110cdbcaac51d43032dbe2f5c926e78b80b31e13475a2f0738927e06f"
+  },
+  "2024-11-05:list_dir": {
+   "bytes": 156,
+   "isError": false,
+   "sha256": "27c7ac2007d81526f4f4ed7a775a0a35a467001de4bba340b6023d7bc8c2138a"
+  },
+  "2024-11-05:memex_read": {
+   "bytes": 237,
+   "isError": true,
+   "sha256": "7827cd76d389bf135adbec7cf3509d415962927d0b3c5b6c017dbeb84d812cc4"
+  },
+  "2024-11-05:search_symbol": {
+   "bytes": 1036,
+   "isError": false,
+   "sha256": "590913c110cdbcaac51d43032dbe2f5c926e78b80b31e13475a2f0738927e06f"
+  },
+  "2024-11-05:search_text": {
+   "bytes": 208,
+   "isError": false,
+   "sha256": "c2ccb1a3e789d7b3401329c139d829f30db0762108d5c79956b9ce2b43e0390f"
+  },
+  "2024-11-05:test_dry_run": {
+   "bytes": 245,
+   "isError": true,
+   "sha256": "5bb8cf17b12c1ebdd444a9b3982fb93fbee7337f86fee1d10ee5430dd95e58d8"
+  },
+  "2024-11-05:view_file": {
+   "bytes": 219,
+   "isError": false,
+   "sha256": "e541241758968eb513ef831b5b013e03845dcfb1dfd8eda0694b7ec4ec32fba0"
+  },
+  "2025-11-25:graph_query": {
+   "bytes": 1952,
+   "isError": false,
+   "sha256": "1ba5acb4adf4a576357bcfeff15a70ed3a6302aae978ef70e7cfdbc0bb0ac4d8"
+  },
+  "2025-11-25:list_dir": {
+   "bytes": 156,
+   "isError": false,
+   "sha256": "27c7ac2007d81526f4f4ed7a775a0a35a467001de4bba340b6023d7bc8c2138a"
+  },
+  "2025-11-25:memex_read": {
+   "bytes": 237,
+   "isError": true,
+   "sha256": "7827cd76d389bf135adbec7cf3509d415962927d0b3c5b6c017dbeb84d812cc4"
+  },
+  "2025-11-25:search_symbol": {
+   "bytes": 1036,
+   "isError": false,
+   "sha256": "590913c110cdbcaac51d43032dbe2f5c926e78b80b31e13475a2f0738927e06f"
+  },
+  "2025-11-25:search_text": {
+   "bytes": 208,
+   "isError": false,
+   "sha256": "c2ccb1a3e789d7b3401329c139d829f30db0762108d5c79956b9ce2b43e0390f"
+  },
+  "2025-11-25:test_dry_run": {
+   "bytes": 245,
+   "isError": true,
+   "sha256": "5bb8cf17b12c1ebdd444a9b3982fb93fbee7337f86fee1d10ee5430dd95e58d8"
+  },
+  "2025-11-25:view_file": {
+   "bytes": 219,
+   "isError": false,
+   "sha256": "e541241758968eb513ef831b5b013e03845dcfb1dfd8eda0694b7ec4ec32fba0"
+  }
+ },
+ "cli_tools": {
+  "bytes": 1631472,
+  "exit": 0,
+  "sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56"
+ },
+ "identity": {
+  "atlas_aci_file": "/ws/mcp-server/src/atlas_aci/__init__.py",
+  "label": "after",
+  "mcp": "1.30.0",
+  "python": "3.12.16",
+  "results_py_sha256": "6dd2ec426d75cffb40637e659476fdbe3ece48b0f0b6d5024f863ca5a468fbdb",
+  "server_py_sha256": "21393e61dfbe9ec4ae93f55f7b9c0abf17029681b24f75395d143c955eeb13f7"
+ },
+ "manifests": {
+  "": {
+   "bytes": 12923,
+   "sha256": "91be13637e74e608d28e176241e5682cf886913b5b0ffdbafa1d07fa428c3243"
+  },
+  "2024-11-05": {
+   "bytes": 12923,
+   "sha256": "91be13637e74e608d28e176241e5682cf886913b5b0ffdbafa1d07fa428c3243"
+  },
+  "2025-03-26": {
+   "bytes": 12923,
+   "sha256": "91be13637e74e608d28e176241e5682cf886913b5b0ffdbafa1d07fa428c3243"
+  },
+  "2025-06-18": {
+   "bytes": 347091,
+   "sha256": "8ba17cb99281c71ef4790be12db19e52801d5f10ff0013523dc819fe7eaaa223"
+  },
+  "2025-11-25": {
+   "bytes": 347091,
+   "sha256": "8ba17cb99281c71ef4790be12db19e52801d5f10ff0013523dc819fe7eaaa223"
+  },
+  "2099-01-01": {
+   "bytes": 12923,
+   "sha256": "91be13637e74e608d28e176241e5682cf886913b5b0ffdbafa1d07fa428c3243"
+  },
+  "<default>": {
+   "bytes": 347091,
+   "sha256": "8ba17cb99281c71ef4790be12db19e52801d5f10ff0013523dc819fe7eaaa223"
+  }
+ }
+}

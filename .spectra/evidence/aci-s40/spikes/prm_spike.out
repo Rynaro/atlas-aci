@@ -1,0 +1,6 @@
+{"resource":"https://atlas.example.com/mcp/repo-a","authorization_servers":["https://idp.example.com/"],"scopes_supported":["atlas.read"],"bearer_methods_supported":["header"]}
+{"resource":"https://atlas.example.com:8443/mcp/repo-a","authorization_servers":["https://idp.example.com/"],"scopes_supported":["atlas.read"],"bearer_methods_supported":["header"]}
+{"resource":"https://atlas.example.com/mcp/repo-a","authorization_servers":["https://idp.example.com/"],"scopes_supported":["atlas.read"],"bearer_methods_supported":["header"]}
+{"resource":"https://atlas.example.com/mcp/repo-a","authorization_servers":["https://idp.example.com/a/b"],"bearer_methods_supported":["header"]}
+['resource', 'authorization_servers', 'jwks_uri', 'scopes_supported', 'bearer_methods_supported', 'resource_signing_alg_values_supported', 'resource_name', 'resource_documentation', 'resource_policy_uri', 'resource_tos_uri', 'tls_client_certificate_bound_access_tokens', 'authorization_details_types_supported', 'dpop_signing_alg_values_supported', 'dpop_bound_access_tokens_required']
+https://atlas.example.com/.well-known/oauth-protected-resource/mcp/repo-a

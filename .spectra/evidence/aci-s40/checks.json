@@ -1,0 +1,63 @@
+{
+ "slice": "ACI-S40",
+ "base_commit": "f4f9f9f2b3c41ecf4eb4f5b65a97c9ae31991502",
+ "environment": "atlas-aci-dev-relock (uid 1000, Python 3.12, mcp 1.30.0, pyjwt 2.15.1, cryptography 50.0.2, ripgrep 14.1.1); CI is Python 3.14 (S40 tests: 303 passed on python:3.14.10 with the locked deps)",
+ "gates": {
+  "s40-contract": {
+   "exit": 0,
+   "summary": "285 passed (54 s wall); 12 mutation checks each made the relevant test fail; orchestrator rerun with S39/S38 isolation, S11 stdio and thesis negatives: 129 passed; the eight AC tests rerun verbosely: 30 passed"
+  },
+  "g-injection": {
+   "exit": 0,
+   "summary": "10 passed: real rg plus marker program never runs and the pattern is searched literally on stdio, S39 HTTP and shared mode; argv spy; benign results equal base; classify rejects leading-dash and non-str patterns with zero spawns and a positive control. Orchestrator reproduced the pre-fix injection and the fix independently"
+  },
+  "regression": {
+   "exit": 0,
+   "summary": "866 passed, 3 skipped (s12 admission, s13, s17, s18, s30, s33-s39 isolation, s38, s39, thesis negatives, server tests, search_text tests)"
+  },
+  "ruff": {
+   "exit": 0
+  },
+  "format": {
+   "exit": 0
+  },
+  "mypy": {
+   "exit": 0,
+   "summary": "orchestrator reran the exact CI lint chain including ../scripts/: clean"
+  },
+  "full-suite": {
+   "exit": 0,
+   "summary": "3140 passed, 11 skipped, 2 deselected in 1004 s; deselected the pre-existing uid-1000 failure test_s01_contract::test_call_deadline_after_initialization and the known-flaky test_s08_integration::test_nonregular_pack_does_not_block_acquisition; base 2855 passed"
+  },
+  "g-src": {
+   "exit": 0,
+   "summary": "only query/authz.py, query/authn.py, query/shared_http.py (new), __main__.py (+52, 0 deleted), tools/search_text.py (injection fix) and tools/test_dry_run.py (case guard, +4) changed under mcp-server/src; server.py, protocol/*, codegraph.py, enforcement.py, config.py, query/leases.py, pyproject.toml, uv.lock, Dockerfile and workflows byte-identical vs f4f9f9f; no tracked test modified; no private key committed"
+  },
+  "g-mcp": {
+   "exit": 0,
+   "summary": "tools JSON sha256 94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56, 1631472 bytes, 7 tools"
+  },
+  "g-s39-preserve": {
+   "exit": 0,
+   "summary": "S39 suite green; S38 stdio transcripts (seeds 0 and 4242) equal the base capture and the committed goldens"
+  },
+  "py314": {
+   "exit": 0,
+   "summary": "S40 tests 303 passed on python:3.14.10 with the locked deps and ripgrep"
+  },
+  "g-image": {
+   "exit": 0,
+   "summary": "orchestrator ran prod-scenario.sh against a freshly built atlas-aci:s40 with the tree staged: 25 PASS, 0 FAIL. In-container driver 11/11: serve-shared on 127.0.0.1; missing/expired/alg=none/wrong-audience tokens 401 before the body; unauthorized and unknown repository 403 with identical bodies; cursor bound to the principal (SCOPE_MISMATCH for another); policy swap revokes continue and page while another principal stays granted; test_dry_run and memex_read FORBIDDEN; test execution env refuses to serve; one 127.0.0.1 LISTEN row, no tcp6, 0.0.0.0 exit 2; protected-resource metadata; SIGTERM exit 0. Host: usage error without --shared-config; stdio golden still matches with a negative control; tools pin; repo and graph manifests unchanged; frozen paths and dependency pins exact; __main__.py additions only"
+  }
+ },
+ "acceptance_tests": {
+  "AC-S40-001": "tests/slices/test_s40_contract.py::test_unauthorized_before_traversal PASSED",
+  "AC-S40-002": "tests/slices/test_s40_contract.py::test_resource_authorization PASSED",
+  "AC-S40-003": "tests/slices/test_s40_contract.py::test_cache_scope_isolation PASSED",
+  "AC-S40-004": "tests/slices/test_s40_contract.py::test_revoked_cursor PASSED",
+  "AC-S40-005": "tests/slices/test_s40_contract.py::test_cross_repo_scope (+ test_cross_repo_scope_path_table) PASSED",
+  "AC-S40-006": "tests/slices/test_s40_contract.py::test_auth_replay (+ test_auth_replay_http) PASSED",
+  "AC-S40-007": "tests/slices/test_s40_contract.py::test_cache_revocation PASSED",
+  "AC-S40-008": "tests/slices/test_s40_contract.py::test_legacy_tool_boundary[3 denial modes x 7 tools] PASSED"
+ }
+}

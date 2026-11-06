@@ -23,6 +23,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and the v3 evidence was not re-recorded. The S38 protocol-compatibility goldens were
   regenerated on mcp 1.30.0 and differ from the 1.27.0 recording only by the SDK version
   string.
+- **Ripgrep option injection closed in `search_text`.** The pattern was appended to the `rg`
+  command line positionally, so a pattern such as `--pre=PROGRAM` ran a program over every
+  searched file, `--hostname-bin=PROGRAM` could run one and `-fFILE` read a file as patterns, on
+  every transport. The command is now built as `[... options ..., -e PATTERN, --, PATHS]`, so a
+  pattern or a scope is never parsed as an option, and benign patterns return the same results.
+  `test_dry_run` also refuses a `case` selector that starts with `-` (it is the value of a test
+  runner option; execution stays opt-in and is never available over shared HTTP). An audit of
+  every subprocess argv under `mcp-server/src` found no other user value in option position.
 
 ### Added
 
@@ -409,6 +417,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   dynamic binding). v1, v2 and v3 snapshots remain readable and keep TSX
   unsupported. The producer fingerprint now includes `extractors/tsx.py`, so
   the next `index` run re-extracts every file.
+
+- **Shared multi-principal HTTP mode (ACI-S40).** `atlas-aci serve-shared --shared-config PATH`
+  serves several operator-declared repositories to authenticated principals over one loopback
+  listener, each on `/mcp/<repository_id>`, behind an operator reverse proxy that terminates TLS.
+  Bearer JWT access tokens are verified offline against a pinned JWKS file (RS256, PS256, ES256 or
+  EdDSA, one audience per route, principal = issuer and subject) and an operator policy file
+  decides which principal may use which repository and which tools. Authorization runs before any
+  request body is read and before any graph, source or memex access, again in a handler guard, and
+  again in the enforcement and lease layers; every lease, cursor and resource is bound to the
+  principal, the repository and a policy epoch, so a revoked grant, another principal's cursor or
+  another repository's resource is refused. `test_dry_run` and `memex_read` are never available in
+  shared mode. The tools manifest, the stdio server and `serve --transport http` are unchanged.
+  See `docs/operations/shared-http-deployment.md` for the trust boundary and what is not isolated.
 
 ### Changed
 

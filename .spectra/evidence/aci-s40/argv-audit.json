@@ -1,0 +1,47 @@
+{
+ "schema": "atlas-aci/argv-audit.v1",
+ "slice_id": "ACI-S40",
+ "base_commit": "f4f9f9f2b3c41ecf4eb4f5b65a97c9ae31991502",
+ "method": "grep and AST scan of every subprocess, asyncio subprocess, os.exec*/system/popen call under mcp-server/src (tests/slices/test_s40_injection.py::test_every_subprocess_call_site_is_in_the_audited_set pins the set)",
+ "sites": [
+  {
+   "file": "mcp-server/src/atlas_aci/tools/search_text.py",
+   "anchor": "search_text() cmd build and asyncio.create_subprocess_exec (base :39-65)",
+   "user_controlled": [
+    "pattern (tools/call argument)",
+    "scope (tools/call argument)"
+   ],
+   "finding": true,
+   "severity": "BLOCKER",
+   "detail": "Base appended the user pattern positionally (cmd.append(pattern), base :49), so --pre=PROG and --hostname-bin=PROG could run programs and -fFILE read a file as patterns, on stdio, S39 HTTP and shared mode. Reproduced against ripgrep 14.1.1: the base argv created the marker file.",
+   "fix": "cmd = [..., '-e', pattern, '--', path]; a glob scope is the value of -g placed before -e. Applied on every transport. Shared mode additionally rejects a non-str pattern or one starting with '-' in classify() (argument_rejected). Tests: tests/slices/test_s40_injection.py (real rg with a marker program, fake-rg argv spy, benign results equal to the base command, stdio, S39 HTTP and shared mode)."
+  },
+  {
+   "file": "mcp-server/src/atlas_aci/tools/test_dry_run.py",
+   "anchor": "test_dry_run() cmd build and asyncio.create_subprocess_exec (base :60-72)",
+   "user_controlled": [
+    "path (resolved to an absolute in-repo path: starts with '/')",
+    "case (value of -k / -n / -t)"
+   ],
+   "finding": true,
+   "severity": "LOW (operator-gated)",
+   "detail": "abs_p is absolute so it never starts with '-'. case is appended as the value of -k (pytest), -n /case/ (rails: starts with '/') and -t (jest): a leading '-' lets jest/yargs parse the next token as an option (for example --globalSetup=FILE). Reachable only with ATLAS_ACI_ENABLE_TEST_EXECUTION=1, which already runs repository test code, and never in S39 HTTP or shared mode (refused at startup).",
+   "fix": "case that is not a str or starts with '-' is refused with INVALID_INPUT before any spawn. The existing argv pin (test_s05_contract: [path, '-k', 'specific_case']) is unchanged. Test: test_s40_injection.py::test_test_dry_run_refuses_an_option_like_case_before_any_spawn."
+  },
+  {
+   "file": "mcp-server/src/atlas_aci/storage/snapshots.py",
+   "anchor": "identity() subprocess.run(['git','-C',str(repo),'rev-parse',flag]) (:43-49)",
+   "user_controlled": [],
+   "finding": false,
+   "detail": "repo is config.repo, resolved to an absolute path by Config (starts with '/'), passed as the value of -C; flag is one of three constants. No request value reaches the argv."
+  },
+  {
+   "file": "mcp-server/src/atlas_aci/history/cochange.py",
+   "anchor": "_Run.git() subprocess.Popen(argv) (:488-494); call sites :553, :571, :581, :596, :619, :644, :662, :845",
+   "user_controlled": [],
+   "finding": false,
+   "detail": "Offline CLI only (atlas-aci cochange); never exposed over MCP. -C takes the resolved repo path; every user-influenced revision (start, end, source commit, parent, sha) follows --end-of-options; --max-count is an int; the remaining argv members are constants. The cat-file commit sha at :644 comes from git's own rev-list output."
+  }
+ ],
+ "result": "2 findings fixed under the scope amendment (search_text BLOCKER, test_dry_run low); storage/snapshots.py and history/cochange.py: none"
+}

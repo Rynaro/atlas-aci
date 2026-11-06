@@ -1,0 +1,100 @@
+{
+ "slice_id": "ACI-S40",
+ "plan": ".spectra/plans/aci-s40.md",
+ "author": "orchestrator-ramza-plan-s40",
+ "checker": "atlas-s40-plan-checker",
+ "verdict": "APPROVE_WITH_CONDITIONS",
+ "method": "independent read-only review; mcp 1.30.0 lowlevel server and streamable_http source read from the scratch copy; repo source, tests and S39 pins read; pyjwt 2.x behaviour from knowledge and flagged for Day-1; no commands executed",
+ "findings": [
+  {
+   "n": 1,
+   "severity": "BLOCKER",
+   "summary": "search_text appends pattern positionally with no -e or --, so a pattern like --pre=/bin/sh or --hostname-bin= executes programs and -f reads files for any principal with a search_text grant; classify must reject a leading-dash pattern before dispatch, with a fake-rg argv spy test and positive control",
+   "disposition": "accepted as plan condition 1"
+  },
+  {
+   "n": 2,
+   "severity": "MAJOR",
+   "summary": "no validation of repo nesting or of graph_root/memex_root inside another registered repo; a grant on A can read nested B via view_file/list_dir/search_text; add startup reasons and table tests; same-path pair only as an explicit before pair; document live-tree exposure",
+   "disposition": "accepted as plan condition 2"
+  },
+  {
+   "n": 3,
+   "severity": "MAJOR",
+   "summary": "policy stat gate (ino,size,mtime_ns,ctime_ns) can miss a same-size rewrite within one timestamp tick or inode reuse, so revocation is missed and AC-004 is flaky; read and hash content once per interval from a single fd",
+   "disposition": "accepted as plan condition 3"
+  },
+  {
+   "n": 4,
+   "severity": "MAJOR",
+   "summary": "ContextVar binding only tested sequentially; set AUTHZ_CONTEXT only inside the guard with reset in finally, assert None in router and outside tasks, add concurrent two-principal rendezvous test and timer-never-calls-scope check",
+   "disposition": "accepted as plan condition 4"
+  },
+  {
+   "n": 5,
+   "severity": "MAJOR",
+   "summary": "pyjwt can raise non-PyJWTError (TypeError/OverflowError for list/Infinity/1e400 exp) and the SDK returns str(e) on handler exceptions; verify and the router catch Exception, explicit claim type checks, guard fails closed with fixed bodies, tests with signed odd-typed claims",
+   "disposition": "accepted as plan condition 5"
+  },
+  {
+   "n": 6,
+   "severity": "MAJOR",
+   "summary": "shared gate has no per-principal concurrency cap, lease quota arithmetic against max_graph_leases=4 lets two principals starve others for 300 s, and aggregate lease memory scales with repository count; add per-principal in-flight cap, default quota 1, bounded max_graph_leases knob, documented capacity formula, non-blocking test",
+   "disposition": "accepted as plan condition 6"
+  },
+  {
+   "n": 7,
+   "severity": "MAJOR",
+   "summary": "test soundness: AC-003 must recompute scope independently, AC-004 must reject with purge disabled, AC-009 none with empty and non-empty signature, receive controls, 5 s leeway margins, sorted-list digests, AC-008 cross-repo path/symlink/snapshot_id cases",
+   "disposition": "accepted as plan condition 7"
+  },
+  {
+   "n": 8,
+   "severity": "MINOR",
+   "summary": "epoch fence in ScopedLeaseRegistry.pending/install so an in-flight request decided before a purge cannot install a stale lease",
+   "disposition": "accepted as plan condition 8"
+  },
+  {
+   "n": 9,
+   "severity": "MINOR",
+   "summary": "router path match uses fullmatch on ASCII label, requires raw_path equals path and empty root_path; test percent-encoding, newline, trailing slash, double slash, case and PRM variants",
+   "disposition": "accepted as plan condition 9"
+  },
+  {
+   "n": 10,
+   "severity": "MINOR",
+   "summary": "pyjwt Day-1: per-key PyJWK construction instead of PyJWKSet, strict_aud probe, independent HS256/none rejection proof, iat/sub/jti behaviour, runtime pyjwt and cryptography version floor, optional token lifetime cap",
+   "disposition": "accepted as plan condition 10"
+  },
+  {
+   "n": 11,
+   "severity": "MINOR",
+   "summary": "reject duplicate keys and NaN/Infinity in policy, JWKS and config; one subject predicate for policy and token; refuse group/world-writable config files; max_token_bytes above h11 header limit is unreachable",
+   "disposition": "accepted as plan condition 11"
+  },
+  {
+   "n": 12,
+   "severity": "MINOR",
+   "summary": "wiring tripwires: registry and enforcement types after build_shared, __atlas_guard__ on every non-Ping handler, Ping unwrapped, server.experimental never accessed, install_guards idempotent, req=None ListTools inside and outside a guarded call",
+   "disposition": "accepted as plan condition 12"
+  },
+  {
+   "n": 13,
+   "severity": "MINOR",
+   "summary": "document AC-005 C as same working tree with distinct graph namespace and snapshot (historical evidence boundary, not live-content isolation) and AC-003 cache as the lease registry",
+   "disposition": "accepted as plan condition 13"
+  },
+  {
+   "n": 14,
+   "severity": "MINOR",
+   "summary": "docs must state proxy-makes-peer-check-moot, event-loop JWT cost and proxy rate limiting, local port squatting, IdP audience enumeration, dotfile/.git readability, token revocation via short exp or key rotation",
+   "disposition": "accepted as plan condition 14"
+  },
+  {
+   "n": 15,
+   "severity": "MINOR",
+   "summary": "five days is tight; run base full suite in the background; never-cut gains findings 1-6, policy deny-all with epoch, JWKS validation and the in-flight cap; stop at Day-4 checkpoint if any is red",
+   "disposition": "accepted as plan condition 15"
+  }
+ ]
+}
