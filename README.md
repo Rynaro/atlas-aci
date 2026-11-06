@@ -954,6 +954,7 @@ digest never changes. Each release's notes include the exact
 | [`SETUP.md`](SETUP.md) | End-to-end playbook: install → host wiring → canaries → hardening |
 | [`docs/operations/shared-http-deployment.md`](docs/operations/shared-http-deployment.md) | Shared multi-principal operation (`atlas-aci serve-shared`): the shared-config and policy formats, offline JWT verification, the router and guard order, revocation, and what is not isolated |
 | [`docs/operations/index-jobs-and-retention.md`](docs/operations/index-jobs-and-retention.md) | Durable index jobs (`atlas-aci jobs`): identity and reuse, checkpoints and resume, cancellation, retained generation farms, cross-process reader leases and lease-aware garbage collection. |
+| [`docs/evidence/s42/README.md`](docs/evidence/s42/README.md) | Shared-operation readiness evidence (ACI-S42): tested deployment model, evidence access ledger, interruption matrix, tested client and transport combinations, one bounded workload record and unresolved limits; not a deployment |
 | [`INTEGRATION.md`](INTEGRATION.md) | Onboarding an existing codebase: indexing, skip tuning, freshness, multi-repo |
 | [`CLAUDE.md`](CLAUDE.md) | How Claude Code should navigate this repo when opened in an agent loop |
 

@@ -1,0 +1,27 @@
+{
+ "slice_id": "ACI-S42",
+ "base_commit": "4f470d73a80fcf0e797728b1e45bccc77bf3a0a5",
+ "src_diff_vs_base": "clean (git diff --quiet 4f470d7 -- mcp-server/src exit 0)",
+ "tools_json_sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+ "tools_json_bytes": 1631472,
+ "READ_ONLY_TOOLS_count": 7,
+ "src_tree_digest": "07bc58e0ec6c5c32da5d2a9a27dc5587dd49a571c6b9d84cf1f3b6b6209d7d1e",
+ "src_tree_digest_definition": "sha256 of json.dumps([[relpath, sha256], ...]) over sorted mcp-server/src/**/*.py (106 files)",
+ "pyproject_sha256": "981f0784d6bc5c1502c91ab27657beb483460b97e066cd8846f51e98f1d7d92f",
+ "uv_lock_sha256": "87ba265e76f382aaa4387da7ca5d89dc85eb3699b35ee4315e981302b19646fd",
+ "dockerfile_sha256": "8abfc6635110f158f2ce60d473dabbcf447f38e62b71fbdc38e178b17654f529",
+ "dockerfile_dev_sha256": "1ac46d1137ac42b71608e6d0e7042b38b49a1a9054233d487d6508ae175e91e4",
+ "s23_manifest_sha256": "3b901b99607d3db95d02a79794792cc8fb0df142901dc35fb502a1fa8e49b1ce",
+ "mcp_version": "1.30.0",
+ "pyjwt_version": "2.15.1",
+ "cryptography_version": "50.0.2",
+ "httpx_version": "0.28.1",
+ "dev_image_python": "3.12.16",
+ "base_full_suite": {
+  "command": "pytest -q -p no:cacheprovider --deselect tests/slices/test_s08_integration.py::test_nonregular_pack_does_not_block_acquisition (dev image, uid 1000, no concurrent load)",
+  "result": "1 failed, 3254 passed, 11 skipped, 1 deselected in 1081.77s",
+  "failed": ["tests/slices/test_s01_contract.py::test_call_deadline_after_initialization (known pre-existing, uid 1000)"],
+  "ci_reference": "3256 passed, 11 skipped (run 42179540906)",
+  "log": "base-full.log"
+ }
+}

@@ -1,0 +1,38 @@
+[
+  {
+    "ac_id": "AC-S42-001",
+    "test": "mcp-server/tests/slices/test_s42_contract.py::test_negative_isolation_suite",
+    "exit_code": 0,
+    "tail": "1 passed in 24.21s"
+  },
+  {
+    "ac_id": "AC-S42-002",
+    "test": "mcp-server/tests/slices/test_s42_contract.py::test_failure_recovery_suite",
+    "exit_code": 0,
+    "tail": "1 passed in 24.48s"
+  },
+  {
+    "ac_id": "AC-S42-003",
+    "test": "mcp-server/tests/slices/test_s42_contract.py::test_compatibility_matrix",
+    "exit_code": 0,
+    "tail": "1 passed in 26.35s"
+  },
+  {
+    "ac_id": "AC-S42-004",
+    "test": "mcp-server/tests/slices/test_s42_contract.py::test_capacity_record",
+    "exit_code": 0,
+    "tail": "1 passed in 25.72s"
+  },
+  {
+    "ac_id": "AC-S42-005",
+    "test": "mcp-server/tests/slices/test_s42_contract.py::test_failed_gate_visible",
+    "exit_code": 0,
+    "tail": "1 passed in 0.20s"
+  },
+  {
+    "ac_id": "AC-S42-006",
+    "test": "mcp-server/tests/slices/test_s42_contract.py::test_shared_report_replay",
+    "exit_code": 0,
+    "tail": "1 passed in 26.67s"
+  }
+]

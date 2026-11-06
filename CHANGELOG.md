@@ -418,6 +418,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   unsupported. The producer fingerprint now includes `extractors/tsx.py`, so
   the next `index` run re-extracts every file.
 
+- **Shared-operation readiness evidence (ACI-S42).** `scripts/eval/s42_record.py` runs the shared
+  multi-principal HTTP mode (`serve-shared`), the index jobs and the protocol surfaces as real
+  subprocesses and writes immutable run records; `scripts/eval/s42_aggregate.py` rebuilds one
+  report and a `blocked` or `ready_for_operator_review` verdict from them, byte-identically on
+  replay. The records cover an evidence access ledger (planted canaries, same-shape controls,
+  an over-granted teeth run, revocation), an interruption matrix (cancel, kill, garbage
+  collection against a lease and a build, two teeth cases), ten tested client and transport
+  combinations, and one bounded workload record. No real host was tested, and a zero is a count
+  over the enumerated cases, not a claim that no leakage exists. See `docs/evidence/s42/`;
+  not a deployment; no product code changes.
+
 - **Index jobs, retained generations and lease-aware garbage collection (ACI-S41).**
   `atlas-aci jobs submit|resume|cancel|status|gc|acquire` runs an index build as a durable job with a
   content-addressed identity: an identical job whose retained output still verifies is reused, a

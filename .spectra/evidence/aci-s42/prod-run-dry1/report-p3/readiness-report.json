@@ -1,0 +1,844 @@
+{
+ "canonical_sha256": "5c057472791ff64d793f5c34c761d0fdc830cff9150d58ff39ec1e45c8769319",
+ "diagnostic": {},
+ "format": "atlas-shared-readiness-report.v1",
+ "report": {
+  "capacity": {
+   "workload": null
+  },
+  "checks": {
+   "capacity.limits_held": "missing",
+   "capacity.saturation_typed": "missing",
+   "compat.cells_recorded": "pass",
+   "environment.sdk_pinned": "pass",
+   "interrupt.all_recovered": "pass",
+   "interrupt.teeth_detected": "pass",
+   "isolation.concurrency": "pass",
+   "isolation.ledger_teeth": "pass",
+   "isolation.positive_controls": "pass",
+   "isolation.typed_denials": "pass",
+   "isolation.unauthorized_zero": "pass",
+   "records.complete": "missing",
+   "retention.lease_respected": "pass"
+  },
+  "compatibility": {
+   "cells": [
+    {
+     "call": {
+      "canary_hit": true,
+      "outcome": "ok",
+      "tool": "search_symbol"
+     },
+     "client": "raw-jsonrpc",
+     "expected": {
+      "offered": "2024-11-05",
+      "outcome": "supported"
+     },
+     "id": "raw.shared-http.2024-11-05",
+     "mcp_version": "1.30.0",
+     "negotiated": "2024-11-05",
+     "requested": "2024-11-05",
+     "sent_revision": "2024-11-05",
+     "server_info": {
+      "name": "atlas-aci",
+      "version": "1.30.0"
+     },
+     "shared": true,
+     "tools": {
+      "count": 7,
+      "sha256": "a270c1611b1568c815ddefa515b47b5bc32772885eea200f34026558a23d2edf"
+     },
+     "transport": "shared-http"
+    },
+    {
+     "call": {
+      "canary_hit": true,
+      "outcome": "ok",
+      "tool": "search_symbol"
+     },
+     "client": "raw-jsonrpc",
+     "expected": {
+      "offered": "2025-03-26",
+      "outcome": "supported"
+     },
+     "id": "raw.shared-http.2025-03-26",
+     "mcp_version": "1.30.0",
+     "negotiated": "2025-03-26",
+     "requested": "2025-03-26",
+     "sent_revision": "2025-03-26",
+     "server_info": {
+      "name": "atlas-aci",
+      "version": "1.30.0"
+     },
+     "shared": true,
+     "tools": {
+      "count": 7,
+      "sha256": "a270c1611b1568c815ddefa515b47b5bc32772885eea200f34026558a23d2edf"
+     },
+     "transport": "shared-http"
+    },
+    {
+     "call": {
+      "canary_hit": true,
+      "outcome": "ok",
+      "tool": "search_symbol"
+     },
+     "client": "raw-jsonrpc",
+     "expected": {
+      "offered": "2025-06-18",
+      "outcome": "supported"
+     },
+     "id": "raw.shared-http.2025-06-18",
+     "mcp_version": "1.30.0",
+     "negotiated": "2025-06-18",
+     "requested": "2025-06-18",
+     "sent_revision": "2025-06-18",
+     "server_info": {
+      "name": "atlas-aci",
+      "version": "1.30.0"
+     },
+     "shared": true,
+     "tools": {
+      "count": 7,
+      "sha256": "9837ab0126ed3046f545eb2b83700034c516d1bca8b5b213d7c799d4ecdaff29"
+     },
+     "transport": "shared-http"
+    },
+    {
+     "call": {
+      "canary_hit": true,
+      "outcome": "ok",
+      "tool": "search_symbol"
+     },
+     "client": "raw-jsonrpc",
+     "expected": {
+      "offered": "2025-11-25",
+      "outcome": "supported"
+     },
+     "id": "raw.shared-http.2025-11-25",
+     "mcp_version": "1.30.0",
+     "negotiated": "2025-11-25",
+     "requested": "2025-11-25",
+     "sent_revision": "2025-11-25",
+     "server_info": {
+      "name": "atlas-aci",
+      "version": "1.30.0"
+     },
+     "shared": true,
+     "tools": {
+      "count": 7,
+      "sha256": "9837ab0126ed3046f545eb2b83700034c516d1bca8b5b213d7c799d4ecdaff29"
+     },
+     "transport": "shared-http"
+    },
+    {
+     "call": {
+      "canary_hit": true,
+      "outcome": "ok",
+      "tool": "search_symbol"
+     },
+     "client": "raw-jsonrpc",
+     "expected": {
+      "offered": "2025-11-25",
+      "outcome": "counter_offer"
+     },
+     "id": "raw.shared-http.2099-01-01",
+     "mcp_version": "1.30.0",
+     "negotiated": "2025-11-25",
+     "requested": "2099-01-01",
+     "sent_revision": "2025-11-25",
+     "server_info": {
+      "name": "atlas-aci",
+      "version": "1.30.0"
+     },
+     "shared": true,
+     "tools": {
+      "count": 7,
+      "sha256": "9837ab0126ed3046f545eb2b83700034c516d1bca8b5b213d7c799d4ecdaff29"
+     },
+     "transport": "shared-http"
+    },
+    {
+     "call": {
+      "canary_hit": true,
+      "outcome": "ok",
+      "tool": "search_symbol"
+     },
+     "client": "raw-jsonrpc",
+     "expected": {
+      "offered": "2025-11-25",
+      "outcome": "supported"
+     },
+     "id": "raw.http.2025-11-25",
+     "mcp_version": "1.30.0",
+     "negotiated": "2025-11-25",
+     "requested": "2025-11-25",
+     "sent_revision": "2025-11-25",
+     "server_info": {
+      "name": "atlas-aci",
+      "version": "1.30.0"
+     },
+     "shared": false,
+     "tools": {
+      "count": 7,
+      "sha256": "9837ab0126ed3046f545eb2b83700034c516d1bca8b5b213d7c799d4ecdaff29"
+     },
+     "transport": "http"
+    },
+    {
+     "call": {
+      "canary_hit": true,
+      "outcome": "ok",
+      "tool": "search_symbol"
+     },
+     "client": "raw-jsonrpc",
+     "expected": {
+      "offered": "2025-11-25",
+      "outcome": "supported"
+     },
+     "id": "raw.stdio.2025-11-25",
+     "mcp_version": "1.30.0",
+     "negotiated": "2025-11-25",
+     "requested": "2025-11-25",
+     "sent_revision": "2025-11-25",
+     "server_info": {
+      "name": "atlas-aci",
+      "version": "1.30.0"
+     },
+     "shared": false,
+     "tools": {
+      "count": 7,
+      "sha256": "9837ab0126ed3046f545eb2b83700034c516d1bca8b5b213d7c799d4ecdaff29"
+     },
+     "transport": "stdio"
+    },
+    {
+     "call": {
+      "canary_hit": true,
+      "outcome": "ok",
+      "tool": "search_symbol"
+     },
+     "client": "mcp-sdk",
+     "expected": {
+      "offered": "2025-11-25",
+      "outcome": "supported"
+     },
+     "id": "sdk.stdio.sdk_default",
+     "mcp_version": "1.30.0",
+     "negotiated": "2025-11-25",
+     "requested": "sdk_default",
+     "sent_revision": "2025-11-25",
+     "server_info": {
+      "name": "atlas-aci",
+      "version": "1.30.0"
+     },
+     "shared": false,
+     "tools": {
+      "count": 7,
+      "sha256": "9837ab0126ed3046f545eb2b83700034c516d1bca8b5b213d7c799d4ecdaff29"
+     },
+     "transport": "stdio"
+    },
+    {
+     "call": {
+      "canary_hit": true,
+      "outcome": "ok",
+      "tool": "search_symbol"
+     },
+     "client": "mcp-sdk",
+     "expected": {
+      "offered": "2025-11-25",
+      "outcome": "supported"
+     },
+     "id": "sdk.http.sdk_default",
+     "mcp_version": "1.30.0",
+     "negotiated": "2025-11-25",
+     "requested": "sdk_default",
+     "sent_revision": "2025-11-25",
+     "server_info": {
+      "name": "atlas-aci",
+      "version": "1.30.0"
+     },
+     "shared": false,
+     "tools": {
+      "count": 7,
+      "sha256": "9837ab0126ed3046f545eb2b83700034c516d1bca8b5b213d7c799d4ecdaff29"
+     },
+     "transport": "http"
+    },
+    {
+     "call": {
+      "canary_hit": true,
+      "outcome": "ok",
+      "tool": "search_symbol"
+     },
+     "client": "mcp-sdk",
+     "expected": {
+      "offered": "2025-11-25",
+      "outcome": "supported"
+     },
+     "id": "sdk.shared-http.sdk_default",
+     "mcp_version": "1.30.0",
+     "negotiated": "2025-11-25",
+     "requested": "sdk_default",
+     "sent_revision": "2025-11-25",
+     "server_info": {
+      "name": "atlas-aci",
+      "version": "1.30.0"
+     },
+     "shared": true,
+     "tools": {
+      "count": 7,
+      "sha256": "9837ab0126ed3046f545eb2b83700034c516d1bca8b5b213d7c799d4ecdaff29"
+     },
+     "transport": "shared-http"
+    }
+   ],
+   "hosts": [
+    {
+     "id": "claude-code",
+     "reason": "no_real_host_run",
+     "status": "untested"
+    },
+    {
+     "id": "github-copilot",
+     "reason": "no_real_host_run",
+     "status": "untested"
+    },
+    {
+     "id": "cursor",
+     "reason": "no_real_host_run",
+     "status": "untested"
+    }
+   ],
+   "untested_cells": []
+  },
+  "deployment_model": {
+   "clients": "raw HTTP/1.1 and stdio JSON-RPC lines, plus the mcp SDK client",
+   "keys": "RS256 generated per run, offline JWKS file",
+   "listen": "127.0.0.1 port 0 (ephemeral)",
+   "policy_reload_seconds": 0,
+   "principals": 4,
+   "process": "one loopback serve-shared process per phase",
+   "repositories": "a and b, plus c as the before snapshot of a at the same path",
+   "storage": "container-local tmp behind the lock canary",
+   "tls_reverse_proxy": "none"
+  },
+  "environment": {
+   "atlas_aci_version": "2.0.0",
+   "mcp_version": "1.30.0",
+   "observed": {
+    "cpu_count": 8,
+    "fstype": "overlay",
+    "image": "sha256:1785257ee96b40dee1368082d8a672d78aa0aac0f0cdc8fc1bcf8237b4144790",
+    "platform": "Linux-aarch64",
+    "python": "3.12.16",
+    "runner": "container_image"
+   }
+  },
+  "failed_checks": [
+   "capacity.limits_held",
+   "capacity.saturation_typed",
+   "records.complete"
+  ],
+  "honesty": [
+   "Black-box evidence: the ledger detects planted canaries and typed outcomes in responses and server log lines, not internal reads.",
+   "Unauthorized evidence access is zero within the enumerated cases; this is not a claim that no leakage exists.",
+   "Not tested: timing side channels, the shared address space of the single server process, and a TLS-terminating reverse proxy.",
+   "Inherited and not re-run: the S40 in-process Observer suite (mcp-server/tests/slices/test_s40_contract.py)."
+  ],
+  "inputs": [
+   {
+    "name": "compat.raw.http.2025-11-25",
+    "sha256": "9ee050906672b5d30d7d1cad18e5f16917f59253a8af785e23a4b0bfc5322b26"
+   },
+   {
+    "name": "compat.raw.shared-http.2024-11-05",
+    "sha256": "b493cb67444f0220702c393b15a1a0954a0b38c0da5401f6f8d33863aad2b9ee"
+   },
+   {
+    "name": "compat.raw.shared-http.2025-03-26",
+    "sha256": "fd96c947e242a20974a80956d49b336d529c6e96e71dcf02029dfc1081d1e269"
+   },
+   {
+    "name": "compat.raw.shared-http.2025-06-18",
+    "sha256": "b319aeb368e282a8be47d207b7cdd6b0b80d95c38e4437e2bec5b9b1d10cbb60"
+   },
+   {
+    "name": "compat.raw.shared-http.2025-11-25",
+    "sha256": "e8e1628e5b62fcb19d7c21ef875b237fc7f097cd1caf7652466da91274da39e2"
+   },
+   {
+    "name": "compat.raw.shared-http.2099-01-01",
+    "sha256": "b9eeaa331f637f422a37adc1b990cba9e707e63e388356b779c44d54517af5a9"
+   },
+   {
+    "name": "compat.raw.stdio.2025-11-25",
+    "sha256": "44f85755ddd5a5bec86788c4ad2ee765ae94facbc3f3d7de5616709ee3d17b27"
+   },
+   {
+    "name": "compat.sdk.http.sdk_default",
+    "sha256": "e03c56501ed71f6697c16819afd527461f308f5fad556efc0dbfb1cf567d4756"
+   },
+   {
+    "name": "compat.sdk.shared-http.sdk_default",
+    "sha256": "e4d806a6e8768dc8534b9ecd86f8156c0eee053408509cba9817fbb04f32366d"
+   },
+   {
+    "name": "compat.sdk.stdio.sdk_default",
+    "sha256": "dee13bd734cadec185314f0a2b9eb6ff3fd303902af7a0100d6f20ed9e3d20b4"
+   },
+   {
+    "name": "environment.main",
+    "sha256": "aa935d55c1981d1dbbc5efd53a9ea7841059748dabaffe5b1937a6a09c130bf2"
+   },
+   {
+    "name": "interrupt.cancel_marker",
+    "sha256": "b4fa033a4adf88df966459ddb9128bb36cdb967e5abffd4fd4ee93cd0ce1ffca"
+   },
+   {
+    "name": "interrupt.cancel_sigterm",
+    "sha256": "f0d15fc4805996c7227738cd8a30ec07bf6262ba8ffb7d6858869cd1360f9712"
+   },
+   {
+    "name": "interrupt.gc_vs_build",
+    "sha256": "4e2dcbe1a3296a1b48ec73d2d5e2cf882d1fa330b908ff0ad36b17ee6e31cb63"
+   },
+   {
+    "name": "interrupt.gc_vs_lease",
+    "sha256": "5f24b7ff276e1cbce43a30dfe8a08c47466ea6af4cfcdfe9a7b0970aa9190bef"
+   },
+   {
+    "name": "interrupt.kill_checkpoint",
+    "sha256": "1e3718f9bef51d303e5e08a1b5cf6942a93531ff75bcf9fe0a1c2472518cd906"
+   },
+   {
+    "name": "interrupt.kill_mid_publish",
+    "sha256": "9ec2e31f98e2d80653fea793bd80f06b048af9a25cfbe6cfe57dc742144349b2"
+   },
+   {
+    "name": "interrupt.kill_post_replace",
+    "sha256": "eed44c4060f6e072338c579899ca444e02fa9ab3627aaa7351bbeef48378f905"
+   },
+   {
+    "name": "interrupt.kill_pre_receipt",
+    "sha256": "61529ad8eee1219f15ed5567b1b9b987f1f630716c4db06810e438390542f992"
+   },
+   {
+    "name": "interrupt.teeth_replace_by_copy",
+    "sha256": "39c01ee06fd81db11609642c031c016091615749fe88dd6d94bd379b321bc40c"
+   },
+   {
+    "name": "interrupt.teeth_wrong_expectation",
+    "sha256": "20abd88cb03274532a6298c9ac8a6c41aeb26bf571f3b1be5794f12b39ca5f2c"
+   },
+   {
+    "name": "isolation.main",
+    "sha256": "3fd547e306389abc11b3017d2817d5489ae5c38b1578ea81658d27cb95d9b166"
+   },
+   {
+    "name": "isolation.revocation",
+    "sha256": "c953bf376dd838855943bf00450c6e4334819b2675486530772f0ebc2dfcef3c"
+   },
+   {
+    "name": "isolation.teeth",
+    "sha256": "5c7a451058358a8bc84fe066a33550c21773f9e5ecdfb8abfaa9a2c52bbe3cf8"
+   }
+  ],
+  "interruption": {
+   "cases": [
+    {
+     "expect_valid": true,
+     "expected_tree": "T1",
+     "facts": {
+      "cancel": "honoured",
+      "exit": 4,
+      "published": false,
+      "state": "cancelled"
+     },
+     "id": "cancel_marker",
+     "injection": {
+      "kind": "cancel_marker",
+      "seam": "staged"
+     },
+     "live_unchanged": null,
+     "valid": true,
+     "validation": {
+      "acquire_ok": true,
+      "control_gid_matches": true,
+      "no_invalid_jobs": true,
+      "server_expected_canary": true,
+      "server_gid_matches": true,
+      "server_other_canary_absent": true,
+      "status_current_matches": true
+     }
+    },
+    {
+     "expect_valid": true,
+     "expected_tree": "T1",
+     "facts": {
+      "cancel": "honoured",
+      "exit": 4,
+      "published": false,
+      "state": "cancelled"
+     },
+     "id": "cancel_sigterm",
+     "injection": {
+      "kind": "cancel_sigterm",
+      "seam": "staged"
+     },
+     "live_unchanged": null,
+     "valid": true,
+     "validation": {
+      "acquire_ok": true,
+      "control_gid_matches": true,
+      "no_invalid_jobs": true,
+      "server_expected_canary": true,
+      "server_gid_matches": true,
+      "server_other_canary_absent": true,
+      "status_current_matches": true
+     }
+    },
+    {
+     "expect_valid": true,
+     "expected_tree": "T2",
+     "facts": {
+      "interrupted": true,
+      "interrupted_state": "running",
+      "killed": true,
+      "outcome": "built",
+      "resumed_from": 2,
+      "state": "completed"
+     },
+     "id": "kill_checkpoint",
+     "injection": {
+      "at": 2,
+      "kind": "kill",
+      "seam": "checkpoint"
+     },
+     "live_unchanged": null,
+     "valid": true,
+     "validation": {
+      "acquire_ok": true,
+      "control_gid_matches": true,
+      "no_invalid_jobs": true,
+      "server_expected_canary": true,
+      "server_gid_matches": true,
+      "server_other_canary_absent": true,
+      "status_current_matches": true
+     }
+    },
+    {
+     "expect_valid": true,
+     "expected_tree": "T2",
+     "facts": {
+      "interrupted": true,
+      "interrupted_state": "running",
+      "killed": true,
+      "outcome": "built",
+      "state": "completed"
+     },
+     "id": "kill_mid_publish",
+     "injection": {
+      "kind": "kill",
+      "seam": "mid_publish"
+     },
+     "live_unchanged": null,
+     "valid": true,
+     "validation": {
+      "acquire_ok": true,
+      "control_gid_matches": true,
+      "no_invalid_jobs": true,
+      "server_expected_canary": true,
+      "server_gid_matches": true,
+      "server_other_canary_absent": true,
+      "status_current_matches": true
+     }
+    },
+    {
+     "expect_valid": true,
+     "expected_tree": "T2",
+     "facts": {
+      "interrupted": true,
+      "interrupted_state": "published",
+      "killed": true,
+      "outcome": "recovered",
+      "state": "completed"
+     },
+     "id": "kill_post_replace",
+     "injection": {
+      "kind": "kill",
+      "seam": "post_replace"
+     },
+     "live_unchanged": null,
+     "valid": true,
+     "validation": {
+      "acquire_ok": true,
+      "control_gid_matches": true,
+      "no_invalid_jobs": true,
+      "server_expected_canary": true,
+      "server_gid_matches": true,
+      "server_other_canary_absent": true,
+      "status_current_matches": true
+     }
+    },
+    {
+     "expect_valid": true,
+     "expected_tree": "T2",
+     "facts": {
+      "interrupted": true,
+      "interrupted_state": "captured",
+      "killed": true,
+      "outcome": "recovered",
+      "state": "completed"
+     },
+     "id": "kill_pre_receipt",
+     "injection": {
+      "kind": "kill",
+      "seam": "pre_receipt"
+     },
+     "live_unchanged": null,
+     "valid": true,
+     "validation": {
+      "acquire_ok": true,
+      "control_gid_matches": true,
+      "no_invalid_jobs": true,
+      "server_expected_canary": true,
+      "server_gid_matches": true,
+      "server_other_canary_absent": true,
+      "status_current_matches": true
+     }
+    },
+    {
+     "expect_valid": true,
+     "expected_tree": "T2",
+     "facts": {
+      "acquire_code": "EXPIRED_REFERENCE",
+      "acquire_exit": 3,
+      "holder_killed": true,
+      "leased_retained": true,
+      "retired_after_release": true
+     },
+     "id": "gc_vs_lease",
+     "injection": {
+      "kind": "gc_vs_lease"
+     },
+     "live_unchanged": null,
+     "valid": true,
+     "validation": {
+      "acquire_ok": true,
+      "control_gid_matches": true,
+      "no_invalid_jobs": true,
+      "server_expected_canary": true,
+      "server_gid_matches": true,
+      "server_other_canary_absent": true,
+      "status_current_matches": true
+     }
+    },
+    {
+     "expect_valid": true,
+     "expected_tree": "T2",
+     "facts": {
+      "gc_code": "WRITER_BUSY",
+      "gc_exit": 75,
+      "state": "completed"
+     },
+     "id": "gc_vs_build",
+     "injection": {
+      "kind": "gc_vs_build",
+      "seam": "staged"
+     },
+     "live_unchanged": null,
+     "valid": true,
+     "validation": {
+      "acquire_ok": true,
+      "control_gid_matches": true,
+      "no_invalid_jobs": true,
+      "server_expected_canary": true,
+      "server_gid_matches": true,
+      "server_other_canary_absent": true,
+      "status_current_matches": true
+     }
+    },
+    {
+     "expect_valid": false,
+     "expected_tree": "T2",
+     "facts": {
+      "corrupted_farm_acquire_refused": true
+     },
+     "id": "teeth_replace_by_copy",
+     "injection": {
+      "kind": "teeth_replace_by_copy"
+     },
+     "live_unchanged": true,
+     "valid": false,
+     "validation": {
+      "acquire_ok": false,
+      "control_gid_matches": true,
+      "no_invalid_jobs": true,
+      "server_expected_canary": true,
+      "server_gid_matches": true,
+      "server_other_canary_absent": true,
+      "status_current_matches": true
+     }
+    },
+    {
+     "expect_valid": false,
+     "expected_tree": "T2",
+     "facts": {
+      "validated_against": "T1"
+     },
+     "id": "teeth_wrong_expectation",
+     "injection": {
+      "kind": "teeth_wrong_expectation"
+     },
+     "live_unchanged": null,
+     "valid": false,
+     "validation": {
+      "acquire_ok": true,
+      "control_gid_matches": false,
+      "no_invalid_jobs": true,
+      "server_expected_canary": false,
+      "server_gid_matches": false,
+      "server_other_canary_absent": false,
+      "status_current_matches": false
+     }
+    }
+   ]
+  },
+  "isolation": {
+   "allow_rows": 22,
+   "by_class": [
+    {
+     "class": "control",
+     "controls_ok": 22,
+     "deny_cases": 0,
+     "unauthorized": 0
+    },
+    {
+     "class": "ungranted_repo",
+     "controls_ok": 2,
+     "deny_cases": 2,
+     "unauthorized": 0
+    },
+    {
+     "class": "ungranted_tool",
+     "controls_ok": 2,
+     "deny_cases": 2,
+     "unauthorized": 0
+    },
+    {
+     "class": "disabled_tool",
+     "controls_ok": 2,
+     "deny_cases": 2,
+     "unauthorized": 0
+    },
+    {
+     "class": "impact_before_ungranted",
+     "controls_ok": 1,
+     "deny_cases": 1,
+     "unauthorized": 0
+    },
+    {
+     "class": "cross_principal_cursor",
+     "controls_ok": 1,
+     "deny_cases": 1,
+     "unauthorized": 0
+    },
+    {
+     "class": "cross_principal_resource",
+     "controls_ok": 1,
+     "deny_cases": 1,
+     "unauthorized": 0
+    },
+    {
+     "class": "cross_repo_resource",
+     "controls_ok": 1,
+     "deny_cases": 1,
+     "unauthorized": 0
+    },
+    {
+     "class": "cross_repo_argument",
+     "controls_ok": 1,
+     "deny_cases": 1,
+     "unauthorized": 0
+    },
+    {
+     "class": "path_escape",
+     "controls_ok": 2,
+     "deny_cases": 2,
+     "unauthorized": 0
+    },
+    {
+     "class": "token_missing",
+     "controls_ok": 1,
+     "deny_cases": 1,
+     "unauthorized": 0
+    },
+    {
+     "class": "token_invalid",
+     "controls_ok": 1,
+     "deny_cases": 1,
+     "unauthorized": 0
+    },
+    {
+     "class": "token_wrong_audience",
+     "controls_ok": 1,
+     "deny_cases": 1,
+     "unauthorized": 0
+    },
+    {
+     "class": "revoked_grant",
+     "controls_ok": 2,
+     "deny_cases": 2,
+     "unauthorized": 0
+    }
+   ],
+   "deny_rows": 18,
+   "overlap": {
+    "holds_spanned_recorder_attested": true,
+    "observed": {
+     "max_client_overlap": 8,
+     "server_peak": 8
+    },
+    "server_peak_ge_3": true
+   },
+   "principals": [
+    "p1",
+    "p2",
+    "p3",
+    "p4"
+   ],
+   "routes": [
+    "a",
+    "b",
+    "c"
+   ],
+   "rows_total": 40,
+   "unauthorized": {
+    "main": 0,
+    "revocation": 0,
+    "teeth": 1
+   },
+   "unauthorized_rows": []
+  },
+  "manifest_sha256": "6c0365ad5b86a06e482050913418eadd9e92981e149c099a4634ce5ab56a404b",
+  "unresolved_limits": [
+   "black_box_ledger_detects_planted_canaries_and_typed_outcomes_only",
+   "zero_is_within_the_enumerated_cases_not_a_no_leakage_claim",
+   "stderr_tool_call_corroboration_is_necessary_not_sufficient",
+   "timing_side_channels_untested",
+   "shared_address_space_untested",
+   "tls_reverse_proxy_untested",
+   "same_path_pair_exposes_the_live_tree_by_design",
+   "real_hosts_untested_claude_code_copilot_cursor",
+   "s40_in_process_observer_suite_inherited_not_rerun",
+   "gc_seam_kills_untested_only_lease_writer_busy_and_expiry",
+   "single_host_loopback_workload_not_a_load_test",
+   "resource_metrics_linux_proc_with_source_labels",
+   "no_deployment_credentials_or_dns_performed",
+   "fresh_runs_compared_by_invariants_not_by_digest"
+  ],
+  "verdict": "blocked"
+ }
+}

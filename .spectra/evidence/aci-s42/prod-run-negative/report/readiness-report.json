@@ -1,0 +1,1118 @@
+{
+ "canonical_sha256": "f0de2c344e88a44e55430f2fa0e60a0707b2c62dad20c22b379e67eec5f6a2eb",
+ "diagnostic": {},
+ "format": "atlas-shared-readiness-report.v1",
+ "report": {
+  "capacity": {
+   "workload": {
+    "invariants": {
+     "all_calls_completed": true,
+     "client_principal_concurrency_within_cap": true,
+     "limits_match_config_document": true,
+     "no_untyped_5xx": true,
+     "server_peak_within_limit": true,
+     "typed_503_has_retry_after": true,
+     "unauthorized_zero": true
+    },
+    "limits": {
+     "limits": {
+      "max_calls_per_minute": 10000,
+      "max_calls_per_principal_per_minute": 10000,
+      "max_graph_leases": 4,
+      "max_leases_per_principal": 1,
+      "max_records": 1024,
+      "max_total_lease_state_bytes": 1073741824
+     },
+     "listen": {
+      "max_body_bytes": 1048576,
+      "max_inflight": 4,
+      "max_inflight_per_principal": 2
+     }
+    },
+    "observed": {
+     "attempts": 74,
+     "fds": {
+      "max": 14,
+      "source": "proc_fd"
+     },
+     "latency_ms": {
+      "max": 103,
+      "n": 72,
+      "p50": 37,
+      "p95": 84
+     },
+     "memory": {
+      "samples": 12,
+      "source": "proc_status",
+      "vm_hwm_kib": 73392,
+      "vm_rss_kib": 73392
+     },
+     "rejections": {
+      "inflight_limit": 2,
+      "principal_inflight_limit": 0
+     },
+     "rusage": {
+      "ru_maxrss": 101336,
+      "source": "wait4",
+      "unit": "kib"
+     },
+     "saturation_polls": 3,
+     "server": {
+      "admitted": 80,
+      "peak": 4,
+      "rejected": 3,
+      "source": "stopped_line"
+     },
+     "wall_s": 1.4
+    },
+    "saturation": {
+     "gate_503_typed": true,
+     "other_principal_admitted": true,
+     "recovered_after_disconnect": true,
+     "stopped_line_rejected_ge_1": true,
+     "third_rejected_typed": true
+    },
+    "workload": {
+     "calls_per_client": 12,
+     "client_principals": [
+      "p1",
+      "p2",
+      "p3",
+      "p4",
+      "p1",
+      "p2"
+     ],
+     "clients": 6,
+     "grants": [
+      {
+       "repository": "a",
+       "subject": "p1",
+       "tools": [
+        "graph_query",
+        "list_dir",
+        "search_symbol",
+        "search_text",
+        "view_file"
+       ]
+      },
+      {
+       "repository": "b",
+       "subject": "p1",
+       "tools": [
+        "graph_query",
+        "list_dir",
+        "search_symbol",
+        "search_text",
+        "view_file"
+       ]
+      },
+      {
+       "repository": "a",
+       "subject": "p2",
+       "tools": [
+        "graph_query",
+        "list_dir",
+        "search_symbol",
+        "search_text",
+        "view_file"
+       ]
+      },
+      {
+       "repository": "b",
+       "subject": "p2",
+       "tools": [
+        "graph_query",
+        "list_dir",
+        "search_symbol",
+        "search_text",
+        "view_file"
+       ]
+      },
+      {
+       "repository": "a",
+       "subject": "p3",
+       "tools": [
+        "graph_query",
+        "list_dir",
+        "search_symbol",
+        "search_text",
+        "view_file"
+       ]
+      },
+      {
+       "repository": "b",
+       "subject": "p3",
+       "tools": [
+        "graph_query",
+        "list_dir",
+        "search_symbol",
+        "search_text",
+        "view_file"
+       ]
+      },
+      {
+       "repository": "a",
+       "subject": "p4",
+       "tools": [
+        "graph_query",
+        "list_dir",
+        "search_symbol",
+        "search_text",
+        "view_file"
+       ]
+      },
+      {
+       "repository": "b",
+       "subject": "p4",
+       "tools": [
+        "graph_query",
+        "list_dir",
+        "search_symbol",
+        "search_text",
+        "view_file"
+       ]
+      }
+     ],
+     "max_attempts": 10,
+     "mix": [
+      [
+       "a",
+       "search_text",
+       {
+        "pattern": "s42cnry_a_7bc667a4421a",
+        "scope": "."
+       }
+      ],
+      [
+       "b",
+       "search_text",
+       {
+        "pattern": "s42cnry_b_240793d97d57",
+        "scope": "."
+       }
+      ],
+      [
+       "a",
+       "search_symbol",
+       {
+        "name": "s42cnry_a_7bc667a4421a_hub"
+       }
+      ],
+      [
+       "b",
+       "search_symbol",
+       {
+        "name": "s42cnry_b_240793d97d57_fn"
+       }
+      ],
+      [
+       "a",
+       "view_file",
+       {
+        "end_line": 20,
+        "path": "core.py",
+        "start_line": 1
+       }
+      ],
+      [
+       "b",
+       "view_file",
+       {
+        "end_line": 20,
+        "path": "main.py",
+        "start_line": 1
+       }
+      ],
+      [
+       "a",
+       "list_dir",
+       {
+        "path": "."
+       }
+      ],
+      [
+       "b",
+       "list_dir",
+       {
+        "path": "."
+       }
+      ],
+      [
+       "a",
+       "graph_query",
+       {
+        "op": "status",
+        "schema_version": "atlas.graph.v1"
+       }
+      ],
+      [
+       "b",
+       "graph_query",
+       {
+        "op": "status",
+        "schema_version": "atlas.graph.v1"
+       }
+      ],
+      [
+       "a",
+       "search_symbol",
+       {
+        "name": "s42cnry_a_7bc667a4421a_hub"
+       }
+      ],
+      [
+       "b",
+       "search_text",
+       {
+        "pattern": "s42cnry_b_240793d97d57_fn",
+        "scope": "."
+       }
+      ]
+     ],
+     "principals": 4,
+     "repositories": 2
+    }
+   }
+  },
+  "checks": {
+   "capacity.limits_held": "pass",
+   "capacity.saturation_typed": "pass",
+   "compat.cells_recorded": "pass",
+   "environment.sdk_pinned": "pass",
+   "interrupt.all_recovered": "pass",
+   "interrupt.teeth_detected": "pass",
+   "isolation.concurrency": "pass",
+   "isolation.ledger_teeth": "pass",
+   "isolation.positive_controls": "fail",
+   "isolation.typed_denials": "fail",
+   "isolation.unauthorized_zero": "fail",
+   "records.complete": "pass",
+   "retention.lease_respected": "pass"
+  },
+  "compatibility": {
+   "cells": [
+    {
+     "call": {
+      "canary_hit": true,
+      "outcome": "ok",
+      "tool": "search_symbol"
+     },
+     "client": "raw-jsonrpc",
+     "expected": {
+      "offered": "2024-11-05",
+      "outcome": "supported"
+     },
+     "id": "raw.shared-http.2024-11-05",
+     "mcp_version": "1.30.0",
+     "negotiated": "2024-11-05",
+     "requested": "2024-11-05",
+     "sent_revision": "2024-11-05",
+     "server_info": {
+      "name": "atlas-aci",
+      "version": "1.30.0"
+     },
+     "shared": true,
+     "tools": {
+      "count": 7,
+      "sha256": "a270c1611b1568c815ddefa515b47b5bc32772885eea200f34026558a23d2edf"
+     },
+     "transport": "shared-http"
+    },
+    {
+     "call": {
+      "canary_hit": true,
+      "outcome": "ok",
+      "tool": "search_symbol"
+     },
+     "client": "raw-jsonrpc",
+     "expected": {
+      "offered": "2025-03-26",
+      "outcome": "supported"
+     },
+     "id": "raw.shared-http.2025-03-26",
+     "mcp_version": "1.30.0",
+     "negotiated": "2025-03-26",
+     "requested": "2025-03-26",
+     "sent_revision": "2025-03-26",
+     "server_info": {
+      "name": "atlas-aci",
+      "version": "1.30.0"
+     },
+     "shared": true,
+     "tools": {
+      "count": 7,
+      "sha256": "a270c1611b1568c815ddefa515b47b5bc32772885eea200f34026558a23d2edf"
+     },
+     "transport": "shared-http"
+    },
+    {
+     "call": {
+      "canary_hit": true,
+      "outcome": "ok",
+      "tool": "search_symbol"
+     },
+     "client": "raw-jsonrpc",
+     "expected": {
+      "offered": "2025-06-18",
+      "outcome": "supported"
+     },
+     "id": "raw.shared-http.2025-06-18",
+     "mcp_version": "1.30.0",
+     "negotiated": "2025-06-18",
+     "requested": "2025-06-18",
+     "sent_revision": "2025-06-18",
+     "server_info": {
+      "name": "atlas-aci",
+      "version": "1.30.0"
+     },
+     "shared": true,
+     "tools": {
+      "count": 7,
+      "sha256": "9837ab0126ed3046f545eb2b83700034c516d1bca8b5b213d7c799d4ecdaff29"
+     },
+     "transport": "shared-http"
+    },
+    {
+     "call": {
+      "canary_hit": true,
+      "outcome": "ok",
+      "tool": "search_symbol"
+     },
+     "client": "raw-jsonrpc",
+     "expected": {
+      "offered": "2025-11-25",
+      "outcome": "supported"
+     },
+     "id": "raw.shared-http.2025-11-25",
+     "mcp_version": "1.30.0",
+     "negotiated": "2025-11-25",
+     "requested": "2025-11-25",
+     "sent_revision": "2025-11-25",
+     "server_info": {
+      "name": "atlas-aci",
+      "version": "1.30.0"
+     },
+     "shared": true,
+     "tools": {
+      "count": 7,
+      "sha256": "9837ab0126ed3046f545eb2b83700034c516d1bca8b5b213d7c799d4ecdaff29"
+     },
+     "transport": "shared-http"
+    },
+    {
+     "call": {
+      "canary_hit": true,
+      "outcome": "ok",
+      "tool": "search_symbol"
+     },
+     "client": "raw-jsonrpc",
+     "expected": {
+      "offered": "2025-11-25",
+      "outcome": "counter_offer"
+     },
+     "id": "raw.shared-http.2099-01-01",
+     "mcp_version": "1.30.0",
+     "negotiated": "2025-11-25",
+     "requested": "2099-01-01",
+     "sent_revision": "2025-11-25",
+     "server_info": {
+      "name": "atlas-aci",
+      "version": "1.30.0"
+     },
+     "shared": true,
+     "tools": {
+      "count": 7,
+      "sha256": "9837ab0126ed3046f545eb2b83700034c516d1bca8b5b213d7c799d4ecdaff29"
+     },
+     "transport": "shared-http"
+    },
+    {
+     "call": {
+      "canary_hit": true,
+      "outcome": "ok",
+      "tool": "search_symbol"
+     },
+     "client": "raw-jsonrpc",
+     "expected": {
+      "offered": "2025-11-25",
+      "outcome": "supported"
+     },
+     "id": "raw.http.2025-11-25",
+     "mcp_version": "1.30.0",
+     "negotiated": "2025-11-25",
+     "requested": "2025-11-25",
+     "sent_revision": "2025-11-25",
+     "server_info": {
+      "name": "atlas-aci",
+      "version": "1.30.0"
+     },
+     "shared": false,
+     "tools": {
+      "count": 7,
+      "sha256": "9837ab0126ed3046f545eb2b83700034c516d1bca8b5b213d7c799d4ecdaff29"
+     },
+     "transport": "http"
+    },
+    {
+     "call": {
+      "canary_hit": true,
+      "outcome": "ok",
+      "tool": "search_symbol"
+     },
+     "client": "raw-jsonrpc",
+     "expected": {
+      "offered": "2025-11-25",
+      "outcome": "supported"
+     },
+     "id": "raw.stdio.2025-11-25",
+     "mcp_version": "1.30.0",
+     "negotiated": "2025-11-25",
+     "requested": "2025-11-25",
+     "sent_revision": "2025-11-25",
+     "server_info": {
+      "name": "atlas-aci",
+      "version": "1.30.0"
+     },
+     "shared": false,
+     "tools": {
+      "count": 7,
+      "sha256": "9837ab0126ed3046f545eb2b83700034c516d1bca8b5b213d7c799d4ecdaff29"
+     },
+     "transport": "stdio"
+    },
+    {
+     "call": {
+      "canary_hit": true,
+      "outcome": "ok",
+      "tool": "search_symbol"
+     },
+     "client": "mcp-sdk",
+     "expected": {
+      "offered": "2025-11-25",
+      "outcome": "supported"
+     },
+     "id": "sdk.stdio.sdk_default",
+     "mcp_version": "1.30.0",
+     "negotiated": "2025-11-25",
+     "requested": "sdk_default",
+     "sent_revision": "2025-11-25",
+     "server_info": {
+      "name": "atlas-aci",
+      "version": "1.30.0"
+     },
+     "shared": false,
+     "tools": {
+      "count": 7,
+      "sha256": "9837ab0126ed3046f545eb2b83700034c516d1bca8b5b213d7c799d4ecdaff29"
+     },
+     "transport": "stdio"
+    },
+    {
+     "call": {
+      "canary_hit": true,
+      "outcome": "ok",
+      "tool": "search_symbol"
+     },
+     "client": "mcp-sdk",
+     "expected": {
+      "offered": "2025-11-25",
+      "outcome": "supported"
+     },
+     "id": "sdk.http.sdk_default",
+     "mcp_version": "1.30.0",
+     "negotiated": "2025-11-25",
+     "requested": "sdk_default",
+     "sent_revision": "2025-11-25",
+     "server_info": {
+      "name": "atlas-aci",
+      "version": "1.30.0"
+     },
+     "shared": false,
+     "tools": {
+      "count": 7,
+      "sha256": "9837ab0126ed3046f545eb2b83700034c516d1bca8b5b213d7c799d4ecdaff29"
+     },
+     "transport": "http"
+    },
+    {
+     "call": {
+      "canary_hit": true,
+      "outcome": "ok",
+      "tool": "search_symbol"
+     },
+     "client": "mcp-sdk",
+     "expected": {
+      "offered": "2025-11-25",
+      "outcome": "supported"
+     },
+     "id": "sdk.shared-http.sdk_default",
+     "mcp_version": "1.30.0",
+     "negotiated": "2025-11-25",
+     "requested": "sdk_default",
+     "sent_revision": "2025-11-25",
+     "server_info": {
+      "name": "atlas-aci",
+      "version": "1.30.0"
+     },
+     "shared": true,
+     "tools": {
+      "count": 7,
+      "sha256": "9837ab0126ed3046f545eb2b83700034c516d1bca8b5b213d7c799d4ecdaff29"
+     },
+     "transport": "shared-http"
+    }
+   ],
+   "hosts": [
+    {
+     "id": "claude-code",
+     "reason": "no_real_host_run",
+     "status": "untested"
+    },
+    {
+     "id": "github-copilot",
+     "reason": "no_real_host_run",
+     "status": "untested"
+    },
+    {
+     "id": "cursor",
+     "reason": "no_real_host_run",
+     "status": "untested"
+    }
+   ],
+   "untested_cells": []
+  },
+  "deployment_model": {
+   "clients": "raw HTTP/1.1 and stdio JSON-RPC lines, plus the mcp SDK client",
+   "keys": "RS256 generated per run, offline JWKS file",
+   "listen": "127.0.0.1 port 0 (ephemeral)",
+   "policy_reload_seconds": 0,
+   "principals": 4,
+   "process": "one loopback serve-shared process per phase",
+   "repositories": "a and b, plus c as the before snapshot of a at the same path",
+   "storage": "container-local tmp behind the lock canary",
+   "tls_reverse_proxy": "none"
+  },
+  "environment": {
+   "atlas_aci_version": "2.0.0",
+   "mcp_version": "1.30.0",
+   "observed": {
+    "cpu_count": 8,
+    "fstype": "overlay",
+    "image": "sha256:af38209937b929ea03fa2b94df03698df56d8adfeb0a9000f6f99b1a14bbbbe6",
+    "platform": "Linux-aarch64",
+    "python": "3.12.16",
+    "runner": "container_image"
+   }
+  },
+  "failed_checks": [
+   "isolation.positive_controls",
+   "isolation.typed_denials",
+   "isolation.unauthorized_zero"
+  ],
+  "honesty": [
+   "Black-box evidence: the ledger detects planted canaries and typed outcomes in responses and server log lines, not internal reads.",
+   "Unauthorized evidence access is zero within the enumerated cases; this is not a claim that no leakage exists.",
+   "Not tested: timing side channels, the shared address space of the single server process, and a TLS-terminating reverse proxy.",
+   "Inherited and not re-run: the S40 in-process Observer suite (mcp-server/tests/slices/test_s40_contract.py)."
+  ],
+  "inputs": [
+   {
+    "name": "capacity.main",
+    "sha256": "a4cea4126cd48b1408ba2682ebc6bd557a53c23940450d583fe1bc03f1a8768d"
+   },
+   {
+    "name": "compat.raw.http.2025-11-25",
+    "sha256": "3889fe051cbad9cd315b582e6e7a40018e816f8dca61657ba7b5d08856c244d5"
+   },
+   {
+    "name": "compat.raw.shared-http.2024-11-05",
+    "sha256": "92d1f666c430f26c1ad319c64dbf9572ffe630ca8e2c4041f59fffda832cbcf9"
+   },
+   {
+    "name": "compat.raw.shared-http.2025-03-26",
+    "sha256": "bc93d59200d42d9a5883accc5b7b34aec3e5e49e1fbb53aeee91130b64524e7e"
+   },
+   {
+    "name": "compat.raw.shared-http.2025-06-18",
+    "sha256": "b022bb76df73bb00a1f1756f571ee98eefba4ad4e899c4008866b2987d8cb05c"
+   },
+   {
+    "name": "compat.raw.shared-http.2025-11-25",
+    "sha256": "12070624a95611b98ff3db3076b1e143c7b31c2fa8babd3443ba6d8010f2b022"
+   },
+   {
+    "name": "compat.raw.shared-http.2099-01-01",
+    "sha256": "2ea054adb7244e02ae54155c11661ec552c558cba02266bac3df354c23b21e7a"
+   },
+   {
+    "name": "compat.raw.stdio.2025-11-25",
+    "sha256": "912837daf5531c89dc0e4fb61169a954591ee918b50512393894c5063c77a6e1"
+   },
+   {
+    "name": "compat.sdk.http.sdk_default",
+    "sha256": "09a5dbf4974ded319eece64f9e4a0d7bdafbd2b9505ec87f03281db8564cee4e"
+   },
+   {
+    "name": "compat.sdk.shared-http.sdk_default",
+    "sha256": "2958fac5f11e011204b470a7f349bfe11ffdb4828624de17136071dec2f3601d"
+   },
+   {
+    "name": "compat.sdk.stdio.sdk_default",
+    "sha256": "66a4b7908c0ba5a0b940d79ee06ee04ecab54504df6833a00f6b4cb1937241aa"
+   },
+   {
+    "name": "environment.main",
+    "sha256": "bd19115423e7eff87623131501c007eca10e41fcef224ead0e51f9258ab5d73a"
+   },
+   {
+    "name": "interrupt.cancel_marker",
+    "sha256": "812662f697977feb44a409f8060a29ade6c2e5fe7945c44778ff184024755471"
+   },
+   {
+    "name": "interrupt.cancel_sigterm",
+    "sha256": "e48aae003dd321dbb09fe1004f7efdf5a1293c0c565d797a94c14887710200e8"
+   },
+   {
+    "name": "interrupt.gc_vs_build",
+    "sha256": "ad356f12fecd16bc8ce9aab3dbd77d2f69bab4d3e3420cea12436386ae4469f8"
+   },
+   {
+    "name": "interrupt.gc_vs_lease",
+    "sha256": "34f9002d46a6afbe70b324ab8fef644d1810d498f092d4b38eff75be1046aa82"
+   },
+   {
+    "name": "interrupt.kill_checkpoint",
+    "sha256": "153e39016a6220d6403edd1f4d4415f902ae3edaf1e0036cf295df991fe84c55"
+   },
+   {
+    "name": "interrupt.kill_mid_publish",
+    "sha256": "40cecfd19736e809d31032b1b5e50a940559ee10e354fd739ca70443b5ddf646"
+   },
+   {
+    "name": "interrupt.kill_post_replace",
+    "sha256": "83d6a07489515741854758d00ba7ddb370a05be191fcebac7c5898c57addacb7"
+   },
+   {
+    "name": "interrupt.kill_pre_receipt",
+    "sha256": "748e2421233b55d37771614c8143cd1b669c4a7ae592c554f19c7228a855aac9"
+   },
+   {
+    "name": "interrupt.teeth_replace_by_copy",
+    "sha256": "1423f1fe5f0708a2abf2dfc68cb370e2b948dd95ccade06cc5466f73c2b939da"
+   },
+   {
+    "name": "interrupt.teeth_wrong_expectation",
+    "sha256": "9ea80499a585cbeba4602f28cc4218a58241f4c060737f143a64fbee6994f960"
+   },
+   {
+    "name": "isolation.main",
+    "sha256": "fbbdb5e3d3ee701a6c9c46e2cb3b7ce037db276cde1db3b93689b863c9b26f1f"
+   },
+   {
+    "name": "isolation.revocation",
+    "sha256": "1f716e1a26b336836db84113912cc6ef798708a31b5a7d94fe175ad9e59fcea4"
+   },
+   {
+    "name": "isolation.teeth",
+    "sha256": "c3f92d75c5227f51424b6e8e40adb772a98e5b628b2746ee65e82007efc09731"
+   }
+  ],
+  "interruption": {
+   "cases": [
+    {
+     "expect_valid": true,
+     "expected_tree": "T1",
+     "facts": {
+      "cancel": "honoured",
+      "exit": 4,
+      "published": false,
+      "state": "cancelled"
+     },
+     "id": "cancel_marker",
+     "injection": {
+      "kind": "cancel_marker",
+      "seam": "staged"
+     },
+     "live_unchanged": null,
+     "valid": true,
+     "validation": {
+      "acquire_ok": true,
+      "control_gid_matches": true,
+      "no_invalid_jobs": true,
+      "server_expected_canary": true,
+      "server_gid_matches": true,
+      "server_other_canary_absent": true,
+      "status_current_matches": true
+     }
+    },
+    {
+     "expect_valid": true,
+     "expected_tree": "T1",
+     "facts": {
+      "cancel": "honoured",
+      "exit": 4,
+      "published": false,
+      "state": "cancelled"
+     },
+     "id": "cancel_sigterm",
+     "injection": {
+      "kind": "cancel_sigterm",
+      "seam": "staged"
+     },
+     "live_unchanged": null,
+     "valid": true,
+     "validation": {
+      "acquire_ok": true,
+      "control_gid_matches": true,
+      "no_invalid_jobs": true,
+      "server_expected_canary": true,
+      "server_gid_matches": true,
+      "server_other_canary_absent": true,
+      "status_current_matches": true
+     }
+    },
+    {
+     "expect_valid": true,
+     "expected_tree": "T2",
+     "facts": {
+      "interrupted": true,
+      "interrupted_state": "running",
+      "killed": true,
+      "outcome": "built",
+      "resumed_from": 2,
+      "state": "completed"
+     },
+     "id": "kill_checkpoint",
+     "injection": {
+      "at": 2,
+      "kind": "kill",
+      "seam": "checkpoint"
+     },
+     "live_unchanged": null,
+     "valid": true,
+     "validation": {
+      "acquire_ok": true,
+      "control_gid_matches": true,
+      "no_invalid_jobs": true,
+      "server_expected_canary": true,
+      "server_gid_matches": true,
+      "server_other_canary_absent": true,
+      "status_current_matches": true
+     }
+    },
+    {
+     "expect_valid": true,
+     "expected_tree": "T2",
+     "facts": {
+      "interrupted": true,
+      "interrupted_state": "running",
+      "killed": true,
+      "outcome": "built",
+      "state": "completed"
+     },
+     "id": "kill_mid_publish",
+     "injection": {
+      "kind": "kill",
+      "seam": "mid_publish"
+     },
+     "live_unchanged": null,
+     "valid": true,
+     "validation": {
+      "acquire_ok": true,
+      "control_gid_matches": true,
+      "no_invalid_jobs": true,
+      "server_expected_canary": true,
+      "server_gid_matches": true,
+      "server_other_canary_absent": true,
+      "status_current_matches": true
+     }
+    },
+    {
+     "expect_valid": true,
+     "expected_tree": "T2",
+     "facts": {
+      "interrupted": true,
+      "interrupted_state": "published",
+      "killed": true,
+      "outcome": "recovered",
+      "state": "completed"
+     },
+     "id": "kill_post_replace",
+     "injection": {
+      "kind": "kill",
+      "seam": "post_replace"
+     },
+     "live_unchanged": null,
+     "valid": true,
+     "validation": {
+      "acquire_ok": true,
+      "control_gid_matches": true,
+      "no_invalid_jobs": true,
+      "server_expected_canary": true,
+      "server_gid_matches": true,
+      "server_other_canary_absent": true,
+      "status_current_matches": true
+     }
+    },
+    {
+     "expect_valid": true,
+     "expected_tree": "T2",
+     "facts": {
+      "interrupted": true,
+      "interrupted_state": "captured",
+      "killed": true,
+      "outcome": "recovered",
+      "state": "completed"
+     },
+     "id": "kill_pre_receipt",
+     "injection": {
+      "kind": "kill",
+      "seam": "pre_receipt"
+     },
+     "live_unchanged": null,
+     "valid": true,
+     "validation": {
+      "acquire_ok": true,
+      "control_gid_matches": true,
+      "no_invalid_jobs": true,
+      "server_expected_canary": true,
+      "server_gid_matches": true,
+      "server_other_canary_absent": true,
+      "status_current_matches": true
+     }
+    },
+    {
+     "expect_valid": true,
+     "expected_tree": "T2",
+     "facts": {
+      "acquire_code": "EXPIRED_REFERENCE",
+      "acquire_exit": 3,
+      "holder_killed": true,
+      "leased_retained": true,
+      "retired_after_release": true
+     },
+     "id": "gc_vs_lease",
+     "injection": {
+      "kind": "gc_vs_lease"
+     },
+     "live_unchanged": null,
+     "valid": true,
+     "validation": {
+      "acquire_ok": true,
+      "control_gid_matches": true,
+      "no_invalid_jobs": true,
+      "server_expected_canary": true,
+      "server_gid_matches": true,
+      "server_other_canary_absent": true,
+      "status_current_matches": true
+     }
+    },
+    {
+     "expect_valid": true,
+     "expected_tree": "T2",
+     "facts": {
+      "gc_code": "WRITER_BUSY",
+      "gc_exit": 75,
+      "state": "completed"
+     },
+     "id": "gc_vs_build",
+     "injection": {
+      "kind": "gc_vs_build",
+      "seam": "staged"
+     },
+     "live_unchanged": null,
+     "valid": true,
+     "validation": {
+      "acquire_ok": true,
+      "control_gid_matches": true,
+      "no_invalid_jobs": true,
+      "server_expected_canary": true,
+      "server_gid_matches": true,
+      "server_other_canary_absent": true,
+      "status_current_matches": true
+     }
+    },
+    {
+     "expect_valid": false,
+     "expected_tree": "T2",
+     "facts": {
+      "corrupted_farm_acquire_refused": true
+     },
+     "id": "teeth_replace_by_copy",
+     "injection": {
+      "kind": "teeth_replace_by_copy"
+     },
+     "live_unchanged": true,
+     "valid": false,
+     "validation": {
+      "acquire_ok": false,
+      "control_gid_matches": true,
+      "no_invalid_jobs": true,
+      "server_expected_canary": true,
+      "server_gid_matches": true,
+      "server_other_canary_absent": true,
+      "status_current_matches": true
+     }
+    },
+    {
+     "expect_valid": false,
+     "expected_tree": "T2",
+     "facts": {
+      "validated_against": "T1"
+     },
+     "id": "teeth_wrong_expectation",
+     "injection": {
+      "kind": "teeth_wrong_expectation"
+     },
+     "live_unchanged": null,
+     "valid": false,
+     "validation": {
+      "acquire_ok": true,
+      "control_gid_matches": false,
+      "no_invalid_jobs": true,
+      "server_expected_canary": false,
+      "server_gid_matches": false,
+      "server_other_canary_absent": false,
+      "status_current_matches": false
+     }
+    }
+   ]
+  },
+  "isolation": {
+   "allow_rows": 22,
+   "by_class": [
+    {
+     "class": "control",
+     "controls_ok": 22,
+     "deny_cases": 0,
+     "unauthorized": 0
+    },
+    {
+     "class": "ungranted_repo",
+     "controls_ok": 2,
+     "deny_cases": 2,
+     "unauthorized": 0
+    },
+    {
+     "class": "ungranted_tool",
+     "controls_ok": 2,
+     "deny_cases": 2,
+     "unauthorized": 1
+    },
+    {
+     "class": "disabled_tool",
+     "controls_ok": 2,
+     "deny_cases": 2,
+     "unauthorized": 0
+    },
+    {
+     "class": "impact_before_ungranted",
+     "controls_ok": 1,
+     "deny_cases": 1,
+     "unauthorized": 0
+    },
+    {
+     "class": "cross_principal_cursor",
+     "controls_ok": 1,
+     "deny_cases": 1,
+     "unauthorized": 0
+    },
+    {
+     "class": "cross_principal_resource",
+     "controls_ok": 1,
+     "deny_cases": 1,
+     "unauthorized": 0
+    },
+    {
+     "class": "cross_repo_resource",
+     "controls_ok": 1,
+     "deny_cases": 1,
+     "unauthorized": 0
+    },
+    {
+     "class": "cross_repo_argument",
+     "controls_ok": 1,
+     "deny_cases": 1,
+     "unauthorized": 0
+    },
+    {
+     "class": "path_escape",
+     "controls_ok": 2,
+     "deny_cases": 2,
+     "unauthorized": 0
+    },
+    {
+     "class": "token_missing",
+     "controls_ok": 1,
+     "deny_cases": 1,
+     "unauthorized": 0
+    },
+    {
+     "class": "token_invalid",
+     "controls_ok": 1,
+     "deny_cases": 1,
+     "unauthorized": 0
+    },
+    {
+     "class": "token_wrong_audience",
+     "controls_ok": 1,
+     "deny_cases": 1,
+     "unauthorized": 0
+    },
+    {
+     "class": "revoked_grant",
+     "controls_ok": 2,
+     "deny_cases": 2,
+     "unauthorized": 0
+    }
+   ],
+   "deny_rows": 18,
+   "overlap": {
+    "holds_spanned_recorder_attested": true,
+    "observed": {
+     "max_client_overlap": 8,
+     "server_peak": 8
+    },
+    "server_peak_ge_3": true
+   },
+   "principals": [
+    "p1",
+    "p2",
+    "p3",
+    "p4"
+   ],
+   "routes": [
+    "a",
+    "b",
+    "c"
+   ],
+   "rows_total": 40,
+   "unauthorized": {
+    "main": 1,
+    "revocation": 0,
+    "teeth": 1
+   },
+   "unauthorized_rows": [
+    "D04"
+   ]
+  },
+  "manifest_sha256": "a2bf1e211caede3c92e4ecb67b2b7605148851d20ff7a6694fe6f41b074f5fec",
+  "unresolved_limits": [
+   "black_box_ledger_detects_planted_canaries_and_typed_outcomes_only",
+   "zero_is_within_the_enumerated_cases_not_a_no_leakage_claim",
+   "stderr_tool_call_corroboration_is_necessary_not_sufficient",
+   "timing_side_channels_untested",
+   "shared_address_space_untested",
+   "tls_reverse_proxy_untested",
+   "same_path_pair_exposes_the_live_tree_by_design",
+   "real_hosts_untested_claude_code_copilot_cursor",
+   "s40_in_process_observer_suite_inherited_not_rerun",
+   "gc_seam_kills_untested_only_lease_writer_busy_and_expiry",
+   "single_host_loopback_workload_not_a_load_test",
+   "resource_metrics_linux_proc_with_source_labels",
+   "no_deployment_credentials_or_dns_performed",
+   "fresh_runs_compared_by_invariants_not_by_digest"
+  ],
+  "verdict": "blocked"
+ }
+}

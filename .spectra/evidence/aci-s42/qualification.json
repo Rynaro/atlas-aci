@@ -1,0 +1,16 @@
+{
+ "slice_id": "ACI-S42",
+ "stage": "Day-1 qualification (before any slice file under scripts/, tests/, atlas/, docs/)",
+ "stop_rule_triggered": false,
+ "results": {
+  "a_base_invariants": "pass: src clean at 4f470d7; tools sha 94f9567a.../1631472; base full suite 1 failed (known), 3254 passed, 11 skipped; see base-invariants.json",
+  "b_serve_shared_subprocess": "pass: serve-shared starts on container-local tmp with generated RS256 keys and a/b/c (same-path pair passes validate_deployment); port parsed from the shared_http_listening line; a nonce-bearing search_text gives a stderr tool_call line containing the nonce; SIGTERM gives a clean exit and a shared_http_stopped line; os.wait4 returns rusage. The stopped line renders keys alphabetically (admitted= peak= rejected=): parsed per key, not as one ordered pattern",
+  "c_sdk_bearer_path": "pass: streamable_http_client(url, *, http_client=None, terminate_on_close=True); an SDK ClientSession over httpx.AsyncClient(headers=Authorization Bearer) initializes (2025-11-25), lists 7 tools and calls search_symbol on /mcp/b with a witness hit. SDK x shared-http stays required:true",
+  "d_s41_faults_from_a_subprocess": "pass: D6 sequence (T1 base, then T2 over the warm cache) replayed for all 8 injection kinds plus 2 teeth cases; kill at checkpoint at=2 gives rc -9, an interrupted_jobs id and resume resumed_from 2; block at staged gives the seam line, jobs gc --wait-seconds 0 gives exit 75 WRITER_BUSY; jobs acquire --hold gives a lease line; a corrupted farm copy is refused (non-zero); see day1-d-interrupt.log",
+  "e_proc": "pass: /proc/<pid>/status and /proc/<pid>/fd readable in the dev image (uid 1000) and in the production image as user atlas",
+  "f_generation_id_field": "pass: stdio graph_query op=status carries generation_id equal to jobs status current_generation_id (server_gid_matches is true, not null)",
+  "g_case_table_dry_run": "pass: no deny case returned ok and no foreign canary hit; every control hits its target witness; see day1-g-case-table.log. Adaptations recorded in the final report (witness tokens inside callee identifiers because resource blobs carry the callee span only; retrieve text is the exact symbol name, so retrieve rows are not nonce carriers; D13 uses ../a; extra controls M12-M14; page_max_bytes 18000/24000, deadline_ms 2000)",
+  "h_wall_time_cpus_4": "22 s for the full recorder (25 units, 3 interrupt workers plus one independent-phase thread) under docker run --cpus 4 in the dev image; the cut order was not needed. Deadlines: per case 120 s, recorder 300 s (units only), test fixture 600 s (adds the serial grammar warm-up, up to 240 s, found at the first py314 gate: a cold tree-sitter grammar cache downloads on first use, 150-200 s on this host network, and four parallel cold processes timed out); 2x rule satisfied with a wide margin",
+  "i_production_image": "pass: as user atlas (uid 10001), --network none, /usr/local/bin/python -I: --help runs; the full recorder (python grammar available offline) completes 25/25 units"
+ }
+}

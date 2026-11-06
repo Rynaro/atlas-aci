@@ -1,0 +1,54 @@
+{
+ "checks": [
+  {
+   "detail": "mcp 1.30.0 in the production image",
+   "name": "P0-sdk-version",
+   "status": "PASS"
+  },
+  {
+   "detail": "installed atlas_aci/**/*.py equals mcp-server/src",
+   "name": "P0-installed-equals-source",
+   "status": "PASS"
+  },
+  {
+   "detail": "recorder exit 0 as user atlas, --network none, python -I",
+   "name": "P1-recorder-in-production-image",
+   "status": "PASS"
+  },
+  {
+   "detail": "the over-granted policy gives verdict blocked",
+   "name": "N1-verdict-blocked",
+   "status": "PASS"
+  },
+  {
+   "detail": "failed checks are exactly: isolation.positive_controls,isolation.typed_denials,isolation.unauthorized_zero",
+   "name": "N2-failed-checks-exact",
+   "status": "PASS"
+  },
+  {
+   "detail": "unauthorized (main revocation teeth): 1 0 1",
+   "name": "N3-unauthorized-counted",
+   "status": "PASS"
+  },
+  {
+   "detail": "environment, interruption, compat and capacity checks still pass",
+   "name": "N4-other-checks-intact",
+   "status": "PASS"
+  }
+ ],
+ "facts": {
+  "capacity_n": "72",
+  "compat_cells": "10",
+  "env": "3.12.16 Linux-aarch64",
+  "failed": "isolation.positive_controls,isolation.typed_denials,isolation.unauthorized_zero",
+  "image": "sha256:af38209937b929ea03fa2b94df03698df56d8adfeb0a9000f6f99b1a14bbbbe6",
+  "interrupt_records": "10",
+  "iso_rows": "40",
+  "sha": "f0de2c344e88a44e55430f2fa0e60a0707b2c62dad20c22b379e67eec5f6a2eb",
+  "teeth": "pass pass",
+  "unauthorized": "1 0 1",
+  "verdict": "blocked"
+ },
+ "image": "sha256:af38209937b929ea03fa2b94df03698df56d8adfeb0a9000f6f99b1a14bbbbe6",
+ "negative_control": true
+}

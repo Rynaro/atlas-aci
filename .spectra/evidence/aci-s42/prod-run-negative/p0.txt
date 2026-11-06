@@ -1,0 +1,9 @@
+python 3.12.16
+version mcp 1.30.0
+version pyjwt 2.15.1
+version cryptography 50.0.2
+version httpx 0.28.1
+version atlas-aci 2.0.0
+installed_files 106 57a21d260f69859688f1b2d834e43d62c504c4f2a37e67eca030fa70e67ad5ab
+source_files 106 57a21d260f69859688f1b2d834e43d62c504c4f2a37e67eca030fa70e67ad5ab
+same_tree True

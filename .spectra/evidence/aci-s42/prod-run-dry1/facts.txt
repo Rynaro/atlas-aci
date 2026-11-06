@@ -1,0 +1,11 @@
+verdict ready_for_operator_review
+failed none
+iso_rows 40
+compat_cells 10
+interrupt_records 10
+capacity_n 72
+teeth pass pass
+unauthorized 0 0 1
+sha 867296e3da8dd3a37d3f716d9945b76c7e43f635a1aa3d4f2e328eb9790ff1e0
+image sha256:1785257ee96b40dee1368082d8a672d78aa0aac0f0cdc8fc1bcf8237b4144790
+env 3.12.16 Linux-aarch64

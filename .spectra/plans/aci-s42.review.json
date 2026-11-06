@@ -1,0 +1,106 @@
+{
+ "slice_id": "ACI-S42",
+ "plan": ".spectra/plans/aci-s42.md",
+ "author": "orchestrator-ramza-plan-s42",
+ "checker": "atlas-s42-plan-checker",
+ "verdict": "APPROVE_WITH_CONDITIONS",
+ "method": "independent read-only review; plan, frozen criteria, scope amendment, scout report, shared_http.py router/guard/config/run_shared, authz.py (decide, ScopedLeaseRegistry, PrincipalInflight), http.py gate, enforcement.record, tools/search_text.py and graph_query.py, protocol/results.py, resources.py, revisions.py, job_runner.py seams and fault grammar, jobs.py status, __main__.py jobs commands, S41 support/contract, v3_aggregate.py canonical/gzip helpers, S23/S36/S40/S41 pins, CHANGELOG/README layout, ci.yml and pyproject read; SDK http_client signature, flock and virtiofs behaviour and timing estimated from knowledge and flagged for Day-1; no commands executed",
+ "findings": [
+  {
+   "n": 1,
+   "severity": "MAJOR",
+   "summary": "request-excluded canary hits make search_text controls self-cancelling and base64 resource blobs invisible; need disjoint pattern and witness tokens, decoded-blob scan, and synthetic tests of both D5 clauses",
+   "disposition": "accepted as plan condition 1"
+  },
+  {
+   "n": 2,
+   "severity": "MAJOR",
+   "summary": "controls do not hit the deny case's target canary (D01/M04, D02/M05, D11, D12); define target_domain per deny and same-canary same-tool controls",
+   "disposition": "accepted as plan condition 2"
+  },
+  {
+   "n": 3,
+   "severity": "MAJOR",
+   "summary": "nonce sha256(case_id) collides between main and teeth D01, giving a deterministic false server_seen; key by (phase, case_id) and use file-direct stderr",
+   "disposition": "accepted as plan condition 3"
+  },
+  {
+   "n": 4,
+   "severity": "MAJOR",
+   "summary": "max_leases_per_principal 1 makes R1 fail LEASE_CAPACITY after W1 and races M08/M09 on one lease; raise to 3 with graph leases 8 and use separate warm leases",
+   "disposition": "accepted as plan condition 4"
+  },
+  {
+   "n": 5,
+   "severity": "MAJOR",
+   "summary": "outcome classifier unspecified and frozen expected_outcomes may include OTHER, so any error counts as typed denial; specify classifier order and ban OTHER in deny expectations",
+   "disposition": "accepted as plan condition 5"
+  },
+  {
+   "n": 6,
+   "severity": "MAJOR",
+   "summary": "AC-002 teeth cover only the acquire condition; add a wrong-expectation negative control and a copy-namespace corruption that must fail the server-side conditions",
+   "disposition": "accepted as plan condition 6"
+  },
+  {
+   "n": 7,
+   "severity": "MAJOR",
+   "summary": "sequential phases estimate 130-150 s against a 150 s recorder deadline and 120 s gate; measure under --cpus 4, set deadlines at least 2x, consider overlapping independent phases",
+   "disposition": "accepted as plan condition 7"
+  },
+  {
+   "n": 8,
+   "severity": "MINOR",
+   "summary": "interruption mechanics: running_jobs vs interrupted_jobs for job ids, cancel_sigterm needs release and S41 uses staged, stdin pipe held, env hygiene, Day-1 (d) must replay the D6 sequence for all eight injections, normalize kill exit codes",
+   "disposition": "accepted as plan condition 8"
+  },
+  {
+   "n": 9,
+   "severity": "MINOR",
+   "summary": "compat: read negotiated from the initialize response, send the negotiated header afterwards, literal oracle, SDK http_client Day-1 evidence, derive shared in the aggregator, negative controls must use never-cut units",
+   "disposition": "accepted as plan condition 9"
+  },
+  {
+   "n": 10,
+   "severity": "MINOR",
+   "summary": "capacity: peak<=limit is tautological, bound retries, declare capacity grants, optional deterministic gate-503 phase; saturation route itself is deterministic",
+   "disposition": "accepted as plan condition 10"
+  },
+  {
+   "n": 11,
+   "severity": "MINOR",
+   "summary": "gate peak>=3 does not prove holds were admitted; add a settle delay and word the overlap claim and recorder-attested holds_spanned precisely",
+   "disposition": "accepted as plan condition 11"
+  },
+  {
+   "n": 12,
+   "severity": "MINOR",
+   "summary": "aggregator robustness: typed errors for bad gzip/json/shape, failed records without body, input sha over strip(record), compare canonical plain bytes not gz bytes, unique importlib module name",
+   "disposition": "accepted as plan condition 12"
+  },
+  {
+   "n": 13,
+   "severity": "MINOR",
+   "summary": "subprocess.run timeout kills only the recorder and orphans servers; use start_new_session plus killpg, a reaper, and timeouts on every test subprocess",
+   "disposition": "accepted as plan condition 13"
+  },
+  {
+   "n": 14,
+   "severity": "MINOR",
+   "summary": "wording: precise ready regex, BANNED words, isolation means enumerated cases, no real host tested",
+   "disposition": "accepted as plan condition 14"
+  },
+  {
+   "n": 15,
+   "severity": "MINOR",
+   "summary": "lint and production-image runnability confirmed with checks: ruff/mypy via cwd config, atlas/evals unlinted acceptable, -I recorder with path-loaded siblings, P0 version checks",
+   "disposition": "accepted as plan condition 15"
+  },
+  {
+   "n": 16,
+   "severity": "MINOR",
+   "summary": "CHANGELOG/README/docs-operations/v3/s38/tools-sha/harden-gate pins confirmed green with the planned placements; no action",
+   "disposition": "accepted as plan condition 16"
+  }
+ ]
+}

@@ -1,0 +1,84 @@
+{
+ "checks": [
+  {
+   "detail": "mcp 1.30.0 in the production image",
+   "name": "P0-sdk-version",
+   "status": "PASS"
+  },
+  {
+   "detail": "installed atlas_aci/**/*.py equals mcp-server/src",
+   "name": "P0-installed-equals-source",
+   "status": "PASS"
+  },
+  {
+   "detail": "recorder exit 0 as user atlas, --network none, python -I",
+   "name": "P1-recorder-in-production-image",
+   "status": "PASS"
+  },
+  {
+   "detail": "ready_for_operator_review, failed checks none",
+   "name": "P2-verdict",
+   "status": "PASS"
+  },
+  {
+   "detail": "25 raw records",
+   "name": "P2-records-non-vacuous",
+   "status": "PASS"
+  },
+  {
+   "detail": "40 ledger rows",
+   "name": "P2-isolation-rows",
+   "status": "PASS"
+  },
+  {
+   "detail": "10 recorded cells",
+   "name": "P2-compat-cells",
+   "status": "PASS"
+  },
+  {
+   "detail": "10 interruption records (8 recoveries, 2 teeth)",
+   "name": "P2-interrupt-records",
+   "status": "PASS"
+  },
+  {
+   "detail": "72 workload calls in one record",
+   "name": "P2-capacity-calls",
+   "status": "PASS"
+  },
+  {
+   "detail": "ledger and recovery teeth checks pass",
+   "name": "P2-teeth-checks",
+   "status": "PASS"
+  },
+  {
+   "detail": "unauthorized (main revocation teeth) = 0 0 1: zero within the enumerated cases, and the over-granted teeth run fires",
+   "name": "P2-ledger-counts",
+   "status": "PASS"
+  },
+  {
+   "detail": "report names the producing image, python 3.12.16 Linux-aarch64",
+   "name": "P2-environment-recorded",
+   "status": "PASS"
+  },
+  {
+   "detail": "without capacity.main the verdict is blocked and names capacity.limits_held",
+   "name": "P3-missing-record-blocks",
+   "status": "PASS"
+  }
+ ],
+ "facts": {
+  "capacity_n": "72",
+  "compat_cells": "10",
+  "env": "3.12.16 Linux-aarch64",
+  "failed": "none",
+  "image": "sha256:1785257ee96b40dee1368082d8a672d78aa0aac0f0cdc8fc1bcf8237b4144790",
+  "interrupt_records": "10",
+  "iso_rows": "40",
+  "sha": "867296e3da8dd3a37d3f716d9945b76c7e43f635a1aa3d4f2e328eb9790ff1e0",
+  "teeth": "pass pass",
+  "unauthorized": "0 0 1",
+  "verdict": "ready_for_operator_review"
+ },
+ "image": "sha256:1785257ee96b40dee1368082d8a672d78aa0aac0f0cdc8fc1bcf8237b4144790",
+ "negative_control": false
+}

@@ -1,0 +1,32 @@
+NEGATIVE CONTROL: main policy over-granted (p4 gains search_text on repository b)
+IMAGE: atlas-aci:s42 id=sha256:af38209937b929ea03fa2b94df03698df56d8adfeb0a9000f6f99b1a14bbbbe6 created=2026-11-06T10:44:36.404819836Z
+python 3.12.16
+version mcp 1.30.0
+version pyjwt 2.15.1
+version cryptography 50.0.2
+version httpx 0.28.1
+version atlas-aci 2.0.0
+installed_files 106 57a21d260f69859688f1b2d834e43d62c504c4f2a37e67eca030fa70e67ad5ab
+source_files 106 57a21d260f69859688f1b2d834e43d62c504c4f2a37e67eca030fa70e67ad5ab
+same_tree True
+PASS P0-sdk-version: mcp 1.30.0 in the production image
+PASS P0-installed-equals-source: installed atlas_aci/**/*.py equals mcp-server/src
+PASS P1-recorder-in-production-image: recorder exit 0 as user atlas, --network none, python -I
+f0de2c344e88a44e55430f2fa0e60a0707b2c62dad20c22b379e67eec5f6a2eb blocked
+verdict blocked
+failed isolation.positive_controls,isolation.typed_denials,isolation.unauthorized_zero
+iso_rows 40
+compat_cells 10
+interrupt_records 10
+capacity_n 72
+teeth pass pass
+unauthorized 1 0 1
+sha f0de2c344e88a44e55430f2fa0e60a0707b2c62dad20c22b379e67eec5f6a2eb
+image sha256:af38209937b929ea03fa2b94df03698df56d8adfeb0a9000f6f99b1a14bbbbe6
+env 3.12.16 Linux-aarch64
+PASS N1-verdict-blocked: the over-granted policy gives verdict blocked
+PASS N2-failed-checks-exact: failed checks are exactly: isolation.positive_controls,isolation.typed_denials,isolation.unauthorized_zero
+PASS N3-unauthorized-counted: unauthorized (main revocation teeth): 1 0 1
+PASS N4-other-checks-intact: environment, interruption, compat and capacity checks still pass
+wrote /Users/henrique/workspace/oss/agents/atlas-aci/.spectra/evidence/aci-s42/prod-run-negative/production-scenario-negative.json
+RESULT: negative control blocked as intended
