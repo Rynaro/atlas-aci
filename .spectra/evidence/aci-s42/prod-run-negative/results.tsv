@@ -1,0 +1,7 @@
+P0-sdk-version	PASS	mcp 1.30.0 in the production image
+P0-installed-equals-source	PASS	installed atlas_aci/**/*.py equals mcp-server/src
+P1-recorder-in-production-image	PASS	recorder exit 0 as user atlas, --network none, python -I
+N1-verdict-blocked	PASS	the over-granted policy gives verdict blocked
+N2-failed-checks-exact	PASS	failed checks are exactly: isolation.positive_controls,isolation.typed_denials,isolation.unauthorized_zero
+N3-unauthorized-counted	PASS	unauthorized (main revocation teeth): 1 0 1
+N4-other-checks-intact	PASS	environment, interruption, compat and capacity checks still pass

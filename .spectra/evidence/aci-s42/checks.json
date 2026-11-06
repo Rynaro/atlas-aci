@@ -1,0 +1,51 @@
+{
+ "slice": "ACI-S42",
+ "base_commit": "4f470d73a80fcf0e797728b1e45bccc77bf3a0a5",
+ "environment": "atlas-aci-dev-relock (uid 1000, Python 3.12, mcp 1.30.0); CI is Python 3.14 (S42 contract tests: 29 passed on python:3.14 with uv sync --frozen, replay verified on 3.14)",
+ "gates": {
+  "s42-contract": {
+   "exit": 0,
+   "summary": "29 S42 tests pass in 34.4 s, and in 36.3 s under docker run --cpus 4; orchestrator rerun of the S42 suites with S14, S23 and S38-S41 isolation: 130 passed; the six AC tests rerun verbosely (acceptance-runs.json): all exit 0"
+  },
+  "regression": {
+   "exit": 0,
+   "summary": "699 passed"
+  },
+  "ruff": {
+   "exit": 0
+  },
+  "format": {
+   "exit": 0
+  },
+  "mypy": {
+   "exit": 0,
+   "summary": "orchestrator reran the exact CI lint chain including ../scripts/: clean"
+  },
+  "full-suite": {
+   "exit": 1,
+   "summary": "3283 passed, 11 skipped, 1 deselected, 1 failed: the known uid-1000 test_s01_contract::test_call_deadline_after_initialization (pre-existing, passes in CI); base 3254 + 29 new; known-flaky test_s08_integration::test_nonregular_pack_does_not_block_acquisition deselected"
+  },
+  "g-src": {
+   "exit": 0,
+   "summary": "zero diff against the base under mcp-server/src, pyproject.toml, uv.lock, both Dockerfiles and .github/workflows; orchestrator confirmed docs/operations, docs/evidence/v3 and scripts/eval/v3_* unchanged and no existing test edited"
+  },
+  "g-mcp": {
+   "exit": 0,
+   "summary": "tools JSON sha256 94f9567a..., 1631472 bytes, 7 tools"
+  },
+  "g-replay": {
+   "exit": 0,
+   "summary": "orchestrator re-aggregated the 25 committed raw records into a scratch directory: readiness-report.json and readiness-report.md cmp-identical to the committed files; --verify exit 0; canonical_sha256 867296e3..., verdict ready_for_operator_review"
+  },
+  "py314": {
+   "exit": 0,
+   "summary": "29 passed; replay verified on 3.14"
+  },
+  "g-image": {
+   "exit": 0,
+   "summary": "orchestrator-built atlas-aci:s42 (sha256:af382099...): prod-scenario.sh RESULT all checks passed (recorder inside the production image as atlas, --network none, aggregation and blocked-verdict checks); orchestrator negative control S42_NEGATIVE=1 RESULT negative control blocked as intended, failing exactly isolation.positive_controls, isolation.typed_denials and isolation.unauthorized_zero"
+  }
+ },
+ "drift": "ramza-drift --staged: 236 changed files, all within declared scope",
+ "criteria_sha256": "3930f6ad8488a435e7ea980c700c51b2a899539d37b96858bc984143cb0ebdab"
+}

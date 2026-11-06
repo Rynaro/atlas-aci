@@ -1,0 +1,13 @@
+P0-sdk-version	PASS	mcp 1.30.0 in the production image
+P0-installed-equals-source	PASS	installed atlas_aci/**/*.py equals mcp-server/src
+P1-recorder-in-production-image	PASS	recorder exit 0 as user atlas, --network none, python -I
+P2-verdict	PASS	ready_for_operator_review, failed checks none
+P2-records-non-vacuous	PASS	25 raw records
+P2-isolation-rows	PASS	40 ledger rows
+P2-compat-cells	PASS	10 recorded cells
+P2-interrupt-records	PASS	10 interruption records (8 recoveries, 2 teeth)
+P2-capacity-calls	PASS	72 workload calls in one record
+P2-teeth-checks	PASS	ledger and recovery teeth checks pass
+P2-ledger-counts	PASS	unauthorized (main revocation teeth) = 0 0 1: zero within the enumerated cases, and the over-granted teeth run fires
+P2-environment-recorded	PASS	report names the producing image, python 3.12.16 Linux-aarch64
+P3-missing-record-blocks	PASS	without capacity.main the verdict is blocked and names capacity.limits_held

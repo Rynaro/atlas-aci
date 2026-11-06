@@ -116,3 +116,51 @@ shared by the v3 aggregator (`scripts/eval/v3_aggregate.py`); `measure_context_y
 unchanged and `test_s23_metrics.py` proves the two agree on every committed S18 row. The frozen
 manifest is `v3/manifest.v1.json`. `run-canaries.py --server-json` runs any `tasks.json` against
 another server argv (inline JSON array or a file). See `docs/evidence/v3/README.md`.
+
+## ACI-S42 shared-operation readiness
+
+`shared/manifest.v1.json` (`atlas-shared-readiness-manifest.v1`) freezes the declared fixture for the
+shared-operation evidence: the four principals and their grants, the planted canary trees, the
+evidence access case table (controls, deny cases with a same-shape control and a target domain,
+a revocation sequence and the over-granted teeth re-run), the interruption matrix, the client and
+transport cells, the bounded workload, the deadlines and the required checks. Two scripts use it:
+
+```sh
+python scripts/eval/s42_record.py --manifest atlas/evals/shared/manifest.v1.json \
+    --out /tmp/s42/raw --work /tmp/s42/work
+python scripts/eval/s42_aggregate.py --manifest atlas/evals/shared/manifest.v1.json \
+    --raw docs/evidence/s42/raw --out docs/evidence/s42 [--verify]
+```
+
+The recorder starts real `atlas-aci` processes (`serve-shared`, stdio `serve`, `serve --transport
+http`, `jobs`) and writes one gzip-canonical record per unit; the aggregator is pure and derives
+every count and the verdict (`blocked` or `ready_for_operator_review`) from row-level facts. Keys
+named `observed` or `diagnostic` are excluded from `canonical_sha256`, so replaying the committed
+records is byte-identical while a fresh run is compared by invariants. Formats, commands, the
+tested deployment model and the committed run are in `docs/evidence/s42/README.md`.
+
+H1 Black-box evidence: the ledger detects planted canaries and typed outcomes in responses and server log lines, not internal reads.
+
+H2 Unauthorized evidence access is zero within the enumerated cases; this is not a claim that no leakage exists.
+
+H3 Not tested: timing side channels, the shared address space of the single server process, and a TLS-terminating reverse proxy.
+
+H4 Inherited and not re-run: the S40 in-process Observer suite (mcp-server/tests/slices/test_s40_contract.py).
+
+Hosts are listed and never tested: claude-code: untested, github-copilot: untested, cursor: untested.
+Unresolved limits, always rendered in the report:
+
+- black_box_ledger_detects_planted_canaries_and_typed_outcomes_only
+- zero_is_within_the_enumerated_cases_not_a_no_leakage_claim
+- stderr_tool_call_corroboration_is_necessary_not_sufficient
+- timing_side_channels_untested
+- shared_address_space_untested
+- tls_reverse_proxy_untested
+- same_path_pair_exposes_the_live_tree_by_design
+- real_hosts_untested_claude_code_copilot_cursor
+- s40_in_process_observer_suite_inherited_not_rerun
+- gc_seam_kills_untested_only_lease_writer_busy_and_expiry
+- single_host_loopback_workload_not_a_load_test
+- resource_metrics_linux_proc_with_source_labels
+- no_deployment_credentials_or_dns_performed
+- fresh_runs_compared_by_invariants_not_by_digest

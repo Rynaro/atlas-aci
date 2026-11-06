@@ -1,0 +1,48 @@
+fixtures 1.9 s
+isolation 3.6 s
+== main {'policy': 'main', 'policy_sha256': 'f1b65b8a1e8b16eb8b0bbe4209f4a24929c12488cdab4052867ed011e98a4b1e', 'holds_spanned': True, 'server': {'stopped_line_parsed': True, 'peak_ge_3': True}, 'observed': {'server': {'admitted': 35, 'rejected': 0, 'peak': 8}, 'max_client_overlap': 8}}
+warm       W1   p1    a ok                                         hits=['A'] seen=None witreq=False http=200
+warm       W2   p1    a ok                                         hits=['A'] seen=None witreq=False http=200
+hold       H1   p2    a ok                                         hits=['A'] seen=None witreq=False http=200
+hold       H2   p4    b ok                                         hits=['B'] seen=None witreq=False http=200
+main       M01  p1    a ok                                         hits=['A'] seen=True witreq=False http=200
+main       M02  p1    b ok                                         hits=['B'] seen=True witreq=False http=200
+main       M03  p1    a ok                                         hits=['A'] seen=None witreq=False http=200
+main       M04  p3    b ok                                         hits=['B'] seen=True witreq=False http=200
+main       M05  p2    a ok                                         hits=['A'] seen=None witreq=False http=200
+main       M06  p4    b ok                                         hits=['B'] seen=None witreq=False http=200
+main       M07  p2    a ok                                         hits=['C'] seen=None witreq=False http=200
+main       M08  p1    a ok                                         hits=['A'] seen=None witreq=False http=200
+main       M09  p1    a ok                                         hits=['A'] seen=None witreq=False http=200
+main       M10  p3    b ok                                         hits=['B'] seen=None witreq=False http=200
+main       M11  p4    b ok                                         hits=['B'] seen=None witreq=False http=200
+main       M12  p1    a ok                                         hits=['A'] seen=None witreq=False http=200
+main       M13  p1    b ok                                         hits=['B'] seen=None witreq=False http=200
+main       M14  p1    a ok                                         hits=['A'] seen=None witreq=False http=200
+main       D01  p3    a http:403:repository_forbidden              hits=[] seen=False witreq=False http=403
+main       D02  p3    c http:403:repository_forbidden              hits=[] seen=None witreq=False http=403
+main       D03  p2    a tool_error:FORBIDDEN                       hits=[] seen=None witreq=False http=200
+main       D04  p4    b tool_error:FORBIDDEN                       hits=[] seen=False witreq=False http=200
+main       D05  p1    a tool_error:FORBIDDEN                       hits=[] seen=None witreq=False http=200
+main       D06  p1    b tool_error:FORBIDDEN                       hits=[] seen=None witreq=False http=200
+main       D07  p1    a tool_error:FORBIDDEN                       hits=[] seen=None witreq=False http=200
+main       D08  p2    a tool_error:SCOPE_MISMATCH                  hits=[] seen=None witreq=False http=200
+main       D09  p2    a rpc_error:SCOPE_MISMATCH                   hits=[] seen=None witreq=False http=200
+main       D10  p1    b rpc_error:INVALID_REFERENCE                hits=[] seen=None witreq=False http=200
+main       D11  p3    b tool_error:FORBIDDEN                       hits=[] seen=None witreq=False http=200
+main       D12  p1    a tool_error:FORBIDDEN                       hits=[] seen=None witreq=False http=200
+main       D13  p4    b tool_error:FORBIDDEN                       hits=[] seen=None witreq=False http=200
+main       D14  None  a http:401:credentials_missing               hits=[] seen=False witreq=False http=401
+main       D15  p1    a http:401:credentials_invalid               hits=[] seen=False witreq=False http=401
+main       D16  p1    a http:401:credentials_invalid               hits=[] seen=False witreq=False http=401
+== revocation {'policy': 'revoked', 'policy_sha256': 'fa9f9683e6dad0f191309b44d127aa0963629e6085928098a6f73bc461d45aa7', 'holds_spanned': None, 'server': {'stopped_line_parsed': True, 'peak_ge_3': True}, 'observed': {'server': {'admitted': 35, 'rejected': 0, 'peak': 8}, 'max_client_overlap': 8}}
+revocation R1   p1    a ok                                         hits=['A'] seen=None witreq=False http=200
+revocation R2   p1    a ok                                         hits=['A'] seen=None witreq=False http=200
+revocation R3   p1    a http:403:repository_forbidden              hits=[] seen=None witreq=False http=403
+revocation R4   p1    b ok                                         hits=['B'] seen=True witreq=False http=200
+revocation R5   p1    a tool_error:EXPIRED_REFERENCE               hits=[] seen=None witreq=False http=200
+revocation R6   p1    a ok                                         hits=['A'] seen=None witreq=False http=200
+== teeth {'policy': 'teeth', 'policy_sha256': '1924c0ec44a07f5af01e0fbaf5f504598e251ad2c05bb932a9eb4861145b9731', 'holds_spanned': None, 'server': {'stopped_line_parsed': True, 'peak_ge_3': True}, 'observed': {'server': {'admitted': 35, 'rejected': 0, 'peak': 8}, 'max_client_overlap': 8}}
+teeth      D01  p3    a ok                                         hits=['A'] seen=True witreq=False http=200
+teeth      D02  p3    c http:403:repository_forbidden              hits=[] seen=None witreq=False http=403
+workdir /tmp/s42spike-h0s7io7p

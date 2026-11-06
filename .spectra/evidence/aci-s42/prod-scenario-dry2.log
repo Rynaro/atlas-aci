@@ -1,0 +1,39 @@
+IMAGE: atlas-aci:s42-wip id=sha256:1785257ee96b40dee1368082d8a672d78aa0aac0f0cdc8fc1bcf8237b4144790 created=2026-11-06T10:44:36.404819836Z
+python 3.12.16
+version mcp 1.30.0
+version pyjwt 2.15.1
+version cryptography 50.0.2
+version httpx 0.28.1
+version atlas-aci 2.0.0
+installed_files 106 57a21d260f69859688f1b2d834e43d62c504c4f2a37e67eca030fa70e67ad5ab
+source_files 106 57a21d260f69859688f1b2d834e43d62c504c4f2a37e67eca030fa70e67ad5ab
+same_tree True
+PASS P0-sdk-version: mcp 1.30.0 in the production image
+PASS P0-installed-equals-source: installed atlas_aci/**/*.py equals mcp-server/src
+PASS P1-recorder-in-production-image: recorder exit 0 as user atlas, --network none, python -I
+867296e3da8dd3a37d3f716d9945b76c7e43f635a1aa3d4f2e328eb9790ff1e0 ready_for_operator_review
+verdict ready_for_operator_review
+failed none
+iso_rows 40
+compat_cells 10
+interrupt_records 10
+capacity_n 72
+teeth pass pass
+unauthorized 0 0 1
+sha 867296e3da8dd3a37d3f716d9945b76c7e43f635a1aa3d4f2e328eb9790ff1e0
+image sha256:1785257ee96b40dee1368082d8a672d78aa0aac0f0cdc8fc1bcf8237b4144790
+env 3.12.16 Linux-aarch64
+PASS P2-verdict: ready_for_operator_review, failed checks none
+PASS P2-records-non-vacuous: 25 raw records
+PASS P2-isolation-rows: 40 ledger rows
+PASS P2-compat-cells: 10 recorded cells
+PASS P2-interrupt-records: 10 interruption records (8 recoveries, 2 teeth)
+PASS P2-capacity-calls: 72 workload calls in one record
+PASS P2-teeth-checks: ledger and recovery teeth checks pass
+PASS P2-ledger-counts: unauthorized (main revocation teeth) = 0 0 1: zero within the enumerated cases, and the over-granted teeth run fires
+PASS P2-environment-recorded: report names the producing image, python 3.12.16 Linux-aarch64
+5c057472791ff64d793f5c34c761d0fdc830cff9150d58ff39ec1e45c8769319 blocked
+p3_failed capacity.limits_held,capacity.saturation_typed,records.complete
+PASS P3-missing-record-blocks: without capacity.main the verdict is blocked and names capacity.limits_held
+wrote /Users/henrique/workspace/oss/agents/atlas-aci/.spectra/evidence/aci-s42/prod-run/production-scenario.json
+RESULT: all checks passed

@@ -1,0 +1,1734 @@
+{
+ "canaries": {
+  "A": {
+   "pattern": "s42cnry_a_7bc667a4421a",
+   "seed": "s42cnry_a_7bc667a4421a_hub",
+   "witness": "s42wit_a_7bc667a4421a"
+  },
+  "B": {
+   "pattern": "s42cnry_b_240793d97d57",
+   "symbol": "s42cnry_b_240793d97d57_fn",
+   "witness": "s42wit_b_240793d97d57"
+  },
+  "C": {
+   "witness": "s42cnry_c_1de90b3befd9"
+  },
+  "T1": {
+   "name": "s42cnry_t1_0a3da9c059cd"
+  },
+  "T2": {
+   "name": "s42cnry_t2_0e557e9779a2"
+  }
+ },
+ "capacity": {
+  "limits": {
+   "max_calls_per_minute": 10000,
+   "max_calls_per_principal_per_minute": 10000,
+   "max_graph_leases": 4,
+   "max_leases_per_principal": 1,
+   "max_records": 1024,
+   "max_total_lease_state_bytes": 1073741824
+  },
+  "listen": {
+   "max_body_bytes": 1048576,
+   "max_inflight": 4,
+   "max_inflight_per_principal": 2
+  },
+  "saturation": {
+   "gate_principal": "p3",
+   "holds": 2,
+   "max_polls": 50,
+   "other": "p2",
+   "poll_ms": 100,
+   "principal": "p1",
+   "settle_ms": 400
+  },
+  "workload": {
+   "calls_per_client": 12,
+   "client_principals": [
+    "p1",
+    "p2",
+    "p3",
+    "p4",
+    "p1",
+    "p2"
+   ],
+   "clients": 6,
+   "grants": [
+    {
+     "repository": "a",
+     "subject": "p1",
+     "tools": [
+      "graph_query",
+      "list_dir",
+      "search_symbol",
+      "search_text",
+      "view_file"
+     ]
+    },
+    {
+     "repository": "b",
+     "subject": "p1",
+     "tools": [
+      "graph_query",
+      "list_dir",
+      "search_symbol",
+      "search_text",
+      "view_file"
+     ]
+    },
+    {
+     "repository": "a",
+     "subject": "p2",
+     "tools": [
+      "graph_query",
+      "list_dir",
+      "search_symbol",
+      "search_text",
+      "view_file"
+     ]
+    },
+    {
+     "repository": "b",
+     "subject": "p2",
+     "tools": [
+      "graph_query",
+      "list_dir",
+      "search_symbol",
+      "search_text",
+      "view_file"
+     ]
+    },
+    {
+     "repository": "a",
+     "subject": "p3",
+     "tools": [
+      "graph_query",
+      "list_dir",
+      "search_symbol",
+      "search_text",
+      "view_file"
+     ]
+    },
+    {
+     "repository": "b",
+     "subject": "p3",
+     "tools": [
+      "graph_query",
+      "list_dir",
+      "search_symbol",
+      "search_text",
+      "view_file"
+     ]
+    },
+    {
+     "repository": "a",
+     "subject": "p4",
+     "tools": [
+      "graph_query",
+      "list_dir",
+      "search_symbol",
+      "search_text",
+      "view_file"
+     ]
+    },
+    {
+     "repository": "b",
+     "subject": "p4",
+     "tools": [
+      "graph_query",
+      "list_dir",
+      "search_symbol",
+      "search_text",
+      "view_file"
+     ]
+    }
+   ],
+   "max_attempts": 10,
+   "mix": [
+    [
+     "a",
+     "search_text",
+     {
+      "pattern": "s42cnry_a_7bc667a4421a",
+      "scope": "."
+     }
+    ],
+    [
+     "b",
+     "search_text",
+     {
+      "pattern": "s42cnry_b_240793d97d57",
+      "scope": "."
+     }
+    ],
+    [
+     "a",
+     "search_symbol",
+     {
+      "name": "s42cnry_a_7bc667a4421a_hub"
+     }
+    ],
+    [
+     "b",
+     "search_symbol",
+     {
+      "name": "s42cnry_b_240793d97d57_fn"
+     }
+    ],
+    [
+     "a",
+     "view_file",
+     {
+      "end_line": 20,
+      "path": "core.py",
+      "start_line": 1
+     }
+    ],
+    [
+     "b",
+     "view_file",
+     {
+      "end_line": 20,
+      "path": "main.py",
+      "start_line": 1
+     }
+    ],
+    [
+     "a",
+     "list_dir",
+     {
+      "path": "."
+     }
+    ],
+    [
+     "b",
+     "list_dir",
+     {
+      "path": "."
+     }
+    ],
+    [
+     "a",
+     "graph_query",
+     {
+      "op": "status",
+      "schema_version": "atlas.graph.v1"
+     }
+    ],
+    [
+     "b",
+     "graph_query",
+     {
+      "op": "status",
+      "schema_version": "atlas.graph.v1"
+     }
+    ],
+    [
+     "a",
+     "search_symbol",
+     {
+      "name": "s42cnry_a_7bc667a4421a_hub"
+     }
+    ],
+    [
+     "b",
+     "search_text",
+     {
+      "pattern": "s42cnry_b_240793d97d57_fn",
+      "scope": "."
+     }
+    ]
+   ],
+   "principals": 4,
+   "repositories": 2
+  }
+ },
+ "compatibility": {
+  "cells": [
+   {
+    "client": "raw-jsonrpc",
+    "id": "raw.shared-http.2024-11-05",
+    "requested": "2024-11-05",
+    "required": true,
+    "transport": "shared-http"
+   },
+   {
+    "client": "raw-jsonrpc",
+    "id": "raw.shared-http.2025-03-26",
+    "requested": "2025-03-26",
+    "required": true,
+    "transport": "shared-http"
+   },
+   {
+    "client": "raw-jsonrpc",
+    "id": "raw.shared-http.2025-06-18",
+    "requested": "2025-06-18",
+    "required": true,
+    "transport": "shared-http"
+   },
+   {
+    "client": "raw-jsonrpc",
+    "id": "raw.shared-http.2025-11-25",
+    "requested": "2025-11-25",
+    "required": true,
+    "transport": "shared-http"
+   },
+   {
+    "client": "raw-jsonrpc",
+    "id": "raw.shared-http.2099-01-01",
+    "requested": "2099-01-01",
+    "required": true,
+    "transport": "shared-http"
+   },
+   {
+    "client": "raw-jsonrpc",
+    "id": "raw.http.2025-11-25",
+    "requested": "2025-11-25",
+    "required": true,
+    "transport": "http"
+   },
+   {
+    "client": "raw-jsonrpc",
+    "id": "raw.stdio.2025-11-25",
+    "requested": "2025-11-25",
+    "required": true,
+    "transport": "stdio"
+   },
+   {
+    "client": "mcp-sdk",
+    "id": "sdk.stdio.sdk_default",
+    "requested": "sdk_default",
+    "required": true,
+    "transport": "stdio"
+   },
+   {
+    "client": "mcp-sdk",
+    "id": "sdk.http.sdk_default",
+    "requested": "sdk_default",
+    "required": true,
+    "transport": "http"
+   },
+   {
+    "client": "mcp-sdk",
+    "id": "sdk.shared-http.sdk_default",
+    "requested": "sdk_default",
+    "required": true,
+    "transport": "shared-http"
+   }
+  ],
+  "hosts": [
+   {
+    "id": "claude-code",
+    "reason": "no_real_host_run",
+    "status": "untested"
+   },
+   {
+    "id": "github-copilot",
+    "reason": "no_real_host_run",
+    "status": "untested"
+   },
+   {
+    "id": "cursor",
+    "reason": "no_real_host_run",
+    "status": "untested"
+   }
+  ]
+ },
+ "deadlines": {
+  "interrupt_case_s": 120,
+  "recorder_total_s": 300,
+  "request_s": 30,
+  "startup_s": 60
+ },
+ "deployment_model": {
+  "clients": "raw HTTP/1.1 and stdio JSON-RPC lines, plus the mcp SDK client",
+  "keys": "RS256 generated per run, offline JWKS file",
+  "listen": "127.0.0.1 port 0 (ephemeral)",
+  "policy_reload_seconds": 0,
+  "principals": 4,
+  "process": "one loopback serve-shared process per phase",
+  "repositories": "a and b, plus c as the before snapshot of a at the same path",
+  "storage": "container-local tmp behind the lock canary",
+  "tls_reverse_proxy": "none"
+ },
+ "format": "atlas-shared-readiness-manifest.v1",
+ "grants": {
+  "main": [
+   {
+    "repository": "a",
+    "subject": "p1",
+    "tools": [
+     "graph_query",
+     "list_dir",
+     "search_symbol",
+     "search_text",
+     "view_file"
+    ]
+   },
+   {
+    "repository": "b",
+    "subject": "p1",
+    "tools": [
+     "graph_query",
+     "list_dir",
+     "search_symbol",
+     "search_text",
+     "view_file"
+    ]
+   },
+   {
+    "repository": "a",
+    "subject": "p2",
+    "tools": [
+     "graph_query",
+     "search_symbol"
+    ]
+   },
+   {
+    "repository": "c",
+    "subject": "p2",
+    "tools": [
+     "graph_query"
+    ]
+   },
+   {
+    "repository": "b",
+    "subject": "p3",
+    "tools": [
+     "graph_query",
+     "list_dir",
+     "search_symbol",
+     "search_text",
+     "view_file"
+    ]
+   },
+   {
+    "repository": "b",
+    "subject": "p4",
+    "tools": [
+     "list_dir",
+     "view_file"
+    ]
+   }
+  ],
+  "revoke": [
+   {
+    "repository": "a",
+    "subject": "p1"
+   }
+  ],
+  "teeth_add": [
+   {
+    "repository": "a",
+    "subject": "p3",
+    "tools": [
+     "search_symbol",
+     "search_text"
+    ]
+   }
+  ]
+ },
+ "honesty": [
+  "Black-box evidence: the ledger detects planted canaries and typed outcomes in responses and server log lines, not internal reads.",
+  "Unauthorized evidence access is zero within the enumerated cases; this is not a claim that no leakage exists.",
+  "Not tested: timing side channels, the shared address space of the single server process, and a TLS-terminating reverse proxy.",
+  "Inherited and not re-run: the S40 in-process Observer suite (mcp-server/tests/slices/test_s40_contract.py)."
+ ],
+ "interruption": {
+  "cases": [
+   {
+    "expect_valid": true,
+    "expected_tree": "T1",
+    "facts": {
+     "cancel": "honoured",
+     "exit": 4,
+     "published": false,
+     "state": "cancelled"
+    },
+    "id": "cancel_marker",
+    "injection": {
+     "kind": "cancel_marker",
+     "seam": "staged"
+    }
+   },
+   {
+    "expect_valid": true,
+    "expected_tree": "T1",
+    "facts": {
+     "cancel": "honoured",
+     "exit": 4,
+     "published": false,
+     "state": "cancelled"
+    },
+    "id": "cancel_sigterm",
+    "injection": {
+     "kind": "cancel_sigterm",
+     "seam": "staged"
+    }
+   },
+   {
+    "expect_valid": true,
+    "expected_tree": "T2",
+    "facts": {
+     "interrupted": true,
+     "interrupted_state": "running",
+     "killed": true,
+     "outcome": "built",
+     "resumed_from": 2,
+     "state": "completed"
+    },
+    "id": "kill_checkpoint",
+    "injection": {
+     "at": 2,
+     "kind": "kill",
+     "seam": "checkpoint"
+    }
+   },
+   {
+    "expect_valid": true,
+    "expected_tree": "T2",
+    "facts": {
+     "interrupted": true,
+     "interrupted_state": "running",
+     "killed": true,
+     "outcome": "built",
+     "state": "completed"
+    },
+    "id": "kill_mid_publish",
+    "injection": {
+     "kind": "kill",
+     "seam": "mid_publish"
+    }
+   },
+   {
+    "expect_valid": true,
+    "expected_tree": "T2",
+    "facts": {
+     "interrupted": true,
+     "interrupted_state": "published",
+     "killed": true,
+     "outcome": "recovered",
+     "state": "completed"
+    },
+    "id": "kill_post_replace",
+    "injection": {
+     "kind": "kill",
+     "seam": "post_replace"
+    }
+   },
+   {
+    "expect_valid": true,
+    "expected_tree": "T2",
+    "facts": {
+     "interrupted": true,
+     "interrupted_state": "captured",
+     "killed": true,
+     "outcome": "recovered",
+     "state": "completed"
+    },
+    "id": "kill_pre_receipt",
+    "injection": {
+     "kind": "kill",
+     "seam": "pre_receipt"
+    }
+   },
+   {
+    "expect_valid": true,
+    "expected_tree": "T2",
+    "facts": {
+     "acquire_code": "EXPIRED_REFERENCE",
+     "acquire_exit": 3,
+     "holder_killed": true,
+     "leased_retained": true,
+     "retired_after_release": true
+    },
+    "id": "gc_vs_lease",
+    "injection": {
+     "kind": "gc_vs_lease"
+    }
+   },
+   {
+    "expect_valid": true,
+    "expected_tree": "T2",
+    "facts": {
+     "gc_code": "WRITER_BUSY",
+     "gc_exit": 75,
+     "state": "completed"
+    },
+    "id": "gc_vs_build",
+    "injection": {
+     "kind": "gc_vs_build",
+     "seam": "staged"
+    }
+   },
+   {
+    "expect_valid": false,
+    "expected_tree": "T2",
+    "facts": {
+     "corrupted_farm_acquire_refused": true
+    },
+    "id": "teeth_replace_by_copy",
+    "injection": {
+     "kind": "teeth_replace_by_copy"
+    }
+   },
+   {
+    "expect_valid": false,
+    "expected_tree": "T2",
+    "facts": {
+     "validated_against": "T1"
+    },
+    "id": "teeth_wrong_expectation",
+    "injection": {
+     "kind": "teeth_wrong_expectation"
+    }
+   }
+  ],
+  "langs": [
+   "python"
+  ],
+  "retention": {
+   "keep_last": 1
+  },
+  "workers": 3
+ },
+ "isolation": {
+  "cases": [
+   {
+    "class": "control",
+    "control": null,
+    "domains": [
+     "A"
+    ],
+    "expected": "allow",
+    "expected_outcomes": [
+     "ok"
+    ],
+    "id": "W1",
+    "nonce_carrier": false,
+    "phase": "warm",
+    "principal": "p1",
+    "request": {
+     "arguments": {
+      "op": "page",
+      "page_max_bytes": 18000,
+      "query": {
+       "deadline_ms": 2000,
+       "max_depth": 1,
+       "op": "neighborhood",
+       "schema_version": "atlas.graph.v1",
+       "seed": {
+        "name": "s42cnry_a_7bc667a4421a_hub"
+       }
+      },
+      "schema_version": "atlas.graph.v1"
+     },
+     "kind": "tool",
+     "tool": "graph_query"
+    },
+    "route": "a",
+    "target_domain": null,
+    "token": "valid"
+   },
+   {
+    "class": "control",
+    "control": null,
+    "domains": [
+     "A"
+    ],
+    "expected": "allow",
+    "expected_outcomes": [
+     "ok"
+    ],
+    "id": "W2",
+    "nonce_carrier": false,
+    "phase": "warm",
+    "principal": "p1",
+    "request": {
+     "arguments": {
+      "op": "page",
+      "page_max_bytes": 24000,
+      "query": {
+       "deadline_ms": 2000,
+       "max_depth": 1,
+       "op": "neighborhood",
+       "schema_version": "atlas.graph.v1",
+       "seed": {
+        "name": "s42cnry_a_7bc667a4421a_hub"
+       }
+      },
+      "schema_version": "atlas.graph.v1"
+     },
+     "kind": "tool",
+     "tool": "graph_query"
+    },
+    "route": "a",
+    "target_domain": null,
+    "token": "valid"
+   },
+   {
+    "class": "control",
+    "control": null,
+    "domains": [
+     "A"
+    ],
+    "expected": "allow",
+    "expected_outcomes": [
+     "ok"
+    ],
+    "id": "H1",
+    "nonce_carrier": false,
+    "phase": "hold",
+    "principal": "p2",
+    "request": {
+     "arguments": {
+      "name": "s42cnry_a_7bc667a4421a_hub"
+     },
+     "kind": "tool",
+     "tool": "search_symbol"
+    },
+    "route": "a",
+    "target_domain": null,
+    "token": "valid"
+   },
+   {
+    "class": "control",
+    "control": null,
+    "domains": [
+     "B"
+    ],
+    "expected": "allow",
+    "expected_outcomes": [
+     "ok"
+    ],
+    "id": "H2",
+    "nonce_carrier": false,
+    "phase": "hold",
+    "principal": "p4",
+    "request": {
+     "arguments": {
+      "path": "."
+     },
+     "kind": "tool",
+     "tool": "list_dir"
+    },
+    "route": "b",
+    "target_domain": null,
+    "token": "valid"
+   },
+   {
+    "class": "control",
+    "control": null,
+    "domains": [
+     "A"
+    ],
+    "expected": "allow",
+    "expected_outcomes": [
+     "ok"
+    ],
+    "id": "M01",
+    "nonce_carrier": true,
+    "phase": "main",
+    "principal": "p1",
+    "request": {
+     "arguments": {
+      "pattern": "$A_PATTERN|$NONCE",
+      "scope": "."
+     },
+     "kind": "tool",
+     "tool": "search_text"
+    },
+    "route": "a",
+    "target_domain": null,
+    "token": "valid"
+   },
+   {
+    "class": "control",
+    "control": null,
+    "domains": [
+     "B"
+    ],
+    "expected": "allow",
+    "expected_outcomes": [
+     "ok"
+    ],
+    "id": "M02",
+    "nonce_carrier": true,
+    "phase": "main",
+    "principal": "p1",
+    "request": {
+     "arguments": {
+      "pattern": "$B_PATTERN|$NONCE",
+      "scope": "."
+     },
+     "kind": "tool",
+     "tool": "search_text"
+    },
+    "route": "b",
+    "target_domain": null,
+    "token": "valid"
+   },
+   {
+    "class": "control",
+    "control": null,
+    "domains": [
+     "A"
+    ],
+    "expected": "allow",
+    "expected_outcomes": [
+     "ok"
+    ],
+    "id": "M03",
+    "nonce_carrier": false,
+    "phase": "main",
+    "principal": "p1",
+    "request": {
+     "arguments": {
+      "end_line": 20,
+      "path": "core.py",
+      "start_line": 1
+     },
+     "kind": "tool",
+     "tool": "view_file"
+    },
+    "route": "a",
+    "target_domain": null,
+    "token": "valid"
+   },
+   {
+    "class": "control",
+    "control": null,
+    "domains": [
+     "B"
+    ],
+    "expected": "allow",
+    "expected_outcomes": [
+     "ok"
+    ],
+    "id": "M04",
+    "nonce_carrier": true,
+    "phase": "main",
+    "principal": "p3",
+    "request": {
+     "arguments": {
+      "pattern": "$B_PATTERN|$NONCE",
+      "scope": "."
+     },
+     "kind": "tool",
+     "tool": "search_text"
+    },
+    "route": "b",
+    "target_domain": null,
+    "token": "valid"
+   },
+   {
+    "class": "control",
+    "control": null,
+    "domains": [
+     "A"
+    ],
+    "expected": "allow",
+    "expected_outcomes": [
+     "ok"
+    ],
+    "id": "M05",
+    "nonce_carrier": false,
+    "phase": "main",
+    "principal": "p2",
+    "request": {
+     "arguments": {
+      "name": "s42cnry_a_7bc667a4421a_hub"
+     },
+     "kind": "tool",
+     "tool": "search_symbol"
+    },
+    "route": "a",
+    "target_domain": null,
+    "token": "valid"
+   },
+   {
+    "class": "control",
+    "control": null,
+    "domains": [
+     "B"
+    ],
+    "expected": "allow",
+    "expected_outcomes": [
+     "ok"
+    ],
+    "id": "M06",
+    "nonce_carrier": false,
+    "phase": "main",
+    "principal": "p4",
+    "request": {
+     "arguments": {
+      "end_line": 20,
+      "path": "main.py",
+      "start_line": 1
+     },
+     "kind": "tool",
+     "tool": "view_file"
+    },
+    "route": "b",
+    "target_domain": null,
+    "token": "valid"
+   },
+   {
+    "class": "control",
+    "control": null,
+    "domains": [
+     "A",
+     "C"
+    ],
+    "expected": "allow",
+    "expected_outcomes": [
+     "ok"
+    ],
+    "id": "M07",
+    "nonce_carrier": false,
+    "phase": "main",
+    "principal": "p2",
+    "request": {
+     "arguments": {
+      "op": "impact",
+      "schema_version": "atlas.graph.v1"
+     },
+     "kind": "tool",
+     "tool": "graph_query"
+    },
+    "route": "a",
+    "target_domain": null,
+    "token": "valid"
+   },
+   {
+    "class": "control",
+    "control": null,
+    "domains": [
+     "A"
+    ],
+    "expected": "allow",
+    "expected_outcomes": [
+     "ok"
+    ],
+    "id": "M08",
+    "nonce_carrier": false,
+    "phase": "main",
+    "principal": "p1",
+    "request": {
+     "kind": "cursor_continue",
+     "uses": "W1"
+    },
+    "route": "a",
+    "target_domain": null,
+    "token": "valid"
+   },
+   {
+    "class": "control",
+    "control": null,
+    "domains": [
+     "A"
+    ],
+    "expected": "allow",
+    "expected_outcomes": [
+     "ok"
+    ],
+    "id": "M09",
+    "nonce_carrier": false,
+    "phase": "main",
+    "principal": "p1",
+    "request": {
+     "kind": "resource_read",
+     "uses": "W2"
+    },
+    "route": "a",
+    "target_domain": null,
+    "token": "valid"
+   },
+   {
+    "class": "control",
+    "control": null,
+    "domains": [
+     "B"
+    ],
+    "expected": "allow",
+    "expected_outcomes": [
+     "ok"
+    ],
+    "id": "M10",
+    "nonce_carrier": false,
+    "phase": "main",
+    "principal": "p3",
+    "request": {
+     "arguments": {
+      "op": "retrieve",
+      "repository": "$REPO_B",
+      "schema_version": "atlas.graph.v1",
+      "text": "s42cnry_b_240793d97d57_fn"
+     },
+     "kind": "tool",
+     "tool": "graph_query"
+    },
+    "route": "b",
+    "target_domain": null,
+    "token": "valid"
+   },
+   {
+    "class": "control",
+    "control": null,
+    "domains": [
+     "B"
+    ],
+    "expected": "allow",
+    "expected_outcomes": [
+     "ok"
+    ],
+    "id": "M11",
+    "nonce_carrier": false,
+    "phase": "main",
+    "principal": "p4",
+    "request": {
+     "arguments": {
+      "path": "."
+     },
+     "kind": "tool",
+     "tool": "list_dir"
+    },
+    "route": "b",
+    "target_domain": null,
+    "token": "valid"
+   },
+   {
+    "class": "control",
+    "control": null,
+    "domains": [
+     "A"
+    ],
+    "expected": "allow",
+    "expected_outcomes": [
+     "ok"
+    ],
+    "id": "M12",
+    "nonce_carrier": false,
+    "phase": "main",
+    "principal": "p1",
+    "request": {
+     "arguments": {
+      "op": "retrieve",
+      "repository": "$REPO_A",
+      "schema_version": "atlas.graph.v1",
+      "text": "s42cnry_a_7bc667a4421a_hub"
+     },
+     "kind": "tool",
+     "tool": "graph_query"
+    },
+    "route": "a",
+    "target_domain": null,
+    "token": "valid"
+   },
+   {
+    "class": "control",
+    "control": null,
+    "domains": [
+     "B"
+    ],
+    "expected": "allow",
+    "expected_outcomes": [
+     "ok"
+    ],
+    "id": "M13",
+    "nonce_carrier": false,
+    "phase": "main",
+    "principal": "p1",
+    "request": {
+     "arguments": {
+      "end_line": 20,
+      "path": "main.py",
+      "start_line": 1
+     },
+     "kind": "tool",
+     "tool": "view_file"
+    },
+    "route": "b",
+    "target_domain": null,
+    "token": "valid"
+   },
+   {
+    "class": "control",
+    "control": null,
+    "domains": [
+     "A"
+    ],
+    "expected": "allow",
+    "expected_outcomes": [
+     "ok"
+    ],
+    "id": "M14",
+    "nonce_carrier": false,
+    "phase": "main",
+    "principal": "p1",
+    "request": {
+     "arguments": {
+      "path": "."
+     },
+     "kind": "tool",
+     "tool": "list_dir"
+    },
+    "route": "a",
+    "target_domain": null,
+    "token": "valid"
+   },
+   {
+    "class": "ungranted_repo",
+    "control": "M01",
+    "domains": [],
+    "expected": "deny",
+    "expected_outcomes": [
+     "http:403:repository_forbidden"
+    ],
+    "id": "D01",
+    "nonce_carrier": true,
+    "phase": "main",
+    "principal": "p3",
+    "request": {
+     "arguments": {
+      "pattern": "$A_PATTERN|$NONCE",
+      "scope": "."
+     },
+     "kind": "tool",
+     "tool": "search_text"
+    },
+    "route": "a",
+    "target_domain": "A",
+    "token": "valid"
+   },
+   {
+    "class": "ungranted_repo",
+    "control": "M07",
+    "domains": [],
+    "expected": "deny",
+    "expected_outcomes": [
+     "http:403:repository_forbidden"
+    ],
+    "id": "D02",
+    "nonce_carrier": false,
+    "phase": "main",
+    "principal": "p3",
+    "request": {
+     "arguments": {
+      "op": "impact",
+      "schema_version": "atlas.graph.v1"
+     },
+     "kind": "tool",
+     "tool": "graph_query"
+    },
+    "route": "c",
+    "target_domain": "C",
+    "token": "valid"
+   },
+   {
+    "class": "ungranted_tool",
+    "control": "M03",
+    "domains": [],
+    "expected": "deny",
+    "expected_outcomes": [
+     "tool_error:FORBIDDEN"
+    ],
+    "id": "D03",
+    "nonce_carrier": false,
+    "phase": "main",
+    "principal": "p2",
+    "request": {
+     "arguments": {
+      "end_line": 20,
+      "path": "core.py",
+      "start_line": 1
+     },
+     "kind": "tool",
+     "tool": "view_file"
+    },
+    "route": "a",
+    "target_domain": "A",
+    "token": "valid"
+   },
+   {
+    "class": "ungranted_tool",
+    "control": "M04",
+    "domains": [],
+    "expected": "deny",
+    "expected_outcomes": [
+     "tool_error:FORBIDDEN"
+    ],
+    "id": "D04",
+    "nonce_carrier": true,
+    "phase": "main",
+    "principal": "p4",
+    "request": {
+     "arguments": {
+      "pattern": "$B_PATTERN|$NONCE",
+      "scope": "."
+     },
+     "kind": "tool",
+     "tool": "search_text"
+    },
+    "route": "b",
+    "target_domain": "B",
+    "token": "valid"
+   },
+   {
+    "class": "disabled_tool",
+    "control": "M03",
+    "domains": [],
+    "expected": "deny",
+    "expected_outcomes": [
+     "tool_error:FORBIDDEN"
+    ],
+    "id": "D05",
+    "nonce_carrier": false,
+    "phase": "main",
+    "principal": "p1",
+    "request": {
+     "arguments": {
+      "path": "core.py"
+     },
+     "kind": "tool",
+     "tool": "test_dry_run"
+    },
+    "route": "a",
+    "target_domain": "A",
+    "token": "valid"
+   },
+   {
+    "class": "disabled_tool",
+    "control": "M13",
+    "domains": [],
+    "expected": "deny",
+    "expected_outcomes": [
+     "tool_error:FORBIDDEN"
+    ],
+    "id": "D06",
+    "nonce_carrier": false,
+    "phase": "main",
+    "principal": "p1",
+    "request": {
+     "arguments": {
+      "ref": "memex://excerpt/0000000000000000000000000000000000000000000000000000000000000000"
+     },
+     "kind": "tool",
+     "tool": "memex_read"
+    },
+    "route": "b",
+    "target_domain": "B",
+    "token": "valid"
+   },
+   {
+    "class": "impact_before_ungranted",
+    "control": "M07",
+    "domains": [],
+    "expected": "deny",
+    "expected_outcomes": [
+     "tool_error:FORBIDDEN"
+    ],
+    "id": "D07",
+    "nonce_carrier": false,
+    "phase": "main",
+    "principal": "p1",
+    "request": {
+     "arguments": {
+      "op": "impact",
+      "schema_version": "atlas.graph.v1"
+     },
+     "kind": "tool",
+     "tool": "graph_query"
+    },
+    "route": "a",
+    "target_domain": "C",
+    "token": "valid"
+   },
+   {
+    "class": "cross_principal_cursor",
+    "control": "M08",
+    "domains": [],
+    "expected": "deny",
+    "expected_outcomes": [
+     "tool_error:SCOPE_MISMATCH"
+    ],
+    "id": "D08",
+    "nonce_carrier": false,
+    "phase": "main",
+    "principal": "p2",
+    "request": {
+     "kind": "cursor_continue",
+     "uses": "W1"
+    },
+    "route": "a",
+    "target_domain": "A",
+    "token": "valid"
+   },
+   {
+    "class": "cross_principal_resource",
+    "control": "M09",
+    "domains": [],
+    "expected": "deny",
+    "expected_outcomes": [
+     "rpc_error:SCOPE_MISMATCH"
+    ],
+    "id": "D09",
+    "nonce_carrier": false,
+    "phase": "main",
+    "principal": "p2",
+    "request": {
+     "kind": "resource_read",
+     "uses": "W2"
+    },
+    "route": "a",
+    "target_domain": "A",
+    "token": "valid"
+   },
+   {
+    "class": "cross_repo_resource",
+    "control": "M09",
+    "domains": [],
+    "expected": "deny",
+    "expected_outcomes": [
+     "rpc_error:INVALID_REFERENCE"
+    ],
+    "id": "D10",
+    "nonce_carrier": false,
+    "phase": "main",
+    "principal": "p1",
+    "request": {
+     "kind": "resource_read",
+     "uses": "W2"
+    },
+    "route": "b",
+    "target_domain": "A",
+    "token": "valid"
+   },
+   {
+    "class": "cross_repo_argument",
+    "control": "M12",
+    "domains": [],
+    "expected": "deny",
+    "expected_outcomes": [
+     "tool_error:FORBIDDEN"
+    ],
+    "id": "D11",
+    "nonce_carrier": false,
+    "phase": "main",
+    "principal": "p3",
+    "request": {
+     "arguments": {
+      "op": "retrieve",
+      "repository": "$REPO_A",
+      "schema_version": "atlas.graph.v1",
+      "text": "s42cnry_a_7bc667a4421a_hub"
+     },
+     "kind": "tool",
+     "tool": "graph_query"
+    },
+    "route": "b",
+    "target_domain": "A",
+    "token": "valid"
+   },
+   {
+    "class": "path_escape",
+    "control": "M13",
+    "domains": [],
+    "expected": "deny",
+    "expected_outcomes": [
+     "tool_error:FORBIDDEN"
+    ],
+    "id": "D12",
+    "nonce_carrier": false,
+    "phase": "main",
+    "principal": "p1",
+    "request": {
+     "arguments": {
+      "end_line": 20,
+      "path": "../b/main.py",
+      "start_line": 1
+     },
+     "kind": "tool",
+     "tool": "view_file"
+    },
+    "route": "a",
+    "target_domain": "B",
+    "token": "valid"
+   },
+   {
+    "class": "path_escape",
+    "control": "M14",
+    "domains": [],
+    "expected": "deny",
+    "expected_outcomes": [
+     "tool_error:FORBIDDEN"
+    ],
+    "id": "D13",
+    "nonce_carrier": false,
+    "phase": "main",
+    "principal": "p4",
+    "request": {
+     "arguments": {
+      "path": "../a"
+     },
+     "kind": "tool",
+     "tool": "list_dir"
+    },
+    "route": "b",
+    "target_domain": "A",
+    "token": "valid"
+   },
+   {
+    "class": "token_missing",
+    "control": "M01",
+    "domains": [],
+    "expected": "deny",
+    "expected_outcomes": [
+     "http:401:credentials_missing"
+    ],
+    "id": "D14",
+    "nonce_carrier": true,
+    "phase": "main",
+    "principal": null,
+    "request": {
+     "arguments": {
+      "pattern": "$A_PATTERN|$NONCE",
+      "scope": "."
+     },
+     "kind": "tool",
+     "tool": "search_text"
+    },
+    "route": "a",
+    "target_domain": "A",
+    "token": "missing"
+   },
+   {
+    "class": "token_invalid",
+    "control": "M01",
+    "domains": [],
+    "expected": "deny",
+    "expected_outcomes": [
+     "http:401:credentials_invalid"
+    ],
+    "id": "D15",
+    "nonce_carrier": true,
+    "phase": "main",
+    "principal": "p1",
+    "request": {
+     "arguments": {
+      "pattern": "$A_PATTERN|$NONCE",
+      "scope": "."
+     },
+     "kind": "tool",
+     "tool": "search_text"
+    },
+    "route": "a",
+    "target_domain": "A",
+    "token": "stranger"
+   },
+   {
+    "class": "token_wrong_audience",
+    "control": "M01",
+    "domains": [],
+    "expected": "deny",
+    "expected_outcomes": [
+     "http:401:credentials_invalid"
+    ],
+    "id": "D16",
+    "nonce_carrier": true,
+    "phase": "main",
+    "principal": "p1",
+    "request": {
+     "arguments": {
+      "pattern": "$A_PATTERN|$NONCE",
+      "scope": "."
+     },
+     "kind": "tool",
+     "tool": "search_text"
+    },
+    "route": "a",
+    "target_domain": "A",
+    "token": "audience:b"
+   },
+   {
+    "class": "control",
+    "control": null,
+    "domains": [
+     "A"
+    ],
+    "expected": "allow",
+    "expected_outcomes": [
+     "ok"
+    ],
+    "id": "R1",
+    "nonce_carrier": false,
+    "phase": "revocation",
+    "principal": "p1",
+    "request": {
+     "arguments": {
+      "op": "page",
+      "page_max_bytes": 18000,
+      "query": {
+       "deadline_ms": 2000,
+       "max_depth": 1,
+       "op": "neighborhood",
+       "schema_version": "atlas.graph.v1",
+       "seed": {
+        "name": "s42cnry_a_7bc667a4421a_hub"
+       }
+      },
+      "schema_version": "atlas.graph.v1"
+     },
+     "kind": "tool",
+     "tool": "graph_query"
+    },
+    "route": "a",
+    "target_domain": null,
+    "token": "valid"
+   },
+   {
+    "class": "control",
+    "control": null,
+    "domains": [
+     "A"
+    ],
+    "expected": "allow",
+    "expected_outcomes": [
+     "ok"
+    ],
+    "id": "R2",
+    "nonce_carrier": false,
+    "phase": "revocation",
+    "principal": "p1",
+    "request": {
+     "kind": "cursor_continue",
+     "uses": "R1"
+    },
+    "route": "a",
+    "target_domain": null,
+    "token": "valid"
+   },
+   {
+    "class": "revoked_grant",
+    "control": "R2",
+    "domains": [],
+    "expected": "deny",
+    "expected_outcomes": [
+     "http:403:repository_forbidden"
+    ],
+    "id": "R3",
+    "nonce_carrier": false,
+    "phase": "revocation",
+    "principal": "p1",
+    "request": {
+     "kind": "cursor_continue",
+     "uses": "R1"
+    },
+    "route": "a",
+    "target_domain": "A",
+    "token": "valid"
+   },
+   {
+    "class": "control",
+    "control": null,
+    "domains": [
+     "B"
+    ],
+    "expected": "allow",
+    "expected_outcomes": [
+     "ok"
+    ],
+    "id": "R4",
+    "nonce_carrier": true,
+    "phase": "revocation",
+    "principal": "p1",
+    "request": {
+     "arguments": {
+      "pattern": "$B_PATTERN|$NONCE",
+      "scope": "."
+     },
+     "kind": "tool",
+     "tool": "search_text"
+    },
+    "route": "b",
+    "target_domain": null,
+    "token": "valid"
+   },
+   {
+    "class": "revoked_grant",
+    "control": "R2",
+    "domains": [],
+    "expected": "deny",
+    "expected_outcomes": [
+     "tool_error:EXPIRED_REFERENCE"
+    ],
+    "id": "R5",
+    "nonce_carrier": false,
+    "phase": "revocation",
+    "principal": "p1",
+    "request": {
+     "kind": "cursor_continue",
+     "uses": "R1"
+    },
+    "route": "a",
+    "target_domain": "A",
+    "token": "valid"
+   },
+   {
+    "class": "control",
+    "control": null,
+    "domains": [
+     "A"
+    ],
+    "expected": "allow",
+    "expected_outcomes": [
+     "ok"
+    ],
+    "id": "R6",
+    "nonce_carrier": false,
+    "phase": "revocation",
+    "principal": "p1",
+    "request": {
+     "arguments": {
+      "op": "page",
+      "page_max_bytes": 18000,
+      "query": {
+       "deadline_ms": 2000,
+       "max_depth": 1,
+       "op": "neighborhood",
+       "schema_version": "atlas.graph.v1",
+       "seed": {
+        "name": "s42cnry_a_7bc667a4421a_hub"
+       }
+      },
+      "schema_version": "atlas.graph.v1"
+     },
+     "kind": "tool",
+     "tool": "graph_query"
+    },
+    "route": "a",
+    "target_domain": null,
+    "token": "valid"
+   }
+  ],
+  "classes": [
+   "control",
+   "ungranted_repo",
+   "ungranted_tool",
+   "disabled_tool",
+   "impact_before_ungranted",
+   "cross_principal_cursor",
+   "cross_principal_resource",
+   "cross_repo_resource",
+   "cross_repo_argument",
+   "path_escape",
+   "token_missing",
+   "token_invalid",
+   "token_wrong_audience",
+   "revoked_grant"
+  ],
+  "concurrency": 6,
+  "limits": {
+   "max_calls_per_minute": 0,
+   "max_calls_per_principal_per_minute": 0,
+   "max_graph_leases": 8,
+   "max_leases_per_principal": 3
+  },
+  "listen": {
+   "max_inflight": 16,
+   "max_inflight_per_principal": 8
+  },
+  "settle_ms": 400,
+  "teeth_rerun": [
+   "D01",
+   "D02"
+  ]
+ },
+ "issuer": "https://idp.example.test",
+ "principals": [
+  "p1",
+  "p2",
+  "p3",
+  "p4"
+ ],
+ "repositories": [
+  {
+   "id": "a",
+   "tree": "A2"
+  },
+  {
+   "id": "b",
+   "tree": "B"
+  },
+  {
+   "before_of": "a",
+   "id": "c",
+   "same_path_as": "a",
+   "tree": "A1"
+  }
+ ],
+ "required_checks": [
+  "records.complete",
+  "environment.sdk_pinned",
+  "isolation.unauthorized_zero",
+  "isolation.positive_controls",
+  "isolation.typed_denials",
+  "isolation.concurrency",
+  "isolation.ledger_teeth",
+  "interrupt.all_recovered",
+  "interrupt.teeth_detected",
+  "retention.lease_respected",
+  "compat.cells_recorded",
+  "capacity.limits_held",
+  "capacity.saturation_typed"
+ ],
+ "resource_base_url": "https://atlas.example.test/mcp",
+ "sdk_pin": "1.30.0",
+ "slice": "ACI-S42",
+ "trees": {
+  "A1": {
+   "core.py": "# s42wit_a_7bc667a4421a core module\n\n\ndef core_entry(x):  # s42wit_a_7bc667a4421a\n    return x\n",
+   "old.py": "def s42cnry_c_1de90b3befd9(x):\n    return x\n",
+   "s42wit_a_7bc667a4421a.py": "def s42cnry_a_7bc667a4421a_0_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_1_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_1_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_2_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_2_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_3_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_3_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_4_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_4_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_5_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_5_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_6_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_6_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_7_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_7_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_8_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_8_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_9_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_9_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_10_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_10_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_11_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_11_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_12_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_12_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_13_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_13_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_14_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_14_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_15_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_15_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_16_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_16_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_17_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_17_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_18_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_18_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_19_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_19_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_20_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_20_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_21_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_21_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_22_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_22_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_23_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_23_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_24_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_24_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_25_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_25_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_26_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_26_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_27_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_27_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_28_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_28_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_29_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_29_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return x\n\ndef s42cnry_a_7bc667a4421a_hub(x):  # s42wit_a_7bc667a4421a\n    s42cnry_a_7bc667a4421a_0_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_1_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_2_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_3_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_4_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_5_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_6_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_7_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_8_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_9_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_10_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_11_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_12_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_13_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_14_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_15_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_16_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_17_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_18_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_19_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_20_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_21_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_22_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_23_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_24_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_25_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_26_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_27_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_28_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_29_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    return x\n\n"
+  },
+  "A2": {
+   "core.py": "# s42wit_a_7bc667a4421a core module\n\n\ndef core_entry(x):  # s42wit_a_7bc667a4421a\n    return x\n",
+   "s42wit_a_7bc667a4421a.py": "def s42cnry_a_7bc667a4421a_0_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_1_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_1_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_2_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_2_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_3_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_3_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_4_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_4_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_5_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_5_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_6_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_6_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_7_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_7_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_8_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_8_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_9_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_9_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_10_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_10_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_11_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_11_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_12_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_12_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_13_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_13_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_14_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_14_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_15_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_15_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_16_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_16_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_17_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_17_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_18_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_18_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_19_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_19_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_20_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_20_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_21_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_21_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_22_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_22_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_23_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_23_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_24_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_24_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_25_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_25_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_26_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_26_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_27_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_27_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_28_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_28_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return s42cnry_a_7bc667a4421a_29_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n\ndef s42cnry_a_7bc667a4421a_29_s42wit_a_7bc667a4421a(x, tag=\"s42wit_a_7bc667a4421a\"):  # s42wit_a_7bc667a4421a\n    return x\n\ndef s42cnry_a_7bc667a4421a_hub(x):  # s42wit_a_7bc667a4421a\n    s42cnry_a_7bc667a4421a_0_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_1_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_2_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_3_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_4_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_5_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_6_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_7_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_8_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_9_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_10_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_11_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_12_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_13_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_14_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_15_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_16_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_17_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_18_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_19_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_20_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_21_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_22_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_23_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_24_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_25_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_26_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_27_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_28_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    s42cnry_a_7bc667a4421a_29_s42wit_a_7bc667a4421a(x, \"s42wit_a_7bc667a4421a\")\n    return x\n\n"
+  },
+  "B": {
+   "main.py": "# s42wit_b_240793d97d57 main module\n\n\ndef main():  # s42wit_b_240793d97d57\n    return s42cnry_b_240793d97d57_fn(1)\n",
+   "s42wit_b_240793d97d57.py": "def s42cnry_b_240793d97d57_fn(x):  # s42wit_b_240793d97d57\n    return x\n\n\nPAYLOAD = \"s42cnry_b_240793d97d57\"  # s42wit_b_240793d97d57\n"
+  },
+  "T1": {
+   "m0.py": "def s42cnry_t1_0a3da9c059cd(x):\n    return x + 0\n\n\ndef f0(x):\n    return x + 0\n\nclass C0:\n    def m(self):\n        return f0(1)\n",
+   "m1.py": "def f1(x):\n    return x + 1\n\nclass C1:\n    def m(self):\n        return f1(1)\n",
+   "m2.py": "def f2(x):\n    return x + 2\n\nclass C2:\n    def m(self):\n        return f2(1)\n",
+   "m3.py": "def f3(x):\n    return x + 3\n\nclass C3:\n    def m(self):\n        return f3(1)\n",
+   "m4.py": "def f4(x):\n    return x + 4\n\nclass C4:\n    def m(self):\n        return f4(1)\n"
+  },
+  "T2": {
+   "m0.py": "def s42cnry_t2_0e557e9779a2(x):\n    return x + 0\n\n\ndef f0(x):\n    return x + 100\n\nclass C0:\n    def m(self):\n        return f0(1)\n",
+   "m1.py": "def f1(x):\n    return x + 101\n\nclass C1:\n    def m(self):\n        return f1(1)\n",
+   "m2.py": "def f2(x):\n    return x + 2\n\nclass C2:\n    def m(self):\n        return f2(1)\n",
+   "m3.py": "def f3(x):\n    return x + 3\n\nclass C3:\n    def m(self):\n        return f3(1)\n",
+   "m4.py": "def f4(x):\n    return x + 4\n\nclass C4:\n    def m(self):\n        return f4(1)\n"
+  }
+ },
+ "unresolved_limits": [
+  "black_box_ledger_detects_planted_canaries_and_typed_outcomes_only",
+  "zero_is_within_the_enumerated_cases_not_a_no_leakage_claim",
+  "stderr_tool_call_corroboration_is_necessary_not_sufficient",
+  "timing_side_channels_untested",
+  "shared_address_space_untested",
+  "tls_reverse_proxy_untested",
+  "same_path_pair_exposes_the_live_tree_by_design",
+  "real_hosts_untested_claude_code_copilot_cursor",
+  "s40_in_process_observer_suite_inherited_not_rerun",
+  "gc_seam_kills_untested_only_lease_writer_busy_and_expiry",
+  "single_host_loopback_workload_not_a_load_test",
+  "resource_metrics_linux_proc_with_source_labels",
+  "no_deployment_credentials_or_dns_performed",
+  "fresh_runs_compared_by_invariants_not_by_digest"
+ ]
+}

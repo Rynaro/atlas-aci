@@ -1,0 +1,12 @@
+ruff 0
+format 0
+mypy 0
+s42-contract 0
+s42-contract-cpus4 0
+g-src 0
+g-mcp 0
+g-replay 0
+py314 0
+regression 0
+full-suite 1
+FINAL_DONE

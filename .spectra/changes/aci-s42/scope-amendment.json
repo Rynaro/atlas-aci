@@ -1,0 +1,150 @@
+{
+ "slice_id": "ACI-S42",
+ "base_commit": "4f470d73a80fcf0e797728b1e45bccc77bf3a0a5",
+ "recorded_before_implementation": true,
+ "declared_by_issue": [
+  "atlas/evals/*",
+  "scripts/eval/*",
+  "mcp-server/tests/slices/test_s42_*.py",
+  "docs/evidence/*",
+  "docs/operations/*"
+ ],
+ "glob_depth_clarifications": [
+  {
+   "path": "atlas/evals/*",
+   "reason": "Adds atlas/evals/shared/manifest.v1.json (one level below the declared glob: frozen principals, grants, trees, canaries, case table, interruption matrix, compat cells, capacity workload, required checks, unresolved limits, honesty statements) and appends an 'ACI-S42 shared-operation readiness' section to atlas/evals/README.md (0 deletions). No existing atlas/evals file is otherwise touched; atlas/evals/v3/manifest.v1.json (S23 sha pin) is untouched"
+  },
+  {
+   "path": "scripts/eval/*",
+   "reason": "Adds scripts/eval/s42_record.py (impure recorder; stdlib at top level, atlas_aci/mcp/httpx/jwt/cryptography lazily) and scripts/eval/s42_aggregate.py (pure; one importlib spec of v3_aggregate.py; AST-tested). Unique basenames; linted by the existing CI ruff/mypy ../scripts/ steps. v3_aggregate.py and v3_record.py are untouched"
+  },
+  {
+   "path": "docs/evidence/*",
+   "reason": "Adds docs/evidence/s42/ (README.md deployment model and limits, raw/*.json.gz immutable run records, readiness-report.json, readiness-report.md), nested below the declared glob. docs/evidence/v3/** (S23 pins) is untouched"
+  },
+  {
+   "path": "docs/operations/*",
+   "reason": "Declared by the issue but intentionally byte-unchanged: test_s40_isolation.py:471-474 and test_s41_isolation.py:412-415 pin the exact docs/operations/*.md set and test_s41_isolation.py:457-459 pins the S40 test text, so the deployment-model and limits document lives at docs/evidence/s42/README.md"
+  }
+ ],
+ "added": [
+  {
+   "path": "CHANGELOG.md",
+   "reason": "One '- **Shared-operation readiness evidence (ACI-S42).**' bullet inserted immediately before the S41 bullet (CHANGELOG.md:421), after the ACI-S14 block. Unreleased/Added then has 26 bullets with S42 at bullets[-3]: bullets[-1] stays S40 (test_s40_isolation.py:431-440), bullets[-2] stays S41 (test_s41_isolation.py:424-435), bullets[0..9] keep their S33-S39 positions. Contains no '(ACI-S40)'/'(ACI-S41)' token, no continuation line starting '- ', ASCII, no BANNED words; '### Security' unchanged; 0 deletions"
+  },
+  {
+   "path": "README.md",
+   "reason": "One two-cell docs-table row for docs/evidence/s42/README.md directly after the S41 row (README.md:956), before the INTEGRATION.md row. The S40 (SETUP+1) and S41 (shared-http+1) adjacency pins and their once-only path counts are unaffected; the row contains no docs/operations path and no 'canary-missions.md' (test_s23_isolation.py:130); 0 deletions"
+  },
+  {
+   "path": ".spectra/plans/aci-s42.*",
+   "reason": "Ramza plan, criteria, state, issue snapshot, review, scope"
+  },
+  {
+   "path": ".spectra/plans/ramza-calibration.jsonl",
+   "reason": "Ramza calibration append"
+  },
+  {
+   "path": ".spectra/changes/aci-s42/*",
+   "reason": "This amendment"
+  },
+  {
+   "path": ".spectra/evidence/aci-s42/**",
+   "reason": "qualification.json, base-invariants.json, Day-1 spike logs, dev-run/ (dev-image recorder records and report), production-scenario.sh and production-scenario.json, py314 log, replay and gate logs and exit files"
+  },
+  {
+   "path": ".spectra/state/aci-s42.execution.json",
+   "reason": "Authoritative execution receipt (AC-RUN-01/02)"
+  },
+  {
+   "path": ".spectra/backlog/execution.json",
+   "reason": "Backlog status update"
+  },
+  {
+   "path": ".spectra/backlog/order.md",
+   "reason": "Backlog order update"
+  }
+ ],
+ "prior_test_edits": [],
+ "interpretations": [
+  {
+   "topic": "AC-001 evidence access ledger",
+   "decision": "Black-box against a real serve-shared subprocess with planted canary tokens per evidence domain (A: repository a live tree and graph; B: repository b; C: the before-snapshot-only symbol of c, the same-path before of a) and deterministic per-case nonces. unauthorized = (expected deny AND outcome ok) OR (a canary domain hit outside the case's authorized domains; tokens present in the request are not counted) OR (expected deny AND a nonce-carrying case's nonce in a stderr tool_call line). Every deny class has a paired allow control that must be ok with its domains hit; an over-granted teeth policy must produce unauthorized > 0 and verdict blocked. Zero is reported as 'zero within the enumerated cases', never as no leakage"
+  },
+  {
+   "topic": "AC-002 valid completed generation",
+   "decision": "After each injected interruption and its recovery: jobs status shows the expected current generation with no running/interrupted/failed job; a fresh stdio server on the recovered namespace reports that generation id (structured graph_query status) and finds the expected tree canary but not the other tree's; jobs acquire --generation <current> exits 0; the generation id equals a twin-root control build of the same tree. A replace-by-copy farm corruption teeth case must be recorded invalid while the live store stays unchanged. GC-seam kills are untested (no CLI fault path without src)"
+  },
+  {
+   "topic": "AC-003 tested combinations",
+   "decision": "A combination is a (client, transport, requested revision -> negotiated revision) cell that exists only when a run record exists; real hosts (Claude Code, GitHub Copilot, Cursor) are listed untested with reason no_real_host_run"
+  },
+  {
+   "topic": "AC-004 workload record and AC-006 canonical metrics",
+   "decision": "One report object report.capacity.workload holds configured limits, invariant booleans and an observed block (latency percentiles, /proc and wait4 resource use with source labels, server gate counters). canonical_sha256 = sha256 of the report with every key named observed or diagnostic removed recursively; replay of the same immutable records is byte-identical; fresh runs are compared by invariants only"
+  },
+  {
+   "topic": "No product change",
+   "decision": "mcp-server/src, pyproject.toml, uv.lock, Dockerfile, Dockerfile.dev and .github/workflows stay byte-identical; only S38-S41 public CLI surfaces are exercised"
+  }
+ ],
+ "implementation_adaptations": [
+  "Day-1 (g) fixes: witness tokens sit inside callee identifiers (resource blobs carry only the callee span); retrieve cases use the exact symbol name, so they are not nonce carriers; D13 is p4.b.list_dir ../a; extra controls M12-M14; D02 is a graph_query impact on route c (same tool class as its control M07); page_max_bytes 18000/24000, deadline_ms 2000",
+  "The shared_http_stopped line renders keys alphabetically (admitted, peak, rejected); the recorder parses each key",
+  "Compatibility cells run against their own serve-shared process, not the isolation server; interruption has 10 records (8 recoveries and 2 teeth)",
+  "Aggregator and scenario run inside the production image (python -I); the negative control gives p4 search_text on b and must fail exactly isolation.positive_controls, isolation.typed_denials and isolation.unauthorized_zero",
+  "No cut from the cut order was applied; full recorder measured 22 s under docker run --cpus 4 (dev image)"
+ ],
+ "not_touched_follow_up": [
+  {
+   "path": "mcp-server/src/atlas_aci/storage/retention.py, mcp-server/src/atlas_aci/__main__.py",
+   "reason": "Process kills at GC seams would need jobs gc to read a fault specification; follow-up"
+  },
+  {
+   "path": "real host runs",
+   "reason": "Claude Code, GitHub Copilot and Cursor runs need an operator budget; follow-up"
+  }
+ ],
+ "explicitly_untouched_gated": [
+  "mcp-server/src/",
+  "mcp-server/pyproject.toml",
+  "mcp-server/uv.lock",
+  "mcp-server/Dockerfile",
+  "mcp-server/Dockerfile.dev",
+  ".github/workflows/",
+  "hosts/",
+  "docs/operations/",
+  "docs/evidence/v3/",
+  "atlas/evals/v3/",
+  "scripts/eval/v3_aggregate.py",
+  "scripts/eval/v3_record.py",
+  "mcp-server/tests/fixtures/",
+  "mcp-server/tests/slices/test_s23_isolation.py",
+  "mcp-server/tests/slices/test_s40_isolation.py",
+  "mcp-server/tests/slices/test_s41_isolation.py"
+ ],
+ "invariants": {
+  "tools_json_sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+  "tools_json_bytes": 1631472,
+  "READ_ONLY_TOOLS_count": 7,
+  "pyproject_sha256": "981f0784d6bc5c1502c91ab27657beb483460b97e066cd8846f51e98f1d7d92f",
+  "uv_lock_sha256": "87ba265e76f382aaa4387da7ca5d89dc85eb3699b35ee4315e981302b19646fd",
+  "src_tree_digest": "recorded at Day-1 (a) from 4f470d7",
+  "dockerfile_sha256": "recorded at Day-1 (a) from 4f470d7",
+  "s23_manifest_sha256": "3b901b99607d3db95d02a79794792cc8fb0df142901dc35fb502a1fa8e49b1ce",
+  "mcp_version": "1.30.0",
+  "pyjwt_version": "2.15.1",
+  "cryptography_version": "50.0.2",
+  "httpx_version": "0.28.1",
+  "docs_operations_set": [
+   "shared-http-deployment.md",
+   "index-jobs-and-retention.md"
+  ],
+  "changelog_added_tail": [
+   "S42 at bullets[-3]",
+   "S41 at bullets[-2]",
+   "S40 at bullets[-1]"
+  ],
+  "criteria_sha256": "3930f6ad8488a435e7ea980c700c51b2a899539d37b96858bc984143cb0ebdab"
+ }
+}

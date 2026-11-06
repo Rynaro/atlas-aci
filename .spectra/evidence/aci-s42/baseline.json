@@ -1,0 +1,6 @@
+{
+ "base_commit": "4f470d73a80fcf0e797728b1e45bccc77bf3a0a5",
+ "ci_run": "42179540906",
+ "ci_result": "3256 passed, 11 skipped",
+ "source": "gh run view 42179540906 (PR #107 pytest / ruff / mypy)"
+}
