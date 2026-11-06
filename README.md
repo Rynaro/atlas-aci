@@ -1,462 +1,201 @@
 # atlas-aci
 
-Reference MCP server and setup bundle for the **ATLAS bounded
-Agent-Computer Interface**.
+Give your coding agent seven read-only tools it cannot misuse.
 
-<!--
-  The release badge below is DYNAMIC (shields.io github/v/release) — it
-  tracks this repo's latest GitHub release automatically. Don't hardcode
-  a version number here; it updates itself the moment a tag is cut.
--->
 [![CI](https://github.com/Rynaro/atlas-aci/actions/workflows/ci.yml/badge.svg)](https://github.com/Rynaro/atlas-aci/actions/workflows/ci.yml)
-<img src="https://img.shields.io/github/v/release/Rynaro/atlas-aci?sort=semver&label=release&color=blue" alt="release">
-[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](mcp-server/pyproject.toml)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-%E2%89%A53.11-blue.svg)](mcp-server/pyproject.toml)
-[![MCP SDK](https://img.shields.io/badge/mcp-%E2%89%A51.2-6e44ff.svg)](mcp-server/pyproject.toml)
+[![MCP](https://img.shields.io/badge/MCP-server-6e44ff.svg)](https://modelcontextprotocol.io)
 
 <p>
-<a href="#try-it-in-60-seconds">Try it</a> ·
-<a href="#the-seven-tools">The tools</a> ·
-<a href="#see-it-query">See it query</a> ·
-<a href="#how-its-bounded">How it's bounded</a> ·
-<a href="#does-it-hold-up">Does it hold up?</a> ·
-<a href="#install">Install</a> ·
-<a href="#when-atlas-aci-is-the-wrong-tool">When not to use it</a>
+<a href="#quickstart">Quickstart</a> &middot;
+<a href="#the-seven-tools">The seven tools</a> &middot;
+<a href="#why-read-only">Why read-only</a> &middot;
+<a href="#mechanical-bounds">Mechanical bounds</a> &middot;
+<a href="#language-support">Languages</a> &middot;
+<a href="#does-it-hold-up">Does it hold up?</a> &middot;
+<a href="#when-not-to-use-it">When not to use it</a> &middot;
+<a href="#documentation">Docs</a>
 </p>
 
----
+atlas-aci is a Model Context Protocol (MCP) server that lets a coding agent explore a repository through seven bounded, read-only tools. It builds a local code graph with tree-sitter and answers from that graph. It makes no LLM calls and needs no API key.
 
-Most code-navigation MCP servers hand the agent read *and* write tools —
-`edit_file`, `shell_exec`, sometimes `git_commit` — and hope prompt
-discipline holds. atlas-aci makes a narrower bet: a code-exploration
-agent doesn't need to mutate anything to do its job, so the mutating
-tools simply don't exist in the interface. Not by convention, not by
-system-prompt instruction — the allowlist is a `frozenset` literal in
-source, checked before any tool code runs. **The agent is the untrusted
-party**, and as of v2.0.0 every doc claim below is mechanically checked
-too, not merely asserted. The numbers — and their honest catches — are
-[below](#does-it-hold-up).
+The agent is the untrusted party in this design. The server has no tool that writes files or runs arbitrary commands. The one tool that executes code, `test_dry_run`, is off unless you opt in. Every response is capped by code before the agent sees it.
 
-## Try it in 60 seconds
+## Quickstart
 
-Evaluation, not commitment — no host, no API key, nothing written outside
-`.atlas/`:
+You need Python 3.11 or newer, [uv](https://docs.astral.sh/uv/), and ripgrep (`rg`) on your PATH.
 
 ```bash
-git clone https://github.com/Rynaro/atlas-aci && cd atlas-aci/mcp-server
-uv sync
+cd mcp-server && uv sync                          # once, from a checkout of this repo
+uv tool install .                                 # puts atlas-aci on your PATH
 
-uv run atlas-aci index --repo /path/to/any/repo
-uv run atlas-aci tools --repo /path/to/any/repo | jq 'map(.name)'
-# ["view_file","list_dir","search_text","search_symbol",
-#  "graph_query","test_dry_run","memex_read"]
+atlas-aci index --repo /path/to/your/repo         # builds the code graph in <repo>/.atlas/
+atlas-aci tools --repo /path/to/your/repo | jq -r '.[].name'
+# you should see the seven tool names, in this order:
+# view_file
+# list_dir
+# search_text
+# search_symbol
+# graph_query
+# test_dry_run
+# memex_read
 ```
 
-Any output containing a name not in that list means the server is
-non-conformant — file a bug. Full walkthrough (host wiring, canaries,
-hardening): [`SETUP.md`](SETUP.md). Onboarding an existing codebase:
-[`INTEGRATION.md`](INTEGRATION.md).
+Add `.atlas/` to the repo's `.gitignore`. The index is derived data and can always be rebuilt.
+
+Next, register the server in your host. For Claude Code, add an entry like this to the MCP configuration described in [hosts/claude-code.md](hosts/claude-code.md):
+
+```json
+{
+  "mcpServers": {
+    "atlas-aci": {
+      "command": "atlas-aci",
+      "args": ["serve", "--repo", "/path/to/your/repo"]
+    }
+  }
+}
+```
+
+Restart the host. It should list the same seven `atlas-aci` tools. Without `--memex-root`, the excerpt store lives at `<repo>/.atlas/memex`.
+
+For the full walkthrough, read [SETUP.md](SETUP.md). To onboard an existing codebase, read [INTEGRATION.md](INTEGRATION.md).
+
+<details>
+<summary>Copilot, Cursor and Docker</summary>
+
+Copilot custom agent, in the agent's frontmatter (see [hosts/copilot.md](hosts/copilot.md)):
+
+```yaml
+tools:
+  mcp_servers:
+    - name: atlas-aci
+      transport: stdio
+      command: ["atlas-aci", "serve", "--repo", "${workspaceFolder}"]
+```
+
+Cursor: add a custom server in Settings with transport `stdio`, command `atlas-aci` and arguments `serve --repo /path/to/your/repo`. The same JSON as above works in `~/.cursor/mcp.json`. See [hosts/cursor.md](hosts/cursor.md).
+
+Docker, with the published image:
+
+```bash
+docker run --rm -v /path/to/your/repo:/repo ghcr.io/rynaro/atlas-aci index --repo /repo
+docker run --rm -i --read-only -v /path/to/your/repo:/repo:ro -v atlas-memex:/memex \
+  ghcr.io/rynaro/atlas-aci serve --repo /repo --memex-root /memex
+```
+
+The newest published tag is `v2.0.0`, which predates the changes under Unreleased in [CHANGELOG.md](CHANGELOG.md). The image also needs network access the first time it indexes. [docs/installation.md](docs/installation.md) covers both points and how to build the image locally.
+
+</details>
 
 ## The seven tools
 
-All bounds below are **mechanical** — enforced in the dispatcher before
-the tool sees the request, not advisory hints to the model. Defaults
-live in
-[`mcp-server/src/atlas_aci/config.py`](mcp-server/src/atlas_aci/config.py)
-and can be tightened per deployment.
+Each tool's output passes the same bounds before the agent sees it. The defaults live in [`config.py`](mcp-server/src/atlas_aci/config.py).
 
-| Tool | Purpose | Hard bound |
-|------|---------|------------|
-| `view_file` | Read a window of lines from a UTF-8 text file. Rejects binaries by extension and by `UnicodeDecodeError`. | ≤100 lines/call, ≤8 KiB/call, `next_cursor` for paging |
-| `list_dir` | List a directory, respecting the skip-list (`node_modules`, `vendor/bundle`, `.git`, `.atlas`, …). | ≤200 entries/call, overflow flag if truncated |
-| `search_text` | Ripgrep-backed regex search over a repo-relative scope or glob. Smart-case by default. | ≤50 matches/call, 15s wall-clock timeout |
-| `search_symbol` | Index-backed symbol lookup. Returns definitions + references for a name (optionally filtered by `kind`). | Requires `atlas-aci index` first; central element cap + byte ceiling (truncated + flagged) |
-| `graph_query` | Tiny DSL over the code graph: `callers_of:Sym`, `definitions_of:Name`, `subclasses_of:Class`, `god_nodes:`, `communities:`, `rationale:`. | Rejects unknown verbs; central element cap + byte ceiling (truncated + flagged) |
-| `test_dry_run` | **Disabled by default.** After explicit operator opt-in, run one test file, optionally filtered by case name. | 30s wall-clock; stdout and stderr each capped at 8 KiB. **No OS sandbox.** |
-| `memex_read` | Byte-exact retrieval of a previously captured excerpt via its `memex://excerpt/<sha256>` ref, minted by `Memex.write()`. No ATLAS tool currently emits one. | Scoped to the hashed-dir backend |
+| Tool | What it answers | Hard bound |
+| --- | --- | --- |
+| `view_file` | Read a window of lines from a UTF-8 text file. Binary files are rejected. | 100 lines and 8 KiB per call. `next_cursor` pages the rest. |
+| `list_dir` | What is in this directory? The skip-list applies (`node_modules`, `.git`, `.atlas`, and more). | 200 entries per call. Overflow is flagged. |
+| `search_text` | Where does this regex match? Ripgrep, smart-case by default. | 50 matches per call. 15 s timeout. |
+| `search_symbol` | Where is this name defined and referenced? Needs an index. | 200 items per list field. Responses capped at 1 MiB. |
+| `graph_query` | Who calls this, what inherits from it, what matters most? Needs an index. | The same caps. Unknown verbs are rejected. |
+| `test_dry_run` | Run one test file. Off unless the operator opts in. | 30 s. 8 KiB per stdout and stderr stream. No OS sandbox. |
+| `memex_read` | Read a saved excerpt back by its `memex://excerpt/<sha256>` ref. | Byte-exact. No ATLAS tool emits refs today. |
 
-Process-wide: **200 calls/minute** sliding-window rate limit. Every call
-is recorded in telemetry (per-tool count, bytes out, overflow flags,
-errors) — wire `Enforcement.records` to your observability sink.
+The process as a whole accepts 200 calls per minute. Excess calls get a structured error. Every call is logged to stderr as a `tool_call` event.
 
-### `graph_query`'s DSL, in six lines
+### graph_query in six lines
 
-`callers_of`/`subclasses_of` return materialized edges carrying a
-`confidence` enum (`EXTRACTED` / `INFERRED` / `AMBIGUOUS`, never
-LLM-produced) plus a top-level `unresolved_refs` count. `god_nodes:` and
-`communities:` both run over the **confident subgraph** only
-(`EXTRACTED` ∪ `INFERRED` — AMBIGUOUS is structurally excluded, not
-filtered) and both responses carry `analysis_basis`,
-`ambiguous_edges_excluded`, and `resolved_edge_count` so that exclusion
-is visible, not implicit. `rationale:` surfaces every recognized
-`# NOTE:`/`# TODO:`/`# HACK:`/ADR-RFC-referencing comment as a first-class
-node with its own `rationale_for` edge, structurally kept out of the
-call/inheritance graph. **Confidence tiers are conservative by
-construction:** the `EXTRACTED` shadowing guard is file-scoped, not
-scope-scoped, so it can under-claim (never over-claim) — treat
-`EXTRACTED` as a floor on what's captured, not an exact count. The full
-edge-shape reference, the `god_nodes`/`communities` response shapes, the
-D4a analysis-graph-vs-query-graph divergence, and the `rationale:` node
-shape live in [`docs/graph-query-dsl.md`](docs/graph-query-dsl.md).
+`graph_query` takes a DSL string in its `query` argument. Six examples, with placeholder names:
 
-## See it query
-
-`graph_query` is a real local program, not a prompt — ask it something
-and it answers in JSON:
-
-```console
-$ uv run atlas-aci index --repo .
-$ uv run python -c "
-from pathlib import Path
-from atlas_aci.codegraph import CodeGraph
-from atlas_aci.config import Config
-from atlas_aci.enforcement import Enforcement
-import asyncio, json
-from atlas_aci.tools.graph_query import graph_query
-config = Config(repo=Path('.'), memex_root=Path('/tmp/memex'))
-cg, enf = CodeGraph(Path('.')), Enforcement(config)
-print(json.dumps(asyncio.run(graph_query({'query': 'callers_of:assert_read_only'}, config, enf, cg)), indent=2))
-"
-{
-  "edges": [
-    {
-      "relation": "call",
-      "confidence": "INFERRED",
-      "source": {
-        "path": "mcp-server/src/atlas_aci/server.py",
-        "line": 379,
-        "name": "dispatch_tool_call",
-        "kind": "function"
-      },
-      "target": {
-        "path": "mcp-server/src/atlas_aci/enforcement.py",
-        "line": 81,
-        "name": "assert_read_only"
-      },
-      "candidates": null
-    }
-    // ... 2 more edges (both from mcp-server/tests/test_enforcement.py)
-  ],
-  "unresolved_refs": 0
-}
+```text
+{"query": "definitions_of:Config"}
+{"query": "callers_of:dispatch_tool_call"}
+{"query": "subclasses_of:Base"}
+{"query": "god_nodes:"}
+{"query": "communities:"}
+{"query": "rationale:"}
 ```
 
-```console
-$ # same shape, query changed to 'god_nodes:' — degree centrality over
-$ # the confident subgraph only
-{
-  "god_nodes": [
-    {"path": "mcp-server/src/atlas_aci/codegraph.py", "line": 753,
-     "name": "CodeGraph", "kind": "class",
-     "in_degree": 128, "out_degree": 0, "degree": 128}
-    // ... ranked list continues
-  ],
-  "analysis_basis": "confident_edges",
-  "ambiguous_edges_excluded": 326,
-  "resolved_edge_count": 684
-}
-```
+Edges from `callers_of` and `subclasses_of` carry a `confidence` label: `EXTRACTED`, `INFERRED` or `AMBIGUOUS`. The labels come from the parser's structure and are never produced by a model. `god_nodes:` and `communities:` analyze only the confident edges, and their responses say so. Treat `EXTRACTED` as a floor, not an exact count: the shadowing guard can under-claim but never over-claim. The same tool also takes structured operations (`status`, `neighborhood`, `path`, `page`, `continue`, `retrieve`, `context`, `impact`). The full reference is in [docs/graph-query-dsl.md](docs/graph-query-dsl.md).
 
-<sup>Output captured against atlas-aci's own index and lightly trimmed
-for length; not lightly trimmed for content. Both calls run entirely
-local, make **zero LLM calls, no API key**, and reproduce
-byte-identically for an identical index — this is deterministic
-program output, not a generated sample.</sup>
+## Why atlas-aci
 
-## How it's bounded
+- **Read-only by construction.** An allowlist of seven tool names is checked before any tool code runs. Every other name returns `FORBIDDEN`. [Why read-only](#why-read-only)
+- **One bounds chokepoint.** Every response passes a single check that caps list fields and total size, so a new tool cannot forget to cap. [Mechanical bounds](#mechanical-bounds)
+- **A real code graph.** Definitions, call sites and inheritance for 11 languages, parsed with tree-sitter and stored in a local SQLite index. [Language support](#language-support)
+- **No LLM calls, no API key.** Indexing and queries run as local programs, and a test fails the build if the server imports an LLM SDK. [Does it hold up?](#does-it-hold-up)
+- **Deterministic export.** `atlas-aci export` writes canonical JSONL, so a teammate can import a graph instead of re-parsing the repo. [Export and import](docs/how-it-works.md#export-and-import)
+- **Signed images.** Published images carry a keyless cosign signature plus SBOM and build-provenance attestations. [Verified releases](#verified-releases)
 
-```
-┌─────────────────────────────────────────────┐
-│            your MCP host                    │
-│  (Claude Code / Copilot / Cursor / …)       │
-└──────────────────┬──────────────────────────┘
-                   │ stdio  (tools/list, tools/call)
-                   ▼
-┌─────────────────────────────────────────────┐
-│   atlas-aci  (this server)                  │
-│   ┌──────────────────────────────────────┐  │
-│   │ enforcement.py                       │  │  ← read-only allowlist,
-│   │  • READ_ONLY_TOOLS frozenset         │  │    path-traversal guard,
-│   │  • assert_path_in_repo               │  │    sliding-window rate
-│   │  • assert_rate_limit                 │  │    limiter, bound helpers,
-│   │  • cap_lines / cap_matches / …       │  │    telemetry sink
-│   └───────────────┬──────────────────────┘  │
-│                   │ every call funnels here │
-│   ┌───────────────▼──────────────────────┐  │
-│   │ 7 tools  (view_file, list_dir,       │  │
-│   │  search_text, search_symbol,         │  │
-│   │  graph_query, test_dry_run,          │  │
-│   │  memex_read)                         │  │
-│   └───┬─────────────────────────────┬────┘  │
-│       │                             │       │
-│   ┌───▼──────┐               ┌──────▼────┐  │
-│   │ memex.py │               │codegraph  │  │
-│   │ hashed-  │               │tree-sitter│  │
-│   │ dir KV   │               │+ SQLite   │  │
-│   └──────────┘               └───────────┘  │
-└─────────────────────────────────────────────┘
-```
+## How it compares
 
-These are the properties the enforcement layer guarantees. If any of
-them fail under test, the server is non-conformant — every invariant has
-a corresponding test in
-[`mcp-server/tests/test_enforcement.py`](mcp-server/tests/test_enforcement.py).
+| Approach | Good for | Tradeoff |
+| --- | --- | --- |
+| Shell and text search (`rg`, `grep`, `find`) | Exact text, fast, no setup | No structure. A name match is not a definition or a call site. |
+| Embedding or RAG search | Fuzzy questions and finding code by meaning | Results are approximate and depend on an embedding model. |
+| Read-write agent toolkits (edit, shell, git) | Agents that also change code | The agent can modify the repo, so read-only use depends on prompts and host settings. |
+| atlas-aci | Read-only exploration with structure and hard caps | Structural only. No type inference, no compiler semantics, no edits. |
 
-1. **Read-only allowlist.** Any tool name not in
-   `enforcement.READ_ONLY_TOOLS` is rejected with `FORBIDDEN` before any
-   tool code runs. The set is a source-level `frozenset` literal.
-2. **Path-traversal guard.** Every file path is resolved (including
-   symlinks) and checked against the configured repo root before any
-   filesystem access. Paths that resolve outside the repo are rejected
-   with `FORBIDDEN`.
-3. **Mechanical bounds.** Line / entry / match / byte caps and the
-   sliding-window rate limiter are applied per call in `enforcement.py`,
-   plus a central dispatch-layer chokepoint (`server.py`'s
-   `apply_central_bounds`) that element-caps every tool's declared
-   list-valued field and enforces an absolute byte ceiling — the floor
-   every tool (including `search_symbol` and `graph_query`) passes
-   through regardless of its own caps. Tools can only narrow bounds,
-   never widen them.
-4. **Structured errors.** All errors are `ToolError(code, message,
-   retry_hint)`. The retry hint is one of `none`, `narrower_scope`,
-   `different_tool` — intended to be acted on by the model without
-   humans in the loop.
-5. **Telemetry of every call.** Tool name, arg shape (with the `content`
-   field redacted), bytes out, duration, overflow flag, and error code
-   are recorded for every call. Wire `Enforcement.records` to your
-   observability sink at process start.
+## Why read-only
 
-**Explicitly absent:** `edit_file`, `write_file`, `shell_exec`,
-`git_commit`, `git_checkout`, `migration_apply`, `deploy_run`, and any
-other mutating primitive. Attempts to call them return `FORBIDDEN` from
-`assert_read_only` before any code runs. If your workflow needs to apply
-edits, run migrations, or deploy code, **use a different server** — don't
-hollow out this one.
+Most code-navigation servers also offer write tools and rely on instructions to keep them unused. atlas-aci makes the narrower choice. An exploration agent does not need to change anything, so the server offers no way to.
 
-### Repository test execution requires operator opt-in
+The allowlist is a `frozenset` literal in [`enforcement.py`](mcp-server/src/atlas_aci/enforcement.py). A call to `edit_file`, `write_file`, `shell_exec` or `git_commit` returns `FORBIDDEN` before any tool code runs. Because the agent is the untrusted party, two operations are CLI-only and never tools:
 
-`test_dry_run` is disabled by default. Requests receive a deterministic
-`FORBIDDEN` error before test-path inspection or subprocess creation. Request
-fields and repository files cannot enable it. To enable execution for a trusted
-repository, set the exact operator environment value when starting the server:
+- **`import`** replaces the whole index from a file on disk. An agent that could call it could swap every future `search_symbol` or `graph_query` answer. A hand-made file with a fresh hash passes the same check as a real export.
+- **`export`** is a closer call. It never writes to the index, but it writes a file at a path the caller chooses. An export tool would be the first exception to "no tool writes files", so it stays on the CLI.
 
-```sh
-ATLAS_ACI_ENABLE_TEST_EXECUTION=1 atlas-aci serve --repo /path/to/repo
-```
+Run the server against a read-only mount. `--read-only` plus a `:ro` bind mount is an OS-level guarantee, which is stronger than any check in code. If your workflow needs edits, migrations or deploys, pair this server with a different one. Do not add write tools here.
 
-Only `1` enables it; missing, empty, `0`, `false`, or malformed values leave it
-disabled. Configuration snapshots this choice at startup. Programmatic callers
-may explicitly set `Config(test_execution_enabled=True, ...)`; explicit `False`
-overrides the environment. Read-only navigation tools remain available either way.
+The read-only property covers ATLAS's own tools. `test_dry_run` is the deliberate exception: when you enable it, the test file's code runs with the server's permissions. It is off by default. See [Test execution is opt-in](docs/how-it-works.md#test-execution-is-opt-in).
 
-The tool remains discoverable in `tools/list`. Its description and
-`_meta["atlas-aci/test_execution_enabled"]` identify the active state. Enabling
-it retains the supported runners, case filtering, path containment, timeout,
-separate stdout/stderr caps, truncation fields, and central response ceiling.
-On timeout, Atlas kills and waits for the **immediate child subprocess**; it does
-not guarantee cleanup of descendants.
+## Mechanical bounds
 
-**Security boundary:** enabled tests execute repository code with the server's
-permissions and may write files or access the network. A timeout and output caps
-are not an OS sandbox. For untrusted code or models, the operator must supply
-isolation such as a DevContainer or microVM and appropriate filesystem/network
-restrictions. See [`SETUP.md §8`](SETUP.md#8-production-hardening-checklist).
+Every bound is enforced in code. None is a hint to the model. Defaults are in [`config.py`](mcp-server/src/atlas_aci/config.py).
 
-### External graph storage for a read-only source checkout
+| Bound | Default | Enforced in |
+| --- | --- | --- |
+| Lines per `view_file` call | 100 | `enforcement.py` |
+| Bytes per call (`view_file`; each `test_dry_run` stream) | 8 KiB | `config.py` |
+| Entries per `list_dir` call | 200 | `enforcement.py` |
+| Matches per `search_text` call | 50 | `enforcement.py` |
+| Items per list field, every tool | 200 | `server.py` chokepoint |
+| Serialized response, every tool | 1 MiB | `server.py` chokepoint |
+| Calls per minute, whole process | 200 | `enforcement.py` |
+| `search_text` wall-clock limit | 15 s | `tools/search_text.py` |
+| `test_dry_run` wall-clock limit | 30 s | `config.py` |
 
-`index`, `serve`, `status`, `export`, and `import` accept an optional explicit
-`--graph-root PATH`. Omission keeps `<repo>/.atlas` exactly as before. There is
-no graph-root environment-variable precedence: CLI, Config, or CodeGraph values
-are explicit; `None` means the local default. `--memex-root` remains independent.
+The chokepoint matters most. Every response passes through `apply_central_bounds` in [`server.py`](mcp-server/src/atlas_aci/server.py) before serialization. It caps each declared list field on a whole-element boundary and marks the result `truncated`, with `truncated_fields` and `returned_count` so the agent can see what was cut. A response still over 1 MiB after that is refused with `RESPONSE_TOO_LARGE`. A tool can narrow a bound, but it cannot widen one. Errors are structured, with a `retry_hint` of `none`, `narrower_scope` or `different_tool`.
 
-```bash
-atlas-aci index --repo /path/to/source --graph-root /path/to/graphs
-atlas-aci serve --repo /path/to/source --graph-root /path/to/graphs --memex-root /path/to/memex
-atlas-aci status --repo /path/to/source --graph-root /path/to/graphs
-```
+The export size ceiling (AC-REL-2) is GitHub's 100 MiB limit on one committed file. `atlas-aci export` warns on stderr at 50 MiB and again at 100 MiB, and never fails the export. [docs/how-it-works.md](docs/how-it-works.md#export-size-ceiling-ac-rel-2) covers what to do past it.
 
-The graph root must be outside the source checkout. All graph databases, writer
-locks, publication stages and attempt diagnostics live under
-`<graph-root>/repos/<SHA-256 of the resolved source path>`. Separate repositories
-and Git worktrees have separate namespaces; symlink aliases of the same resolved
-source share one. Configured root symlinks resolve consistently; derived namespace redirections
-are rejected, including links to another repository inside the same root. Storage is operator-owned; this is not a hostile
-concurrent symlink sandbox. Atlas never relocates or deletes a different root's
-index, and an explicit root never falls back to `<repo>/.atlas`.
+## Language support
 
-Index and serve must use the **same canonical source/mount path**. Host
-`/home/project` and container `/repo` deliberately have different identities.
-Moving a checkout changes its namespace. Portable exports can be imported into
-the chosen destination/root; graph-root location does not enter canonical facts
-or generation identity.
+The index covers 11 languages by default. `atlas-aci index --langs` takes a subset.
 
-For Docker, prepare `/path/to/graphs` and `/path/to/memex` so UID10001 can write
-them, then keep the source read-only in both commands:
-
-```bash
-docker run --rm --read-only --network none -v "$PWD":/repo:ro \
-  -v /path/to/graphs:/graphs -v /path/to/memex:/memex \
-  atlas-aci index --repo /repo --graph-root /graphs
-docker run --rm -i --read-only --network none -v "$PWD":/repo:ro \
-  -v /path/to/graphs:/graphs:ro -v /path/to/memex:/memex \
-  atlas-aci serve --repo /repo --graph-root /graphs --memex-root /memex
-```
-
-The image prefetches only the already shipped parser languages at build time;
-the immutable parser cache is readable by UID10001. Do not mask `/tmp/.cache`
-with an empty runtime mount. Runtime indexing needs writable graph storage, not
-writable source or a parser download. Status/export/serve open graph state
-read-only and create no graph directory when the selected index is missing.
-
-### Content-addressed extraction cache
-
-Index writers store complete per-file raw extraction packets below the selected
-repository graph namespace, at `extraction-cache/v1/<prefix>/<key>.json`. The key
-includes exact consumed source bytes, relative path, language, schema, producer
-module/query/parser fingerprints and extraction configuration. Full builds and
-new writer instances can reuse valid packets without parsing; compatible
-incremental predecessor reuse is reported separately. Global bindings are always
-recomputed, so a changed or removed dependency still changes query results.
-
-Entries use closed records, source/link validation and atomic replacement.
-Missing, partial, corrupt, incompatible and failed entries reparse actual source;
-recovered syntax errors are retried and retain the existing partial/stale policy.
-Cache I/O failures fall back to extraction and appear in build diagnostics. Fatal
-source, parser, extraction or publication failures still preserve the previous
-completed generation. Derived cache symlinks are rejected rather than redirected.
-Serve, status, export and import never access or create the extraction cache.
-
-Build output includes `extraction_cache` counters: disk hits, misses by reason,
-write failures, predecessor reuse and parser invocations. These operational values
-never enter canonical facts, observation identities or portable exports. The
-owner-local cache validates integrity, not authenticity against an owner able to
-fabricate a fully coherent replacement. No eviction policy or speed guarantee is
-provided. It does not reduce the previously measured 651,844,965-byte Spree export
-or its approximately 1.98 GB peak export RSS; those remain disclosed costs.
-
-### Conservative incremental binding
-
-Incremental builds persist owner-local `atlas-binding-dependencies.v1` witnesses
-inside the graph manifest. Each active source path, including empty indexed
-package markers, is a binding unit. Units depend on complete language-level
-buckets of declarations, lexical blockers, imports and stale names; Python also
-depends on the full indexed module/package path universe. These buckets include
-negative lookups, so a newly appearing target or ambiguity invalidates old results.
-Declaration or scope changes may rebind every unit of that language. A call-only
-edit with unchanged selection inputs can preserve another live binding unit in
-the same language. Full builds always rebind all units.
-
-Reuse requires exact current producer/configuration, complete predecessor input
-and output witnesses, and validated source/projection closure. Missing, malformed,
-unknown, incompatible or incoherent metadata invokes explicit full binding; corrupt
-predecessor facts are restored through full extraction/cache validation first.
-Affected source paths lose superseded edge, import and rationale assertions before
-rebinding against current global raw facts. Failed-file historical evidence remains
-separate, and fatal work still leaves the prior published generation intact.
-
-Build output reports `binding_resolution` mode/reason and affected, reused and
-removed unit counts/paths. The witness and counters do not enter canonical facts,
-generation/status identity or portable exports; readers never repair the witness.
-Imported indexes have no trusted local witness until a build establishes one.
-This coarse policy does not avoid source discovery/hashing or promise a speedup
-for every incremental edit. It does not add resolver options or infer dependencies
-only from previously resolved edges.
-
-### Graph-linked source snapshots
-
-Graph tool responses include `snapshot_id` and `source_available`. Pass a
-non-null token to `view_file` to read the bytes used by that graph generation:
-`{"path":"src/example.py","start_line":1,"end_line":40,"snapshot_id":"..."}`.
-For historical evidence, also pass its `source_sha256`. A missing, pruned,
-foreign, or corrupt snapshot fails explicitly; it never substitutes live bytes.
-Old generations and source-free imports remain graph-readable with source
-unavailable. A token indicates an acquired source snapshot, not that every
-historical binding has materialized bytes. Retained imported/legacy history can
-remain source-unavailable; requesting its hash fails explicitly. Without a token, `view_file` preserves its live-file behavior and
-labels the result `source_mode: live`; snapshot results identify their mode,
-token and authenticated content hash. Existing line, list and byte caps apply.
-
-A graph request holds one read-only SQLite handle and one immutable source-pack
-FD. Publishers may complete and unlink old snapshot paths while an acquired
-reader continues reading its original bytes. Idle entries retain current plus
-one previous completed snapshot. Active readers retain unlinked pack storage
-until their descriptors close; this is **not a global hard disk-byte bound**.
-Packs coalesce source bytes and can duplicate unchanged bytes across snapshots.
-There is no TTL, writable reader lease file, background service or cross-kernel
-advisory-lock assumption. Supported storage is the tested POSIX local-filesystem
-envelope, including host publication with read-only Docker readers; operators
-must provide appropriate mount ownership/access and the same canonical source
-path. Host/container path aliases are not treated as equivalent.
-
-Snapshot identity includes the resolved source root, actual Git worktree/common
-metadata when available (or explicit unavailable/non-Git identity), configuration,
-producer, consumed source vector and retained evidence. Branch/HEAD-only changes
-are not identity inputs. Capture is a deterministic per-file byte vector, **not
-an atomic filesystem-wide instant**. Unsafe source symlinks abort publication.
-
-The Python build API additionally accepts explicit `overlays: Mapping[str,bytes]`:
-`graph.build(overlays={"new/unsaved.py": b"def draft(): pass\n"})`. It copies the
-mapping, validates eligible normalized relative paths, and hashes/parses/packs
-those bytes without writing them into the checkout. Same-byte disk and overlay
-builds replay identically. There is no implicit editor read, tombstone protocol,
-CLI overlay flag or compiler/build execution.
+| Language | Extensions | What the index records |
+| --- | --- | --- |
+| Rust | `.rs` | Modules, structs, enums, traits, functions, methods. Calls are recorded but unresolved. |
+| TSX | `.tsx` | Classes, functions, arrow components, methods, imports. Calls resolve within one file only. |
+| Ruby | `.rb` | Classes, modules, methods, calls, inheritance. Callers of setters and operators are not resolved. |
+| Python | `.py` | Classes, functions, calls, superclasses. |
+| TypeScript | `.ts` | Classes, functions, methods, calls, `extends`. |
+| JavaScript | `.js`, `.jsx` | Classes, functions, methods, calls, `extends`. |
+| SCSS and CSS | `.scss`, `.css` | Mixins, functions, placeholders, `$variables`, class and id selectors. `@include` sites are references. |
+| HTML | `.html`, `.htm` | Elements with an `id`. Symbols only. |
+| YAML | `.yml`, `.yaml` | Mapping keys, including nested ones. Symbols only. |
+| Markdown | `.md`, `.markdown` | Headings. Symbols only. |
+| Bash | `.sh`, `.bash` | Function definitions and command invocations. |
+| Go, Java | `.go`, `.java` | Recognized and skipped, with the skip reported. No extraction yet. |
 
 ### Rust structural navigation
 
-Rust source is indexed by the locked Tree-sitter grammar, without running Cargo,
-`build.rs`, procedural macros, or a compiler. The producer records modules,
-structs, enums, traits, free functions, and direct impl/trait methods once per
-source occurrence. Impl owners use token-normalized literal headers: comments
-and whitespace outside literals do not change their identity; literal contents,
-generic bounds, and repeated impl blocks remain distinct. Occurrences retain the
-exact consumed source hash and byte spans.
-
-Calls retain their raw spelling and syntactic qualifier. All Rust calls remain
-unresolved with `rust_semantic_binding_unavailable`; matching a basename does not
-establish a function, associated-method, trait, or dispatch target. Capability
-snapshots from `atlas-capabilities.v3` onward report this boundary explicitly. Older
-v1/v2 snapshots remain readable with their original Rust-unsupported declarations.
-
-Macro bodies, derive/procedural-macro expansion, and unmaterialized generated
-output are unavailable. Already materialized `.rs` files are ordinary input.
-Declarations under `cfg` are recorded as source syntax; conditions are not
-evaluated for a build configuration, so indexed declarations do not prove
-inclusion in a binary. The
-SDK may download its locked grammar asset on first use; the production Docker
-image prefetches it so read-only, offline indexing needs no runtime download.
+Rust files are parsed with the locked Tree-sitter Rust grammar. Nothing is compiled. The indexer never runs Cargo, `build.rs` or procedural macros. Every call stays unresolved, because a matching name does not establish which function or trait method is meant. Declarations under `cfg` are recorded as written, so an indexed declaration does not prove it is built into a binary. Details are in [docs/how-it-works.md](docs/how-it-works.md#rust-structural-navigation).
 
 ### TSX structural navigation
 
-`.tsx` source is indexed by the locked Tree-sitter `tsx` grammar, without running
-`tsc`, a bundler, module resolution, or any JSX runtime. The producer records
-class declarations (including class components), function declarations,
-`const`/`let` declarators whose value is an arrow function or function expression
-(the common component form), and methods, once per source occurrence. Every
-occurrence keeps the exact consumed source hash and byte span. A declaration's
-syntactic export status (`named`, `default`, or none) is stored in the symbol's
-binding context; a declarator component owns the calls inside its body.
-
-Imports (default, named, aliased, namespace `* as X`, and `import type`) are
-recorded as `import` occurrences on the imported name, with the preserved local
-alias, the module source string, the specifier kind, and a type-only flag. Every
-import stays unresolved with `tsx_module_resolution_unavailable`; a basename match
-never binds an imported name to a file. Calls, `new`, and `extends` use the same
-scoped structural binding as TypeScript, with no global name fallback.
-
-JSX tags that reference a value (an identifier whose first character is not a
-lowercase ASCII letter, or a member expression such as `<Icons.Logo />`) are
-recorded with relation `jsx`. They are **never** a `call`: each is unresolved with
-`jsx_semantic_binding_unavailable`, creates no edge, and does not appear in
-`callers_of`. Intrinsic tags (`<div />`, `<my-el />`), namespaced names
-(`<svg:rect />`), closing tags and fragments are host markup and are not recorded.
-`jsx` is a raw-reference and unresolved-assertion relation only; it is not a
-protocol traversal relation. A file the parser cannot recover is reported as
-`failed`/`parse_error` with its source location in `status` completeness, and none
-of its symbols are indexed.
-
-Capability snapshot `atlas-capabilities.v4` reports this boundary explicitly,
-including the limitations below. Older v1, v2, and v3 snapshots remain readable
-with TSX unsupported (`no_extraction_query`).
+`.tsx` is parsed with the locked Tree-sitter `tsx` grammar. Nothing runs: no `tsc`, no bundler, no module resolution and no JSX runtime. The matrix below is the contract. Each row names what is structural, what stays unresolved, and the test that backs it.
 
 | Relation | Support | Boundary | Backing test |
 | --- | --- | --- | --- |
@@ -480,355 +219,39 @@ with TSX unsupported (`no_extraction_query`).
 | `limitation: tsx_anonymous_default_export` | `unnamed_declarations_not_recorded` | `export default function () {}` | `test_s14_limitations.py::test_reported_gap_is_real_and_not_silently_fabricated` |
 | `limitation: tsx_dynamic_binding` | `import_call_require_and_computed_member_unbound` | `import()`, `require`, `obj[key]()` | `test_s14_limitations.py::test_reported_gap_is_real_and_not_silently_fabricated` |
 
-Out of scope: React-specific flow (hooks, props, context, higher-order
-components), type inference, and interface, type-alias, or enum declarations.
-Side-effect-only imports (`import './x'`) introduce no binding and are not
-recorded. The matrix is cross-checked against the runtime capabilities by
-`test_s14_capabilities.py::test_readme_matrix_matches_capabilities_and_names_real_tests`.
+Out of scope: React-specific flow (hooks, props, context, higher-order components), type inference, and interface, type-alias or enum declarations. Side-effect-only imports (`import './x'`) introduce no binding and are not recorded. The matrix is cross-checked against the runtime capabilities by `test_s14_capabilities.py::test_readme_matrix_matches_capabilities_and_names_real_tests`.
 
-### `status` — operator capabilities and completeness
+### What the graph does not claim
 
-```bash
-atlas-aci status --repo /path/to/repo
-```
-
-This CLI-only command prints deterministic, sorted `atlas-status.v1` JSON. It
-opens one read-only generation lease and reads one atomic attempt snapshot. It
-does not construct a memex, read current source files, create directories, rebuild,
-or write an index. Missing or incompatible indexes are reported with a null
-`generation_id` and `INDEX_UNAVAILABLE`; reporting that state successfully exits 0.
-The command is not exposed as an MCP tool.
-
-`runtime` describes the currently installed structural producer. `indexed` reports
-the capabilities, language selection, producer fingerprint, and `coverage_id`
-persisted by the indexed generation. Registered languages disabled by `--langs`
-are unsupported for that generation even when currently available at runtime.
-Recognized Go and Java extensions have no extraction query. Definitions
-and relations reflect actual persistence: for example, SCSS `@include` produces a
-`call` reference; HTML IDs, YAML keys, and Markdown headings provide symbols only.
-`partial` means bounded Tree-sitter syntax/lookup support; `unsupported` means no
-enabled provider supplies that operation. Every shipped producer reports compiler
-semantic binding as unsupported. Structural confidence labels do not establish
-compiler semantics or completeness percentages.
-
-Index builds publish `atlas-generation.v4` inputs with a deterministic observation
-digest and an `atlas-coverage.v2` snapshot. Every recognized source file records
-its exact observed hash and indexed, failed, unsupported, or disabled outcome.
-Complete enumeration is separate from complete extraction: recovered syntax-error
-trees are quarantined as whole files and publish a **partial** generation. No
-clean-looking subtree in such a file supplies new facts. A parser diagnostic can
-reflect unsupported dialect syntax; it does not prove that the source is invalid.
-CLI success means that the complete atomic observation was published; build output
-reports `extraction_state` and `files_failed`, and status reports partial coverage.
-Excluded paths are not verified, and excluded counts remain unknown.
-
-When a previously indexed file fails extraction, its exact historical facts and
-necessary target evidence are retained separately, with original source hashes,
-byte spans and producer IDs. `historical_definitions`, `historical_references`,
-`historical_edges` and `historical_rationale` expose them with explicit stale
-freshness. They never supply current bindings or confident/community/god-node
-analysis. Fresh callers cannot bind stale targets. Retrying failed bytes parses
-them again; recovery replaces history. Disabled/deleted sources leave the active
-index. Portable v2 export/import retains these observations and historical
-associations. Imported source verification stays unavailable even when declared
-staleness is known; v1/epoch6 artifacts without observations remain unknown.
-
-Fatal parser/query/extraction exceptions, read errors, and persistence/publication
-failures still abort staging and preserve the previous completed generation.
-A failed refresh retains the previous immutable generation and records an atomic
-`.atlas/index-attempt.v1.json` observation under the writer lock. A matching failed
-attempt marks retained facts for failed files stale, preserving
-`fact_source_sha256` separately from `failed_source_sha256`. Fail-fast counts cover
-only the observed prefix; remaining files are `not_processed`, not freshly
-verified. Retained facts are verified unchanged only when consumed hashes and
-producer/configuration provenance agree; incompatible provenance leaves freshness
-unknown. Successfully parsed changes discarded by an aborted build remain
-observed but unpublished. `attempt.observation` includes failed new files even when they have no
-retained facts. A failed first build is `unbound_no_generation`; a failure over an
-older generation without a publication token is `uncorrelated_missing_token`,
-with unknown stale correlation. Corrupt diagnostics report unavailable diagnostics
-and unknown current completeness rather than a healthy refresh. Failure to write
-diagnostics emits a warning while preserving the original indexing error and
-published generation.
-
-An internal per-publication token correlates failures without entering canonical
-IDs or status JSON. Re-publishing identical facts invalidates old failure overlays
-even when `generation_id` is reused. `coverage_id`, semantic `attempt_id`, and
-`status_id` distinguish changed coverage or diagnostics without timestamps,
-durations, or random identifiers. Repeated unchanged status requests serialize
-identically. A concurrent status request reports its pinned generation and applies
-only an exactly matching attempt; a newer mismatched observation cannot overlay
-older facts. This is a bounded generation/diagnostic snapshot, not an atomic
-snapshot of the source tree or a promise of the latest completed publication.
-
-### `export` / `import` — CLI-only, by design
-
-v2.0.0 adds a deterministic, portable JSONL export/import of the code
-graph — the point being "one person builds the graph, everyone else
-benefits immediately on `git pull`" instead of everyone re-parsing the
-same repo. Both are **CLI commands only** (`atlas-aci export`/`atlas-aci
-import`) — neither is registered as an MCP tool, and neither ever will be
-without a deliberate, separately-reviewed decision to widen the
-read-only thesis above. **`import` is a mutating primitive, full stop**:
-it replaces the entire index DB from the bytes of a file on disk. Since
-**the agent is the untrusted party**, an agent-callable `import` would
-hand it a way to silently replace every future `search_symbol`/
-`graph_query` result with attacker-chosen content. `export` is a closer
-call — it never writes to the index, only computes content already
-exposed by the seven read tools — but keeping it **CLI-only** preserves
-a clean, mechanically-checkable invariant (every tool in
-`READ_ONLY_TOOLS` performs zero filesystem writes, full stop) over
-carving out a single well-reasoned exception.
-
-<details>
-<summary>Cold-start workflow, the full import/export threat-model argument, and named cross-OS hazards</summary>
-
-**Cold-start workflow** (the reason this exists):
-
-```bash
-atlas-aci export --repo /path/to/your/repo .atlas/export/graph-export.jsonl
-git add .atlas/export/graph-export.jsonl && git commit
-
-# ...on a fresh checkout:
-atlas-aci import --repo /path/to/checkout .atlas/export/graph-export.jsonl
-```
-
-`.atlas/*` is gitignored; `.atlas/export/` is explicitly not — derived
-data stays out, the portable artefact goes in. `import` is idempotent
-(repeat imports of the same file reproduce the identical DB), rejects a
-truncated/hand-edited/wrong-epoch file with a clean error, and validates
-every path in the file is repository-relative and repository-contained
-before inserting a single row — `content_hash` proves bytes weren't
-truncated, never that the paths inside them are safe, so that check is
-separate and mandatory.
-
-**Why `import` is never a tool, argued through, not just asserted.** The
-export format's `content_hash` check only proves a file wasn't truncated
-in transit; it proves nothing about *provenance* — a hand-crafted JSONL
-with a self-consistent, freshly-computed hash passes the exact same
-check a genuine `atlas-aci export` output does. There is no way to
-distinguish "a real export" from "a plausible forgery" from inside
-`import_jsonl` itself. That is precisely why this is an operator-invoked,
-human-in-the-loop CLI command, never a tool a served agent can reach.
-
-**Why `export` is a closer call.** It opens the index DB read-only and
-writes a NEW file at whatever path the caller chooses — nothing it
-produces is new information an agent couldn't already reconstruct by
-paging through `graph_query` results. The case against a tool wins
-anyway: an `export` tool would be the first exception to "every
-`READ_ONLY_TOOLS` member performs zero filesystem writes," a property
-otherwise enforceable by inspection alone, and would need its own
-path-scoping argument forever after. The `write_file`-shaped capability —
-"let the model choose a path and put bytes there" — is exactly the
-primitive this project's whole thesis excludes, regardless of how
-well-scoped the bytes are.
-
-**Known, named cross-OS hazards (not mechanically closed).**
-Byte-determinism is verified on the macOS/Linux CI matrix for this
-project's own source and the two pinned reference repos, but: (0) a
-Windows backslash-separated relative path is outside that CI matrix and
-a real, separate hazard this export does not close; (1) unicode filename
-normalization — macOS traditionally presents decomposed (NFD) filenames,
-Linux presents whatever bytes were written (typically composed, NFC) —
-could change an exported path's bytes for a non-ASCII filename across
-operating systems (mitigated in practice by git's default
-`core.precomposeUnicode` on macOS; neither pinned reference repo has
-non-ASCII filenames — this is **documented, not mechanically fixed**);
-(2) case-only-colliding filenames (`Foo.rb` / `foo.rb`) are two distinct
-files on a case-sensitive filesystem but alias to one on a
-case-insensitive macOS volume — a filesystem-level data difference
-before export ever runs, not something any export format can paper over.
-
-</details>
-
-**Export size ceiling.** GitHub rejects any single committed file at or
-above 100 MB outright. Measured once, for real, on the larger of this
-project's two pinned Rails-scale reference repos: Spree @ `6699cde4`
-exports to **88,742,743 bytes — 84.63% of that ceiling.** A Rails
-application moderately larger than Spree produces an export that cannot
-be committed at all. `atlas-aci export` warns to stderr (never fails the
-export) past the 50 MB soft threshold and again past the hard limit — see
-`_GITHUB_FILE_WARN_BYTES`/`_GITHUB_FILE_HARD_LIMIT_BYTES` in
-[`mcp-server/src/atlas_aci/__main__.py`](mcp-server/src/atlas_aci/__main__.py).
-If your export crosses the ceiling: compress it out-of-band (`gzip -9`,
-decompress before `import`), publish it as a CI artifact instead of
-`git add`-ing it, or re-index instead of importing for a one-off —
-`atlas-aci index` itself never has this ceiling, only the portable,
-committed artefact does.
+- Structural labels are not compiler semantics. Every shipped producer reports compiler semantic binding as unsupported.
+- `status` reports partial coverage. A file the parser cannot recover is quarantined as a whole, and the generation is published as partial.
+- An indexed declaration is source syntax. It is not proof that the code is compiled or reachable.
 
 ## Does it hold up?
 
-Verify the cheap part first — no key, no bill. `atlas-aci index` then
-any `graph_query` runs entirely local, makes **zero LLM calls**, and
-returns a **byte-deterministic** result for an identical index. Two
-offline checks prove it, and you can run both yourself:
-
-```bash
-grep -rn 'import anthropic\|import openai' mcp-server/src   # zero matches
-atlas-aci export --repo . /tmp/a.jsonl && atlas-aci export --repo . /tmp/b.jsonl
-diff /tmp/a.jsonl /tmp/b.jsonl                               # byte-identical
-```
-
-That's the floor. Above it sit measurements that took real work to
-produce, each with its data committed in-repo:
-
-| # | Headline result | The catch |
-|---|---|---|
-| 1 | **201 tests**, up from 35 at v0.4.0; **zero** new runtime dependencies; `uv.lock`'s `dependencies` block is byte-identical to v0.4.0 throughout. | A green suite proves the invariants hold on this repo's own fixtures — not that the graph is complete on *your* code. |
-| 2 | **Communities ship zero-dependency and measured.** A hand-rolled label-propagation implementation vs. networkx Louvain, on two SHA-pinned Rails repos, evaluated independently, never averaged, against a bar frozen **before a line of LPA existed** (`LPA_Q >= 0.85 × Louvain_Q_median`, both scores ≥ 0.30): solidus `LPA_Q 0.6691476` vs. median `0.7449783` (margin `+0.035916`); spree `0.7165340` vs. `0.7846477` (margin `+0.049584`). | At the tighter `R = 0.90` counterfactual, solidus falls short by `0.001333` — smaller than Louvain's own seed-to-seed population sd of `0.0025925`. Spree still *passes* at `R = 0.90` (margin `+0.010351`). The rule is a strict AND across both repos, so solidus's shortfall alone would still have cut the feature — this is not evidence both repos would have failed. |
-| 3 | **`rationale:` on real code:** 33 rows found in solidus (24 `TODO`, 7 `NOTE`, 2 `FIXME`); markers, text, and line numbers accurate on spot-check. | **Zero rows in atlas-aci itself** — this codebase doesn't write `# TODO:`/`# NOTE:`/`# FIXME:`-shaped comments, so there's nothing for the same query to find here. |
-| 4 | **Cross-platform byte-determinism** for the portable export, green on `ubuntu-latest` *and* `macos-latest`. | The export tops out near Spree scale — **88,742,743 bytes, 84.63%** of GitHub's 100 MB hard limit. A larger Rails app cannot commit its graph (see [How it's bounded](#how-its-bounded)). |
-| 5 | **Twenty defects found and fixed**, all one shape: a check validating data whose provenance went unchecked. | Found by this project's own adversarial pass, pre-release; it names a defect *class*, it does not prove zero remain. |
-
-<details>
-<summary><strong>1 · The LPA-vs-Louvain probe</strong> — ten Louvain seeds per repo, the three-clause arithmetic, the frozen-before-probe bar</summary>
-
-Ten independent Louvain runs per repo (seeds 0–9, resolution 1.0),
-median/best/worst/sd all recomputed in pure Python from a committed,
-sha256-verified graph bundle — never read as a cached label. Full
-per-seed tables and the exact clause arithmetic:
-[`probe-lpa-vs-louvain.md`](https://github.com/Rynaro/atlas-aci/blob/v2.0.0/.spectra/changes/aci-v2-harden-and-augment/probe-lpa-vs-louvain.md).
-
-</details>
-
-<details>
-<summary><strong>2 · `rationale:` on real code, and the honest zero-in-self finding</strong></summary>
-
-Indexed `solidusio/solidus@4026945` with the shipped extraction code: 33
-recognized rationale comments, all plain `#`-prefixed Ruby comments (no
-ADR/RFC labels in that corpus), 27 with a resolved enclosing symbol, 6
-`null` (top-of-file). Spot-checked against the source for accuracy.
-Verdict detail:
-[`export-size-spree.md`](https://github.com/Rynaro/atlas-aci/blob/v2.0.0/.spectra/changes/aci-v2-harden-and-augment/export-size-spree.md)
-(same index run backs both the rationale count and the export-size
-measurement below).
-
-</details>
-
-<details>
-<summary><strong>3 · Twenty defects, one shape</strong> — the retrospective and the design record</summary>
-
-Every defect this campaign found was a check that validated the data it
-was handed while the data's own provenance or completeness went
-unchecked — a forged verdict label, a bar read from the artefact it
-audited, an unasserted repo/seed set, an under-reported baseline. Full
-account:
-[`RETRO.md`](https://github.com/Rynaro/atlas-aci/blob/v2.0.0/.spectra/changes/aci-v2-harden-and-augment/RETRO.md)
-and
-[`ADR-001-checks-vs-proxies.md`](https://github.com/Rynaro/atlas-aci/blob/v2.0.0/.spectra/changes/aci-v2-harden-and-augment/ADR-001-checks-vs-proxies.md).
-
-</details>
-
-<details>
-<summary><strong>4 · Cross-OS determinism and the export ceiling</strong></summary>
-
-Measured once, for real, on Spree @ `6699cde4` (2,181 Ruby files):
-export size and the three named, disclosed-not-fixed cross-OS hazards
-(Windows path separators, NFC/NFD unicode filename normalization,
-case-only-colliding filenames) are detailed in
-[How it's bounded](#how-its-bounded) above and in
-[`export-size-spree.md`](https://github.com/Rynaro/atlas-aci/blob/v2.0.0/.spectra/changes/aci-v2-harden-and-augment/export-size-spree.md).
-
-</details>
-
-## Install
-
-Global, one-time:
+Start with the cheap checks. They need no key and no bill, and you can run them yourself.
 
 ```bash
 cd mcp-server
-uv sync
+uv run pytest -q                                   # includes the test that forbids LLM SDK imports
+uv run atlas-aci export --repo /path/to/your/repo /tmp/a.jsonl
+uv run atlas-aci export --repo /path/to/your/repo /tmp/b.jsonl
+diff /tmp/a.jsonl /tmp/b.jsonl                     # no output means byte-identical
 ```
 
-Per repo:
+The export commands need an index built first. Each claim below points to its test, its data or its method in the repository.
 
-```bash
-uv run atlas-aci index --repo /path/to/your/repo \
-    --langs ruby,python,javascript,typescript
-
-uv run atlas-aci serve --repo /path/to/your/repo
-```
-
-Already have a teammate's index? Skip the parse entirely — see the
-cold-start workflow in [How it's bounded](#how-its-bounded). `export`/
-`import` are CLI-only, operator-invoked commands, never MCP tools a
-served agent can call.
-
-> **TL;DR on staying fresh** — `atlas-aci index` writes to `<repo>/.atlas/`;
-> add that to your `.gitignore`. Re-index cheaply with `--since <marker>`
-> (skips files whose `(mtime, size)` are unchanged since the last pass —
-> it does **not** diff a git ref; see
-> [`INTEGRATION.md` § Keep the index fresh](INTEGRATION.md#step-6--keep-the-index-fresh)).
-> One server process per repo.
-
-### Supported hosts
-
-| Host | Wiring doc | Notes |
-|------|-----------|-------|
-| Claude Code | [`hosts/claude-code.md`](hosts/claude-code.md) | Best-ranked host. One JSON edit to `claude_desktop_config.json` per repo. |
-| GitHub Copilot custom agents | [`hosts/copilot.md`](hosts/copilot.md) | MCP server goes in agent frontmatter. Skill descriptions must match ATLAS phases (T, L, A, S) for the selector to fire correctly. |
-| Cursor | [`hosts/cursor.md`](hosts/cursor.md) | MCP config via Settings UI or `~/.cursor/mcp.json`. Cursor's agent loop is more eager — keep ATLAS invocations in Plan mode unless you want edits attempted alongside exploration. |
-
-### Upgrading between schema epochs
-
-Upgrading to v2.0.0 (or any release that bumps `SCHEMA_EPOCH`)? One
-command: `atlas-aci index --repo /path/to/your/repo`. The on-disk index
-is pure, disposable derived data — always rebuilt fully from source,
-never migrated in place — so a schema change is always a fresh
-`.atlas/graph.<SCHEMA_EPOCH>.db` (currently epoch `5`), never an `ALTER
-TABLE` ladder against the old one. **`serve` itself always starts** — it
-does not check the epoch at startup — but every tool call that touches
-the code graph independently asks whether the current-epoch index
-exists, and a stale or missing one returns a structured
-`INDEX_UNAVAILABLE` `ToolError` naming the exact `index` command, rather
-than silently serving stale or wrong results. `serve` performs zero
-writes under `.atlas` either way. A downgrade to an older binary finds no
-matching epoch file and rebuilds its own on its next `index` run — one
-rebuild per direction you move, never a ping-pong.
+| Claim | Evidence | The catch |
+| --- | --- | --- |
+| The server makes no LLM calls | `test_no_llm_client_importable_from_server_package` fails if `anthropic`, `openai` or `boto3` is imported under `src/` | It checks imports in this source tree. It cannot see what a host does with the agent. |
+| Export bytes match on macOS and Linux | CI builds one fixture on each OS and fails on any byte difference (AC-REL-1) | The fixture is small. Windows path separators are outside the check. |
+| A paired, reproducible evaluation of the v3 server | [docs/evidence/v3/README.md](docs/evidence/v3/README.md): five arms, three token budgets, 30 pinned pytest ids | No model ran. Coding-task success, model tokens and cost are `unmeasured`. |
+| The read-only invariants hold | [`test_enforcement.py`](mcp-server/tests/test_enforcement.py) covers the allowlist, path guard and bounds | The tests check these invariants on this repo's fixtures. They do not show your graph is complete. |
 
 <details>
-<summary>Running in Docker, container image, development, production hardening</summary>
+<summary>Run the canary suite and replay the v3 evidence</summary>
 
-**Running in Docker** — two invocations, documented in detail in the
-[`mcp-server/Dockerfile`](mcp-server/Dockerfile) header:
-
-```bash
-# Index once (writable repo mount)
-docker run --rm -v /path/to/repo:/repo \
-    atlas-aci index --repo /repo --langs ruby,python,javascript,typescript
-
-# Serve long-lived (read-only repo mount, persistent memex)
-docker run --rm -i --read-only \
-    -v /path/to/repo:/repo:ro -v atlas-memex:/memex \
-    atlas-aci
-```
-
-The `--read-only` flag plus the `:ro` bind mount is an OS-level guarantee
-that the server cannot mutate your repo — stronger than any code-level
-check. Full index-then-serve pattern:
-[`INTEGRATION.md`](INTEGRATION.md#running-in-docker).
-
-**Container image** — `ghcr.io/rynaro/atlas-aci` is the canonical
-distribution channel (linux/amd64 + linux/arm64). See
-[Verified releases](#verified-releases) for signing/SBOM/provenance, and
-[`INTEGRATION.md § GHCR distribution`](INTEGRATION.md#ghcr-distribution)
-for the full consumer workflow including
-[`eidolons mcp atlas-aci`](https://github.com/Rynaro/eidolons).
-
-**Development** — container-based dev is preferred (a dedicated
-[`Dockerfile.dev`](mcp-server/Dockerfile.dev) ships `pytest`, `ruff`,
-`mypy`):
-
-```bash
-cd mcp-server
-docker build -f Dockerfile.dev -t atlas-aci-dev .
-docker run --rm -v "$PWD":/work atlas-aci-dev uv run pytest -q
-```
-
-Running on the host instead: `uv sync && uv run pytest && uv run ruff
-check src/ tests/ && uv run mypy src/`.
-
-**Running the canary suite:**
+Run the canary suite from the repository root with the stdio host:
 
 ```bash
 uv run python scripts/run-canaries.py \
@@ -838,77 +261,51 @@ uv run python scripts/run-canaries.py \
     --output /tmp/canary-results.json
 ```
 
-`--canaries-dir` is a directory holding a `tasks.json` task manifest (see
-[`atlas/evals/README.md`](atlas/evals/README.md)); the older `--canaries <file>` spelling
-never existed. `--host stdio` is the default and a **real** MCP SDK host: it starts the
-server over stdio, initializes a session per task and replays the manifest's ordered
-tool calls, recording a transport ledger. No model runs, so model tokens, cost and
-coding-task success stay `null`. `--server-json '["docker","run","--rm","-i",...]'` (inline
-JSON, or a file path) runs the same manifest against another server command, for example a
-container image, instead of the default in-process `python -m atlas_aci serve`.
+`--canaries-dir` holds a `tasks.json` manifest. See [atlas/evals/README.md](atlas/evals/README.md). The stdio host starts the server, replays the manifest's tool calls and records a transport ledger. It runs no model, so model tokens, cost and task success are not measured. To run the same manifest against another server command, such as a container, pass `--server-json` with an inline JSON array or a file path. The other `--host` values (`stub`, `claude-code-api`, `copilot`, `cursor`) raise `NotImplementedError`, so no agent pass rate exists yet. See [SETUP.md §7](SETUP.md#7-run-the-canary-suite).
 
-**Status of the other hosts:** the legacy scout-report dispatchers are not implemented.
-`--host stub` raises `NotImplementedError` from `StubDispatcher.dispatch()`, and
-`claude-code-api`, `copilot` and `cursor` raise the same in `main()`; there is no
-agent pass-rate to quote until one exists (see the deferred note in
-[`scripts/run-canaries.py`](scripts/run-canaries.py), tracked in
-[`SETUP.md §7`](SETUP.md#7-run-the-canary-suite)).
+Replay the v3 evidence. It regenerates the report from the committed records, and a clean `git diff` means it reproduces:
 
-**v3 evidence:** a reproducible, paired evaluation of the v3 context packer against the
-pre-v3 server and a search-then-read baseline, with the P0 binding/snapshot regression gate,
-indexing and query cost counters and a host/SDK matrix, is published under
-[`docs/evidence/v3/`](docs/evidence/v3/README.md). It measures fixture accounting only; the live
-agent outcomes are explicitly `unmeasured`.
-
-**Production hardening** — before letting `atlas-aci` run unattended on
-shared infrastructure, work through the full checklist in
-[`SETUP.md §8`](SETUP.md#8-production-hardening-checklist). The two items
-most commonly skipped: OS isolation when opting into `test_dry_run`, and
-mounting the repo read-only at the OS level (a stronger guarantee than
-any code-level check, and one that survives mis-configuration of the
-server itself).
+```bash
+cd mcp-server
+uv run python ../scripts/eval/v3_aggregate.py --manifest ../atlas/evals/v3/manifest.v1.json \
+    --raw ../docs/evidence/v3/raw --out ../docs/evidence/v3
+```
 
 </details>
 
-## When atlas-aci is the wrong tool
+Full detail, including what each check does not show, is in [docs/evaluation.md](docs/evaluation.md).
 
-Honest scoping beats a benchmark. Skip atlas-aci, or reach for something
-else alongside it, when:
+## When not to use it
 
-- **You need to apply edits, run migrations, or deploy code.** This
-  server is read-only by construction; use a different server — don't
-  hollow this one out to fit.
-- **You need agent-callable `export`/`import`.** Both are **CLI-only**,
-  deliberately: `import` is a mutating primitive and the agent is the
-  untrusted party — see [How it's bounded](#how-its-bounded).
-- **Your repo exceeds Spree scale and you need the committed, portable
-  graph.** The measured ceiling is **84.63%** of GitHub's 100 MB hard
-  limit at Spree scale; re-index instead of importing, or publish the
-  export out-of-band (CI artifact, shared cache) instead of committing
-  it.
-- **You need exact Ruby setter/operator call-site resolution.**
-  Definitions (`def foo=`, `def +`, `def []=`) are captured; a *caller*
-  of a Ruby setter or operator is still invisible to `callers_of` today
-  — see [The seven tools](#the-seven-tools) and
-  [`docs/graph-query-dsl.md`](docs/graph-query-dsl.md).
-- **You need cross-OS unicode-safe export paths.** NFC/NFD filename
-  normalization across macOS/Linux is documented, not mechanically
-  fixed — see [How it's bounded](#how-its-bounded).
-- **You're running `test_dry_run` against untrusted models with no OS
-  sandbox.** The code cannot enforce sandboxing; the operator must put
-  the server behind a DevContainer, Firecracker microVM, or equivalent.
+- **You need edits, migrations or deploys.** Use a different server. This one stays read-only by design.
+- **You need an agent to call `export` or `import`.** Both are CLI-only on purpose. See [Why read-only](#why-read-only).
+- **You need one committed graph larger than GitHub's file limit.** Re-index instead, or publish the export as a CI artifact. See [Mechanical bounds](#mechanical-bounds).
+- **You need exact Ruby setter or operator call sites.** Definitions are captured, but callers of setters and operators are not, so `callers_of` misses them. See [docs/graph-query-dsl.md](docs/graph-query-dsl.md).
+- **You need compiler-grade answers.** Type inference, TSX import resolution and Rust trait dispatch are unresolved, and every producer reports compiler binding as unsupported.
+- **You would run `test_dry_run` on untrusted code without OS isolation.** The server cannot sandbox a test run. Put it behind a DevContainer or microVM first.
+
+## Security model
+
+- **Allowlist.** Only the seven tool names in `READ_ONLY_TOOLS` run. Everything else returns `FORBIDDEN`.
+- **Path guard.** Every path is resolved, symlinks included, and must stay inside `--repo`. Anything outside returns `FORBIDDEN`.
+- **Opt-in execution.** `test_dry_run` runs only when `ATLAS_ACI_ENABLE_TEST_EXECUTION=1` is set at startup. Request fields and repository files cannot enable it.
+- **Loopback HTTP only.** The optional HTTP transport binds loopback addresses, has no authentication, and refuses to start while test execution is enabled. The `serve-shared` command adds authenticated principals over loopback HTTP. The HTTP transport and shared-operation entries are in the documentation table below.
+- **Telemetry.** Each call is logged to stderr with its tool, size, duration and error. Arguments are logged except the `content` field.
+- **Read-only mount.** Mount the repo read-only at the OS level, with `:ro` on the bind.
+- **Hardening.** Before running unattended on shared infrastructure, follow [SETUP.md §8](SETUP.md#8-production-hardening-checklist).
+
+These are checks inside one server process. They are not an OS sandbox.
 
 ## Verified releases
 
-Every published GA image (tagged `v<x>.<y>.<z>` without a pre-release
-suffix) is scanned by Trivy before signing and has no known HIGH/CRITICAL
-CVEs at release time — the [release workflow](.github/workflows/release.yml)
-fails and does not proceed to signing, attestation, or GitHub Release
-creation otherwise. Every release is:
+Each `v*` tag produces `linux/amd64` and `linux/arm64` images. The [release workflow](.github/workflows/release.yml) then does the following:
 
-- **Cosign-signed, keyless** — GitHub Actions OIDC token, no long-lived keys.
-- **SBOM-attested (SPDX)** — via `actions/attest-sbom`.
-- **Build-provenance-attested** — via `actions/attest-build-provenance`.
+- **Trivy scan.** For GA tags, a HIGH or CRITICAL finding that has a fix fails the release before signing. Findings without a fix are recorded in the SARIF report and do not block.
+- **Keyless cosign signature.** It uses GitHub OIDC and no long-lived key.
+- **SBOM and provenance attestations.** An SPDX SBOM and a build-provenance attestation are stored in the registry.
+- **Digest in the release notes.** Each release lists the exact `ghcr.io/rynaro/atlas-aci@sha256:<digest>` string.
+
+Release candidate and beta tags are signed but are not gated by the Trivy check.
 
 ```bash
 cosign verify \
@@ -919,27 +316,26 @@ cosign verify \
 gh attestation verify oci://ghcr.io/rynaro/atlas-aci@sha256:<digest> --owner Rynaro
 ```
 
-Digest-pinned pulls are the most reliable — a tag can be overwritten, a
-digest never changes. Each release's notes include the exact
-`ghcr.io/rynaro/atlas-aci@sha256:<digest>` string ready to copy.
+Pull by digest. A tag can be moved, and a digest cannot. Signing shows which workflow built the image. It does not show that the image has no vulnerabilities the scan did not flag.
 
-## What's in this repo
+## Documentation
 
-| Area | What it contains |
-|------|------------------|
-| [`mcp-server/`](mcp-server/) | The Python MCP server — CLI, enforcement layer, tools, tree-sitter indexer |
-| [`mcp-server/tests/`](mcp-server/tests/) | The test suite: enforcement invariants, indexer honesty, DSL dispatch, epoch substrate — incl. [`test_codegraph.py`](mcp-server/tests/test_codegraph.py) |
-| [`hosts/`](hosts/) | Per-editor wiring: Claude Code, Copilot, Cursor |
-| [`scripts/`](scripts/) | Guards for the augmentation workstreams (canary orchestrator, probe/export-size verifiers) — not shipped project code |
-| [`docs/`](docs/) | Deep reference — the `graph_query` DSL |
+The README is the entry point. The documents below hold the depth.
+
+| Document | What it covers |
+| --- | --- |
+| [`docs/how-it-works.md`](docs/how-it-works.md) | The engine in depth: invariants, test execution, graph storage, extraction cache, incremental binding, source snapshots, Rust detail, `status`, export and import, HTTP transport |
+| [`docs/installation.md`](docs/installation.md) | Install paths, Docker invocations and image caveats, development setup, upgrades between schema epochs, hardening pointers |
+| [`docs/evaluation.md`](docs/evaluation.md) | Every offline check, the CI gates, the v3 evidence package, and what each claim does not show |
+| [`docs/graph-query-dsl.md`](docs/graph-query-dsl.md) | `graph_query` reference: edge shapes, confidence tiers, `god_nodes:`, `communities:`, `rationale:`, structured operations |
 | [`atlas/docs/scip-import.md`](atlas/docs/scip-import.md) | Importing an official scip-typescript index (`atlas-aci scip-manifest` / `import-scip`) |
 | [`atlas/docs/coverage-import.md`](atlas/docs/coverage-import.md) | Importing per-test Python coverage observations (`atlas-aci coverage-probe` / `coverage-manifest` / `import-coverage`) |
 | [`atlas/docs/symbol-diff.md`](atlas/docs/symbol-diff.md) | Comparing two indexed snapshots at symbol and contract boundaries (`atlas-aci diff`) |
 | [`atlas/docs/change-impact.md`](atlas/docs/change-impact.md) | Potential change impact through typed reverse paths (`graph_query op=impact`, `atlas-aci impact`) |
-| [`atlas/docs/validation-plan.md`](atlas/docs/validation-plan.md) | Evidence-backed, advisory validation plan from impact plus observed coverage (`atlas-aci validation-plan`; CLI only, no MCP op) |
-| [`docs/evidence-reports.md`](docs/evidence-reports.md) | Exporting one scoped context answer as offline HTML plus canonical JSON (`atlas-aci evidence-report`; CLI only, no MCP op) |
-| [`docs/architecture-rules.md`](docs/architecture-rules.md) | Declarative forbidden-import rules checked against one indexed snapshot with bounded counterexamples (`atlas-aci check-architecture`; CLI only, no MCP op) |
-| [`docs/counterfactual-analysis.md`](docs/counterfactual-analysis.md) | Hypothetical analysis of a proposed patch: S19 source diff and S31 rule delta against a declared base snapshot, staged outside the checkout and never published (`atlas-aci counterfactual`; CLI only, no MCP op) |
+| [`atlas/docs/validation-plan.md`](atlas/docs/validation-plan.md) | Advisory test-selection plan from impact and observed coverage (`atlas-aci validation-plan`; CLI only) |
+| [`docs/evidence-reports.md`](docs/evidence-reports.md) | One scoped context answer exported as offline HTML and canonical JSON (`atlas-aci evidence-report`; CLI only) |
+| [`docs/architecture-rules.md`](docs/architecture-rules.md) | Forbidden-import rules checked against one indexed snapshot (`atlas-aci check-architecture`; CLI only) |
+| [`docs/counterfactual-analysis.md`](docs/counterfactual-analysis.md) | Hypothetical analysis of a proposed patch, staged outside the checkout and never published (`atlas-aci counterfactual`; CLI only) |
 | [`docs/importers/openapi.md`](docs/importers/openapi.md) | Importing one OpenAPI 3.1 JSON document into a contract snapshot (not a source snapshot) and explaining contract changes between two snapshots; S19 is not invoked, only its change-set shape is reused; provenance is artifact digest plus JSON pointer, binding to a source snapshot is a follow-up (`atlas-aci openapi-snapshot` / `openapi-diff`; CLI only, no MCP op) |
 | [`docs/importers/opentelemetry.md`](docs/importers/opentelemetry.md) | Importing one local OTLP JSON trace artifact into a separate runtime overlay bound to the active snapshot: spans are linked to the exact indexed source snapshot or classified as unlinked (build mismatch, missing or malformed location, path outside the declared roots, file not in the snapshot, file not indexed, line out of range), span nesting is recorded as `observed_parent_of` (observed nesting, not a call) and every result carries `observed_sample` coverage; the import does not write the graph, only the operator's `--output` (`atlas-aci import-otel`; CLI only, no MCP op) |
 | [`docs/importers/python-dependencies.md`](docs/importers/python-dependencies.md) | Indexing one uv-locked pure-Python dependency from a supplied local wheel as a standalone package snapshot: the lock selects exactly one registry variant for the declared environment, the wheel is matched by its locked filename and its sha256 must equal the lock entry before any archive is opened, then module, class and function declarations, import paths and literal `__all__` exports are read from the zip in memory (`declaration_only`, `call_binding: not_claimed`); the importer does not install, does not download and never executes package code, the snapshot is not written to the graph, and the python grammar must already be cached locally (`atlas-aci import-python-dependency`; CLI only, no MCP op) |
@@ -958,81 +354,30 @@ digest never changes. Each release's notes include the exact
 | [`INTEGRATION.md`](INTEGRATION.md) | Onboarding an existing codebase: indexing, skip tuning, freshness, multi-repo |
 | [`CLAUDE.md`](CLAUDE.md) | How Claude Code should navigate this repo when opened in an agent loop |
 
-<details>
-<summary>Full repository tree</summary>
+## FAQ
 
-```
-atlas-aci/
-├── README.md                          ← you are here (orientation)
-├── SETUP.md                           ← end-to-end playbook
-├── INTEGRATION.md                     ← codebase onboarding workflow
-├── CLAUDE.md                          ← in-repo Claude Code guidance
-├── docs/
-│   └── graph-query-dsl.md             ← graph_query DSL deep-dive (A1-A4)
-│
-├── mcp-server/                        ← the Python MCP server
-│   ├── pyproject.toml
-│   ├── Dockerfile                     ← production runtime image
-│   ├── Dockerfile.dev                 ← dev-loop image (pytest/ruff/mypy)
-│   ├── .dockerignore
-│   ├── README.md                      ← package-scoped quick start
-│   ├── src/atlas_aci/
-│   │   ├── __main__.py                ← Click CLI: serve | index | export | import | status | tools
-│   │   ├── server.py                  ← MCP stdio wiring + dispatcher
-│   │   ├── enforcement.py             ← read-only guard, bounds, rate limit, telemetry
-│   │   ├── config.py                  ← Config dataclass + skip patterns + path_is_within
-│   │   ├── codegraph.py               ← tree-sitter indexer + SQLite queries + export/import
-│   │   ├── label_propagation.py       ← dependency-free deterministic LPA core
-│   │   ├── memex.py                   ← hashed-dir excerpt store
-│   │   └── tools/
-│   │       ├── view_file.py
-│   │       ├── list_dir.py
-│   │       ├── search_text.py         ← ripgrep wrapper
-│   │       ├── search_symbol.py
-│   │       ├── graph_query.py
-│   │       └── test_dry_run.py
-│   └── tests/
-│       ├── test_enforcement.py        ← safety invariants
-│       ├── test_codegraph.py          ← indexer + language-table honesty
-│       ├── test_confidence.py         ← confidence enum (EXTRACTED/INFERRED/AMBIGUOUS)
-│       ├── test_communities.py        ← label propagation + probe gate
-│       ├── test_rationale.py          ← rationale nodes
-│       ├── test_export.py             ← export/import (CodeGraph API level)
-│       ├── test_cli_export_import.py  ← export/import (CLI reachability level)
-│       ├── test_graph_query.py        ← graph_query DSL dispatch
-│       ├── test_server.py             ← central bounds chokepoint
-│       ├── test_schema_epoch.py       ← epoch-namespaced DB substrate
-│       └── test_thesis_negatives.py   ← no LLM, no networkx, ...
-│
-├── hosts/
-│   ├── claude-code.md
-│   ├── copilot.md
-│   └── cursor.md
-│
-└── scripts/                           ← guards for the augmentation workstreams,
-    │                                     not shipped project code — see each file's own header
-    ├── run-canaries.py                ← canary mission orchestrator
-    ├── verify-probe-verdict.py        ← probe verdict verifier
-    ├── verify-export-size.py          ← export-size-on-Spree verifier
-    ├── harden-gate-classify.sh        ← harden-gate.yml's diff classifier
-    └── fingerprint-fixture/           ← committed multi-language fixture for the
-                                          behavioural indexer fingerprint
-```
+**Does it call a model or need an API key?**
+No. Indexing, queries and export are local programs. A test checks that the server source does not import the `anthropic`, `openai` or `boto3` SDKs.
 
-</details>
+**Why is a symbol missing?**
+Check that the index exists with `atlas-aci status --repo /path/to/your/repo`, which prints JSON. Then check the language is in the default set. Ruby setter callers and JSX references are known gaps.
+
+**Can one server cover several repositories?**
+No. Run one process per repository and give each host entry its own name. See [INTEGRATION.md](INTEGRATION.md#multi-repo-setups).
+
+**Which Docker image should I use?**
+The published `v2.0.0` image is the newest tag. It does not include the changes under Unreleased in [CHANGELOG.md](CHANGELOG.md). To use them, build locally with `docker build -t atlas-aci mcp-server`.
+
+**Do I need to re-index after an upgrade?**
+Only when the schema epoch changes. `serve` still starts, and graph tools return `INDEX_UNAVAILABLE` until a current index exists. See [docs/installation.md](docs/installation.md).
 
 ## Contributing
 
-Bugs and features for this server belong here. Host-wiring questions
-belong in [`hosts/`](hosts/) first — most editor-integration issues are
-config, not code. [`scripts/`](scripts/) are augmentation guards for this
-repo's own workstreams, not code this project ships to consumers.
+Open issues and pull requests on GitHub. Host wiring questions start in [`hosts/`](hosts/), since most editor problems are configuration. To run the test suite, use `cd mcp-server && uv sync && uv run pytest`. Scripts under [`scripts/`](scripts/) guard this repo's own workstreams and are not shipped code.
 
 ## License
 
-Apache-2.0. See the top-level [`LICENSE`](LICENSE) file for the full
-text; [`mcp-server/pyproject.toml`](mcp-server/pyproject.toml) declares
-the same identifier for the packaged distribution.
+Apache-2.0. See [LICENSE](LICENSE). The package metadata in [`mcp-server/pyproject.toml`](mcp-server/pyproject.toml) declares the same license.
 
 ---
 
