@@ -1,0 +1,56 @@
+[
+  {
+    "ac_id": "AC-S40-001",
+    "test": "mcp-server/tests/slices/test_s40_contract.py::test_unauthorized_before_traversal",
+    "exit_code": 0,
+    "tail": "1 passed in 3.45s"
+  },
+  {
+    "ac_id": "AC-S40-002",
+    "test": "mcp-server/tests/slices/test_s40_contract.py::test_resource_authorization",
+    "exit_code": 0,
+    "tail": "1 passed in 3.62s"
+  },
+  {
+    "ac_id": "AC-S40-003",
+    "test": "mcp-server/tests/slices/test_s40_contract.py::test_cache_scope_isolation",
+    "exit_code": 0,
+    "tail": "1 passed in 3.65s"
+  },
+  {
+    "ac_id": "AC-S40-004",
+    "test": "mcp-server/tests/slices/test_s40_contract.py::test_revoked_cursor",
+    "exit_code": 0,
+    "tail": "1 passed in 4.01s"
+  },
+  {
+    "ac_id": "AC-S40-005",
+    "test": "mcp-server/tests/slices/test_s40_contract.py::test_cross_repo_scope",
+    "exit_code": 0,
+    "tail": "1 passed in 3.55s"
+  },
+  {
+    "ac_id": "AC-S40-006",
+    "test": "mcp-server/tests/slices/test_s40_contract.py::test_auth_replay",
+    "exit_code": 0,
+    "tail": "1 passed in 4.20s"
+  },
+  {
+    "ac_id": "AC-S40-007",
+    "test": "mcp-server/tests/slices/test_s40_contract.py::test_cache_revocation",
+    "exit_code": 0,
+    "tail": "1 passed in 3.75s"
+  },
+  {
+    "ac_id": "AC-S40-008",
+    "test": "mcp-server/tests/slices/test_s40_contract.py::test_legacy_tool_boundary",
+    "exit_code": 0,
+    "tail": "21 passed in 8.27s"
+  },
+  {
+    "ac_id": "AC-S40-009",
+    "test": "mcp-server/tests/slices/test_s40_contract.py::test_invalid_credentials",
+    "exit_code": 0,
+    "tail": "1 passed in 3.57s"
+  }
+]
