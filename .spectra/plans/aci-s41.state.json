@@ -1,0 +1,150 @@
+{
+  "schema": "ramza/plan-state.v1",
+  "plan": "aci-s41",
+  "created_at": "2026-11-06T04:51:49Z",
+  "tier": "full",
+  "phase": "DONE",
+  "phases_done": [
+    "RS",
+    "S",
+    "P",
+    "E",
+    "C",
+    "T",
+    "A",
+    "DONE"
+  ],
+  "rightsize": {
+    "score": 6,
+    "computed_tier": "full",
+    "inputs": {
+      "files_est": 12,
+      "new_dep": false,
+      "public_api": true,
+      "migration": false,
+      "security": false,
+      "novel": true,
+      "stakes": "high"
+    }
+  },
+  "refine_cycles": 0,
+  "skips": [],
+  "gates": [
+    {
+      "rubric": "complexity",
+      "total": 11,
+      "dims": {
+        "scope": 3,
+        "ambiguity": 2,
+        "dependencies": 3,
+        "risk": 3
+      },
+      "verdict": "human_loop",
+      "at": "2026-11-06T05:17:58Z"
+    },
+    {
+      "rubric": "explore",
+      "total": 77,
+      "dims": {
+        "alignment": 9,
+        "correctness": 8,
+        "maintainability": 7,
+        "performance": 8,
+        "simplicity": 6,
+        "risk": 7,
+        "innovation": 6
+      },
+      "verdict": "solid",
+      "at": "2026-11-06T05:17:58Z"
+    },
+    {
+      "rubric": "confidence",
+      "total": 77.25,
+      "dims": {
+        "pattern_match": 72,
+        "requirement_clarity": 78,
+        "decomposition_stability": 74,
+        "constraint_compliance": 85
+      },
+      "verdict": "VALIDATE",
+      "at": "2026-11-06T05:17:58Z"
+    },
+    {
+      "rubric": "refine",
+      "cycle": 1,
+      "total": 4.2,
+      "min": 3,
+      "dims": {
+        "clarity": 4,
+        "completeness": 4,
+        "actionability": 5,
+        "efficiency": 3,
+        "testability": 5
+      },
+      "verdict": "pass",
+      "at": "2026-11-06T05:17:58Z",
+      "label": "pre-checker"
+    },
+    {
+      "rubric": "refine",
+      "cycle": 1,
+      "total": 3.8,
+      "min": 3,
+      "dims": {
+        "clarity": 4,
+        "completeness": 4,
+        "actionability": 4,
+        "efficiency": 3,
+        "testability": 4
+      },
+      "verdict": "pass",
+      "at": "2026-11-06T05:27:14Z",
+      "label": "post-checker"
+    }
+  ],
+  "amendments": [],
+  "declared_scope": [
+    "mcp-server/src/atlas_aci/storage/generations.py",
+    "mcp-server/src/atlas_aci/storage/leases.py",
+    "mcp-server/src/atlas_aci/storage/retention.py",
+    "mcp-server/src/atlas_aci/storage/*",
+    "mcp-server/src/atlas_aci/indexing/jobs.py",
+    "mcp-server/src/atlas_aci/indexing/job_runner.py",
+    "mcp-server/src/atlas_aci/indexing/*",
+    "mcp-server/src/atlas_aci/__main__.py",
+    "mcp-server/tests/slices/test_s41_*.py",
+    "mcp-server/tests/slices/test_s40_isolation.py",
+    "docs/operations/*",
+    "CHANGELOG.md",
+    "README.md",
+    ".spectra/plans/aci-s41.*",
+    ".spectra/plans/ramza-calibration.jsonl",
+    ".spectra/changes/aci-s41/*",
+    ".spectra/evidence/aci-s41/**",
+    ".spectra/state/aci-s41.execution.json",
+    ".spectra/backlog/execution.json",
+    ".spectra/backlog/order.md"
+  ],
+  "criteria_sha256": "ffa352d6b5bdcb773e47845b08431890ce8d3c3721dcfb534b30385ec6a1659f",
+  "critic": {
+    "author": "orchestrator-ramza-plan-s41",
+    "checker": "atlas-s41-plan-checker",
+    "at": "2026-11-06T05:27:14Z"
+  },
+  "criteria_frozen_at": "2026-11-06T05:27:14Z",
+  "scope_declared_at": "2026-11-06T05:27:14Z",
+  "drift_reports": [
+    {
+      "at": "2026-11-06T07:07:06Z",
+      "range": "staged",
+      "files_changed": 68,
+      "uncovered": []
+    },
+    {
+      "at": "2026-11-06T07:12:54Z",
+      "range": "staged",
+      "files_changed": 72,
+      "uncovered": []
+    }
+  ]
+}

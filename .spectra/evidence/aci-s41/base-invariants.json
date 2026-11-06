@@ -1,0 +1,73 @@
+{
+ "base_commit": "fa16b1c64f6ad4cb7cfde9957e8536fbaeeff318",
+ "budgets": {
+  "COLLECTION_MINIMUM_BUDGET": 3448,
+  "FIXED_ERROR_ENVELOPE_CAP": 797,
+  "IMPACT_MINIMUM_BUDGET": 7730,
+  "MINIMUM_BUDGET": 3436
+ },
+ "ci_baseline": {
+  "base_commit": "fa16b1c64f6ad4cb7cfde9957e8536fbaeeff318",
+  "ci_result": "3142 passed, 11 skipped",
+  "ci_run": "42162691268",
+  "source": "gh run view 42162691268 (PR #106 pytest / ruff / mypy)"
+ },
+ "criteria_sha256": "ffa352d6b5bdcb773e47845b08431890ce8d3c3721dcfb534b30385ec6a1659f",
+ "ev_RELATIONS": [
+  "call",
+  "construct",
+  "extend",
+  "import",
+  "include",
+  "prepend",
+  "rationale_for",
+  "superclass"
+ ],
+ "graph_output_schema_sha256": "713ec5b6b2af963d556ddc3829dfd6919d52b3be2a9d70d918a5a6e270d4cf60",
+ "mcp_version": "1.30.0",
+ "producer_input_modules": [
+  "storage/evidence.py",
+  "providers/python_imports.py",
+  "indexing/extraction_cache.py",
+  "resolvers/dependencies.py",
+  "extractors/rust.py",
+  "storage/snapshots.py",
+  "indexing/retrieval.py",
+  "extractors/tsx.py"
+ ],
+ "pyproject_sha256": "981f0784d6bc5c1502c91ab27657beb483460b97e066cd8846f51e98f1d7d92f",
+ "spawn_site_files": [
+  "tools/search_text.py",
+  "tools/test_dry_run.py",
+  "storage/snapshots.py",
+  "history/cochange.py"
+ ],
+ "src_sha256_at_base": {
+  "__main__.py": "61fe20206bd1e58ecd74b3f43d7ca854019793b7d0d7495aa3dcab3468c16915",
+  "codegraph.py": "5dbc8433d8a9bb3db80ebbe2d04d1bcfc3f6aa252ea9166e3c94e277e9527026",
+  "config.py": "9593feb511711113b1c03885233a9da7615a9d7abdf8ab62a75cf345c9251871",
+  "enforcement.py": "000eeb5ef65a6d098354708405b5288ff9d6ce2718701ab0d318c60b6558fda9",
+  "extractors/rust.py": "28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a",
+  "extractors/tsx.py": "cfbdf5d5390bd36816ecaec968f9b5e364d28eab40ac31a5da457fa09ffc81c8",
+  "indexing/__init__.py": "e4b9d192790309018248199725d46db643744ee7be19e51355cab5f4cf93db1f",
+  "indexing/extraction_cache.py": "6849d31d6b5b78a8a72a33d4ae0eeb8f5ae3c0d5b2c0da6bbc608d8ef70e21e5",
+  "indexing/retrieval.py": "d53c185c213e5ed35883652f54b7568e53f95dbed995833eea128c029c4d2ece",
+  "memex.py": "2a350d68b494bc7e324a6bad63181f046891b3caa4ae5d53de0eb6d84c96f458",
+  "protocol/http.py": "6afbd23147c6304d9a1f646a82a2c27c937ffc1786b8f5500f8595b1fa0b7f5a",
+  "protocol/resources.py": "e9857785d9b839301037c4d4c7cca39d44aa2b78d812d3abccb76648ebdf1744",
+  "protocol/results.py": "6dd2ec426d75cffb40637e659476fdbe3ece48b0f0b6d5024f863ca5a468fbdb",
+  "providers/python_imports.py": "de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014",
+  "query/impact.py": "7e4233218f36be9b51ff11989382fa6c16be301b5a55679f676d2c36bc6d09e9",
+  "query/leases.py": "017e8c3ea847f37f0ad548049f50dc1438dc0bb2442fd76bc54598fae92e90aa",
+  "query/paging.py": "4924bbc6092e3204e1e805e6a5cc5255b524e55f90ce8260d9fa59d513c2801d",
+  "query/retrieval.py": "4b8d77c4db886cfe3501e21da2439e5cd3bc963a3e86c3cd9412fb0cf6fdbaa7",
+  "resolvers/dependencies.py": "e3bd74233b6bac6ddd808f5eb6f473c4211519afa007255ace79b30901e70ccd",
+  "server.py": "21393e61dfbe9ec4ae93f55f7b9c0abf17029681b24f75395d143c955eeb13f7",
+  "storage/__init__.py": "a5c86b099d459153c262be671561811557ad2f764d24f4ba7c56e243d50bf8b6",
+  "storage/evidence.py": "88eec05ea6d0f741f3398213fccca893edfff82e7de5a7a91c8ed3b0891a5a97",
+  "storage/snapshots.py": "6e800008cbbbda1b345f199aecbda193eb27c68b15aeb1ff941b5a840ab5be82"
+ },
+ "tools_json_bytes": 1631472,
+ "tools_json_sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+ "uv_lock_sha256": "87ba265e76f382aaa4387da7ca5d89dc85eb3699b35ee4315e981302b19646fd"
+}

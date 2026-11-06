@@ -1,0 +1,186 @@
+{
+ "slice_id": "ACI-S41",
+ "base_commit": "fa16b1c64f6ad4cb7cfde9957e8536fbaeeff318",
+ "recorded_before_implementation": true,
+ "declared_by_issue": [
+  "mcp-server/src/atlas_aci/indexing/*",
+  "mcp-server/src/atlas_aci/storage/*",
+  "mcp-server/src/atlas_aci/__main__.py",
+  "mcp-server/tests/slices/test_s41_*.py",
+  "docs/operations/*"
+ ],
+ "glob_depth_clarifications": [
+  {
+   "path": "mcp-server/src/atlas_aci/storage/*",
+   "reason": "Adds storage/generations.py (layout, retention policy, writer lock, capture, farm verification), storage/leases.py (flock reader leases, GenerationLease, probe) and storage/retention.py (garbage collection, orphan sweep, cache prune, retained-set digest). storage/__init__.py, storage/evidence.py and storage/snapshots.py stay byte-identical: evidence.py and snapshots.py are producer-fingerprint inputs (codegraph.py:1461-1470) and the producer list is explicit, so the new files are not hashed"
+  },
+  {
+   "path": "mcp-server/src/atlas_aci/indexing/*",
+   "reason": "Adds indexing/jobs.py (identity, job store, submit/resume/cancel/status, slots, receipts, reuse verification) and indexing/job_runner.py (in-process runner of the jobs CLI command, CodeGraph subclass seams, checkpointing extraction-cache wrapper, fault seams, SIGTERM handling). indexing/__init__.py, indexing/extraction_cache.py and indexing/retrieval.py stay byte-identical (the latter two are fingerprint inputs). No subprocess spawn call is added (test_s40_injection.py:371-375 pins the spawn-site set)"
+  },
+  {
+   "path": "mcp-server/src/atlas_aci/__main__.py",
+   "reason": "Declared by the issue. A new 'jobs' click group (submit, resume, cancel, status, gc, acquire) with lazy imports. Additions only (numstat deletions 0); index, serve and serve-shared and their parameters are untouched"
+  },
+  {
+   "path": "docs/operations/*",
+   "reason": "New docs/operations/index-jobs-and-retention.md only"
+  }
+ ],
+ "added": [
+  {
+   "path": "CHANGELOG.md",
+   "reason": "One '- **Index jobs, retained generations and lease-aware garbage collection (ACI-S41).**' bullet inserted immediately before the S40 bullet (CHANGELOG.md:421), after the ACI-S14 bullet, so bullets[-1] of Unreleased/Added stays S40 (test_s40_isolation.py:431-440) and bullets[0..9] keep their positions (S33-S36, S38, S39 pins). No '(ACI-S40)' token, no continuation line starting '- ', ASCII, no BANNED words; '### Security' unchanged; 0 deletions"
+  },
+  {
+   "path": "README.md",
+   "reason": "One two-cell docs-table row for docs/operations/index-jobs-and-retention.md directly after the S40 row (README.md:955); it does not contain shared-http-deployment.md (test_s40_isolation.py:457 requires that path exactly once); 0 deletions"
+  },
+  {
+   "path": ".spectra/plans/aci-s41.*",
+   "reason": "Ramza plan, criteria, state, issue snapshot, review, scope"
+  },
+  {
+   "path": ".spectra/plans/ramza-calibration.jsonl",
+   "reason": "Ramza calibration append"
+  },
+  {
+   "path": ".spectra/changes/aci-s41/*",
+   "reason": "This amendment"
+  },
+  {
+   "path": ".spectra/evidence/aci-s41/**",
+   "reason": "qualification.json, base-invariants.json, the flock/link/seam spike logs, g-fingerprint base and branch outputs, production-scenario.sh and production-scenario.json, py314 log, gate logs and exit files"
+  },
+  {
+   "path": ".spectra/state/aci-s41.execution.json",
+   "reason": "Authoritative execution receipt (AC-RUN-01/02)"
+  },
+  {
+   "path": ".spectra/backlog/execution.json",
+   "reason": "Backlog status update"
+  },
+  {
+   "path": ".spectra/backlog/order.md",
+   "reason": "Backlog order update"
+  }
+ ],
+ "prior_test_edits": [
+  {
+   "path": "mcp-server/tests/slices/test_s40_isolation.py",
+   "lines": "471-473",
+   "before": "assert [p.name for p in (ROOT / \"docs\" / \"operations\").glob(\"*.md\")] == [\"shared-http-deployment.md\"]",
+   "after": "assert {p.name for p in (ROOT / \"docs\" / \"operations\").glob(\"*.md\")} == {\"shared-http-deployment.md\", \"index-jobs-and-retention.md\"}",
+   "reason": "The issue requires a docs/operations document; the pin stays an exact (now set-based, order-independent) listing. Same pattern as S39 relaxing an S38 pin. No other existing test is edited"
+  }
+ ],
+ "interpretations": [
+  {
+   "topic": "Live server and AC-004/007/008",
+   "decision": "The read-only query server reads only the current generation (graph.9.db). Current is always a GC root and GC never touches the live store (graph.9.db, source-snapshots/), which the inline snap.retain still owns; in-flight server readers are additionally FD-pinned (snapshots.py:3-4). Cross-process flock leases protect retained non-current generations accessed through storage.leases.acquire and 'atlas-aci jobs acquire'. server.py, query/*, protocol/* and config.py stay byte-identical. Wiring serve to non-current generations is a documented follow-up"
+  },
+  {
+   "topic": "Job process (refines orchestrator decision 7)",
+   "decision": "The build runs in the 'atlas-aci jobs submit|resume' command process via indexing/job_runner.run_from_cli, not in a spawned child, because a new subprocess.Popen site would break test_s40_injection.py:371-375. Process isolation, SIGKILL and SIGTERM semantics are identical; ATLAS_ACI_JOB_FAULTS is read only in run_from_cli"
+  },
+  {
+   "topic": "Checkpoints",
+   "decision": "Checkpoints are content-addressed extraction-cache entries recorded in an append-only fsynced checkpoint.log with a chained digest, plus a constant-size checkpoint.json summary (fsync+rename). Resume re-runs; cache hits prove continuation (parser_invocations == files - valid prefix)"
+  },
+  {
+   "topic": "Retained generations",
+   "decision": "Same-filesystem hardlink farm <atlas_dir>/generations/<generation_id>/ (graph.9.db, source-snapshots manifest+pack, lease.lock, meta.json), captured under the writer lock (inside the build's own critical section for jobs; at GC start for unmanaged publishers). Cross-device is refused with CROSS_DEVICE. Verification repeats reader_lease's validation on the farm through a repo-bound read-only CodeGraph (private coupling listed, parity-tested)"
+  },
+  {
+   "topic": "Reuse",
+   "decision": "Identical job identity with a receipt whose generation passes a full lease acquisition, digest verification and identity binding returns the stored receipt with no work. Missing, retired, raced, digest-invalid or identity-mismatched output declines with a closed reason and re-runs. Re-publishing a retained output as current is out of scope"
+  }
+ ],
+ "not_touched_follow_up": [
+  {
+   "path": "mcp-server/src/atlas_aci/server.py, mcp-server/src/atlas_aci/query/leases.py, mcp-server/src/atlas_aci/codegraph.py",
+   "reason": "Serving retained non-current generations over MCP with flock leases needs edits to frozen or fingerprinted files; follow-up"
+  },
+  {
+   "path": "cross-device retention",
+   "reason": "Copy-based farms for a separate retention volume; follow-up"
+  }
+ ],
+ "explicitly_untouched_gated": [
+  "mcp-server/src/atlas_aci/codegraph.py",
+  "mcp-server/src/atlas_aci/storage/__init__.py",
+  "mcp-server/src/atlas_aci/storage/evidence.py",
+  "mcp-server/src/atlas_aci/storage/snapshots.py",
+  "mcp-server/src/atlas_aci/indexing/__init__.py",
+  "mcp-server/src/atlas_aci/indexing/extraction_cache.py",
+  "mcp-server/src/atlas_aci/indexing/retrieval.py",
+  "mcp-server/src/atlas_aci/providers/",
+  "mcp-server/src/atlas_aci/resolvers/",
+  "mcp-server/src/atlas_aci/extractors/",
+  "mcp-server/src/atlas_aci/server.py",
+  "mcp-server/src/atlas_aci/config.py",
+  "mcp-server/src/atlas_aci/enforcement.py",
+  "mcp-server/src/atlas_aci/memex.py",
+  "mcp-server/src/atlas_aci/protocol/",
+  "mcp-server/src/atlas_aci/query/",
+  "mcp-server/src/atlas_aci/tools/",
+  "mcp-server/pyproject.toml",
+  "mcp-server/uv.lock",
+  "mcp-server/Dockerfile",
+  "mcp-server/tests/fixtures/s38/",
+  "mcp-server/tests/slices/test_s40_injection.py",
+  "mcp-server/tests/slices/test_s39_isolation.py",
+  "hosts/",
+  ".github/workflows/",
+  "scripts/",
+  "atlas/"
+ ],
+ "invariants": {
+  "tools_json_sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+  "tools_json_bytes": 1631472,
+  "READ_ONLY_TOOLS_count": 7,
+  "MINIMUM_BUDGET": 3436,
+  "COLLECTION_MINIMUM_BUDGET": 3448,
+  "FIXED_ERROR_ENVELOPE_CAP": 797,
+  "IMPACT_MINIMUM_BUDGET": 7730,
+  "ev_RELATIONS": [
+   "call",
+   "construct",
+   "extend",
+   "import",
+   "include",
+   "prepend",
+   "rationale_for",
+   "superclass"
+  ],
+  "graph_output_schema_sha256": "713ec5b6b2af963d556ddc3829dfd6919d52b3be2a9d70d918a5a6e270d4cf60",
+  "pyproject_sha256": "981f0784d6bc5c1502c91ab27657beb483460b97e066cd8846f51e98f1d7d92f",
+  "uv_lock_sha256": "87ba265e76f382aaa4387da7ca5d89dc85eb3699b35ee4315e981302b19646fd",
+  "server_py_sha256": "21393e61dfbe9ec4ae93f55f7b9c0abf17029681b24f75395d143c955eeb13f7",
+  "codegraph_py_sha256": "5dbc8433d8a9bb3db80ebbe2d04d1bcfc3f6aa252ea9166e3c94e277e9527026",
+  "config_py_sha256": "9593feb511711113b1c03885233a9da7615a9d7abdf8ab62a75cf345c9251871",
+  "enforcement_py_sha256": "000eeb5ef65a6d098354708405b5288ff9d6ce2718701ab0d318c60b6558fda9",
+  "hashed_storage_indexing_module_shas": "recorded at Day-1 (a) from git show fa16b1c: for storage/evidence.py, storage/snapshots.py, indexing/extraction_cache.py, indexing/retrieval.py, storage/__init__.py, indexing/__init__.py",
+  "producer_input_modules": [
+   "storage/evidence.py",
+   "providers/python_imports.py",
+   "indexing/extraction_cache.py",
+   "resolvers/dependencies.py",
+   "extractors/rust.py",
+   "storage/snapshots.py",
+   "indexing/retrieval.py",
+   "extractors/tsx.py"
+  ],
+  "spawn_site_files": [
+   "tools/search_text.py",
+   "tools/test_dry_run.py",
+   "storage/snapshots.py",
+   "history/cochange.py"
+  ],
+  "protocol_resources_REASONS_unchanged": true,
+  "s08_retain_manifest_count_after_import": 1,
+  "s21_retain_manifest_count": 2,
+  "mcp_version": "1.30.0",
+  "criteria_sha256": "ffa352d6b5bdcb773e47845b08431890ce8d3c3721dcfb534b30385ec6a1659f"
+ }
+}

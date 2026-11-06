@@ -1,0 +1,56 @@
+[
+  {
+    "ac_id": "AC-S41-001",
+    "test": "mcp-server/tests/slices/test_s41_contract.py::test_job_dedup",
+    "exit_code": 0,
+    "tail": "1 passed in 2.48s"
+  },
+  {
+    "ac_id": "AC-S41-002",
+    "test": "mcp-server/tests/slices/test_s41_contract.py::test_job_resume",
+    "exit_code": 0,
+    "tail": "1 passed in 2.35s"
+  },
+  {
+    "ac_id": "AC-S41-003",
+    "test": "mcp-server/tests/slices/test_s41_contract.py::test_cancel_no_publish",
+    "exit_code": 0,
+    "tail": "2 passed in 4.45s"
+  },
+  {
+    "ac_id": "AC-S41-004",
+    "test": "mcp-server/tests/slices/test_s41_contract.py::test_leased_generation_retained",
+    "exit_code": 0,
+    "tail": "2 passed in 2.04s"
+  },
+  {
+    "ac_id": "AC-S41-005",
+    "test": "mcp-server/tests/slices/test_s41_contract.py::test_expired_reference_visible",
+    "exit_code": 0,
+    "tail": "1 passed in 1.96s"
+  },
+  {
+    "ac_id": "AC-S41-006",
+    "test": "mcp-server/tests/slices/test_s41_contract.py::test_gc_replay",
+    "exit_code": 0,
+    "tail": "1 passed in 1.85s"
+  },
+  {
+    "ac_id": "AC-S41-007",
+    "test": "mcp-server/tests/slices/test_s41_contract.py::test_current_generation_retained",
+    "exit_code": 0,
+    "tail": "1 passed in 1.35s"
+  },
+  {
+    "ac_id": "AC-S41-008",
+    "test": "mcp-server/tests/slices/test_s41_contract.py::test_lease_gc_race",
+    "exit_code": 0,
+    "tail": "4 passed in 2.54s"
+  },
+  {
+    "ac_id": "AC-S41-009",
+    "test": "mcp-server/tests/slices/test_s41_contract.py::test_missing_job_output",
+    "exit_code": 0,
+    "tail": "5 passed in 2.22s"
+  }
+]

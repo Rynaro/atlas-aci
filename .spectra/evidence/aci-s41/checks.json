@@ -1,0 +1,51 @@
+{
+ "slice": "ACI-S41",
+ "base_commit": "fa16b1c64f6ad4cb7cfde9957e8536fbaeeff318",
+ "environment": "atlas-aci-dev-relock (uid 1000, Python 3.12, mcp 1.30.0); CI is Python 3.14 (S41 plus S40 isolation: 130 passed on python:3.14 with uv sync --frozen)",
+ "gates": {
+  "s41-contract": {
+   "exit": 0,
+   "summary": "25 contract tests; all 114 S41 tests pass in 92.8 s; orchestrator rerun of the S41 suites with S40 and S23 isolation: 140 passed; the nine AC tests rerun verbosely (acceptance-runs.json): all exit 0"
+  },
+  "regression": {
+   "exit": 0,
+   "summary": "406 passed, 2 skipped, 1 deselected"
+  },
+  "ruff": {
+   "exit": 0
+  },
+  "format": {
+   "exit": 0
+  },
+  "mypy": {
+   "exit": 0,
+   "summary": "orchestrator reran the exact CI lint chain including ../scripts/: clean"
+  },
+  "full-suite": {
+   "exit": 0,
+   "summary": "3254 passed, 11 skipped, 2 deselected (base 3140 + 114 new; skips unchanged); deselected the known uid-1000 test_s01_contract::test_call_deadline_after_initialization and the known-flaky test_s08_integration::test_nonregular_pack_does_not_block_acquisition"
+  },
+  "g-src": {
+   "exit": 0,
+   "summary": "26 PASS: only the five new modules and an additions-only __main__.py under src; frozen and fingerprinted files byte-identical; orchestrator confirmed pyproject, uv.lock, Dockerfile, workflows and scripts unchanged against the base"
+  },
+  "g-fingerprint": {
+   "exit": 0,
+   "summary": "producer fingerprint, gid and sid equal at base and branch; a one-byte change to a hashed module changes all three"
+  },
+  "g-mcp": {
+   "exit": 0,
+   "summary": "tools JSON sha256 94f9567a..., 1631472 bytes, 7 tools"
+  },
+  "py314": {
+   "exit": 0,
+   "summary": "130 passed, no skips"
+  },
+  "g-image": {
+   "exit": 0,
+   "summary": "orchestrator-built atlas-aci:s41 (sha256:996cd263...): prod-scenario.sh 21 PASS, 0 FAIL (kill seam exit 137 as PID 1, resume from checkpoint 2, SIGTERM cancel keeps the live generation, cross-container lease retains a generation through GC, EXPIRED_REFERENCE after retirement, GC replay digest stable, :ro acquire leaves 47 files unchanged, live serve answers identically across GC); orchestrator negative control S41_NEGATIVE=1 fails exactly P2"
+  }
+ },
+ "drift": "ramza-drift --staged: 68 changed files, all within declared scope",
+ "criteria_sha256": "ffa352d6b5bdcb773e47845b08431890ce8d3c3721dcfb534b30385ec6a1659f"
+}

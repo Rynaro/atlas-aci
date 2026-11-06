@@ -468,6 +468,7 @@ def test_the_new_documents_and_tests_are_the_only_additions():
         "test_s40_policy.py",
         "test_s40_support.py",
     ]
-    assert [p.name for p in (ROOT / "docs" / "operations").glob("*.md")] == [
-        "shared-http-deployment.md"
-    ]
+    assert {p.name for p in (ROOT / "docs" / "operations").glob("*.md")} == {
+        "shared-http-deployment.md",
+        "index-jobs-and-retention.md",
+    }

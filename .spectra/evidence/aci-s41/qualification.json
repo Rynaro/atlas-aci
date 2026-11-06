@@ -1,0 +1,140 @@
+{
+ "a_base_clean": {
+  "ci_baseline": "run 42162691268: 3142 passed, 11 skipped",
+  "git_diff_quiet_src": true,
+  "shas_recorded_in": "base-invariants.json"
+ },
+ "b_flock": {
+  "dev_image_py312_container_local": {
+   "after_sigkill_ex": "granted",
+   "ex_on_rdonly_fd": "granted",
+   "ex_vs_sh_two_fds": "EAGAIN",
+   "proc_ex_vs_sh": "EAGAIN",
+   "proc_sh_vs_sh": "granted",
+   "rename_parent_after_unlock": "granted",
+   "rename_parent_ex_vs_sh": "EAGAIN",
+   "sh_sh_two_fds": [
+    "granted",
+    "granted"
+   ],
+   "sh_vs_ex_two_fds": "EAGAIN",
+   "threads_ex_vs_sh": "EAGAIN"
+  },
+  "flock_on_ro_volume_in_linux": "works (O_RDONLY fd, :ro mount)",
+  "python314_container_local": "identical to the dev image result",
+  "two_containers_named_volume": {
+   "A_ro_holds_EX__B_rw_probe": {
+    "ex": "EAGAIN",
+    "sh": "EAGAIN"
+   },
+   "A_rw_holds_SH__B_ro_probe": {
+    "ex": "EAGAIN",
+    "sh": "granted"
+   },
+   "after_docker_kill_A": {
+    "ex": "granted",
+    "sh": "granted"
+   }
+  }
+ },
+ "base_commit": "fa16b1c64f6ad4cb7cfde9957e8536fbaeeff318",
+ "c_hardlink": {
+  "exdev_probe": "tmpfs at the destination gives EXDEV (python:3.14 --tmpfs); real-mount case not constructible inside a test, so os.link EXDEV injection plus the doc (recorded adaptation)",
+  "same_filesystem": {
+   "nlink": 2,
+   "same_dev_ino": true
+  }
+ },
+ "d_wrapper": {
+  "cold_5_files": {
+   "parser_invocations": 5,
+   "writes": 5
+  },
+  "intercepts_without_codegraph_edit": true,
+  "kill_after_write_2_then_rerun": {
+   "disk_hits": 2,
+   "parser_invocations": 3
+  },
+  "warm": {
+   "disk_hits": 5,
+   "parser_invocations": 0,
+   "writes": 0
+  }
+ },
+ "e_override_order": {
+  "capture_inside_lock_deadlock": false,
+  "order": [
+   "_publication_base",
+   "_run_build",
+   "_close_db",
+   "_retire_previous_native"
+  ],
+  "raise_in_close_db": {
+   "installed_objects_removed": true,
+   "live_inode_unchanged": true,
+   "stage_removed": true
+  },
+  "writer_lock_held_in_each": true
+ },
+ "f_farm": {
+  "farm_survives_live_retain": true,
+  "l_parity": "tests test_s41_leases.py (healthy store, framework corpus, 5 mutations, foreign repository)",
+  "snap_acquire_on_farm": true
+ },
+ "g_fingerprint": {
+  "producer_inputs_sha256": "15bf884580ee2edd094dccc370030fbc90a13eeebe43eab900228ceb7d18dcfc",
+  "scratch_files_in_storage_and_indexing_change_producer_inputs": false
+ },
+ "h_base_tests": {
+  "full_base_run": "2962 passed, 1 failed, 177 errors in 1272 s: the errors were the s28/s30 python-grammar fixture and one s28 lock test while probe containers shared the grammar cache; the same files rerun alone at base: green (exit 0)",
+  "named_tests": "test_s08_integration, test_s21_lifecycle, test_s12_storage, test_schema_epoch, test_s09_cache_validation, test_s40_injection",
+  "result": "130 passed, 1 deselected when run alone at base; one test (test_s12_storage::test_staged_upgrade_preserves_history_and_held_source) timed out at 30 s only while other containers ran concurrently and passed alone"
+ },
+ "i_gid_probe_condition2": {
+  "distinct_gids_for_six_builds": 3,
+  "outcome": "They change both whenever the adapter adds facts (rails_models fixture: plain, rails_models and rails_models+map give 3 distinct gids and 3 distinct sids; rails_routes and rails_jobs fixtures: distinct). They do NOT change them when the adapter adds no facts (rails and rails_jobs on the models fixture equal the plain build). Also any rebuild of equal content in one namespace yields the same gid and a new db inode (publication token). So gids can collide: capture_current retires and recaptures a farm whose db inode differs from the live db, and gives capture_conflict when the farm is leased.",
+  "question": "do frameworks or the rails table map change generation_id or snapshot_id?",
+  "stop": false
+ },
+ "j_offline_get_parser": {
+  "image": "atlas-aci:relock (python 3.12, uid 10001)",
+  "languages": [
+   "python",
+   "ruby",
+   "javascript",
+   "typescript"
+  ],
+  "network": "none",
+  "ok": true
+ },
+ "k_rollback_smoke": {
+  "base_code": "git archive of fa16b1c (no jobs.py)",
+  "export": "ok",
+  "index_since": "ok",
+  "serve_search_symbol": "ok",
+  "status": "ok",
+  "store_contents": [
+   "generations",
+   "jobs",
+   "retention.json"
+  ],
+  "store_entries_unchanged": true
+ },
+ "lock_canary": {
+  "dev_image": {
+   "device_differs_from_repo": true,
+   "fstype": "overlay",
+   "nlink": 2,
+   "process_blocks": true,
+   "same_inode": true,
+   "second_fd_blocks": true
+  },
+  "implemented_in": "test_s41_support.lock_canary (session autouse, fails never skips)"
+ },
+ "notes": [
+  "Probes (b)-(j) were executed before any mcp-server/src edit; this file consolidates the observations afterwards. (k) was executed after the implementation, with the base commit's code reading a store written by the S41 code."
+ ],
+ "recorded_before_src_edits": true,
+ "slice_id": "ACI-S41",
+ "stop_rule_triggered": false
+}

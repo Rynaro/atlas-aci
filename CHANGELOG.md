@@ -418,6 +418,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   unsupported. The producer fingerprint now includes `extractors/tsx.py`, so
   the next `index` run re-extracts every file.
 
+- **Index jobs, retained generations and lease-aware garbage collection (ACI-S41).**
+  `atlas-aci jobs submit|resume|cancel|status|gc|acquire` runs an index build as a durable job with a
+  content-addressed identity: an identical job whose retained output still verifies is reused, a
+  build that dies after a durable checkpoint resumes from it, and a cancel before the commit leaves the
+  previous generation selected. Generations are retained as same-filesystem hardlink farms; a reader
+  holds one with a cross-process `flock` lease (`storage.leases`, `jobs acquire`); garbage collection
+  retires unleased generations by an operator `retention.json` (never the current generation, a held
+  one or a running job's base) and a retired reference reports `EXPIRED_REFERENCE`. The query server,
+  the tools manifest, `index` and the producer fingerprint are unchanged: the server still reads only
+  the current generation. See `docs/operations/index-jobs-and-retention.md` for the formats, the lease
+  protocol and the limits.
+
 - **Shared multi-principal HTTP mode (ACI-S40).** `atlas-aci serve-shared --shared-config PATH`
   serves several operator-declared repositories to authenticated principals over one loopback
   listener, each on `/mcp/<repository_id>`, behind an operator reverse proxy that terminates TLS.
