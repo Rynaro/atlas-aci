@@ -6,7 +6,7 @@ behaviour only; nothing here changes what the server sends.
 
 ## 1. Summary
 
-- Transport: stdio only. The server is `atlas-aci serve`; there is no HTTP or SSE transport.
+- Transport: this page covers stdio (`atlas-aci serve`, the default). An operator-enabled, loopback-only Streamable HTTP transport with SSE responses (`atlas-aci serve --transport http`) is described in `hosts/http-transport.md`; the goldens and fixture hosts on this page are stdio only.
 - SDK: the locked Python SDK `mcp` 1.30.0 owns the wire. The dependency floors were raised by the
   security re-lock (`pyproject.toml` and `uv.lock`; receipts in `.spectra/evidence/sec-relock/`),
   after which every transcript was regenerated and differs from the mcp 1.27.0 recording only by
@@ -155,7 +155,7 @@ modern live runs only, because the legacy conversations do not read resources.
 
 ## 8. Unsupported
 
-- HTTP and SSE transports.
+- HTTP and SSE beyond the loopback Streamable HTTP transport of `hosts/http-transport.md`: no public bind, no sessions, no standalone GET stream, no resumability.
 - JSON-RPC batching, for every revision including 2025-03-26. Exercised: a one-line batch after
   `initialize` yields a server log notification and no JSON-RPC response, and the next `ping` is
   answered.

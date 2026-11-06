@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import json
 import shutil
 import time
@@ -73,6 +74,13 @@ async def search_text(
             "Search exceeded 15s. Use a narrower scope or a more specific pattern.",
             "narrower_scope",
         ) from e
+    except BaseException:
+        # Cancellation (e.g. an HTTP client disconnect) must not orphan the rg child.
+        # No await here: the cancel path stays synchronous and the loop reaps the process.
+        if proc.returncode is None:
+            with contextlib.suppress(ProcessLookupError):
+                proc.kill()
+        raise
 
     matches: list[dict[str, Any]] = []
     for line in stdout_bytes.splitlines():

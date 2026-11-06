@@ -1,0 +1,14 @@
+{
+ "base_uvicorn_default": {
+  "exit": -15,
+  "stdout": "",
+  "stderr_tail": ""
+ },
+ "override_run_http": {
+  "exit": 0,
+  "latency_s": 0.249,
+  "http_stopped": true,
+  "traceback": false,
+  "stderr_tail": "2026-11-06 00:08:15 [info     ] http_stopped                   admitted=0 peak=0 rejected=0\n"
+ }
+}

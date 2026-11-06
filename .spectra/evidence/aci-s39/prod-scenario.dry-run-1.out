@@ -1,0 +1,39 @@
+PASS  H0 image atlas-aci:s39-wip exists (sha256:1428359b40a04bb79f93b88a6ad08b28bb5ac220e9dde5519b46fa87ff183d06)
+PASS  H1 locked dependency versions in the image
+PASS  H1 the six changed or gated source files in the image equal this tree
+PASS  H2 index exit 0, 6 graph file(s)
+      PASS E0 http child serves a ping http_listening on 127.0.0.1:18765; ping 200
+      PASS E1 stdio and http answers are equal 30 comparisons equal at 2 revisions
+      PASS E2 invalid Origin refused before the body evil Origin 403 before the body; a valid call 200
+      PASS E3 in-flight bound third=503 Retry-After 1; finished=[200, 200]; fourth=200
+      PASS E4 body cap declared 65537+ and chunked overrun both 413
+      PASS E5 method and path GET/DELETE /mcp 405 Allow POST; GET /x 404
+      PASS E6 host foreign Host 421
+      PASS E8 non-loopback host refused in-container --host 0.0.0.0 exit 2
+      PASS E9 listening socket is loopback only /proc/net/tcp LISTEN ['0100007F:494D']; tcp6 []
+      PASS E7 SIGTERM stops cleanly SIGTERM exit 0 in 0.3s; http_stopped; connection refused
+      DRIVER: 10 passed, 0 failed
+PASS  H3 E0 http child serves a ping http_listening on 127.0.0.1:18765; ping 200
+PASS  H3 E1 stdio and http answers are equal 30 comparisons equal at 2 revisions
+PASS  H3 E2 invalid Origin refused before the body evil Origin 403 before the body; a valid call 200
+PASS  H3 E3 in-flight bound third=503 Retry-After 1; finished=[200, 200]; fourth=200
+PASS  H3 E4 body cap declared 65537+ and chunked overrun both 413
+PASS  H3 E5 method and path GET/DELETE /mcp 405 Allow POST; GET /x 404
+PASS  H3 E6 host foreign Host 421
+PASS  H3 E7 SIGTERM stops cleanly SIGTERM exit 0 in 0.3s; http_stopped; connection refused
+PASS  H3 E8 non-loopback host refused in-container --host 0.0.0.0 exit 2
+PASS  H3 E9 listening socket is loopback only /proc/net/tcp LISTEN ['0100007F:494D']; tcp6 []
+PASS  H3 driver exit 0: DRIVER: 10 passed, 0 failed
+PASS  H4 --host 0.0.0.0 exits 2 with Usage: and a reason, nothing on stdout
+PASS  H4 --host 192.0.2.1 exits 2 with Usage: and a reason, nothing on stdout
+PASS  H6 stdio modern.2025-11-25 still matches its golden (digest 59841d91fa4e3c605c1d301e899e491e114dfce06f2a6741e093c17817f91165)
+PASS  H6 negative control: the legacy conversation against the modern golden exits 1 with match:false
+PASS  H7 atlas-aci tools sha256 94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56, 1631472 bytes
+PASS  H5 repo (f1ee2c9e11350d5da7c54d72a53321f7e6c359b3ce5350be025b5c23021b957b) and graph root (d2676242047c2c67766d2adc85131e20db1e766849d2b82c8c610a91c2cfc750) manifests are unchanged by every run
+PASS  H8 pyproject.toml and uv.lock are byte-identical to the pins
+PASS  H8 server.py, pyproject, uv.lock, Dockerfile, workflows, scripts, atlas and docs are byte-identical to the base commit
+PASS  H8 changed source files are exactly the five allowed ones
+PASS  H8 the two tools files have 0 deleted lines versus the base (additions only)
+image: atlas-aci:s39-wip (sha256:1428359b40a04bb79f93b88a6ad08b28bb5ac220e9dde5519b46fa87ff183d06)
+checks: 25 passed, 0 failed
+RESULT: all checks passed

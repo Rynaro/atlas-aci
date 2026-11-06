@@ -1,0 +1,29 @@
+{
+  "slice_id": "ACI-S39",
+  "base_commit": "8ab6582e862d8c3bc29141104e58287bbee8f6be",
+  "full_suite": {
+    "passed": 2686,
+    "skipped": 11,
+    "deselected": 2,
+    "exit": 0,
+    "seconds": 934
+  },
+  "tools_json_sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+  "tools_json_bytes": 1631472,
+  "budgets": [
+    3436,
+    3448,
+    797,
+    7730
+  ],
+  "READ_ONLY_TOOLS": 7,
+  "graph_output_schema_sha256": "713ec5b6b2af963d556ddc3829dfd6919d52b3be2a9d70d918a5a6e270d4cf60",
+  "pyproject_sha256": "981f0784d6bc5c1502c91ab27657beb483460b97e066cd8846f51e98f1d7d92f",
+  "uv_lock_sha256": "87ba265e76f382aaa4387da7ca5d89dc85eb3699b35ee4315e981302b19646fd",
+  "server_py_sha256": "21393e61dfbe9ec4ae93f55f7b9c0abf17029681b24f75395d143c955eeb13f7",
+  "known_failures": [
+    "test_s01_contract::test_call_deadline_after_initialization (deselected)",
+    "test_s08_integration::test_nonregular_pack_does_not_block_acquisition (deselected)"
+  ],
+  "preserve_base": "preserve/base"
+}

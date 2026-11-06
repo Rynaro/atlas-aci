@@ -1,0 +1,362 @@
+{
+ "M1": {
+  "close": {
+   "exit_code": 0,
+   "killed": false
+  },
+  "responses": [
+   {
+    "error": {
+     "code": -32602,
+     "data": "",
+     "message": "Invalid request parameters"
+    },
+    "id": 1,
+    "jsonrpc": "2.0"
+   }
+  ],
+  "traceback": false
+ },
+ "M2a": {
+  "close": {
+   "exit_code": 0,
+   "killed": false
+  },
+  "responses": [
+   {
+    "error": {
+     "code": -32602,
+     "data": "",
+     "message": "Invalid request parameters"
+    },
+    "id": 1,
+    "jsonrpc": "2.0"
+   }
+  ],
+  "traceback": false
+ },
+ "M2b": {
+  "close": {
+   "exit_code": 0,
+   "killed": false
+  },
+  "responses": [
+   {
+    "error": {
+     "code": -32602,
+     "data": "",
+     "message": "Invalid request parameters"
+    },
+    "id": 1,
+    "jsonrpc": "2.0"
+   }
+  ],
+  "traceback": false
+ },
+ "M3": {
+  "close": {
+   "exit_code": 0,
+   "killed": false
+  },
+  "responses": [
+   {
+    "error": {
+     "code": -32602,
+     "data": "",
+     "message": "Invalid request parameters"
+    },
+    "id": 1,
+    "jsonrpc": "2.0"
+   }
+  ],
+  "traceback": false
+ },
+ "P1": {
+  "close": {
+   "exit_code": 0,
+   "killed": false
+  },
+  "responses": [
+   {
+    "error": {
+     "code": -32602,
+     "data": "",
+     "message": "Invalid request parameters"
+    },
+    "id": 1,
+    "jsonrpc": "2.0"
+   }
+  ],
+  "traceback": false
+ },
+ "P2": {
+  "close": {
+   "exit_code": 0,
+   "killed": false
+  },
+  "responses": [
+   {
+    "id": 1,
+    "jsonrpc": "2.0",
+    "result": {}
+   }
+  ],
+  "traceback": false
+ },
+ "R1": {
+  "close": {
+   "exit_code": 0,
+   "killed": false
+  },
+  "responses": [
+   {
+    "error": {
+     "code": -32602,
+     "data": "",
+     "message": "Invalid request parameters"
+    },
+    "id": 1,
+    "jsonrpc": "2.0"
+   },
+   {
+    "id": 2,
+    "jsonrpc": "2.0",
+    "result": {
+     "capabilities": {
+      "experimental": {},
+      "resources": {
+       "listChanged": false,
+       "subscribe": false
+      },
+      "tools": {
+       "listChanged": false
+      }
+     },
+     "protocolVersion": "2024-11-05",
+     "serverInfo": {
+      "name": "atlas-aci",
+      "version": "1.30.0"
+     }
+    }
+   },
+   {
+    "id": 3,
+    "jsonrpc": "2.0",
+    "result": {}
+   },
+   {
+    "id": 4,
+    "jsonrpc": "2.0",
+    "result": {
+     "tools_digest": {
+      "annotations": [
+       "test_dry_run"
+      ],
+      "bytes": 12923,
+      "meta": [
+       "test_dry_run"
+      ],
+      "names": [
+       "graph_query",
+       "list_dir",
+       "memex_read",
+       "search_symbol",
+       "search_text",
+       "test_dry_run",
+       "view_file"
+      ],
+      "output_schema": [],
+      "sha256": "91be13637e74e608d28e176241e5682cf886913b5b0ffdbafa1d07fa428c3243"
+     }
+    }
+   }
+  ],
+  "traceback": false
+ },
+ "U1": {
+  "close": {
+   "exit_code": 0,
+   "killed": false
+  },
+  "responses": [
+   {
+    "id": 1,
+    "jsonrpc": "2.0",
+    "result": {
+     "capabilities": {
+      "experimental": {},
+      "resources": {
+       "listChanged": false,
+       "subscribe": false
+      },
+      "tools": {
+       "listChanged": false
+      }
+     },
+     "protocolVersion": "2025-11-25",
+     "serverInfo": {
+      "name": "atlas-aci",
+      "version": "1.30.0"
+     }
+    }
+   },
+   {
+    "id": 2,
+    "jsonrpc": "2.0",
+    "result": {
+     "tools_digest": {
+      "annotations": [
+       "test_dry_run"
+      ],
+      "bytes": 347091,
+      "meta": [
+       "test_dry_run"
+      ],
+      "names": [
+       "graph_query",
+       "list_dir",
+       "memex_read",
+       "search_symbol",
+       "search_text",
+       "test_dry_run",
+       "view_file"
+      ],
+      "output_schema": [
+       "graph_query"
+      ],
+      "sha256": "8ba17cb99281c71ef4790be12db19e52801d5f10ff0013523dc819fe7eaaa223"
+     }
+    }
+   }
+  ],
+  "traceback": false
+ },
+ "U2": {
+  "close": {
+   "exit_code": 0,
+   "killed": false
+  },
+  "responses": [
+   {
+    "id": 1,
+    "jsonrpc": "2.0",
+    "result": {
+     "capabilities": {
+      "experimental": {},
+      "resources": {
+       "listChanged": false,
+       "subscribe": false
+      },
+      "tools": {
+       "listChanged": false
+      }
+     },
+     "protocolVersion": "2025-11-25",
+     "serverInfo": {
+      "name": "atlas-aci",
+      "version": "1.30.0"
+     }
+    }
+   },
+   {
+    "id": 2,
+    "jsonrpc": "2.0",
+    "result": {}
+   }
+  ],
+  "traceback": false
+ },
+ "U3": {
+  "close": {
+   "exit_code": 0,
+   "killed": false
+  },
+  "responses": [
+   {
+    "id": 1,
+    "jsonrpc": "2.0",
+    "result": {
+     "capabilities": {
+      "experimental": {},
+      "resources": {
+       "listChanged": false,
+       "subscribe": false
+      },
+      "tools": {
+       "listChanged": false
+      }
+     },
+     "protocolVersion": "2025-11-25",
+     "serverInfo": {
+      "name": "atlas-aci",
+      "version": "1.30.0"
+     }
+    }
+   },
+   {
+    "id": 2,
+    "jsonrpc": "2.0",
+    "result": {}
+   }
+  ],
+  "traceback": false
+ },
+ "U4": {
+  "close": {
+   "exit_code": 0,
+   "killed": false
+  },
+  "responses": [
+   {
+    "id": 1,
+    "jsonrpc": "2.0",
+    "result": {
+     "capabilities": {
+      "experimental": {},
+      "resources": {
+       "listChanged": false,
+       "subscribe": false
+      },
+      "tools": {
+       "listChanged": false
+      }
+     },
+     "protocolVersion": "2025-11-25",
+     "serverInfo": {
+      "name": "atlas-aci",
+      "version": "1.30.0"
+     }
+    }
+   },
+   {
+    "id": 2,
+    "jsonrpc": "2.0",
+    "result": {
+     "tools_digest": {
+      "annotations": [
+       "test_dry_run"
+      ],
+      "bytes": 347091,
+      "meta": [
+       "test_dry_run"
+      ],
+      "names": [
+       "graph_query",
+       "list_dir",
+       "memex_read",
+       "search_symbol",
+       "search_text",
+       "test_dry_run",
+       "view_file"
+      ],
+      "output_schema": [
+       "graph_query"
+      ],
+      "sha256": "8ba17cb99281c71ef4790be12db19e52801d5f10ff0013523dc819fe7eaaa223"
+     }
+    }
+   }
+  ],
+  "traceback": false
+ }
+}

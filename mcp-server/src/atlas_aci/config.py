@@ -2,13 +2,20 @@
 
 from __future__ import annotations
 
+import ipaddress
 import os
+import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
 import structlog
 
 log = structlog.get_logger()
+
+# ACI-S39 HTTP transport bounds (see Config._validate_http).
+HTTP_HOST_MAX_CHARS: int = 253
+HTTP_MAX_BUFFERED_BYTES: int = 256 * 1024 * 1024
+HTTP_ORIGIN_PATTERN = re.compile(r"https?://([a-z0-9.-]+|\[[0-9a-f:]+\])(:[1-9][0-9]{0,4})?")
 
 # The default for Config.max_bound_field_elements below. Named at module
 # level (not just a dataclass default) so codegraph.py can derive its own
@@ -141,6 +148,14 @@ class Config:
     impact_max_diff_occurrences: int = 250_000
     impact_max_changed_files: int = 200
 
+    # ACI-S39 loopback Streamable HTTP transport (`serve --transport http`). Unused by stdio.
+    # Validated here without DNS; hostnames are resolved (loopback-only) by protocol/http.py.
+    http_host: str = "127.0.0.1"
+    http_port: int = 8765
+    http_max_inflight: int = 8
+    http_max_body_bytes: int = 1024 * 1024
+    http_allowed_origins: tuple[str, ...] = ()
+
     def __post_init__(self) -> None:
         if self.context_tokenizer is not None:
             from atlas_aci.query.context_tokens import declaration
@@ -165,6 +180,7 @@ class Config:
         ):
             if type(getattr(self, name)) is not int or getattr(self, name) < 0:
                 raise ValueError("Impact diff limits must be finite nonnegative integers: " + name)
+        self._validate_http()
         self.graph_root = self.graph_root.resolve() if self.graph_root is not None else None
         self.before_repo = self.before_repo.resolve() if self.before_repo is not None else None
         self.before_graph_root = (
@@ -195,6 +211,48 @@ class Config:
                 memex_root=str(self.memex_root),
                 error=str(e),
             )
+
+    def _validate_http(self) -> None:
+        """Bounds for the HTTP transport fields (fixed messages naming the field; no DNS)."""
+        host = self.http_host
+        if type(host) is not str or not 1 <= len(host) <= HTTP_HOST_MAX_CHARS:
+            raise ValueError("http_host must be a string of 1 to 253 characters")
+        if "%" in host or any(ch.isspace() for ch in host):
+            raise ValueError("http_host must not contain whitespace or a scope id")
+        literal = host[1:-1] if host.startswith("[") and host.endswith("]") else host
+        try:
+            address = ipaddress.ip_address(literal)
+        except ValueError:
+            pass  # a hostname: resolved by protocol/http.py (loopback-only), never here
+        else:
+            if isinstance(address, ipaddress.IPv6Address) and address.ipv4_mapped is not None:
+                address = address.ipv4_mapped
+            if not address.is_loopback:
+                raise ValueError("http_host must be a loopback address or a hostname")
+        port = self.http_port
+        if type(port) is not int or not 0 <= port <= 65535:
+            raise ValueError("http_port must be an integer from 0 to 65535")
+        if 1 <= port <= 1023:
+            raise ValueError("http_port must be 0 or at least 1024 (clients must send Host:port)")
+        inflight = self.http_max_inflight
+        if type(inflight) is not int or not 1 <= inflight <= 256:
+            raise ValueError("http_max_inflight must be an integer from 1 to 256")
+        size = self.http_max_body_bytes
+        if type(size) is not int or not 1024 <= size <= 16 * 1024 * 1024:
+            raise ValueError("http_max_body_bytes must be an integer from 1024 to 16777216")
+        if inflight * size > HTTP_MAX_BUFFERED_BYTES:
+            raise ValueError(
+                "http_max_inflight times http_max_body_bytes must not exceed 268435456 bytes"
+            )
+        origins = self.http_allowed_origins
+        if isinstance(origins, list):
+            origins = self.http_allowed_origins = tuple(origins)
+        if type(origins) is not tuple or len(origins) > 32 or len(set(origins)) != len(origins):
+            raise ValueError("http_allowed_origins must be at most 32 unique origins")
+        for origin in origins:
+            match = HTTP_ORIGIN_PATTERN.fullmatch(origin) if type(origin) is str else None
+            if match is None or (match.group(2) and int(match.group(2)[1:]) > 65535):
+                raise ValueError("http_allowed_origins entries must be exact scheme://host[:port]")
 
     def is_in_repo(self, p: Path) -> bool:
         """Path-traversal guard. Resolves symlinks; rejects anything outside the repo."""

@@ -163,6 +163,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   coverage with completeness unknown. Only ids, parent id, timestamps, `status.code` and the two
   source attributes are read; no other attribute reaches the output. The tools JSON and every
   tool budget are unchanged. See `docs/importers/opentelemetry.md`.
+- **Loopback Streamable HTTP transport (ACI-S39).** `atlas-aci serve --transport http` serves the
+  same seven read-only tools over `POST /mcp` with SSE responses, stateless, loopback only: a host
+  that does not resolve only to loopback is a usage error (exit 2) and there is no public-bind
+  option. Options `--host`, `--port`, `--max-inflight`, `--max-body-bytes` and `--allowed-origins`
+  (stdio stays the default; the image still starts stdio). A closed order of checks runs before the
+  body is read: peer, Host (421), Origin (403), path (404), method (405) and a bounded in-flight
+  gate (503 with `Retry-After`), then the SDK body cap (413). A client disconnect cancels the
+  request in flight, which releases its reader lease and kills the `search_text` or `test_dry_run`
+  child (a documented deviation from the MCP specification; `notifications/cancelled` is a no-op).
+  tools/call shaping follows the `mcp-protocol-version` header; a request without it is shaped as
+  2025-03-26. Refused while test execution is enabled (no authentication). The tools JSON, every
+  tool budget, `server.py` and the dependency lock are unchanged. Known limits for the shared
+  mode are measured and left to S40. See `hosts/http-transport.md`.
 - **Rails: direct job enqueues and positional argument paths (ACI-S26).** New opt-in adapter
   `rails_jobs` (`atlas-aci index --frameworks rails_jobs`, library
   `CodeGraph(repo, frameworks=("rails_jobs",))`; the closed registry is now `{rails, rails_jobs,

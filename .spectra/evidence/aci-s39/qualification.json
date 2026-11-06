@@ -1,0 +1,264 @@
+{
+  "slice_id": "ACI-S39",
+  "base_commit": "8ab6582e862d8c3bc29141104e58287bbee8f6be",
+  "clock": {
+    "day1_started_utc": "2026-11-05T23:39:21Z",
+    "qualification_complete_utc": "2026-11-06T00:09:00Z",
+    "note": "container wall clock as read from the host `date -u`"
+  },
+  "stop_rule_triggered": false,
+  "a": {
+    "src_clean_vs_base": true,
+    "versions": {
+      "mcp": "1.30.0",
+      "uvicorn": "0.44.0",
+      "starlette": "1.3.1",
+      "sse-starlette": "3.3.4",
+      "anyio": "4.16.0",
+      "h11": "0.16.0",
+      "httpx": "0.28.1"
+    },
+    "requires_mcp_names": [
+      "uvicorn",
+      "starlette",
+      "sse-starlette"
+    ],
+    "pyproject_sha256": "981f0784d6bc5c1502c91ab27657beb483460b97e066cd8846f51e98f1d7d92f",
+    "uv_lock_sha256": "87ba265e76f382aaa4387da7ca5d89dc85eb3699b35ee4315e981302b19646fd",
+    "SERVER_PY_SHA": "21393e61dfbe9ec4ae93f55f7b9c0abf17029681b24f75395d143c955eeb13f7",
+    "production_image_imports_uvicorn": {
+      "image": "atlas-aci:relock",
+      "entrypoint": "/usr/local/bin/python",
+      "uvicorn": "0.44.0",
+      "python": "3.12.16",
+      "starlette_sse_starlette_mcp": "import ok"
+    }
+  },
+  "b_c_m": {
+    "full_suite_at_base": {
+      "passed": 2686,
+      "skipped": 11,
+      "deselected": 2,
+      "exit": 0,
+      "seconds": 934,
+      "deselects": [
+        "tests/slices/test_s01_contract.py::test_call_deadline_after_initialization",
+        "tests/slices/test_s08_integration.py::test_nonregular_pack_does_not_block_acquisition"
+      ]
+    },
+    "s38_goldens_green_at_base": true,
+    "base_preserve_capture": {
+      "method": "git archive 8ab6582 mcp-server (no worktree), dev image, PYTHONPATH on the archived src",
+      "seeds": [
+        0,
+        4242
+      ],
+      "transcripts_equal_across_seeds": true,
+      "transcripts_equal_committed_goldens": true,
+      "ac004_equal": true,
+      "frames_equal_with_same_fixture_path": true,
+      "inprocess_equal_with_same_fixture_path": true,
+      "caveat": "frames.json and inprocess.json digests depend on the fixture path (ids derived from it): a comparison must use the same fixture directory (/tmp/fx0 here)",
+      "inprocess_dump_serialises_config_fields": false
+    }
+  },
+  "d": {
+    "dev_3_12": {
+      "python": "3.12.16",
+      "scope_client": [
+        "127.0.0.1",
+        56524
+      ],
+      "scope_server": [
+        "127.0.0.1",
+        46743
+      ],
+      "scope_server_port_matches_bind": true,
+      "status": 200
+    },
+    "py314": {
+      "python": "3.14.10",
+      "status": 200,
+      "server": [
+        "127.0.0.1",
+        37803
+      ],
+      "client": [
+        "127.0.0.1",
+        33904
+      ],
+      "uvicorn": "0.44.0",
+      "mcp": "1.30.0",
+      "starlette": "1.3.1",
+      "sse_starlette": "3.3.4",
+      "anyio": "4.16.0"
+    }
+  },
+  "e": {
+    "all_released_latency_s": 0.0068,
+    "before": {
+      "fd_open": true,
+      "gate_active": 1,
+      "open_leases": 1,
+      "validated": true
+    },
+    "cancel_latency_s": 0.0068,
+    "cancelled_seen": true,
+    "conn_closed": true,
+    "gate_active_after": 0,
+    "open_leases_after": 0,
+    "reader_closed": true,
+    "release_never_set": true,
+    "source_fd_none": true
+  },
+  "e_control_json_response": {
+    "cancelled_after_2s": 0,
+    "still_inside": 1
+  },
+  "f": {
+    "order": [
+      [
+        "ticket.release_called",
+        -0.0068,
+        1,
+        2
+      ],
+      [
+        "ticket.release_called",
+        0.0003,
+        1,
+        2
+      ],
+      [
+        "ticket.release_called",
+        0.0005,
+        1,
+        1
+      ],
+      [
+        "handler_unwind_done",
+        0.0005,
+        0
+      ]
+    ],
+    "ticket_in_scope": true,
+    "wrapper_scope_is_request_scope": true
+  },
+  "g": {
+    "http_equals_stdio_tools_digest": {
+      "2024-11-05": true,
+      "2025-03-26": true,
+      "2025-06-18": true,
+      "2025-11-25": true
+    },
+    "absent_header_equals_2025_03_26": true,
+    "manifest_sha256": {
+      "2024-11-05": "91be13637e74e608d28e176241e5682cf886913b5b0ffdbafa1d07fa428c3243",
+      "2025-03-26": "91be13637e74e608d28e176241e5682cf886913b5b0ffdbafa1d07fa428c3243",
+      "2025-06-18": "8ba17cb99281c71ef4790be12db19e52801d5f10ff0013523dc819fe7eaaa223",
+      "2025-11-25": "8ba17cb99281c71ef4790be12db19e52801d5f10ff0013523dc819fe7eaaa223"
+    }
+  },
+  "h": {
+    "base_child_alive_2s_after_cancel": true,
+    "log": "spikes/spike-h.base.out",
+    "after_fix_child_alive": false,
+    "log_after": "spikes/spike-h.after-fix.out",
+    "decision": "D9 needed and applied"
+  },
+  "i": {
+    "base_uvicorn_default_exit": -15,
+    "override_exit": 0,
+    "override_http_stopped": true,
+    "override_traceback": false
+  },
+  "j": {
+    "after_main": [
+      "click",
+      "structlog"
+    ],
+    "flags_after_main": {
+      "atlas_aci.protocol.http": false,
+      "uvicorn": false,
+      "starlette": false,
+      "sse_starlette": false,
+      "atlas_aci.server": false,
+      "mcp": false
+    },
+    "after_server": [
+      "annotated_types",
+      "anyio",
+      "attr",
+      "attrs",
+      "click",
+      "dotenv",
+      "httpx",
+      "httpx_sse",
+      "idna",
+      "jsonschema",
+      "jsonschema_specifications",
+      "mcp",
+      "pydantic",
+      "pydantic_core",
+      "pydantic_settings",
+      "pygments",
+      "python_multipart",
+      "referencing",
+      "rpds",
+      "sse_starlette",
+      "starlette",
+      "structlog",
+      "typing_extensions",
+      "typing_inspection",
+      "uvicorn"
+    ],
+    "flags_after_server": {
+      "atlas_aci.protocol.http": false,
+      "uvicorn": true,
+      "starlette": true,
+      "sse_starlette": true,
+      "atlas_aci.server": true,
+      "mcp": true
+    }
+  },
+  "k": {
+    "commit": "3c4d91b7e832d9b74338d56eed03403ccc662123",
+    "file": "docs/specification/2025-11-25/basic/transports.mdx",
+    "fetched": true,
+    "sha256_of_fetched_file": "a247fdbb3cc25c805ef43124db18d9b60a56669b3e65bd163dffb76f4129dfc0",
+    "stored": "spikes/spec-transports-3c4d91b.mdx",
+    "disconnect": [
+      "Disconnection MAY occur at any time (e.g., due to network conditions). Therefore:",
+      "Disconnection SHOULD NOT be interpreted as the client cancelling its request.",
+      "To cancel, the client SHOULD explicitly send an MCP CancelledNotification."
+    ],
+    "origin": [
+      "Servers MUST validate the Origin header on all incoming connections to prevent DNS rebinding attacks",
+      "If the Origin header is present and invalid, servers MUST respond with HTTP 403 Forbidden. The HTTP response body MAY comprise a JSON-RPC error response that has no id"
+    ],
+    "localhost": "When running locally, servers SHOULD bind only to localhost (127.0.0.1) rather than all network interfaces (0.0.0.0)"
+  },
+  "l": {
+    "request": {
+      "schema_version": "atlas.graph.v1",
+      "op": "neighborhood",
+      "seed": {
+        "name": "A"
+      },
+      "max_visited_nodes": 1,
+      "deadline_ms": 2000
+    },
+    "stop_reason": "visited_node_limit",
+    "commitments_equal": true,
+    "sse_body_byte_equal_across_two_runs": true,
+    "sse_body_sha256": "912e8401113a5a08ac0292b4195c0d58573fb1916826c700b2f1d2d7fdc80699",
+    "sse_body_len": 3834,
+    "max_visited_nodes_2_differs": true,
+    "structuredContent_equals_text": true,
+    "adaptation": "the plan wrote deadline_ms 30000; the engine caps deadline_ms at 2000 (query/traversal.py:24), so 30000 is INVALID_INPUT; 2000 is used everywhere. The gated tests release well inside it, and a deadline stop would still be a non-error result"
+  },
+  "adaptations": [
+    "deadline_ms 2000 instead of 30000 (see l)",
+    "git archive instead of git worktree for the base capture (no .git mutation)"
+  ]
+}

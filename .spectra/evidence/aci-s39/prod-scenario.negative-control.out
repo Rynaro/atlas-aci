@@ -1,0 +1,45 @@
+PASS  H0 image atlas-aci:relock exists (sha256:a0aa0b2c8aee8e99b5942e9fd30a4149f1f40b0541974d0700d7d0df6039ef77)
+FAIL  H1 identity container exit 1: Traceback (most recent call last):
+  File "/identity.py", line 14, in <module>
+    print("sha", name, hashlib.sha256((root / name).read_bytes()).hexdigest())
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    w
+FAIL  H1 skipped: identity container failed
+PASS  H2 index exit 0, 6 graph file(s)
+      FAIL E0 http child serves a ping AssertionError: no http_listening line (exit=2): Usage: python -m atlas_aci serve [OPTIONS]
+      Try 'python -m atlas_aci serve --help' for help.
+      
+      Error: No such option: --transport Did you mean --graph-root?
+      
+      DRIVER: 0 passed, 1 failed
+FAIL  H3 E0 did not pass: FAIL E0 http child serves a ping AssertionError: no http_listening line (exit=2): Usage: python -m atlas_aci serve [OPTIONS]
+FAIL  H3 E1 did not pass: 
+FAIL  H3 E2 did not pass: 
+FAIL  H3 E3 did not pass: 
+FAIL  H3 E4 did not pass: 
+FAIL  H3 E5 did not pass: 
+FAIL  H3 E6 did not pass: 
+FAIL  H3 E7 did not pass: 
+FAIL  H3 E8 did not pass: 
+FAIL  H3 E9 did not pass: 
+FAIL  H3 driver rc=1:  DRIVER: 0 passed, 1 failed  
+FAIL  H4 --host 0.0.0.0 rc=2 stdout=0 stderr: Usage: atlas-aci serve [OPTIONS]
+Try 'atlas-aci serve --help' for help.
+
+Error: No such option: --transport Did you mean --graph-root?
+FAIL  H4 --host 192.0.2.1 rc=2 stdout=0 stderr: Usage: atlas-aci serve [OPTIONS]
+Try 'atlas-aci serve --help' for help.
+
+Error: No such option: --transport Did you mean --graph-root?
+PASS  H6 stdio modern.2025-11-25 still matches its golden (digest 59841d91fa4e3c605c1d301e899e491e114dfce06f2a6741e093c17817f91165)
+PASS  H6 negative control: the legacy conversation against the modern golden exits 1 with match:false
+PASS  H7 atlas-aci tools sha256 94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56, 1631472 bytes
+PASS  H5 repo (f1ee2c9e11350d5da7c54d72a53321f7e6c359b3ce5350be025b5c23021b957b) and graph root (0ff616664fc80c113e547550c82406e8b12ef702a0263491c7b1dac5db529477) manifests are unchanged by every run
+PASS  H8 pyproject.toml and uv.lock are byte-identical to the pins
+PASS  H8 server.py, pyproject, uv.lock, Dockerfile, workflows, scripts, atlas and docs are byte-identical to the base commit
+PASS  H8 changed source files are exactly the five allowed ones
+PASS  H8 the two tools files have 0 deleted lines versus the base (additions only)
+image: atlas-aci:relock (sha256:a0aa0b2c8aee8e99b5942e9fd30a4149f1f40b0541974d0700d7d0df6039ef77)
+checks: 10 passed, 15 failed
+RESULT: 15 check(s) failed
