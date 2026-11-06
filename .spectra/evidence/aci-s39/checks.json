@@ -1,0 +1,57 @@
+{
+ "slice": "ACI-S39",
+ "base_commit": "8ab6582e862d8c3bc29141104e58287bbee8f6be",
+ "environment": "atlas-aci-dev-relock (uid 1000, Python 3.12, mcp 1.30.0, uvicorn 0.44.0); CI is Python 3.14 (S39 tests: 181 passed on python:3.14.10 with uv sync --frozen)",
+ "gates": {
+  "s39-contract": {
+   "exit": 0,
+   "summary": "169 passed in ~41s (3 consecutive runs, no flake); orchestrator rerun with s38 isolation/contract, s11 stdio, s35 isolation and thesis negatives: 219 passed; the six AC tests rerun verbosely: 8 passed"
+  },
+  "regression": {
+   "exit": 0,
+   "summary": "694 passed, 2 skipped after the final edits (s11, s12 admission, s13, s18 stdio, s23, s33-s38 isolation, s38, thesis negatives, server tests, search_text/test_dry_run tests)"
+  },
+  "ruff": {
+   "exit": 0
+  },
+  "format": {
+   "exit": 0
+  },
+  "mypy": {
+   "exit": 0,
+   "summary": "orchestrator reran the exact CI lint chain including ../scripts/: clean"
+  },
+  "full-suite": {
+   "exit": 0,
+   "summary": "2855 passed, 11 skipped, 2 deselected in 961.24s (base 2686 + 169 new; skips unchanged); deselected the pre-existing uid-1000 failure test_s01_contract::test_call_deadline_after_initialization and the known-flaky test_s08_integration::test_nonregular_pack_does_not_block_acquisition"
+  },
+  "g-src": {
+   "exit": 0,
+   "summary": "only protocol/http.py (new), __main__.py, config.py and tools/search_text.py + tools/test_dry_run.py (8 added lines each, 0 deleted) changed under mcp-server/src; server.py, pyproject.toml, uv.lock, workflows and Dockerfile byte-identical vs 8ab6582; no tracked test modified"
+  },
+  "g-mcp": {
+   "exit": 0,
+   "summary": "tools JSON sha256 94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56, 1631472 bytes, 7 tools"
+  },
+  "g-stdio-preserve": {
+   "exit": 0,
+   "summary": "S38 stdio transcripts equal base and the committed goldens (seeds 0 and 4242); frames, AC-004 cases and in-process captures equal base"
+  },
+  "py314": {
+   "exit": 0,
+   "summary": "S39 tests 181 passed on python:3.14.10 with the locked dependencies"
+  },
+  "g-image": {
+   "exit": 0,
+   "summary": "orchestrator ran prod-scenario.sh against a freshly built atlas-aci:s39 with the tree staged: 25 PASS, 0 FAIL. Inside the production image on --network none: image identity and versions; index; the in-container driver 10/10 (ping, stdio vs HTTP equality at 2025-11-25 and 2024-11-05, evil Origin 403 before the body, in-flight slots then 503 with Retry-After, 413 declared and chunked, 405/404, 421, SIGTERM exit 0 with http_stopped and refused connection, --host 0.0.0.0 exit 2, exactly one 127.0.0.1 LISTEN row and no tcp6); host-side non-loopback --host exit 2; repo and graph manifests unchanged; S38 stdio replay matches its golden with a negative control; tools pin; dependency pins and gated paths exact"
+  }
+ },
+ "acceptance_tests": {
+  "AC-S39-001": "tests/slices/test_s39_contract.py::test_http_query_equivalence[2025-11-25,2024-11-05] PASSED",
+  "AC-S39-002": "tests/slices/test_s39_contract.py::test_loopback_default PASSED",
+  "AC-S39-003": "tests/slices/test_s39_contract.py::test_disconnect_cleanup (+ test_disconnect_cleanup_page_registry) PASSED",
+  "AC-S39-004": "tests/slices/test_s39_contract.py::test_concurrency_bound PASSED",
+  "AC-S39-005": "tests/slices/test_s39_contract.py::test_invalid_origin PASSED",
+  "AC-S39-006": "tests/slices/test_s39_contract.py::test_http_replay PASSED"
+ }
+}

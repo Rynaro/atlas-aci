@@ -1,0 +1,16 @@
+mcp-server/src/atlas_aci/protocol/*
+mcp-server/src/atlas_aci/__main__.py
+mcp-server/src/atlas_aci/config.py
+mcp-server/src/atlas_aci/tools/search_text.py
+mcp-server/src/atlas_aci/tools/test_dry_run.py
+mcp-server/tests/slices/test_s39_*.py
+hosts/*
+CHANGELOG.md
+README.md
+.spectra/plans/aci-s39.*
+.spectra/plans/ramza-calibration.jsonl
+.spectra/changes/aci-s39/*
+.spectra/evidence/aci-s39/**
+.spectra/state/aci-s39.execution.json
+.spectra/backlog/execution.json
+.spectra/backlog/order.md

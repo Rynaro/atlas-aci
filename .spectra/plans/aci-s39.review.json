@@ -1,0 +1,106 @@
+{
+ "slice_id": "ACI-S39",
+ "plan": ".spectra/plans/aci-s39.md",
+ "author": "orchestrator-ramza-plan-s39",
+ "checker": "atlas-s39-plan-checker",
+ "verdict": "APPROVE_WITH_CONDITIONS",
+ "method": "independent read-only review; mcp 1.30.0, uvicorn 0.44.0, starlette and sse_starlette 3.3.4 source read from the scratch copy; repo pins and CI read; no commands executed",
+ "findings": [
+  {
+   "n": 1,
+   "severity": "MAJOR",
+   "summary": "uvicorn startup sys.exit(1) inside the serve task escapes the event loop, not await task; convert SystemExit to OSError inside the task wrapper, subprocess test for bind conflict",
+   "disposition": "accepted as plan condition 1"
+  },
+  {
+   "n": 2,
+   "severity": "MAJOR",
+   "summary": "capture_signals override tested only in G-PROD E7; add subprocess SIGTERM exit-0 test in CI, second signal must terminate, main-thread guard, AppStatus.original_handler tripwire",
+   "disposition": "accepted as plan condition 2"
+  },
+  {
+   "n": 3,
+   "severity": "MAJOR",
+   "summary": "E9 expects 0100007F:4983 but port 18765 is 0x494D; compute the expected hex from the port",
+   "disposition": "accepted as plan condition 3"
+  },
+  {
+   "n": 4,
+   "severity": "MAJOR",
+   "summary": "lazy-import equal-set baseline from 3.12 is fragile on 3.14 CI; assert named modules absent instead; mcp.server already imports uvicorn via FastMCP",
+   "disposition": "accepted as plan condition 4"
+  },
+  {
+   "n": 5,
+   "severity": "MAJOR",
+   "summary": "flake sources: immediate active==0 asserts need bounded polling, 413 tests need small caps and tolerant concurrent write/read, SSE parser must handle CRLF and comments",
+   "disposition": "accepted as plan condition 5"
+  },
+  {
+   "n": 6,
+   "severity": "MAJOR",
+   "summary": "ticket atomicity: no await between hold and try, assignment inside try, idempotent release, nested hold balance, RequestGone surfaces as isError",
+   "disposition": "accepted as plan condition 6"
+  },
+  {
+   "n": 7,
+   "severity": "MAJOR",
+   "summary": "unauthenticated local reach including env-enabled test_dry_run; fail closed on HTTP with test execution or document the trust boundary and log it",
+   "disposition": "accepted as plan condition 7"
+  },
+  {
+   "n": 8,
+   "severity": "MINOR",
+   "summary": "resolve_loopback exception classes, scope-id on sockaddr, uvicorn_config loopback/workers/fd/uds guards, duplicate and case-variant Host/Origin, bare Host on port 80",
+   "disposition": "accepted as plan condition 8"
+  },
+  {
+   "n": 9,
+   "severity": "MINOR",
+   "summary": "uvicorn Config.load probes loaded_app() with no args; __call__ must have three required positional params; interface asgi3 explicit",
+   "disposition": "accepted as plan condition 9"
+  },
+  {
+   "n": 10,
+   "severity": "MINOR",
+   "summary": "run_http must finally-await the serve task and close owned state on every path including pre-running failures",
+   "disposition": "accepted as plan condition 10"
+  },
+  {
+   "n": 11,
+   "severity": "MINOR",
+   "summary": "pyproject mcp floor allows older SDKs; fail closed on non-verified mcp version at run_http or document",
+   "disposition": "accepted as plan condition 11"
+  },
+  {
+   "n": 12,
+   "severity": "MINOR",
+   "summary": "http.py import allow-list lacks TYPE_CHECKING-only enforcement/memex/codegraph and ASGI type aliases; extend and record",
+   "disposition": "accepted as plan condition 12"
+  },
+  {
+   "n": 13,
+   "severity": "MINOR",
+   "summary": "AC-002 non-loopback probe is environment dependent; add Linux 127.0.0.2 refusal probe and gate the checked-true assertion by env",
+   "disposition": "accepted as plan condition 13"
+  },
+  {
+   "n": 14,
+   "severity": "MINOR",
+   "summary": "add absent-header tools/call equality, whole-body SSE equality at Day-1 (l), handle_request spy control",
+   "disposition": "accepted as plan condition 14"
+  },
+  {
+   "n": 15,
+   "severity": "MINOR",
+   "summary": "document slow-read and slow-header holds, SDK stderr tracebacks, info-level http_listening, inflight x body product, immediate-child kill, host-network loopback",
+   "disposition": "accepted as plan condition 15"
+  },
+  {
+   "n": 16,
+   "severity": "MINOR",
+   "summary": "Day-1 too heavy and cut list weak; stop and return at Day-2 if a never-cut item is not green; check uvicorn in the production image on Day 1",
+   "disposition": "accepted as plan condition 16"
+  }
+ ]
+}

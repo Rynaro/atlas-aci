@@ -1,0 +1,38 @@
+[
+  {
+    "ac_id": "AC-S39-001",
+    "test": "mcp-server/tests/slices/test_s39_contract.py::test_http_query_equivalence",
+    "exit_code": 0,
+    "tail": "2 passed in 11.59s"
+  },
+  {
+    "ac_id": "AC-S39-002",
+    "test": "mcp-server/tests/slices/test_s39_contract.py::test_loopback_default",
+    "exit_code": 0,
+    "tail": "1 passed in 2.43s"
+  },
+  {
+    "ac_id": "AC-S39-003",
+    "test": "mcp-server/tests/slices/test_s39_contract.py::test_disconnect_cleanup",
+    "exit_code": 0,
+    "tail": "1 passed in 2.37s"
+  },
+  {
+    "ac_id": "AC-S39-004",
+    "test": "mcp-server/tests/slices/test_s39_contract.py::test_concurrency_bound",
+    "exit_code": 0,
+    "tail": "1 passed in 2.39s"
+  },
+  {
+    "ac_id": "AC-S39-005",
+    "test": "mcp-server/tests/slices/test_s39_contract.py::test_invalid_origin",
+    "exit_code": 0,
+    "tail": "1 passed in 2.62s"
+  },
+  {
+    "ac_id": "AC-S39-006",
+    "test": "mcp-server/tests/slices/test_s39_contract.py::test_http_replay",
+    "exit_code": 0,
+    "tail": "1 passed in 2.56s"
+  }
+]

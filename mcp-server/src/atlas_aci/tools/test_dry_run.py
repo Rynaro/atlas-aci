@@ -9,6 +9,7 @@ cleanup is not guaranteed. Operators must provide isolation for untrusted code.
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import time
 from pathlib import Path
 from typing import Any
@@ -83,6 +84,13 @@ async def test_dry_run(
             f"test_dry_run exceeded {config.test_dry_run_timeout_s}s.",
             "narrower_scope",
         ) from e
+    except BaseException:
+        # Cancellation (e.g. an HTTP client disconnect) must not orphan the child. Only the
+        # immediate child is killed (see the module docstring); no await in the cancel path.
+        if proc.returncode is None:
+            with contextlib.suppress(ProcessLookupError):
+                proc.kill()
+        raise
 
     # Cap output to byte budget. `truncated_fields` names exactly which
     # stream(s) actually lost data — stdout and stderr are capped

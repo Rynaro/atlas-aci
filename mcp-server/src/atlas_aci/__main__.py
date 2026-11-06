@@ -114,6 +114,41 @@ def cli(ctx: click.Context, log_level: str) -> None:
 @click.option("--impact-max-diff-entities", default=None, type=click.IntRange(min=0))
 @click.option("--impact-max-diff-occurrences", default=None, type=click.IntRange(min=0))
 @click.option("--impact-max-changed-files", default=None, type=click.IntRange(min=0))
+@click.option(
+    "--transport",
+    default="stdio",
+    show_default=True,
+    type=click.Choice(["stdio", "http"]),
+    help="stdio, or a loopback-only Streamable HTTP endpoint at /mcp (see hosts/http-transport.md)",
+)
+@click.option(
+    "--host",
+    default=None,
+    help="HTTP only: loopback address or a name resolving only to loopback (default 127.0.0.1)",
+)
+@click.option(
+    "--port",
+    default=None,
+    type=click.IntRange(0, 65535),
+    help="HTTP only: port (default 8765; 0 picks a free port, reported by http_listening)",
+)
+@click.option(
+    "--max-inflight",
+    default=None,
+    type=click.IntRange(1, 256),
+    help="HTTP only: requests in flight before 503 (default 8)",
+)
+@click.option(
+    "--max-body-bytes",
+    default=None,
+    type=click.IntRange(1024, 16 * 1024 * 1024),
+    help="HTTP only: request body cap in bytes before 413 (default 1048576)",
+)
+@click.option(
+    "--allowed-origins",
+    default=None,
+    help="HTTP only: comma-separated exact origins allowed to call (default: none)",
+)
 def serve(
     repo: Path,
     memex_root: Path | None,
@@ -124,9 +159,52 @@ def serve(
     impact_max_diff_entities: int | None = None,
     impact_max_diff_occurrences: int | None = None,
     impact_max_changed_files: int | None = None,
+    transport: str = "stdio",
+    host: str | None = None,
+    port: int | None = None,
+    max_inflight: int | None = None,
+    max_body_bytes: int | None = None,
+    allowed_origins: str | None = None,
 ) -> None:
-    """Start the MCP server over stdio."""
+    """Start the MCP server over stdio (default) or loopback Streamable HTTP."""
     from atlas_aci.query.impact import validate_configuration
+
+    http_options: dict[str, Any] = {
+        name: value
+        for name, value in (
+            ("http_host", host),
+            ("http_port", port),
+            ("http_max_inflight", max_inflight),
+            ("http_max_body_bytes", max_body_bytes),
+            (
+                "http_allowed_origins",
+                tuple(o.strip() for o in allowed_origins.split(","))
+                if allowed_origins is not None
+                else None,
+            ),
+        )
+        if value is not None
+    }
+    if transport != "http" and http_options:
+        raise click.UsageError(
+            "--host, --port, --max-inflight, --max-body-bytes and --allowed-origins "
+            "require --transport http"
+        )
+    if transport == "http":
+        _serve_http(
+            repo=repo,
+            memex_root=memex_root,
+            max_bytes_per_call=max_bytes_per_call,
+            graph_root=graph_root,
+            before_graph_root=before_graph_root,
+            before_repo=before_repo,
+            impact_max_diff_entities=impact_max_diff_entities,
+            impact_max_diff_occurrences=impact_max_diff_occurrences,
+            impact_max_changed_files=impact_max_changed_files,
+            http_options=http_options,
+        )
+        return
+
     from atlas_aci.server import run_stdio
 
     diff_options: dict[str, Any] = {
@@ -153,6 +231,77 @@ def serve(
         raise click.ClickException(str(exc)) from exc
     try:
         asyncio.run(run_stdio(config))
+    except (ValueError, OSError) as exc:
+        raise click.ClickException(str(exc)) from exc
+
+
+def _serve_http(
+    *,
+    repo: Path,
+    memex_root: Path | None,
+    max_bytes_per_call: int,
+    graph_root: Path | None,
+    before_graph_root: Path | None,
+    before_repo: Path | None,
+    impact_max_diff_entities: int | None,
+    impact_max_diff_occurrences: int | None,
+    impact_max_changed_files: int | None,
+    http_options: dict[str, Any],
+) -> None:
+    """`serve --transport http`: the HTTP module is imported here, never at CLI import."""
+    from atlas_aci.protocol.http import LoopbackError, RefusedError, resolve_loopback, run_http
+    from atlas_aci.query.impact import validate_configuration
+
+    def loopback_usage(exc: LoopbackError) -> click.UsageError:
+        return click.UsageError(
+            f"--host must resolve only to loopback addresses (reason: {exc.reason}); "
+            "a non-loopback bind needs S40 shared mode, which is not available"
+        )
+
+    if "http_host" in http_options:
+        try:
+            http_options["http_host"] = resolve_loopback(http_options["http_host"])
+        except LoopbackError as exc:
+            raise loopback_usage(exc) from None
+    diff_options: dict[str, Any] = {
+        name: value
+        for name, value in (
+            ("impact_max_diff_entities", impact_max_diff_entities),
+            ("impact_max_diff_occurrences", impact_max_diff_occurrences),
+            ("impact_max_changed_files", impact_max_changed_files),
+        )
+        if value is not None
+    }
+    try:
+        config = Config(
+            repo=repo.resolve(),
+            memex_root=(memex_root or repo / ".atlas" / "memex").resolve(),
+            max_bytes_per_call=max_bytes_per_call,
+            graph_root=graph_root,
+            before_repo=before_repo,
+            before_graph_root=before_graph_root,
+            **diff_options,
+            **http_options,
+        )
+    except ValueError as exc:
+        if str(exc).startswith("http_"):
+            raise click.UsageError(str(exc)) from None
+        raise
+    if config.test_execution_enabled:
+        raise click.UsageError(
+            "HTTP serving is not available while test execution is enabled "
+            "(ATLAS_ACI_ENABLE_TEST_EXECUTION=1): any local process could reach it"
+        )
+    try:
+        validate_configuration(config)
+    except (ValueError, OSError) as exc:
+        raise click.ClickException(str(exc)) from exc
+    try:
+        asyncio.run(run_http(config))
+    except LoopbackError as exc:
+        raise loopback_usage(exc) from None
+    except RefusedError as exc:
+        raise click.UsageError(str(exc)) from None
     except (ValueError, OSError) as exc:
         raise click.ClickException(str(exc)) from exc
 

@@ -1,0 +1,188 @@
+{
+ "slice_id": "ACI-S39",
+ "base_commit": "8ab6582e862d8c3bc29141104e58287bbee8f6be",
+ "recorded_before_implementation": true,
+ "declared_by_issue": [
+  "mcp-server/src/atlas_aci/protocol/*",
+  "mcp-server/src/atlas_aci/__main__.py",
+  "mcp-server/src/atlas_aci/config.py",
+  "mcp-server/tests/slices/test_s39_*.py",
+  "hosts/*"
+ ],
+ "glob_depth_clarifications": [
+  {
+   "path": "mcp-server/src/atlas_aci/protocol/*",
+   "reason": "Adds protocol/http.py only (loopback Streamable HTTP adapter: resolve_loopback, InflightGate/Ticket, the raw ASGI wrapper, handler re-registration, run_http). protocol/{__init__,graph,resources,results,context,impact,revisions}.py stay byte-unchanged; protocol/__init__.py does not import http.py"
+  },
+  {
+   "path": "mcp-server/src/atlas_aci/__main__.py, mcp-server/src/atlas_aci/config.py",
+   "reason": "serve gains --transport/--host/--port/--max-inflight/--max-body-bytes/--allowed-origins with a lazy protocol.http import (no frameworks or rails_table_map parameter). Config gains five appended http_* fields with defaults, validated in __post_init__ without DNS; Config(repo=, memex_root=) and positional construction are unchanged"
+  },
+  {
+   "path": "hosts/*",
+   "reason": "New hosts/http-transport.md. hosts/protocol-compatibility.md lines 9 and 158 are edited minimally and keep every S38-pinned token (HTTP, SSE, the revision tokens, the conversation table) and the untested-host rule. claude-code.md, copilot.md and cursor.md are untouched"
+  }
+ ],
+ "added": [
+  {
+   "path": "mcp-server/src/atlas_aci/tools/search_text.py",
+   "reason": "Cancellation reach (orchestrator decision 7, amend branch). search_text.py:61-75 awaits asyncio.create_subprocess_exec plus wait_for(communicate) and kills rg only on TimeoutError, so an HTTP disconnect-cancel leaves rg running. The change is additions only: 'import contextlib' and 'except BaseException: kill if still running; raise', with no await in the cancel path. The TimeoutError path is unchanged"
+  },
+  {
+   "path": "mcp-server/src/atlas_aci/tools/test_dry_run.py",
+   "reason": "The same finding at test_dry_run.py:66-85 and the same additions-only change. It kills the immediate child only, as the module docstring already states"
+  },
+  {
+   "path": "CHANGELOG.md",
+   "reason": "One '- **Loopback Streamable HTTP transport (ACI-S39).**' bullet at Unreleased/Added index 8, directly after the '- **OpenTelemetry trace import' bullet (index 7, CHANGELOG.md:148) and before the S26 Rails bullet (:166). '### Security' stays first; bullets[0..7] are unchanged (test_s38_isolation.py:305-328 and the s30/s33-s36 pins); no '- **' continuation line; no '(ACI-S38)' and no prior locator"
+  },
+  {
+   "path": "README.md",
+   "reason": "One two-cell docs-table row for hosts/http-transport.md directly after the docs/frameworks/rails.md row (README.md:952) and before SETUP.md. The S38 adjacency (community \u2192 protocol \u2192 rails, :950-952) is untouched; the row has no protocol-compatibility.md and no canary-missions.md"
+  },
+  {
+   "path": ".spectra/plans/aci-s39.*",
+   "reason": "Ramza plan, criteria, state, issue snapshot, review, scope"
+  },
+  {
+   "path": ".spectra/plans/ramza-calibration.jsonl",
+   "reason": "Ramza calibration append"
+  },
+  {
+   "path": ".spectra/changes/aci-s39/*",
+   "reason": "This amendment"
+  },
+  {
+   "path": ".spectra/evidence/aci-s39/**",
+   "reason": "qualification.json, base-invariants.json, spike logs (uvicorn bind, SSE disconnect cancel, scope identity, signal handling, spec text), preserve/{base,after} S38 captures, production-scenario.sh and production-scenario.json, py314.log, gate logs and exit files"
+  },
+  {
+   "path": ".spectra/state/aci-s39.execution.json",
+   "reason": "Authoritative execution receipt (AC-RUN-01/02)"
+  },
+  {
+   "path": ".spectra/backlog/execution.json",
+   "reason": "Backlog status update"
+  },
+  {
+   "path": ".spectra/backlog/order.md",
+   "reason": "Backlog order update"
+  }
+ ],
+ "prior_test_edits": [],
+ "interpretations": [
+  {
+   "topic": "Selected transport contract",
+   "decision": "MCP Streamable HTTP via mcp 1.30.0 StreamableHTTPSessionManager(stateless=True, json_response=False, no event store) behind an Atlas raw-ASGI wrapper with the exact endpoint /mcp and POST only. It is the only SDK mode in which a client disconnect cancels the in-flight handler"
+  },
+  {
+   "topic": "AC-001 equivalence",
+   "decision": "The same fixture index is served by a stdio child and an HTTP child (CLI path). Initialize result, tools/list digest, resources lists, ping, tool results for steps 7-16 (text bytes, isError, structuredContent) and the -32601 error are equal at 2025-11-25 and 2024-11-05, plus a live page/resources-read step. The HTTP shaping revision comes from the mcp-protocol-version header via negotiate(); an absent header is 2025-03-26, as in the SDK"
+  },
+  {
+   "topic": "AC-002 loopback",
+   "decision": "resolve_loopback requires every getaddrinfo result to be loopback (IPv4-mapped unwrapped; wildcard, scope id and mixed results rejected). The literal is bound, never the name. It is enforced at the CLI (UsageError, exit 2) and again in run_http, plus a post-bind getsockname check. There is no public-bind option until S40"
+  },
+  {
+   "topic": "AC-003 disconnect cleanup",
+   "decision": "A client TCP close during a gated structured query cancels the handler; the per-request reader (ExitStack) closes and its source lease fd is released. Disconnect = cancellation is a documented deviation from the spec's guidance; stateless notifications/cancelled is a no-op. Synchronous legacy ops, view_file and list_dir cannot be cancelled mid-call and are bounded by their caps"
+  },
+  {
+   "topic": "AC-004 active-query bound",
+   "decision": "An in-flight gate rejects (503, Retry-After: 1, JSON-RPC -32000, reason inflight_limit) before any body read and never queues. Each admitted POST holds a refcounted ticket, reached through the ASGI scope, until both the HTTP exchange and every Atlas handler for it have ended, so the cancellation unwind cannot push active work over the limit. Verified independently through concurrent reader leases and the traversal hook"
+  },
+  {
+   "topic": "AC-005 transport policy",
+   "decision": "The wrapper order is peer loopback (403), Host (421), Origin (403; absent passes; exact scheme://host[:port] allowlist; * and null rejected), path (404), method (405), admission (503), then the SDK body cap (413). A rejection happens before the SDK manager runs, which spies and withheld-body requests prove"
+  },
+  {
+   "topic": "AC-006 replay",
+   "decision": "A neighborhood request that stops on a deterministic limit (visited_node_limit, never deadline), retried after a disconnected attempt, yields byte-identical SSE data lines and equal frontier commitments on two HTTP requests"
+  }
+ ],
+ "not_touched_follow_up": [
+  {
+   "path": "mcp-server/src/atlas_aci/enforcement.py",
+   "reason": "Enforcement.records grows without bound (enforcement.py:77,185) and one sliding rate limiter is shared by all HTTP clients (enforcement.py:76,100-114). Both are pre-existing (stdio has the same growth) and documented as S40 work"
+  },
+  {
+   "path": "mcp-server/src/atlas_aci/server.py",
+   "reason": "Scout option (a), a build_server extraction, is rejected. The handlers are re-registered in protocol/http.py and guarded by runtime and AST parity tests"
+  },
+  {
+   "path": "mcp-server/Dockerfile",
+   "reason": "CMD stays stdio; no EXPOSE. Loopback inside a container is not reachable through -p, which is documented"
+  }
+ ],
+ "explicitly_untouched_gated": [
+  "mcp-server/src/atlas_aci/server.py",
+  "mcp-server/src/atlas_aci/codegraph.py",
+  "mcp-server/src/atlas_aci/enforcement.py",
+  "mcp-server/src/atlas_aci/query/",
+  "mcp-server/src/atlas_aci/storage/",
+  "mcp-server/src/atlas_aci/extractors/",
+  "mcp-server/src/atlas_aci/tools/graph_query.py",
+  "mcp-server/src/atlas_aci/tools/search_symbol.py",
+  "mcp-server/src/atlas_aci/tools/view_file.py",
+  "mcp-server/src/atlas_aci/tools/list_dir.py",
+  "mcp-server/src/atlas_aci/protocol/__init__.py",
+  "mcp-server/src/atlas_aci/protocol/graph.py",
+  "mcp-server/src/atlas_aci/protocol/resources.py",
+  "mcp-server/src/atlas_aci/protocol/results.py",
+  "mcp-server/src/atlas_aci/protocol/context.py",
+  "mcp-server/src/atlas_aci/protocol/impact.py",
+  "mcp-server/src/atlas_aci/protocol/revisions.py",
+  "mcp-server/pyproject.toml",
+  "mcp-server/uv.lock",
+  "mcp-server/Dockerfile",
+  "mcp-server/tests/fixtures/s38/",
+  ".github/workflows/",
+  "scripts/",
+  "atlas/",
+  "docs/"
+ ],
+ "invariants": {
+  "tools_json_sha256": "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56",
+  "tools_json_bytes": 1631472,
+  "READ_ONLY_TOOLS_count": 7,
+  "MINIMUM_BUDGET": 3436,
+  "COLLECTION_MINIMUM_BUDGET": 3448,
+  "FIXED_ERROR_ENVELOPE_CAP": 797,
+  "IMPACT_MINIMUM_BUDGET": 7730,
+  "ev_RELATIONS": [
+   "call",
+   "construct",
+   "extend",
+   "import",
+   "include",
+   "prepend",
+   "rationale_for",
+   "superclass"
+  ],
+  "graph_output_schema_sha256": "713ec5b6b2af963d556ddc3829dfd6919d52b3be2a9d70d918a5a6e270d4cf60",
+  "pyproject_sha256": "981f0784d6bc5c1502c91ab27657beb483460b97e066cd8846f51e98f1d7d92f",
+  "uv_lock_sha256": "87ba265e76f382aaa4387da7ca5d89dc85eb3699b35ee4315e981302b19646fd",
+  "mcp_version": "1.30.0",
+  "uvicorn_version": "0.44.0",
+  "starlette_version": "1.3.1",
+  "sse_starlette_version": "3.3.4",
+  "anyio_version": "4.16.0",
+  "sdk_supported_protocol_versions": [
+   "2024-11-05",
+   "2025-03-26",
+   "2025-06-18",
+   "2025-11-25"
+  ],
+  "selected_revision": "2025-11-25",
+  "http_default_negotiated_version": "2025-03-26",
+  "server_py_line_20": "from mcp.server.stdio import stdio_server",
+  "server_py_harden_marker_count": 3,
+  "server_py_sha256": "recorded at Day-1 (a) from git show 8ab6582:mcp-server/src/atlas_aci/server.py",
+  "producer_fingerprint_inputs_untouched": [
+   "mcp-server/src/atlas_aci/codegraph.py",
+   "mcp-server/src/atlas_aci/storage/evidence.py",
+   "mcp-server/src/atlas_aci/extractors/"
+  ],
+  "criteria_sha256": "66c854ca2f103d9ac1edae2954db92de1ef03a9c5927969121538bad2b49d4e4"
+ }
+}
