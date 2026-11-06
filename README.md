@@ -953,6 +953,7 @@ digest never changes. Each release's notes include the exact
 | [`hosts/http-transport.md`](hosts/http-transport.md) | Optional loopback-only Streamable HTTP transport (`atlas-aci serve --transport http`): one stateless `POST /mcp` endpoint with SSE responses, a closed order of rejections (Host 421, Origin 403, path 404, method 405, in-flight gate 503 with `Retry-After`, body cap 413), a client disconnect that cancels the request in flight (a documented deviation from the MCP specification), and the limits left to S40; no authentication, so it is refused while test execution is enabled |
 | [`SETUP.md`](SETUP.md) | End-to-end playbook: install → host wiring → canaries → hardening |
 | [`docs/operations/shared-http-deployment.md`](docs/operations/shared-http-deployment.md) | Shared multi-principal operation (`atlas-aci serve-shared`): the shared-config and policy formats, offline JWT verification, the router and guard order, revocation, and what is not isolated |
+| [`docs/operations/index-jobs-and-retention.md`](docs/operations/index-jobs-and-retention.md) | Durable index jobs (`atlas-aci jobs`): identity and reuse, checkpoints and resume, cancellation, retained generation farms, cross-process reader leases and lease-aware garbage collection. |
 | [`INTEGRATION.md`](INTEGRATION.md) | Onboarding an existing codebase: indexing, skip tuning, freshness, multi-repo |
 | [`CLAUDE.md`](CLAUDE.md) | How Claude Code should navigate this repo when opened in an agent loop |
 

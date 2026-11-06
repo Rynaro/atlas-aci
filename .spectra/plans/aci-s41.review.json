@@ -1,0 +1,118 @@
+{
+ "slice_id": "ACI-S41",
+ "plan": ".spectra/plans/aci-s41.md",
+ "author": "orchestrator-ramza-plan-s41",
+ "checker": "atlas-s41-plan-checker",
+ "verdict": "APPROVE_WITH_CONDITIONS",
+ "method": "independent read-only review; plan, frozen criteria, scope amendment, codegraph.py (_producer_inputs, _build_inputs, _generation_data, reader_lease, _build_atomic, _run_build, _writer_lock), snapshots.py (acquire, Builder, retain), extraction_cache.py, __main__.py index command and S40 isolation/injection pins read; flock/PID-1/virtiofs/overlayfs semantics from knowledge and flagged for Day-1; no commands executed",
+ "findings": [
+  {
+   "n": 1,
+   "severity": "BLOCKER",
+   "summary": "AC-009 tamper cases flip bytes in farm files that share inodes with the live graph.9.db and source-snapshots, corrupting the live store and making the rerun unsatisfiable; tamper only by copy-modify-os.replace on the farm path, assert live inode and reader_lease unchanged, and script case (i) with a v2 job, keep_last=1 GC and tree restore",
+   "disposition": "accepted as plan condition 1"
+  },
+  {
+   "n": 2,
+   "severity": "MAJOR",
+   "summary": "frameworks and rails_table_map are not in generation inputs (_build_inputs), so same-gid farms may hold different DB content and first-wins capture, reconcile and reuse can bind wrong content; Day-1 probe with STOP rule, and retire-and-recapture on inode mismatch if gids collide",
+   "disposition": "accepted as plan condition 2"
+  },
+  {
+   "n": 3,
+   "severity": "MAJOR",
+   "summary": "crash-matrix assertion (3) is unsatisfiable for kills before snap.retain; reconcile must call snap.retain under the writer lock and the assertion be restated per seam",
+   "disposition": "accepted as plan condition 3"
+  },
+  {
+   "n": 4,
+   "severity": "MAJOR",
+   "summary": "self-SIGKILL is ignored for PID 1 in the production image so G-PROD P3 is vacuous, and P3 expects exit 1 JOB_INTERRUPTED from a killed process; follow os.kill with os._exit(137), assert exit 137, install SIGTERM handler in acquire --hold",
+   "disposition": "accepted as plan condition 4"
+  },
+  {
+   "n": 5,
+   "severity": "MAJOR",
+   "summary": "submit on an existing interrupted, failed, cancelled or accepted job is unspecified and JOB_INTERRUPTED has no producer; add a state table with a test per row",
+   "disposition": "accepted as plan condition 5"
+  },
+  {
+   "n": 6,
+   "severity": "MAJOR",
+   "summary": "reuse of a retained non-current output exits 0 while the live index is stale; add current_generation_id and receipt_is_current to the envelope and document",
+   "disposition": "accepted as plan condition 6"
+  },
+  {
+   "n": 7,
+   "severity": "MAJOR",
+   "summary": "cancel and SIGTERM are not honoured while blocked on the build's blocking writer-lock flock (EINTR retried, flag-only handler); override _writer_lock with NB poll plus cancel check and add a test",
+   "disposition": "accepted as plan condition 7"
+  },
+  {
+   "n": 8,
+   "severity": "MAJOR",
+   "summary": "retire_invalid renames and deletes without gc.lock so GC recovery rmtree of retired/ can race it; take gc.lock NB or EX-lock each retired farm and tolerate ENOENT",
+   "disposition": "accepted as plan condition 8"
+  },
+  {
+   "n": 9,
+   "severity": "MAJOR",
+   "summary": "flock and hardlink tests can be vacuous on Docker Desktop virtiofs bind mounts; fail-not-skip canary on the used base dir (SH/EX conflict, nlink, st_dev) and FlockSpy via module-local fcntl proxy rather than global fcntl.flock",
+   "disposition": "accepted as plan condition 9"
+  },
+  {
+   "n": 10,
+   "severity": "MAJOR",
+   "summary": "decision-2 reading accepted only as stated: no doc, PR or receipt claim that the server serves retained generations; test names say retained generation via storage.leases; G-PROD P6 is never-cut",
+   "disposition": "accepted as plan condition 10"
+  },
+  {
+   "n": 11,
+   "severity": "MINOR",
+   "summary": "AC-006 observers contradict the write path (gc-receipt tmp/replace, mkdir exist_ok, generations/ dir mtime); count successful ops only, exclude receipt, compare files not dir mtimes",
+   "disposition": "accepted as plan condition 11"
+  },
+  {
+   "n": 12,
+   "severity": "MINOR",
+   "summary": "job_base root is unreachable for real builds because GC needs the writer lock held for the whole build; test holds run.lock manually and docs state WRITER_BUSY during builds and in-lock capture/enumeration cost",
+   "disposition": "accepted as plan condition 12"
+  },
+  {
+   "n": 13,
+   "severity": "MINOR",
+   "summary": "interrupted jobs protect cache keys forever, identity failure on symlink/unreadable source needs a typed error with nothing created, source-read cost undocumented, OSError mid-command must map to STORE_INVALID with fixed text",
+   "disposition": "accepted as plan condition 13"
+  },
+  {
+   "n": 14,
+   "severity": "MINOR",
+   "summary": "no direct test that a job-published generation has the same generation_id and snapshot_id as a plain index of the same tree on a twin namespace; G-FINGERPRINT lacks a positive control",
+   "disposition": "accepted as plan condition 14"
+  },
+  {
+   "n": 15,
+   "severity": "MINOR",
+   "summary": "checkpoint prefix validation must use the same predicate as ExtractionCache.lookup, resumed_from equality only holds for a cold cache so assert on parser_invocations, corruption variant must be detectable by the predicate",
+   "disposition": "accepted as plan condition 15"
+  },
+  {
+   "n": 16,
+   "severity": "MINOR",
+   "summary": "patched() rebinding is module-global in-process; no second build in the same process while active, twins in python -c subprocesses",
+   "disposition": "accepted as plan condition 16"
+  },
+  {
+   "n": 17,
+   "severity": "MINOR",
+   "summary": "Day-1 additions: offline get_parser in the --network none image, rollback smoke with generations/jobs/retention.json present, wider L-PARITY corpus, probe-absorbing backoff for GC EX, slot and run.lock",
+   "disposition": "accepted as plan condition 17"
+  },
+  {
+   "n": 18,
+   "severity": "MINOR",
+   "summary": "never-cut list gains tamper/decline, PID-1 fallback, docs plus S40 pin amendment, reconcile retain and flock canary; cuts 3 and 4 must pre-declare test deltas; Day-4 checkpoint stands",
+   "disposition": "accepted as plan condition 18"
+  }
+ ]
+}

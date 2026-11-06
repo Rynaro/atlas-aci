@@ -1,0 +1,23 @@
+PASS  H0 image atlas-aci:s41 exists (sha256:996cd263f1e88340333039d4440236d6e2406aa145827156fde0f0d77c5cfc48)
+PASS  P0 mcp 1.30.0; the six changed or new and eleven frozen source files in the image equal this tree
+PASS  P1 python -I wrote tree v1 (5 files) into the repo volume
+FAIL  P2 first submit rc=0 reused-expect=true parse='5' g1='4dcb4fbad11f097638974e8db0273b084c75d86cb7f2acdd76dee11162484814': 
+PASS  P2 the identical submit is reused: the same G1 and a result equal to the first one except reused (the stored receipt, attempt 1: no new work)
+PASS  P3 the kill seam at checkpoint 2 ended the container with exit 137 (PID 1 included)
+PASS  P3 jobs status: interrupted == 1 (JOB_INTERRUPTED), the live generation is still G1
+PASS  P3 jobs resume: resumed_from 2, parser_invocations 3, disk_hits 2 (G2 e7391993de5146243d60c62a12ceec1450708b867ba3c3bced8f0bb155ba4a85)
+PASS  P3 SIGTERM at a blocked submit: exit 4 JOB_CANCELLED; jobs status current is still G2
+PASS  P3 control: the same job without a cancel publishes G3 0e4ccdfc887e2f5bb81d6d546715add6052f1da44169fc8beec7c116100f3b47
+PASS  P4 container A (graphs :ro) holds a lease on G1 (origin retained)
+PASS  P4 GC in container B: G1 retained (leased), G3 retained (current), G2 retired (non-vacuous)
+PASS  P4 closing A's stdin ended the holder with exit 0
+PASS  P4 after the lease ended, GC retired G1
+PASS  P4 acquiring the retired G1: exit 3 EXPIRED_REFERENCE (retry_current)
+PASS  P4 a further GC retires nothing and has an equal retained_digest (41a5f7b3325d09dcde21a986eeca385a4f74689e147207f800630d6afc1c6574)
+PASS  P5 the current generation is acquirable after GC (exit 0)
+PASS  P5 a :ro acquire left the graphs manifest (bytes and mtimes of 47 files) unchanged
+PASS  P6 the read-only server answered search_symbol identically before, during (a GC retired G3) and after garbage collection (f932e5681346ec29e0eee2e031161ea366edef3253ff07b427e231eff7a6efef)
+PASS  P7 atlas-aci tools sha256 94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56, 1631472 bytes
+PASS  H8 pyproject and uv.lock pins, frozen paths byte-identical to the base, exactly the six allowed src files, __main__.py has 0 deleted lines
+== passed 20, failed 1
+RESULT: failed

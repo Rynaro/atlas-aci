@@ -2772,5 +2772,229 @@ def feedback_rank(
     stream.flush()
 
 
+# ---------------------------------------------------------------------- jobs (ACI-S41)
+def _jobs_options(function: Callable[..., Any]) -> Callable[..., Any]:
+    function = click.option(
+        "--graph-root",
+        default=None,
+        type=click.Path(file_okay=False, path_type=Path),
+        help="External graph storage root (default: <repo>/.atlas)",
+    )(function)
+    return click.option(
+        "--repo", required=True, type=click.Path(exists=True, file_okay=False, path_type=Path)
+    )(function)
+
+
+def _jobs_now(function: Callable[..., Any]) -> Callable[..., Any]:
+    return click.option(
+        "--now",
+        default=None,
+        type=click.IntRange(min=0),
+        help="Unix seconds used for capture times and retention age (default: the clock)",
+    )(function)
+
+
+def _jobs_namespace(repo: Path, graph_root: Path | None) -> Any:
+    from atlas_aci.storage import generations as generation_store
+
+    try:
+        return generation_store.namespace(repo.resolve(), graph_root)
+    except (ValueError, OSError):
+        raise click.UsageError("Invalid repository or graph root") from None
+
+
+def _jobs_id(value: str, label: str, noun: str) -> str:
+    import re
+
+    if re.fullmatch(r"[0-9a-f]{64}", value) is None:
+        raise click.UsageError(f"{label}: must be a 64-character lowercase hex {noun} id")
+    return value
+
+
+def _jobs_emit(value: dict[str, Any]) -> None:
+    click.echo(json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False))
+
+
+def _jobs_fail(exc: BaseException, *, generation: str | None = None) -> None:
+    from atlas_aci.indexing import jobs as job_api
+
+    error = job_api.error_for(exc)
+    if generation is not None and error.generation_id is None:
+        error.generation_id = generation
+    _jobs_emit(error.envelope())
+    click.echo(f"jobs: {error.code}", err=True)
+    sys.exit(job_api.exit_code(error.code))
+
+
+def _jobs_guard(call: Callable[[], Any], *, generation: str | None = None) -> Any:
+    """Run ``call``; map expected failures to the typed error envelope and the documented exit."""
+    from atlas_aci.enforcement import ToolError
+    from atlas_aci.indexing import job_runner
+    from atlas_aci.indexing import jobs as job_api
+    from atlas_aci.storage import generations as generation_store
+
+    try:
+        return call()
+    except job_runner.FaultSpecError as exc:
+        raise click.UsageError(str(exc)) from None
+    except generation_store.PolicyError as exc:
+        raise click.UsageError("retention.json: " + str(exc)) from None
+    except (job_api.JobError, generation_store.StoreError, ToolError, OSError) as exc:
+        _jobs_fail(exc, generation=generation)
+    return None
+
+
+@cli.group("jobs")
+def jobs_group() -> None:
+    """Operator index jobs, retained generations, reader leases and garbage collection."""
+
+
+@jobs_group.command("submit")
+@_jobs_options
+@click.option(
+    "--langs", default=",".join(DEFAULT_LANGS), show_default=True, help="Comma-separated languages"
+)
+@click.option(
+    "--frameworks",
+    default="",
+    help="Comma-separated opt-in framework adapters; closed set: "
+    + ", ".join(sorted(FRAMEWORK_ADAPTERS)),
+)
+@click.option(
+    "--rails-table-map",
+    default=None,
+    type=click.Path(path_type=Path),
+    help="Operator model-to-table map (JSON); needs the rails_models framework adapter",
+)
+@_jobs_now
+def jobs_submit(
+    repo: Path,
+    graph_root: Path | None,
+    langs: str,
+    frameworks: str,
+    rails_table_map: Path | None,
+    now: int | None,
+) -> None:
+    """Run (or reuse) an index job; prints the canonical result envelope."""
+    import time
+
+    lang_list = [s.strip() for s in langs.split(",") if s.strip()]
+    try:
+        adapters = normalize_frameworks(frameworks, lang_list or DEFAULT_LANGS)
+    except ValueError as exc:
+        raise click.UsageError(str(exc)) from exc
+    table_map: bytes | None = None
+    if rails_table_map is not None:
+        if "rails_models" not in adapters:
+            raise click.UsageError("--rails-table-map requires --frameworks rails_models")
+        table_map = _read_table_map(rails_table_map)
+        try:
+            rails_models.parse_table_map(table_map)
+        except ValueError as exc:
+            raise click.UsageError(str(exc)) from None
+    from atlas_aci.indexing import job_runner
+    from atlas_aci.indexing import jobs as job_api
+
+    ns = _jobs_namespace(repo, graph_root)
+    spec = job_api.JobSpec(ns, tuple(sorted(set(lang_list))), adapters, table_map)
+    stamp = int(time.time()) if now is None else now
+    result = _jobs_guard(lambda: job_runner.run_from_cli("submit", ns, now=stamp, spec=spec))
+    _jobs_emit(result)
+
+
+@jobs_group.command("resume")
+@_jobs_options
+@click.option("--job", "job", required=True, help="64-character lowercase hex job id")
+@_jobs_now
+def jobs_resume(repo: Path, graph_root: Path | None, job: str, now: int | None) -> None:
+    """Continue an interrupted job from its last valid checkpoint."""
+    import time
+
+    _jobs_id(job, "--job", "job")
+    from atlas_aci.indexing import job_runner
+
+    ns = _jobs_namespace(repo, graph_root)
+    stamp = int(time.time()) if now is None else now
+    result = _jobs_guard(lambda: job_runner.run_from_cli("resume", ns, now=stamp, job=job))
+    _jobs_emit(result)
+
+
+@jobs_group.command("cancel")
+@_jobs_options
+@click.option("--job", "job", required=True, help="64-character lowercase hex job id")
+def jobs_cancel(repo: Path, graph_root: Path | None, job: str) -> None:
+    """Request cancellation (honoured only before the commit); prints the outcome."""
+    _jobs_id(job, "--job", "job")
+    from atlas_aci.indexing import jobs as job_api
+
+    ns = _jobs_namespace(repo, graph_root)
+    _jobs_emit(_jobs_guard(lambda: job_api.cancel(ns, job)))
+
+
+@jobs_group.command("status")
+@_jobs_options
+def jobs_status(repo: Path, graph_root: Path | None) -> None:
+    """Print canonical job, lease and retention metrics (read-only)."""
+    from atlas_aci.indexing import jobs as job_api
+
+    ns = _jobs_namespace(repo, graph_root)
+    _jobs_emit(_jobs_guard(lambda: job_api.status(ns)))
+
+
+@jobs_group.command("gc")
+@_jobs_options
+@_jobs_now
+@click.option(
+    "--wait-seconds",
+    default=30.0,
+    show_default=True,
+    type=click.FloatRange(min=0),
+    help="How long to wait for the writer lock held by a running build before WRITER_BUSY",
+)
+def jobs_gc(repo: Path, graph_root: Path | None, now: int | None, wait_seconds: float) -> None:
+    """Retire unleased generations by policy; prints the garbage-collection receipt."""
+    import time
+
+    from atlas_aci.storage import generations as generation_store
+    from atlas_aci.storage import retention
+
+    ns = _jobs_namespace(repo, graph_root)
+    stamp = int(time.time()) if now is None else now
+
+    def collect() -> dict[str, Any]:
+        policy = generation_store.load_policy(ns)
+        return retention.gc(ns, policy=policy, now=stamp, wait_seconds=wait_seconds)
+
+    _jobs_emit(_jobs_guard(collect))
+
+
+@jobs_group.command("acquire")
+@_jobs_options
+@click.option("--generation", "generation", required=True, help="64-character hex generation id")
+@click.option("--hold", is_flag=True, help="Keep the lease until stdin closes or SIGTERM")
+def jobs_acquire(repo: Path, graph_root: Path | None, generation: str, hold: bool) -> None:
+    """Take a reader lease on a retained generation; prints it (read-only on disk)."""
+    _jobs_id(generation, "--generation", "generation")
+    from atlas_aci.indexing import job_runner
+    from atlas_aci.storage import leases
+
+    ns = _jobs_namespace(repo, graph_root)
+    lease = _jobs_guard(lambda: leases.acquire(ns, generation), generation=generation)
+    try:
+        _jobs_emit(
+            {
+                "format": "atlas-aci-lease.v1",
+                "generation_id": lease.generation_id,
+                "snapshot_id": lease.snapshot_id,
+                "origin": lease.origin,
+            }
+        )
+        if hold:
+            sys.stdout.flush()
+            job_runner.hold_lease()
+    finally:
+        lease.close()
+
+
 if __name__ == "__main__":
     cli()
