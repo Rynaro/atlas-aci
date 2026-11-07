@@ -325,7 +325,7 @@ def test_python_dependency_docs_state_the_interpretation_and_name_every_closed_v
         assert "--" + option in docs
     assert "--max-compression-ratio" in docs and "200" in docs
     changelog = (ROOT / "CHANGELOG.md").read_text()
-    unreleased = changelog.split("## [", 2)[1]
+    unreleased = changelog.split("\n## [3.0.0]", 1)[1].split("\n## [", 1)[0]
     entry = next(e for e in unreleased.split("\n- **") if "Python dependency surface" in e)
     readme = (ROOT / "README.md").read_text()
     row = next(

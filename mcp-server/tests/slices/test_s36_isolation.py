@@ -42,8 +42,10 @@ BASE_TOOLS_SHA256 = "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a464
 BASE_TOOLS_BYTES = 1631472
 # These whole-file pins change only through a receipted re-lock
 # (see .spectra/evidence/sec-relock/): the CVE-floor re-lock moved both files.
-PYPROJECT_SHA256 = "981f0784d6bc5c1502c91ab27657beb483460b97e066cd8846f51e98f1d7d92f"
-UV_LOCK_SHA256 = "87ba265e76f382aaa4387da7ca5d89dc85eb3699b35ee4315e981302b19646fd"
+# re-baselined for the v3.0.0 release version bump (pyproject version and the uv.lock
+# atlas-aci stanza only)
+PYPROJECT_SHA256 = "d1a0ab5b09d82cd228110d803026ee599d86aea1093e6b7a4123dc16c6f4034c"
+UV_LOCK_SHA256 = "9fcbeba0195699494522a80eab27500e51331cdfd5deb949179814ca6c23d7d9"
 BANNED = {
     "safe", "proven", "guaranteed", "compliant", "compatible", "incompatible", "breaking",
     "applied", "trusted", "certified", "authentic", "superior", "optimal", "better", "improves",
