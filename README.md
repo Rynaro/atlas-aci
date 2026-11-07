@@ -84,7 +84,7 @@ docker run --rm -i --read-only -v /path/to/your/repo:/repo:ro -v atlas-memex:/me
   ghcr.io/rynaro/atlas-aci serve --repo /repo --memex-root /memex
 ```
 
-The newest published tag is `v2.0.0`, which predates the changes under Unreleased in [CHANGELOG.md](CHANGELOG.md). The image also needs network access the first time it indexes. [docs/installation.md](docs/installation.md) covers both points and how to build the image locally.
+The newest published tag is `v3.0.0` (image `ghcr.io/rynaro/atlas-aci:3.0.0`). It prefetches the tree-sitter grammars, so it indexes without network access. Building locally from `main` gives changes made after 3.0.0. [docs/installation.md](docs/installation.md) covers how to build the image locally.
 
 </details>
 
@@ -366,7 +366,7 @@ Check that the index exists with `atlas-aci status --repo /path/to/your/repo`, w
 No. Run one process per repository and give each host entry its own name. See [INTEGRATION.md](INTEGRATION.md#multi-repo-setups).
 
 **Which Docker image should I use?**
-The published `v2.0.0` image is the newest tag. It does not include the changes under Unreleased in [CHANGELOG.md](CHANGELOG.md). To use them, build locally with `docker build -t atlas-aci mcp-server`.
+The published `v3.0.0` image (`ghcr.io/rynaro/atlas-aci:3.0.0`) is the newest tag. Building locally from `main` gives changes made after 3.0.0: `docker build -t atlas-aci mcp-server`.
 
 **Do I need to re-index after an upgrade?**
 Only when the schema epoch changes. `serve` still starts, and graph tools return `INDEX_UNAVAILABLE` until a current index exists. See [docs/installation.md](docs/installation.md).

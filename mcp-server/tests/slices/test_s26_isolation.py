@@ -1699,7 +1699,7 @@ def test_docs_name_every_closed_value_and_the_silent_limits():
         assert phrase in section.replace("Constant assignment", "constant assignment"), phrase
     assert "affected_paths" in section
     changelog = (ROOT / "CHANGELOG.md").read_text()
-    unreleased = changelog.split("## [", 2)[1]
+    unreleased = changelog.split("\n## [3.0.0]", 1)[1].split("\n## [", 1)[0]
     assert "(ACI-S26)" in unreleased and "async_enqueue" in unreleased
     readme = (ROOT / "README.md").read_text()
     row = next(line for line in readme.splitlines() if "docs/frameworks/rails.md" in line)

@@ -203,7 +203,7 @@ def test_otel_docs_name_every_closed_value_and_state_the_interpretation():
     changelog = (ROOT / "CHANGELOG.md").read_text()
     readme = (ROOT / "README.md").read_text()
     row = next(line for line in readme.splitlines() if "docs/importers/opentelemetry.md" in line)
-    unreleased = changelog.split("## [", 2)[1]
+    unreleased = changelog.split("\n## [3.0.0]", 1)[1].split("\n## [", 1)[0]
     entry = unreleased[unreleased.index("OpenTelemetry trace import") :].split("\n- **", 1)[0]
     names = [
         *otel.REJECTIONS, *otel.LIMITS, *runtime.OVERLAY_REJECTIONS, *runtime.LIMITATIONS,

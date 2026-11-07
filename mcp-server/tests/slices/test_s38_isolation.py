@@ -26,8 +26,10 @@ TOOLS_BYTES = 1631472
 GRAPH_OUTPUT_SHA = "713ec5b6b2af963d556ddc3829dfd6919d52b3be2a9d70d918a5a6e270d4cf60"
 # These whole-file pins change only through a receipted re-lock
 # (see .spectra/evidence/sec-relock/): the CVE-floor re-lock moved both files.
-PYPROJECT_SHA = "981f0784d6bc5c1502c91ab27657beb483460b97e066cd8846f51e98f1d7d92f"
-UV_LOCK_SHA = "87ba265e76f382aaa4387da7ca5d89dc85eb3699b35ee4315e981302b19646fd"
+# re-baselined for the v3.0.0 release version bump (pyproject version and the uv.lock
+# atlas-aci stanza only)
+PYPROJECT_SHA = "d1a0ab5b09d82cd228110d803026ee599d86aea1093e6b7a4123dc16c6f4034c"
+UV_LOCK_SHA = "9fcbeba0195699494522a80eab27500e51331cdfd5deb949179814ca6c23d7d9"
 MARKERS = re.compile(
     r"EXTRACTED|INFERRED|AMBIGUOUS|god_node|label_propagation|rationale_for"
     r"|CREATE TABLE IF NOT EXISTS edges"

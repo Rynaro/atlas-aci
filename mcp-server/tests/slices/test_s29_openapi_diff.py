@@ -1445,7 +1445,7 @@ def test_openapi_docs_state_the_interpretation_and_name_every_closed_value():
     changelog = (ROOT / "CHANGELOG.md").read_text()
     readme = (ROOT / "README.md").read_text()
     row = next(line for line in readme.splitlines() if "docs/importers/openapi.md" in line)
-    unreleased = changelog.split("## [", 2)[1]
+    unreleased = changelog.split("\n## [3.0.0]", 1)[1].split("\n## [", 1)[0]
     entry = unreleased[unreleased.index("OpenAPI 3.1 contract import") :].split("\n- **", 1)[0]
     names = [
         *o.REJECTIONS, *o.REGION_NAMES, *o.LIMITATIONS, *o.IGNORED_FIELDS, *o.REFERENCE_REASONS,

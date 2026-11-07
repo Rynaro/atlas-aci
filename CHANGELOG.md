@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-11-06
+
 ### Security
 
 - **Dependency floors raised against known fixable CVEs.** `mcp` is now `>=1.28.1,<2`
