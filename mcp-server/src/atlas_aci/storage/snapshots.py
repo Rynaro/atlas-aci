@@ -814,6 +814,7 @@ class Builder:
             raise
         self.blobs = {}
         self.installed = []
+        self.staged_extra = []
         self.published = False
 
     def add(self, source):
@@ -910,11 +911,13 @@ class Builder:
             raw = ev.canonical(manifest).encode()
             identifier = hashlib.sha256(raw).hexdigest()
             pack_name = "pack." + pack["sha256"] + ".bin"
+            self.staged_extra.append(pack_name)
             os.rename("pack-stage", pack_name, src_dir_fd=self.fd, dst_dir_fd=self.fd)
             store = directory(self.atlas_dir / "source-snapshots", create=True)
             try:
                 self._install(store, pack_name, fd)
                 name = "manifest." + identifier + ".json"
+                self.staged_extra.append(name)
                 mfd = os.open(
                     name, os.O_RDWR | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600, dir_fd=self.fd
                 )
@@ -940,18 +943,32 @@ class Builder:
             os.close(fd)
 
     def close(self):
-        if not self.published and self.installed:
-            store = directory(self.atlas_dir / "source-snapshots")
+        try:
+            if not self.published and self.installed:
+                store = directory(self.atlas_dir / "source-snapshots")
+                try:
+                    for name in reversed(self.installed):
+                        os.unlink(name, dir_fd=store)
+                finally:
+                    os.close(store)
+            # self.fd was opened while the stage was empty; listing it (or a dup of it)
+            # may replay a stale directory stream on some filesystems (btrfs, overlayfs).
+            # Enumerate through a fresh descriptor and union in the names we staged.
+            names = set(self.blobs) | set(self.staged_extra) | {"pack-stage"}
+            fresh = os.open(".", os.O_RDONLY | os.O_DIRECTORY, dir_fd=self.fd)
             try:
-                for name in reversed(self.installed):
-                    os.unlink(name, dir_fd=store)
+                names.update(os.listdir(fresh))
             finally:
-                os.close(store)
-        for name in os.listdir(self.fd):
-            os.unlink(name, dir_fd=self.fd)
-        os.close(self.fd)
-        os.rmdir(self.name, dir_fd=self.root)
-        os.close(self.root)
+                os.close(fresh)
+            for name in sorted(names):
+                with suppress(FileNotFoundError):
+                    os.unlink(name, dir_fd=self.fd)
+            os.rmdir(self.name, dir_fd=self.root)
+        finally:
+            try:
+                os.close(self.fd)
+            finally:
+                os.close(self.root)
 
 
 def retain(atlas_dir, identifier):

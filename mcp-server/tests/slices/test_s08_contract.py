@@ -262,3 +262,127 @@ def test_snapshot_replay(tmp_path):
             r.read_source("a.py")
     imported.close()
     graph.close()
+
+
+def _open_fds():
+    return set(os.listdir("/dev/fd"))
+
+
+def _stale_listdir(monkeypatch, builder):
+    """Simulate btrfs/overlayfs: the pre-populated stage fd lists as empty."""
+    real = os.listdir
+
+    def listdir(path="."):
+        # Only the original descriptor carries the stale stream.
+        if path == builder.fd:
+            return []
+        return real(path)
+
+    monkeypatch.setattr(snap.os, "listdir", listdir)
+
+
+def test_builder_close_stale_dirfd_listing(tmp_path, monkeypatch):
+    (tmp_path / "atlas").mkdir()
+    before = _open_fds()
+    builder = snap.Builder(tmp_path / "atlas")
+    for data in (b"one", b"two"):
+        builder.add(data)
+    stage = tmp_path / "atlas" / builder.name
+    assert len(list(stage.iterdir())) == 2
+    _stale_listdir(monkeypatch, builder)
+    builder.close()
+    assert not stage.exists()
+    assert _open_fds() == before
+
+
+def test_builder_close_fresh_listing_catches_unknown_files(tmp_path):
+    (tmp_path / "atlas").mkdir()
+    before = _open_fds()
+    builder = snap.Builder(tmp_path / "atlas")
+    builder.add(b"one")
+    (tmp_path / "atlas" / builder.name / "stray").write_bytes(b"x")
+    builder.close()
+    assert not (tmp_path / "atlas" / builder.name).exists()
+    assert _open_fds() == before
+
+
+def test_builder_close_no_fd_leak_when_rmdir_fails(tmp_path, monkeypatch):
+    (tmp_path / "atlas").mkdir()
+    before = _open_fds()
+    builder = snap.Builder(tmp_path / "atlas")
+
+    def boom(*args, **kwargs):
+        raise OSError(39, "Directory not empty")
+
+    monkeypatch.setattr(snap.os, "rmdir", boom)
+    with pytest.raises(OSError):
+        builder.close()
+    monkeypatch.undo()
+    os.rmdir(tmp_path / "atlas" / builder.name)
+    assert _open_fds() == before
+
+
+def test_published_build_closes_with_stale_stage_listing(tmp_path, monkeypatch):
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    (repo / "a.py").write_bytes(OLD)
+    real_init = snap.Builder.__init__
+    seen = []
+
+    def init(self, atlas_dir):
+        real_init(self, atlas_dir)
+        seen.append(self)
+        _stale_listdir(monkeypatch, self)
+
+    monkeypatch.setattr(snap.Builder, "__init__", init)
+    graph = CodeGraph(repo)
+    try:
+        graph.build()
+        assert seen and seen[0].published
+        assert not list(graph.atlas_dir.glob(".sources-stage.*"))
+    finally:
+        graph.close()
+
+
+def test_close_helper_swallows_oserror_when_published(caplog):
+    from atlas_aci.codegraph import _close_source_builder
+
+    class B:
+        published = True
+
+        def close(self):
+            raise OSError(39, "Directory not empty")
+
+    _close_source_builder(B())  # must not raise
+
+
+def test_close_helper_reraises_when_unpublished():
+    from atlas_aci.codegraph import _close_source_builder
+
+    class B:
+        published = False
+
+        def close(self):
+            raise OSError(39, "Directory not empty")
+
+    with pytest.raises(OSError):
+        _close_source_builder(B())
+
+
+def test_build_survives_stage_cleanup_failure_after_publish(tmp_path, monkeypatch):
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    (repo / "a.py").write_bytes(OLD)
+    real_close = snap.Builder.close
+
+    def close(self):
+        real_close(self)
+        raise OSError(39, "Directory not empty")
+
+    monkeypatch.setattr(snap.Builder, "close", close)
+    graph = CodeGraph(repo)
+    try:
+        graph.build()
+        assert graph.db_path.exists()
+    finally:
+        graph.close()
