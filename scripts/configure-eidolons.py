@@ -5,6 +5,13 @@ CRYSTALIUM 2.5.0 logs to stdout before configuring its MCP transport. Route
 structlog to stderr before importing the server, and persist its model cache
 inside the existing project memory volume. This intentional launch override
 is reported as drift by the upstream `eidolons mcp verify` command.
+
+Since Eidolons 4.8.0 the nexus wires OCI MCPs through its session launcher
+(`mcp_launch.sh <mcp> ... -- run <docker flags> <image> <serve command>`), so
+the entry's command is the launcher rather than `docker`. Only the serve
+command after the pinned image is replaced; the launcher keeps it verbatim and
+runs it inside the session container. The legacy bare `docker run` shape is
+still accepted.
 """
 
 import argparse
@@ -42,8 +49,11 @@ def configure(root: Path) -> None:
     config: dict[str, Any] = json.loads(config_path.read_text())
     entry = config["mcpServers"]["crystalium"]
     args = entry["args"]
-    if entry["command"] != "docker" or CRYSTALIUM_IMAGE not in args:
-        raise ValueError("Expected the pinned CRYSTALIUM 2.5.0 Docker launch; no files changed")
+    command = Path(entry["command"]).name
+    if command not in ("docker", "mcp_launch.sh") or CRYSTALIUM_IMAGE not in args:
+        raise ValueError(
+            "Expected the pinned CRYSTALIUM 2.5.0 Docker or launcher wiring; no files changed"
+        )
     image_index = args.index(CRYSTALIUM_IMAGE)
     tail = args[image_index + 1 :]
     if tail not in (

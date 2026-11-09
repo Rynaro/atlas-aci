@@ -123,3 +123,30 @@ def test_refuses_unknown_launches_before_writing(
     with pytest.raises(ValueError, match="no files changed"):
         module.configure(root)
     assert snapshot(root) == before
+
+
+def test_accepts_launcher_wrapped_entry(
+    project: tuple[ModuleType, Path], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    module, root = project
+    launcher = "/home/me/.eidolons/nexus/cli/src/mcp_launch.sh"
+    prefix = ["crystalium", "--keepalive", "shell", "--", "run", "--rm", "-i"]
+    for relative in (".mcp.json", ".cursor/mcp.json"):
+        path = root / relative
+        config = json.loads(path.read_text())
+        config["mcpServers"]["crystalium"].update(
+            {
+                "command": launcher,
+                "args": [*prefix, module.CRYSTALIUM_IMAGE, "python", "-m", "crystalium", "serve"],
+            }
+        )
+        path.write_text(json.dumps(config))
+
+    def render(command: list[str], **kwargs: Any) -> subprocess.CompletedProcess[str]:
+        return subprocess.CompletedProcess(command, 0, stdout="[agents]\n")
+
+    monkeypatch.setattr(module.subprocess, "run", render)
+    module.configure(root)
+    entry = json.loads((root / ".mcp.json").read_text())["mcpServers"]["crystalium"]
+    assert entry["command"] == launcher
+    assert entry["args"] == [*prefix, module.CRYSTALIUM_IMAGE, "python", "-c", module.BOOTSTRAP]
