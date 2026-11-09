@@ -122,7 +122,7 @@ def test_lock_real_repository_lock_is_in_profile():
     ]
     exc = rejected(lambda: select(REAL_LOCK, "atlas-aci"))
     assert exc.reason == "unsupported_source_kind"
-    assert exc.coordinate is not None and exc.coordinate["coordinate"] == "pypi:atlas-aci@3.0.1"
+    assert exc.coordinate is not None and exc.coordinate["coordinate"] == "pypi:atlas-aci@3.0.2"
     exc = rejected(lambda: select(REAL_LOCK, "tree-sitter-language-pack"))
     assert exc.reason == "no_locked_pure_wheel"  # every wheel of it is platform specific
     assert exc.coordinate is not None and exc.coordinate["expected_artifacts"] == []

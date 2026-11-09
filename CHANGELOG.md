@@ -7,7 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.2] - 2026-11-09
+
+Carries the 3.0.1 fix below. 3.0.2 is the first published release that contains it.
+
+### Security
+
+- **Runtime image applies Debian security updates at build time.** The `v3.0.1` image failed
+  the release workflow's Trivy gate on two fixable HIGH findings in `zlib1g`
+  (CVE-2026-76844, CVE-2026-85091; installed `1:1.3.dfsg+really1.3.1-1+b1`, fixed in
+  `1:1.3.dfsg+really1.3.1-1+deb13u1`) inherited from the `python:3.12-slim` base. The
+  runtime stage of `mcp-server/Dockerfile` now runs `apt-get upgrade` before installing
+  `ripgrep` and `git`. The Python dependencies, the schema epoch, the export epoch and the
+  seven MCP tools are unchanged from 3.0.1.
+
 ## [3.0.1] - 2026-11-09
+
+Not published as a release. The release workflow pushed an image for the `v3.0.1` tag
+(`ghcr.io/rynaro/atlas-aci:3.0.1`), then stopped at the Trivy gate before signing,
+attestation and the GitHub Release, so that image is unsigned and carries no attestations.
+Use 3.0.2.
 
 ### Fixed
 
