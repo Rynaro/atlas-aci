@@ -399,7 +399,7 @@ def test_the_documentation_names_every_closed_value():
 
 def test_changelog_and_readme_entries():
     lines = (ROOT / "CHANGELOG.md").read_text().splitlines()
-    added = lines.index("### Added", lines.index("## [Unreleased]"))
+    added = lines.index("### Added", lines.index("## [3.0.0] - 2026-11-06"))
     bullets = [i for i, line in enumerate(lines) if line.startswith("- **") and i > added]
     assert lines[bullets[0]].startswith("- **Cross-repository package links (ACI-S30).")
     assert lines[bullets[1]].startswith("- **Git co-change correlation (ACI-S33).")

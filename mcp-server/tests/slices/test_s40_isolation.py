@@ -419,7 +419,7 @@ def test_the_transport_document_points_to_the_deployment_document_once():
 
 def test_the_changelog_carries_the_security_bullet_and_the_last_added_bullet():
     lines = (ROOT / "CHANGELOG.md").read_text().splitlines()
-    unreleased = lines.index("## [Unreleased]")
+    unreleased = lines.index("## [3.0.0] - 2026-11-06")
     sections = [i for i, line in enumerate(lines) if line.startswith("### ") and i > unreleased]
     first, added, changed = sections[0], sections[1], sections[2]
     assert lines[first] == "### Security" and lines[added] == "### Added"

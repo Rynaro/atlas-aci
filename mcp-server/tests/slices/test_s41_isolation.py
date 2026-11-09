@@ -417,7 +417,7 @@ def test_the_documents_and_tests_are_the_only_additions() -> None:
 
 def test_the_changelog_bullet_sits_directly_before_the_s40_bullet() -> None:
     lines = (ROOT / "CHANGELOG.md").read_text().splitlines()
-    unreleased = lines.index("## [Unreleased]")
+    unreleased = lines.index("## [3.0.0] - 2026-11-06")
     sections = [i for i, line in enumerate(lines) if line.startswith("### ") and i > unreleased]
     first, added, changed = sections[0], sections[1], sections[2]
     assert lines[first] == "### Security" and lines[added] == "### Added"

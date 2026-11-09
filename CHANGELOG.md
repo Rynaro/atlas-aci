@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.1] - 2026-11-09
+
+### Fixed
+
+- **`index` no longer discards a completed build on btrfs and overlayfs (#118).**
+  `Builder.close()` listed the source staging directory through the descriptor opened while
+  that directory was empty. On btrfs and overlayfs that listing returned no entries, so the
+  staged blobs stayed, `rmdir` raised `ENOTEMPTY` after the graph was already published, and
+  the run was recorded as `index_failed`. tmpfs returned the entries, which hid the defect.
+  `close()` now lists the directory through a freshly opened descriptor, adds the names the
+  builder staged itself, and closes its descriptors on every path. When the graph is already
+  published, a stage-cleanup `OSError` in `index`, `import-coverage` or `import-scip` is
+  logged as `source_stage_cleanup_failed` and the run still succeeds; before publication it
+  still fails the run.
+- `storage/snapshots.py` is one of the producer-fingerprint module hashes, so a 3.0.1 index
+  records a different producer fingerprint than a 3.0.0 index, and extraction-cache entries
+  written by 3.0.0 are not reused (the cache key covers the producer fingerprint). The schema
+  epoch and export epoch are unchanged, and the seven MCP tools are unchanged.
+
 ## [3.0.0] - 2026-11-06
 
 ### Security

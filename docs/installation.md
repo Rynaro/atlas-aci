@@ -61,10 +61,10 @@ The entries all run the same command, `atlas-aci serve --repo <path>`. Restart t
 
 ### The published image
 
-`ghcr.io/rynaro/atlas-aci` is built for `linux/amd64` and `linux/arm64` on every `v*` tag. The newest published tag is `v3.0.0` (image `ghcr.io/rynaro/atlas-aci:3.0.0`):
+`ghcr.io/rynaro/atlas-aci` is built for `linux/amd64` and `linux/arm64` on every `v*` tag. The newest published tag is `v3.0.1` (image `ghcr.io/rynaro/atlas-aci:3.0.1`):
 
-- The 3.0.0 image prefetches the tree-sitter grammars, so the first indexing run does not need network access.
-- Changes made after 3.0.0 are not in it. Build locally from `main` to get them.
+- The 3.0.1 image prefetches the tree-sitter grammars, so the first indexing run does not need network access.
+- Changes made after 3.0.1 are not in it. Build locally from `main` to get them.
 
 ```bash
 docker run --rm -v /path/to/your/repo:/repo ghcr.io/rynaro/atlas-aci index --repo /repo
@@ -81,7 +81,7 @@ For the wider container workflow, including a route that pulls the pinned digest
 
 ### Build the image locally
 
-Building locally from `main` gives changes made after 3.0.0, and the build prefetches the parser grammars:
+Building locally from `main` gives changes made after 3.0.1, and the build prefetches the parser grammars:
 
 ```bash
 docker build -t atlas-aci mcp-server

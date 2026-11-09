@@ -1,6 +1,6 @@
 [project]
 name = "atlas-aci"
-version = "3.0.0"
+version = "3.0.1"
 description = "ATLAS bounded Agent-Computer Interface — reference MCP server"
 readme = "README.md"
 requires-python = ">=3.11"

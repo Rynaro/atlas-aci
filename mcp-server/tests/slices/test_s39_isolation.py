@@ -28,10 +28,10 @@ COMPAT = ROOT / "hosts" / "protocol-compatibility.md"
 TOOLS_SHA = "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56"
 TOOLS_BYTES = 1631472
 GRAPH_OUTPUT_SHA = "713ec5b6b2af963d556ddc3829dfd6919d52b3be2a9d70d918a5a6e270d4cf60"
-# re-baselined for the v3.0.0 release version bump (pyproject version and the uv.lock
+# re-baselined for the v3.0.1 release version bump (pyproject version and the uv.lock
 # atlas-aci stanza only)
-PYPROJECT_SHA = "d1a0ab5b09d82cd228110d803026ee599d86aea1093e6b7a4123dc16c6f4034c"
-UV_LOCK_SHA = "9fcbeba0195699494522a80eab27500e51331cdfd5deb949179814ca6c23d7d9"
+PYPROJECT_SHA = "5b50cf2c43e4a2bd78fdff22d379c3508ed16a04a5f4bd1a986e65ab35bdf097"
+UV_LOCK_SHA = "5430bec0d957662b6608bf2cf0c777876d791bfffdac754ae6362b48b15827d5"
 SERVER_PY_SHA = "21393e61dfbe9ec4ae93f55f7b9c0abf17029681b24f75395d143c955eeb13f7"
 MARKERS = re.compile(
     r"EXTRACTED|INFERRED|AMBIGUOUS|god_node|label_propagation|rationale_for"
@@ -426,13 +426,13 @@ def test_the_compatibility_document_points_to_the_http_document() -> None:
 
 def _bullets() -> tuple[list[str], list[int]]:
     lines = (ROOT / "CHANGELOG.md").read_text().splitlines()
-    added = lines.index("### Added", lines.index("## [Unreleased]"))
+    added = lines.index("### Added", lines.index("## [3.0.0] - 2026-11-06"))
     return lines, [i for i, line in enumerate(lines) if line.startswith("- **") and i > added]
 
 
 def test_the_changelog_carries_one_entry_at_index_eight() -> None:
     lines, bullets = _bullets()
-    unreleased = lines.index("## [Unreleased]")
+    unreleased = lines.index("## [3.0.0] - 2026-11-06")
     first = next(line for line in lines[unreleased + 1 :] if line.startswith("### "))
     assert first == "### Security"
     assert lines[bullets[6]].startswith("- **MCP protocol-revision compatibility adapter")
