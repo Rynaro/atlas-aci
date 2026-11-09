@@ -28,10 +28,10 @@ COMPAT = ROOT / "hosts" / "protocol-compatibility.md"
 TOOLS_SHA = "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56"
 TOOLS_BYTES = 1631472
 GRAPH_OUTPUT_SHA = "713ec5b6b2af963d556ddc3829dfd6919d52b3be2a9d70d918a5a6e270d4cf60"
-# re-baselined for the v3.0.1 release version bump (pyproject version and the uv.lock
+# re-baselined for the v3.0.2 release version bump (pyproject version and the uv.lock
 # atlas-aci stanza only)
-PYPROJECT_SHA = "5b50cf2c43e4a2bd78fdff22d379c3508ed16a04a5f4bd1a986e65ab35bdf097"
-UV_LOCK_SHA = "5430bec0d957662b6608bf2cf0c777876d791bfffdac754ae6362b48b15827d5"
+PYPROJECT_SHA = "89bbab9ce0b3cc69111eaed4c2d7aea35dc6c8ecdde34b2a7f04033b658e10e2"
+UV_LOCK_SHA = "d5aecf7acd3bed2166668746b96ecf850267592d20a68e3bb0eaf8cecf926640"
 SERVER_PY_SHA = "21393e61dfbe9ec4ae93f55f7b9c0abf17029681b24f75395d143c955eeb13f7"
 MARKERS = re.compile(
     r"EXTRACTED|INFERRED|AMBIGUOUS|god_node|label_propagation|rationale_for"

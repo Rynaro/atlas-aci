@@ -64,9 +64,12 @@ LABEL org.opencontainers.image.title="atlas-aci" \
 #   git     — general repo tooling for operators/test_dry_run; NOT used by
 #             `atlas-aci index --since <marker>`, which never shells out to
 #             git — it hashes the exact consumed file buffers
+# `apt-get upgrade` applies Debian security updates the floating base tag has
+# not picked up yet (v3.0.1's image failed the release Trivy gate on zlib1g).
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
-    apt-get update && apt-get install -y --no-install-recommends \
+    apt-get update && apt-get upgrade -y --no-install-recommends \
+    && apt-get install -y --no-install-recommends \
         ripgrep \
         git \
     && rm -rf /var/lib/apt/lists/*
