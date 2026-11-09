@@ -42,13 +42,13 @@ LAZY_IMPORTS = {"mcp", "httpx", "jwt", "cryptography"}
 # Day-1 (a) constants, recorded in .spectra/evidence/aci-s42/base-invariants.json at base 4f470d7.
 TOOLS_SHA = "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56"
 TOOLS_BYTES = 1631472
-# re-baselined for the v3.0.0 release version bump (pyproject version and the uv.lock
+# re-baselined for the v3.0.1 release version bump (pyproject version and the uv.lock
 # atlas-aci stanza only)
-PYPROJECT_SHA = "d1a0ab5b09d82cd228110d803026ee599d86aea1093e6b7a4123dc16c6f4034c"
-UV_LOCK_SHA = "9fcbeba0195699494522a80eab27500e51331cdfd5deb949179814ca6c23d7d9"
+PYPROJECT_SHA = "5b50cf2c43e4a2bd78fdff22d379c3508ed16a04a5f4bd1a986e65ab35bdf097"
+UV_LOCK_SHA = "5430bec0d957662b6608bf2cf0c777876d791bfffdac754ae6362b48b15827d5"
 DOCKERFILE_SHA = "8abfc6635110f158f2ce60d473dabbcf447f38e62b71fbdc38e178b17654f529"
 DOCKERFILE_DEV_SHA = "1ac46d1137ac42b71608e6d0e7042b38b49a1a9054233d487d6508ae175e91e4"
-SRC_TREE_DIGEST = "c5199ce03f91d8cd8f204a170e5558031a79e20c39153bdd204827b55ecc9e72"
+SRC_TREE_DIGEST = "332cfa3b80cd2e77aa0e594ab9bff5f9ca041d9aa6e3f904585d9b34299f0d61"
 V3_AGGREGATE_SHA = "64250ba512f18d7f7f8ce9027af920f2bb240320341e8e4b5056e3418dabf80c"
 V3_RECORD_SHA = "400918d65dbb684c47758fd81848ca3ec4678c03536026e2757c4322cfa7f004"
 HOSTS = ("claude-code", "github-copilot", "cursor")
@@ -703,7 +703,7 @@ def _documents() -> dict[str, str]:
 
 def _changelog_bullets() -> list[str]:
     lines = (ROOT / "CHANGELOG.md").read_text().splitlines()
-    unreleased = lines.index("## [Unreleased]")
+    unreleased = lines.index("## [3.0.0] - 2026-11-06")
     sections = [i for i, line in enumerate(lines) if line.startswith("### ") and i > unreleased]
     added, changed = sections[1], sections[2]
     starts = [i for i in range(added, changed) if lines[i].startswith("- **")]

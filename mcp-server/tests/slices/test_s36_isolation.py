@@ -42,10 +42,10 @@ BASE_TOOLS_SHA256 = "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a464
 BASE_TOOLS_BYTES = 1631472
 # These whole-file pins change only through a receipted re-lock
 # (see .spectra/evidence/sec-relock/): the CVE-floor re-lock moved both files.
-# re-baselined for the v3.0.0 release version bump (pyproject version and the uv.lock
+# re-baselined for the v3.0.1 release version bump (pyproject version and the uv.lock
 # atlas-aci stanza only)
-PYPROJECT_SHA256 = "d1a0ab5b09d82cd228110d803026ee599d86aea1093e6b7a4123dc16c6f4034c"
-UV_LOCK_SHA256 = "9fcbeba0195699494522a80eab27500e51331cdfd5deb949179814ca6c23d7d9"
+PYPROJECT_SHA256 = "5b50cf2c43e4a2bd78fdff22d379c3508ed16a04a5f4bd1a986e65ab35bdf097"
+UV_LOCK_SHA256 = "5430bec0d957662b6608bf2cf0c777876d791bfffdac754ae6362b48b15827d5"
 BANNED = {
     "safe", "proven", "guaranteed", "compliant", "compatible", "incompatible", "breaking",
     "applied", "trusted", "certified", "authentic", "superior", "optimal", "better", "improves",
@@ -448,7 +448,7 @@ def test_the_documentation_reports_the_committed_real_run_and_nothing_more():
 
 def test_the_changelog_and_the_readme_carry_one_entry_each():
     lines = (ROOT / "CHANGELOG.md").read_text().splitlines()
-    added = lines.index("### Added", lines.index("## [Unreleased]"))
+    added = lines.index("### Added", lines.index("## [3.0.0] - 2026-11-06"))
     bullets = [i for i, line in enumerate(lines) if line.startswith("- **") and i > added]
     for index, title in enumerate(
         ("Cross-repository package links (ACI-S30).", "Git co-change correlation (ACI-S33).",

@@ -560,9 +560,9 @@ def test_the_changelog_and_readme_record_the_surface():
         "OpenAPI 3.1 contract import",
     ):
         assert title not in entry
-    added = lines.index("### Added", lines.index("## [Unreleased]"))
+    added = lines.index("### Added", lines.index("## [3.0.0] - 2026-11-06"))
     first_bullet = next(i for i, line in enumerate(lines) if line.startswith("- **") and i > added)
-    assert first_bullet == start  # the new entry sits at the top of Unreleased/Added
+    assert first_bullet == start  # the new entry sits at the top of 3.0.0/Added
     readme = (ROOT / "README.md").read_text().splitlines()
     row = next(line for line in readme if "docs/cross-repository-links.md" in line)
     assert row.startswith("|") and "not a call" in row and "CLI only, no MCP op" in row
