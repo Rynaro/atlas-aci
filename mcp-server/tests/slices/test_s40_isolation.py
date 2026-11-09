@@ -30,7 +30,7 @@ FROZEN = {
     "protocol/http.py": "6afbd23147c6304d9a1f646a82a2c27c937ffc1786b8f5500f8595b1fa0b7f5a",
     "config.py": "9593feb511711113b1c03885233a9da7615a9d7abdf8ab62a75cf345c9251871",
     "enforcement.py": "000eeb5ef65a6d098354708405b5288ff9d6ce2718701ab0d318c60b6558fda9",
-    "codegraph.py": "5dbc8433d8a9bb3db80ebbe2d04d1bcfc3f6aa252ea9166e3c94e277e9527026",
+    "codegraph.py": "4184d6214c1e252439e4cc332213dcf58614c0a7cc3e96beb3d3d5ee70c7e850",
     "query/leases.py": "017e8c3ea847f37f0ad548049f50dc1438dc0bb2442fd76bc54598fae92e90aa",
     "query/paging.py": "4924bbc6092e3204e1e805e6a5cc5255b524e55f90ce8260d9fa59d513c2801d",
     "query/impact.py": "7e4233218f36be9b51ff11989382fa6c16be301b5a55679f676d2c36bc6d09e9",

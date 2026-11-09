@@ -49,6 +49,21 @@ if TYPE_CHECKING:
 
 log = structlog.get_logger()
 
+
+def _close_source_builder(builder: Any) -> None:
+    """Close a source-snapshot builder without discarding an already published build.
+
+    Once the graph is published, a stage-directory cleanup failure is only litter
+    (the next build reaps it); raising would turn a complete build into a failure.
+    """
+    try:
+        builder.close()
+    except OSError as exc:
+        if not builder.published:
+            raise
+        log.warning("source_stage_cleanup_failed", error=str(exc))
+
+
 # Map file extensions → tree-sitter language names.
 #
 # Beyond the programming languages, the web/markup/config formats below let
@@ -2668,7 +2683,7 @@ class CodeGraph:
                 predecessor.close()
             self._source_builder = None
             if builder is not None:
-                builder.close()
+                _close_source_builder(builder)
             if conn is not None:
                 conn.close()
             for path in (tmp_path, Path(str(tmp_path) + "-journal")):
@@ -2888,7 +2903,7 @@ class CodeGraph:
             if predecessor is not None:
                 predecessor.close()
             if builder is not None:
-                builder.close()
+                _close_source_builder(builder)
             if conn is not None:
                 conn.close()
             for leftover in (tmp_path, Path(str(tmp_path) + "-journal")):
@@ -3096,7 +3111,7 @@ class CodeGraph:
             if predecessor is not None:
                 predecessor.close()
             if builder is not None:
-                builder.close()
+                _close_source_builder(builder)
             if conn is not None:
                 conn.close()
             for leftover in (tmp_path, Path(str(tmp_path) + "-journal")):
