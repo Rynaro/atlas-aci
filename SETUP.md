@@ -11,20 +11,23 @@ the host of your choice. The server implements the bounded ACI from
 
 ## Eidolons for contributors
 
-This repository uses Eidolons 4.6.2 with ATLAS, RAMZA, Vivi, and IDG. Claude
+This repository uses Eidolons 4.8.0 with ATLAS, RAMZA, Vivi, and IDG. Claude
 Code, Codex, and Cursor adapters are committed; canonical agent packages and
 machine-specific MCP configurations are restored locally. Before using the
 adapters on a new checkout, install the [Eidolons CLI](https://github.com/Rynaro/eidolons)
 and have Docker running, `jq` available, and Python 3.11+ on your PATH, then run:
 
 ```bash
-eidolons upgrade self --ref v4.6.2 --non-interactive
+eidolons upgrade self --ref v4.8.0 --non-interactive
 bash scripts/setup-eidolons.sh
 ```
 
 The setup command restores agent packages, registers hooks, and installs the
-digest-pinned Atlas-ACI 2.0.0 and CRYSTALIUM 2.5.0 MCPs for all three hosts.
-Open a new host session and approve the project MCPs when prompted. On Codex,
+digest-pinned Atlas-ACI 3.0.0 and CRYSTALIUM 2.5.0 MCPs for all three hosts.
+Since 4.8.0 the MCPs launch through the Eidolons session launcher, which runs
+one container per host session; restart any open host session after setup so
+it picks up the new wiring. Open a new host session and approve the project
+MCPs when prompted. On Codex,
 project trust and hook approval are also required. Cursor's hooks provide
 session-start context; they do not provide per-prompt routing injection.
 
@@ -34,8 +37,11 @@ It intentionally differs from the upstream template, so `eidolons mcp verify`
 reports runtime drift. After a manual `eidolons sync` or
 `eidolons mcp sync --repair-wiring`, run `python3 scripts/configure-eidolons.py`
 again. The helper preserves client-specific settings and refuses custom or
-unrecognized CRYSTALIUM launches. Deep doctor checks in 4.6.2 also report
-legacy skill paths and an obsolete ATLAS schema link in the upstream packages.
+unrecognized CRYSTALIUM launches; it accepts the launcher-wrapped entry and
+rewrites only the serve command. Deep doctor checks in 4.8.0 also report
+missing `verify-incoming` skills and an obsolete ATLAS schema link in the
+upstream packages, and the memory probe cannot find `serve` in the overridden
+CRYSTALIUM arguments.
 
 ## 0. Stack at a glance
 

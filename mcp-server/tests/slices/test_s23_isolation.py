@@ -27,6 +27,10 @@ FROZEN_LOCK_PATH = "mcp-server/uv.lock"
 FROZEN_ROUTED = frozenset({FROZEN_LOCK_PATH})
 FROZEN_LOCK = ROOT / "mcp-server/tests/fixtures/s23/uv.lock.as-recorded.gz"
 FROZEN_LOCK_SHA256 = "6b820f14327cd71951abe8d4a41b2d1962af21b33b492469de82553a31ca2962"
+# Frozen copy of `eidolons.mcp.lock` as recorded at eval time (the live lock moves on with consumer
+# pin upgrades); sha256-pinned below, plain text because it is ~1.5 KB.
+FROZEN_MCP_LOCK = ROOT / "mcp-server/tests/fixtures/s23/eidolons.mcp.lock.as-recorded"
+FROZEN_MCP_LOCK_SHA256 = "ddfed26fa91e6212ba983c90f8ae7691d0272004215e53357f2d8a448556ff51"
 RECEIPT = ROOT / ".spectra/evidence/aci-s23/base-invariants.json"
 RECEIPT_BASE_COMMIT = "1cedf60331ef892f1fb2b3a68eb942bf2dac894b"
 ALLOWED_IMPORTS = {
@@ -174,8 +178,10 @@ def test_manifest_anchors_declared_inputs_and_p0_ids_still_exist():
     assert "--network" in v0["index_argv"] and "none" in v0["index_argv"]
     assert v0["digest"] == "sha256:e2542ef8d569882c560065f0bcaed9ef2a7398e7e61765e25b142a3c93ec7cf7"
     assert list(rec.COUNTERS) == m["cost"]["counters"]
-    lock = (ROOT / "eidolons.mcp.lock").read_text()
-    assert v0["digest"].split(":")[1] in lock
+    # The V0 image digest was the digest-pinned consumer image at eval time: check the frozen lock.
+    frozen_mcp_lock = FROZEN_MCP_LOCK.read_bytes()
+    assert hashlib.sha256(frozen_mcp_lock).hexdigest() == FROZEN_MCP_LOCK_SHA256
+    assert v0["digest"].split(":")[1] in frozen_mcp_lock.decode()
     matrix = {(h["dimension"], h["value"]): h["status"] for h in m["host_matrix"]}
     assert matrix[("OS", "macOS")] == "tested (partial)"
     assert any("recorder" in dim for dim, _ in matrix)
