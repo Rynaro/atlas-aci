@@ -42,13 +42,13 @@ LAZY_IMPORTS = {"mcp", "httpx", "jwt", "cryptography"}
 # Day-1 (a) constants, recorded in .spectra/evidence/aci-s42/base-invariants.json at base 4f470d7.
 TOOLS_SHA = "94f9567a8b00ecaa52d308e52c4c9fa3a4647de260fa63013435a56a4642ac56"
 TOOLS_BYTES = 1631472
-# re-baselined for the v3.0.2 release version bump (pyproject version and the uv.lock
+# re-baselined for the v3.1.0 release version bump (pyproject version and the uv.lock
 # atlas-aci stanza only)
-PYPROJECT_SHA = "89bbab9ce0b3cc69111eaed4c2d7aea35dc6c8ecdde34b2a7f04033b658e10e2"
-UV_LOCK_SHA = "d5aecf7acd3bed2166668746b96ecf850267592d20a68e3bb0eaf8cecf926640"
+PYPROJECT_SHA = "7863d10fd14ff804915ba818a19e4173dde99529e9d42378c6578f450cc03cfd"
+UV_LOCK_SHA = "6acf74013618ad49f4ca2d7bbb1dea1ef611e55a1dfc86fed9fbf322673cfbbf"
 DOCKERFILE_SHA = "8dccfa17c8dfce11e88c93be9ebafe0376c2e7d2ea604c488a61bce426221dbd"
 DOCKERFILE_DEV_SHA = "1ac46d1137ac42b71608e6d0e7042b38b49a1a9054233d487d6508ae175e91e4"
-SRC_TREE_DIGEST = "3529db109941000e7fb36d62543e12e989d309c665d8bb8fac01e53f1cbbad81"
+SRC_TREE_DIGEST = "2bd19a221dbe73677fa508b7ec5474c7f8125fbb13cf5a996eefd19b84d7cf57"
 V3_AGGREGATE_SHA = "64250ba512f18d7f7f8ce9027af920f2bb240320341e8e4b5056e3418dabf80c"
 V3_RECORD_SHA = "400918d65dbb684c47758fd81848ca3ec4678c03536026e2757c4322cfa7f004"
 HOSTS = ("claude-code", "github-copilot", "cursor")
