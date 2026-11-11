@@ -39,12 +39,12 @@ PRODUCER_MODULES = (
 # sha256 at the base commit (fa16b1c) of the producer-fingerprint inputs and the package inits.
 BASE_SHAS = {
     "storage/evidence.py": "88eec05ea6d0f741f3398213fccca893edfff82e7de5a7a91c8ed3b0891a5a97",
-    "storage/snapshots.py": "f1679435892452f99758f9af5935cc3112755469408b0b2a5d1709e1f5d2d095",
+    "storage/snapshots.py": "948f77158ee449c9116d187e4823b5508437056887950187cd9894821a65a6d1",
     "indexing/extraction_cache.py": "6849d31d6b5b78a8a72a33d4ae0eeb8f5ae3c0d5b2c0da6bbc608d8ef70e21e5",  # noqa: E501
     "indexing/retrieval.py": "d53c185c213e5ed35883652f54b7568e53f95dbed995833eea128c029c4d2ece",
     "storage/__init__.py": "a5c86b099d459153c262be671561811557ad2f764d24f4ba7c56e243d50bf8b6",
     "indexing/__init__.py": "e4b9d192790309018248199725d46db643744ee7be19e51355cab5f4cf93db1f",
-    "codegraph.py": "4184d6214c1e252439e4cc332213dcf58614c0a7cc3e96beb3d3d5ee70c7e850",
+    "codegraph.py": "16df794bbfb238870b47c8bd4fc4d5066175507c13f7a69503ea5505f5093303",
     "providers/python_imports.py": "de00688a2826aad7665adfb0c5ca7f6d044250087d645c069cda9452d4938014",  # noqa: E501
     "resolvers/dependencies.py": "e3bd74233b6bac6ddd808f5eb6f473c4211519afa007255ace79b30901e70ccd",
     "extractors/rust.py": "28531780080bfc82e09d328262705a50cbeab05a14e090fe3fe56c5c5406262a",
