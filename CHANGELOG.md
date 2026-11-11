@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.1.0] - 2026-11-11
+
 ### Fixed
 
 - **`graph_query` DSL calls no longer take tens of seconds (#123).** Every call acquired a reader
@@ -40,6 +42,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   call has a server-side deadline, `Config.graph_query_deadline_s` (default 20 s, 0 disables;
   `serve --graph-query-deadline SECONDS`),
   and returns the structured error `GRAPH_DEADLINE_EXCEEDED` when it passes.
+- `codegraph.py` and `storage/snapshots.py` are producer-fingerprint inputs, so a 3.1.0 index
+  records a different producer fingerprint than a 3.0.2 index, and extraction-cache entries
+  written by 3.0.2 are not reused (the cache key covers the producer fingerprint). The schema
+  epoch and export epoch are unchanged, and the seven MCP tools are unchanged. A minor version
+  because `serve` gains `--graph-query-deadline` and calls can now fail with
+  `GRAPH_DEADLINE_EXCEEDED`.
 
 ## [3.0.2] - 2026-11-09
 
