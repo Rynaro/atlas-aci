@@ -8,6 +8,7 @@ from typing import Any
 from atlas_aci.codegraph import SCHEMA_EPOCH, CodeGraph
 from atlas_aci.config import Config
 from atlas_aci.enforcement import Enforcement, ToolError
+from atlas_aci.graph_work import run_blocking
 from atlas_aci.protocol.graph import envelope, request_mode
 from atlas_aci.query.admission import MINIMUM_BUDGET, Admission
 from atlas_aci.query.retrieval import LIMITS as RETRIEVAL_LIMITS
@@ -87,7 +88,7 @@ async def graph_query(
         )
         result = admission.finish(data)
     elif mode == "structured":
-        data = code_graph.published_status()
+        data = await run_blocking(code_graph.published_status, config.max_bound_field_elements)
         state = data["completeness"]["state"]
         result = envelope(
             data,
@@ -96,7 +97,7 @@ async def graph_query(
             evidence_status="available" if state == "complete" else state,
         )
     else:
-        result = code_graph.query(args["query"])
+        result = await run_blocking(code_graph.query, args["query"])
 
     enforcement.record(
         tool="graph_query",

@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import time
 from collections import deque
+from contextvars import ContextVar, Token
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -63,6 +64,20 @@ class ToolCallRecord:
     duration_ms: int
     overflow: bool
     error: str | None
+
+
+@dataclass
+class _OpenCall:
+    records: list[ToolCallRecord]
+    started: float
+
+
+# Records made while a call is being served are held (unlogged) until `finish_call` stamps them
+# with what was actually emitted. Tools record from inside the call, BEFORE the central bounds
+# chokepoint truncates the result and before the serialized size is known, so a record written
+# there can only describe the pre-bound payload (issue #123: `bytes_out=7394470 overflow=False`
+# for a response that was in fact cut down).
+_OPEN_CALL: ContextVar[_OpenCall | None] = ContextVar("atlas_open_call", default=None)
 
 
 class Enforcement:
@@ -183,15 +198,62 @@ class Enforcement:
             error=error,
         )
         self.records.append(rec)
+        open_call = _OPEN_CALL.get()
+        if open_call is not None:
+            open_call.records.append(rec)  # logged by finish_call, once the emitted size is known
+            return
+        self._log(rec)
+
+    @staticmethod
+    def _log(rec: ToolCallRecord) -> None:
         log.info(
             "tool_call",
-            tool=tool,
-            args={k: v for k, v in args.items() if k != "content"},  # don't log raw content
-            bytes_out=bytes_out,
-            ms=duration_ms,
-            overflow=overflow,
-            error=error,
+            tool=rec.tool,
+            args={k: v for k, v in rec.args.items() if k != "content"},  # don't log raw content
+            bytes_out=rec.bytes_out,
+            ms=rec.duration_ms,
+            overflow=rec.overflow,
+            error=rec.error,
         )
+
+    def begin_call(self) -> Token[_OpenCall | None]:
+        """Start holding this call's telemetry until `finish_call` (see `_OPEN_CALL`)."""
+        return _OPEN_CALL.set(_OpenCall([], time.monotonic()))
+
+    def finish_call(
+        self,
+        token: Token[_OpenCall | None],
+        *,
+        tool: str,
+        args: dict[str, Any],
+        bytes_out: int,
+        overflow: bool,
+        error: str | None = None,
+    ) -> None:
+        """Stamp the held records with the bytes actually emitted and whether the result was cut.
+
+        A call that failed before its tool recorded anything (rejected input, deadline, ...)
+        still gets exactly one record, so errors are as visible in telemetry as successes.
+        """
+        call = _OPEN_CALL.get()
+        held = call.records if call is not None else []
+        duration_ms = int((time.monotonic() - call.started) * 1000) if call is not None else 0
+        _OPEN_CALL.reset(token)
+        if not held:
+            self.record(
+                tool=tool,
+                args=args if isinstance(args, dict) else {},
+                bytes_out=bytes_out,
+                duration_ms=duration_ms,
+                overflow=overflow,
+                error=error,
+            )
+            return
+        for rec in held:
+            rec.bytes_out = bytes_out
+            rec.overflow = rec.overflow or overflow
+            rec.error = rec.error or error
+            self._log(rec)
 
     def telemetry_summary(self) -> dict[str, Any]:
         """For the harness to query at mission boundaries."""

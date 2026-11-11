@@ -23,14 +23,13 @@ from mcp.types import CallToolResult, Tool
 from atlas_aci.codegraph import PRODUCED_KINDS, CodeGraph, parse_query_verb
 from atlas_aci.config import Config
 from atlas_aci.enforcement import Enforcement, ToolError
+from atlas_aci.graph_dispatch import graph_call
 from atlas_aci.memex import Memex
 from atlas_aci.protocol.graph import (
     GRAPH_INPUT_SCHEMA,
     GRAPH_OUTPUT_SCHEMA,
     RESERVED,
     bound_status,
-    envelope,
-    no_evidence_data,
     request_mode,
 )
 from atlas_aci.protocol.resources import RESOURCE_TEMPLATE, read_resource
@@ -323,11 +322,14 @@ def apply_central_bounds(
     separate, strictly more informative continuation contract on their own.
     """
     if not isinstance(result, dict):
+        # No element cap applies to a shape we cannot introspect, but the absolute byte ceiling
+        # applies to EVERY response shape: nothing is allowed to skip it by not being a dict.
+        _enforce_byte_ceiling(name, result, enforcement)
         return result
 
     if name == "graph_query" and any(key in arguments for key in RESERVED) and "data" in result:
         if arguments.get("op") == "status":
-            result = bound_status(result, enforcement.config.max_bound_field_elements)
+            result = _bounded_status(result, enforcement)
         else:
             from atlas_aci.protocol.graph import validate_navigation
 
@@ -431,6 +433,32 @@ def apply_central_bounds(
     # max_response_bytes docstring). Measured on the compact serialization
     # (information content), not the indent=2 presentation whitespace the
     # wire format uses for readability.
+    _enforce_byte_ceiling(name, result, enforcement)
+    return result
+
+
+def _bounded_status(payload: dict[str, Any], enforcement: Enforcement) -> dict[str, Any]:
+    """Element-cap the status projection, then shrink the per-file lists further until the whole
+    result fits the absolute byte ceiling.
+
+    The element cap alone is not a byte bound (a row can be arbitrarily wide); status is a summary
+    whose lists are an excerpt, so cutting them harder is always legitimate and is signalled in
+    `bounds` (`truncated`, `total_count` vs `returned_count`). Only when even a one-row excerpt
+    cannot fit does the ceiling backstop below refuse the response.
+    """
+    limit = enforcement.config.max_bound_field_elements
+    ceiling = enforcement.config.max_response_bytes
+    while True:
+        # Re-project from the ORIGINAL payload each time: its CountedLists keep the true totals.
+        projected = bound_status(payload, limit)
+        # A structured-content result carries the payload twice (text + structuredContent).
+        size = 2 * len(json.dumps(projected, separators=(",", ":"), default=str).encode("utf-8"))
+        if size <= ceiling or limit <= 1:
+            return projected
+        limit = max(1, min(limit // 2, limit * ceiling // size))
+
+
+def _enforce_byte_ceiling(name: str, result: Any, enforcement: Enforcement) -> None:
     body = json.dumps(result, separators=(",", ":"), default=str).encode("utf-8")
     if enforcement.over_absolute_byte_ceiling(body):
         raise ToolError(
@@ -440,7 +468,6 @@ def apply_central_bounds(
             f"truncation.",
             retry_hint="narrower_scope",
         )
-    return result
 
 
 async def dispatch_tool_call(
@@ -498,40 +525,18 @@ async def dispatch_tool_call(
 
     if name in {"search_symbol", "graph_query"}:
         with ExitStack() as stack:
-            try:
-                reader = stack.enter_context(code_graph.reader_lease())
-            except ToolError:
-                if (
-                    mode != "structured"
-                    or arguments.get("op") != "status"
-                    or not code_graph.index_is_absent()
-                ):
-                    raise
-                if arguments.get("expected_generation_id") is not None:
-                    raise ToolError(
-                        "SNAPSHOT_MISMATCH", "Requested generation does not match."
-                    ) from None
-                result = envelope(no_evidence_data())
-                return apply_central_bounds(name, arguments, result, enforcement)
-            if (
-                mode == "structured"
-                and arguments.get("expected_generation_id", reader.generation_id)
-                != reader.generation_id
-            ):
-                raise ToolError("SNAPSHOT_MISMATCH", "Requested generation does not match.")
-            if name == "search_symbol":
-                result = await search_symbol(arguments, config, enforcement, reader)
-            elif mode == "structured" and arguments["op"] in {"context", "impact"}:
-                # The dispatch ExitStack owns (and closes) the served reader.
-                result = await graph_query(
-                    arguments, config, enforcement, reader, structured=structured
-                )
-            else:
-                result = await graph_query(arguments, config, enforcement, reader)
-            if mode != "structured":
-                result["generation_id"] = reader.generation_id
-                result["snapshot_id"] = reader.snapshot_id
-                result["source_available"] = reader.snapshot_id is not None
+            # The stack owns (and closes) the leased reader, on every path including cancellation.
+            result = await graph_call(
+                stack,
+                name,
+                arguments,
+                config,
+                enforcement,
+                code_graph,
+                mode,
+                structured,
+                tools={"search_symbol": search_symbol, "graph_query": graph_query},
+            )
             return apply_central_bounds(name, arguments, result, enforcement)
 
     if name == "view_file":
@@ -627,6 +632,79 @@ async def call_tool_result(
         else "status"
     )
     budget = config.max_response_bytes
+    call_token = enforcement.begin_call()
+    emitted: CallToolResult | None = None
+    try:
+        emitted = await _call_tool_result_inner(
+            name,
+            arguments,
+            config,
+            enforcement,
+            memex,
+            code_graph,
+            mode=mode,
+            structured=structured,
+            operation=operation,
+            budget=budget,
+            protocol_version=protocol_version,
+        )
+        return emitted
+    finally:
+        # Telemetry describes what was EMITTED (post-bounds, serialized), never the pre-bound
+        # payload the tool saw — and `overflow` says whether anything was cut or refused.
+        size = 0
+        cut = False
+        failure = None
+        if emitted is not None:
+            text = emitted.content[0].text if emitted.content else ""  # type: ignore[union-attr]
+            size = len(emitted.model_dump_json(by_alias=True, exclude_none=True).encode("utf-8"))
+            cut = _was_cut(text, emitted.isError)
+            failure = _error_code(text) if emitted.isError else None
+        else:
+            failure = "cancelled"  # no result was produced (client disconnect / shutdown)
+        enforcement.finish_call(
+            call_token,
+            tool=name,
+            args=arguments if isinstance(arguments, dict) else {},
+            bytes_out=size,
+            overflow=cut,
+            error=failure,
+        )
+
+
+def _error_code(text: str) -> str | None:
+    """The error code of an emitted (small, fixed-shape) error result."""
+    try:
+        payload = json.loads(text)
+    except ValueError:
+        return None
+    error = payload.get("error") if isinstance(payload, dict) else None
+    if isinstance(error, dict):
+        error = error.get("code")
+    return error if isinstance(error, str) else None
+
+
+def _was_cut(text: str, is_error: bool | None) -> bool:
+    """True when the emitted result was truncated or replaced by a size refusal."""
+    if is_error:
+        return "RESPONSE_TOO_LARGE" in text or "GRAPH_DEADLINE_EXCEEDED" in text
+    return '"truncated":true' in text  # compact JSON: see protocol.results.sdk_result
+
+
+async def _call_tool_result_inner(
+    name: str,
+    arguments: dict[str, Any],
+    config: Config,
+    enforcement: Enforcement,
+    memex: Memex,
+    code_graph: CodeGraph,
+    *,
+    mode: str | None,
+    structured: bool,
+    operation: str,
+    budget: int,
+    protocol_version: str,
+) -> CallToolResult:
     if operation != "status" and isinstance(arguments, dict):
         requested = arguments.get("page_max_bytes" if operation == "page" else "max_bytes", budget)
         if type(requested) is int and 0 <= requested <= budget:

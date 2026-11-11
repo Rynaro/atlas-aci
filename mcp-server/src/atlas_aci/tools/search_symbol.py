@@ -8,6 +8,7 @@ from typing import Any
 from atlas_aci.codegraph import SCHEMA_EPOCH, CodeGraph
 from atlas_aci.config import Config
 from atlas_aci.enforcement import Enforcement, ToolError
+from atlas_aci.graph_work import run_blocking
 
 
 async def search_symbol(
@@ -34,7 +35,7 @@ async def search_symbol(
             "different_tool",
         )
 
-    result = code_graph.search_symbol(name=name, kind=kind)
+    result = await run_blocking(code_graph.search_symbol, name, kind)
 
     bytes_out = sum(len(d.get("path", "")) + 32 for d in result["definitions"]) + sum(
         len(r.get("path", "")) + 32 for r in result["references"]

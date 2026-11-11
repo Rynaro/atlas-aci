@@ -13,7 +13,9 @@ import os
 import secrets
 import stat
 import subprocess
-from contextlib import suppress
+import threading
+from collections import OrderedDict
+from contextlib import nullcontext, suppress
 from pathlib import Path
 
 from atlas_aci.storage import evidence as ev
@@ -640,15 +642,19 @@ def _compare_binding(manifest, expected):
 
 
 class SourceLease:
-    def __init__(self, fd, manifest, snapshot_id):
+    def __init__(self, fd, manifest, snapshot_id, tables=None):
         self.fd = fd
         self.chunk_catalog = None
         self.chunk_catalog_bytes = 0
         self.manifest = manifest
         self.snapshot_id = snapshot_id
-        self.index = {r["sha256"]: r for r in manifest["pack"]["index"]}
-        self.current = {r["path"]: r["sha256"] for r in manifest["current"]}
-        self.bindings = {(r["path"], r["sha256"]): r["available"] for r in manifest["bindings"]}
+        if tables is not None:
+            # Shared, read-only lookup tables from a memoized verification: not rebuilt per call.
+            self.index, self.current, self.bindings = tables
+        else:
+            self.index = {r["sha256"]: r for r in manifest["pack"]["index"]}
+            self.current = {r["path"]: r["sha256"] for r in manifest["current"]}
+            self.bindings = {(r["path"], r["sha256"]): r["available"] for r in manifest["bindings"]}
 
     def close(self):
         if self.fd is not None:
@@ -714,18 +720,98 @@ class SourceLease:
         self.close()
 
 
-def acquire(atlas_dir, snapshot_id, *, repository, expected=None, chunk_catalog_bytes=None):
+# ---- Verified-pack memo (issue #123) ----
+#
+# `acquire` authenticates a snapshot by hashing the whole manifest and every byte of the pack. At
+# corpus scale that is tens of seconds of CPU, and it used to repeat for EVERY tool call. Published
+# objects are immutable (`pack.<sha256>.bin` is content-addressed, manifests are written once and
+# renamed into place), so the verdict can be remembered per process as long as the very same files
+# are still there. "The same file" is the (device, inode, size, mtime_ns, ctime_ns) of the OPEN
+# descriptor — read from the fd that will serve the reads, so a replace-by-rename or an in-place
+# edit forces a full re-verification. Only callers passing `memo=True` (the read-only server) use
+# this; indexing, import and predecessor loads always verify in full.
+_MEMO_MAX = 4
+_MEMO: OrderedDict[tuple[str, str], dict] = OrderedDict()
+_MEMO_LOCK = threading.Lock()
+_VERIFY_LOCK = threading.RLock()  # one full verification at a time; waiters then hit the memo
+
+
+def clear_memo():
+    with _MEMO_LOCK:
+        _MEMO.clear()
+
+
+def _signature(fd):
+    info = os.fstat(fd)
+    return (info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns, info.st_ctime_ns)
+
+
+def _memo_get(key, manifest_sig, pack_sig, need_catalog):
+    with _MEMO_LOCK:
+        entry = _MEMO.get(key)
+        if (
+            entry is not None
+            and entry["manifest_sig"] == manifest_sig
+            and entry["pack_sig"] == pack_sig
+            and (not need_catalog or entry["catalog"] is not None)
+        ):
+            _MEMO.move_to_end(key)
+            return entry
+    return None
+
+
+def _catalog_capacity(pack, allowance):
+    # Exact canonical size depends only on fixed hash widths and blob lengths.
+    return (
+        2
+        + sum(
+            (69 if r["length"] == 0 else 68 + ((r["length"] + AUTH_CHUNK - 1) // AUTH_CHUNK) * 67)
+            for r in pack["index"]
+        )
+        + max(0, len(pack["index"]) - 1)
+    )
+
+
+def acquire(
+    atlas_dir,
+    snapshot_id,
+    *,
+    repository,
+    expected=None,
+    chunk_catalog_bytes=None,
+    memo=False,
+    trusted_binding=False,
+):
+    """Authenticate and lease one snapshot.
+
+    ``memo=True`` reuses a previous full verification of the same open files (see above).
+    ``trusted_binding=True`` additionally means the caller already proved the graph<->source
+    binding for this exact (database, snapshot) pair and passes no ``expected``.
+    """
     require(ev.hash_value(snapshot_id), "snapshot identifier")
     directory_fd = directory(atlas_dir / "source-snapshots")
+    manifest_fd = None
     pack_fd = None
     try:
-        raw = read_file(directory_fd, "manifest." + snapshot_id + ".json")
-        require(hashlib.sha256(raw).hexdigest() == snapshot_id, "manifest checksum")
-        manifest = validate_manifest(json.loads(raw))
-        require(raw == ev.canonical(manifest).encode(), "canonical manifest")
+        key = (str(atlas_dir), snapshot_id)
+        manifest_fd = open_file(directory_fd, "manifest." + snapshot_id + ".json")
+        manifest_sig = _signature(manifest_fd)
+        with _MEMO_LOCK:
+            known = _MEMO.get(key) if memo else None
+            manifest = (
+                known["manifest"] if known and known["manifest_sig"] == manifest_sig else None
+            )
+        if manifest is None:
+            with os.fdopen(os.dup(manifest_fd), "rb") as stream:
+                raw = stream.read()
+            require(hashlib.sha256(raw).hexdigest() == snapshot_id, "manifest checksum")
+            manifest = validate_manifest(json.loads(raw))
+            require(raw == ev.canonical(manifest).encode(), "canonical manifest")
         require(manifest["context"]["repository"] == str(repository), "foreign repository")
         if expected is not None:
             _compare_binding(manifest, expected)
+        elif memo and not trusted_binding:
+            raise ValueError("Invalid source snapshot: memoized acquisition needs a binding")
         pack = manifest["pack"]
         catalog = None
         catalog_size = 0
@@ -734,64 +820,103 @@ def acquire(atlas_dir, snapshot_id, *, repository, expected=None, chunk_catalog_
                 type(chunk_catalog_bytes) is int and chunk_catalog_bytes > 0,
                 "source chunk catalog allowance",
             )
-            # Exact canonical size depends only on fixed hash widths and blob lengths.
-            catalog_size = (
-                2
-                + sum(
-                    (
-                        69
-                        if r["length"] == 0
-                        else 68 + ((r["length"] + AUTH_CHUNK - 1) // AUTH_CHUNK) * 67
-                    )
-                    for r in pack["index"]
-                )
-                + max(0, len(pack["index"]) - 1)
-            )
+            catalog_size = _catalog_capacity(pack, chunk_catalog_bytes)
             require(catalog_size <= chunk_catalog_bytes, "source chunk catalog capacity")
             catalog = {}
         pack_fd = open_file(directory_fd, "pack." + pack["sha256"] + ".bin")
+        pack_sig = _signature(pack_fd)
         require(os.fstat(pack_fd).st_size == pack["size"], "pack size")
         require(os.pread(pack_fd, len(HEADER), 0) == HEADER, "pack header")
-        sha = hashlib.sha256()
-        position = 0
-        while position < pack["size"]:
-            block = os.pread(pack_fd, min(CHUNK, pack["size"] - position), position)
-            require(bool(block), "truncated pack")
-            sha.update(block)
-            position += len(block)
-        require(sha.hexdigest() == pack["sha256"], "pack checksum")
-        lease = SourceLease(pack_fd, manifest, snapshot_id)
-        for row in manifest["pack"]["index"]:
-            # Authenticate ranges individually without retaining all bytes.
-            index = lease.index[row["sha256"]]
-            offset = index["offset"]
-            remaining = index["length"]
-            blob = hashlib.sha256()
-            hashes = []
-            while remaining:
-                step = min(AUTH_CHUNK if catalog is not None else CHUNK, remaining)
-                data = os.pread(pack_fd, step, offset)
-                require(bool(data) and (catalog is None or len(data) == step), "blob truncation")
-                blob.update(data)
-                if catalog is not None:
-                    hashes.append(hashlib.sha256(data).hexdigest())
-                offset += len(data)
-                remaining -= len(data)
-            require(blob.hexdigest() == row["sha256"], "blob checksum")
+
+        def finish(entry):
+            lease = SourceLease(pack_fd, manifest, snapshot_id, entry["tables"])
             if catalog is not None:
-                catalog[row["sha256"]] = hashes
-        if catalog is not None:
-            actual_size = len(ev.canonical(catalog).encode())
-            require(
-                actual_size <= catalog_size <= chunk_catalog_bytes, "source chunk catalog capacity"
-            )
-            lease.chunk_catalog = catalog
-            lease.chunk_catalog_bytes = actual_size
-        pack_fd = None
-        return lease
+                lease.chunk_catalog = entry["catalog"]
+                lease.chunk_catalog_bytes = entry["catalog_bytes"]
+            return lease
+
+        if memo:
+            hit = _memo_get(key, manifest_sig, pack_sig, catalog is not None)
+            if hit is not None:
+                lease = finish(hit)
+                pack_fd = None
+                return lease
+        with _VERIFY_LOCK if memo else nullcontext():
+            if memo:
+                hit = _memo_get(key, manifest_sig, pack_sig, catalog is not None)
+                if hit is not None:
+                    lease = finish(hit)
+                    pack_fd = None
+                    return lease
+            sha = hashlib.sha256()
+            position = 0
+            while position < pack["size"]:
+                block = os.pread(pack_fd, min(CHUNK, pack["size"] - position), position)
+                require(bool(block), "truncated pack")
+                sha.update(block)
+                position += len(block)
+            require(sha.hexdigest() == pack["sha256"], "pack checksum")
+            lease = SourceLease(pack_fd, manifest, snapshot_id)
+            for row in manifest["pack"]["index"]:
+                # Authenticate ranges individually without retaining all bytes.
+                index = lease.index[row["sha256"]]
+                offset = index["offset"]
+                remaining = index["length"]
+                blob = hashlib.sha256()
+                hashes = []
+                while remaining:
+                    step = min(AUTH_CHUNK if catalog is not None else CHUNK, remaining)
+                    data = os.pread(pack_fd, step, offset)
+                    require(
+                        bool(data) and (catalog is None or len(data) == step), "blob truncation"
+                    )
+                    blob.update(data)
+                    if catalog is not None:
+                        hashes.append(hashlib.sha256(data).hexdigest())
+                    offset += len(data)
+                    remaining -= len(data)
+                require(blob.hexdigest() == row["sha256"], "blob checksum")
+                if catalog is not None:
+                    catalog[row["sha256"]] = hashes
+            catalog_actual = 0
+            if catalog is not None:
+                catalog_actual = len(ev.canonical(catalog).encode())
+                require(
+                    catalog_actual <= catalog_size <= chunk_catalog_bytes,
+                    "source chunk catalog capacity",
+                )
+                lease.chunk_catalog = catalog
+                lease.chunk_catalog_bytes = catalog_actual
+            if memo:
+                with _MEMO_LOCK:
+                    previous = _MEMO.get(key)
+                    keep = (
+                        previous is not None
+                        and previous["manifest_sig"] == manifest_sig
+                        and previous["pack_sig"] == pack_sig
+                    )
+                    _MEMO[key] = {
+                        "manifest": manifest,
+                        "manifest_sig": manifest_sig,
+                        "pack_sig": pack_sig,
+                        "tables": (lease.index, lease.current, lease.bindings),
+                        "catalog": catalog
+                        if catalog is not None
+                        else (previous["catalog"] if keep else None),
+                        "catalog_bytes": catalog_actual
+                        if catalog is not None
+                        else (previous["catalog_bytes"] if keep else 0),
+                    }
+                    _MEMO.move_to_end(key)
+                    while len(_MEMO) > _MEMO_MAX:
+                        _MEMO.popitem(last=False)
+            pack_fd = None
+            return lease
     finally:
         if pack_fd is not None:
             os.close(pack_fd)
+        if manifest_fd is not None:
+            os.close(manifest_fd)
         os.close(directory_fd)
 
 

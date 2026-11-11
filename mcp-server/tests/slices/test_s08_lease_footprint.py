@@ -178,13 +178,16 @@ def test_validation_scope_is_one_lease(tmp_path, monkeypatch):
         assert not first.epoch_ok()
         with graph.reader_lease() as second:
             assert second.epoch_ok()
-            assert len(calls) == 2 and calls[0] != calls[1]
-        # New request must validate the actual new handle, not a token cache.
+            # Issue #123: the exhaustive authentication of an immutable generation runs once per
+            # process (memoized by the identity of the verified file), not once per lease.
+            assert len(calls) == 1
+        # A changed file must be validated again by the actual new handle, never served from
+        # the memo.
         with sqlite3.connect(graph.db_path) as conn:
             conn.execute("UPDATE manifest SET value='{}' WHERE key='source_observations'")
         with pytest.raises(ToolError), graph.reader_lease():
             pytest.fail("prior request validation leaked across requests")
-        assert len(calls) == 3
+        assert len(calls) == 2
     finally:
         graph.close()
 

@@ -758,8 +758,9 @@ def bound_status(payload: dict[str, Any], limit: int) -> dict[str, Any]:
         if isinstance(value, dict):
             return {key: project(child, path + "/" + key) for key, child in value.items()}
         if isinstance(value, list):
-            total = len(value)
-            prefix = value[:limit]
+            # A producer that bounded the list itself (CountedList) reports the true total.
+            total = max(len(value), getattr(value, "total", 0))
+            prefix = list(value[:limit])
             records[path] = {
                 "total_count": total,
                 "returned_count": len(prefix),
