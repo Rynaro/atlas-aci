@@ -115,6 +115,16 @@ def cli(ctx: click.Context, log_level: str) -> None:
 @click.option("--impact-max-diff-occurrences", default=None, type=click.IntRange(min=0))
 @click.option("--impact-max-changed-files", default=None, type=click.IntRange(min=0))
 @click.option(
+    "--graph-query-deadline",
+    "graph_query_deadline",
+    default=None,
+    type=click.FloatRange(0, 3600),
+    help=(
+        "Server-side deadline in seconds for one graph_query/search_symbol call; 0 disables "
+        "it (default 20). A call past it fails with GRAPH_DEADLINE_EXCEEDED."
+    ),
+)
+@click.option(
     "--transport",
     default="stdio",
     show_default=True,
@@ -159,6 +169,7 @@ def serve(
     impact_max_diff_entities: int | None = None,
     impact_max_diff_occurrences: int | None = None,
     impact_max_changed_files: int | None = None,
+    graph_query_deadline: float | None = None,
     transport: str = "stdio",
     host: str | None = None,
     port: int | None = None,
@@ -202,6 +213,7 @@ def serve(
             impact_max_diff_occurrences=impact_max_diff_occurrences,
             impact_max_changed_files=impact_max_changed_files,
             http_options=http_options,
+            graph_query_deadline=graph_query_deadline,
         )
         return
 
@@ -216,6 +228,8 @@ def serve(
         )
         if value is not None
     }
+    if graph_query_deadline is not None:
+        diff_options["graph_query_deadline_s"] = graph_query_deadline
     config = Config(
         repo=repo.resolve(),
         memex_root=(memex_root or repo / ".atlas" / "memex").resolve(),
@@ -229,6 +243,9 @@ def serve(
         validate_configuration(config)
     except (ValueError, OSError) as exc:
         raise click.ClickException(str(exc)) from exc
+    from atlas_aci.graph_dispatch import start_graph_warmup
+
+    start_graph_warmup(config)
     try:
         asyncio.run(run_stdio(config))
     except (ValueError, OSError) as exc:
@@ -247,6 +264,7 @@ def _serve_http(
     impact_max_diff_occurrences: int | None,
     impact_max_changed_files: int | None,
     http_options: dict[str, Any],
+    graph_query_deadline: float | None = None,
 ) -> None:
     """`serve --transport http`: the HTTP module is imported here, never at CLI import."""
     from atlas_aci.protocol.http import LoopbackError, RefusedError, resolve_loopback, run_http
@@ -272,6 +290,8 @@ def _serve_http(
         )
         if value is not None
     }
+    if graph_query_deadline is not None:
+        diff_options["graph_query_deadline_s"] = graph_query_deadline
     try:
         config = Config(
             repo=repo.resolve(),
@@ -296,6 +316,9 @@ def _serve_http(
         validate_configuration(config)
     except (ValueError, OSError) as exc:
         raise click.ClickException(str(exc)) from exc
+    from atlas_aci.graph_dispatch import start_graph_warmup
+
+    start_graph_warmup(config)
     try:
         asyncio.run(run_http(config))
     except LoopbackError as exc:
@@ -346,6 +369,10 @@ def serve_shared(shared_config: Path) -> None:
         validate_deployment(deployment)
     except DeploymentError as exc:
         raise click.ClickException(str(exc)) from None
+    from atlas_aci.graph_dispatch import start_graph_warmup
+
+    for repository_config in deployment.configs.values():
+        start_graph_warmup(repository_config)
     try:
         asyncio.run(run_shared(deployment))
     except LoopbackError as exc:

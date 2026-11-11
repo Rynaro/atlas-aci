@@ -19,6 +19,7 @@ from test_s34_support import (
 )
 
 from atlas_aci import __main__ as entry
+from atlas_aci.codegraph import clear_authentication_memo
 from atlas_aci.overlays import runtime
 from atlas_aci.query import diff as symbol_diff
 from atlas_aci.query.diff import Side
@@ -78,6 +79,9 @@ def _unreadable(mp):
         raise ValueError("source unavailable")
 
     mp.setattr(snapshots.SourceLease, "read", refuse)
+    # The lease-time source reads that used to surface this failure run once per generation now
+    # (issue #123); forget the remembered authentication so the patched read is reached.
+    clear_authentication_memo()
 
 
 def _tampered(mp, module, name, key):

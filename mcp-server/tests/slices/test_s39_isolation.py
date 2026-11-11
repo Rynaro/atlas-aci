@@ -32,7 +32,7 @@ GRAPH_OUTPUT_SHA = "713ec5b6b2af963d556ddc3829dfd6919d52b3be2a9d70d918a5a6e270d4
 # atlas-aci stanza only)
 PYPROJECT_SHA = "89bbab9ce0b3cc69111eaed4c2d7aea35dc6c8ecdde34b2a7f04033b658e10e2"
 UV_LOCK_SHA = "d5aecf7acd3bed2166668746b96ecf850267592d20a68e3bb0eaf8cecf926640"
-SERVER_PY_SHA = "21393e61dfbe9ec4ae93f55f7b9c0abf17029681b24f75395d143c955eeb13f7"
+SERVER_PY_SHA = "e5867df89d60a479d9bdc832be4ba282113c2a30c08cb5d2793e53d9bc909ebf"
 MARKERS = re.compile(
     r"EXTRACTED|INFERRED|AMBIGUOUS|god_node|label_propagation|rationale_for"
     r"|CREATE TABLE IF NOT EXISTS edges"
@@ -87,6 +87,7 @@ NEW_SERVE_PARAMS = {
     "max_inflight",
     "max_body_bytes",
     "allowed_origins",
+    "graph_query_deadline",  # issue #123: serve --graph-query-deadline
 }
 BASE_PROTOCOL = {
     "__init__.py",

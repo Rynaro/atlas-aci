@@ -279,8 +279,10 @@ isolation, and it does not remove these limits:
 
 - One process and one address space serve every principal and repository; a bug that crosses a
   repository boundary in memory is not contained.
-- Synchronous operations (JWT verification, the policy reload, graph traversal and the file tools)
-  run on the single event loop and block it for every principal while they run.
+- Synchronous operations (JWT verification, the policy reload, structured graph traversal between
+  its yield points and the file tools) run on the single event loop and block it for every principal
+  while they run. Legacy `graph_query` verbs, `status` and `search_symbol` run on graph worker
+  threads under a deadline (`Config.graph_query_deadline_s`, 20 s) and are cancelled on disconnect.
 - Timing side channels are not addressed: latency can reveal that a repository exists or how large
   a result was.
 - `Enforcement.record` logs tool arguments (patterns, paths) to the operator's stderr at the Atlas

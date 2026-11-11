@@ -7,6 +7,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **`graph_query` DSL calls no longer take tens of seconds (#123).** Every call acquired a reader
+  lease, and every lease re-authenticated the entire published generation: it re-parsed and
+  re-validated every observation, occurrence and evidence row, rebuilt the graph-to-source binding
+  closure and re-hashed the whole source pack. On a 12k-file corpus that was the cost of every
+  verb, whatever the size of the answer. The verdict is now computed once per process per
+  generation and remembered, keyed by the identity of the exact files verified (device, inode,
+  size, mtime and ctime of the open descriptors; a replaced or edited file is verified in full
+  again, and so is a database with a journal or WAL sidecar). `serve` runs that one authentication
+  in the background at startup. Leased queries also stop re-validating the observation records on
+  every search. No schema change and no re-index: the graph epoch stays 9.
+- **`callers_of` and `subclasses_of` no longer cost refs x edges (#123).** The unresolved-reference
+  count probed `edges` once per reference through an index that only narrows to edges of the same
+  name (about 3.5 s at 2,000 references to one name, effectively unbounded at the tens of
+  thousands a common name has in a Rails corpus). It is now one linear pass per name.
+  `rationale:` is bounded by the response cap in SQL (`rationale_count` is still the true total),
+  and `god_nodes:` / `communities:` read each file's symbols once instead of issuing a statement
+  per edge, with the result memoized per generation.
+- **`graph_query op=status` is bounded where it is built, and its telemetry is truthful (#123).**
+  The per-file lists were materialized in full (7.4 MB at 11.8k files) and cut afterwards, and the
+  `tool_call` line was written from inside the tool, before truncation, so it logged the
+  pre-bound size with `overflow=False`. The lists are now built bounded (truncation is signalled in
+  `bounds`, with the true totals), `status` shrinks them further when the result would not fit the
+  1 MiB ceiling, the ceiling now applies to responses of any shape (non-object results used to skip
+  it), and `tool_call` reports the emitted bytes, `overflow`, and the error code for failed calls.
+- **A client disconnect now stops graph work, and one slow query no longer stalls the server
+  (#123).** Graph reads ran inline on the event loop with no cancellation point. They now run on a
+  worker pool (`Config.graph_workers`) under a guard: cancellation interrupts the running SQLite
+  statement and joins the worker before the lease closes. Every `search_symbol` / `graph_query`
+  call has a server-side deadline, `Config.graph_query_deadline_s` (default 20 s, 0 disables;
+  `serve --graph-query-deadline SECONDS`),
+  and returns the structured error `GRAPH_DEADLINE_EXCEEDED` when it passes.
+
 ## [3.0.2] - 2026-11-09
 
 Carries the 3.0.1 fix below. 3.0.2 is the first published release that contains it.

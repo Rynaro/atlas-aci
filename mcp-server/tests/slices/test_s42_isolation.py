@@ -48,7 +48,7 @@ PYPROJECT_SHA = "89bbab9ce0b3cc69111eaed4c2d7aea35dc6c8ecdde34b2a7f04033b658e10e
 UV_LOCK_SHA = "d5aecf7acd3bed2166668746b96ecf850267592d20a68e3bb0eaf8cecf926640"
 DOCKERFILE_SHA = "8dccfa17c8dfce11e88c93be9ebafe0376c2e7d2ea604c488a61bce426221dbd"
 DOCKERFILE_DEV_SHA = "1ac46d1137ac42b71608e6d0e7042b38b49a1a9054233d487d6508ae175e91e4"
-SRC_TREE_DIGEST = "9242a7f60fbc409c2d3098afef388b858cabba28f8d4c316634af7969f628fb0"
+SRC_TREE_DIGEST = "3529db109941000e7fb36d62543e12e989d309c665d8bb8fac01e53f1cbbad81"
 V3_AGGREGATE_SHA = "64250ba512f18d7f7f8ce9027af920f2bb240320341e8e4b5056e3418dabf80c"
 V3_RECORD_SHA = "400918d65dbb684c47758fd81848ca3ec4678c03536026e2757c4322cfa7f004"
 HOSTS = ("claude-code", "github-copilot", "cursor")
@@ -668,7 +668,7 @@ def test_the_product_surface_is_byte_unchanged() -> None:
     digest = hashlib.sha256(
         json.dumps([[str(p.relative_to(root / "src")), sha_of(p)] for p in files]).encode()
     ).hexdigest()
-    assert len(files) == 106 and digest == SRC_TREE_DIGEST
+    assert len(files) == 108 and digest == SRC_TREE_DIGEST
     from atlas_aci.enforcement import READ_ONLY_TOOLS
 
     assert len(READ_ONLY_TOOLS) == 7

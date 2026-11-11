@@ -125,6 +125,15 @@ class Config:
     max_lease_resources: int = 4096
     lease_setup_ms: int = 2000
 
+    # Server-side deadline for one graph_query / search_symbol call (seconds, covering reader
+    # acquisition and the query). Deliberately below the ~30 s that agent harnesses time out
+    # at, so the caller gets a structured GRAPH_DEADLINE_EXCEEDED error rather than a wedged
+    # connection. 0 disables the deadline (client disconnect still cancels).
+    graph_query_deadline_s: float = 20.0
+    # Worker threads for graph work. Graph reads run off the event loop so that one slow
+    # query cannot stall the transport or other requests.
+    graph_workers: int = 4
+
     # Explicit trusted local tokenizer object; never loaded from requests/environment.
     context_tokenizer: object | None = None
 
@@ -180,6 +189,13 @@ class Config:
         ):
             if type(getattr(self, name)) is not int or getattr(self, name) < 0:
                 raise ValueError("Impact diff limits must be finite nonnegative integers: " + name)
+        deadline = self.graph_query_deadline_s
+        if isinstance(deadline, bool) or not isinstance(deadline, int | float):
+            raise ValueError("graph_query_deadline_s must be a number of seconds (0 disables)")
+        if not 0 <= deadline <= 3600:
+            raise ValueError("graph_query_deadline_s must be between 0 and 3600 seconds")
+        if type(self.graph_workers) is not int or not 1 <= self.graph_workers <= 64:
+            raise ValueError("graph_workers must be an integer from 1 to 64")
         self._validate_http()
         self.graph_root = self.graph_root.resolve() if self.graph_root is not None else None
         self.before_repo = self.before_repo.resolve() if self.before_repo is not None else None

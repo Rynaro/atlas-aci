@@ -11,6 +11,7 @@ This module covers the universal baseline for every shipped language.
 
 from __future__ import annotations
 
+import copy
 import fcntl
 import hashlib
 import importlib.metadata
@@ -21,8 +22,10 @@ import secrets
 import sqlite3
 import stat
 import tempfile
+import threading
+from collections import OrderedDict
 from collections.abc import Iterable, Mapping
-from contextlib import contextmanager
+from contextlib import contextmanager, suppress
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from pathlib import Path
@@ -34,6 +37,7 @@ from atlas_aci.config import DEFAULT_MAX_BOUND_FIELD_ELEMENTS, path_is_within
 from atlas_aci.extractors import rust, tsx
 from atlas_aci.frameworks import normalize as normalize_frameworks
 from atlas_aci.frameworks import rails_jobs, rails_models, rails_routes
+from atlas_aci.graph_work import checkpoint
 from atlas_aci.indexing import extraction_cache as xc
 from atlas_aci.indexing import retrieval as ret
 from atlas_aci.label_propagation import label_propagation
@@ -356,6 +360,101 @@ _SCOPED_LANGS: frozenset[str] = frozenset({"python", "ruby"}) | _JS_FAMILY
 # Recompute via:
 #   python -c "from atlas_aci.codegraph import SCHEMA, ddl_hash; print(ddl_hash(SCHEMA))"
 SCHEMA_EPOCH = 9
+
+
+class CountedList(list[Any]):
+    """A list holding a bounded prefix that still reports how many items exist (``total``).
+
+    Compares, serializes and copies as the plain prefix; ``bound_status`` reads ``total`` so a
+    truncated projection is signalled as truncated instead of looking complete.
+    """
+
+    total: int
+
+    def __init__(self, items: Iterable[Any], total: int):
+        super().__init__(items)
+        self.total = total
+
+
+# ---- Authenticated-generation memo (issue #123) ----
+#
+# Acquiring a reader lease authenticates the WHOLE generation: it re-parses every observation,
+# every occurrence and every evidence row, rebuilds the graph<->source binding closure and
+# re-hashes the source pack. Measured on a 12k-file corpus that is the entire cost of a
+# `graph_query` (tens of seconds) and it was repeated on every call. A published generation is
+# immutable (staged file, renamed into place), so the verdict is remembered per process, keyed by
+# the identity of the exact file that was verified. A replaced or edited database has a different
+# (device, inode, size, mtime_ns, ctime_ns) and is verified in full again; so does one with a
+# journal/WAL sidecar. Nothing is persisted: a fresh process always authenticates once.
+_AUTH_MEMO_MAX = 4
+_AUTH_MEMO: OrderedDict[str, dict[str, Any]] = OrderedDict()
+_AUTH_MEMO_LOCK = threading.Lock()
+_AUTH_VERIFY_LOCK = threading.RLock()  # one full authentication at a time
+_AUTH_IN_PROGRESS = [0]
+
+
+_ANALYSIS_MEMO_MAX = 8
+_ANALYSIS_MEMO: OrderedDict[tuple[str, str, int], dict[str, Any]] = OrderedDict()
+_ANALYSIS_MEMO_LOCK = threading.Lock()
+_STATUS_MEMO: OrderedDict[tuple[str, str | None, int], dict[str, Any]] = OrderedDict()
+_STATUS_MEMO_LOCK = threading.Lock()
+
+
+def authentication_in_progress() -> bool:
+    """True while some thread is running a full (uncached) generation authentication."""
+    return _AUTH_IN_PROGRESS[0] > 0
+
+
+def _db_signature(path: Path) -> tuple[int, ...] | None:
+    """Identity of a published DB file, or None when it must not be memoized."""
+    try:
+        for suffix in ("-wal", "-journal", "-shm"):
+            if os.path.lexists(str(path) + suffix):
+                return None
+        info = os.stat(path)
+    except OSError:
+        return None
+    return (info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns, info.st_ctime_ns)
+
+
+def _auth_memo_get(key: str, signature: tuple[int, ...] | None) -> dict[str, Any] | None:
+    if signature is None:
+        return None
+    with _AUTH_MEMO_LOCK:
+        entry = _AUTH_MEMO.get(key)
+        if entry is not None and entry["signature"] == signature:
+            _AUTH_MEMO.move_to_end(key)
+            return entry
+    return None
+
+
+def _remember_authentication(
+    key: str, signature: tuple[int, ...] | None, selected: Path, hit: dict[str, Any]
+) -> None:
+    """Store a completed authentication iff the file is still exactly the one that was read."""
+    if signature is None or _db_signature(selected) != signature:
+        return
+    entry = {k: v for k, v in hit.items() if k != "inputs"}
+    entry["signature"] = signature
+    hit["signature"] = signature
+    with _AUTH_MEMO_LOCK:
+        _AUTH_MEMO[key] = entry
+        _AUTH_MEMO.move_to_end(key)
+        while len(_AUTH_MEMO) > _AUTH_MEMO_MAX:
+            _AUTH_MEMO.popitem(last=False)
+
+
+def clear_authentication_memo() -> None:
+    """Drop every remembered authentication (tests; the next lease verifies in full)."""
+    with _AUTH_MEMO_LOCK:
+        _AUTH_MEMO.clear()
+    with _ANALYSIS_MEMO_LOCK:
+        _ANALYSIS_MEMO.clear()
+    with _STATUS_MEMO_LOCK:
+        _STATUS_MEMO.clear()
+    snap.clear_memo()
+
+
 # Generation kinds that carry authenticated source bytes: a `build`, and the derived
 # generations published over one (ACI-S16 `scip_import`, ACI-S21 `coverage_import`).
 _SOURCE_KINDS = frozenset({"build", "scip_import", "coverage_import"})
@@ -946,6 +1045,9 @@ class CodeGraph:
         self._lease_evidence_status = "unknown"
         self._acquisition_observations = None
         self._acquisition_retrieval_documents = None
+        self._lease_observations: list[dict[str, Any]] | None = None
+        self._lease_histories: list[dict[str, Any]] | None = None
+        self._analysis_cache: dict[tuple[Any, ...], Any] | None = None
         self._source_lease: snap.SourceLease | None = None
         self._source_builder: snap.Builder | None = None
         self._source_predecessor: snap.SourceLease | None = None
@@ -989,7 +1091,12 @@ class CodeGraph:
             if self.read_only or selected != self.db_path:
                 # mode=ro: SQLite never attempts a write, journal, or lock
                 # file for this connection — safe on a read-only mount.
-                self._db = sqlite3.connect(selected.as_uri() + "?mode=ro", uri=True)
+                # check_same_thread=False: a lease is opened on a graph worker thread and then
+                # used from the event loop (and vice versa), strictly one thread at a time —
+                # `graph_work` joins a worker before the lease is closed or reused.
+                self._db = sqlite3.connect(
+                    selected.as_uri() + "?mode=ro", uri=True, check_same_thread=False
+                )
             else:
                 self._db = sqlite3.connect(self.db_path)
                 self._db.executescript(SCHEMA)
@@ -1012,6 +1119,8 @@ class CodeGraph:
         self._validated_lease = False
         self._lease_evidence_status = "unknown"
         self._acquisition_observations = None
+        self._lease_observations = None
+        self._lease_histories = None
         self._close_db()
         self._closed = True
 
@@ -1322,7 +1431,9 @@ class CodeGraph:
             raise RuntimeError("This graph is closed")
         lease = None
         try:
-            lease = snap.acquire(self.atlas_dir, snapshot_id, repository=self.repo)
+            lease = snap.acquire(
+                self.atlas_dir, snapshot_id, repository=self.repo, memo=True, trusted_binding=True
+            )
             yield lease
         except (ValueError, OSError, TypeError, KeyError) as exc:
             raise ToolError(
@@ -1351,70 +1462,46 @@ class CodeGraph:
                 graph_root=self.graph_root,
             )
             try:
-                data = reader._generation_data(reader.db, retain_observations=True)
-                if data is None:
-                    raise ToolError(
-                        "INDEX_UNAVAILABLE",
-                        f"No complete compatible graph generation under {self.atlas_dir}. "
-                        "Run: atlas-aci index --repo <repo>, or reimport a valid graph.",
-                        "different_tool",
-                    )
-                reader._lease_generation_id = data[1]
-                reader._lease_schema_epoch = data[0]["schema"]["epoch"]
-                inputs = data[0]
-                pointer = inputs.get("snapshot", {})
-                if pointer.get("state") == "available":
-                    binding = reader._snapshot_binding(reader.db, reader._acquisition_observations)
-                    expected = {**binding}
-                    reader._source_lease = snap.acquire(
-                        self.atlas_dir,
-                        pointer["id"],
-                        repository=self.repo,
-                        expected=expected,
-                        **(
-                            {"chunk_catalog_bytes": chunk_catalog_bytes}
-                            if chunk_catalog_bytes is not None
-                            else {}
-                        ),
-                    )
-                    actual_context = reader._source_lease.manifest["context"]
-                    if any(
-                        actual_context[k] != value
-                        for k, value in reader._snapshot_context(inputs).items()
-                    ):
-                        raise ValueError("Graph/source provenance contradiction")
-                if inputs["format"] == "atlas-generation.v5":
-                    descriptor = inputs["retrieval"]
-                    wanted, coverage = ret.expected(
-                        reader.db, reader._source_lease, descriptor["coverage"]["source_policy"]
-                    )
-                    if (
-                        reader._acquisition_retrieval_documents != wanted
-                        or descriptor != ret.descriptor(wanted, coverage)
-                    ):
-                        raise ValueError("Retrieval canonical/source document closure")
-                    reader._acquisition_retrieval_documents = None
-                    del wanted, coverage, descriptor
-                # Reuse only facts already authenticated on THIS opened lease.
-                # No traversal SQL/global status materialization is hidden in work counters.
+                selected = reader._read_db_path()
+                key = str(selected)
+                signature = _db_signature(selected)
+                hit = _auth_memo_get(key, signature)
+                if hit is not None and not reader._memo_still_valid(hit, selected):
+                    hit = None
+                cold = hit is None
+                if cold:
+                    with _AUTH_VERIFY_LOCK:
+                        hit = _auth_memo_get(key, signature)
+                        if hit is not None and not reader._memo_still_valid(hit, selected):
+                            hit = None
+                        cold = hit is None
+                        if cold:
+                            _AUTH_IN_PROGRESS[0] += 1
+                            try:
+                                hit, binding = reader._authenticate_full()
+                                reader._bind_source_lease(
+                                    hit, binding, chunk_catalog_bytes, self.atlas_dir
+                                )
+                                _remember_authentication(key, signature, selected, hit)
+                            finally:
+                                _AUTH_IN_PROGRESS[0] -= 1
+                if not cold:
+                    reader._bind_source_lease(hit, None, chunk_catalog_bytes, self.atlas_dir)
+                reader._lease_generation_id = hit["generation_id"]
+                reader._lease_schema_epoch = hit["epoch"]
                 reader._lease_evidence_status = (
                     "partial"
-                    if any(
-                        row.get("type") == "observation" and row["state"] == "failed"
-                        for row in (reader._acquisition_observations or [])
-                    )
+                    if hit["failed_observation"]
                     else "available"
-                    if inputs["format"] in {"atlas-generation.v4", "atlas-generation.v5"}
-                    and reader._source_lease is not None
+                    if hit["evidence_available"] and reader._source_lease is not None
                     else "unknown"
                 )
+                reader._lease_observations = hit["observations"]
+                reader._lease_histories = hit["histories"]
+                reader._prime_fts()
                 reader._validated_lease = True
                 reader._acquisition_observations = None
-                # No full native validation documents or generation-input copies
-                # remain hidden in a retained S13 context-manager frame.
-                if pointer.get("state") == "available":
-                    del binding, expected, actual_context
-                del inputs, data, pointer
+                reader._acquisition_retrieval_documents = None
                 break
             except sqlite3.Error as exc:
                 reader.close()
@@ -1444,6 +1531,113 @@ class CodeGraph:
             yield reader
         finally:
             reader.close()
+
+    def _prime_fts(self) -> None:
+        """Give a served connection the FTS5 state that the exhaustive authentication leaves.
+
+        Authenticating a generation reads `retrieval_fts` (integrity check plus a full scan),
+        which warms FTS5's per-connection index-structure cache. The retrieval/context `work`
+        accounting counts SQLite progress callbacks, and it is part of the replay identity
+        (`retrieval_record_id`), so a connection that skipped the authentication (a remembered
+        generation) must not meter the same query differently from one that ran it. One row read
+        reproduces the warmed state exactly (verified against the pre-memo callback counts).
+        Absent on indexes older than the retrieval store: then there is nothing to prime.
+        """
+        with suppress(sqlite3.Error):
+            self.db.execute("SELECT candidate_id, text FROM retrieval_fts LIMIT 1").fetchall()
+
+    def _memo_still_valid(
+        self, hit: dict[str, Any], selected: Path, signature: tuple[int, ...] | None = None
+    ) -> bool:
+        """Cheap re-check: the connection just opened is the generation that was verified."""
+        try:
+            row = self.db.execute("SELECT value FROM manifest WHERE key='generation_id'").fetchone()
+        except sqlite3.Error:
+            return False
+        return (
+            row is not None
+            and row[0] == hit["generation_id"]
+            and _db_signature(selected)
+            == (signature if signature is not None else hit["signature"])
+        )
+
+    def _authenticate_full(self) -> tuple[dict[str, Any], dict[str, Any] | None]:
+        """The uncached, exhaustive authentication of the generation behind ``self.db``.
+
+        Returns the facts a lease needs plus the graph<->source binding that the (separately
+        authenticated) source pack must still be checked against.
+        """
+        from atlas_aci.enforcement import ToolError
+
+        data = self._generation_data(self.db, retain_observations=True)
+        if data is None:
+            raise ToolError(
+                "INDEX_UNAVAILABLE",
+                f"No complete compatible graph generation under {self.atlas_dir}. "
+                "Run: atlas-aci index --repo <repo>, or reimport a valid graph.",
+                "different_tool",
+            )
+        inputs = data[0]
+        pointer = inputs.get("snapshot", {})
+        observations: list[dict[str, Any]] = self._acquisition_observations or []
+        binding = None
+        if pointer.get("state") == "available":
+            binding = self._snapshot_binding(self.db, self._acquisition_observations)
+        entry: dict[str, Any] = {
+            "generation_id": data[1],
+            "epoch": data[0]["schema"]["epoch"],
+            "snapshot": dict(pointer),
+            "inputs": inputs,
+            "context": self._snapshot_context(inputs)
+            if pointer.get("state") == "available"
+            else {},
+            "failed_observation": any(
+                row.get("type") == "observation" and row["state"] == "failed"
+                for row in observations
+            ),
+            "evidence_available": inputs["format"]
+            in {"atlas-generation.v4", "atlas-generation.v5"},
+            "observations": observations,
+            "histories": [r for r in observations if r.get("type") == "history"],
+        }
+        return entry, binding
+
+    def _bind_source_lease(
+        self,
+        hit: dict[str, Any],
+        binding: dict[str, Any] | None,
+        chunk_catalog_bytes: int | None,
+        atlas_dir: Path,
+    ) -> None:
+        """Acquire this lease's own source-pack descriptor; on a cold path also close the
+        retrieval document set over it (``binding`` is only supplied on a cold path)."""
+        pointer = hit["snapshot"]
+        if pointer.get("state") == "available":
+            options: dict[str, Any] = {}
+            if chunk_catalog_bytes is not None:
+                options["chunk_catalog_bytes"] = chunk_catalog_bytes
+            self._source_lease = snap.acquire(
+                atlas_dir,
+                pointer["id"],
+                repository=self.repo,
+                expected=binding,
+                memo=True,
+                trusted_binding=binding is None,
+                **options,
+            )
+            actual_context = self._source_lease.manifest["context"]
+            if any(actual_context[k] != value for k, value in hit["context"].items()):
+                raise ValueError("Graph/source provenance contradiction")
+        inputs = hit.get("inputs")  # present only on a cold (just authenticated) path
+        if inputs is not None and inputs["format"] == "atlas-generation.v5":
+            descriptor = inputs["retrieval"]
+            wanted, coverage = ret.expected(
+                self.db, self._source_lease, descriptor["coverage"]["source_policy"]
+            )
+            if self._acquisition_retrieval_documents != wanted or descriptor != ret.descriptor(
+                wanted, coverage
+            ):
+                raise ValueError("Retrieval canonical/source document closure")
 
     def epoch_ok(self) -> bool:
         """Validate the pinned handle when present; otherwise inspect RO once."""
@@ -1923,11 +2117,39 @@ class CodeGraph:
             return False
         return True
 
-    def published_status(self) -> dict[str, Any]:
+    def published_status(self, limit: int | None = None) -> dict[str, Any]:
+        """The status projection, memoized per (generation, source snapshot, limit) on a lease.
+
+        It is a pure function of an immutable published generation, and building it scans whole
+        tables (distinct fact paths, row counts) and re-validates the stored coverage, which is
+        hundreds of milliseconds at 10k+ files. Only the limited (bounded) form is memoized.
+        """
+        if limit is None or not self._validated_lease or self._lease_generation_id is None:
+            return self._published_status(limit)
+        key = (self._lease_generation_id, self.snapshot_id, limit)
+        with _STATUS_MEMO_LOCK:
+            hit = _STATUS_MEMO.get(key)
+            if hit is not None:
+                _STATUS_MEMO.move_to_end(key)
+        if hit is None:
+            hit = self._published_status(limit)
+            with _STATUS_MEMO_LOCK:
+                _STATUS_MEMO[key] = hit
+                while len(_STATUS_MEMO) > _ANALYSIS_MEMO_MAX:
+                    _STATUS_MEMO.popitem(last=False)
+        return copy.deepcopy(hit)
+
+    def _published_status(self, limit: int | None = None) -> dict[str, Any]:
         """Project published evidence from this already validated immutable lease.
 
         No source reads, latest-attempt sidecar, current runtime declarations,
         nested reader acquisition or repeated global graph validation belongs here.
+
+        ``limit`` bounds the two per-file lists (``completeness.files`` and ``source.references``)
+        at construction: only the first ``limit`` rows are materialized, as a ``CountedList``
+        that still reports the true total, so ``bound_status`` signals the truncation. Aggregate
+        figures (``stale_count``, ``total_count``) always cover every file. Without a limit the
+        full lists are built (the unbounded form is retained for offline callers and tests).
         """
         if self._closed or not self._validated_lease:
             raise RuntimeError("Published status requires an acquired graph reader")
@@ -1936,7 +2158,7 @@ class CodeGraph:
                 0
             ]
         )
-        published = self._observation_records(self.db, validate=False)
+        published = self._leased_observations()
         coverage = self._read_coverage(self, inputs) if inputs["kind"] in _SOURCE_KINDS else None
         histories = {r["id"]: r for r in published if r["type"] == "history"}
         observations = {r["path"]: r for r in published if r["type"] == "observation"}
@@ -1954,29 +2176,36 @@ class CodeGraph:
                 for row in history["records"]
                 if row["type"] == "occurrence" and row["provenance_state"] == "source"
             )
-        files = []
+        files: list[dict[str, Any]] = []
+        file_total = 0
+        stale_total = 0
         for path, item in sorted(observations.items()):
-            history = histories.get(item["historical_id"])
+            hist = histories.get(item["historical_id"])
+            retained = bool(
+                hist
+                and any(
+                    row["type"] == "projection"
+                    and row["row"].get("source_path" if row["table"] == "edges" else "path") == path
+                    for row in hist["records"]
+                )
+            )
+            stale = retained if hist else (False if coverage else None)
+            file_total += 1
+            stale_total += stale is True
+            if limit is not None and len(files) >= limit:
+                continue
             hashes = (
                 sorted(
                     {
                         row["source_sha256"]
-                        for row in history["records"]
+                        for row in hist["records"]
                         if row["type"] == "occurrence"
                         and row["path"] == path
                         and row["provenance_state"] == "source"
                     }
                 )
-                if history
+                if hist
                 else ([item["observed_source_sha256"]] if item["state"] == "indexed" else [])
-            )
-            retained = bool(
-                history
-                and any(
-                    row["type"] == "projection"
-                    and row["row"].get("source_path" if row["table"] == "edges" else "path") == path
-                    for row in history["records"]
-                )
             )
             files.append(
                 {
@@ -1988,7 +2217,7 @@ class CodeGraph:
                     "observed_source_sha256": item["observed_source_sha256"],
                     "fact_source_sha256s": hashes,
                     "retained_facts": retained or path in fact_paths,
-                    "stale": retained if history else (False if coverage else None),
+                    "stale": stale,
                     "reason": item["reason"],
                     "location": item["location"],
                 }
@@ -1998,6 +2227,8 @@ class CodeGraph:
             legacy_hashes = (
                 inputs.get("source_hashes", inputs.get("legacy", {}).get("source_hashes")) or {}
             )
+            legacy_items = sorted(legacy_hashes.items())
+            file_total = len(legacy_items)
             files = [
                 {
                     "path": path,
@@ -2012,7 +2243,7 @@ class CodeGraph:
                     "reason": "published_observations_unavailable",
                     "location": None,
                 }
-                for path, sha in sorted(legacy_hashes.items())
+                for path, sha in (legacy_items if limit is None else legacy_items[:limit])
             ]
         capabilities = None
         if coverage:
@@ -2033,33 +2264,43 @@ class CodeGraph:
                     else None
                 ),
             }
-        references = []
+        references: list[dict[str, Any]] = []
+        reference_total = 0
         if self._source_lease is not None:
-            for row in self._source_lease.manifest["current"]:
-                item = observations.get(row["path"])
-                state = item["state"] if item else "unknown"
-                references.append(
-                    {
-                        "path": row["path"],
-                        "source_sha256": row["sha256"],
-                        "provenance": "observed_source",
-                        "extraction_state": state,
-                        "stale": False if state == "indexed" else None,
-                        "available": self._source_lease.bindings[(row["path"], row["sha256"])],
-                    }
-                )
-            for path, sha in sorted(historical_pairs):
-                references.append(
-                    {
-                        "path": path,
-                        "source_sha256": sha,
-                        "provenance": "historical_indexed",
-                        "extraction_state": "retained",
-                        "stale": True,
-                        "available": self._source_lease.bindings[(path, sha)],
-                    }
-                )
-            references.sort(key=lambda row: (row["path"], row["provenance"], row["source_sha256"]))
+            lease = self._source_lease
+            # Order on cheap keys first; only the rows that survive the limit become dicts.
+            keyed: list[tuple[str, str, str, str]] = [
+                (row["path"], "observed_source", row["sha256"], "")
+                for row in lease.manifest["current"]
+            ]
+            keyed.extend((path, "historical_indexed", sha, "") for path, sha in historical_pairs)
+            keyed.sort(key=lambda row: row[:3])
+            reference_total = len(keyed)
+            for path, provenance, sha, _ in keyed if limit is None else keyed[:limit]:
+                if provenance == "observed_source":
+                    seen = observations.get(path)
+                    state = seen["state"] if seen else "unknown"
+                    references.append(
+                        {
+                            "path": path,
+                            "source_sha256": sha,
+                            "provenance": provenance,
+                            "extraction_state": state,
+                            "stale": False if state == "indexed" else None,
+                            "available": lease.bindings[(path, sha)],
+                        }
+                    )
+                else:
+                    references.append(
+                        {
+                            "path": path,
+                            "source_sha256": sha,
+                            "provenance": provenance,
+                            "extraction_state": "retained",
+                            "stale": True,
+                            "available": lease.bindings[(path, sha)],
+                        }
+                    )
         state = (
             "partial"
             if coverage and any(r["state"] == "failed" for r in observations.values())
@@ -2093,14 +2334,14 @@ class CodeGraph:
                 if coverage
                 else None,
                 "total_count": len(coverage["files"]) if coverage else None,
-                "stale_count": sum(row["stale"] is True for row in files) if published else None,
-                "files": files,
+                "stale_count": stale_total if published else None,
+                "files": CountedList(files, file_total),
             },
             "source": {
                 "state": "available" if self.snapshot_id is not None else "unavailable",
                 "reason": None if self.snapshot_id is not None else "source_capture_unavailable",
-                "total_count": len(references),
-                "references": references,
+                "total_count": reference_total,
+                "references": CountedList(references, reference_total),
             },
             "facts": {
                 "definitions": self.db.execute("SELECT COUNT(*) FROM symbols").fetchone()[0],
@@ -5008,9 +5249,48 @@ class CodeGraph:
 
     # ---- Queries ----
 
+    def _memoized_analysis(self, verb: str, list_field: str, compute: Any) -> dict[str, Any]:
+        """Whole-graph analyses are O(edges) by nature, and a published generation never changes:
+        compute once per (generation, verb) and serve the response-sized prefix afterwards.
+
+        This sits ON TOP of the linear-time implementation (not instead of it): the first call
+        still has to compute. Only the first ``query_limit`` rows of the ranked list are kept —
+        exactly what the central cap lets through (``cap + 1`` so truncation stays detectable);
+        the scalar totals in the payload still describe the full analysis. Unleased graphs
+        (indexing, tests) are never memoized.
+        """
+        if not self._validated_lease or self._lease_generation_id is None:
+            return cast("dict[str, Any]", compute())
+        key = (self._lease_generation_id, verb, self.query_limit)
+        with _ANALYSIS_MEMO_LOCK:
+            hit = _ANALYSIS_MEMO.get(key)
+            if hit is not None:
+                _ANALYSIS_MEMO.move_to_end(key)
+        if hit is None:
+            full = cast("dict[str, Any]", compute())
+            hit = {**full, list_field: full[list_field][: self.query_limit]}
+            with _ANALYSIS_MEMO_LOCK:
+                _ANALYSIS_MEMO[key] = hit
+                while len(_ANALYSIS_MEMO) > _ANALYSIS_MEMO_MAX:
+                    _ANALYSIS_MEMO.popitem(last=False)
+        return copy.deepcopy(hit)
+
+    def _leased_observations(self) -> list[dict[str, Any]]:
+        """Observation records of this generation.
+
+        A leased reader already authenticated them (once per generation, see the memo above), so
+        they are not re-parsed and re-validated against every occurrence/evidence row per query.
+        An unleased graph (indexing, tests) still validates in full.
+        """
+        if self._validated_lease and self._lease_observations is not None:
+            return self._lease_observations
+        return self._observation_records(self.db, validate=not self._validated_lease)
+
     def _historical_projection(self, table, predicate):
         """History is separately presented; never enters active query/analysis SQL."""
-        metadata = self._observation_records(self.db)
+        if self._lease_histories is not None and not self._lease_histories:
+            return []  # the common case: a leased generation with no retained history
+        metadata = self._leased_observations()
         observations = {r["path"]: r for r in metadata if r["type"] == "observation"}
         result = {}
         for history in (r for r in metadata if r["type"] == "history"):
@@ -5145,7 +5425,12 @@ class CodeGraph:
             "ORDER BY source_path, source_line, source_col, callee_name",
             relations,
         ).fetchall()
-        return [self._edge_row_to_dict(r) for r in rows]
+        edges = []
+        for position, row in enumerate(rows):
+            if position % 4096 == 0:
+                checkpoint()
+            edges.append(self._edge_row_to_dict(row))
+        return edges
 
     def god_nodes(self) -> dict[str, Any]:
         """A2 (D3/D4a): degree-centrality ranking over the confident
@@ -5191,12 +5476,20 @@ class CodeGraph:
         kind + line-range containment against `symbols`) per edge instead.
         """
         confident = self.confident_edges()
+        self._analysis_cache = {}
+        try:
+            return self._god_nodes(confident)
+        finally:
+            self._analysis_cache = None
 
+    def _god_nodes(self, confident: list[dict[str, Any]]) -> dict[str, Any]:
         in_degree: dict[tuple[str, int, str], int] = {}
         out_degree: dict[tuple[str, int, str], int] = {}
         node_kind: dict[tuple[str, int, str], str | None] = {}
 
-        for edge in confident:
+        for position, edge in enumerate(confident):
+            if position % 2048 == 0:
+                checkpoint()
             # Checker MINOR-1: this guard is a second, redundant barrier,
             # not the only one — `confident_edges()`'s own SQL filter
             # (`WHERE confidence IN ('EXTRACTED', 'INFERRED')`) already
@@ -5278,6 +5571,10 @@ class CodeGraph:
         """The resolved `kind` of an edge's target endpoint. `target_line`
         (`_resolve_edges`) is already the target symbol's exact
         `line_start` — an exact-match lookup, no range/ambiguity risk."""
+        cache = self._analysis_cache
+        cache_key = ("target", target["path"], target["line"], target["name"])
+        if cache is not None and cache_key in cache:
+            return cast("str | None", cache[cache_key])
         # Tree-sitter targets only (never a same-spelled SCIP definition), and a
         # fixed order so the answer cannot depend on row insertion.
         row = self.db.execute(
@@ -5285,7 +5582,10 @@ class CodeGraph:
             "AND kind NOT LIKE 'scip\\_%' ESCAPE '\\' ORDER BY id LIMIT 1",
             (target["path"], target["line"], target["name"]),
         ).fetchone()
-        return row["kind"] if row is not None else None
+        kind = row["kind"] if row is not None else None
+        if cache is not None:
+            cache[cache_key] = kind
+        return kind
 
     def _resolve_source_node(
         self, source: dict[str, Any]
@@ -5306,6 +5606,31 @@ class CodeGraph:
         top-level call) — nothing to attribute source-side contribution to.
         """
         if source["name"] is None:
+            return None, None
+        cache = self._analysis_cache
+        if cache is not None:
+            # Whole-graph analyses resolve one source per edge: read each file's symbols once
+            # (idx_symbols_path) instead of issuing one SQL statement per edge.
+            by_path = cache.setdefault(("symbols-of",), {})
+            rows = by_path.get(source["path"])
+            if rows is None:
+                rows = by_path[source["path"]] = [
+                    (r[0], r[1], r[2], r[3])
+                    for r in self.db.execute(
+                        "SELECT line_start, line_end, name, kind FROM symbols WHERE path = ? "
+                        "ORDER BY line_start, id",
+                        (source["path"],),
+                    )
+                ]
+            line = source["line"]
+            for line_start, line_end, name, kind in rows:
+                if (
+                    name == source["name"]
+                    and kind == source["kind"]
+                    and line_start <= line
+                    and line_end >= line
+                ):
+                    return (source["path"], line_start, name), kind
             return None, None
         row = self.db.execute(
             "SELECT path, line_start, name, kind FROM symbols WHERE path = ? "
@@ -5359,7 +5684,13 @@ class CodeGraph:
         reproducible, not just the grouping.
         """
         confident = self.confident_edges()
+        self._analysis_cache = {}
+        try:
+            return self._communities(confident)
+        finally:
+            self._analysis_cache = None
 
+    def _communities(self, confident: list[dict[str, Any]]) -> dict[str, Any]:
         adjacency: dict[tuple[str, int, str], set[tuple[str, int, str]]] = {}
         node_kind: dict[tuple[str, int, str], str | None] = {}
 
@@ -5367,7 +5698,9 @@ class CodeGraph:
             adjacency.setdefault(key, set())
             node_kind.setdefault(key, kind)
 
-        for edge in confident:
+        for position, edge in enumerate(confident):
+            if position % 2048 == 0:
+                checkpoint()
             target = edge["target"]
             if target is None:
                 continue
@@ -5462,15 +5795,37 @@ class CodeGraph:
             inputs = json.loads(metadata["generation_inputs"])
             if inputs.get("format") == "atlas-generation.v1" and inputs.get("kind") == "import":
                 return None
+        # One linear pass per name. The previous single SQL statement probed `edges` once per ref
+        # through `idx_edges_callee`, which only narrows to edges of the SAME name — so its cost
+        # was refs(name) x edges(name): ~3.5 s at 2k refs, effectively unbounded at the 50k+ refs of
+        # a common name (`new`, `id`), for every callers_of / subclasses_of. Hashing the edge
+        # positions once makes it refs(name) + edges(name), with no schema change.
         placeholders = ",".join("?" for _ in relations)
-        return self.db.execute(
-            f"SELECT COUNT(*) FROM refs r WHERE callee_name = ? AND relation IN ({placeholders}) "
-            "AND NOT EXISTS (SELECT 1 FROM edges e WHERE e.source_path=r.path "
-            "AND e.source_line=r.line AND e.source_col=r.col AND e.lang=r.lang "
-            "AND e.callee_name=r.callee_name AND (e.relation=r.relation "
-            "OR (r.relation='call' AND e.relation='construct')))",
-            (callee_name, *relations),
-        ).fetchone()[0]
+        edge_cursor = self.db.cursor()
+        edge_cursor.row_factory = None
+        resolved = set(
+            edge_cursor.execute(
+                "SELECT source_path, source_line, source_col, lang, relation FROM edges "
+                "WHERE callee_name = ?",
+                (callee_name,),
+            )
+        )
+        ref_cursor = self.db.cursor()
+        ref_cursor.row_factory = None
+        unresolved = 0
+        for seen, row in enumerate(
+            ref_cursor.execute(
+                "SELECT path, line, col, lang, relation FROM refs "
+                f"WHERE callee_name = ? AND relation IN ({placeholders})",
+                (callee_name, *relations),
+            )
+        ):
+            if seen % 4096 == 0:
+                checkpoint()
+            if row in resolved or (row[4] == "call" and (*row[:4], "construct") in resolved):
+                continue
+            unresolved += 1
+        return unresolved
 
     @staticmethod
     def _edge_row_to_dict(row: sqlite3.Row) -> dict[str, Any]:
@@ -5525,10 +5880,14 @@ class CodeGraph:
         Total order: `(path, line, text)` — a fixed order for identical
         input, matching every other list this project returns (D6).
         """
+        # LIMIT query_limit (cap+1, like every other list verb): the SQL and Python work is bounded
+        # by the response cap, not by the size of the corpus; `rationale_count` is the true total.
         rows = self.db.execute(
             "SELECT path, line, text, label, target_path, target_line, target_name, lang "
-            "FROM rationale ORDER BY path, line, text"
+            "FROM rationale ORDER BY path, line, text LIMIT ?",
+            (self.query_limit,),
         ).fetchall()
+        total = self.db.execute("SELECT COUNT(*) FROM rationale").fetchone()[0]
         items = [
             {
                 "path": r["path"],
@@ -5550,7 +5909,7 @@ class CodeGraph:
         ]
         return {
             "rationale": items,
-            "rationale_count": len(items),
+            "rationale_count": total,
             **self._historical_payload("rationale", lambda _row: True, "historical_rationale"),
         }
 
@@ -7200,12 +7559,12 @@ class CodeGraph:
         if verb == "god_nodes":
             # A2: degree-centrality ranking over the confident subgraph —
             # `arg` is ignored (see the docstring above).
-            return self.god_nodes()
+            return self._memoized_analysis("god_nodes", "god_nodes", self.god_nodes)
 
         if verb == "communities":
             # A3: deterministic label propagation over the confident
             # subgraph — `arg` is ignored (see the docstring above).
-            return self.communities()
+            return self._memoized_analysis("communities", "communities", self.communities)
 
         if verb == "rationale":
             # A4: every recognized rationale comment — `arg` is ignored

@@ -167,10 +167,29 @@ slot. So a client disconnect cancels the request:
   path is unchanged). Descendants of that child are not killed.
 - `notifications/cancelled` is accepted (202) and is a no-op: each POST has its own server task, so
   there is nothing for it to cancel.
-- Synchronous operations cannot be cancelled mid-call: legacy `graph_query` and `search_symbol`,
-  `view_file` and `list_dir` run to the end on the event loop, bounded by their own caps (SQL limit,
-  line, entry and match caps, and `deadline_ms` where the operation has one). While one runs it blocks
-  the loop for every HTTP client. Structured `graph_query` operations yield and are cancellable.
+- Graph reads are cancellable and bounded (issue #123). Reader acquisition and every blocking
+  graph read (`search_symbol`, legacy `graph_query` verbs, `status`) run on a small worker pool
+  (`Config.graph_workers`, default 4), not on the event loop, so one slow query no longer stalls the
+  transport or other clients. A disconnect (or any task cancellation) sets an abort flag, interrupts
+  the running SQLite statement (`Connection.interrupt()` plus a progress handler) and joins the
+  worker before the lease is closed; pure-Python whole-graph analyses (`god_nodes:`, `communities:`,
+  the unresolved-reference count) poll the same flag. Structured `graph_query` operations yield and
+  are cancellable as before.
+- Every `search_symbol` / `graph_query` call also has a server-side deadline,
+  `Config.graph_query_deadline_s` (default 20 seconds, `0` disables it; `serve --graph-query-deadline SECONDS` sets it), which covers reader
+  acquisition and the query. When it passes, the work is stopped and the call returns the structured
+  error `GRAPH_DEADLINE_EXCEEDED` (`retry_hint: narrower_scope`) instead of holding the connection
+  until the client gives up. It is deliberately below the roughly 30 seconds at which agent harnesses
+  time out.
+- The first lease of a process authenticates the whole published generation once (every row and the
+  source pack; tens of seconds at 10,000+ files) and remembers the verdict for as long as the same
+  files are in place. `serve` does this in the background at startup (`graph_warmup_done` in the
+  log). A call that arrives meanwhile waits on the same single flight and, if the deadline passes
+  first, gets `GRAPH_DEADLINE_EXCEEDED` with the message "still being authenticated"; retry shortly.
+  That authentication is pure Python and cannot be interrupted, so a cancelled call stops waiting
+  but the shared authentication finishes, for the benefit of the next call.
+- `view_file` and `list_dir` still run to the end on the event loop, bounded by their own line and
+  entry caps.
 - SSE response mode is the only mode of the SDK in which a disconnect reaches the handler; in JSON
   response mode a handler keeps running after its client is gone (observed, not assumed). That is why
   this transport answers with SSE.
@@ -196,7 +215,8 @@ These are measured and left for the shared-operation slice S40:
   `enforcement.py:100-114`; default 200 calls per minute).
 - A slow-body POST holds its slot until its body ends or the connection closes; a slow-reading client holds a
   slot without a write timeout; slow headers hold a file descriptor.
-- Synchronous operations block the loop (section 6).
+- `view_file` and `list_dir` are synchronous and block the loop for their (capped) duration
+  (section 6). Graph reads no longer do.
 - `uvicorn` is not a declared direct dependency. It is used as a locked transitive dependency of `mcp`
   (as are `starlette` and `sse-starlette`); `mcp` itself already imports `uvicorn` when `atlas_aci.server`
   is imported, so the HTTP module is the only importer of it on purpose, not the only way it loads.
